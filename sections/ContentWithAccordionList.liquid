@@ -1,0 +1,137 @@
+{% assign should_be_showed = false %}
+{% for block in section.blocks %}
+
+  {% if block.settings.title != blank %}
+    {% assign should_be_showed = true %}
+    {% break %}
+  {% endif %}
+{% endfor %}
+
+{% unless should_be_showed %}
+  <style>
+    #shopify-section-{{ section.id }} {
+      display: none;
+    }
+  </style>
+{% endunless %}
+
+
+<div class="main-grid">
+  <div class="left-content">
+    <h2 class="h1">
+      {{ section.settings.title }}
+    </h2>
+    <div class="description desktop">
+      {{ section.settings.desc_desktop }}
+    </div>
+
+    <div class="description mobile">
+      {{ section.settings.desc_mobile }}
+    </div>
+
+    {% render 'PrimaryButton',
+      url: section.settings.button_url,
+      title: section.settings.button_label,
+      type: 'transparent'
+    %}
+  </div>
+
+  <div class="right-list">
+    <div class="arrow-nav">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 8">
+        <path fill="#2B3C35" d="M8.626 7.187 5 3.56 1.374 7.187 0 5.813l5-5 5 5-1.374 1.374Z"/>
+      </svg>
+    </div>
+    <div class="scroll-container __accordion">
+      {% for block in section.blocks %}
+        <div class="accordion __accordion-wrapper">
+          <div class="accordion-header __accordion-button">
+            <h2 class="text-start py-2 text-2xl md:text-4xl">
+              {{ block.settings.title }}
+            </h2>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 12">
+              <path fill="#2B3C35" d="M7 5V0H5v5H0v2h5v5h2V7h5V5H7Z"/>
+            </svg>
+          </div>
+          <div class="accordion-description __accordion-content">
+            {{ block.settings.description }}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="arrow-nav bottom">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 8">
+        <path fill="#2B3C35" d="M8.626 7.187 5 3.56 1.374 7.187 0 5.813l5-5 5 5-1.374 1.374Z"/>
+      </svg>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Accordion",
+  "tag": "section",
+  "class": "section accordion-list accordion-list-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+
+    {
+      "type": "textarea",
+      "id": "desc_desktop",
+      "label": "Description desktop"
+    },
+
+    {
+      "type": "textarea",
+      "id": "desc_mobile",
+      "label": "Description mobile"
+    },
+
+    {
+      "type": "header",
+      "content": "Button"
+    },
+
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label"
+    },
+
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Button url"
+    }
+  ],
+
+  "blocks": [
+    {
+      "type": "text",
+      "name": "List",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "Description"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Accordion List"
+    }
+  ]
+}
+{% endschema %}

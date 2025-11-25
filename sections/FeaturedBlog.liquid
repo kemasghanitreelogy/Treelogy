@@ -1,0 +1,72 @@
+{% render 'FeaturedCardSlider', card: 'blog', section: section %}
+
+{% schema %}
+{
+  "name": "Featured Blog Listing",
+  "tag": "section",
+  "class": "section featured-slider featured-blog",
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description"
+    },
+
+    {
+      "type": "blog",
+      "id": "products",
+      "label": "Blog"
+    },
+
+    {
+      "type": "header",
+      "content": "Button"
+    },
+
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Label"
+    },
+
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Url"
+    },
+    {
+      "type": "checkbox",
+      "id": "remove_button",
+      "label": "Remove Button"
+    },
+
+    {
+      "type": "header",
+      "content": "Listing Settings"
+    },
+
+    {
+      "type": "textarea",
+      "id": "filter_tags",
+      "label": "Filter by Tag(s)",
+      "info": "Use commas for multiple tags"
+    },
+
+    {
+      "type": "checkbox",
+      "id": "remove_excerpt",
+      "label": "Remove Excerpt"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Blog Listing"
+    }
+  ]
+}
+{% endschema %}

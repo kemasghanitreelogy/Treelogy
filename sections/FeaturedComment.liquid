@@ -1,0 +1,116 @@
+<div class="main-grid">
+  <div class="inner">
+    <div class="header">
+      <div class="review-rating technical">
+        <div class="jdgm-widget jdgm-all-reviews-text">
+          <a href="javascript:void(0)">
+            <span data-score="{{ shop.metafields.judgeme.all_reviews_rating }}" class="jdgm-all-reviews-rating"></span>
+            <span
+              class="jdgm-all-reviews-text__text"
+              data-score="{{ shop.metafields.judgeme.all_reviews_rating }}"
+              data-number-of-reviews="{{ shop.metafields.judgeme.all_reviews_count }}"
+              data-locale="en"
+            >
+              {{ shop.metafields.judgeme.all_reviews_rating | round: 1 }}/5 based on
+              {{ shop.metafields.judgeme.all_reviews_count }} reviews.</span
+            >
+          </a>
+        </div>
+      </div>
+      <div class="h1">
+        {{ section.settings.title }}
+      </div>
+    </div>
+    <div class="card">
+      {% for block in section.blocks %}
+        <div class="card__item">
+          <div class="thumb">
+            <img src="{{ block.settings.thumb | image_url:width:'310x' }}" width="310" height="310">
+          </div>
+          <div class="reivew">
+            <a href="{{ block.settings.product.url }}" class="product">
+              {% if block.settings.product %}
+                <img
+                  src="{{ block.settings.product.featured_image | image_url:width: '100x' }}"
+                  width="100"
+                  height="100"
+                >
+              {% endif %}
+            </a>
+            <div class="detail">
+              <div class="rating technical">
+                {% render 'Rating', product: block.settings.product %}
+              </div>
+              <div class="user">
+                <div class="sub-head-alt">{{ block.settings.user_name }}</div>
+                <div class="commebt body-s">
+                  {{ block.settings.user_comment | truncate: 60 }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Featured Comment",
+  "tag": "section",
+  "class": "section featured-comment",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+
+    {
+      "type": "text",
+      "id": "review_text",
+      "label": "Review label"
+    }
+  ],
+
+  "blocks": [
+    {
+      "type": "image_picker",
+      "name": "User Review",
+      "limit": 3,
+      "settings": [
+        {
+          "id": "thumb",
+          "type": "image_picker",
+          "label": "Thumbnail"
+        },
+
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+
+        {
+          "type": "text",
+          "id": "user_name",
+          "label": "User name"
+        },
+
+        {
+          "type": "textarea",
+          "id": "user_comment",
+          "label": "Comment"
+        }
+      ]
+    }
+  ],
+
+  "presets": [
+    {
+      "name": "Featured reviews"
+    }
+  ]
+}
+{% endschema %}

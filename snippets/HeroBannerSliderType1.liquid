@@ -1,0 +1,39 @@
+<div class="title">
+  {%- if block.settings.title_one -%}
+    <div class="line-one {% unless request.design_mode %} stagger {% endunless %}">
+      {{ block.settings.title_one }}
+    </div>
+  {%- endif -%}
+  {%- if block.settings.title_two -%}
+    <div class="line-two {% unless request.design_mode %} stagger {% endunless %}">
+      <h1>{{ block.settings.title_two }}</h1>
+    </div>
+  {%- endif -%}
+</div>
+
+<div class="description {% unless request.design_mode %} stagger {% endunless %}">
+  {{ block.settings.content | newline_to_br }}
+</div>
+
+{% if product != empty %}
+  <a class="product {% unless request.design_mode %} stagger {% endunless %}">
+    <div class="thumb">
+      <img src="{{product.featured_image | image_url: width: '96x' }}" width="96" height="96">
+    </div>
+    <div class="product-card-detail">
+      <div class="rating">
+        {% render 'Rating', product: product %}
+      </div>
+      <div class="product-title">{{ product.title }}</div>
+      {% assign description = product.excerpt | default: product.content | strip_html %}
+      <div class="product-excerpt desktop">
+        {{ description | truncate: '80' }}
+      </div>
+
+      <div class="product-excerpt mobile">
+        {{ description | truncate: '68' }}
+      </div>
+      <div class="price">From&nbsp;{% render 'PriceFormat'. product: block.settings.product %}</div>
+    </div>
+  </a>
+{% endif %}

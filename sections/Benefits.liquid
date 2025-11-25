@@ -1,0 +1,98 @@
+<div class="main-grid">
+  <div class="content header">
+    <h1 class="h1 title">
+      {{ section.settings.title }}
+    </h1>
+    <div class="body-desk desc">{{ section.settings.description }}</div>
+
+    {% render 'Image', image: section.settings.background %}
+  </div>
+
+  <div class="content">
+    <div class="items">
+      {% for block in section.blocks %}
+        <div class="items-card">
+          <div class="icon">
+            {% if block.settings.icon %}
+              {% render 'Image', image: block.settings.icon %}
+            {% endif %}
+          </div>
+          <a class="button" href="{{ block.settings.url | default: "#" }}">
+            <h3 class="name">
+              {{ block.settings.title }}
+            </h3>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 13">
+              <path fill="#F8F8F2" d="M7 5.5v-5H5v5H0v2h5v5h2v-5h5v-2H7Z"/>
+            </svg>
+          </a>
+          <div class="background">
+            {% render 'Image', image: block.settings.background %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Benefits",
+  "tag": "section",
+  "class": "section benefits",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description"
+    },
+
+    {
+      "type": "image_picker",
+      "id": "background",
+      "label": "Background"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "text",
+      "name": "List",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Link to"
+        },
+
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Icon"
+        },
+
+        {
+          "type": "image_picker",
+          "id": "background",
+          "label": "Thumbnail"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Benefits"
+    }
+  ]
+}
+{% endschema %}

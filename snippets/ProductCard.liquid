@@ -1,0 +1,49 @@
+{% if item %}
+  {% assign first_variant = item.variants.first %}
+  <div class="card swiper-slide">
+    <figure>
+      <a href="{{ item.url }}"><img src="{{ item.media.first | img_url : '350x' }}" alt="{{ item.title }}"></a>
+
+      {% comment %} {% unless button_cart %} {% endcomment %}
+      {% if first_variant.available %}
+        <div class="button-wrapper">
+        <a
+          href="#"
+          class="button-cart button-quick-add-cart overlay-button open-popup-variants"
+          data-title="{{ item.title }}"
+          data-slug="{{ item.url }}"
+        >
+          {{ 'products.general.add_to_cart' | t }}
+        </a>
+        </div>
+      {% endif %}
+      {% comment %} {% endunless %} {% endcomment %}
+    </figure>
+    <div class="card-detail">
+      <div>
+        <div class="top">{% render 'Rating', product: item %}</div>
+        <a href="{{ item.url }}" class="card-detail__description">
+          <h2 class="sub-head-alt">{{ item.title }}</h2>
+          <div class="sort-desc">
+            {{
+              item.metafields.custom.excerpt
+              | default: 'Superfood, packed with vitamins, minerals, and antioxidants.'
+            }}
+          </div>
+          <div class="price-wrapper">{{ 'products.general.from' | t }} {% render 'PriceFormat', product: item %}</div>
+        </a>
+      </div>
+
+      {% if button_cart and first_variant.available %}
+        <a
+          href="#"
+          class="button-cart button-quick-add-cart open-popup-variants"
+          data-title="{{ item.title }}"
+          data-slug="{{ item.url }}"
+        >
+          {{ 'products.general.add_to_cart' | t }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+{% endif %}

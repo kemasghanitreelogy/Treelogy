@@ -1,0 +1,68 @@
+{% if section.settings.article %}
+  {% assign article = section.settings.article %}
+  {% assign thumb = article.image | image_url %}
+  {% if section.settings.banner %}
+    {% assign thumb = section.settings.banner | image_url %}
+  {% endif %}
+
+  <div class="main-grid">
+    <div class="content">
+      <div class="banner">
+        {% render 'Image', image: thumb %}
+      </div>
+      <div cwlass="content">
+        <div class="top body-mobile">
+          <div class="category">{{ article.tags | join: ', ' }}</div>
+          {% render 'Date', date: article.published_at %}
+        </div>
+        <h1>
+          {{ section.settings.title | default: article.title }}
+        </h1>
+        <div class="body-desk">
+          {{ article.excerpt | strip_html }}
+        </div>
+        {% assign button_url = '#' %}
+
+        {% if article.url %}
+          {% assign button_url = '/' | append: article.url %}
+        {% endif %}
+        {% capture button_title %}
+          {{ 'articles.read_full_article' | t }}
+        {% endcapture %}
+        {% render 'PrimaryButton', url: article.url, title: button_title %}
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Featured articler",
+  "tag": "section",
+  "class": "section featured-article",
+  "settings": [
+    {
+      "type": "article",
+      "id": "article",
+      "label": "Article"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "info": "Replace default title"
+    },
+    {
+      "type": "image_picker",
+      "id": "banner",
+      "label": "Banner",
+      "info": "Replace default banner from the article"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured article"
+    }
+  ]
+}
+{% endschema %}

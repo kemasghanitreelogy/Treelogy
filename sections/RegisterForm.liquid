@@ -1,0 +1,73 @@
+<div class="main-grid login-form regsiter-form">
+  <div class="form">
+    <div class="inner">
+      <h2>{{ 'form.crafting_lifestyle' | t }}</h2>
+      {% form 'create_customer' %}
+        {{ form.errors | default_errors }}
+        <input
+          type="text"
+          value=""
+          name="customer[first_name]"
+          size="30"
+          class="required"
+          placeholder="{{ "form.firs_name" | t }}"
+        >
+        <input type="text" value="" name="customer[last_name]" size="30" placeholder="{{ "form.last_name" | t }}">
+        <input
+          type="date"
+          name="customer[birthday]"
+          value=""
+          data-placeholder="{{ "form.birthday" | t }} (MM/DD/YYYY)"
+          id="date-picker"
+        >
+        <input
+          type="email"
+          value=""
+          name="customer[email]"
+          size="30"
+          class="required"
+          placeholder="{{"form.your_email" | t}}"
+        >
+        <input type="password" value="" name="customer[password]" size="30" class="required" placeholder="Password">
+        <input
+          type="text"
+          value=""
+          name="customer[phone]"
+          size="30"
+          class="required"
+          placeholder="{{ "form.phone_number" | t }}"
+        >
+        <div class="button-login">
+          <input type="submit" value="{{ "form.sign_up" | t }}" class="button-submit">
+        </div>
+      {% endform %}
+      <div class="footer-register">
+        {{ 'form.already_have_an_account' | t }}
+        <a href="/account/login">{{ 'form.login_button' | t }}</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% render 'Image', image: section.settings.banner %}
+
+{% schema %}
+{
+  "name": "Register form",
+  "tag": "section",
+  "class": "section register-section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "banner",
+      "label": "Banner"
+    }
+  ],
+
+  "presets": [
+    {
+      "name": "Register form"
+    }
+  ]
+}
+{% endschema %}

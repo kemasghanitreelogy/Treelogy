@@ -1,0 +1,29 @@
+<div class="login-page">
+  <div class="main-grid">
+    <div class="login-wrapper">
+      {% render 'LoginForm' %}
+    </div>
+  </div>
+  {% render 'Image', image: section.settings.banner %}
+</div>
+
+{% schema %}
+{
+  "name": "Login section",
+  "tag": "section",
+  "class": "section login-form-section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "banner",
+      "label": "Banner"
+    }
+  ],
+
+  "presets": [
+    {
+      "name": "Login"
+    }
+  ]
+}
+{% endschema %}

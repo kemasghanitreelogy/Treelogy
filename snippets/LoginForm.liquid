@@ -1,0 +1,36 @@
+<div class="login-form">
+  <h2 class="h1">{{ 'customer.login.title' | t }}</h2>
+  <div class="form">
+    {% form 'customer_login' %}
+      {{ form.errors | default_errors }}
+      <input type="email" name="customer[email]" placeholder="{{ 'customer.login.email' | t }}" class="required">
+      <input type="password" name="customer[password]" placeholder="{{ 'customer.login.password' | t }}" class="required">
+      <div class="button-login">
+        <input type="submit" value="{{ 'customer.login.submit' | t }}" class="button-submit">
+        {% if checkout_button %}
+          <a href="/checkout" class="checkout-button">
+            <div class="desktop">{{ 'checkout.login.continue_without' | t }}</div>
+            <div class="mobile">{{ 'checkout.login.continue_without_mobile' | t }}</div>
+          </a>
+        {% endif %}
+      </div>
+      <div class="footer">
+        <div class="stay-login">
+          <input type="checkbox" id="keep-me-logged-in"> <label class="sub-head">{{ 'customer.login.keep_signed_in' | t }}</label>
+        </div>
+        <a href="#" class="sub-head button-forgot-password">{{ 'customer.login.forgot_password' | t }}</a>
+      </div>
+    {% endform %}
+    <div class="forgot-form">
+      <div class="form form-forgot-password">
+        {% form 'recover_customer_password' %}
+          {{ form.errors | default_errors }}
+          <input type="email" name="email" class="required" placeholder="{{ 'customer.recover.email' | t }}">
+          <input type="submit" value="{{ 'customer.recover.submit' | t }}" class="button-submit">
+        {% endform %}
+        <div class="note">{{ 'customer.recover.note' | t }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="signup sub-head">{{ 'customer.login.no_account' | t }} <a href="/account/register">{{ 'customer.login.sign_up' | t }}</a></div>
+</div>

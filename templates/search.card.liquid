@@ -1,0 +1,15 @@
+{% paginate search.results %}
+  {% if search.performed %}
+    <div id="search-results">
+      {% if search.results.size > 0 %}
+        {% for item in search.results limit: 4 %}
+          {% render 'ProductCard', item: item %}
+        {% endfor %}
+      {% else %}
+        No results!
+      {% endif %}
+    </div>
+  {% endif %}
+
+  {% if paginate.pages > 1 %}{{ paginate | default_pagination }}{% endif %}
+{% endpaginate %}

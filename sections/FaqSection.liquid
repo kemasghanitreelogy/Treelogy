@@ -1,0 +1,65 @@
+<div class="hidden" style="display: none">
+  {% for block in section.blocks %}
+    <h2 class="title">
+      {{ block.settings.title }}
+    </h2>
+    <p>
+      {{ block.settings.description }}
+    </p>
+  {% endfor %}
+</div>
+
+<script>
+
+createFaqItem({
+    id: '{{ section.id }}',
+    category: `{{ section.settings.title }}`,
+    lists: [
+            {% for block in section.blocks %}
+                {
+                    title: `{{ block.settings.title }}`,
+                    description: `{{ block.settings.description | strip_html }}`
+                },
+            {% endfor %}
+    ]
+})
+</script>
+
+{% schema %}
+{
+  "name": "FAQ category",
+  "tag": "section",
+  "class": "section faq-section-list",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "text",
+      "name": "AQ",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ category"
+    }
+  ]
+}
+{% endschema %}

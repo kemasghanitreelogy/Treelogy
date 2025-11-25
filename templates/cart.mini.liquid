@@ -1,0 +1,37 @@
+<div id="mini-cart-content">
+  <div class="cart-page min-cart-template">
+    <div class="cart-header main-header">
+      <div class="title" id="cart-header-title">
+        {{ 'cart.title' | t }}
+      </div>
+      <div class="close-button">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 1.26495L10.7351 0L6 4.73505L1.26495 0L0 1.26495L4.73505 6L0 10.7351L1.26495 12L6 7.26495L10.7351 12L12 10.7351L7.26495 6L12 1.26495Z" fill="#2B3C35"/>
+        </svg>
+      </div>
+      {% render 'FreeShippingCartProgress' %}
+    </div>
+
+    <div class="cart" data-mobile="true">
+      {% if cart.item_count > 0 %}
+        <form action="/cart" method="post" novalidate>
+          <div class="cart-items">
+            {% for item in cart.items %}
+              {% render 'CartItemCard', item: item %}
+            {% endfor %}
+          </div>
+          <div class="sub-total cart-footer">
+            <div class="body-desk item">
+              {{ 'cart.subtotal_label' | t }}
+              <div id="sub-total-mini" data-total="{{ cart.total_price }}">{{ cart.total_price | money }}</div>
+            </div>
+            <div class="note">{{ settings.tax_footer_setting }}</div>
+            <button type="submit" name="checkout">{{ 'cart.checkout_button_label' | t }}</button>
+          </div>
+        </form>
+      {% else %}
+        <p class="empty-msg cart-note-error">{{ 'cart.empty_cart_text' | t }}</p>
+      {% endif %}
+    </div>
+  </div>
+</div>

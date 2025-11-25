@@ -1,0 +1,255 @@
+<div class="main-grid">
+  <div class="content">
+    <h2 class="h1">
+      {{ section.settings.title }}
+    </h2>
+    <div class="sub-head-alt desktop">
+      {{ section.settings.description }}
+    </div>
+
+    <div class="items">
+      <div class="sub-head-alt mobile description items-list">
+        {% assign mobile_desc = section.settings.description_mobile | default: section.settings.description %}
+        {{ mobile_desc | newline_to_br }}
+      </div>
+      <div class="items-container">
+        {% for block in section.blocks %}
+          <div class="items-list">
+            <div class="grid">
+              {% for card in (1..6) %}
+                {% assign card_key = 'card_' | append: forloop.index %}
+                {% assign num = card_key | append: '_num' %}
+                {% assign label_one = card_key | append: '_label_1' %}
+                {% assign label_two = card_key | append: '_label_2' %}
+
+                {% if block.settings[num] != '' %}
+                  <div class="grid-item">
+                    <div class="grid-item__content">
+                      <div class="grid-item__content-inner">
+                        <h2 class="h1">
+                          {{ block.settings[num] }}
+                        </h2>
+                        <div class="flex flex-col justify-center">
+                          {% if block.settings[label_one] %}
+                            <div class="uppercase small">
+                              {{ block.settings[label_one] }}
+                            </div>
+                          {% endif %}
+                          <div class="sub-head-alt desc">
+                            {{ block.settings[label_two] }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% if section.settings.background %}
+  <img
+    alt="Moringa Background"
+    width="1920"
+    height="auto"
+    src="{{ section.settings.background | image_url: width: '1920x' }}"
+  >
+{% endif %}
+
+{% schema %}
+{
+  "name": "Benefit",
+  "tag": "section",
+  "class": "section benefit-wrapper",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description"
+    },
+
+    {
+      "type": "textarea",
+      "id": "description_mobile",
+      "label": "Description Mobile"
+    },
+
+    {
+      "type": "image_picker",
+      "id": "background",
+      "label": "Background"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "text",
+      "name": "List",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Card 1"
+        },
+        {
+          "type": "text",
+          "id": "card_1_num",
+          "label": "Number"
+        },
+        {
+          "type": "text",
+          "id": "card_1_label_1",
+          "label": "Label one"
+        },
+        {
+          "type": "checkbox",
+          "id": "card_1_small_style",
+          "label": "Label one small text"
+        },
+        {
+          "type": "text",
+          "id": "card_1_label_2",
+          "label": "Label two"
+        },
+
+        {
+          "type": "header",
+          "content": "Card 2"
+        },
+        {
+          "type": "text",
+          "id": "card_2_num",
+          "label": "Number"
+        },
+        {
+          "type": "text",
+          "id": "card_2_label_1",
+          "label": "Label one"
+        },
+        {
+          "type": "checkbox",
+          "id": "card_2_small_style",
+          "label": "Label one small text"
+        },
+        {
+          "type": "text",
+          "id": "card_2_label_2",
+          "label": "Label two"
+        },
+        {
+          "type": "header",
+          "content": "Card 3"
+        },
+        {
+          "type": "text",
+          "id": "card_3_num",
+          "label": "Number"
+        },
+        {
+          "type": "text",
+          "id": "card_3_label_1",
+          "label": "Label one"
+        },
+        {
+          "type": "checkbox",
+          "id": "card_3_small_style",
+          "label": "Label one small text"
+        },
+        {
+          "type": "text",
+          "id": "card_3_label_2",
+          "label": "Label two"
+        },
+
+        {
+          "type": "header",
+          "content": "Card 4"
+        },
+        {
+          "type": "text",
+          "id": "card_4_num",
+          "label": "Number"
+        },
+        {
+          "type": "text",
+          "id": "card_4_label_1",
+          "label": "Label one"
+        },
+        {
+          "type": "checkbox",
+          "id": "card_4_small_style",
+          "label": "Label one small text"
+        },
+        {
+          "type": "text",
+          "id": "card_4_label_2",
+          "label": "Label two"
+        },
+
+        {
+          "type": "header",
+          "content": "Card 5"
+        },
+        {
+          "type": "text",
+          "id": "card_5_num",
+          "label": "Number"
+        },
+        {
+          "type": "text",
+          "id": "card_5_label_1",
+          "label": "Label one"
+        },
+        {
+          "type": "checkbox",
+          "id": "card_5_small_style",
+          "label": "Label one small text"
+        },
+        {
+          "type": "text",
+          "id": "card_5_label_2",
+          "label": "Label two"
+        },
+
+        {
+          "type": "header",
+          "content": "Card 6"
+        },
+        {
+          "type": "text",
+          "id": "card_6_num",
+          "label": "Number"
+        },
+        {
+          "type": "text",
+          "id": "card_6_label_1",
+          "label": "Label one"
+        },
+        {
+          "type": "checkbox",
+          "id": "card_6_small_style",
+          "label": "Label one small text"
+        },
+        {
+          "type": "text",
+          "id": "card_6_label_2",
+          "label": "Label two"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Benefit"
+    }
+  ]
+}
+{% endschema %}

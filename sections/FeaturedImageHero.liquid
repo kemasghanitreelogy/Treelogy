@@ -1,0 +1,182 @@
+<div
+  class="hero-slider swiper-wrapper"
+>
+  {% for block in section.blocks %}
+    {% assign product = block.settings.product %}
+    <div
+      class="banner swiper-slide slider-type-{{ block.type }}"
+      data-href="{{product.url }}"
+      data-swiper-autoplay="{{section.settings.interval }}"
+    >
+      {% comment %}
+        <style>
+          .background-{{ block.id }}{
+            left: {{ block.settings.banner_x | default: 0 }}%;
+            top: {{ block.settings.banner_y | default: 0 }}%;
+          }
+
+          @media only screen and (max-width: 800px) {
+          .background-{{ block.id }}{
+            left: {{ block.settings.banner_x_mob }}%;
+            top: {{ block.settings.banner_y_mob }}%;
+          }
+          }
+        </style>
+      {% endcomment %}
+      <img
+        class="background background-{{ block.id }} desktop"
+        width="auto"
+        height="auto"
+        decoding="async"
+        src="{{ block.settings.banner | image_url }}"
+      >
+
+      {% assign mobile_banner = block.settings.banner_mobile | default: block.settings.banner %}
+
+      <img
+        class="background mobile"
+        width="auto"
+        height="auto"
+        decoding="async"
+        src="{{ mobile_banner | image_url }}"
+      >
+      <div class="main-grid">
+        <div class="content {{ block.type }}">
+          {% if block.type == 'image_picker' %}
+            {% render 'HeroBannerSliderType1', block: block, product: product %}
+          {% elsif block.type == 'image_type_2' %}
+            {% render 'HeroBannerSliderType2', block: block %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<div class="swiper-pagination"></div>
+
+{% schema %}
+{
+  "name": "Hero Banner",
+  "tag": "section",
+  "class": "section jumbo-slider swiper",
+  "settings": [
+    {
+      "type": "number",
+      "id": "interval",
+      "label": "Slider interval",
+      "info": "Interval is in millisecond",
+      "default": 6000
+    }
+  ],
+  "blocks": [
+    {
+      "limit": 5,
+      "type": "image_picker",
+      "name": "Banner",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title_one",
+          "default": "Premium Organic",
+          "label": "Title one"
+        },
+        {
+          "type": "text",
+          "id": "title_two",
+          "default": "Moringa Oleifera",
+          "label": "Title one"
+        },
+
+        {
+          "id": "content",
+          "type": "textarea",
+          "label": "Content"
+        },
+
+        {
+          "id": "product",
+          "type": "product",
+          "label": "Link to product"
+        },
+
+        {
+          "type": "header",
+          "content": "Banner"
+        },
+
+        {
+          "type": "image_picker",
+          "id": "banner",
+          "label": "Background"
+        },
+
+        {
+          "type": "image_picker",
+          "id": "banner_mobile",
+          "label": "Background mobile"
+        }
+      ]
+    },
+
+    {
+      "limit": 5,
+      "type": "image_type_2",
+      "name": "Banner Type 2",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "title_one",
+          "default": "Premium Organic",
+          "label": "Title"
+        },
+        {
+          "type": "image_picker",
+          "id": "bagde",
+          "label": "Badge icon"
+        },
+
+        {
+          "type": "textarea",
+          "id": "bagde_desc",
+          "default": "No extracts. No fillers. Just 100% real moringa leaves, stem-free and nothing else.",
+          "label": "Badge description"
+        },
+
+        {
+          "id": "content",
+          "type": "textarea",
+          "label": "Footer content"
+        },
+
+        {
+          "id": "content_mobile",
+          "type": "textarea",
+          "label": "Footer content mobile"
+        },
+        {
+          "type": "header",
+          "content": "Banner"
+        },
+
+        {
+          "type": "image_picker",
+          "id": "banner",
+          "label": "Background"
+        },
+
+        {
+          "type": "image_picker",
+          "id": "banner_mobile",
+          "label": "Background mobile"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Heroo Slider"
+    }
+  ]
+}
+{% endschema %}

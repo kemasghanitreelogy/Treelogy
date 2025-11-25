@@ -1,0 +1,246 @@
+<footer id="footer">
+  <div class="mobile merchand-list">
+    <div class="inner">
+      {% render 'Image', image: section.settings.mobile_image %}
+    </div>
+  </div>
+  <div class="top-footer">
+    <div class="main-grid">
+      <div class="inner">
+        <div class="footer-navigation desktop">
+          {% render 'MainNavigation', menu: section.settings.footer_menu %}
+          {% render 'MainNavigation', menu: section.settings.footer_menu_secondary %}
+        </div>
+        {% comment %}
+          <div class="mobile selector-mobile">
+            <div class="accordion-lists __accordion">
+              <div class="accordion __accordion-wrapper">
+                <div class="accordion-button __accordion-button">
+                  Indonesia | IDR
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                    <path fill="#fff" fill-rule="evenodd" d="M7 0v14H6V0h1Z" clip-rule="evenodd"/><path fill="#fff" fill-rule="evenodd" d="M0 7h14v1H0V7Z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <div class="accordion-content __accordion-content">
+                  {% render 'CountrySelector' %}
+                </div>
+              </div>
+            </div>
+            <div class="accordion-lists __accordion">
+              <div class="accordion __accordion-wrapper">
+                <div class="accordion-button __accordion-button">
+                  Treelogy
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                    <path fill="#fff" fill-rule="evenodd" d="M7 0v14H6V0h1Z" clip-rule="evenodd"/><path fill="#fff" fill-rule="evenodd" d="M0 7h14v1H0V7Z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <div class="accordion-content __accordion-content">
+                  {% render 'MainNavigation', menu: section.settings.footer_menu %}
+                  {% render 'MainNavigation', menu: section.settings.footer_menu_secondary %}
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endcomment %}
+        <div class="form">
+          <div class="desc">
+            <h3>{{ section.settings.newsletter_title }}</h3>
+            <div class="body-s">{{ section.settings.newsletter_heading }}</div>
+          </div>
+          {% form 'customer', id: 'NewsletterForm' %}
+            <div class="form__inputs">
+              <div class="input-wrapper">
+                <div>
+                  <input
+                    type="email"
+                    placeholder="{{ 'forms.general.email' | t }}"
+                    aria-invalid="false"
+                    name="contact[email]"
+                    class="required"
+                  >
+                  <div class="accept">
+                    {% if form.posted_successfully? %}
+                      {{ 'forms.newsletter.success' | t }}
+                    {% else %}
+                      <input type="checkbox" data-button="button-register" class="accept-tnc" id="accept-tnc">
+                      <a href="{{ section.settings.privacy_url }}">{{ 'forms.newsletter.privacy_accept' | t }}</a>
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="social-media desktop">
+                  {% for block in section.blocks %}
+                    <a href="{{ block.settings.url }}" title="{{ block.settings.title }}">
+                      {% render 'Image', image: block.settings.icon %}
+                    </a>
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="input-wrapper button-wrapper">
+                <button class="rounded-button button-submit disabled-opacity" id="button-register">
+                  {{ section.settings.newsletter_button_label }}
+                </button>
+              </div>
+            </div>
+          {% endform %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="social-media mobile">
+    {% for block in section.blocks %}
+      <a href="{{ block.settings.url }}" title="{{ block.settings.title }}">
+        {% render 'Image', image: block.settings.icon %}
+      </a>
+    {% endfor %}
+  </div>
+  <div class="main-grid bottom-footer">
+    <div class="logo">
+      {% render 'Image', image: section.settings.footer_logo %}
+    </div>
+    <div class="right-content desktop">
+      <div class="payment-title">
+        {{ section.settings.payment_title }}
+      </div>
+      <div class="payment-list">
+        <div class="desktop">
+          {% render 'Image', image: section.settings.desktop_image %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="copy body-s">
+    <div class="main-grid">
+      <div class="content">{{ 'general.copyright' | t }}</div>
+      <div class="selector desktop">
+        {% comment %}
+          {% render 'CountrySelector' %}
+          {% render 'CurrencySelector' %}
+        {% endcomment %}
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const userCountry = localStorage.getItem('__user-country');
+
+  if (!userCountry) {
+    fetch('https://ipapi.co/json/')
+      .then((res) => res.json())
+      .then((data) => {
+        localStorage.setItem('__user-country', data.country_code);
+      });
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "footer_logo",
+      "label": "Footer logo"
+    },
+    {
+      "type": "header",
+      "content": "Newsletter"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_title",
+      "default": "Subscribe our newsletter",
+      "label": "Form title"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_heading",
+      "default": "Get notified about exclusive offers, new product releases, and more. Unsubscribe whenever you want.",
+      "label": "Form description"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_button_label",
+      "default": "Notify Me",
+      "label": "Button label"
+    },
+
+    {
+      "type": "header",
+      "content": "Menu"
+    },
+    {
+      "type": "link_list",
+      "id": "footer_menu",
+      "label": "Footer Menu"
+    },
+    {
+      "type": "link_list",
+      "id": "footer_menu_secondary",
+      "label": "Footer Menu Two"
+    },
+    {
+      "type": "header",
+      "content": "Payment"
+    },
+
+    {
+      "type": "text",
+      "id": "payment_title",
+      "default": "We accept",
+      "label": "Title"
+    },
+
+    {
+      "type": "image_picker",
+      "id": "desktop_image",
+      "label": "Dekstop image"
+    },
+
+    {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Mobile image"
+    },
+
+    {
+      "type": "url",
+      "id": "privacy_url",
+      "label": "Privacy policy page"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Social Media",
+      "type": "social",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "text",
+          "id": "url",
+          "label": "Social URL"
+        },
+
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Icon"
+        }
+      ]
+    }
+  ],
+  "default": {
+    "blocks": [
+      {
+        "type": "social"
+      }
+    ]
+  }
+}
+{% endschema %}

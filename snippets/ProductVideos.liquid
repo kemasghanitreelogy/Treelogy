@@ -1,0 +1,45 @@
+{% assign videos = product.metafields.custom.product_videos.value %}
+
+{% if videos %}
+  <div class="product-videos">
+    {% for video in videos %}
+      <div class="card-wrapper">
+        <div class="thumb">
+          {% render 'Image', image: video.thumb %}
+          <svg width="11" height="14" viewBox="0 0 11 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9.675 7.8502C9.825 7.7502 9.9375 7.6252 10.0125 7.4752C10.0875 7.3252 10.125 7.16686 10.125 7.0002C10.125 6.83353 10.0875 6.6752 10.0125 6.5252C9.9375 6.3752 9.825 6.2502 9.675 6.1502L1.525 0.975195C1.44167 0.925195 1.35417 0.887695 1.2625 0.862695C1.17083 0.837695 1.08333 0.825195 1 0.825195C0.733334 0.825195 0.5 0.921029 0.3 1.1127C0.0999994 1.30436 0 1.54186 0 1.8252V12.1752C0 12.4585 0.0999994 12.696 0.3 12.8877C0.5 13.0794 0.733334 13.1752 1 13.1752C1.08333 13.1752 1.17083 13.1627 1.2625 13.1377C1.35417 13.1127 1.44167 13.0752 1.525 13.0252L9.675 7.8502Z" fill="#F2F2E8"/>
+          </svg>
+        </div>
+        <div class="title">
+          {{ video.title }}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="product-video-popup">
+    <div class="product-video-popup-outer">
+      <div class="button-close">
+        <svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2.48874L10.0113 0.5L6.00001 4.51125L1.98874 0.5L0 2.48874L4.01127 6.49999L0 10.5113L1.98874 12.5L6.00001 8.48875L10.0113 12.5L12 10.5113L7.98873 6.49999L12 2.48874Z" fill="#526547"/>
+        </svg>
+      </div>
+      <div class="product-video-popup-inner">
+        {% for v in videos %}
+          <div class="video">
+            <div class="title">
+              {{ v.title }}
+
+              <div class="progress-bar">
+                <div class="progress"></div>
+              </div>
+            </div>
+            {% assign video_embed = v.video.value %}
+            {% render 'Video', video: video_embed, autoplay: false %}
+          </div>
+        {% endfor %}
+      </div>
+      <div class="dots"></div>
+    </div>
+  </div>
+{% endif %}

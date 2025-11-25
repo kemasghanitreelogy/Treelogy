@@ -1,0 +1,69 @@
+{% if section.settings.product %}
+  <div class="main-grid">
+    <div class="inner">
+      <div class="thumbnail">
+        <div class="wrapper">
+          <img src="{{ section.settings.product.images.first | image_url: width: '550x' }}" width="550" height="550">
+        </div>
+      </div>
+      <div class="product-detail">
+        <div class="inner">
+          <div class="rating body-mobile">{% render 'Rating', product: section.settings.product %}</div>
+          <h1>{{ section.settings.product.title }}</h1>
+          {% assign meta = section.settings.product.metafields.custom.excerpt
+            | default: section.settings.description
+            | strip_html
+          %}
+
+          {% if meta %}
+            <div class="excerpt body-desk desktop">
+              {{ meta }}
+            </div>
+          {% endif %}
+          <div class="price-outer">
+            {{ 'products.general.from' | t }} &nbsp;
+            {% render 'PriceFormat', product: section.settings.product %}
+          </div>
+        </div>
+
+        {%  capture button_title 
+        %}
+          {{ 'products.general.about_product' | t }}
+        {% endcapture %}
+        <div class="buttons">
+          {% render 'PrimaryButton', url: section.settings.product.url, title: button_title, type: 'green' %}
+
+          
+          <a
+            href="#"
+            class="primary-button button-quick-add-cart open-popup-variants button-cart"
+            data-slug="{{section.settings.product.url }}"
+            data-title="{{ section.settings.product.title }}"
+          >
+            {{ 'products.general.add_to_cart' | t }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Featured Product",
+  "tag": "section",
+  "class": "section featured-product",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Product"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured product"
+    }
+  ]
+}
+{% endschema %}

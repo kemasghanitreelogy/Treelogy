@@ -1,0 +1,21 @@
+<div class="main-grid blog-listng">
+  <div class="navigation">
+    {% assign blog_menu = linklists.blogs %}
+    {% render 'MainNavigation', menu: blog_menu %}
+  </div>
+  <div class="posts">
+    {% paginate blog.articles by 9 %}
+      <div class="header h1">{{ 'blogs.general.recent_posts' | t }}</div>
+      <div class="cards">
+        {% for article in blog.articles %}
+          {% render 'BlogCard', item: article, max_char: '200', remove_desc: true %}
+        {% endfor %}
+      </div>
+      {% if paginate.pages > 1 %}
+        <div class="blog-pagination">
+          {{ paginate | default_pagination }}
+        </div>
+      {% endif %}
+    {% endpaginate %}
+  </div>
+</div>

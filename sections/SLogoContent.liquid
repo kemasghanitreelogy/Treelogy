@@ -1,0 +1,62 @@
+<div class="main-grid {% if section.settings.logo_large %} large-image {% endif %}">
+  {% render 'Image', image: section.settings.logo %}
+  <div class="text">
+    {% assign title = section.settings.title | newline_to_br %}
+    {% assign mobile_title = section.settings.title_mobile | default: title | newline_to_br %}
+    <h2 class="h1 desktop">
+      {{ title }}
+    </h2>
+    <h2 class="h1 mobile">
+      {{ mobile_title }}
+    </h2>
+    {%- if section.settings.description -%}
+      <div class="body-desk">
+        {{ section.settings.description }}
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% schema %}
+{
+  "name": "Logo side text",
+  "tag": "section",
+  "class": "section logo-side-text",
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "title",
+      "label": "Title",
+      "default": "We Are A Regenerative Brand Crafting The Highest Quality And Most Ethical Moringa Products"
+    },
+
+    {
+      "type": "textarea",
+      "id": "title_mobile",
+      "label": "Title"
+    },
+
+    {
+      "type": "text",
+      "id": "description",
+      "label": "Description"
+    },
+
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+
+    {
+      "type": "checkbox",
+      "id": "logo_large",
+      "label": "Large image"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Logo with side text"
+    }
+  ]
+}
+{% endschema %}

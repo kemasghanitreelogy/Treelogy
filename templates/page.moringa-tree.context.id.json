@@ -1,0 +1,14 @@
+{
+  "parent": "page.moringa-tree.json",
+  "context": {
+    "market": "id"
+  },
+  "sections": {
+    "main": {
+      "settings": {
+        "first_text": "Moringa Oleifera"
+      },
+      "blocks": {}
+    }
+  }
+}

@@ -1,0 +1,25 @@
+<div class="popup-variant" id="popup-variant">
+  <div class="inner">
+    <div class="header">
+      <div class="close-button" id="close-varaints">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 12">
+          <path fill="#526547" d="M12 1.989 10.011 0 6 4.011 1.989 0 0 1.989 4.011 6 0 10.011 1.989 12 6 7.989 10.011 12 12 10.011 7.989 6 12 1.989Z"/>
+        </svg>
+      </div>
+      <div id="popup-variant-rating"></div>
+      <div class="title" id="popup-variant-title">Please wait...</div>
+    </div>
+    <div class="variants" id="variants-wrapper">
+      {% render 'VariantsButton', product: product, disabled_detail: true %}
+    </div>
+    <div class="button-quick-add-cart disabled-opacity" id="popup-variants-button-bag">Add to Cart</div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('close-varaints').addEventListener('click', () => {
+    const popup = document.getElementById('popup-variant');
+    popup.classList.remove('active');
+    window.popupVariantActive = false;
+  });
+</script>

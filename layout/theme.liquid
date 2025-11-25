@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+  <head>
+    {% if request.path == '/collections/all' %}
+      <title>Treelogy | All Products</title>
+    {% elsif request.path == '/blogs/news' %}
+      <title>Treelogy | Blog</title>
+    {% else %}
+      <title>{{ page_title }}</title>
+    {% endif %}
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    {% if request.path == '/collections/all' %}
+      <meta
+        name="description"
+        content="Browse all Treelogy products made with organic moringa, including powders, capsules, oils, and wellness bundles."
+      >
+    {% elsif request.path == '/blogs/news' %}
+      <meta
+        name="description"
+        content="Read the Treelogy Journal for wellness tips, moringa recipes, product insights, and stories from our farm and community."
+      >
+    {% else %}
+      <meta name="description" content="{{ page_description | escape }}">
+    {% endif %}
+    <link rel="canonical" href="{{ canonical_url }}">
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+
+    {{ content_for_header }}
+
+    {% if settings.favicon != blank %}
+      <link rel="icon" href="{{ settings.favicon | image_url }}" type="image/png">
+    {% endif %}
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <script>
+      window.texts = {
+          allSet: '{{ 'cart.progress.all_set' | t }}',
+          leftText: '{{ 'cart.progress.left_text' | t }}',
+          onlyText: '{{ 'cart.progress.only_text' | t }}',
+          cartTitle: '{{ 'cart.title' | t }}',
+          cartEmpty: '{{ 'cart.empty_cart_text' | t }}',
+        }
+    </script>
+    <!-- Header hook for plugins -->
+    {% comment %} {{ 'app.css' | asset_url | stylesheet_tag }} {% endcomment %}
+    {{ 'theme.css' | asset_url | stylesheet_tag }}
+    {{ 'app.bundle.js' | asset_url | script_tag }}
+    {{ 'review.bundle.js' | asset_url | script_tag }}
+
+    <script>
+      window.faqs = [];
+    </script>
+
+    <!-- Custom assets - Lugus -->
+    <link rel="stylesheet" href="{{ 'lugus-custom.css' | asset_url }}">
+    <script src="{{ 'lugus-custom.js' | asset_url }}" defer></script>
+
+  </head>
+  <body>
+    {% section 'Header' %}
+
+    <main id="landing-page" role="main">
+      {{ content_for_layout }}
+    </main>
+    {% section 'Footer' %}
+  </body>
+</html>

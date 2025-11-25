@@ -1,0 +1,74 @@
+<div class="newsletter-form">
+  <div class="header">
+    <h1>{{ section.settings.newsletter_title }}</h1>
+    <div class="description">
+      {{ section.settings.description }}
+    </div>
+  </div>
+  {% form 'customer', id: 'NewsletterForm' %}
+    <div class="form__inputs">
+      <div class="input-wrapper">
+        <div>
+          <input
+            type="email"
+            placeholder="Email Address"
+            aria-invalid="false"
+            name="contact[email]"
+            class="required"
+          >
+          <div class="accept">
+            {% if form.posted_successfully? %}
+              Thank you for subscribing! Stay tuned for our latest updates.
+            {% else %}
+              <input type="checkbox" class="accept-tnc" data-button="button-register-news" id="accept-tnc">
+              <a href="{{ section.settings.privacy_url }}">I accept the privacy policy</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="input-wrapper button-wrapper">
+        <button class="rounded-button button-submit disabled-opacity" id="button-register-news">
+          {{ section.settings.newsletter_button_label }}
+        </button>
+      </div>
+    </div>
+  {% endform %}
+</div>
+
+{% schema %}
+{
+  "name": "Newsllter From",
+  "tag": "section",
+  "class": "section newsletter-form-wrapper",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Newsletter"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_title",
+      "default": "Subscribe our newsletter",
+      "label": "Form title"
+    },
+    {
+      "type": "text",
+      "id": "description",
+      "default": "At Treelogy, we elevate moringa into exceptional products, grown and crafted by us to deliver pure quality, complete transparency, and lasting well-being.",
+      "label": "Form description"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_button_label",
+      "default": "Subscribe",
+      "label": "Button Label"
+    }
+  ],
+
+  "presets": [
+    {
+      "name": "Newsllter From"
+    }
+  ]
+}
+{% endschema %}

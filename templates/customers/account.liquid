@@ -1,0 +1,110 @@
+<!-- /templates/customers/account.liquid -->
+
+<div class="main-grid page-account">
+  <div class="header">
+    <h2 class="h1">{{ 'customer.account.title' | t }}</h2>
+    <a href="/account/logout/">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 17">
+        <g clip-path="url(#a)"><path fill="#2B3C35" fill-rule="evenodd" d="M5.778 7.826a4 4 0 1 0 4.444-6.652 4 4 0 0 0-4.444 6.652Zm.74-5.543a2.667 2.667 0 1 1 2.963 4.434 2.667 2.667 0 0 1-2.963-4.434ZM12.667 16.5H14v-3.362a3.309 3.309 0 0 0-3.305-3.305h-5.39A3.309 3.309 0 0 0 2 13.139V16.5h1.333v-3.362a1.973 1.973 0 0 1 1.972-1.972h5.39a1.973 1.973 0 0 1 1.972 1.972V16.5Z" clip-rule="evenodd"/></g><defs><clipPath id="a"><path fill="#fff" d="M0 .5h16v16H0z"/></clipPath></defs>
+      </svg>
+      {{ 'customer.account.logout' | t }}
+    </a>
+  </div>
+  <div class="user-detail">
+    <div class="item">
+      <div class="label">{{ 'customer.account.name' | t }}</div>
+      <div>{{ customer.name }}</div>
+    </div>
+    <div class="item">
+      <div class="label">{{ 'customer.account.birthday' | t }}</div>
+      {% assign tag_array = customer.tags | split: ", " %}
+      {% for tag in tag_array %}
+        {% if tag contains "-" %}
+          <div>{{ tag | date: "%d %B %Y" }}</div>
+        {% endif %}
+      {% endfor %}
+    </div>
+    <div class="item">
+      <div class="label">{{ 'customer.account.email' | t }}</div>
+      <div>{{ customer.email }}</div>
+    </div>
+    {% if customer.default_address %}
+      <div class="item">
+        <div class="label">{{ 'customer.account.address' | t }}</div>
+        <div>
+          {{ customer.default_address.address1 -}}
+          <br>
+          {% if customer.default_address.address2 != '' %}
+            {{ customer.default_address.address2 -}}
+            <br>
+          {% endif %}
+
+          {{ customer.default_address.city }},
+          {% if address.province_code %}{{ customer.default_address.province_code }}, {% endif -%}
+          {{- customer.default_address.country -}}
+          <br>
+
+          {{ customer.default_address.zip -}}
+          <br>
+          {{ customer.default_address.phone }}
+        </div>
+      </div>
+    {% endif %}
+    <div class="item">
+      <a href="/account/addresses">{{ 'customer.account.view_addresses' | t }}</a>
+    </div>
+  </div>
+  <div class="user-order">
+    <h2>{{ 'customer.account.order_history' | t }}</h2>
+    {% paginate customer.orders by 10 %}
+      {% if customer.orders.size != 0 %}
+        <table>
+          <thead>
+            <th>{{ 'customer.orders.order' | t }}</th>
+            <th>{{ 'customer.orders.date' | t }}</th>
+            <th>{{ 'customer.orders.payment_status' | t }}</th>
+            <th>{{ 'customer.orders.fulfillment_status' | t }}</th>
+            <th class="total">{{ 'customer.orders.total' | t }}</th>
+          </thead>
+          <tbody>
+            {% for order in customer.orders %}
+              <tr>
+                <td>
+                  <div class="label mobile">{{ 'customer.orders.order' | t }}</div>
+                  <a href="{{ order.customer_url }}">
+                    {{ order.name }}
+                  </a>
+                </td>
+                <td>
+                  <div class="label mobile">{{ 'customer.orders.date' | t }}</div>
+                  <a href="{{ order.customer_url }}">{{ order.created_at | date: '%B %d, %Y' }} </a>
+                </td>
+                <td>
+                  <div class="label mobile">{{ 'customer.orders.payment_status' | t }}</div>
+                  <a href="{{ order.customer_url }}">
+                    {{ order.financial_status_label }}
+                  </a>
+                </td>
+                <td>
+                  <div class="label mobile">{{ 'customer.orders.fulfillment_status' | t }}</div>
+                  <a href="{{ order.customer_url }}">
+                    {{ order.fulfillment_status_label }}
+                  </a>
+                </td>
+                <td class="total">
+                  <div class="label mobile">{{ 'customer.orders.total' | t }}</div>
+                  <a href="{{ order.customer_url }}">
+                    {{ order.total_price | money }}
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p>{{ 'customer.account.no_orders' | t }}</p>
+      {% endif %}
+      {{ paginate | default_pagination }}
+    {% endpaginate %}
+  </div>
+</div>

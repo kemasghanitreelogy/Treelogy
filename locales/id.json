@@ -1,0 +1,232 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "shopify": {
+    "checkout": {
+      "general": {
+        "errors": {
+          "payment": {
+            "shop_cash_not_found": "Toko Uang Tunai tidak ditemukan."
+          }
+        }
+      },
+      "delivery_options": {
+        "free_total_label": "Disediakan"
+      }
+    }
+  },
+  "customer_accounts": {
+    "payment_methods": {
+      "google_pay": {
+        "iframe_title_accessibility_label": "Tambahkan metode pembayaran Google Pay",
+        "loading_accessibility_message": "Memuat Google Pay"
+      },
+      "pay_pal": {
+        "iframe_title_accessibility_label": "Tambahkan metode pembayaran PayPal",
+        "loading_accessibility_message": "Memuat PayPal"
+      }
+    }
+  },
+  "general": {
+    "404": {
+      "title": "Tidak ditemukan",
+      "subtext_html": "Halaman yang Anda cari tidak ada"
+    },
+    "search": {
+      "submit": "cari",
+      "no_results": "tidak ada hasil"
+    },
+    "copyright": "© Hak Cipta Treelogy 2024. Semua Hak Dilindungi.",
+    "buttons": {
+      "add_to_cart": "Tambah ke Keranjang"
+    }
+  },
+  "cart": {
+    "title": "Keranjang",
+    "checkout_button_label": "Check Out",
+    "empty_cart_text": "Keranjang masih kosong",
+    "you_will_alo_like": "Mungkin kamu akan suka",
+    "subtotal_label": "Subtotal",
+    "progress": {
+      "only_text": "Hanya tambah",
+      "left_text": "untuk mendapatkan",
+      "all_set": "Sudah lengkap!",
+      "free_delivery_text": "gratis pengiriman"
+    },
+    "general": {
+      "title": "Ringkasan Pesanan",
+      "subtotal": "Subtotal",
+      "shipping": "Pengiriman",
+      "shipping_estimated": "Pengiriman akan diperkirakan",
+      "total": "Total",
+      "empty": "Keranjang masih kosong",
+      "checkout": "Check Out"
+    },
+    "upselling": {
+      "title": "Mungkin kamu akan suka"
+    }
+  },
+  "checkout": {
+    "login": {
+      "title": "Masuk ke Akun Anda untuk Melanjutkan Checkout",
+      "continue_without": "atau lanjutkan checkout tanpa Akun",
+      "continue_without_mobile": "Lanjutkan tanpa Akun"
+    }
+  },
+  "customer": {
+    "login": {
+      "title": "Masuk ke Akun Anda untuk Melanjutkan Checkout",
+      "email": "Email",
+      "password": "Kata Sandi",
+      "submit": "Masuk",
+      "keep_signed_in": "Biarkan saya tetap masuk",
+      "forgot_password": "Lupa kata sandi?",
+      "no_account": "Tidak punya akun?",
+      "sign_up": "Daftar sekarang"
+    },
+    "recover": {
+      "email": "Email anda",
+      "submit": "Kirim",
+      "note": "Kami akan mengirimkan email untuk mereset kata sandi"
+    },
+    "account": {
+      "title": "Detail Akun",
+      "logout": "Keluar",
+      "name": "Nama",
+      "birthday": "Ulang Tahun",
+      "email": "Email",
+      "address": "Alamat",
+      "view_addresses": "Lihat Alamat",
+      "order_history": "Riwayat Pesanan",
+      "no_orders": "Anda belum melakukan pesanan apapun.",
+      "my_account": "Akun Saya"
+    },
+    "orders": {
+      "order": "Pesanan",
+      "date": "Tanggal",
+      "payment_status": "Status Pembayaran",
+      "fulfillment_status": "Status Pemenuhan",
+      "total": "Total"
+    }
+  },
+  "products": {
+    "general": {
+      "from": "Dari",
+      "about_product": "Tentang Produk Ini",
+      "add_to_cart": "Tambah ke Keranjang",
+      "shop_now": "Belanja Sekarang"
+    },
+    "featured": {
+      "title": "Produk Unggulan"
+    }
+  },
+  "reviews": {
+    "title": "Ulasan",
+    "write_review": "Tulis Ulasan"
+  },
+  "articles": {
+    "read_full_article": "Baca Artikel Lengkap"
+  },
+  "collections": {
+    "all_products": "Semua Produk",
+    "discover_all": "Temukan Semua"
+  },
+  "forms": {
+    "general": {
+      "email": "Email"
+    },
+    "newsletter": {
+      "success": "Terima kasih telah berlangganan! Nantikan pembaruan terbaru kami.",
+      "privacy_accept": "Saya menerima kebijakan privasi"
+    }
+  },
+  "form": {
+    "login_title": "Masuk untuk melanjutkan cek out",
+    "login_continue_dekstop": "atau lanjutkan checkout tanpa Akun",
+    "login_continue_mobile": "Lanjutkan tanpa Akun",
+    "keep_signedin": "Biarkan saya tetap masuk",
+    "forgot_pass": "Lupa kata sandi?",
+    "reset_note": "Kami akan mengirimkan email untuk mereset kata sandi",
+    "dont_have_account": "Tidak punya akun?",
+    "sign_up_now": "Daftar sekarang",
+    "sign_up": "Daftar",
+    "login_button": "Masuk",
+    "crafting_lifestyle": "Membangun Gaya Hidup Regeneratif yang Sehat",
+    "firs_name": "Nama depan",
+    "last_name": "Nama Belakang",
+    "birthday": "Ulang Tahun",
+    "phone_number": "Nomor Telepon",
+    "already_have_an_account": "Sudah punya akun?",
+    "your_email": "Email anda",
+    "submit": "Kirim"
+  },
+  "shipping": {
+    "free_shipping": {
+      "only": "Hanya",
+      "left_for": "tersisa untuk",
+      "free_delivery": "gratis pengiriman"
+    }
+  },
+  "faq": {
+    "category": "Kategori",
+    "question": "Pertanyaan"
+  },
+  "addresses": {
+    "title": "Alamat",
+    "return_to_account": "Kembali ke akun",
+    "default_address": "Alamat Default"
+  },
+  "activate": {
+    "password": "Kata Sandi",
+    "password_confirmation": "Konfirmasi Kata Sandi",
+    "activate_account": "Aktifkan Akun",
+    "or": "atau",
+    "decline_invitation": "Tolak Undangan"
+  },
+  "benefits": {
+    "nutrition": "Nutrisi",
+    "antioxidant": "Antioksidan",
+    "immunity": "Imunitas",
+    "detoxification": "Detoksifikasi",
+    "regeneration": "Regenerasi"
+  },
+  "address": {
+    "country_region": "Negara/ Wilayah",
+    "first_name": "Nama Depan",
+    "last_name_optional": "Nama Belakang (Opsional)",
+    "company_address": "Alamat Perusahaan",
+    "address": "Alamat",
+    "apartment": "Apartemen, suite, dll. (opsional)",
+    "city": "Kota",
+    "postal_code": "Kode Pos",
+    "phone": "Telepon",
+    "default_address": "Alamat Default",
+    "submit": "kirim"
+  },
+  "register": {
+    "title": "Membangun Gaya Hidup Regeneratif yang Sehat",
+    "first_name": "Nama Depan",
+    "last_name": "Nama Belakang",
+    "email": "email",
+    "password": "Kata Sandi",
+    "phone_number": "Nomor Telepon",
+    "submit": "Daftar",
+    "already_have_account": "Sudah punya akun?",
+    "login": "Masuk"
+  },
+  "search": {
+    "placeholder": "Cari"
+  },
+  "blogs": {
+    "general": {
+      "recent_posts": "Posting Terbaru"
+    }
+  }
+}

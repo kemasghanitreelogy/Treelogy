@@ -1,0 +1,88 @@
+<section class="main-grid">
+  <div class="content header">
+    <h2 class="h1">
+      {{ section.settings.title }}
+    </h2>
+    <div class="body-desk">
+      {{ section.settings.description | newline_to_br }}
+    </div>
+  </div>
+  <div class="content cards">
+    {% for block in section.blocks %}
+      <div class="cards-item">
+        {% render 'Image', image: block.settings.icon %}
+        <div class="grid gap-3">
+          <h3 class="h2">
+            {{ block.settings.title }}
+          </h3>
+          <div class="body-desk">
+            {{ block.settings.description }}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+<div class="background">
+  {% render 'Image', image: section.settings.background %}
+</div>
+
+{% schema %}
+{
+  "name": "3 column icons",
+  "tag": "section",
+  "class": "section column-card-with-background",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "In Harmony With Tri Hita Karana"
+    },
+
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Desktop description"
+    },
+
+    {
+      "type": "image_picker",
+      "id": "background",
+      "label": "Background"
+    }
+  ],
+
+  "blocks": [
+    {
+      "type": "icon",
+      "name": "List",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description"
+        },
+
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Icon"
+        }
+      ]
+    }
+  ],
+
+  "presets": [
+    {
+      "name": "3 column bottom content with icon"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,452 @@
+{
+  "sections": {
+    "faq_header_36n87A": {
+      "type": "FaqHeader",
+      "settings": {
+        "label": "FAQs",
+        "title": "Have any questions?",
+        "desc": "<p>Search our help center or scroll down. Cannot find what you are looking for? Contact us directly on <a href=\"mailto:hello@treelogy.com\" title=\"mailto:hello@treelogy.com\">hello@treelogy.com.<\/a><\/p>"
+      }
+    },
+    "faq_section_mJEKCK": {
+      "type": "FaqSection",
+      "blocks": {
+        "text_pBcqaL": {
+          "type": "text",
+          "settings": {
+            "title": "Where do you source your moringa?",
+            "description": "We cultivate our moringa on our organic-certified, regenerative farm located on the foothills of Bali’s iconic volcano, Mount Agung. We are committed to offering our customers ultimate transparency and educating them on how our moringa is grown and processed."
+          }
+        },
+        "text_66mHnr": {
+          "type": "text",
+          "settings": {
+            "title": "What is moringa?",
+            "description": "Moringa, also known as Moringa oleifera, is a nutrient-dense tree often referred to as the “miracle tree” in Ayurvedic Medicine and has been used for centuries in Chinese medicine. It encompasses 92 nutrients with 13 vitamins, 10 minerals, 46 antioxidants, 36 anti-inflammatory compounds, all 18 amino acids including the 9 essential ones, and omega fatty acids 3, 6, and 9. It is also rich in fiber, making it a popular superfood. Moringa is known for its health benefits, including boosting energy, reducing chronic inflammation, improving skin and hair health, and supporting overall wellness."
+          }
+        },
+        "text_Pfd49q": {
+          "type": "text",
+          "settings": {
+            "title": "Where is your farm located?",
+            "description": "Our organic-certified, regenerative moringa farm is nestled on the foothills of Bali’s iconic volcano, Mount Agung."
+          }
+        },
+        "text_PXht7n": {
+          "type": "text",
+          "settings": {
+            "title": "Are you BPOM certified?",
+            "description": "Yes, all our processes and products are certified by BPOM, adhering to the strictest hygiene and protocol standards."
+          }
+        },
+        "text_GKkYTC": {
+          "type": "text",
+          "settings": {
+            "title": "How does Treelogy ensure the quality of its moringa products?",
+            "description": "Treelogy follows strict quality control measures, including organic certification, BPOM certification, and rigorous testing for purity and potency. Our moringa is hand-harvested with unmatched stem-free purity and is gently dehydrated to retain maximum nutritional value."
+          }
+        },
+        "text_NYTRij": {
+          "type": "text",
+          "settings": {
+            "title": "What makes Treelogy’s moringa different from other brands?",
+            "description": "We emphasize our practices around our core values: people care, earth care, and future care. Our moringa is cultivated on an organic-certified farm using regenerative practices by farmers driven by a mission to do good. Our commitment to quality, transparency, and community involvement sets us apart. We ensure our products are pure, potent, and ethically produced."
+          }
+        }
+      },
+      "block_order": [
+        "text_pBcqaL",
+        "text_66mHnr",
+        "text_Pfd49q",
+        "text_PXht7n",
+        "text_GKkYTC",
+        "text_NYTRij"
+      ],
+      "settings": {
+        "title": "About Us"
+      }
+    },
+    "faq_section_jTmb6d": {
+      "type": "FaqSection",
+      "blocks": {
+        "text_tkYGCe": {
+          "type": "text",
+          "settings": {
+            "title": "What is moringa powder good for?",
+            "description": "Moringa powder is highly nutritious and beneficial for overall health. It supports immune health, boosts energy levels, enhances skin and hair health, and helps in reducing inflammation. Our moringa powder is carefully crafted to retain maximum nutritional value."
+          }
+        },
+        "text_RKKqcg": {
+          "type": "text",
+          "settings": {
+            "title": "What does moringa do to your body?",
+            "description": "Moringa provides numerous health benefits, such as reducing inflammation, lowering blood sugar levels, and improving heart health. Moringa is also a powerful antioxidant, which helps fight free radicals in the body, protecting cells from damage and promoting overall well-being."
+          }
+        },
+        "text_mWKMdw": {
+          "type": "text",
+          "settings": {
+            "title": "What are the 10 benefits of moringa?",
+            "description": "The top 10 benefits of moringa include: 1. Rich in antioxidants 2. Anti-inflammatory properties 3. Supports brain health 4. Promotes heart health 5. Regulates blood sugar levels 6. Enhances liver function 7. Improves skin health 8. Boosts immune system 9. Supports digestive health 10. Provides essential nutrients"
+          }
+        },
+        "text_aGN8f8": {
+          "type": "text",
+          "settings": {
+            "title": "What are the health benefits of moringa?",
+            "description": "Moringa is beneficial for overall health and wellness. It supports immune function, enhances energy levels, and promotes healthy skin and hair. Our moringa products are designed to provide these benefits in their purest form."
+          }
+        },
+        "text_jtbUfb": {
+          "type": "text",
+          "settings": {
+            "title": "Can moringa help with specific health conditions?",
+            "description": "Although moringa is being studied for treating specific health issues and is known for its wide range of health benefits, it’s essential to consult with a healthcare professional for advice on using moringa for specific health conditions. Moringa can complement a healthy lifestyle and support overall wellness."
+          }
+        }
+      },
+      "block_order": [
+        "text_tkYGCe",
+        "text_RKKqcg",
+        "text_mWKMdw",
+        "text_aGN8f8",
+        "text_jtbUfb"
+      ],
+      "settings": {
+        "title": "Health Benefits"
+      }
+    },
+    "faq_section_JLNgfw": {
+      "type": "FaqSection",
+      "blocks": {
+        "text_xVwPdV": {
+          "type": "text",
+          "settings": {
+            "title": "How can I drink moringa powder?",
+            "description": "You can add moringa powder to smoothies, juices, or simply mix it with water. It can also be sprinkled over salads or incorporated into soups and stews. For more ideas, check out our recipe section."
+          }
+        },
+        "text_Vhc43D": {
+          "type": "text",
+          "settings": {
+            "title": "What does moringa taste like?",
+            "description": "Moringa has a slightly earthy and grassy flavor, similar to matcha, green tea, or wheatgrass, without any bitterness. It can be easily incorporated into various dishes and beverages, making it a versatile addition to your diet."
+          }
+        },
+        "text_GrKjED": {
+          "type": "text",
+          "settings": {
+            "title": "How do I use moringa powder?",
+            "description": "Moringa powder can be used in various ways, including adding it to smoothies, soups, sauces, and baked goods. It can also be taken as a supplement in capsule form."
+          }
+        },
+        "text_rbz49n": {
+          "type": "text",
+          "settings": {
+            "title": "Can I take moringa capsules every day?",
+            "description": "Yes, our moringa capsules are safe for daily consumption. They are designed to provide a consistent dose of nutrients. However, we recommend consulting with a healthcare professional before starting any new supplement regimen to ensure it is suitable for your individual health needs."
+          }
+        },
+        "text_kffkMC": {
+          "type": "text",
+          "settings": {
+            "title": "Is it safe to drink moringa every day?",
+            "description": "Drinking moringa daily is generally safe and can provide continuous health benefits. Our moringa products undergo rigorous quality control to ensure they are safe for daily use. However, it is always best to consult with a healthcare professional if you have any specific health concerns."
+          }
+        },
+        "text_JfPYhJ": {
+          "type": "text",
+          "settings": {
+            "title": "How do I get started with moringa?",
+            "description": "If you’re new to moringa, start by adding a small amount (e.g., 1\/3 teaspoon) of moringa powder to your smoothies, juices, or meals. Gradually increase to a full teaspoon (3 grams) as you become accustomed to the taste and benefits. For beginners, our powder extract capsules are designed to offer the equivalent of 1 gram of pure powder per capsule, so you can adjust to your needs."
+          }
+        },
+        "text_RkNpak": {
+          "type": "text",
+          "settings": {
+            "title": "What are the different forms of moringa available?",
+            "description": "Moringa is available in various forms, including powder, capsules, tinctures, teas, and infused products such as lattes and skincare items. Each form offers unique benefits and can be chosen based on personal preference and lifestyle."
+          }
+        },
+        "text_HhgGAx": {
+          "type": "text",
+          "settings": {
+            "title": "How does moringa compare to other superfoods?",
+            "description": "Moringa stands out due to its comprehensive nutritional profile, which includes essential vitamins, minerals, amino acids, antioxidants, and anti-inflammatory compounds. Unlike many superfoods that focus on specific nutrients, moringa offers a holistic way to take care of your health."
+          }
+        },
+        "text_XU4UJV": {
+          "type": "text",
+          "settings": {
+            "title": "How can I maximize the benefits of moringa in my diet?",
+            "description": "To maximize the benefits, incorporate moringa into various meals and beverages throughout the day. Consistency is key, so try to include moringa in your daily routine. Pairing moringa with healthy fats can enhance the absorption of its fat-soluble vitamins. If you are starting a fitness program and need to support your muscle recovery, you might want to increase your daily intake. Always remember to listen to your body and adjust the dose accordingly."
+          }
+        },
+        "text_VtiAMF": {
+          "type": "text",
+          "settings": {
+            "title": "Can I combine moringa with other supplements?",
+            "description": "Yes, moringa can be combined with other supplements. However, it’s essential to consult with a healthcare professional or conduct thorough research, as anything in surplus can be counterproductive."
+          }
+        },
+        "text_qLrRQa": {
+          "type": "text",
+          "settings": {
+            "title": "How do I know if moringa is working for me?",
+            "description": "You should notice improvements in energy levels and digestion within the first 3 to 5 days, and in skin and hair health within the first 2 weeks. Keep track of any changes and consult with a healthcare professional if you have specific health goals or concerns."
+          }
+        },
+        "text_w7z9dR": {
+          "type": "text",
+          "settings": {
+            "title": "How do I choose between moringa powder and capsules?",
+            "description": "Moringa powder is versatile and can be added to various recipes, while capsules offer a convenient way to get a consistent dose. Choose based on your lifestyle and preferences. Some people prefer the ease of capsules, while others enjoy incorporating the powder into their meals."
+          }
+        }
+      },
+      "block_order": [
+        "text_xVwPdV",
+        "text_Vhc43D",
+        "text_GrKjED",
+        "text_rbz49n",
+        "text_kffkMC",
+        "text_JfPYhJ",
+        "text_RkNpak",
+        "text_HhgGAx",
+        "text_XU4UJV",
+        "text_VtiAMF",
+        "text_qLrRQa",
+        "text_w7z9dR"
+      ],
+      "settings": {
+        "title": "Usage and Consumption"
+      }
+    },
+    "faq_section_YhMk8W": {
+      "type": "FaqSection",
+      "blocks": {
+        "text_H6nk6G": {
+          "type": "text",
+          "settings": {
+            "title": "Who should not take moringa?",
+            "description": "Individuals with low blood pressure, and those on certain medications should consult a healthcare provider before using moringa. Pregnant or breastfeeding women should seek medical advice if you have any concerns."
+          }
+        },
+        "text_W9p8Ge": {
+          "type": "text",
+          "settings": {
+            "title": "What are the side effects of moringa?",
+            "description": "Common side effects are rare but may include digestive discomfort or allergic reactions. It’s important to monitor your body’s response when starting any new supplement."
+          }
+        },
+        "text_XHTDAy": {
+          "type": "text",
+          "settings": {
+            "title": "Can I take moringa while pregnant or breastfeeding?",
+            "description": "Although many women use moringa to improve their health while pregnant, and moringa is known to enhance milk supply due to its nutrient quality, it is recommended to consult with a healthcare professional before taking moringa during pregnancy or breastfeeding to ensure safety."
+          }
+        }
+      },
+      "block_order": [
+        "text_H6nk6G",
+        "text_W9p8Ge",
+        "text_XHTDAy"
+      ],
+      "settings": {
+        "title": "Safety and Precautions"
+      }
+    },
+    "faq_section_XKwjnN": {
+      "type": "FaqSection",
+      "blocks": {
+        "text_6BTFMf": {
+          "type": "text",
+          "settings": {
+            "title": "How do I choose the best moringa powder?",
+            "description": "To choose the best moringa powder, look for products that are certified organic, ensuring they are free from harmful pesticides and chemicals. Check the packaging for opaque, resealable bags or containers that protect the powder from light, moisture, and air. Always read the ingredients list to ensure you are getting pure moringa powder without any fillers or additives. Research the brand’s reputation and look for customer reviews and third-party certifications."
+          }
+        },
+        "text_K9BNwe": {
+          "type": "text",
+          "settings": {
+            "title": "How can I tell if a moringa product is of good quality?",
+            "description": "High-quality moringa products should have a vibrant green color, indicating freshness and potency. The texture should be fine and consistent. Check for organic certification and ensure the product is free from additives, fillers, and preservatives. Reputable brands will provide transparent information about their sourcing, processing, and quality control measures."
+          }
+        },
+        "text_JqLTdL": {
+          "type": "text",
+          "settings": {
+            "title": "How do you dry your moringa leaves?",
+            "description": "After harvesting the leaves at the first light of dawn, our community carefully separates each leaf from the stems, which is crucial to optimize the quality and longevity of the nutrient content. The leaves are then washed and sorted before being gently dehydrated at low temperatures for 22 hours."
+          }
+        },
+        "text_nDVXBa": {
+          "type": "text",
+          "settings": {
+            "title": "Are your products gluten-free?",
+            "description": "Yes, all our moringa products are gluten-free and suitable for individuals with gluten sensitivities."
+          }
+        },
+        "text_G4BmNW": {
+          "type": "text",
+          "settings": {
+            "title": "Are your products certified organic?",
+            "description": "Yes, our moringa products are certified organic, ensuring they are free from harmful pesticides and chemicals."
+          }
+        },
+        "text_aAa3na": {
+          "type": "text",
+          "settings": {
+            "title": "Are your products vegan?",
+            "description": "Yes, all our moringa products are 100% vegan and do not contain any animal-derived ingredients."
+          }
+        },
+        "text_r4xV4g": {
+          "type": "text",
+          "settings": {
+            "title": "How should I store moringa products?",
+            "description": "Store moringa products in a cool, dry place away from direct sunlight. Proper storage helps maintain their nutritional value and extends shelf life."
+          }
+        },
+        "text_xkxyVw": {
+          "type": "text",
+          "settings": {
+            "title": "Why is my moringa brown?",
+            "description": "Our moringa has a unique vibrant green color due to our meticulous process and packaging. We achieve this by using stem-free purity, dehydration at low temperatures, and opaque packaging that blocks UV light. However, if the powder is left open for too long and exposed to air, it can oxidize and gradually turn brown. While brown moringa is still safe to consume and retains its nutritional benefits, we recommend storing it properly to maintain its quality and vibrant color."
+          }
+        },
+        "text_DGVkfp": {
+          "type": "text",
+          "settings": {
+            "title": "Does baking or cooking reduce the nutrient content of moringa?",
+            "description": "While some nutrients may be reduced during cooking, moringa still retains a significant amount of its nutritional value. To maximize benefits, add moringa powder to dishes after cooking."
+          }
+        },
+        "text_aRK9zX": {
+          "type": "text",
+          "settings": {
+            "title": "How much moringa should I eat?",
+            "description": "The recommended dosage of moringa varies depending on individual health needs. Generally, a full teaspoon per day (about 3 grams) will provide the full spectrum of health benefits. Remember to start small with 1\/3 of a teaspoon to adapt and gradually increase. Our capsules are crafted so that you have the equivalent of a gram of pure powder per capsule. Start with 1 per day if you are new to moringa and increase to 3 progressively. Consult with a healthcare professional for personalized advice."
+          }
+        }
+      },
+      "block_order": [
+        "text_6BTFMf",
+        "text_K9BNwe",
+        "text_JqLTdL",
+        "text_nDVXBa",
+        "text_G4BmNW",
+        "text_aAa3na",
+        "text_r4xV4g",
+        "text_xkxyVw",
+        "text_DGVkfp",
+        "text_aRK9zX"
+      ],
+      "settings": {
+        "title": "Quality and Certifications"
+      }
+    },
+    "faq_section_Qcmpdd": {
+      "type": "FaqSection",
+      "blocks": {
+        "text_CFpUBc": {
+          "type": "text",
+          "settings": {
+            "title": "Do you ship worldwide?",
+            "description": "Yes, we ship our moringa products worldwide. Shipping costs and delivery times vary based on the destination. Note that additional fees, such as customs duties, import taxes, and VAT, may apply when shipped outside of Indonesia. We recommend checking with your local customs office for more information."
+          }
+        },
+        "text_JghDhJ": {
+          "type": "text",
+          "settings": {
+            "title": "How long does shipping take?",
+            "description": "Shipping times vary depending on your location. Typically, orders within Indonesia take 3-5 business days, while international orders may take 7-14 business days. Delivery dates are estimated at checkout depending on your address and courier."
+          }
+        },
+        "text_n7c7LA": {
+          "type": "text",
+          "settings": {
+            "title": "Can I track my order?",
+            "description": "Yes, once your order is shipped, you will receive a tracking number via email. You can use this number to track your order on our website or the carrier’s website."
+          }
+        },
+        "text_JkH9WB": {
+          "type": "text",
+          "settings": {
+            "title": "How do I follow my order?",
+            "description": "You can follow your order using the tracking number provided in your shipping confirmation email. Enter the tracking number on our website or the carrier’s website to get real-time updates on your order status."
+          }
+        },
+        "text_QLDLPU": {
+          "type": "text",
+          "settings": {
+            "title": "What is your return policy?",
+            "description": "We offer a 15-day return policy for unopened and unused products. If you are not satisfied with your purchase, please contact our customer service team at hello@treelogy.com to initiate a return or exchange."
+          }
+        },
+        "text_n4X3fP": {
+          "type": "text",
+          "settings": {
+            "title": "When will your moringa capsules be available?",
+            "description": "Our moringa capsules are currently in production and will be available soon. Please sign up for our newsletter to receive updates on product availability."
+          }
+        },
+        "text_QLGQXU": {
+          "type": "text",
+          "settings": {
+            "title": "When will your moringa seed oil be available?",
+            "description": "Our moringa seed oil is expected to be available in the coming months. Stay tuned for updates by subscribing to our newsletter or following us on social media."
+          }
+        },
+        "text_ectbFQ": {
+          "type": "text",
+          "settings": {
+            "title": "What should I do if I have an issue with my order?",
+            "description": "If you experience any issues with your order, please contact our customer service team at hello@treelogy.com. We are here to assist you and resolve any problems promptly."
+          }
+        },
+        "text_eprVep": {
+          "type": "text",
+          "settings": {
+            "title": "How can I provide feedback on your products?",
+            "description": "We value your feedback! Please leave a review on our website or contact our customer service team with your comments and suggestions. Your input helps us improve our products and services."
+          }
+        }
+      },
+      "block_order": [
+        "text_CFpUBc",
+        "text_JghDhJ",
+        "text_n7c7LA",
+        "text_JkH9WB",
+        "text_QLDLPU",
+        "text_n4X3fP",
+        "text_QLGQXU",
+        "text_ectbFQ",
+        "text_eprVep"
+      ],
+      "settings": {
+        "title": "Shipping and Availability"
+      }
+    },
+    "featured_blog_xRCirX": {
+      "type": "FeaturedBlog",
+      "settings": {
+        "title": "Read More from Our Social",
+        "description": "Moringa Dried Leaf Powder is a potent, organic superfood, densely packed with vitamins, minerals, and antioxidants.",
+        "products": "news",
+        "button_label": "Discover All",
+        "button_url": "shopify:\/\/blogs\/news"
+      }
+    }
+  },
+  "order": [
+    "faq_header_36n87A",
+    "faq_section_mJEKCK",
+    "faq_section_jTmb6d",
+    "faq_section_JLNgfw",
+    "faq_section_YhMk8W",
+    "faq_section_XKwjnN",
+    "faq_section_Qcmpdd",
+    "featured_blog_xRCirX"
+  ]
+}

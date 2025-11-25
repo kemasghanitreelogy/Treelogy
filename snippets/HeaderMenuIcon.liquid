@@ -1,0 +1,42 @@
+<div class="button desktop button-search" id="button-search">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 13">
+    <path fill="#33423B" d="M12 11.794 8.873 8.667a5.002 5.002 0 1 0-.706.706l3.127 3.127.706-.706Zm-6.99-2.29a3.995 3.995 0 1 1 0-7.99 3.995 3.995 0 0 1 0 7.99Z"/>
+  </svg>
+</div>
+
+<a href="{% if template != 'cart' %}/cart{% else %}#{% endif %}" class="button button-cart">
+  <div id="cart-indicator" class="indicator {% if cart.item_count > 0 %}show{% endif %}">
+    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+      <circle cx="6" cy="6" r="5" fill="#A5BB87" stroke="#F8F8F2" stroke-width="2"/>
+    </svg>
+  </div>
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 13">
+    <path fill="#2A3B34" stroke="#2A3B34" stroke-width=".1" d="M.2 9.702v.084c0 1.383 1.148 2.514 2.549 2.514H9.329c.682 0 1.32-.294 1.787-.796.466-.502.722-1.13.68-1.803l-.25-6.57C11.503 1.746 10.355.7 8.996.7H3C1.64.7.493 1.747.449 3.13L.2 9.703Zm1.183-6.567A1.595 1.595 0 0 1 2.999 1.62h6.04c.89 0 1.575.637 1.615 1.513l.25 6.57c0 .44-.162.838-.445 1.157a1.509 1.509 0 0 1-1.13.518H2.75c-.889 0-1.615-.717-1.616-1.592l.25-6.652Z"/><path fill="#2A3B34" stroke="#2A3B34" stroke-width=".1" d="M3.482 3.238A2.571 2.571 0 0 0 6.07 5.825a2.571 2.571 0 0 0 2.587-2.587c0-.12-.04-.224-.115-.298a.412.412 0 0 0-.298-.114c-.12 0-.224.04-.298.114a.412.412 0 0 0-.114.298C7.831 4.225 7.056 5 6.069 5a1.744 1.744 0 0 1-1.762-1.762c0-.12-.04-.224-.114-.298a.412.412 0 0 0-.298-.114c-.12 0-.224.04-.298.114a.412.412 0 0 0-.115.298Z"/>
+  </svg>
+</a>
+
+{% assign base_url = request.locale.root_url | remove_last: '/' %}
+
+{% assign user_url = base_url | append: '/account/login' %}
+
+{% if customer %}
+  {% assign user_url = base_url | append: '/account' %}
+{% endif %}
+
+<a href="{{ user_url }}" class="button button-login desktop">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 13">
+    <path fill="#33423B" fill-rule="evenodd" d="M3.333 5.994a3 3 0 1 0 3.334-4.989 3 3 0 0 0-3.334 4.99Zm.556-4.157A2 2 0 1 1 6.11 5.163 2 2 0 0 1 3.89 1.837ZM8.5 12.5h1V9.98A2.482 2.482 0 0 0 7.021 7.5H2.98A2.482 2.482 0 0 0 .5 9.98V12.5h1V9.98A1.48 1.48 0 0 1 2.978 8.5h4.043A1.48 1.48 0 0 1 8.5 9.98V12.5Z" clip-rule="evenodd"/>
+  </svg>
+</a>
+
+<div class="language-picker button" onclick="this.querySelector('.language-picker__list').toggleAttribute('hidden');
+  ">
+    {{ localization.language.iso_code | upcase }}
+    <div class="language-picker__list" hidden>
+      {% for language in localization.available_languages %}
+        <a href="{{ language.root_url }}">
+          {{ language.endonym_name }}
+        </a>
+      {% endfor %}
+    </div>
+  </div>

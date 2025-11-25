@@ -1,0 +1,83 @@
+<style>
+  .full-video-banner video {
+    width: 100%;
+    object-fit: cover;
+    height: 100%;
+  }
+</style>
+
+<div
+  class="h-screen w-screen relative flex justify-center items-center full-video-banner"
+  style="opacity: 1; filter: blur(0px);"
+>
+  {{ section.settings.video | video_tag: autoplay: true, loop: true, muted: true, controls: true, image_size: '2000x' }}
+
+  <div class="absolute text-light p-7 md:p-0 text-center grid gap-6 md:m-4">
+    {%- if section.settings.first_title -%}
+      <div class="" style="opacity: 1; transform: translateX(0%) translateZ(0px);">
+        <h1 class="capitalize text-4xl md:text-6xl lg:text-7xl">
+          {{ section.settings.first_title }}
+        </h1>
+      </div>
+    {%- endif -%}
+    {%- if section.settings.second_title -%}
+      <div class="" style="opacity: 1; transform: translateX(0%) translateZ(0px);">
+        <h1 class="capitalize text-4xl md:text-6xl lg:text-7xl">
+          {{ section.settings.second_title }}
+        </h1>
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.button_url -%}
+      <a href="{{ section.settings.button_url }}">
+        <button class="inline-flex items-center justify-center whitespace-nowrap text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-light text-light bg-light/20 font-light hover:bg-light/10 hover:shadow-md smooth h-10 rounded-full p-6">
+          {{ section.settings.button_label }}
+        </button>
+      </a>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Featured Video 2",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "first_title",
+      "label": "First title"
+    },
+
+    {
+      "type": "text",
+      "id": "second_title",
+      "label": "Second title"
+    },
+
+    {
+      "type": "text",
+      "id": "button_title",
+      "label": "Button title"
+    },
+
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Button url"
+    },
+
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Video"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured video w button"
+    }
+  ]
+}
+{% endschema %}

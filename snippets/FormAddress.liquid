@@ -1,0 +1,121 @@
+<div class="inputs">
+  <div class="field select-wrapper">
+    <div class="select">
+      <select
+        id="AddressCountry_{{ form.id }}"
+        name="address[country]"
+        class="country-selections"
+        data-default="{{ form.country }}"
+        autocomplete="country"
+        placeholder="{{ 'address.country_region' | t }}"
+      >
+        <option data-provinces="[]">{{ 'address.country_region' | t }}</option>
+        {{ all_country_option_tags }}
+      </select>
+      {% render 'ArrowDown' %}
+    </div>
+  </div>
+  <div class="group-field">
+    <div class="field">
+      <input
+        type="text"
+        id="AddressFirstName_{{ form.id }}"
+        name="address[first_name]"
+        value="{{ form.first_name }}"
+        autocomplete="given-name"
+        placeholder="{{ 'address.first_name' | t }}"
+      >
+    </div>
+    <div class="field">
+      <input
+        type="text"
+        id="AddressLastName_{{ form.id }}"
+        name="address[last_name]"
+        value="{{ form.last_name }}"
+        autocomplete="family-name"
+        placeholder="{{ 'address.last_name_optional' | t }}"
+      >
+    </div>
+  </div>
+  <div class="field">
+    <input
+      type="text"
+      id="AddressCompany_{{ form.id }}"
+      name="address[company]"
+      value="{{ form.company }}"
+      autocomplete="organization"
+      placeholder="{{ 'address.company_address' | t }}"
+    >
+  </div>
+  <div class="field">
+    <input
+      type="text"
+      id="AddressAddress1_{{ form.id }}"
+      name="address[address1]"
+      value="{{ form.address1 }}"
+      autocomplete="address-line1"
+      placeholder="{{ 'address.address' | t }}"
+    >
+  </div>
+  <div class="field">
+    <input
+      type="text"
+      id="AddressAddress2_{{ form.id }}"
+      name="address[address2]"
+      value="{{ form.address2 }}"
+      autocomplete="address-line2"
+      placeholder="{{ 'address.apartment' | t }}"
+    >
+  </div>
+  <div class="field">
+    <input
+      type="text"
+      id="AddressCity_{{ form.id }}"
+      name="address[city]"
+      value="{{ form.city }}"
+      autocomplete="address-level2"
+      placeholder="{{ 'address.city' | t }}"
+    >
+  </div>
+
+  <div id="AddressCountry_{{form.id}}_province" style="display: none" class="select-wrapper field">
+    <div class="select">
+      <select
+        id="AddressProvince_{{ form.id }}"
+        name="address[province]"
+        data-default="{{ form.province }}"
+        autocomplete="address-level1"
+      ></select>
+      {% render 'ArrowDown' %}
+    </div>
+  </div>
+  <div class="field">
+    <input
+      type="text"
+      id="AddressZip_{{ form.id }}"
+      name="address[zip]"
+      value="{{ form.zip }}"
+      autocapitalize="characters"
+      autocomplete="postal-code"
+      placeholder="{{ 'address.postal_code' | t }}"
+    >
+  </div>
+  <div class="field">
+    <input
+      type="tel"
+      id="AddressPhone_{{ form.id }}"
+      name="address[phone]"
+      value="{{ form.phone }}"
+      autocomplete="tel"
+      placeholder="{{ 'address.phone' | t }}"
+    >
+  </div>
+
+  <div class="check-default-address">
+    {{ form.set_as_default_checkbox }}
+    <label for="address_default_address_{{ form.id }}">{{ 'address.default_address' | t }}</label>
+  </div>
+</div>
+<div class="footer-form">
+  <button type="submit" class="round-button">{{ 'address.submit' | t }}</button>
+</div>

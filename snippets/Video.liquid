@@ -1,0 +1,15 @@
+{% if autoplay == false %}
+  {{ video | video_tag: loop: true, muted: true, controls: false, image_size: '2000x', poster: poster, lazy: true }}
+{% else %}
+  {{
+    video
+    | video_tag:
+      autoplay: true,
+      loop: true,
+      muted: true,
+      controls: false,
+      image_size: '2000x',
+      poster: poster,
+      lazy: true
+  }}
+{% endif %}

@@ -1,0 +1,171 @@
+{%- paginate customer.addresses by 5 -%}
+  <div class="customer addresses box-container" data-customer-addresses>
+    <div class="addresses-header">
+      <h1>{{ 'addresses.title' | t }}</h1>
+      <div class="buttons-action">
+        <a class="button-underlined" href="{{ routes.account_url }}"> {{ 'addresses.return_to_account' | t }} </a>
+      </div>
+    </div>
+
+    <ul role="list box-container">
+      {%- for address in customer.addresses -%}
+        <li data-address>
+          <div class="address-detail">
+            {%- if address == customer.default_address -%}
+              <h2 class="default-title">{{ 'addresses.default_address' | t }}</h2>
+            {%- endif -%}
+            {{ address | format_address | replace: '<br>', ', ' }}
+          </div>
+          <div class="buttons-action">
+            <button
+              class="button-underlined button-open-form"
+              data-open="popup_edit-address-{{ address.id }}"
+              type="button"
+              id="EditFormButton_{{ address.id }}"
+              aria-label="Edit Address {{ forloop.index }}"
+              aria-controls="EditAddress_{{ address.id }}"
+              aria-expanded="false"
+              data-address-id="{{ address.id }}"
+            >
+              Edit
+            </button>
+            <button
+              class="button-underlined"
+              type="button"
+              aria-label="Delete {{ forloop.index }}"
+              data-target="{{ address.url }}"
+              data-confirm-message="Confirm Delete"
+            >
+              Delete
+            </button>
+          </div>
+          {% assign form_id = 'popup_edit-address-' | append: address.id %}
+          <div id="{{ form_id }}" class="popup-address">
+            <div id="edit-address-{{ address.id }}" class="inner form-container">
+              {% render 'FormHeaderPopup', title: 'Edit Address', form_id: form_id %}
+              {%- form 'customer_address', address -%}
+                {% render 'FormAddress', form: form %}
+              {%- endform -%}
+            </div>
+          </div>
+        </li>
+      {%- endfor -%}
+    </ul>
+
+    {%- if paginate.pages > 1 -%}
+      {%- if paginate.parts.size > 0 -%}
+        <nav class="pagination" role="navigation">
+          <ul role="list">
+            {%- if paginate.previous -%}
+              <li>
+                <a href="{{ paginate.previous.url }}" aria-label="Previous">
+                  <svg aria-hidden="true" focusable="false" viewBox="0 0 10 6">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z" fill="currentColor">
+                  </svg>
+                </a>
+              </li>
+            {%- endif -%}
+
+            {%- for part in paginate.parts -%}
+              <li>
+                {%- if part.is_link -%}
+                  <a href="{{ part.url }}">
+                    {{- part.title -}}
+                  </a>
+                {%- else -%}
+                  {%- if part.title == paginate.current_page -%}
+                    <span aria-current="page">
+                      {{- part.title -}}
+                    </span>
+                  {%- else -%}
+                    <span>{{ part.title }}</span>
+                  {%- endif -%}
+                {%- endif -%}
+              </li>
+            {%- endfor -%}
+
+            {%- if paginate.next -%}
+              <li>
+                <a href="{{ paginate.next.url }}">
+                  <svg aria-hidden="true" focusable="false" viewBox="0 0 10 6">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z" fill="currentColor">
+                  </svg>
+                </a>
+              </li>
+            {%- endif -%}
+          </ul>
+        </nav>
+      {%- endif -%}
+    {%- endif -%}
+
+    <button
+      class="round-button button-open-form"
+      data-open="popup_new-address"
+      type="button"
+      aria-expanded="false"
+      aria-controls="AddAddress"
+    >
+      Add new address
+    </button>
+
+    <div data-address class="add-new-address popup-address" id="popup_new-address">
+      <div id="AddAddress" class="inner form-container">
+        {% render 'FormHeaderPopup', title: 'Address', form_id: 'popup_new-address' %}
+        {%- form 'customer_address', customer.new_address, aria-labelledBy: 'AddressNewHeading' -%}
+          {% render 'FormAddress', form: form %}
+        {%- endform -%}
+      </div>
+    </div>
+  </div>
+{%- endpaginate -%}
+
+<script>
+  const formCountry = document.querySelectorAll('.country-selections');
+  const closeButton = document.querySelectorAll('.form-close');
+  const buttonOpen = document.querySelectorAll('.button-open-form');
+
+  if (closeButton) {
+    closeButton.forEach((button) => {
+      button.addEventListener('click', () => {
+        const form = button.dataset.close;
+        document.getElementById(form).classList.remove('active');
+      });
+    });
+  }
+
+  if (buttonOpen) {
+    buttonOpen.forEach((item) => {
+      item.addEventListener('click', () => {
+        const form = item.dataset.open;
+        document.getElementById(form).classList.add('active');
+      });
+    });
+  }
+
+  if (formCountry) {
+    formCountry.forEach((selectOp) => {
+      selectOp.addEventListener('change', () => {
+        const selectedOption = selectOp.options[selectOp.selectedIndex];
+        const provinces = selectedOption.getAttribute('data-provinces');
+        const proviceSelectionId = document.getElementById(`${selectOp.id}_province`);
+        if (provinces) {
+          const array = JSON.parse(provinces);
+
+          if (array.length > 0) {
+            if (proviceSelectionId) {
+              proviceSelectionId.style.display = 'block';
+
+              const selectChild = proviceSelectionId.querySelector('select');
+
+              array.forEach((item) => {
+                selectChild.innerHTML += `<option value="${item[0]}">${item[1]}</option>`;
+              });
+            }
+          } else {
+            proviceSelectionId.style.display = 'none';
+          }
+        }
+      });
+    });
+  }
+</script>

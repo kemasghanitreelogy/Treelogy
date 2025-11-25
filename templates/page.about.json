@@ -1,0 +1,204 @@
+{
+  "sections": {
+    "video_banner_T3gp6W": {
+      "type": "VideoBanner",
+      "settings": {
+        "first_text": "Nourishing You",
+        "bottom_text": "Enriching Life",
+        "text_offset": 0,
+        "video": "shopify:\/\/files\/videos\/moringa-tree-section-video.mp4",
+        "video_poster": "shopify:\/\/shop_images\/moringa-forest-video-thumbnail.png"
+      }
+    },
+    "s_logo_content_8HhJHk": {
+      "type": "SLogoContent",
+      "settings": {
+        "title": "We Are A Regenerative Brand Crafting The Highest Quality \nAnd Most Ethical Moringa Products",
+        "title_mobile": "",
+        "description": "",
+        "logo": "shopify:\/\/shop_images\/image.png",
+        "logo_large": false
+      }
+    },
+    "side_image_video_content_Jh7ACz": {
+      "type": "SideImageVideoContent",
+      "blocks": {
+        "text_eJtiVC": {
+          "type": "text",
+          "settings": {
+            "title": "Harvested at Dawn",
+            "description": "We begin the harvest of our moringa trees at the first light of sunrise. This timing is crucial as it ensures the leaves are at their peak moisture and nutrient content, capturing their full potential for health benefits."
+          }
+        },
+        "text_8TxMEP": {
+          "type": "text",
+          "settings": {
+            "title": "Stem-Free Purity",
+            "description": "After harvesting, our community meticulously separates each leaf from the stems by hand. This process is vital to ensure a consistent moisture content in the final product without over-dehydrating the leaves. It guarantees the purity and quality of our moringa."
+          }
+        },
+        "text_LWFUjj": {
+          "type": "text",
+          "settings": {
+            "title": "Low-Temperature Dehydration",
+            "description": "To maintain optimal nutrient retention, we process the leaves right on-site. After washing and wringing out excess water, we dehydrate the leaves at a controlled temperature of 38°C for 22 hours. This careful and precise method locks in the essential nutrients of the moringa leaves, ensuring a superior final product."
+          }
+        }
+      },
+      "block_order": [
+        "text_eJtiVC",
+        "text_8TxMEP",
+        "text_LWFUjj"
+      ],
+      "settings": {
+        "title": "Unyielding in Quality",
+        "description": "Ethically grown with regenerative agriculture by dedicated farmers on our organically certified farm, our moringa products deliver unique nourishment and essence of care, setting them apart in both quality and impact.",
+        "button_label": "Discover The Farm",
+        "button_url": "shopify:\/\/pages\/farm",
+        "button_pos": "top",
+        "banner": "shopify:\/\/shop_images\/treelogy-moringa-leaf-harvest.webp",
+        "fit_content": false,
+        "padding_top_dt": 96,
+        "padding_bottom_dt": 96,
+        "padding_top_mb": 48,
+        "padding_bottom_mb": 48
+      }
+    },
+    "side_image_video_content_LrdCQ9": {
+      "type": "SideImageVideoContent",
+      "settings": {
+        "title": "A Mother And A Son Teaming Up For Change!",
+        "description": "During Bali's COVID-19 crisis, founders Alexa and Sacha launched Treelogy, aiming to diversify the local economy beyond tourism. Drawing inspiration from the Balinese philosophy of Tri Hita Karana, they advocate for a holistic business model that benefits both people and earth, fostering a brighter future for all.",
+        "button_label": "The Story of Legacy +",
+        "button_url": "shopify:\/\/blogs\/news\/the-story-of-a-legacy",
+        "button_pos": "top",
+        "banner": "shopify:\/\/shop_images\/treelogy-founders-on-bamboo-tower.jpg",
+        "fit_content": true,
+        "padding_top_dt": 1,
+        "padding_bottom_dt": 96,
+        "padding_top_mb": 48,
+        "padding_bottom_mb": 48
+      }
+    },
+    "s_logo_content_Fz8X7Y": {
+      "type": "SLogoContent",
+      "settings": {
+        "title": "A Duty, Not A Choice",
+        "title_mobile": "",
+        "description": "Treelogy embodies a moral compass directed by Earth Care, People Care, and Future Care. With every choice we make, we uphold these ethics as unalterable pillars that guide our venture.",
+        "logo": "shopify:\/\/shop_images\/compass_-_farm_green.5c6937df.svg",
+        "logo_large": true
+      }
+    },
+    "columns_text_VhqhQx": {
+      "type": "ColumnsText",
+      "blocks": {
+        "image_picker_Mryk6q": {
+          "type": "image_picker",
+          "settings": {
+            "title": "People Care",
+            "description": "<p>We prioritize the well-being of everyone involved, from our farmers to you. Our holistic approach ensures each person thrives within the interconnected community our products foster. By farming and crafting ourselves, we guarantee premium quality, unmatched transparency, honest wages, and community empowerment.<\/p>",
+            "thumb": "shopify:\/\/shop_images\/about-farm-img-1.webp"
+          }
+        },
+        "image_picker_KYpdN4": {
+          "type": "image_picker",
+          "settings": {
+            "title": "Earth Care",
+            "description": "<p>We strive to work with Nature rather than against it. Practices like rainwater harvesting, composting, mulching, and crop rotation foster a symbiotic relationship that enriches our ecosystem, making it more resilient and providing our Moringa, high-quality organic nutrients, essential for our long-term well-being.<\/p>",
+            "thumb": "shopify:\/\/shop_images\/earth-care.webp"
+          }
+        },
+        "image_picker_9arMQm": {
+          "type": "image_picker",
+          "settings": {
+            "title": "Future Care",
+            "description": "<p>Our holistic approach to nourish health by enriching the soil lays the groundwork for a better tomorrow. By transforming our farm into a regenerative incubator, we aim to create a ripple effect, empowering Indonesian farmers to join us in planting the seeds for a conscientious and thriving future with Moringa leading the way.<\/p>",
+            "thumb": "shopify:\/\/shop_images\/future-care.webp"
+          }
+        }
+      },
+      "block_order": [
+        "image_picker_Mryk6q",
+        "image_picker_KYpdN4",
+        "image_picker_9arMQm"
+      ],
+      "settings": {}
+    },
+    "columns_text_with_icon_fWndyA": {
+      "type": "ColumnsTextWithIcon",
+      "blocks": {
+        "icon_UbEbyg": {
+          "type": "icon",
+          "settings": {
+            "title": "Harmony among People",
+            "description": "We're not just a business; we're a communal vision for elevated living. Treelogy creates an ecosystem where each person, from farmer to consumer, is a stakeholder in global health.",
+            "icon": "shopify:\/\/shop_images\/ic-harmony-people.c9803c7a.svg"
+          }
+        },
+        "icon_GNA9T9": {
+          "type": "icon",
+          "settings": {
+            "title": "Harmony with Nature",
+            "description": "The Balinese philosophy of Tri Hita Karana serves as our spiritual bedrock, guiding us toward harmonious coexistence with people, nature, and the spiritual universe.",
+            "icon": "shopify:\/\/shop_images\/ic-harmony-nature.af125ec4.svg"
+          }
+        },
+        "icon_ae6WTN": {
+          "type": "icon",
+          "settings": {
+            "title": "Harmony with the Spirit",
+            "description": "Tri Hita Karana gives Treelogy its deeper essence. Beyond mere profit, we strive for total well-being, making every product you choose a step toward holistic balance.",
+            "icon": "shopify:\/\/shop_images\/ic-harmony-spirit.c7320ac6.svg"
+          }
+        }
+      },
+      "block_order": [
+        "icon_UbEbyg",
+        "icon_GNA9T9",
+        "icon_ae6WTN"
+      ],
+      "settings": {
+        "title": "In Harmony With Tri Hita Karana",
+        "description": "The Balinese philosophy of Tri Hita Karana serves as our spiritual bedrock, \nguiding us toward harmonious coexistence with people, nature, and the spiritual universe.",
+        "background": "shopify:\/\/shop_images\/bg-farm.7fb31c98_1.jpg"
+      }
+    },
+    "featured_text_wDYDF7": {
+      "type": "FeaturedText",
+      "settings": {
+        "title": "Antioxidant",
+        "description": "Moringa Oleifera, a potent antioxidant force. Explore its proven health benefits in extensive research studies.",
+        "background": "shopify:\/\/shop_images\/antioxidant.webp",
+        "title_mobile": "Antioxidant",
+        "description_mobile": "Moringa Oleifera, a potent antioxidant force. Explore its proven health benefits in extensive research studies.",
+        "background_mobile": "shopify:\/\/shop_images\/antioxidant.webp",
+        "button_label": "Get To Know More +",
+        "button_url": "shopify:\/\/blogs\/news\/antioxidant",
+        "box_container": true,
+        "text_position": "left"
+      }
+    },
+    "featured_products_G6tRTr": {
+      "type": "FeaturedProducts",
+      "settings": {
+        "title": "Shop Our Harvest",
+        "description": "Discover what fits your routine and experience the powerful benefits of moringa with Treelogy's premium, handcrafted products.",
+        "products": [],
+        "button_label": "All Products",
+        "button_url": "shopify:\/\/collections\/all"
+      }
+    }
+  },
+  "order": [
+    "video_banner_T3gp6W",
+    "s_logo_content_8HhJHk",
+    "side_image_video_content_Jh7ACz",
+    "side_image_video_content_LrdCQ9",
+    "s_logo_content_Fz8X7Y",
+    "columns_text_VhqhQx",
+    "columns_text_with_icon_fWndyA",
+    "featured_text_wDYDF7",
+    "featured_products_G6tRTr"
+  ]
+}

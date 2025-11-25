@@ -1,0 +1,35 @@
+{
+  "sections": {
+    "featuerd_article_CHarVx": {
+      "type": "FeatuerdArticle",
+      "settings": {
+        "article": "news\/antioxidant",
+        "title": ""
+      }
+    },
+    "main": {
+      "type": "MainBlogListing",
+      "settings": {}
+    },
+    "featured_products_8WXnDx": {
+      "type": "FeaturedProducts",
+      "settings": {
+        "title": "Shop Our Harvest",
+        "description": "Discover what fits your routine and experience the powerful benefits of moringa with Treelogy's premium, handcrafted products.",
+        "products": [
+          "moringa-ritual-set",
+          "organic-moringa-capsules",
+          "organic-moringa-oil",
+          "organic-moringa-powder"
+        ],
+        "button_label": "All Products",
+        "button_url": "https:\/\/treelogy.com\/collections\/all"
+      }
+    }
+  },
+  "order": [
+    "featuerd_article_CHarVx",
+    "main",
+    "featured_products_8WXnDx"
+  ]
+}

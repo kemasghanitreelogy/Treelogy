@@ -1,0 +1,14 @@
+{% assign has_tags = false %}
+{% for tag in product.tags %}
+  {% if tag %}
+    {% assign has_tags = true %}
+  {% endif %}
+{% endfor %}
+
+{% if has_tags %}
+  <div class="tags">
+    {% for tag in product.tags %}
+      <span class="product-tag">{{ tag }}</span>
+    {% endfor %}
+  </div>
+{% endif %}

@@ -1,0 +1,14 @@
+{
+  "parent": "page.farm.json",
+  "context": {
+    "market": "id"
+  },
+  "sections": {
+    "main": {
+      "settings": {
+        "second_text": "Miracle Tree"
+      },
+      "blocks": {}
+    }
+  }
+}

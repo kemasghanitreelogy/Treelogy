@@ -1,0 +1,244 @@
+{% assign is_has_icon = false %}
+
+{% for block in section.blocks %}
+  {% if block.settings.icon %}
+    {% assign is_has_icon = true %}
+  {% endif %}
+{% endfor %}
+<div class="side-image-video-wrapper {{ section.id }}">
+  <div class="main-grid">
+    <div class="image-video {% if section.settings.fit_content %} fit-content {% endif %} {% if is_has_icon %} list-has-icon {% endif %}">
+      {% if section.settings.video %}
+        {% assign poster = section.settings.banner | image_url: width: '528x' %}
+        {% render 'Video', video: section.settings.video, poster: poster %}
+      {% else %}
+        {% render 'Image', image: section.settings.banner %}
+      {% endif %}
+    </div>
+    <div class="detail">
+      <div class="header">
+        <h2 class="h1">
+          {{ section.settings.title }}
+        </h2>
+        <div class="body-desk desc">
+          {{ section.settings.description }}
+        </div>
+        {% if section.settings.button_pos == 'top' %}
+          {% render 'PrimaryButton',
+            url: section.settings.button_url,
+            title: section.settings.button_label,
+            type: 'transparent'
+          %}
+        {% endif %}
+      </div>
+      {% if section.blocks.size > 0 %}
+        <div class="content-list __accordion {% if is_has_icon %} list-has-icon {% endif %}" data-mobile="1">
+          {% for block in section.blocks %}
+            <div class="item __accordion-wrapper {% if block.settings.icon %} has-icon {% endif %}">
+              {% if block.settings.icon %}
+                <div class="item-icon">
+                  {% render 'Image', image: block.settings.icon %}
+                </div>
+              {% endif %}
+              <div class="__accordion-wrapper-inner">
+                <h2 class="sub-head {% unless block.settings.icon %} __accordion-button {% endunless %}">
+                  {{ block.settings.title }}
+
+                  {% unless block.settings.icon %}
+                    <div class="mobile">
+                      {% render 'ArrowDown' %}
+                    </div>
+                  {% endunless %}
+                </h2>
+                <div class="body-desk-s {% unless block.settings.icon %} __accordion-content {% endunless %}">
+                  {{ block.settings.description }}
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+      {% if section.settings.button_pos == 'bottom' %}
+        {% render 'PrimaryButton',
+          url: section.settings.button_url,
+          title: section.settings.button_label,
+          type: 'transparent'
+        %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+<style>
+    .side-image-video-wrapper.{{ section.id }} {
+      padding: {{ section.settings.padding_top_dt }}px 0 {{ section.settings.padding_bottom_dt }}px
+    }
+
+   @media only screen and (max-width:900px) {
+      .side-image-video-wrapper.{{ section.id }} {
+        padding: {{ section.settings.padding_top_mb }}px 0 {{ section.settings.padding_bottom_mb }}px
+      }
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Column",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Praesent venenatis nibh ex"
+    },
+
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin a consequat ipsum, id efficitur magna. Mauris convallis sit amet sem in ultrices. Suspendisse id hendrerit felis."
+    },
+
+    {
+      "type": "header",
+      "content": "Button"
+    },
+
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Label"
+    },
+
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Url"
+    },
+
+    {
+      "type": "select",
+      "id": "button_pos",
+      "label": "Button position",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        }
+      ],
+      "default": "top"
+    },
+
+    {
+      "type": "header",
+      "content": "Media"
+    },
+
+    {
+      "type": "image_picker",
+      "id": "banner",
+      "label": "Banner",
+      "info": "If a video is provided, it will be used as a poster."
+    },
+
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Video"
+    },
+
+    {
+      "type": "checkbox",
+      "id": "fit_content",
+      "label": "Image fit height",
+      "info": "Image height will follow the height of content"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "label": "Padding top dekstop",
+      "type": "range",
+      "id": "padding_top_dt",
+      "min": 1,
+      "step": 1,
+      "max": 101,
+      "default": 96
+    },
+
+    {
+      "label": "Padding bottom dekstop",
+      "type": "range",
+      "id": "padding_bottom_dt",
+      "min": 1,
+      "step": 1,
+      "max": 101,
+      "default": 96
+    },
+
+    {
+      "label": "Padding top mobile",
+      "type": "range",
+      "id": "padding_top_mb",
+      "min": 1,
+      "step": 1,
+      "max": 101,
+      "default": 48
+    },
+
+    {
+      "label": "Padding bottom mobile",
+      "type": "range",
+      "id": "padding_bottom_mb",
+      "min": 1,
+      "step": 1,
+      "max": 101,
+      "default": 48
+    }
+  ],
+
+  "blocks": [
+    {
+      "type": "text",
+      "name": "Content",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description"
+        },
+
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Icon"
+        }
+      ]
+    }
+  ],
+
+  "presets": [
+    {
+      "name": "Side Image or Video Content"
+    }
+  ]
+}
+{% endschema %}

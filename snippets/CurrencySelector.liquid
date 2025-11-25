@@ -1,0 +1,21 @@
+<div class="currency-selector selector-wrapper">
+  {% for currency in shop.enabled_currencies %}
+    {% if currency.iso_code == cart.currency.iso_code %}
+      <div class="button">
+        {{ currency.iso_code }}
+        {% render 'ArrowDown' %}
+      </div>
+    {% endif %}
+  {% endfor %}
+
+  <div class="list">
+    {% for currency in shop.enabled_currencies %}
+      <a
+        href="?currency={{ currency.iso_code }}"
+        class="sub-head list-item {% if currency.iso_code == cart.currency.iso_code %} selected {% endif %}"
+      >
+        {{ currency.iso_code }}
+      </a>
+    {% endfor %}
+  </div>
+</div>

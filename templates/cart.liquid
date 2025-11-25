@@ -1,0 +1,41 @@
+{% if cart.item_count > 0 %}
+  <div class="mobile button-expand-cart-items" id="button-expand-cart">
+    <div class="button">
+      {{ 'cart.general.title' | t }}
+      <div class="icon">
+        {% render 'ArrowDown' %}
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+<div class="main-grid cart-page">
+  {% render 'LoginForm', checkout_button: true %}
+  <div class="cart" id="cart-summary">
+    {% if cart.item_count > 0 %}
+      <form action="/cart" method="post" novalidate>
+        {% for item in cart.items %}
+          {% render 'CartItemCard', item: item %}
+        {% endfor %}
+
+        <div class="sub-total">
+          <div class="body-desk item">
+            {{ 'cart.general.subtotal' | t }}
+            <div class="sub-head-alt">{{ cart.total_price | money }}</div>
+          </div>
+          <div class="body-desk note item">
+            {{ 'cart.general.shipping' | t }}
+            <div class="value body-desk">{{ 'cart.general.shipping_estimated' | t }}</div>
+          </div>
+
+          <div class="body-desk note item">
+            {{ 'cart.general.total' | t }}
+            <div class="sub-head-alt">{{ cart.total_price | money }}</div>
+          </div>
+        </div>
+      </form>
+    {% else %}
+      <p class="empty-msg">{{ 'cart.general.empty' | t }}</p>
+    {% endif %}
+  </div>
+</div>

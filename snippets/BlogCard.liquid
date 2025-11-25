@@ -1,0 +1,30 @@
+{% assign truncate = max_char | default: '79' %}
+
+{%- if settings.settings.remove_excerpt -%}
+  {% assign remove_desc = true %}
+{%- endif -%}
+
+{% if item %}
+  <div class="card swiper-slide">
+    <a href="{{ item.url }}" class="product-detail__description">
+      <figure>
+        {% render 'Image', image: item.image, width: '350' %}
+      </figure>
+    </a>
+    <div class="card-detail blog-type">
+      <a href="{{ item.url }}" class="product-detail__description">
+        <div class="tags technical">
+          <div class="tag">{{ item.tags | join: ',' }}</div>
+          {% render 'Date', date: item.published_at %}
+        </div>
+        <h2 class="sub-head">{{ item.title | default: 'Moringa Dried Leaf Powder' }}</h2>
+        {% unless remove_desc %}
+          <div class="sort-desc technical">
+            <span class="desktop">{{ item.excerpt }}</span>
+            <span class="mobile">{{ item.excerpt | truncate: truncate }}</span>
+          </div>
+        {% endunless %}
+      </a>
+    </div>
+  </div>
+{% endif %}

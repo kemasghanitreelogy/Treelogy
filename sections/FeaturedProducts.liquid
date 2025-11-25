@@ -1,0 +1,50 @@
+{% render 'FeaturedCardSlider', card: 'product', section: section %}
+{% schema %}
+{
+  "name": "Featured Products",
+  "tag": "section",
+  "class": "section featured-slider",
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "title",
+      "label": "Title",
+      "default": "Different Forms of Moringa"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Discover what fits your routine and experience the powerful benefits of moringa with Treelogy's premium, handcrafted products."
+    },
+
+    {
+      "type": "product_list",
+      "id": "products",
+      "label": "Selected products"
+    },
+
+    {
+      "type": "header",
+      "content": "Button"
+    },
+
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Label"
+    },
+
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Url"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Products"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,223 @@
+<header class="header-nav">
+  <div class="running-text">
+    <div class="running-text-wrapper">
+      <div id="running-text">
+        <div class="running-text-inner {%  if section.blocks.size > 1 %} multiple {% endif %}">
+          {% for block in section.blocks %}
+            <div class="text">
+              <a href="{{ block.settings.url | default : "#" }}">
+                {{ block.settings.title }}
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="header-menu">
+    <div class="main-grid">
+      <div class="burger item">
+        <div class="burger-button" id="burger-button">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 22 17">
+            <path fill="#2B3C35" fill-rule="evenodd" d="M11 .594H0v2.062h11V.594Zm5.5 6.875H0V9.53h16.5V7.47ZM0 14.344h22v2.062H0v-2.062Z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+      </div>
+      <div class="button button-search mobile" id="button-search">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 13">
+          <path fill="#33423B" d="M12 11.794 8.873 8.667a5.002 5.002 0 1 0-.706.706l3.127 3.127.706-.706Zm-6.99-2.29a3.995 3.995 0 1 1 0-7.99 3.995 3.995 0 0 1 0 7.99Z"/>
+        </svg>
+      </div>
+      <div class="logo item">
+        <a href="{{ request.locale.root_url }}">
+          {% render 'Image', image: section.settings.logo %}
+          {% comment %} {% render 'Logo' %} {% endcomment %}
+        </a>
+      </div>
+      <div class="right-menu item">
+        <script>
+          {% assign variants =  settings.free_product.variants | first %}
+          window.bonusItems = [
+            {
+              name: '{{ settings.free_shipping_info }}',
+              active: {{ settings.active_free_shipping_progress }},
+              minCheckout: {{ settings.min_shipping | default: 0 }},
+              icon: "{%-  if  settings.bonus_2_icon -%}{{ settings.bonus_1_icon | image_url: width: 100, height:  100}}{%- endif -%}",
+              countries: '{{ settings.shipping_selected_country | downcase | replace: " ", ""}}'
+            },
+
+            {
+              name: '{{ settings.free_product_info }}',
+              active: {{ settings.active_free_product }},
+              minCheckout: {{ settings.min_free_product_checkout | default: 0 }},
+              freeProduct: '{{ variants.id }}',
+              icon: "{%-  if  settings.bonus_2_icon -%}{{ settings.bonus_2_icon | image_url: width: 100, height:  100}}{%- endif -%}",
+              countries: '{{ settings.free_product_selected_country | downcase | replace: " ", "" }}'
+            }
+          ]
+
+
+          window.activeCountryCode = Shopify.country.toLowerCase();
+          window.activeFreeProduct = null;
+          window.activeFreeProductDetailInfo = '{{ settings.free_product_info }}'
+
+          window.customCompleteText = '{{ settings.complete_text }}';
+
+          const haveUserCauntry = localStorage.getItem('_userCountry')
+
+
+
+
+          if(haveUserCauntry) {
+            window.activeCountryCode = haveUserCauntry;
+              if({{ settings.active_free_product }}) {
+                window.activeFreeProduct = '{{ variants.id }}';
+              }
+          }else{
+            fetch('https://ipapi.co/json/')
+            .then((response) => response.json())
+            .then((data) => {
+              window.activeCountryCode = data.country.toLowerCase();
+
+              if({{ settings.active_free_product }}) {
+                window.activeFreeProduct = '{{ variants.id }}';
+              }
+
+              localStorage.setItem('_userCountry', data.country.toLowerCase())
+
+            })
+            .catch((error) => {
+              console.error('Error:', error);
+            });
+          }
+        </script>
+
+        {% render 'HeaderMenuIcon' %}
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="header-popup header-nav">
+  <div class="header-menu">
+    <div class="main-grid">
+      <div class="burger item">
+        <div class="burger-button" id="close-menu-button">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 12">
+            <path fill="#F8F8F2" d="M12 1.265 10.735 0 6 4.735 1.265 0 0 1.265 4.735 6 0 10.735 1.265 12 6 7.265 10.735 12 12 10.735 7.265 6 12 1.265Z"/>
+          </svg>
+        </div>
+      </div>
+      <div class="logo item">
+        <a href="{{ request.locale.root_url }}">
+          {% render 'Image', image: section.settings.logo %}
+        </a>
+      </div>
+      <div class="right-menu item">
+        {% render 'HeaderMenuIcon' %}
+      </div>
+    </div>
+  </div>
+  <div class="header-inner">
+    <div class="main-grid">
+      {% render 'MainNavigation', menu: section.settings.main_menu %}
+      <div class="header-selector">
+        {% comment %}
+          {% render 'CountrySelector' %}
+          {% render 'CurrencySelector' %}
+        {% endcomment %}
+      </div>
+      {% if section.settings.header_product != null %}
+        <div class="featured-header-product">
+          <div class="h2 heading desktop">{{ 'products.featured.title' | t }}</div>
+          {% render 'ProductCard', item: section.settings.header_product, button_cart: true %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+<div id="country-code"></div>
+
+<style>
+  #country-code {
+    position: fixed;
+    top: 10px;
+    right: 20px;
+    pointer-events: none;
+    font-size: 11px;
+    color: #fff;
+    border-radius: 10px;
+    padding: 0 10px;
+    z-index: 9999999;
+    text-transform: uppercase;
+    background-color: rgba(0, 0, 0, 0.9);
+  }
+</style>
+<script>
+  window.country_progress_selection = '{{ settings.shipping_selected_country | downcase }}';
+  window.country_progress_is_active = {{ settings.active_free_shipping_progress | default: false}};
+</script>
+
+{% render 'SearchInput' %}
+
+{% render 'MiniCart', up_selling: section.settings.up_selling_products %}
+
+{% render 'PopupVariants', product: section.settings.header_product %}
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+
+    {
+      "type": "product",
+      "id": "header_product",
+      "label": "Featured Product"
+    },
+    {
+      "type": "link_list",
+      "id": "main_menu",
+      "label": "Main Menu"
+    },
+    {
+      "type": "header",
+      "content": "Cart"
+    },
+    {
+      "type": "product_list",
+      "id": "up_selling_products",
+      "label": "Up Selling Products"
+    },
+
+    {
+      "type": "header",
+      "content": "Cart Sidebar Settings"
+    }
+  ],
+  "blocks": [
+    {
+      "limit": 5,
+      "type": "text",
+      "name": "Runing Text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Link to"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

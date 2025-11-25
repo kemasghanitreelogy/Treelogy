@@ -1,0 +1,61 @@
+<div class="main-grid">
+  <div class="header content">
+    {% render 'Image', image: section.settings.background %}
+    <div class="header-content">
+      <div class="a">
+        <div class="body-mobile">
+          {{ section.settings.label }}
+        </div>
+        <h1>{{ section.settings.title }}</h1>
+        <div class="body-desk">
+          {{ section.settings.desc }}
+        </div>
+      </div>
+    </div>
+    <div class="b"></div>
+  </div>
+  <div class="accordion-nav left">
+    <div class="st">
+      <div class="sub-head-alt">{{ 'faq.category' | t }}</div>
+    </div>
+    <div class="menu-wrapper">
+      <div class="menu"></div>
+    </div>
+  </div>
+  <div class="accordion-item left">
+    <div class="st">
+      <div class="sub-head-alt">{{ 'faq.question' | t }}</div>
+    </div>
+    <div class="accordion"></div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "FAQ",
+  "tag": "section",
+  "class": "section faq-wrapper",
+  "settings": [
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Label"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "desc",
+      "label": "Description"
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ"
+    }
+  ]
+}
+{% endschema %}

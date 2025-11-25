@@ -1,0 +1,320 @@
+{
+  "sections": {
+    "main": {
+      "type": "VideoBanner",
+      "settings": {
+        "first_text": "",
+        "bottom_text": "",
+        "text_offset": 0,
+        "video": "shopify:\/\/files\/videos\/Farm_compressed.mp4"
+      }
+    },
+    "fullwidth_content_thumbnail_6xcKhM": {
+      "type": "FullwidthContentThumbnail",
+      "blocks": {
+        "image_picker_FL6YHJ": {
+          "type": "image_picker",
+          "settings": {
+            "title": "Harvesting Rainwater",
+            "description": "By ingeniously redesigning our farm's landscape to align with the earth's natural contours, we've established a robust system for harvesting rainwater. This approach prevents erosion and maximizes water conservation, ensuring effective distribution across the farm. The result is a promotion of healthy plant growth and soil regeneration, crucial for sustaining our farm's vibrant ecosystem and supporting our overarching goal of environmental stewardship.",
+            "video": "shopify:\/\/files\/videos\/tree-1.mp4"
+          }
+        },
+        "image_picker_FUQ4YW": {
+          "type": "image_picker",
+          "settings": {
+            "title": "Co-Working with Animals",
+            "description": "Treelogy ensures our animals lead happy, healthy lives, which results in nitrogen-rich manure for our compost. This sustainable cycle enhances soil fertility, embodying our commitment to athriving, balanced ecosystem and showcasing the symbiotic relationship between animal welfare and agricultural productivity.",
+            "video": "shopify:\/\/files\/videos\/tree-2.mp4"
+          }
+        },
+        "image_picker_kLKRxi": {
+          "type": "image_picker",
+          "settings": {
+            "title": "Tailored Compost",
+            "description": "Treelogy's approach to composting is highly customized, designed to replenish the soil with precisely what it loses in the farming process. This bespoke method ensures our soil remains rich and productive, maintaining a healthy balance within our ecosystem. It's a reflection of our philosophy to not just take from the Earth but to give back, fostering a symbiotic relationship between the land and our farming practices.",
+            "video": "shopify:\/\/files\/videos\/tree-3.mp4"
+          }
+        },
+        "image_picker_9xWMkd": {
+          "type": "image_picker",
+          "settings": {
+            "title": "Innovative Earthwork",
+            "description": "Our innovative earthwork, including the strategic reshaping of the landscape and the establishment of raised beds and no-walk zones, ensures better rain water absorption and reduces soil compaction. This thoughtful design respects the soil's integrity, allowing for a flourishing natural ecosystem and creating the ideal conditions for plant growth and microbial activity. It underscores our respect for the land and our commitment to creating a sustainable farming environment.",
+            "video": "shopify:\/\/files\/videos\/tree-4.mp4"
+          }
+        },
+        "image_picker_qHXVyL": {
+          "type": "image_picker",
+          "settings": {
+            "title": "Welcoming Wildlife",
+            "description": "Choosing not to fence our farm, we embrace the natural world, inviting wild life and allowing endogenous plants and trees to flourish. This open ecosystem approach enriches the farm's biodiversity, enhancing its resilience and health. It reflects our belief in living in harmony with nature and our dedication to supporting a diverse, thriving ecosystem where life in all its forms can prosper.",
+            "video": "shopify:\/\/files\/videos\/tree-5.mp4"
+          }
+        }
+      },
+      "block_order": [
+        "image_picker_FL6YHJ",
+        "image_picker_FUQ4YW",
+        "image_picker_kLKRxi",
+        "image_picker_9xWMkd",
+        "image_picker_qHXVyL"
+      ],
+      "settings": {
+        "title": "The First Regenerative Organic Moringa Farm In the World",
+        "description": "We've embraced regenerative agriculture from the start, already Organic Certified and now nearing Regenerative Organic Alliance Certification. This certification is a formal acknowledgment of our longstanding commitment to practices that rejuvenate the earth. Our approach to Moringa cultivation has always prioritized the health of the soil and ecosystem, ensuring every product is a testament to truly sustainable and ethical farming."
+      }
+    },
+    "side_image_video_content_8EV4Vf": {
+      "type": "SideImageVideoContent",
+      "blocks": {
+        "text_cqa6rP": {
+          "type": "text",
+          "settings": {
+            "title": "Harmony among People",
+            "description": "We're not just a business; we're a communal vision for elevated living. Treelogy creates an ecosystem where each person, from farmer to consumer, is a stakeholder in global health."
+          }
+        },
+        "text_8j6ztT": {
+          "type": "text",
+          "settings": {
+            "title": "Harmony with Nature",
+            "description": "Earth isn't just a resource; it's a shared home. Our commitment to regenerative agriculture is our lasting promise for the enduring health and balance of our planet."
+          }
+        },
+        "text_M7pqfc": {
+          "type": "text",
+          "settings": {
+            "title": "Harmony with the Spirit",
+            "description": "Tri Hita Karana gives Treelogy its deeper essence. Beyond mere profit, we strive for total well-being, making every product you choose a step toward holistic balance."
+          }
+        }
+      },
+      "block_order": [
+        "text_cqa6rP",
+        "text_8j6ztT",
+        "text_M7pqfc"
+      ],
+      "settings": {
+        "title": "A Hidden Gem On The Foothills Of Bali's Iconic Volcano",
+        "description": "Nestled 500 meters high in the volcanic foothills of Bali, Treelogy's farm sets a global standard, uniting regenerative agriculture with social enrichment. Here, we craft more than just Moringa leaves, seeds, and flowers; we forge a new, ethical paradigm that nourishes you while enriching life. Reshaping the symbiosis between humans and nature.",
+        "button_label": "",
+        "button_url": "",
+        "button_pos": "top",
+        "video": "shopify:\/\/files\/videos\/Farm_compressed.mp4",
+        "fit_content": false,
+        "padding_top_dt": 96,
+        "padding_bottom_dt": 96,
+        "padding_top_mb": 48,
+        "padding_bottom_mb": 48
+      }
+    },
+    "crew_carousel_LhBpfP": {
+      "type": "CrewCarousel",
+      "blocks": {
+        "image_picker_MUybN9": {
+          "type": "image_picker",
+          "settings": {
+            "position": "Farm Manager",
+            "title": "Novitasari Napitupulu",
+            "portrait": "shopify:\/\/shop_images\/treelogy-team-novitasari-napitupulu.webp"
+          }
+        },
+        "image_picker_Pw4Nmb": {
+          "type": "image_picker",
+          "settings": {
+            "position": "Regenerator",
+            "title": "Fery Kurniawan",
+            "portrait": "shopify:\/\/shop_images\/treelogy-team-fery-kurniawan.webp"
+          }
+        },
+        "image_picker_YM6tNU": {
+          "type": "image_picker",
+          "settings": {
+            "position": "Regenerator",
+            "title": "I Gede Suastika",
+            "portrait": "shopify:\/\/shop_images\/treelogy-team-i-gede-suastika.webp"
+          }
+        },
+        "image_picker_yx6YMP": {
+          "type": "image_picker",
+          "settings": {
+            "position": "Regenerator",
+            "title": "I Gede Sukra",
+            "portrait": "shopify:\/\/shop_images\/treelogy-team-i-gede-sukra.webp"
+          }
+        },
+        "image_picker_G4aBLn": {
+          "type": "image_picker",
+          "settings": {
+            "position": "Regenerator",
+            "title": "I Kadek Juniantara",
+            "portrait": "shopify:\/\/shop_images\/treelogy-team-i-kadek-juniantara.webp"
+          }
+        },
+        "image_picker_jh6nHC": {
+          "type": "image_picker",
+          "settings": {
+            "position": "Regenerator",
+            "title": "I Kadek Pande Suastika",
+            "portrait": "shopify:\/\/shop_images\/treelogy-team-i-kadek-pande-suastika.webp"
+          }
+        },
+        "image_picker_8nXz6Y": {
+          "type": "image_picker",
+          "settings": {
+            "position": "Regenerator",
+            "title": "I Ketut De Juliana",
+            "portrait": "shopify:\/\/shop_images\/treelogy-team-i-ketut-de-juliana.webp"
+          }
+        },
+        "image_picker_V9dFK8": {
+          "type": "image_picker",
+          "settings": {
+            "position": "Regenerator",
+            "title": "I Ketut Suatra",
+            "portrait": "shopify:\/\/shop_images\/treelogy-team-i-ketut-suatra.webp"
+          }
+        },
+        "image_picker_JfU3Xc": {
+          "type": "image_picker",
+          "settings": {
+            "position": "Regenerator",
+            "title": "I Komang Adi Ariasa",
+            "portrait": "shopify:\/\/shop_images\/treelogy-team-i-komang-adi-ariasa.webp"
+          }
+        },
+        "image_picker_n6gah7": {
+          "type": "image_picker",
+          "settings": {
+            "position": "Regenerator",
+            "title": "I Komang Darma",
+            "portrait": "shopify:\/\/shop_images\/treelogy-team-i-komang-darma.webp"
+          }
+        },
+        "image_picker_CGtA8H": {
+          "type": "image_picker",
+          "settings": {
+            "position": "Regenerator",
+            "title": "I Komang Mertayasa",
+            "portrait": "shopify:\/\/shop_images\/treelogy-team-i-komang-mertayasa.webp"
+          }
+        },
+        "image_picker_pPTfYJ": {
+          "type": "image_picker",
+          "settings": {
+            "position": "Regenerator",
+            "title": "I Nengah Sueta",
+            "portrait": "shopify:\/\/shop_images\/treelogy-team-i-nengah-sueta.webp"
+          }
+        },
+        "image_picker_RgakkQ": {
+          "type": "image_picker",
+          "settings": {
+            "position": "Regenerator",
+            "title": "I Wayan Belasin",
+            "portrait": "shopify:\/\/shop_images\/treelogy-team-i-wayan-belasin.webp"
+          }
+        },
+        "image_picker_4t3KH9": {
+          "type": "image_picker",
+          "settings": {
+            "position": "Regenerator",
+            "title": "Nyoman Bingin",
+            "portrait": "shopify:\/\/shop_images\/treelogy-team-nyoman-bingin.webp"
+          }
+        },
+        "image_picker_GKYA8H": {
+          "type": "image_picker",
+          "settings": {
+            "position": "Regenerator",
+            "title": "Setiadi Jitendhriyawan Suwarno",
+            "portrait": "shopify:\/\/shop_images\/treelogy-team-setiadi-jitendhriyawan-suwarno.webp"
+          }
+        }
+      },
+      "block_order": [
+        "image_picker_MUybN9",
+        "image_picker_Pw4Nmb",
+        "image_picker_YM6tNU",
+        "image_picker_yx6YMP",
+        "image_picker_G4aBLn",
+        "image_picker_jh6nHC",
+        "image_picker_8nXz6Y",
+        "image_picker_V9dFK8",
+        "image_picker_JfU3Xc",
+        "image_picker_n6gah7",
+        "image_picker_CGtA8H",
+        "image_picker_pPTfYJ",
+        "image_picker_RgakkQ",
+        "image_picker_4t3KH9",
+        "image_picker_GKYA8H"
+      ],
+      "settings": {
+        "title": "The Regenerators",
+        "description": "Each face you scroll through is not just a farmer, but a change-maker in the art of regenerative agriculture. They're the pulse of Treelogy, dedicated to a future where wellness and sustainability are inseparable. As you discover their portraits, know that you're meeting the very people who breathe life into our mission—each nurturing the Earth, your health, and a legacy for generations to come."
+      }
+    },
+    "side_image_video_content_KqD3qG": {
+      "type": "SideImageVideoContent",
+      "blocks": {
+        "text_jTtamn": {
+          "type": "text",
+          "settings": {
+            "title": "Beyond minimum wage",
+            "description": "Fair wages are more than just numbers; they empower individuals to thrive and contribute to community well-being, fostering a more equitable society."
+          }
+        },
+        "text_8iE8Kk": {
+          "type": "text",
+          "settings": {
+            "title": "Reducing physical labor",
+            "description": "Our farm design and modern tools minimize the physical effort required in farming, making the labor not just bearable, but also enriching."
+          }
+        },
+        "text_yxVRcp": {
+          "type": "text",
+          "settings": {
+            "title": "Farmer as a career",
+            "description": "By offering fair wages and reducing physical toll, we're redefining farming as a dignified career, crucial for both earth and community."
+          }
+        }
+      },
+      "block_order": [
+        "text_jTtamn",
+        "text_8iE8Kk",
+        "text_yxVRcp"
+      ],
+      "settings": {
+        "title": "Farmer by Choice",
+        "description": "At Treelogy, we see farming as more than a job it's a calling, fueled by respect, pride, and purpose. Our farmers consciously select this path, not just to cultivate Moringa, but to enrich lives and the planet. Through regenerative agriculture, we create a legacy that goes beyond the here and now, shaping a more sustainable world for generations to come.",
+        "button_label": "",
+        "button_url": "",
+        "button_pos": "top",
+        "fit_content": false,
+        "padding_top_dt": 96,
+        "padding_bottom_dt": 96,
+        "padding_top_mb": 1,
+        "padding_bottom_mb": 48
+      }
+    },
+    "featured_products_bDwcnP": {
+      "type": "FeaturedProducts",
+      "settings": {
+        "title": "Shop Our Harvest",
+        "description": "Discover what fits your routine and experience the powerful benefits of moringa with Treelogy's premium, handcrafted products.",
+        "products": [],
+        "button_label": "All Products",
+        "button_url": "https:\/\/treelogy.com\/collections\/all"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "fullwidth_content_thumbnail_6xcKhM",
+    "side_image_video_content_8EV4Vf",
+    "crew_carousel_LhBpfP",
+    "side_image_video_content_KqD3qG",
+    "featured_products_bDwcnP"
+  ]
+}

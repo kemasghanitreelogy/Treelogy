@@ -1,0 +1,86 @@
+<div class="main-grid">
+  <div class="header">
+    <h1 class="h1">{{ section.settings.title }}</h1>
+    <div class="description body-desk">
+      {{ section.settings.description }}
+    </div>
+  </div>
+  <div class="card-wrppr">
+    <div class="card card-w-video">
+      {% for block in section.blocks %}
+        <div class="card-item --scroll-snap-item">
+          <div class="video desktop">
+            {% render 'Video', video: block.settings.video, poster: block.settings.poster, autoplay: false %}
+          </div>
+          <div class="video mobile">
+            {% render 'Video', video: block.settings.video, poster: block.settings.poster %}
+          </div>
+          <div class="detail">
+            <h3>
+              {{ block.settings.title }}
+            </h3>
+            <p>
+              {{ block.settings.description }}
+            </p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Content thumbnails",
+  "tag": "section",
+  "class": "section fullwidth-content-thumbnail",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image_picker",
+      "name": "List",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description"
+        },
+
+        {
+          "type": "image_picker",
+          "id": "thumb",
+          "label": "Poster"
+        },
+        {
+          "type": "video",
+          "id": "video",
+          "label": "Video"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Full width content, video thumbnail"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,41 @@
+<div class="main-grid">
+  {% render 'Image', image: section.settings.logo %}
+  <div class="content">
+    <h2 class="h1">
+      {{ section.settings.title }}
+    </h2>
+  </div>
+</div>
+{% schema %}
+{
+  "name": "Logo content M",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Title"
+    },
+
+    {
+      "type": "text",
+      "id": "description",
+      "label": "Description",
+      "default": "description"
+    },
+
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Large logo side text"
+    }
+  ]
+}
+{% endschema %}

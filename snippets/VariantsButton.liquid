@@ -1,0 +1,116 @@
+{% assign default_variant = product.variants[0].id %}
+{% assign has_gift = false %}
+{% assign active_currency = cart.currency.iso_code | downcase %}
+
+{% for variant in product.variants %}
+  {% assign set_default_varaint = variant.metafields.custom.set_default %}
+
+  {%- if set_default_varaint -%}
+    {% assign default_variant = variant.id %}
+  {%- endif -%}
+
+  {% if variant.metafields.custom.gift_product.value %}
+    {% assign has_gift = true %}
+  {% endif %}
+{% endfor %}
+
+{% assign variant_size = product.variants.size %}
+{% assign first_variant = product.variants.first %}
+{% assign base_cents = first_variant.price %}
+{% assign cur_cents = base_cents %}
+{% assign original_price_from_meta_variant = first_variant.metafields.custom.original_price | times : 100 %}
+
+<div style="display: none;">{{ cur_cents }} {{ product.variants.size }} {{ original_price_from_meta_variant }}</div>
+
+{% for variant in product.variants %}
+  <div
+    data-value="{{ variant.id }}"
+    class="checkbox-button {% if default_variant == variant.id %} active {% endif %}"
+    data-available="{{ variant.available }}"
+  >
+    {% assign original_price = variant.metafields.custom.use_doubling_prices %}
+    {% assign discount_percent = variant.metafields.custom.discount_percent_variant |default :0 %}
+
+    {% if original_price %}
+      {% assign price_diff = cur_cents | minus: variant.price %}
+
+      {% if variant_size > 1 %}
+        {% assign discount_percent = price_diff | times: 100 | divided_by: cur_cents %}
+      {% endif %}
+
+      <div class="discount-label">-{{ discount_percent }}%</div>
+    {% endif %}
+
+    <div class="left body-desk-s">
+      <div class="check"></div>
+      {% assign meta = variant.metafields.custom.description %}
+      <div class="variant-detail">
+        <div>
+          {% if meta %}
+            <strong>{{ variant.title }}</strong>
+          {% else %}
+            {{ variant.title }}
+          {% endif %}
+          {% unless variant.available %} - sold out {% endunless %}
+        </div>
+
+        {% unless disabled_detail %}
+          {% if meta %}
+            <div class="description">{{ meta | metafield_tag }}</div>
+          {% endif %}
+        {% endunless %}
+      </div>
+    </div>
+    <div class="body-desk-s right">
+      {% if original_price %}
+        <div class="custom-discount-price">
+          {% if variant_size == 1 %}
+    
+            {% assign discount_factor = 100 | minus: discount_percent %}
+            {% assign price_before_discount = variant.price | times: 100 | divided_by: discount_factor %}
+
+            {{ price_before_discount | round: 0 | money_with_currency }}
+          {% else %}
+            {{ cur_cents | money_with_currency }}
+          {%  endif %}
+        </div>
+      {% endif %}
+      {% assign saving = variant.metafields.custom.saving %}
+      {{ variant.price | money_with_currency }}
+
+      {% unless disabled_detail %}
+        {% if saving %}
+          {% assign saving_amount_array = saving | split: '|' %}
+          {% for amount in saving_amount_array %}
+            {%- if amount contains active_currency -%}
+              <div class="saving"><span>save</span> {{ amount | split: ':' | last | money_with_currency }}</div>
+            {%- endif -%}
+          {% endfor %}
+        {% endif %}
+      {% endunless %}
+    </div>
+  </div>
+  {% assign cur_cents = cur_cents | times: 2 %}
+{% endfor %}
+
+{% if has_gift %}
+  <div class="gift-products">
+    {% for variant in product.variants %}
+      {% assign gift_product = variant.metafields.custom.gift_product.value %}
+      {% if gift_product %}
+        <div class="product  {% if default_variant == variant.id %} active {% endif %}" id="gift-{{ variant.id }}">
+          <h4>Gifts Included with Your Purchase</h4>
+          <div class="product-wrapper">
+            <div class="thumb">
+              {% assign thumb = gift_product.images | first %}
+              {% render 'Image', image: thumb.src %}
+            </div>
+            <div class="title">
+              {{ gift_product.title }}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+{% endif %}

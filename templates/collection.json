@@ -1,0 +1,45 @@
+{
+  "sections": {
+    "featured_product_pTELCE": {
+      "type": "FeaturedProduct",
+      "settings": {
+        "product": "organic-moringa-powder"
+      }
+    },
+    "main": {
+      "type": "MainListingProduct",
+      "settings": {}
+    },
+    "featured_text_CkWmqN": {
+      "type": "FeaturedText",
+      "settings": {
+        "title": "Antioxidant",
+        "description": "Moringa Oleifera, a potent antioxidant force. Explore its proven health benefits in extensive research studies.",
+        "background": "shopify:\/\/shop_images\/antioxidant.webp",
+        "title_mobile": "Antioxidant",
+        "description_mobile": "Moringa Oleifera, a potent antioxidant force. Explore its proven health benefits in extensive research studies.",
+        "background_mobile": "shopify:\/\/shop_images\/antioxidant.webp",
+        "button_label": "Get To Know More +",
+        "button_url": "shopify:\/\/blogs\/news\/antioxidant",
+        "box_container": true,
+        "text_position": "left"
+      }
+    },
+    "featured_blog_6XFnzG": {
+      "type": "FeaturedBlog",
+      "settings": {
+        "title": "Rooted in Wisdom, \nGrowing Through Knowledge.",
+        "description": "Explore the science of Moringa, discover recipes we love, and learn about our farm, factory, and well-being practices.",
+        "products": "news",
+        "button_label": "Discover All",
+        "button_url": "#"
+      }
+    }
+  },
+  "order": [
+    "featured_product_pTELCE",
+    "main",
+    "featured_text_CkWmqN",
+    "featured_blog_6XFnzG"
+  ]
+}

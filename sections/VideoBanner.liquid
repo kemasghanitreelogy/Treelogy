@@ -1,0 +1,69 @@
+{% assign video_file = section.settings.video %}
+{% assign image_file = section.settings.video_poster %}
+
+<h1 class="sr-only">{{section.settings.first_text}} {{section.settings.bottom_text}}</h1>
+<div class="text">
+  {% if section.settings.first_text %}
+    <h2 class="big-title ">{{ section.settings.first_text }}</h2>
+  {% endif %}
+  {% if section.settings.bottom_text %}
+    <h2 class="big-title text-two_{{ section.id }}">{{ section.settings.bottom_text }}</h2>
+  {% endif %}
+</div>
+<div class="background parallax">
+  {%- if video_file -%}
+    {% render 'Video', video: video_file %}
+  {% endif %}
+
+  {% if image_file and video_file == null %}
+    {% render 'Image', image: image_file %}
+  {% endif %}
+</div>
+<style>
+  .text-two_{{ section.id }}{
+    transform: translateX({{ section.settings.text_offset }}%)
+  }
+</style>
+{% schema %}
+{
+  "name": "Video/image hero",
+  "tag": "section",
+  "class": "section video-banner-wrapper",
+  "settings": [
+    {
+      "type": "text",
+      "id": "first_text",
+      "label": "First text"
+    },
+    {
+      "type": "text",
+      "id": "bottom_text",
+      "label": "Second text"
+    },
+    {
+      "type": "range",
+      "id": "text_offset",
+      "label": "X offset text (%)",
+      "min": 0,
+      "max": 100,
+      "default": 0
+    },
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Video"
+    },
+
+    {
+      "type": "image_picker",
+      "id": "video_poster",
+      "label": "or Banner"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video or image hero"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,97 @@
+<div class="main-grid">
+  <div class="description">
+    <div class="title h1">
+      {{ section.settings.title | newline_to_br }}
+    </div>
+    <div class="excerpt">
+      {{ section.settings.description }}
+    </div>
+
+    {% unless section.settings.remove_button %}
+      <div class="button">
+        {% assign url = section.settings.button_url %}
+
+        {% if url == blank %}
+          {% case card %}
+            {% when 'product' %}
+              {% capture button_title %}
+                {{ 'collections.all_products' | t }}
+              {% endcapture %}
+              {% render 'PrimaryButton', url: '/collection/all', title: button_title %}
+            {% when 'blog' %}
+              {% capture button_title %}
+                {{ 'collections.discover_all' | t }}
+              {% endcapture %}
+              {% render 'PrimaryButton', url: '/collection/all', title: button_title %}
+          {% endcase %}
+        {% else %}
+          {% render 'PrimaryButton', url: section.settings.button_url, title: section.settings.button_label %}
+        {% endif %}
+      </div>
+    {% endunless %}
+  </div>
+
+  <div class="product-slider swiper layout-{{ card }}">
+    <div class="inner swiper-wrapper">
+      {% case card %}
+        {% when 'product' %}
+          {% assign products = section.settings.products %}
+
+          {% if section.settings.products.count < 1 %}
+            {% assign products = collections['all-products'].products %}
+          {% endif %}
+
+          {% for item in products limit: 5 %}
+            {% if template != 'product' or product.id != item.id %}
+              {% render 'ProductCard', item: item %}
+            {% endif %}
+          {% endfor %}
+
+        {% when 'blog' %}
+          {% assign articles = section.settings.products.articles %}
+
+          {% comment %}
+            {% for article in articles limit: 5 %}
+              {% render 'BlogCard', item: article, settings: section %}
+            {% endfor %}
+          {% endcomment %}
+
+          {% assign articles = section.settings.products.articles %}
+
+          {% assign tag_filters = section.settings.filter_tags %}
+          {% assign limit = 5 %}
+
+          {%- if tag_filters != empty -%}
+            {% assign limit = 50 %}
+          {%- endif -%}
+
+          {% assign max_results = 5 %}
+          {% assign result_count = 0 %}
+
+          {% for article in articles limit: limit %}
+            {% if tag_filters != empty %}
+              {% if result_count < max_results %}
+                {% assign filter_tags_array = tag_filters | split: ',' %}
+                {% assign include_article = false %}
+
+                {% for tag in filter_tags_array %}
+                  {% if article.tags contains tag %}
+                    {% assign include_article = true %}
+                  {% endif %}
+                {% endfor %}
+
+                {% if include_article %}
+                  {% render 'BlogCard', item: article, settings: section %}
+                  {% assign result_count = result_count | plus: 1 %}
+                {% endif %}
+              {% endif %}
+
+            {% else %}
+              {% render 'BlogCard', item: article, settings: section %}
+            {% endif %}
+          {% endfor %}
+      {% endcase %}
+    </div>
+    <div class="swiper-pagination type-{{ card }}"></div>
+  </div>
+</div>

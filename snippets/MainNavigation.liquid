@@ -1,0 +1,21 @@
+<div class="menu-listing">
+  {% for link in menu.links %}
+    <div class="menu-listing__item">
+      <a href="{{ link.url }}" class="{% if request.path == link.url %}active{% endif %}">
+        {{ link.title }}
+      </a>
+    </div>
+  {% endfor %}
+
+  <div class="menu-listing__item mobile">
+    {% assign user_url = '/account/login' %}
+
+    {% if customer %}
+      {% assign user_url = '/account' %}
+    {% endif %}
+
+    <a href="{{ user_url }}" class="{% if request.path == user_url %}active{% endif %}">
+      {{ 'customer.account.my_account' | t }}
+    </a>
+  </div>
+</div>

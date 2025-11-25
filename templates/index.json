@@ -1,0 +1,193 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "featured_image_hero_U7tQjE": {
+      "type": "FeaturedImageHero",
+      "blocks": {
+        "image_picker_TbYBwc": {
+          "type": "image_picker",
+          "settings": {
+            "title_one": "Premium Organic",
+            "title_two": "Moringa Oleifera",
+            "content": "Nourish your health from inside & out with our Premium Organic Moringa\nregeneratively farmed and ethically crafted on the volcanic foothills of Bali.",
+            "product": "organic-moringa-powder",
+            "banner": "shopify://shop_images/moringa_powder_6843067d-e069-4558-b277-7fa63b80b23d.png",
+            "banner_mobile": "shopify://shop_images/20250912_Product_MoringaPowder_Tin_45g.png"
+          }
+        },
+        "image_type_2_XFTqMR": {
+          "type": "image_type_2",
+          "settings": {
+            "title_one": "The first and only pure Moringa\ncapsules approved by BPOM\nas traditonal medicine**.",
+            "bagde": "shopify://shop_images/badge.png",
+            "bagde_desc": "No extracts. No fillers.\nJust 100% real moringa leaves,\nstem-free and nothing else.",
+            "content": "**As of June 9th, Treelogy's moringa capsules are the only\nproduct in Indonesia officially certified to contain pure\nmoringa leaf powder under BPOM Traditional Medicine.",
+            "content_mobile": "**As of June 9th, Treelogy's moringa capsules are the\nonly product in Indonesia officially certified to contain pure\nmoringa leaf powder under BPOM Traditional Medicine.",
+            "banner": "shopify://shop_images/Moringa-Capsules.png",
+            "banner_mobile": "shopify://shop_images/moringa-capsules-mobile-V2.png"
+          }
+        }
+      },
+      "block_order": [
+        "image_picker_TbYBwc",
+        "image_type_2_XFTqMR"
+      ],
+      "settings": {
+        "interval": 6000
+      }
+    },
+    "featured_products_riADma": {
+      "type": "FeaturedProducts",
+      "settings": {
+        "title": "Health From \nthe Inside & Out.",
+        "description": "At Treelogy, we elevate moringa into exceptional products, grown and crafted by us to deliver pure quality, complete transparency, and lasting well-being.",
+        "products": [
+          "organic-moringa-powder",
+          "organic-moringa-oil",
+          "organic-moringa-capsules",
+          "moringa-ritual-set"
+        ],
+        "button_label": "All Products",
+        "button_url": "shopify://collections/all"
+      }
+    },
+    "featured_text_nc4UFx": {
+      "type": "FeaturedText",
+      "settings": {
+        "title": "A Timeless Healer, Now \nBacked by Modern Science",
+        "description": "Moringa, nature’s quiet wonder, holds an unrivaled nutrient profile. Rooted in ancient traditions, it nourished civilizations for centuries. Today, science unveils its profound benefits—connecting timeless wisdom with modern well-being.",
+        "background": "shopify://shop_images/moringa-tree-in-pot.webp",
+        "title_mobile": "A Timeless Healer, Now\nBacked by Modern\nScience.",
+        "description_mobile": "Moringa, nature’s quiet wonder, holds\nan unrivaled nutrient profile. Rooted in\nancient traditions, it nourished\ncivilizations for centuries. Today,\nscience unveils its profound benefits—\nconnecting timeless wisdom with\nmodern well-being.",
+        "background_mobile": "shopify://shop_images/moringa-plant-in-clay-pot.jpg",
+        "button_label": "Discover Moringa",
+        "button_url": "shopify://pages/moringa-tree",
+        "box_container": false,
+        "text_position": "right"
+      }
+    },
+    "featured_comment_bTjTrP": {
+      "type": "FeaturedComment",
+      "blocks": {
+        "image_picker_GtNNd4": {
+          "type": "image_picker",
+          "settings": {
+            "thumb": "shopify://shop_images/treelogy-moringa-powder-45g-package.jpg",
+            "product": "organic-moringa-powder",
+            "user_name": "Sacha Aguila",
+            "user_comment": "Using moringa daily has been life-changing for my wellness."
+          }
+        },
+        "image_picker_QyH3md": {
+          "type": "image_picker",
+          "settings": {
+            "thumb": "shopify://shop_images/treelogy-moringa-powder-open-can.png",
+            "product": "organic-moringa-powder",
+            "user_name": "Samantha L.",
+            "user_comment": "I’ve been adding this to my morning smoothies for a month now, and I feel a noticeable difference in my energy levels. The taste is earthy but blends well with fruits. Love that it’s organic and packed with nutrients. Definitely a staple in my pantry now!"
+          }
+        },
+        "image_picker_hCC7WB": {
+          "type": "image_picker",
+          "settings": {
+            "thumb": "shopify://shop_images/treelogy-complete-moringa-ritual-set.jpg",
+            "product": "moringa-ritual-set",
+            "user_name": "James R.",
+            "user_comment": "This set is everything I needed to start my Moringa journey! The powder, capsules, and oil complement each other perfectly. I feel healthier, my skin looks more radiant, and I love the ritual of using all three products daily. Worth every penny!"
+          }
+        }
+      },
+      "block_order": [
+        "image_picker_GtNNd4",
+        "image_picker_QyH3md",
+        "image_picker_hCC7WB"
+      ],
+      "settings": {
+        "title": "They Speak About It Better Than Us",
+        "review_text": "4.8/5 based on 239 reviews"
+      }
+    },
+    "featured_text_FdJyJB": {
+      "type": "FeaturedText",
+      "settings": {
+        "title": "From Seed To You, Regeneratively Farmed, Ethically Crafted.",
+        "description": "From seed to you, we control every step. By farming and crafting our products ourselves, we deliver exceptional quality with complete transparency—so you know what you’re consuming, how it’s made, and the people behind it.",
+        "background": "shopify://shop_images/treelogy-natural-fiber-sorting-landscape.jpg",
+        "title_mobile": "From Seed To You, Regeneratively\nFarmed, Ethically Crafted.",
+        "description_mobile": "Moringa, nature’s quiet wonder, holds an unrivaled nutrient profile. Rooted in ancient traditions, it nourished civilizations for centuries. Today, science unveils its profound benefits—connecting timeless wisdom with modern well-being.",
+        "background_mobile": "shopify://shop_images/treelogy-natural-fiber-sorting.jpg",
+        "button_label": "Discover Moringa",
+        "button_url": "shopify://pages/farm",
+        "box_container": false,
+        "text_position": "left"
+      }
+    },
+    "virtual_content_7Rj8iJ": {
+      "type": "VirtualContent",
+      "blocks": {
+        "text_8rAKD3": {
+          "type": "text",
+          "settings": {
+            "title": "People Care",
+            "description": "We prioritize the well-being of everyone involved, from our farmers to you.  By farming and crafting ourselves, we guarantee premium quality, unmatched transparency, honest wages, and community empowerment."
+          }
+        },
+        "text_jYtgqh": {
+          "type": "text",
+          "settings": {
+            "title": "Earth Care",
+            "description": "We strive to work with Nature rather than against it. Our practices  foster a symbiotic relationship that enriches our ecosystem, making it more resilient and providing our Moringa, high-quality organic nutrients."
+          }
+        },
+        "text_CLRWqt": {
+          "type": "text",
+          "settings": {
+            "title": "Future Care",
+            "description": "Our holistic approach to nourish health by enriching the soil lays the groundwork for a better tomorrow. By transforming our farm into a regenerative incubator, we aim to create a ripple effect, empowering Indonesian farmers to join us."
+          }
+        }
+      },
+      "block_order": [
+        "text_8rAKD3",
+        "text_jYtgqh",
+        "text_CLRWqt"
+      ],
+      "settings": {
+        "title": "In Symbiosis with\nTri Hita Karana Philosophy.",
+        "button_title": "Discover Our Story",
+        "button_url": "shopify://pages/about-us",
+        "main_graphic": "shopify://shop_images/treelogy-sustainability-diagram.png"
+      }
+    },
+    "featured_blog_LeFg6M": {
+      "type": "FeaturedBlog",
+      "settings": {
+        "title": "Rooted in Wisdom, \nGrowing Through Knowledge.",
+        "description": "Explore the science of Moringa, discover recipes we love, and learn about our farm, factory, and well-being practices.",
+        "products": "news",
+        "button_label": "Discover All",
+        "button_url": "shopify://blogs/news",
+        "remove_button": false,
+        "filter_tags": "",
+        "remove_excerpt": false
+      }
+    }
+  },
+  "order": [
+    "featured_image_hero_U7tQjE",
+    "featured_products_riADma",
+    "featured_text_nc4UFx",
+    "featured_comment_bTjTrP",
+    "featured_text_FdJyJB",
+    "virtual_content_7Rj8iJ",
+    "featured_blog_LeFg6M"
+  ]
+}

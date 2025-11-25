@@ -1,0 +1,22 @@
+<div
+  class="free-shipping-progress"
+  data-free-shipping="{{ settings.min_shipping}}"
+>
+  <div class="free-shipping-progress-container">
+    <div class="free-shipping-progress-container-text">
+      <div id="first-text">{{ 'cart.progress.only_text' | t }}</div>
+      <div id="amount-to-get"></div>
+      <span id="progress-note">
+        {{ 'cart.progress.left_text' | t }}
+        <span class="label-note">{{ 'cart.progress.free_delivery_text' | t }}</span></span
+      >
+    </div>
+
+    <div class="free-shipping-progress-container-progress">
+      <div class="indicator">
+        <div class="bar"></div>
+      </div>
+      <div id="progress-content" class="item-list"></div>
+    </div>
+  </div>
+</div>

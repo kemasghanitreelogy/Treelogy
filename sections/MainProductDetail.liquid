@@ -1,0 +1,218 @@
+{% assign product_detail = product.metafields.custom.product_detail %}
+
+{%  comment %}
+  LUGUS : Hide the product detail for now because we're using FAQ at the moment. 
+  TODO : Show the product detail again when we would rework the product page. 
+  If you remove the line below, the product detail will be showed back. 
+{% endcomment %}
+{% assign product_detail = blank %}
+
+{%  comment %}
+  LUGUS : Filter product image by language : 
+
+  We use ALT text to filter product image by language.
+
+  Example of ALT text :
+  "LANG:EN|TRADITTIONAL ALT TEXT OF THE IMAGE"
+
+  This will display the image in English but not for all other languages.
+
+  The format to use is : 
+  "LANG:[ISO CODE]|[ALT TEXT]"
+{% endcomment %}
+
+<div class="main-grid product-detail-wrapper">
+  <div class="gallery-wrapper">
+    <div id="product-geallery-wrapper">
+      <div class="media-gallery sticky desktop">
+        {% for image in product.images %}
+
+          {% assign image_alt = image.alt | escape %}
+
+          {% if image.alt contains 'LANG:' %} 
+            {% assign image_alt = image.alt | split : "|" | last %}
+            {% assign language_code = image.alt | split : "|" | first | remove: "LANG:" | downcase %}
+
+            {% if language_code != request.locale.iso_code %}
+              {% continue %}
+            {% endif %}
+          {% endif %}
+
+          <a href="{{ image.src | img_url: '1440x' }}">
+            <img src="{{ image.src | img_url: 'compact' }}" alt="{{ image.alt | escape }}">
+          </a>
+        {% endfor %}
+      </div>
+      <div class="main-image sticky">
+        <div class="wrapper">
+          <div class="main-image-wrapper">
+            {% for image in product.images %}
+              {% assign image_alt = image.alt | escape %}
+
+              {% if image.alt contains 'LANG:' %}
+                {% assign image_alt = image.alt | split : "|" | last %}
+                {% assign language_code = image.alt | split : "|" | first | remove: "LANG:" | downcase %}
+
+                {% if language_code != request.locale.iso_code %}
+                  {% continue %}
+                {% endif %}
+              {% endif %}
+
+              <img src="{{ image.src | img_url: '1440x' }}" alt="{{ image_alt  }}">
+              
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% assign free_product = settings.free_product.id %}
+
+  <div class="detail" id="product-detail-content">
+    <div class="rating body-mobile">{% render 'Rating' %}</div>
+    <h1>{{ product.title }}</h1>
+    {% render 'ProductTags' %}
+    {% render 'ProductVideos' %}
+    <div class="body-desk description">{{ product.description }}</div>
+    <div class="variant-button">
+      {% if free_product != product.id %}
+        {% render 'VariantsButton', product: product %}
+      {% endif %}
+      {% comment %}
+        {% if section.settings.note or section.settings.note_image %}
+          <div class="note">
+            {{ section.settings.note }}
+            {% render 'Image', image: section.settings.note_image %}
+          </div>
+        {% endif %}
+      {% endcomment %}
+    </div>
+
+    {% if free_product != product.id %}
+      <form action="/cart/add" method="post" enctype="multipart/form-data" id="AddToCartForm">
+        <select name="id" id="productSelect">
+          {% for variant in product.variants %}
+            {% if variant.available %}
+              <option value="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money_with_currency }}</option>
+            {% else %}
+              <option disabled="disabled">{{ variant.title }} - sold out</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+
+        {% assign default_variant = product.variants[0].id %}
+
+        {% for variant in product.variants %}
+          {% assign set_default_varaint = variant.metafields.custom.set_default %}
+
+          {%- if set_default_varaint -%}
+            {% assign default_variant = variant.id %}
+          {%- endif -%}
+        {% endfor %}
+
+        <input type="hidden" id="Quantity" name="quantity" value="1" min="1" max="1">
+        <button
+          data-variant="{{ default_variant }}"
+          type="submit"
+          class="button button-quick-add-cart"
+          name="add"
+          id="AddToCart"
+        >
+          {{ 'products.general.add_to_cart' | t }}
+        </button>
+      </form>
+    {% endif %}
+    {% if product_detail.value.count > 0 %}
+      <div class="product-detail-wrapper__list-description __accordion">
+        {% for item in product_detail.value %}
+          <div class="item __accordion-wrapper">
+            <div class="button h3 __accordion-button">
+              {{ item.title }}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 12">
+                <path fill="#2B3C35" d="M7 5V0H5v5H0v2h5v5h2V7h5V5H7Z"/>
+              </svg>
+            </div>
+            <div class="description __accordion-content">
+              {{ item.description | metafield_tag }}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    <div class="payment">
+      <div class="payment-title">{{ section.settings.payment_title }}</div>
+      <div class="payment-image desktop">
+        {% render 'Image', image: section.settings.payment_list %}
+      </div>
+      <div class="payment-image mobile">
+        {% assign mobile_image = section.settings.payment_list_mob | default: section.settings.payment_list %}
+        {% render 'Image', image: mobile_image %}
+      </div>
+    </div>
+  </div>
+</div>
+{% comment %}
+  <div style="clear:both"></div>
+  <div
+    id="judgeme_product_reviews"
+    class="jdgm-widget jdgm-review-widget"
+    data-product-title="{{ product.title | escape }}"
+    data-id="{{ product.id }}"
+    data-auto-install="false"
+  >
+    {{ product.metafields.judgeme.widget }}
+  </div>
+{% endcomment %}
+{% schema %}
+{
+  "name": "Product single",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "payment_title",
+      "label": "Payments title"
+    },
+    {
+      "type": "image_picker",
+      "id": "payment_list",
+      "label": "Payments image desktop"
+    },
+
+    {
+      "type": "image_picker",
+      "id": "payment_list_mob",
+      "label": "Payments image mobile"
+    },
+
+    {
+      "type": "header",
+      "content": "Note"
+    },
+
+    {
+      "type": "text",
+      "id": "note",
+      "label": "Note"
+    },
+
+    {
+      "type": "image_picker",
+      "id": "note_image",
+      "label": "Note image"
+    }
+  ],
+
+  "presets": [
+    {
+      "name": "Product single"
+    }
+  ]
+}
+{% endschema %}
+
+<script>
+  const customPriceDiscount = document.querySelectorAll('.custom-discount-price');
+</script>

@@ -1,0 +1,9 @@
+{% assign image_path = 'placeholder.png' | asset_url %}
+{% assign image_width = width %}
+{% assign image_height = height %}
+
+{% if image %}
+  {% assign image_path = image | image_url %}
+{% endif %}
+
+<img src="{{ image_path }}" width="{{ image_width | default: "auto" }}" height="{{ image_height| default: "auto" }}">

@@ -1,0 +1,62 @@
+{% assign card_detail = product.metafields.custom.how_to_use %}
+{% if card_detail != blank %}
+  <div class="inner">
+    <div class="header">
+      <h3 class="h1 title">
+        {{ section.settings.title }}
+      </h3>
+    </div>
+
+    <div class="content">
+      <div class="items">
+        {% for card in card_detail.value %}
+          <div class="card">
+            {% render 'Image', image: card.thumb %}
+
+            <div class="detail">
+              <div class="title">
+                {{ card.title }}
+              </div>
+              <div class="desc">
+                {{ card.description }}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+<style>
+  #shopify-section-{{ section.id }}{
+    background: {{ section.settings.bakground_color | default: '#FFFFFF' }}
+  }
+</style>
+
+{% schema %}
+{
+  "name": "How To",
+  "tag": "section",
+  "class": "section how-to-use main-grid",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+
+    {
+      "type": "color",
+      "id": "bakground_color",
+      "label": "Background"
+    }
+  ],
+
+  "presets": [
+    {
+      "name": "How to Use"
+    }
+  ]
+}
+{% endschema %}

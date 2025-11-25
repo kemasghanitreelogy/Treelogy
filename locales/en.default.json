@@ -1,0 +1,232 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "shopify": {
+    "checkout": {
+      "general": {
+        "errors": {
+          "payment": {
+            "shop_cash_not_found": "Shop Cash not found."
+          }
+        }
+      },
+      "delivery_options": {
+        "free_total_label": "Provided"
+      }
+    }
+  },
+  "customer_accounts": {
+    "payment_methods": {
+      "google_pay": {
+        "iframe_title_accessibility_label": "Add Google Pay payment method",
+        "loading_accessibility_message": "Loading Google Pay"
+      },
+      "pay_pal": {
+        "iframe_title_accessibility_label": "Add PayPal payment method",
+        "loading_accessibility_message": "Loading PayPal"
+      }
+    }
+  },
+  "general": {
+    "404": {
+      "title": "Not found",
+      "subtext_html": "The page you were looking for does not exist"
+    },
+    "search": {
+      "submit": "search",
+      "no_results": "no results"
+    },
+    "copyright": "© Copyright Treelogy 2024. All Rights Reserved.",
+    "buttons": {
+      "add_to_cart": "Add to Cart"
+    }
+  },
+  "cart": {
+    "title": "Cart",
+    "checkout_button_label": "Check Out",
+    "empty_cart_text": "Cart is empty",
+    "you_will_alo_like": "You will also like",
+    "subtotal_label": "Subtotal",
+    "progress": {
+      "only_text": "Only",
+      "left_text": "left for",
+      "all_set": "All set!",
+      "free_delivery_text": "free delivery"
+    },
+    "general": {
+      "title": "Order Summary",
+      "subtotal": "Subtotal",
+      "shipping": "Shipping",
+      "shipping_estimated": "Shipping to be estimated",
+      "total": "Total",
+      "empty": "Cart is empty", 
+      "checkout": "Check Out"
+    },
+    "upselling": {
+      "title": "You will also like"
+    }
+  },
+  "checkout": {
+    "login": {
+      "title": "Login to Your Account to Continue Checkout",
+      "continue_without": "or continue check out without Account",
+      "continue_without_mobile": "Continue without Account"
+    }
+  },
+  "customer": {
+    "login": {
+      "title": "Login to Your Account to Continue Checkout",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Login",
+      "keep_signed_in": "Keep me signed in",
+      "forgot_password": "Forgot your password?",
+      "no_account": "Don't have an account?",
+      "sign_up": "Sign up now"
+    },
+    "recover": {
+      "email": "Your email",
+      "submit": "Submit",
+      "note": "We will send you an email to reset your password"
+    },
+    "account": {
+      "title": "Account Details",
+      "logout": "Logout",
+      "name": "Name",
+      "birthday": "Birthday",
+      "email": "Email",
+      "address": "Address",
+      "view_addresses": "View Addresses",
+      "order_history": "Order History",
+      "no_orders": "You haven't placed any orders yet.",
+      "my_account": "My Account"
+    },
+    "orders": {
+      "order": "Order",
+      "date": "Date",
+      "payment_status": "Payment Status",
+      "fulfillment_status": "Fulfillment Status",
+      "total": "Total"
+    }
+  },
+  "products": {
+    "general": {
+      "from": "From",
+      "about_product": "About this Product",
+      "add_to_cart": "Add to Cart",
+      "shop_now": "Shop Now"
+    },
+    "featured": {
+      "title": "Featured Products"
+    }
+  },
+  "reviews": {
+    "title": "Reviews",
+    "write_review": "Write a Review"
+  },
+  "articles": {
+    "read_full_article": "Read Full Article"
+  },
+  "collections": {
+    "all_products": "All Products",
+    "discover_all": "Discover All"
+  },
+  "forms": {
+    "general": {
+      "email": "Email"
+    },
+    "newsletter": {
+      "success": "Thank you for subscribing! Stay tuned for our latest updates.",
+      "privacy_accept": "I accept the privacy policy"
+    }
+  },
+  "form": {
+    "login_title": "Login to continue checkout",
+    "login_continue_dekstop": "or continue check out without Account",
+    "login_continue_mobile": "Continue without Account",
+    "keep_signedin": "Keep me signed in",
+    "forgot_pass": "Forgot password?",
+    "reset_note": "We will send you an email to reset your password",
+    "dont_have_account": "Don't have an account?",
+    "sign_up_now": "Sign up now",
+    "sign_up": "Sign up",
+    "login_button": "Login",
+    "crafting_lifestyle": "Crafting A Healthy Regenerative Lifestyle",
+    "firs_name": "First Name",
+    "last_name": "Last Name",
+    "birthday": "Birthday",
+    "phone_number": "Phone Number",
+    "already_have_an_account": "Already have an account?",
+    "your_email": "Your email",
+    "submit": "Submit"
+  },
+  "shipping": {
+    "free_shipping": {
+      "only": "Only",
+      "left_for": "left for",
+      "free_delivery": "free delivery"
+    }
+  },
+  "faq": {
+    "category": "Category",
+    "question": "Question"
+  },
+  "addresses": {
+    "title": "Addresses",
+    "return_to_account": "Return to account",
+    "default_address": "Default Address"
+  },
+  "activate": {
+    "password": "Password",
+    "password_confirmation": "Password Confirmation",
+    "activate_account": "Activate Account",
+    "or": "or",
+    "decline_invitation": "Decline Invitation"
+  },
+  "benefits": {
+    "nutrition": "Nutrition",
+    "antioxidant": "Antioxidant",
+    "immunity": "Immunity",
+    "detoxification": "Detoxification",
+    "regeneration": "Regeneration"
+  },
+  "address": {
+    "country_region": "Country/ Region",
+    "first_name": "First Name",
+    "last_name_optional": "Last Name (Optional)",
+    "company_address": "Company Address",
+    "address": "Address",
+    "apartment": "Apartment, suite, etc. (optional)",
+    "city": "City",
+    "postal_code": "Postal Code",
+    "phone": "Phone",
+    "default_address": "Default Address",
+    "submit": "submit"
+  },
+  "register": {
+    "title": "Crafting A Healthy Regenerative Lifestyle",
+    "first_name": "First Name",
+    "last_name": "Last Name",
+    "email": "email",
+    "password": "Password",
+    "phone_number": "Phone Number",
+    "submit": "Sign-up",
+    "already_have_account": "Already have an account?",
+    "login": "Login"
+  },
+  "search": {
+    "placeholder": "Search"
+  }, 
+  "blogs": {
+    "general": {
+      "recent_posts": "Recent Posts"
+    }
+  }
+}

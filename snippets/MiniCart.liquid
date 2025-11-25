@@ -1,0 +1,53 @@
+<div class="mini-cart">
+  <div class="overlay"></div>
+  <div class="mini-cart-wrapper">
+    <div class="cart-page min-cart-template up-selling">
+      <div class="cart-header">
+        <div>{{ 'cart.you_will_alo_like' | t }}</div>
+      </div>
+      <div class="cart swiper">
+        {% if up_selling != null %}
+          <div class="swiper-wrapper">
+            {% for product in up_selling %}
+              <div
+                class="card swiper-slide upsel-product-cart"
+                id="upsel-product-{{ product.id }}"
+                style="display: none;"
+              >
+                <div class="card-thumb">
+                  <img
+                    src="{{ product.media.first | img_url: '100x' }}"
+                    alt="{{ product.title | escape }}"
+                    width="100"
+                    height="100"
+                  >
+                </div>
+                <div class="card-detail">
+                  {% render 'Rating', product: product %}
+                  <div class="body-mobile">
+                    {{ product.title }}
+                  </div>
+                  {% render 'PriceFormat', product: product %}
+                </div>
+                <div
+                  class="button-add button-quick-add-cart button-cart-icon"
+                  data-variant="{{ product.variants.first.id }}"
+                >
+                  <svg width="32" height="33" viewBox="0 0 32 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect y="0.5" width="32" height="32" rx="16" fill="#56734F"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12.7095 16.9997H20.082L20.3525 15.4998H21.368L20.918 17.9997H12.827L12.8925 18.5577C12.9067 18.6794 12.9651 18.7916 13.0567 18.8731C13.1482 18.9546 13.2665 18.9996 13.389 18.9997H20V19.9996H13.389C13.0217 19.9994 12.6672 19.8645 12.3928 19.6204C12.1183 19.3763 11.943 19.0399 11.9 18.6752L11.1075 11.9414C11.0932 11.8198 11.0347 11.7077 10.9432 11.6263C10.8517 11.5449 10.7335 11.5 10.611 11.5H10V10.5H10.611C10.9782 10.5002 11.3327 10.635 11.6071 10.879C11.8815 11.1231 12.0569 11.4593 12.1 11.8239L12.121 11.9999H17V12.9999H12.239L12.7095 16.9997ZM14.5 21.5C14.5 22.0523 14.0523 22.5 13.5 22.5C12.9477 22.5 12.5 22.0523 12.5 21.5C12.5 20.9478 12.9477 20.5001 13.5 20.5001C14.0523 20.5001 14.5 20.9478 14.5 21.5ZM18.5 22.5C19.0523 22.5 19.5 22.0523 19.5 21.5C19.5 20.9478 19.0523 20.5001 18.5 20.5001C17.9477 20.5001 17.5 20.9478 17.5 21.5C17.5 22.0523 17.9477 22.5 18.5 22.5ZM20.5 10.5V11.9999H22V12.9999H20.5V14.4998H19.5V12.9999H18V11.9999H19.5V10.5H20.5Z" fill="#F8F8F2"/>
+                  </svg>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    <div id="cart"></div>
+  </div>
+</div>
+
+<script>
+  const minShipping = {{ settings.min_shipping | default: 1000000 }}
+</script>

@@ -1,0 +1,66 @@
+{% assign featured_product = article.metafields.custom.featured_product.value %}
+<div class="main-grid post-single" id="post-detail">
+  <div class="post-detail">
+    <div class="header">
+      <div class="tags technical">
+        <div class="tag">{{ article.tags | join: ',' }}</div>
+        {% render 'Date', date: article.published_at %}
+      </div>
+      <h1>{{ article.title }}</h1>
+    </div>
+    <div class="content">
+      {{ article.content }}
+    </div>
+    {% if featured_product %}
+      <div class="featrued-product">
+        <div class="thumb">
+          {%- assign thumb = featured_product.media.first -%}
+          {% render 'Image', image: thumb %}
+        </div>
+        <div class="content">
+          <div class="sub-head top">Best Seller</div>
+          {% render 'Rating', product: featured_product %}
+          <div class="sub-head-alt prod-title">{{ featured_product.title }}</div>
+          <div class="body-desk exerpt">
+            {{ featured_product.content | strip_html | truncate: '125' }}
+          </div>
+          {% capture button_title %}
+            {{ 'products.general.shop_now' | t }}
+          {% endcapture %}
+          {% render 'PrimaryButton', url: featured_product.url, title: button_title %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+  <div class="related-post">
+    <div id="related-post">
+      <div class="header sub-head">Related Post</div>
+      <div class="list">
+        {% for tag in article.tags %}
+          {% assign counter = 0 %}
+          {% assign skip_articles = article.handle | split: '.....' %}
+          {% for related_article in blog.articles %}
+            {% if related_article.tags contains tag and counter < 6 %}
+              {% unless skip_articles contains related_article.handle %}
+                {% assign counter = counter | plus: 1 %}
+                {% assign temp = related_article.handle | split: '.....' %}
+                {% assign skip_articles = skip_articles | concat: temp %}
+                <a href="{{ related_article.url }}" class="list-item">
+                  <div class="thumb">
+                    {%- render 'Image', image: related_article.image -%}
+                  </div>
+                  <div class="content">
+                    <h3 class="sub-head">{{ related_article.title | truncate: '54' }}</h3>
+                    <div class="tag body-mobile">
+                      {{ related_article.tags | join: ',' }}
+                    </div>
+                  </div>
+                </a>
+              {% endunless %}
+            {% endif %}
+          {% endfor %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>

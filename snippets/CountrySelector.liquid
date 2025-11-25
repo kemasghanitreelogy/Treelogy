@@ -1,0 +1,23 @@
+<div class="country-selector selector-wrapper">
+  {% for country in localization.available_languages %}
+    {% assign country_code = localization.language.iso_code | downcase %}
+    {% if country.iso_code == country_code %}
+      <div class="button">
+        {{ country.name }}
+        {% render 'ArrowDown' %}
+      </div>
+    {% endif %}
+  {% endfor %}
+
+  <div class="list">
+    {% for country in localization.available_languages %}
+      {% assign country_code = localization.language.iso_code | downcase %}
+      <a
+        href="{% if country.iso_code == "en" %} / {% else %} /{{  country.iso_code }} {% endif %}"
+        class="{% if country.iso_code == country_code %}selected{% endif %} list-item"
+      >
+        {{ country.name }}
+      </a>
+    {% endfor %}
+  </div>
+</div>

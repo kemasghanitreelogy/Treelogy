@@ -1,0 +1,36 @@
+{
+  "sections": {
+    "main": {
+      "type": "ArticleDetail",
+      "settings": {}
+    },
+    "featured_blog_EpTEFP": {
+      "type": "FeaturedBlog",
+      "settings": {
+        "title": "Inspiration You Can Try",
+        "description": "Explore delicious recipes for drinks and dishes crafted with our Premium Organic Moringa.",
+        "products": "news",
+        "button_label": "",
+        "button_url": "",
+        "remove_button": true,
+        "filter_tags": "Recipe",
+        "remove_excerpt": true
+      }
+    },
+    "featured_products_tpKqcz": {
+      "type": "FeaturedProducts",
+      "settings": {
+        "title": "Shop Our Harvest",
+        "description": "Discover what fits your routine and experience the powerful benefits of moringa with Treelogy's premium, handcrafted products.",
+        "products": [],
+        "button_label": "All Products",
+        "button_url": "https:\/\/treelogy.com\/collections\/all"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "featured_blog_EpTEFP",
+    "featured_products_tpKqcz"
+  ]
+}

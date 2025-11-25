@@ -1,0 +1,89 @@
+<div class="main-grid">
+  <div class="header">
+    <h2 class="h1">{{ section.settings.title }}</h2>
+    <div class="description body-desk">
+      {{ section.settings.description }}
+    </div>
+  </div>
+  <div class="crew swiper">
+    <div class="crew-slider swiper-wrapper">
+      {% for block in section.blocks %}
+        <div class="swiper-slide crew-item">
+          <div class="crew-item-wrapper">
+            {% render 'Image', image: block.settings.portrait %}
+            <div class="detail">
+              <h5 class="body-mobile">{{ block.settings.position }}</h5>
+              <h3 class="sub-head">{{ block.settings.title }}</h3>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="navigation">
+      <div class="swiper-button-prev nav-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 16">
+          <path fill="#F8F8F2" d="M2.243 16 .5 14.313 7.034 8 .5 1.687 2.248 0l6.529 6.313C9.24 6.761 9.5 7.367 9.5 8s-.26 1.24-.723 1.687L2.243 16Z"/>
+        </svg>
+      </div>
+      <div class="swiper-button-next nav-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 16">
+          <path fill="#F8F8F2" d="M2.243 16 .5 14.313 7.034 8 .5 1.687 2.248 0l6.529 6.313C9.24 6.761 9.5 7.367 9.5 8s-.26 1.24-.723 1.687L2.243 16Z"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Crew carousel",
+  "tag": "section",
+  "class": "section crew-carousel",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "The Regenerators"
+    },
+
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Each face you scroll through is not just a farmer, but a change-maker in the art of regenerative agriculture. They're the pulse of Treelogy, dedicated to a future where wellness and sustainability are inseparable. As you discover their portraits, know that you're meeting the very people who breathe life into our mission—each nurturing the Earth, your health, and a legacy for generations to come."
+    }
+  ],
+
+  "blocks": [
+    {
+      "type": "image_picker",
+      "name": "Crew",
+      "settings": [
+        {
+          "type": "text",
+          "id": "position",
+          "label": "Position"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Name"
+        },
+
+        {
+          "type": "image_picker",
+          "id": "portrait",
+          "label": "Portrait"
+        }
+      ]
+    }
+  ],
+
+  "presets": [
+    {
+      "name": "Crew Carousel"
+    }
+  ]
+}
+{% endschema %}

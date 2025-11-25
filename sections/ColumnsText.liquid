@@ -1,0 +1,56 @@
+<div class="main-grid">
+  <div class="cards">
+    {% for item in section.blocks %}
+      <div class="cards-item">
+        <div class="thumb">
+          {% if item.settings.thumb %}
+            {% render 'Image', image: item.settings.thumb %}
+          {% endif %}
+        </div>
+        <div class="content">
+          <h5 class="sub-head">{{ item.settings.title }}</h5>
+          <div class="body-desk">{{ item.settings.description }}</div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% schema %}
+{
+  "name": "3 column card",
+  "tag": "section",
+  "class": "section column-card",
+  "settings": [],
+  "blocks": [
+    {
+      "limit": 3,
+      "type": "image_picker",
+      "name": "List",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description"
+        },
+
+        {
+          "type": "image_picker",
+          "id": "thumb",
+          "label": "Thumbnail"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "3 column card"
+    }
+  ]
+}
+{% endschema %}
