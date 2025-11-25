@@ -1,0 +1,10 @@
+{
+  "sections": {
+    "main": {
+      "type": "page-1212-main",
+      "settings": {},
+      "blocks": {}
+    }
+  },
+  "order": ["main"]
+}
