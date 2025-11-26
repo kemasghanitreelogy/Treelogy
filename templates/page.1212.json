@@ -1,10 +1,1 @@
-{
-  "sections": {
-    "main": {
-      "type": "page-1212-main",
-      "settings": {},
-      "blocks": {}
-    }
-  },
-  "order": ["main"]
-}
+{"sections":{"main":{"type":"DefaultContent","settings":{}},"featured_products_yRy7Tm":{"type":"FeaturedProducts","name":"Featured Products","settings":{"title":"Cannot wait ?","description":"Discover what fits your routine and experience the powerful benefits of moringa with Treelogy's premium, handcrafted products.","products":[],"button_label":"","button_url":""}}},"order":["main","featured_products_yRy7Tm"]}
