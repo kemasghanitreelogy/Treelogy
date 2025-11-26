@@ -1,1 +1,44 @@
-{"sections":{"main":{"type":"DefaultContent","settings":{}},"featured_products_yRy7Tm":{"type":"FeaturedProducts","name":"Featured Products","settings":{"title":"Cannot wait ?","description":"Discover what fits your routine and experience the powerful benefits of moringa with Treelogy's premium, handcrafted products.","products":[],"button_label":"","button_url":""}}},"order":["main","featured_products_yRy7Tm"]}
+{
+  "sections": {
+    "text_plain_P37YDD": {
+      "type": "TextPlain",
+      "blocks": {
+        "text_block_FPQqBx": {
+          "type": "text_block",
+          "settings": {
+            "block_title": "",
+            "block_content": "<p>A Gift of Real Regeneration. Secure your Hari Ibu gifts early. Shop our limited regeneration sets privately from December 9th, three days before the public rush.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "text_block_FPQqBx"
+      ],
+      "name": "Text Plain",
+      "settings": {
+        "title": "<p>12.12 For you.  For mother.  For her.</p>",
+        "description": "",
+        "text_alignment": "center",
+        "button_label": "",
+        "button_url": "",
+        "margin_top": 50,
+        "margin_bottom": 40
+      }
+    },
+    "featured_products_yRy7Tm": {
+      "type": "FeaturedProducts",
+      "name": "Featured Products",
+      "settings": {
+        "title": "Cannot wait ?",
+        "description": "Discover what fits your routine and experience the powerful benefits of moringa with Treelogy's premium, handcrafted products.",
+        "products": [],
+        "button_label": "",
+        "button_url": ""
+      }
+    }
+  },
+  "order": [
+    "text_plain_P37YDD",
+    "featured_products_yRy7Tm"
+  ]
+}

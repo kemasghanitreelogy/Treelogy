@@ -1,0 +1,211 @@
+<div class="countdown-section">
+  <div class="countdown-wrapper">
+    <div class="countdown-item">
+      <div class="countdown-label">DAYS</div>
+      <div class="countdown-value" data-days>00</div>
+    </div>
+    <div class="countdown-item">
+      <div class="countdown-label">HOURS</div>
+      <div class="countdown-value" data-hours>00</div>
+    </div>
+    <div class="countdown-item">
+      <div class="countdown-label">MINUTES</div>
+      <div class="countdown-value" data-minutes>00</div>
+    </div>
+    <div class="countdown-item">
+      <div class="countdown-label">SECONDS</div>
+      <div class="countdown-value" data-seconds>00</div>
+    </div>
+  </div>
+  
+  {% if section.settings.description != blank %}
+    <div class="countdown-description">
+      {{ section.settings.description }}
+    </div>
+  {% endif %}
+  
+  {% if section.settings.footer_text != blank %}
+    <div class="countdown-footer">
+      {{ section.settings.footer_text }}
+    </div>
+  {% endif %}
+</div>
+
+<script>
+  (function() {
+    const targetMinutes = {{ section.settings.countdown_minutes }};
+    const endTime = Date.now() + (targetMinutes * 60 * 1000);
+    
+    const days = document.querySelector('[data-days]');
+    const hours = document.querySelector('[data-hours]');
+    const minutes = document.querySelector('[data-minutes]');
+    const seconds = document.querySelector('[data-seconds]');
+    
+    function pad(n) {
+      return n < 10 ? '0' + n : n;
+    }
+    
+    function update() {
+      const now = Date.now();
+      const diff = endTime - now;
+      
+      if (diff <= 0) {
+        days.textContent = '00';
+        hours.textContent = '00';
+        minutes.textContent = '00';
+        seconds.textContent = '00';
+        return;
+      }
+      
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff % 86400000) / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      
+      days.textContent = pad(d);
+      hours.textContent = pad(h);
+      minutes.textContent = pad(m);
+      seconds.textContent = pad(s);
+    }
+    
+    update();
+    setInterval(update, 1000);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Countdown Timer",
+  "settings": [
+    {
+      "type": "number",
+      "id": "countdown_minutes",
+      "label": "Countdown Duration (minutes)",
+      "default": 14400,
+      "info": "Enter total minutes. Example: 14400 = 10 days"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>* Required Field. Public access begins Dec 12. Private access opens Dec 9 at 10:00 AM WIB.</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "footer_text",
+      "label": "Footer Text",
+      "default": "<p>By submitting this form, you agree to receive Treelogy updates and marketing messages by email or WhatsApp. Consent is not a condition of purchase. You can unsubscribe at any time by replying STOP or using the link provided. Our Privacy Policy and Terms apply.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Styling"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#f5f5f0"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "Countdown Timer"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+.countdown-section {
+  background-color: {{ section.settings.background_color }};
+  color: {{ section.settings.text_color }};
+  padding: {{ section.settings.padding_top }}px 20px {{ section.settings.padding_bottom }}px;
+  text-align: center;
+}
+
+.countdown-wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  max-width: 800px;
+  margin: 0 auto 30px;
+  flex-wrap: wrap;
+}
+
+.countdown-item {
+  min-width: 100px;
+}
+
+.countdown-label {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.countdown-value {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.countdown-description {
+  max-width: 800px;
+  margin: 0 auto 20px;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.countdown-footer {
+  max-width: 900px;
+  margin: 0 auto;
+  font-size: 14px;
+  line-height: 1.6;
+  opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+  .countdown-wrapper {
+    gap: 20px;
+  }
+  
+  .countdown-item {
+    min-width: 80px;
+  }
+  
+  .countdown-value {
+    font-size: 36px;
+  }
+  
+  .countdown-label {
+    font-size: 12px;
+  }
+}
+{% endstylesheet %}

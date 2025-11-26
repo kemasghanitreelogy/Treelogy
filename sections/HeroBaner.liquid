@@ -1,0 +1,115 @@
+<section 
+    id="hero-{{ section.id }}" 
+    class="hero-section"
+    style="margin-top: {{ section.settings.margin_top }}px; margin-bottom: {{ section.settings.margin_bottom }}px;"
+>
+  {% if section.settings.image != blank %}
+    <picture>
+      {% if section.settings.image_mobile != blank %}
+        <source
+          media="(max-width: 767px)"
+          srcset="
+            {{ section.settings.image_mobile | image_url: width: 400 }} 400w,
+            {{ section.settings.image_mobile | image_url: width: 600 }} 600w,
+            {{ section.settings.image_mobile | image_url: width: 800 }} 800w
+          "
+          sizes="100vw"
+        >
+      {% endif %}
+      <img
+        src="{{ section.settings.image | image_url: width: 1920 }}"
+        srcset="
+          {{ section.settings.image | image_url: width: 800 }} 800w,
+          {{ section.settings.image | image_url: width: 1200 }} 1200w,
+          {{ section.settings.image | image_url: width: 1600 }} 1600w,
+          {{ section.settings.image | image_url: width: 2000 }} 2000w
+        "
+        sizes="100vw"
+        alt="{{ section.settings.alt | escape }}"
+        {% if section.settings.loading_priority %}
+          fetchpriority="high"
+        {% else %}
+          loading="lazy"
+        {% endif %}
+        width="{{ section.settings.image.width }}"
+        height="{{ section.settings.image.height }}"
+        class="hero-image"
+      >
+    </picture>
+  {% else %}
+    <div class="hero-placeholder">
+      {{ 'image' | placeholder_svg_tag }}
+    </div>
+  {% endif %}
+</section>
+
+{% schema %}
+{
+  "name": "Hero Image Only",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Mobile image (optional)"
+    },
+    {
+      "type": "text",
+      "id": "alt",
+      "label": "Image alt text",
+      "default": "Hero image"
+    },
+    {
+      "type": "checkbox",
+      "id": "loading_priority",
+      "label": "High priority loading (above the fold)",
+      "default": true,
+      "info": "Enable for hero images visible on page load"
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "label": "Margin Top",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "label": "Margin Bottom",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Image Only"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+#hero-{{ section.id }} .hero-image {
+  width: 100%;
+  display: block;
+  height: auto;
+  object-fit: cover;
+}
+
+#hero-{{ section.id }} .hero-placeholder {
+  width: 100%;
+  height: 400px;
+  background: #f4f4f4;
+}
+{% endstylesheet %}
