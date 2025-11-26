@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "text_plain_P37YDD": {
@@ -35,10 +44,120 @@
         "button_label": "",
         "button_url": ""
       }
+    },
+    "text_plain_NgCBTx": {
+      "type": "TextPlain",
+      "blocks": {
+        "text_block_jWeTtQ": {
+          "type": "text_block",
+          "settings": {
+            "block_title": "<p>Guaranteed Availability</p>",
+            "block_content": "<p>To preserve the quality & freshness of our moringa and the wellbeing of our farm and factory teams, this list unlocks early access to the first 600 orders out of a strictly limited 3,000.</p>"
+          }
+        },
+        "text_block_FLcC7b": {
+          "type": "text_block",
+          "settings": {
+            "block_title": "<p>On-time Delivery</p>",
+            "block_content": "<p>Your order ships first, ensuring it arrives perfectly in time for Hari Ibu (Dec 22) without the usual 12.12 logistics delays.</p>"
+          }
+        },
+        "text_block_4bPp8d": {
+          "type": "text_block",
+          "settings": {
+            "block_title": "<p>Exclusive Offers</p>",
+            "block_content": "<p>Unlock exclusive pricing on our three holiday bundles (saving up to 20%).</p>"
+          }
+        }
+      },
+      "block_order": [
+        "text_block_jWeTtQ",
+        "text_block_FLcC7b",
+        "text_block_4bPp8d"
+      ],
+      "name": "Text Plain",
+      "settings": {
+        "title": "<p>Why Join The Waiting List?</p>",
+        "description": "",
+        "text_alignment": "center",
+        "button_label": "",
+        "button_url": "",
+        "margin_top": 50,
+        "margin_bottom": 50
+      }
+    },
+    "text_plain_MDTpgy": {
+      "type": "TextPlain",
+      "blocks": {
+        "text_block_UqEPyB": {
+          "type": "text_block",
+          "settings": {
+            "block_title": "<p>III. The Discovery Pack </p>",
+            "block_content": "<p>For the woman starting her journey. Our most requested collection for a reason. The complete \"Inside & Out\" experience, combining Skin, Gut, and Energy support in one essential set.</p>"
+          }
+        },
+        "text_block_N9Te6H": {
+          "type": "text_block",
+          "settings": {
+            "block_title": "<p>II. The Ritual of Radiance </p>",
+            "block_content": "<p>For the woman who deserves a pause. Our signature Bamboo Ritual Set. A complete sensory experience for those who value the process as much as the result.</p>"
+          }
+        },
+        "text_block_pYKafh": {
+          "type": "text_block",
+          "settings": {
+            "block_title": "<p>I. The Movement & Relief Set </p>",
+            "block_content": "<p>For the woman seeking physical comfort. A potent pairing of our Capsules and Oil. Designed to help with joint stiffness, deep tissue relief, and daily mobility.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "text_block_UqEPyB",
+        "text_block_N9Te6H",
+        "text_block_pYKafh"
+      ],
+      "name": "Text Plain",
+      "settings": {
+        "title": "<p>12.12 Hari Ibu Bundles</p>",
+        "description": "",
+        "text_alignment": "center",
+        "button_label": "",
+        "button_url": "",
+        "margin_top": 0,
+        "margin_bottom": 0
+      }
+    },
+    "hero_baner_M9ERdV": {
+      "type": "HeroBaner",
+      "name": "Hero Image Only",
+      "settings": {
+        "image": "shopify://shop_images/SON00317_1.webp",
+        "alt": "Hero image",
+        "loading_priority": false,
+        "margin_top": 40,
+        "margin_bottom": 40
+      }
+    },
+    "text_plain_HB4mkx": {
+      "type": "TextPlain",
+      "name": "Text Plain",
+      "settings": {
+        "title": "<p>Regeneration Should Not Be Rushed.</p>",
+        "description": "<p>As we approach Hari Ibu on December 22nd, we want to make sure your gifts are chosen with intention and delivered with care. The noise of the 12.12 shopping festival often distracts from what matters: honoring the women who raised us, and nurturing the strength in your own body.</p><p><br/></p><p>We have curated three specific bundles designed to address the changing needs of a woman’s body, whether that is your daughter, </p><p>your mother, or yourself.</p>",
+        "text_alignment": "center",
+        "button_label": "",
+        "button_url": "",
+        "margin_top": 0,
+        "margin_bottom": 0
+      }
     }
   },
   "order": [
     "text_plain_P37YDD",
+    "text_plain_NgCBTx",
+    "text_plain_MDTpgy",
+    "hero_baner_M9ERdV",
+    "text_plain_HB4mkx",
     "featured_products_yRy7Tm"
   ]
 }

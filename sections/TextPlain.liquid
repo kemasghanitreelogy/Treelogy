@@ -1,6 +1,6 @@
 <div 
-  class="wrapper {% if section.settings.box_container %} main-grid  {% else %} full-width  {% endif %}" 
-  style="margin-top: {{ section.settings.margin_top }}px; margin-bottom: {{ section.settings.margin_bottom }}px;"
+  class="wrapper text-plain-container" 
+  style="margin-top: {{ section.settings.margin_top }}px; margin-bottom: {{ section.settings.margin_bottom }}px; color: {{ section.settings.text_color }};"
 >
   <div class="content">
     <div class="inner text-align-{{ section.settings.text_alignment }}">
@@ -89,6 +89,12 @@
       "content": "Spacing"
     },
     {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#000000"
+    },
+    {
       "type": "range",
       "id": "margin_top",
       "min": 0,
@@ -143,6 +149,10 @@
 {% endschema %}
 
 {% stylesheet %}
+.text-plain-container {
+  padding: 0 24px
+}
+
 .text-align-left {
   text-align: left;
 }
