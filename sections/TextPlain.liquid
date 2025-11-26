@@ -1,0 +1,173 @@
+<div class="wrapper {% if section.settings.box_container %} main-grid  {% else %} full-width  {% endif %}" style="margin-top: {{ section.settings.margin_top }}px; margin-bottom: {{ section.settings.margin_bottom }}px;">
+  <div class="content">
+    <div class="inner text-align-{{ section.settings.text_alignment }}">
+      <div class="title h1">{{ section.settings.title }}</div>
+      {% if section.settings.description != blank %}
+          <div class="description body-desk">
+            {{ section.settings.description }}
+          </div>
+      {% endif %}
+      {% if section.blocks.size > 0 %}
+        <div class="text-blocks">
+          {% for block in section.blocks %}
+            <div class="text-block" {{ block.shopify_attributes }}>
+              {% if block.settings.block_title != blank %}
+                <div class="block-title h3">{{ block.settings.block_title }}</div>
+              {% endif %}
+              {% if block.settings.block_content != blank %}
+                <div class="block-content">{{ block.settings.block_content }}</div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+      
+      {% if section.settings.button_label != blank %}
+        {% render 'PrimaryButton',
+          url: section.settings.button_url,
+          title: section.settings.button_label,
+          type: 'transparent'
+        %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Text Plain",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "title",
+      "label": "Title",
+      "default": "<p>Title</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Description</p>"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Button url"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "label": "Margin Top",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "label": "Margin Bottom",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "text_block",
+      "name": "Text Block",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "block_title",
+          "label": "Block Title",
+          "default": "<p>Block Title</p>"
+        },
+        {
+          "type": "richtext",
+          "id": "block_content",
+          "label": "Block Content",
+          "default": "<p>Block content goes here</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Text Plain",
+      "blocks": [
+        {
+          "type": "text_block"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+.text-align-left {
+  text-align: left;
+}
+
+.text-align-center {
+  text-align: center;
+}
+
+.text-align-right {
+  text-align: right;
+}
+
+.text-blocks {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.text-block {
+  padding: 1rem 0;
+}
+
+.block-title {
+  margin-bottom: 0.5rem;
+}
+
+.block-content {
+  line-height: 1.6;
+}
+{% endstylesheet %}
