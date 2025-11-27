@@ -1,0 +1,127 @@
+<div class="klaviyo-form-wrapper section-{{ section.id }}-padding">
+  <div class="page-width">
+    <div class="klaviyo-form-container">
+      {%- comment -%} Language Detection & Form Rendering {%- endcomment -%}
+      <div class="klaviyo-form-content">
+        {%- liquid
+          assign current_locale = request.locale.iso_code
+          assign is_indonesian = false
+          
+          if current_locale == 'id' or current_locale == 'ID'
+            assign is_indonesian = true
+          endif
+        -%}
+
+        {%- if is_indonesian -%}
+          {%- comment -%} Indonesian Form {%- endcomment -%}
+          <div class="klaviyo-form-lang" data-lang="id">
+            {{ section.settings.klaviyo_form_code_id }}
+          </div>
+        {%- else -%}
+          {%- comment -%} English Form {%- endcomment -%}
+          <div class="klaviyo-form-lang" data-lang="en">
+            {{ section.settings.klaviyo_form_code_en }}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .klaviyo-form-wrapper {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    background-color: {{ section.settings.background_color }};
+  }
+
+  .klaviyo-form-container {
+    max-width: {{ section.settings.form_width }}px;
+    margin: 0 auto;
+  }
+
+  .text-left {
+    text-align: left;
+  }
+  .text-center {
+    text-align: center;
+  }
+  .text-right {
+    text-align: right;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Klaviyo Form",
+  "tag": "section",
+  "class": "section-klaviyo-form",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Form Settings"
+    },
+    {
+      "type": "paragraph",
+      "content": "This section automatically detects language (English/Indonesian) and shows the appropriate form."
+    },
+    {
+      "type": "html",
+      "id": "klaviyo_form_code_en",
+      "label": "Klaviyo Form Code (English)",
+      "info": "Paste your English Klaviyo embed code here"
+    },
+    {
+      "type": "html",
+      "id": "klaviyo_form_code_id",
+      "label": "Klaviyo Form Code (Indonesian)",
+      "info": "Paste your Indonesian Klaviyo embed code here"
+    },
+    {
+      "type": "header",
+      "content": "Style Settings"
+    },
+    {
+      "type": "range",
+      "id": "form_width",
+      "min": 400,
+      "max": 1200,
+      "step": 50,
+      "unit": "px",
+      "label": "Form Max Width",
+      "default": 600
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top Padding",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom Padding",
+      "default": 48
+    }
+  ],
+  "presets": [
+    {
+      "name": "Klaviyo Form"
+    }
+  ]
+}
+{% endschema %}
