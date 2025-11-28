@@ -119,11 +119,11 @@
     "text_plain_MDTpgy": {
       "type": "TextPlain",
       "blocks": {
-        "text_block_UqEPyB": {
+        "text_block_pYKafh": {
           "type": "text_block",
           "settings": {
-            "block_title": "<p>III. The Discovery Pack </p>",
-            "block_content": "<p>For the woman starting her journey. Our most requested collection for a reason. The complete \"Inside & Out\" experience, combining Skin, Gut, and Energy support in one essential set.</p>"
+            "block_title": "<p>I. The Movement & Relief Set </p>",
+            "block_content": "<p>For the woman seeking physical comfort. A potent pairing of our Capsules and Oil. Designed to help with joint stiffness, deep tissue relief, and daily mobility.</p>"
           }
         },
         "text_block_N9Te6H": {
@@ -133,18 +133,18 @@
             "block_content": "<p>For the woman who deserves a pause. Our signature Bamboo Ritual Set. A complete sensory experience for those who value the process as much as the result.</p>"
           }
         },
-        "text_block_pYKafh": {
+        "text_block_UqEPyB": {
           "type": "text_block",
           "settings": {
-            "block_title": "<p>I. The Movement & Relief Set </p>",
-            "block_content": "<p>For the woman seeking physical comfort. A potent pairing of our Capsules and Oil. Designed to help with joint stiffness, deep tissue relief, and daily mobility.</p>"
+            "block_title": "<p>III. The Discovery Pack </p>",
+            "block_content": "<p>For the woman starting her journey. Our most requested collection for a reason. The complete \"Inside & Out\" experience, combining Skin, Gut, and Energy support in one essential set.</p>"
           }
         }
       },
       "block_order": [
-        "text_block_UqEPyB",
+        "text_block_pYKafh",
         "text_block_N9Te6H",
-        "text_block_pYKafh"
+        "text_block_UqEPyB"
       ],
       "name": "Text Plain",
       "settings": {
@@ -210,6 +210,18 @@
         "font_size_content_block": 14
       }
     },
+    "klaviyo_form_qTPAk6": {
+      "type": "klaviyo-form",
+      "name": "Klaviyo Form",
+      "settings": {
+        "klaviyo_form_code_en": "<div class=\"klaviyo-form-WM9fu2\"></div>",
+        "klaviyo_form_code_id": "<div class=\"klaviyo-form-WhhKjp\"></div>",
+        "form_width": 600,
+        "background_color": "#f8f8f2",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
     "countdown_timer_BKt7bN": {
       "type": "CountdownTimer",
       "name": "Countdown Timer",
@@ -244,6 +256,7 @@
     "basic_text_zabUfg",
     "hero_baner_M9ERdV",
     "text_plain_HB4mkx",
+    "klaviyo_form_qTPAk6",
     "countdown_timer_BKt7bN",
     "featured_products_yRy7Tm"
   ]
