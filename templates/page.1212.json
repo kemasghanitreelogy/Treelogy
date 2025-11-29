@@ -191,6 +191,7 @@
     },
     "text_plain_HB4mkx": {
       "type": "TextPlain",
+      "disabled": true,
       "name": "Text Plain",
       "settings": {
         "title": "<p><strong>Regeneration Should Not Be Rushed.</strong></p>",
@@ -212,6 +213,7 @@
     },
     "klaviyo_form_qTPAk6": {
       "type": "klaviyo-form",
+      "disabled": true,
       "name": "Klaviyo Form",
       "settings": {
         "klaviyo_form_code_en": "<div class=\"klaviyo-form-WM9fu2\"></div>",
@@ -224,6 +226,7 @@
     },
     "countdown_timer_BKt7bN": {
       "type": "CountdownTimer",
+      "disabled": true,
       "name": "Countdown Timer",
       "settings": {
         "countdown_minutes": 345,
@@ -236,6 +239,7 @@
     },
     "featured_products_yRy7Tm": {
       "type": "FeaturedProducts",
+      "disabled": true,
       "name": "Featured Products",
       "settings": {
         "title": "Cannot wait ?",

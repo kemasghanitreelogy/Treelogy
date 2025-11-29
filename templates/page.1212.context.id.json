@@ -1,0 +1,98 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "parent": "page.1212.json",
+  "context": {
+    "market": "id"
+  },
+  "sections": {
+    "text_plain_P37YDD": {
+      "settings": {
+        "description": "<p>Hadiah Regenerasi yang Sesungguhnya. Dapatkan hadiah Hari Ibu lebih awal. Beli limited set regenerasi kami mulai 9 Desember, 3 hari sebelum dibuka untuk umum.</p>"
+      }
+    },
+    "basic_text_d7B6Wm": {
+      "settings": {
+        "text": "<p><strong>AKSES PRIVAT: 9 - 10 DES Hingga 25% OFF untuk Paket Bundling Hari Ibu. Terbatas untuk 100 pembeli pertama.</strong></p>"
+      }
+    },
+    "countdown_timer_ywwKAN": {
+      "settings": {
+        "description": "<p>* Wajib diisi. Akses publik dimulai 12 Desember.  Akses privat dibuka pada 9 Desember pukul 10.00 WIB.</p>",
+        "footer_text": "<p>Dengan mengirimkan formulir ini, Anda menyetujui untuk menerima updates dan pesan marketing Treelogy melalui email atau WhatsApp. Persetujuan ini tidak menjadi syarat untuk melakukan pembelian. Anda dapat berhenti berlangganan kapan saja dengan membalas STOP atau melalui tautan yang tersedia. Kebijakan Privasi dan S&K berlaku.</p>"
+      }
+    },
+    "text_plain_NgCBTx": {
+      "settings": {
+        "title": "<p>Mengapa Gabung ke Waiting List?</p>"
+      },
+      "blocks": {
+        "text_block_jWeTtQ": {
+          "settings": {
+            "block_title": "<p>Ketersediaan Terjamin</p>",
+            "block_content": "<p>Untuk menjaga kualitas & kesegaran moringa kami, serta kesejahteraan tim kebun dan pabrik, list ini memberi akses lebih awal untuk 100 pesanan pertama dari total 300 yang sangat terbatas.</p>"
+          }
+        },
+        "text_block_FLcC7b": {
+          "settings": {
+            "block_title": "<p>Pengiriman Tepat Waktu</p>",
+            "block_content": "<p>Pesananmu akan dikirim lebih dahulu, memastikan tiba tepat waktu untuk Hari Ibu (22 Des) tanpa risiko keterlambatan logistik 12.12.</p>"
+          }
+        },
+        "text_block_4bPp8d": {
+          "settings": {
+            "block_title": "<p>Penawaran Eksklusif</p>",
+            "block_content": "<p>Penawaran Eksklusif</p>"
+          }
+        }
+      }
+    },
+    "text_plain_MDTpgy": {
+      "settings": {
+        "title": "<p><strong>12.12 Paket Bundling Hari Ibu</strong></p>"
+      },
+      "blocks": {
+        "text_block_pYKafh": {
+          "settings": {
+            "block_content": "<p>Untuk perempuan yang mencari kenyamanan tubuh. Perpaduan antara Capsules dan Oil dirancang untuk bantu redakan kaku sendi, beri rasa lega pada jaringan dalam, dan dukung kelenturan harian.</p>"
+          }
+        },
+        "text_block_N9Te6H": {
+          "settings": {
+            "block_content": "<p>Untuk perempuan yang layak mendapat istirahat. Bamboo Ritual Set kami. Pengalaman sensori yang lengkap untuk mereka yang menghargai proses sama pentingnya dengan hasil.</p>"
+          }
+        },
+        "text_block_UqEPyB": {
+          "settings": {
+            "block_content": "<p>Untuk perempuan yang memulai perjalanannya. Paket yang paling diminati. Pengalaman luar dalam yang lengkap, gabungkan dukungan untuk kulit, pencernaan, dan energi dalam satu set esensial.</p>"
+          }
+        }
+      }
+    },
+    "text_plain_HB4mkx": {
+      "settings": {
+        "title": "<p><strong>Regenerasi Tidak Perlu Buru-buru </strong></p>",
+        "description": "<p>Menjelang Hari Ibu pada 22 Desember, kami ingin memastikan hadiahmu dipilih dan dikirimkan dengan perhatian. Di tengah hiruk-pikuk festival belanja 12.12, sering kali kita lupa pada yang lebih penting: menghormati perempuan yang membesarkan kita dan merawat kekuatan tubuh kita sendiri.<br/><br/>Kami menyediakan tiga paket bundling khusus yang khusus dirancang untuk mendukung kebutuhan tubuh perempuan yang terus berubah, baik untuk putrimu, ibumu, maupun dirimu sendiri.</p>"
+      }
+    },
+    "countdown_timer_BKt7bN": {
+      "settings": {
+        "description": "<p>* Wajib diisi. Akses publik dimulai 12 Desember.  Akses privat dibuka pada 9 Desember pukul 10.00 WIB.</p>",
+        "footer_text": "<p>Dengan mengirimkan formulir ini, Anda menyetujui untuk menerima updates dan pesan marketing Treelogy melalui email atau WhatsApp. Persetujuan ini tidak menjadi syarat untuk melakukan pembelian. Anda dapat berhenti berlangganan kapan saja dengan membalas STOP atau melalui tautan yang tersedia. Kebijakan Privasi dan S&K berlaku.</p>"
+      }
+    },
+    "featured_products_yRy7Tm": {
+      "settings": {
+        "title": "Tidak sabar menunggu ?",
+        "description": "Temukan produk yang sesuai rutinitasmu dan rasakan manfaat moringa lewat rangkaian produk premium buatan tangan dari Treelogy."
+      }
+    }
+  }
+}
