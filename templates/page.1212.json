@@ -60,6 +60,9 @@
       "name": "Countdown Timer",
       "settings": {
         "countdown_minutes": 14400,
+        "label_days": "DAYS",
+        "label_hours": "HOURS",
+        "label_minutes": "MINUTES",
         "description": "<p>* Required Field. Public access begins Dec 12. Private access opens Dec 9 at 10:00 AM WIB.</p>",
         "footer_text": "<p>By submitting this form, you agree to receive Treelogy updates and marketing messages by email or WhatsApp. Consent is not a condition of purchase. You can unsubscribe at any time by replying STOP or using the link provided. Our Privacy Policy and Terms apply.</p>",
         "text_color": "#2b3c35",
@@ -230,6 +233,9 @@
       "name": "Countdown Timer",
       "settings": {
         "countdown_minutes": 345,
+        "label_days": "DAYS",
+        "label_hours": "HOURS",
+        "label_minutes": "MINUTES",
         "description": "<p>* Required Field. Public access begins Dec 12. Private access opens Dec 9 at 10:00 AM WIB.</p>",
         "footer_text": "<p>By submitting this form, you agree to receive Treelogy updates and marketing messages by email or WhatsApp. Consent is not a condition of purchase. You can unsubscribe at any time by replying STOP or using the link provided. Our Privacy Policy and Terms apply.</p>",
         "text_color": "#2b3c35",

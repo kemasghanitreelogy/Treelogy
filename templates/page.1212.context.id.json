@@ -26,7 +26,10 @@
     "countdown_timer_ywwKAN": {
       "settings": {
         "description": "<p>* Wajib diisi. Akses publik dimulai 12 Desember.  Akses privat dibuka pada 9 Desember pukul 10.00 WIB.</p>",
-        "footer_text": "<p>Dengan mengirimkan formulir ini, Anda menyetujui untuk menerima updates dan pesan marketing Treelogy melalui email atau WhatsApp. Persetujuan ini tidak menjadi syarat untuk melakukan pembelian. Anda dapat berhenti berlangganan kapan saja dengan membalas STOP atau melalui tautan yang tersedia. Kebijakan Privasi dan S&K berlaku.</p>"
+        "footer_text": "<p>Dengan mengirimkan formulir ini, Anda menyetujui untuk menerima updates dan pesan marketing Treelogy melalui email atau WhatsApp. Persetujuan ini tidak menjadi syarat untuk melakukan pembelian. Anda dapat berhenti berlangganan kapan saja dengan membalas STOP atau melalui tautan yang tersedia. Kebijakan Privasi dan S&K berlaku.</p>",
+        "label_days": "HARI",
+        "label_hours": "JAM",
+        "label_minutes": "MENIT"
       }
     },
     "text_plain_NgCBTx": {

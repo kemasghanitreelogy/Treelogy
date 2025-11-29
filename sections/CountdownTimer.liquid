@@ -5,15 +5,15 @@
 >
   <div class="countdown-wrapper">
     <div class="countdown-item">
-      <div class="countdown-label">DAYS</div>
+      <div class="countdown-label">{{ section.settings.label_days }}</div>
       <div class="countdown-value" data-days>00</div>
     </div>
     <div class="countdown-item">
-      <div class="countdown-label">HOURS</div>
+      <div class="countdown-label">{{ section.settings.label_hours }}</div>
       <div class="countdown-value" data-hours>00</div>
     </div>
     <div class="countdown-item">
-      <div class="countdown-label">MINUTES</div>
+      <div class="countdown-label">{{ section.settings.label_minutes }}</div>
       <div class="countdown-value" data-minutes>00</div>
     </div>
   </div>
@@ -95,6 +95,24 @@
       "label": "Countdown Duration (minutes)",
       "default": 14400,
       "info": "Enter total minutes. Example: 14400 = 10 days"
+    },
+    {
+      "type": "text",
+      "id": "label_days",
+      "label": "Label for Days",
+      "default": "DAYS"
+    },
+    {
+      "type": "text",
+      "id": "label_hours",
+      "label": "Label for Hours",
+      "default": "HOURS"
+    },
+    {
+      "type": "text",
+      "id": "label_minutes",
+      "label": "Label for Minutes",
+      "default": "MINUTES"
     },
     {
       "type": "richtext",
