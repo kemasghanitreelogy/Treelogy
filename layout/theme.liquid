@@ -1,11 +1,6 @@
 <!doctype html>
 <html>
   <head>
-    {% if request.path contains '/pages/vip-early-access' %}
-      <meta property="og:image" content="https://cdn.shopify.com/s/files/1/0668/4776/8764/files/The_Movement_Relief.png?v=1764403634">
-      <meta name="twitter:image" content="https://cdn.shopify.com/s/files/1/0668/4776/8764/files/The_Movement_Relief.png?v=1764403634">
-    {% endif %}
-
     {% if request.path == '/collections/all' %}
       <title>Treelogy | All Products</title>
     {% elsif request.path == '/blogs/news' %}
@@ -34,6 +29,11 @@
 
     {{ content_for_header }}
 
+    {% if request.path contains '/pages/vip-early-access' %}
+      <meta property="og:image" content="https://cdn.shopify.com/s/files/1/0668/4776/8764/files/The_Movement_Relief.png?v=1764403634">
+      <meta name="twitter:image" content="https://cdn.shopify.com/s/files/1/0668/4776/8764/files/The_Movement_Relief.png?v=1764403634">
+    {% endif %}
+    
     {% if settings.favicon != blank %}
       <link rel="icon" href="{{ settings.favicon | image_url }}" type="image/png">
     {% endif %}
