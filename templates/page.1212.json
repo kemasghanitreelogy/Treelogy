@@ -59,7 +59,7 @@
       "type": "CountdownTimer",
       "name": "Countdown Timer",
       "settings": {
-        "countdown_minutes": 14400,
+        "countdown_minutes": 13728,
         "label_days": "DAYS",
         "label_hours": "HOURS",
         "label_minutes": "MINUTES",
