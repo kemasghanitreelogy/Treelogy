@@ -2,24 +2,22 @@
   id="text-plain-{{ section.id }}"
   class="wrapper text-plain-container" 
   style="
-    margin-top: {{ section.settings.margin_top }}px; 
-    margin-bottom: {{ section.settings.margin_bottom }}px; 
     color: {{ section.settings.text_color }};
     --padding-mobile: {{ section.settings.padding_horizontal }}px;
     --padding-tablet: {{ section.settings.padding_horizontal | times: 1.5 | round }}px;
     --padding-desktop: {{ section.settings.padding_horizontal | times: 2 | round }}px;
     --mobile-size-title: {{ section.settings.font_size }}px;
-    --tablet-size-title: {{ section.settings.font_size | times: 1.15 | round }}px;
-    --desktop-size-title: {{ section.settings.font_size | times: 1.3 | round }}px;
+    --tablet-size-title: {{ section.settings.font_size | times: 1.3 | round }}px;
+    --desktop-size-title: {{ section.settings.font_size | times: 1.6 | round }}px;
     --mobile-size-desc: {{ section.settings.font_size_desc }}px;
-    --tablet-size-desc: {{ section.settings.font_size_desc | times: 1.15 | round }}px;
-    --desktop-size-desc: {{ section.settings.font_size_desc | times: 1.3 | round }}px;
+    --tablet-size-desc: {{ section.settings.font_size_desc | times: 1.3 | round }}px;
+    --desktop-size-desc: {{ section.settings.font_size_desc | times: 1.6 | round }}px;
     --mobile-size-title-block: {{ section.settings.font_size_title_block }}px;
-    --tablet-size-title-block: {{ section.settings.font_size_title_block | times: 1.1 | round }}px;
-    --desktop-size-title-block: {{ section.settings.font_size_title_block | times: 1.2 | round }}px;
+    --tablet-size-title-block: {{ section.settings.font_size_title_block | times: 1.3 | round }}px;
+    --desktop-size-title-block: {{ section.settings.font_size_title_block | times: 1.6 | round }}px;
     --mobile-size-content-block: {{ section.settings.font_size_content_block }}px;
-    --tablet-size-content-block: {{ section.settings.font_size_content_block | times: 1.1 | round }}px;
-    --desktop-size-content-block: {{ section.settings.font_size_content_block | times: 1.15 | round }}px;
+    --tablet-size-content-block: {{ section.settings.font_size_content_block | times: 1.3 | round }}px;
+    --desktop-size-content-block: {{ section.settings.font_size_content_block | times: 1.6 | round }}px;
   "
 >
   <div class="content">
@@ -259,6 +257,31 @@
   ]
 }
 {% endschema %}
+
+<style>
+  #text-plain-{{ section.id }} {
+    /* Mobile margins */
+    margin-top: {{ section.settings.margin_top }}px;
+    margin-bottom: {{ section.settings.margin_bottom }}px;
+  }
+
+  /* Tablet margins */
+  @media (min-width: 768px) {
+    #text-plain-{{ section.id }} {
+      margin-top: {{ section.settings.margin_top | times: 1.3 | round }}px;
+      margin-bottom: {{ section.settings.margin_bottom | times: 1.3 | round }}px;
+    }
+  }
+
+  /* Desktop margins */
+  @media (min-width: 1024px) {
+    #text-plain-{{ section.id }} {
+      margin-top: {{ section.settings.margin_top | times: 1.6 | round }}px;
+      margin-bottom: {{ section.settings.margin_bottom | times: 1.6 | round }}px;
+    }
+  }
+
+</style>
 
 {% stylesheet %}
 .text-plain-container {

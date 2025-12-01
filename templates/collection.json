@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "featured_product_pTELCE": {
@@ -8,19 +17,22 @@
     },
     "main": {
       "type": "MainListingProduct",
-      "settings": {}
+      "settings": {
+        "collection": "all-products",
+        "product_limit": 20
+      }
     },
     "featured_text_CkWmqN": {
       "type": "FeaturedText",
       "settings": {
         "title": "Antioxidant",
         "description": "Moringa Oleifera, a potent antioxidant force. Explore its proven health benefits in extensive research studies.",
-        "background": "shopify:\/\/shop_images\/antioxidant.webp",
+        "background": "shopify://shop_images/antioxidant.webp",
         "title_mobile": "Antioxidant",
         "description_mobile": "Moringa Oleifera, a potent antioxidant force. Explore its proven health benefits in extensive research studies.",
-        "background_mobile": "shopify:\/\/shop_images\/antioxidant.webp",
+        "background_mobile": "shopify://shop_images/antioxidant.webp",
         "button_label": "Get To Know More +",
-        "button_url": "shopify:\/\/blogs\/news\/antioxidant",
+        "button_url": "shopify://blogs/news/antioxidant",
         "box_container": true,
         "text_position": "left"
       }
@@ -32,7 +44,10 @@
         "description": "Explore the science of Moringa, discover recipes we love, and learn about our farm, factory, and well-being practices.",
         "products": "news",
         "button_label": "Discover All",
-        "button_url": "#"
+        "button_url": "#",
+        "remove_button": false,
+        "filter_tags": "",
+        "remove_excerpt": false
       }
     }
   },

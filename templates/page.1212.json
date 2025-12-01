@@ -30,19 +30,6 @@
         "font_size_content_block": 14
       }
     },
-    "basic_text_d7B6Wm": {
-      "type": "BasicText",
-      "name": "Simple Text",
-      "settings": {
-        "text": "<p><strong>PRIVATE ACCESS: 9 - 10 DEC Up to 25% OFF Our Hari Ibu Bundles. Limited to the first 100 only. </strong></p>",
-        "text_color": "#2b3c35",
-        "font_size": 14,
-        "text_alignment": "center",
-        "font_weight": "400",
-        "margin_top": 0,
-        "margin_bottom": 30
-      }
-    },
     "klaviyo_form_6XTKz6": {
       "type": "klaviyo-form",
       "name": "Klaviyo Form",
@@ -67,7 +54,7 @@
         "footer_text": "<p>By submitting this form, you agree to receive Treelogy updates and marketing messages by email or WhatsApp. Consent is not a condition of purchase. You can unsubscribe at any time by replying STOP or using the link provided. Our Privacy Policy and Terms apply.</p>",
         "text_color": "#2b3c35",
         "margin_top": 0,
-        "margin_bottom": 0
+        "margin_bottom": 30
       }
     },
     "text_plain_NgCBTx": {
@@ -110,11 +97,11 @@
         "text_alignment": "center",
         "button_label": "",
         "button_url": "",
-        "padding_horizontal": 24,
+        "padding_horizontal": 44,
         "desktop_layout": "row",
         "text_color": "#2b3c35",
-        "margin_top": 40,
-        "margin_bottom": 50,
+        "margin_top": 0,
+        "margin_bottom": 40,
         "font_size_title_block": 14,
         "font_size_content_block": 14
       }
@@ -159,26 +146,13 @@
         "text_alignment": "center",
         "button_label": "",
         "button_url": "",
-        "padding_horizontal": 24,
+        "padding_horizontal": 44,
         "desktop_layout": "row-reverse",
         "text_color": "#2b3c35",
         "margin_top": 0,
-        "margin_bottom": 0,
+        "margin_bottom": 40,
         "font_size_title_block": 14,
         "font_size_content_block": 14
-      }
-    },
-    "basic_text_zabUfg": {
-      "type": "BasicText",
-      "name": "Simple Text",
-      "settings": {
-        "text": "<p>Rooted in Bali. Validated by Science. Crafted for Her.</p>",
-        "text_color": "#2b3c35",
-        "font_size": 13,
-        "text_alignment": "center",
-        "font_weight": "600",
-        "margin_top": 30,
-        "margin_bottom": 40
       }
     },
     "hero_baner_M9ERdV": {
@@ -188,7 +162,7 @@
         "image": "shopify://shop_images/SON00317_1.webp",
         "alt": "Hero image",
         "loading_priority": false,
-        "margin_top": 40,
+        "margin_top": 0,
         "margin_bottom": 40
       }
     },
@@ -258,12 +232,10 @@
   },
   "order": [
     "text_plain_P37YDD",
-    "basic_text_d7B6Wm",
     "klaviyo_form_6XTKz6",
     "countdown_timer_ywwKAN",
     "text_plain_NgCBTx",
     "text_plain_MDTpgy",
-    "basic_text_zabUfg",
     "hero_baner_M9ERdV",
     "text_plain_HB4mkx",
     "klaviyo_form_qTPAk6",

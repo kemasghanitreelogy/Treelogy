@@ -1,0 +1,24 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main_listing_product_BX9x87": {
+      "type": "MainListingProduct",
+      "name": "Main Listing Product",
+      "settings": {
+        "collection": "early-vip-access",
+        "product_limit": 8
+      }
+    }
+  },
+  "order": [
+    "main_listing_product_BX9x87"
+  ]
+}

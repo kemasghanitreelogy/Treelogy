@@ -1,22 +1,62 @@
 <div class="collection-listing">
   <div class="header box-container">
-    <h2 class="h1">{{ collection.title }}</h2>
+    <h2 class="h1">
+      {{ section.settings.collection.title }}
+    </h2>
+
     <div class="search-input">
-      <input type="search" placeholder="Search" id="search-product-inline">
+      <input
+        type="search"
+        placeholder="Search"
+        id="search-product-inline">
     </div>
   </div>
+
   <div class="product-listing box-container" id="products-listing">
-    {% assign all_collection_handle = 'all-products' %}
-    {% assign all_collection = collections[all_collection_handle] %}
-    {% paginate all_collection.products by 20 %}
-      {% for product in all_collection.products %}
-        {% render 'ProductCard', item: product %}
-      {% else %}
-        <p>No product(s)</p>
-      {% endfor %}
-      {% if paginate.pages > 1 %}
-        {{ paginate | default_pagination }}
-      {% endif %}
-    {% endpaginate %}
+    {% assign selected_collection = section.settings.collection %}
+    {% assign product_limit = section.settings.product_limit | default: 20 %}
+
+    {% if selected_collection != blank %}
+      {% paginate selected_collection.products by product_limit %}
+        {% for product in selected_collection.products %}
+          {% render 'ProductCard'
+            , item: product %}
+        {% else %}
+          <p>No product(s)</p>
+        {% endfor %}
+
+        {% if paginate.pages > 1 %}
+          {{ paginate | default_pagination }}
+        {% endif %}
+      {% endpaginate %}
+    {% else %}
+      <p>Please select a collection in the Customizer.</p>
+    {% endif %}
   </div>
 </div>
+
+
+{% schema %}
+  {
+    "name": "Main Listing Product",
+    "settings": [
+      {
+        "type": "collection",
+        "id": "collection",
+        "label": "Choose collection"
+      }, {
+        "type": "range",
+        "id": "product_limit",
+        "label": "Products per page",
+        "default": 8,
+        "min": 1,
+        "max": 50
+      }
+    ],
+    "presets": [
+      {
+        "name": "Main Listing Product"
+      }
+    ]
+  }
+{% endschema %}
