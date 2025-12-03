@@ -1,0 +1,490 @@
+{% assign selected_collection = section.settings.collection %}
+{% assign products_limit = section.settings.products_limit | default: 8 %}
+{% assign free_product = settings.free_product.id %}
+
+<div class="featured-products-section">
+  <div class="container">
+    {% if selected_collection and selected_collection.products.size > 0 %}
+      <div class="featured-products-grid">
+        {% for product in selected_collection.products limit: products_limit %}
+          {% assign has_available_variant = false %}
+          {% assign first_available_variant = nil %}
+
+          {% for variant in product.variants %}
+            {% if variant.available %}
+              {% assign has_available_variant = true %}
+              {% unless first_available_variant %}
+                {% assign first_available_variant = variant %}
+              {% endunless %}
+            {% endif %}
+          {% endfor %}
+
+          <div class="featured-product-card" data-product-id="{{ product.id }}">
+            <div class="product-image-wrapper">
+              <a href="{{ product.url }}">
+                {% if product.featured_image %}
+                  <img
+                    src="{{ product.featured_image | img_url: '600x' }}"
+                    alt="{{ product.featured_image.alt | escape }}"
+                    loading="lazy">
+                {% else %}
+                  {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                {% endif %}
+              </a>
+
+              {% if has_available_variant and free_product != product.id %}
+                <div class="button-wrapper">
+                  {% if product.variants.size > 1 %}
+                    <a
+                      href="#"
+                      class="button-cart button-quick-add-cart overlay-button open-popup-variants"
+                      data-title="{{ product.title }}"
+                      data-slug="{{ product.url }}">
+                      {{ 'products.general.add_to_cart' | t }}
+                    </a>
+                  {% else %}
+                    <button
+                      type="button"
+                      class="button-cart button-quick-add-cart overlay-button button-direct-add"
+                      data-variant-id="{{ first_available_variant.id }}">
+                      {{ 'products.general.add_to_cart' | t }}
+                    </button>
+                  {% endif %}
+                </div>
+              {% endif %}
+            </div>
+            <a href="{{ product.url }}">
+              <div class="product-info">
+                <div class="top">
+                  {% render 'Rating'
+                    , product: product %}
+                </div>
+
+                <h3 class="product-title">
+                  <p href="{{ product.url }}">{{ product.title }}</p>
+                </h3>
+
+                <div class="product-badges">
+                  {% for tag in product.tags %}
+                    {% assign check = tag | split: 'exclude' %}
+                    {% unless check.size > 1 %}
+                      <span class="badge-pill">{{ tag | capitalize }}</span>
+                    {% endunless %}
+                  {% endfor %}
+                </div>
+
+                <div class="product-description">
+                  {{ product.description | strip_html | truncatewords: 20 }}
+                </div>
+
+                {% if product.metafields.custom.product_detail.value %}
+                  {% for detail in product.metafields.custom.product_detail.value %}
+                    {% if detail.title == "Benefits" %}
+                      <ul class="benefits-list">
+                        {{ detail.description | metafield_tag }}
+                      </ul>
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+
+                <div class="product-price">
+                  {% if product.compare_at_price > product.price %}
+                    <span class="price price-compare">{{ product.compare_at_price | money }}</span>
+                    <span class="price price-sale">{{ product.price | money }}</span>
+                  {% else %}
+                    <span class="price">{{ product.price | money }}</span>
+                  {% endif %}
+                </div>
+
+                {% if has_available_variant and free_product != product.id %}
+                  {% if product.variants.size > 1 %}
+                    <a
+                      href="#"
+                      class="button-cart button-quick-add-cart open-popup-variants"
+                      data-title="{{ product.title }}"
+                      data-slug="{{ product.url }}">
+                      {{ 'products.general.add_to_cart' | t }}
+                    </a>
+                  {% else %}
+                    <button
+                      type="button"
+                      class="button-cart button-quick-add-cart button-direct-add"
+                      data-variant-id="{{ first_available_variant.id }}">
+                      {{ 'products.general.add_to_cart' | t }}
+                    </button>
+                  {% endif %}
+                {% elsif free_product != product.id %}
+                  <button
+                    type="button"
+                    class="button-sold-out"
+                    disabled>
+                    {{ 'products.general.sold_out' | t }}
+                  </button>
+                {% endif %}
+              </div>
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+
+      {% if section.settings.show_view_all and selected_collection.url %}
+        <div class="view-all-wrapper">
+          <a href="{{ selected_collection.url }}" class="button button-view-all">
+            {{ section.settings.view_all_text | default: 'View All' }}
+          </a>
+        </div>
+      {% endif %}
+    {% else %}
+      <div class="empty-collection">
+        <p>{{ section.settings.empty_text | default: 'No products found. Please select a collection.' }}</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+  const directAddButtons = document.querySelectorAll('.button-direct-add');
+  
+  const textAdding = "{{ 'products.product.adding' | t | default: 'Adding...' }}";
+  const textError = "{{ 'products.product.error' | t | default: 'Error' }}";
+
+  directAddButtons.forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      const variantId = this.getAttribute('data-variant-id');
+      if (!variantId) return;
+
+      const originalText = this.innerHTML;
+      this.innerHTML = textAdding;
+      this.style.opacity = '0.7';
+
+      let formData = {
+       'items': [{
+        'id': variantId,
+        'quantity': 1
+        }]
+      };
+
+      fetch(window.Shopify.routes.root + 'cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      .then(response => response.json())
+      .then(data => {
+
+        this.innerHTML = originalText;
+        this.style.opacity = '1';
+        
+        const cartIcon = document.querySelector('a[href="/cart"]') || 
+                         document.querySelector('.header__icon--cart') || 
+                         document.querySelector('.mini-cart-toggle');
+
+        if (cartIcon) {
+          cartIcon.click();
+        } else {
+          const miniCart = document.querySelector('.mini-cart');
+          if (miniCart) {
+            miniCart.classList.add('active');
+            document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', { bubbles: true }));
+          }
+        }
+
+        const cartBubble = document.querySelectorAll('.cart-count-bubble span, .header__cart-count');
+        cartBubble.forEach(el => {
+            let currentCount = parseInt(el.innerText || 0);
+            el.innerText = currentCount + 1;
+        });
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        this.innerHTML = textError;
+        this.style.opacity = '1';
+      });
+    });
+  });
+  });
+</script>
+
+<style>
+  .featured-products-section .product-info .top {
+    font-size: 12px;
+    font-weight: 300;
+  }
+  .featured-products-section .star-review span {
+    color: #515e56 !important;
+  }
+  .featured-products-section .product-title p {
+    margin-bottom: 3px;
+  }
+  .featured-products-section {
+    padding: 60px 20px;
+    background: #f8f8f2;
+  }
+  .featured-products-section .container {
+    max-width: 1200px;
+    margin: auto;
+  }
+  .featured-products-grid {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    row-gap: 20px;
+  }
+  .featured-product-card {
+    width: 380px;
+    width: 100%;
+    height: fit-content;
+    background: #f8f8f2;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease
+    , box-shadow 0.3s ease;
+  }
+  .featured-product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+  .product-image-wrapper {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    background: #f5f5f5;
+  }
+  .product-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  .featured-product-card:hover .product-image-wrapper img {
+    transform: scale(1.05);
+  }
+  .product-info {
+    padding: 18px 10px 20px;
+  }
+  .product-title {
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 5px;
+    line-height: 1.3;
+    color: #2b3c35;
+  }
+  .product-title a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .product-title a:hover {
+    color: #5a7d5f;
+  }
+  .product-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .badge-pill {
+    display: inline-block;
+    padding: 3px 7px;
+    background: #c8d5b4;
+    color: #2B3C35;
+    font-size: 10px;
+    font-weight: 500;
+    border-radius: 20px;
+    border: 1px solid #2B3C35;
+  }
+  .product-description {
+    font-size: 14px;
+    font-weight: 300;
+    color: #515e56;
+  }
+  .product-description p {
+    margin-bottom: 14px;
+  }
+  .benefits-list {
+    font-size: 14px;
+    font-weight: 300;
+    color: #515e56;
+    padding-left: 14px;
+  }
+  .benefits-list ul {
+    list-style-type: disc;
+  }
+  .product-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px;
+  }
+  .product-features li {
+    font-size: 14px;
+    color: #555;
+    padding: 6px 0 6px 20px;
+    position: relative;
+  }
+  .product-features li:before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #5a7d5f;
+    font-weight: bold;
+  }
+  .product-price {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 14px;
+    color: #2b3c35;
+  }
+  .price {
+    font-weight: 500;
+    color: #2b3c35;
+  }
+  .price-compare {
+    text-decoration: line-through;
+    font-weight: 300;
+  }
+
+  /* --- NEW BUTTON STYLES START --- */
+  .featured-product-card .button-cart {
+    width: 100%;
+    padding: 16px 24px;
+    border: none;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 300;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: white;
+    background: #567350;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+  }
+
+  .featured-product-card .button-cart:hover {
+    background: #4a6d4f;
+    /* Slightly darker green on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(90, 125, 95, 0.3);
+  }
+
+  /* Ensure overlay button is also styled correctly */
+  .product-image-wrapper .button-wrapper .button-cart {
+    /* The base styles above will apply, but we ensure it's not overridden */
+    display: block;
+  }
+  /* --- NEW BUTTON STYLES END --- */
+
+  .view-all-wrapper {
+    text-align: center;
+    margin-top: 40px;
+  }
+  .button-view-all {
+    display: inline-block;
+    padding: 14px 40px;
+    background: transparent;
+    color: #5a7d5f;
+    border: 2px solid #5a7d5f;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  .button-view-all:hover {
+    background: #5a7d5f;
+    color: white;
+  }
+  .empty-collection {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+  }
+  @media (max-width: 1024px) {
+    .featured-product-card {
+      min-width: 280px;
+    }
+  }
+  @media (min-width: 800px) {
+    .featured-product-card {
+      width: 380px;
+    }
+  }
+
+  @media (min-width: 834px) and (max-width: 1180px) {
+    .featured-products-section .container {
+      max-width: 800px;
+    }
+  }
+  @media (max-width: 768px) {
+    .featured-products-section {
+      padding: 40px 15px;
+    }
+    .featured-products-grid {
+      column-gap: 20px;
+    }
+    .featured-product-card {
+      min-width: auto;
+    }
+    .product-info {
+      padding: 20px;
+    }
+    .product-title {
+      font-size: 20px;
+    }
+    .price {
+      font-size: 20px;
+    }
+  }
+</style>
+
+{% schema %}
+  {
+    "name": "Featured Products List",
+    "tag": "section",
+    "class": "section-featured-products",
+    "settings": [
+      {
+        "type": "collection",
+        "id": "collection",
+        "label": "Collection"
+      },
+      {
+        "type": "range",
+        "id": "products_limit",
+        "min": 2,
+        "max": 50,
+        "step": 1,
+        "label": "Products to show",
+        "default": 8
+      },
+      {
+        "type": "checkbox",
+        "id": "show_view_all",
+        "label": "Show 'View All' button",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "view_all_text",
+        "label": "View All button text",
+        "default": "View All"
+      }, {
+        "type": "text",
+        "id": "empty_text",
+        "label": "Empty collection text",
+        "default": "No products found. Please select a collection."
+      }
+    ],
+    "presets": [
+      {
+        "name": "Featured Products List"
+      }
+    ]
+  }
+{% endschema %}

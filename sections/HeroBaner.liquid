@@ -1,115 +1,469 @@
-<section 
-    id="hero-{{ section.id }}" 
-    class="hero-section"
-    style="margin-top: {{ section.settings.margin_top }}px; margin-bottom: {{ section.settings.margin_bottom }}px;"
->
-  {% if section.settings.image != blank %}
-    <picture>
-      {% if section.settings.image_mobile != blank %}
-        <source
-          media="(max-width: 767px)"
+<section
+  id="hero-{{ section.id }}"
+  class="hero-section"
+  style="margin-top: {{ section.settings.margin_top }}px; margin-bottom: {{ section.settings.margin_bottom }}px;">
+
+  <div class="hero-container">
+    {% if section.settings.image != blank %}
+      <picture>
+        {% if section.settings.image_mobile != blank %}
+          <source
+            media="(max-width: 767px)"
+            srcset="
+              {{ section.settings.image_mobile | image_url: width: 400 }} 400w,
+              {{ section.settings.image_mobile | image_url: width: 600 }} 600w,
+              {{ section.settings.image_mobile | image_url: width: 800 }} 800w
+            "
+            sizes="100vw">
+        {% endif %}
+        <img
+          src="{{ section.settings.image | image_url: width: 1920 }}"
           srcset="
-            {{ section.settings.image_mobile | image_url: width: 400 }} 400w,
-            {{ section.settings.image_mobile | image_url: width: 600 }} 600w,
-            {{ section.settings.image_mobile | image_url: width: 800 }} 800w
+            {{ section.settings.image | image_url: width: 800 }} 800w,
+            {{ section.settings.image | image_url: width: 1200 }} 1200w,
+            {{ section.settings.image | image_url: width: 1600 }} 1600w,
+            {{ section.settings.image | image_url: width: 2000 }} 2000w
           "
           sizes="100vw"
-        >
-      {% endif %}
-      <img
-        src="{{ section.settings.image | image_url: width: 1920 }}"
-        srcset="
-          {{ section.settings.image | image_url: width: 800 }} 800w,
-          {{ section.settings.image | image_url: width: 1200 }} 1200w,
-          {{ section.settings.image | image_url: width: 1600 }} 1600w,
-          {{ section.settings.image | image_url: width: 2000 }} 2000w
-        "
-        sizes="100vw"
-        alt="{{ section.settings.alt | escape }}"
-        {% if section.settings.loading_priority %}
+          alt="{{ section.settings.alt | escape }}"
+          {% if section.settings.loading_priority %}
           fetchpriority="high"
-        {% else %}
+          {% else %}
           loading="lazy"
+          {% endif %}
+          width="{{ section.settings.image.width }}"
+          height="{{ section.settings.image.height }}"
+          class="hero-image">
+      </picture>
+    {% else %}
+      <div class="hero-placeholder">
+        {{ 'image' | placeholder_svg_tag }}
+      </div>
+    {% endif %}
+
+    {% if section.settings.title != blank or section.settings.content != blank %}
+      <div class="hero-text-overlay hero-text-{{ section.settings.text_position }}">
+        {% if section.settings.title != blank %}
+          <h1 class="hero-title">{{ section.settings.title }}</h1>
         {% endif %}
-        width="{{ section.settings.image.width }}"
-        height="{{ section.settings.image.height }}"
-        class="hero-image"
-      >
-    </picture>
-  {% else %}
-    <div class="hero-placeholder">
-      {{ 'image' | placeholder_svg_tag }}
+        {% if section.settings.content != blank %}
+          <div class="hero-content">{{ section.settings.content }}</div>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+
+  {% if section.settings.show_countdown %}
+    <div class="countdown-wrapper-{{ section.id }}" style="position: relative;">
+
+      <div id="countdown-anchor-{{ section.id }}" style="position: absolute; top: -{{ section.settings.sticky_top_offset }}px; width: 100%; height: 1px; visibility: hidden; pointer-events: none;"></div>
+
+      <div class="countdown-overlay" id="countdown-bar-{{ section.id }}">
+        <div class="countdown-container" data-end-date="{{ section.settings.countdown_date }}">
+          <div class="countdown-text">
+            <span class="countdown-days">00</span>
+            {{ section.settings.day_label }}
+            <span class="countdown-hours">00</span>
+            {{ section.settings.hour_label }}
+            {{ section.settings.countdown_message }}
+          </div>
+        </div>
+      </div>
+
+      <div id="countdown-spacer-{{ section.id }}" style="display: none; width: 100%;"></div>
     </div>
   {% endif %}
 </section>
 
 {% schema %}
-{
-  "name": "Hero Image Only",
-  "settings": [
-    {
-      "type": "image_picker",
-      "id": "image",
-      "label": "Desktop image"
-    },
-    {
-      "type": "image_picker",
-      "id": "image_mobile",
-      "label": "Mobile image (optional)"
-    },
-    {
-      "type": "text",
-      "id": "alt",
-      "label": "Image alt text",
-      "default": "Hero image"
-    },
-    {
-      "type": "checkbox",
-      "id": "loading_priority",
-      "label": "High priority loading (above the fold)",
-      "default": true,
-      "info": "Enable for hero images visible on page load"
-    },
-    {
-      "type": "range",
-      "id": "margin_top",
-      "min": 0,
-      "max": 200,
-      "step": 10,
-      "unit": "px",
-      "label": "Margin Top",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "margin_bottom",
-      "min": 0,
-      "max": 200,
-      "step": 10,
-      "unit": "px",
-      "label": "Margin Bottom",
-      "default": 0
-    }
-  ],
-  "presets": [
-    {
-      "name": "Hero Image Only"
-    }
-  ]
-}
+  {
+    "name": "Hero Image Only",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Desktop image"
+      },
+      {
+        "type": "image_picker",
+        "id": "image_mobile",
+        "label": "Mobile image (optional)"
+      },
+      {
+        "type": "text",
+        "id": "alt",
+        "label": "Image alt text",
+        "default": "Hero image"
+      },
+      {
+        "type": "checkbox",
+        "id": "loading_priority",
+        "label": "High priority loading (above the fold)",
+        "default": true,
+        "info": "Enable for hero images visible on page load"
+      }, {
+        "type": "header",
+        "content": "Text Overlay"
+      }, {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Hero Title"
+      }, {
+        "type": "richtext",
+        "id": "content",
+        "label": "Content",
+        "default": "<p>Add your hero content here</p>"
+      }, {
+        "type": "select",
+        "id": "text_position",
+        "label": "Text Position",
+        "options": [
+          {
+            "value": "top-left",
+            "label": "Top Left"
+          },
+          {
+            "value": "top-right",
+            "label": "Top Right"
+          },
+          {
+            "value": "center",
+            "label": "Center"
+          },
+          {
+            "value": "bottom-left",
+            "label": "Bottom Left"
+          }, {
+            "value": "bottom-right",
+            "label": "Bottom Right"
+          }
+        ],
+        "default": "center"
+      }, {
+        "type": "header",
+        "content": "Countdown Timer"
+      }, {
+        "type": "checkbox",
+        "id": "show_countdown",
+        "label": "Show countdown timer",
+        "default": false
+      }, {
+        "type": "text",
+        "id": "day_label",
+        "label": "Day Label",
+        "default": "hari"
+      }, {
+        "type": "text",
+        "id": "hour_label",
+        "label": "Hour Label",
+        "default": "jam"
+      }, {
+        "type": "text",
+        "id": "countdown_date",
+        "label": "Countdown end date",
+        "info": "Format: YYYY-MM-DD HH:MM (e.g., 2024-12-31 23:59)",
+        "default": "2024-12-31 23:59"
+      }, {
+        "type": "text",
+        "id": "countdown_message",
+        "label": "Countdown message",
+        "default": "Hanya menerima 100 pesanan"
+      }, {
+        "type": "header",
+        "content": "Sticky Settings"
+      }, {
+        "type": "checkbox",
+        "id": "enable_sticky",
+        "label": "Enable Sticky on Scroll",
+        "default": true
+      }, {
+        "type": "range",
+        "id": "sticky_top_offset",
+        "min": 0,
+        "max": 200,
+        "step": 5,
+        "unit": "px",
+        "label": "Sticky Top Offset",
+        "default": 0,
+        "info": "Adjust this to match your header height."
+      }, {
+        "type": "header",
+        "content": "Spacing"
+      }, {
+        "type": "range",
+        "id": "margin_top",
+        "min": 0,
+        "max": 200,
+        "step": 10,
+        "unit": "px",
+        "label": "Margin Top",
+        "default": 0
+      }, {
+        "type": "range",
+        "id": "margin_bottom",
+        "min": 0,
+        "max": 200,
+        "step": 10,
+        "unit": "px",
+        "label": "Margin Bottom",
+        "default": 0
+      }
+    ],
+    "presets": [
+      {
+        "name": "Hero Image Only"
+      }
+    ]
+  }
 {% endschema %}
 
-{% stylesheet %}
-#hero-{{ section.id }} .hero-image {
-  width: 100%;
-  display: block;
-  height: auto;
-  object-fit: cover;
-}
+<script>
+  (function() {
+    // --- 1. Countdown Timer Logic ---
+    const countdownEl = document.querySelector('#hero-{{ section.id }} .countdown-container');
+    
+    if (countdownEl) {
+      const endDate = new Date(countdownEl.dataset.endDate).getTime();
+      const daysEl = countdownEl.querySelector('.countdown-days');
+      const hoursEl = countdownEl.querySelector('.countdown-hours');
+      
+      function updateCountdown() {
+        const now = new Date().getTime();
+        const distance = endDate - now;
+        
+        if (distance < 0) {
+          daysEl.textContent = '00';
+          hoursEl.textContent = '00';
+          return;
+        }
+        
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        
+        daysEl.textContent = String(days).padStart(2, '0');
+        hoursEl.textContent = String(hours).padStart(2, '0');
+      }
+      
+      updateCountdown();
+      setInterval(updateCountdown, 60000); 
+    }
 
-#hero-{{ section.id }} .hero-placeholder {
-  width: 100%;
-  height: 400px;
-  background: #f4f4f4;
-}
+    // --- 2. Smoother Sticky Logic (No Blinking) ---
+    {% if section.settings.enable_sticky %}
+      const anchor = document.getElementById("countdown-anchor-{{ section.id }}");
+      const bar = document.getElementById("countdown-bar-{{ section.id }}");
+      const spacer = document.getElementById("countdown-spacer-{{ section.id }}");
+      const offset = {{ section.settings.sticky_top_offset | default: 0 }};
+
+      if (anchor && bar && spacer) {
+        
+        function onScroll() {
+          // Calculate the anchor's position relative to the viewport
+          const rect = anchor.getBoundingClientRect();
+          
+          // If the anchor touches or goes above the top of the viewport (0)
+          if (rect.top <= 0) {
+             if (!bar.classList.contains('sticky-fixed')) {
+               // 1. Lock the height of the spacer to prevent page jump
+               spacer.style.height = bar.offsetHeight + 'px';
+               spacer.style.display = 'block';
+               
+               // 2. Fix the bar
+               bar.classList.add('sticky-fixed');
+               bar.style.top = offset + 'px';
+             }
+          } else {
+             if (bar.classList.contains('sticky-fixed')) {
+               // 1. Remove fixed positioning
+               bar.classList.remove('sticky-fixed');
+               bar.style.top = 'auto';
+               
+               // 2. Hide spacer
+               spacer.style.display = 'none';
+               spacer.style.height = '0px';
+             }
+          }
+        }
+
+        // Use requestAnimationFrame for performance (prevents jitter)
+        let ticking = false;
+        window.addEventListener('scroll', function() {
+          if (!ticking) {
+            window.requestAnimationFrame(function() {
+              onScroll();
+              ticking = false;
+            });
+            ticking = true;
+          }
+        }, { passive: true });
+        
+        // Also run on resize to recalculate height if window changes
+        window.addEventListener('resize', onScroll);
+      }
+    {% endif %}
+  })();
+</script>
+
+{% stylesheet %}
+  #hero-{{ section.id }} .hero-container {
+    position: relative;
+    width: 100%;
+  }
+
+  #hero-{{ section.id }}
+  .hero-image {
+    width: 100%;
+    display: block;
+    height: auto;
+    object-fit: cover;
+  }
+
+  #hero-{{ section.id }}
+  .hero-placeholder {
+    width: 100%;
+    height: 400px;
+    background: #f4f4f4;
+  }
+
+  #hero-{{ section.id }}
+  .hero-text-overlay {
+    position: absolute;
+    padding: 2rem;
+    color: white;
+    width: 209px;
+    color: #2b3c35;
+  }
+
+  #hero-{{ section.id }}
+  .hero-text-top-left {
+    top: 0;
+    left: 0;
+  }
+  #hero-{{ section.id }}
+  .hero-text-top-right {
+    top: 30px;
+    right: 11px;
+    text-align: right;
+  }
+  #hero-{{ section.id }}
+  .hero-text-center {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+  #hero-{{ section.id }}
+  .hero-text-bottom-left {
+    bottom: 0;
+    left: 0;
+  }
+  #hero-{{ section.id }}
+  .hero-text-bottom-right {
+    bottom: 0;
+    right: 0;
+    text-align: right;
+  }
+
+  #hero-{{ section.id }}
+  .hero-title {
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  #hero-{{ section.id }}
+  .hero-content {
+    font-size: 14px;
+    font-weight: 300;
+    text-align: center;
+  }
+
+  #hero-{{ section.id }}
+  .countdown-container {
+    background-color: #6c7257;
+    width: 100%;
+    margin: 0 auto;
+    padding: 15px 0;
+    transition: none;
+    /* Important to prevent transition lag */
+  }
+
+  #hero-{{ section.id }}
+  .countdown-overlay {
+    width: 100%;
+    z-index: 999;
+    /* Ensure it doesn't have transition properties that conflict with JS */
+    transition: none;
+  }
+
+  /* Fixed State */
+  #hero-{{ section.id }} .countdown-overlay.sticky-fixed {
+    position: fixed;
+    left: 0;
+    right: 0;
+    width: 100%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: slideDown 0.3s ease-out forwards;
+  }
+
+  /* Smooth entry animation */
+  @keyframes slideDown {
+    from {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  #hero-{{ section.id }}
+  .countdown-text {
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  @media (min-width: 380px) {
+    #hero-{{ section.id }} .countdown-text {
+      font-size: 13px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    #hero-{{ section.id }} .hero-text-overlay {
+      padding: 1.5rem;
+      max-width: 90%;
+    }
+  }
+  @media (min-width: 1024px) {
+    #hero-{{ section.id }} .hero-title {
+      font-size: 36px;
+    }
+    #hero-{{ section.id }}
+    .hero-content {
+      font-size: 24px;
+    }
+    #hero-{{ section.id }}
+    .hero-text-overlay {
+      position: absolute;
+      padding: 2rem;
+      color: white;
+      width: 299px;
+      color: #2b3c35;
+    }
+    , #hero-{{ section.id }}
+    .hero-text-top-right {
+      top: 40px;
+      right: 130px;
+      text-align: right;
+    }
+    , #hero-{{ section.id }}
+    .countdown-text {
+      font-size: 16px;
+    }
+  }
 {% endstylesheet %}

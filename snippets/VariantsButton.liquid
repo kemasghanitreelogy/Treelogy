@@ -18,7 +18,7 @@
 {% assign first_variant = product.variants.first %}
 {% assign base_cents = first_variant.price %}
 {% assign cur_cents = base_cents %}
-{% assign original_price_from_meta_variant = first_variant.metafields.custom.original_price | times : 100 %}
+{% assign original_price_from_meta_variant = first_variant.metafields.custom.original_price | times: 100 %}
 
 <div style="display: none;">{{ cur_cents }} {{ product.variants.size }} {{ original_price_from_meta_variant }}</div>
 
@@ -26,10 +26,9 @@
   <div
     data-value="{{ variant.id }}"
     class="checkbox-button {% if default_variant == variant.id %} active {% endif %}"
-    data-available="{{ variant.available }}"
-  >
+    data-available="{{ variant.available }}">
     {% assign original_price = variant.metafields.custom.use_doubling_prices %}
-    {% assign discount_percent = variant.metafields.custom.discount_percent_variant |default :0 %}
+    {% assign discount_percent = variant.metafields.custom.discount_percent_variant | default: 0 %}
 
     {% if original_price %}
       {% assign price_diff = cur_cents | minus: variant.price %}
@@ -51,7 +50,9 @@
           {% else %}
             {{ variant.title }}
           {% endif %}
-          {% unless variant.available %} - sold out {% endunless %}
+          {% unless variant.available %}
+            - sold out
+          {% endunless %}
         </div>
 
         {% unless disabled_detail %}
@@ -65,14 +66,14 @@
       {% if original_price %}
         <div class="custom-discount-price">
           {% if variant_size == 1 %}
-    
+
             {% assign discount_factor = 100 | minus: discount_percent %}
             {% assign price_before_discount = variant.price | times: 100 | divided_by: discount_factor %}
 
             {{ price_before_discount | round: 0 | money_with_currency }}
           {% else %}
             {{ cur_cents | money_with_currency }}
-          {%  endif %}
+          {% endif %}
         </div>
       {% endif %}
       {% assign saving = variant.metafields.custom.saving %}
@@ -83,7 +84,9 @@
           {% assign saving_amount_array = saving | split: '|' %}
           {% for amount in saving_amount_array %}
             {%- if amount contains active_currency -%}
-              <div class="saving"><span>save</span> {{ amount | split: ':' | last | money_with_currency }}</div>
+              <div class="saving">
+                <span>save</span>
+                {{ amount | split: ':' | last | money_with_currency }}</div>
             {%- endif -%}
           {% endfor %}
         {% endif %}
@@ -103,7 +106,8 @@
           <div class="product-wrapper">
             <div class="thumb">
               {% assign thumb = gift_product.images | first %}
-              {% render 'Image', image: thumb.src %}
+              {% render 'Image'
+                , image: thumb.src %}
             </div>
             <div class="title">
               {{ gift_product.title }}

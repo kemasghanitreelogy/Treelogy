@@ -185,10 +185,10 @@
 
 {% stylesheet %}
 
-  .countdown-container {
+  .countdown-section .countdown-container {
     padding: 0 40px;
   }
-  .countdown-section {
+  .countdown-section .countdown-section {
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -197,7 +197,7 @@
     margin: auto;
   }
 
-  .countdown-wrapper {
+  .countdown-section .countdown-wrapper {
     display: flex;
     justify-content: space-between;
     width: 100%;
@@ -207,20 +207,20 @@
   }
 
 
-  .countdown-label {
+  .countdown-section .countdown-label {
     font-size: 12px;
     font-weight: 400;
     letter-spacing: 2px;
     text-transform: uppercase;
   }
 
-  .countdown-value {
+  .countdown-section .countdown-value {
     font-size: 14px;
     font-weight: 500;
     line-height: 1;
   }
 
-  .countdown-description {
+  .countdown-section .countdown-description {
     max-width: 800px;
     margin: 0 auto 20px;
     font-size: 12px;
@@ -229,7 +229,7 @@
     padding: 0 30px;
   }
 
-  .countdown-footer {
+  .countdown-section .countdown-footer {
     max-width: 900px;
     margin: 0 auto;
     font-size: 9px;
@@ -238,58 +238,58 @@
   }
 
   @media (min-width: 768px) {
-    .countdown-wrapper {
+    .countdown-section .countdown-wrapper {
       gap: 20px;
     }
 
-    .countdown-item {
+    .countdown-section .countdown-item {
       min-width: 80px;
     }
 
-    .countdown-description {
+    .countdown-section .countdown-description {
       font-size: 14px;
     }
-    .countdown-footer {
+    .countdown-section .countdown-footer {
       font-size: 13px;
     }
 
-    .countdown-value {
+    .countdown-section .countdown-value {
       font-size: 36px;
     }
 
-    .countdown-label {
+    .countdown-section .countdown-label {
       font-size: 12px;
     }
   }
 
   /* TABLET: scale 1.3 */
   @media (min-width: 768px) {
-    .countdown-label {
+    .countdown-section .countdown-label {
       font-size: calc(12px * 1.3);
     }
-    .countdown-value {
+    .countdown-section .countdown-value {
       font-size: calc(14px * 1.3);
     }
-    .countdown-description {
+    .countdown-section .countdown-description {
       font-size: calc(12px * 1.3);
     }
-    .countdown-footer {
+    .countdown-section .countdown-footer {
       font-size: calc(9px * 1.3);
     }
   }
 
   /* DESKTOP: scale 1.6 */
   @media (min-width: 1024px) {
-    .countdown-label {
+    .countdown-section .countdown-label {
       font-size: calc(12px * 1.6);
     }
-    .countdown-value {
+    .countdown-section .countdown-value {
       font-size: calc(14px * 1.6);
     }
-    .countdown-description {
+    .countdown-section .countdown-description {
       font-size: calc(12px * 1.6);
     }
-    .countdown-footer {
+    .countdown-section .countdown-footer {
       font-size: calc(9px * 1.6);
     }
   }

@@ -5,10 +5,15 @@
   {% endif %}
 {% endfor %}
 
-{% if has_tags %}
+{% if product.tags.size > 0 %}
   <div class="tags">
     {% for tag in product.tags %}
-      <span class="product-tag">{{ tag }}</span>
+      {% unless tag contains 'exclude' or tag contains 'Exclude' or tag contains 'exclude' %}
+        <span class="product-tag">{{ tag }}</span>
+      {% endunless %}
     {% endfor %}
   </div>
 {% endif %}
+
+
+

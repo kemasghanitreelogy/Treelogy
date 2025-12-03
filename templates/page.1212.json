@@ -162,6 +162,9 @@
         "image": "shopify://shop_images/SON00317_1.webp",
         "alt": "Hero image",
         "loading_priority": false,
+        "title": "",
+        "content": "",
+        "text_position": "center",
         "margin_top": 0,
         "margin_bottom": 40
       }
