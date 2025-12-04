@@ -71,6 +71,7 @@
     
     // Check if the date string was invalid
     if (isNaN(endTime)) {
+        console.error(`Countdown Timer (ID: {{ section.id }}): Invalid target date format: ${targetDateString}`);
         return;
     }
 
@@ -206,7 +207,7 @@
   .countdown-container {
     padding: 0 40px;
   }
-  .countdown-section {
+  .countdown-section{
     text-align: center;
     display: flex;
     flex-direction: column;
