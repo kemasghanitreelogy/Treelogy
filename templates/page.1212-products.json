@@ -17,16 +17,6 @@
         "image_mobile": "shopify://shop_images/Copy_of_Copy_of_DSC01052_1.png",
         "alt": "Hero image",
         "loading_priority": true,
-        "title": "12.12 Hari Ibu",
-        "content": "<p>Your Private access to our exclusive bundle</p>",
-        "text_position": "top-right",
-        "show_countdown": true,
-        "day_label": "days",
-        "hour_label": "hrs",
-        "countdown_date": "2025-12-12 10:00",
-        "countdown_message": "left • Only 100 orders accepted",
-        "enable_sticky": true,
-        "sticky_top_offset": 90,
         "margin_top": 0,
         "margin_bottom": 0
       }

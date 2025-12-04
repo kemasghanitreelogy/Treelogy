@@ -76,4 +76,26 @@
     </main>
     {% section 'Footer' %}
   </body>
+     <script>
+      window.addEventListener("klaviyoForms", function(e) {
+        if (e.detail.type == 'submit') {
+          // Define target VIP Form IDs
+          var vipFormIds = ['WM9fu2', 'WhhKjp'];
+          
+          if (vipFormIds.includes(e.detail.formId)) {
+            // Check if Facebook Pixel is initialized
+            if (typeof fbq !== 'undefined') {
+              fbq('track', 'Lead', {
+                content_name: 'VIP Early Access Signup',
+                content_category: 'Lead',
+                content_ids: [e.detail.formId],
+                status: 'success'
+              });
+              // Silent debug log (visible only in browser console)
+              console.log('Treelogy Tracking: Meta Lead Event fired for form ' + e.detail.formId);
+            }
+          }
+        }
+      });
+    </script>
 </html>
