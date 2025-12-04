@@ -60,13 +60,9 @@
 
       <div class="countdown-overlay" id="countdown-bar-{{ section.id }}">
         <div class="countdown-container" data-end-date="{{ section.settings.countdown_date }}">
-          <div class="countdown-text">
-            <span class="countdown-days">00</span>
-            {{ section.settings.day_label }}
-            <span class="countdown-hours">00</span>
-            {{ section.settings.hour_label }}
-            {{ section.settings.countdown_message }}
-          </div>
+        <div class="countdown-text">
+          <span class="countdown-hours">00</span>:<span class="countdown-minutes">00</span>:<span class="countdown-seconds">00</span>&nbsp;{{ section.settings.countdown_message }}
+        </div>
         </div>
       </div>
 
@@ -148,17 +144,20 @@
         "id": "show_countdown",
         "label": "Show countdown timer",
         "default": false
-      }, {
+      }, 
+      /* Labels removed from Schema usage but kept here to avoid breaking existing settings data */
+      {
         "type": "text",
         "id": "day_label",
-        "label": "Day Label",
+        "label": "Day Label (Not used in H:M:S format)",
         "default": "hari"
       }, {
         "type": "text",
         "id": "hour_label",
-        "label": "Hour Label",
+        "label": "Hour Label (Not used in H:M:S format)",
         "default": "jam"
-      }, {
+      }, 
+      {
         "type": "text",
         "id": "countdown_date",
         "label": "Countdown end date",
@@ -225,28 +224,40 @@
     
     if (countdownEl) {
       const endDate = new Date(countdownEl.dataset.endDate).getTime();
-      const daysEl = countdownEl.querySelector('.countdown-days');
+      
+      // Selectors updated for Hours, Minutes, Seconds
       const hoursEl = countdownEl.querySelector('.countdown-hours');
+      const minutesEl = countdownEl.querySelector('.countdown-minutes');
+      const secondsEl = countdownEl.querySelector('.countdown-seconds');
       
       function updateCountdown() {
         const now = new Date().getTime();
         const distance = endDate - now;
         
         if (distance < 0) {
-          daysEl.textContent = '00';
           hoursEl.textContent = '00';
+          minutesEl.textContent = '00';
+          secondsEl.textContent = '00';
           return;
         }
         
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        // Calculate Time
+        // Hours: Total hours (including days)
+        const hours = Math.floor(distance / (1000 * 60 * 60));
+        // Minutes: Remainder after hours removed
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        // Seconds: Remainder after minutes removed
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
         
-        daysEl.textContent = String(days).padStart(2, '0');
+        // Update DOM
         hoursEl.textContent = String(hours).padStart(2, '0');
+        minutesEl.textContent = String(minutes).padStart(2, '0');
+        secondsEl.textContent = String(seconds).padStart(2, '0');
       }
       
       updateCountdown();
-      setInterval(updateCountdown, 60000); 
+      // UPDATED: Interval set to 1000ms (1 second) instead of 60000ms
+      setInterval(updateCountdown, 1000); 
     }
 
     // --- 2. Smoother Sticky Logic (No Blinking) ---
@@ -259,34 +270,27 @@
       if (anchor && bar && spacer) {
         
         function onScroll() {
-          // Calculate the anchor's position relative to the viewport
           const rect = anchor.getBoundingClientRect();
           
-          // If the anchor touches or goes above the top of the viewport (0)
           if (rect.top <= 0) {
              if (!bar.classList.contains('sticky-fixed')) {
-               // 1. Lock the height of the spacer to prevent page jump
                spacer.style.height = bar.offsetHeight + 'px';
                spacer.style.display = 'block';
                
-               // 2. Fix the bar
                bar.classList.add('sticky-fixed');
                bar.style.top = offset + 'px';
              }
           } else {
              if (bar.classList.contains('sticky-fixed')) {
-               // 1. Remove fixed positioning
                bar.classList.remove('sticky-fixed');
                bar.style.top = 'auto';
                
-               // 2. Hide spacer
                spacer.style.display = 'none';
                spacer.style.height = '0px';
              }
           }
         }
 
-        // Use requestAnimationFrame for performance (prevents jitter)
         let ticking = false;
         window.addEventListener('scroll', function() {
           if (!ticking) {
@@ -298,7 +302,6 @@
           }
         }, { passive: true });
         
-        // Also run on resize to recalculate height if window changes
         window.addEventListener('resize', onScroll);
       }
     {% endif %}
@@ -306,12 +309,12 @@
 </script>
 
 {% stylesheet %}
-  #hero-{{ section.id }} .hero-container {
+  .hero-section .hero-container {
     position: relative;
     width: 100%;
   }
 
-  #hero-{{ section.id }}
+  .hero-section
   .hero-image {
     width: 100%;
     display: block;
@@ -319,14 +322,14 @@
     object-fit: cover;
   }
 
-  #hero-{{ section.id }}
+  .hero-section
   .hero-placeholder {
     width: 100%;
     height: 400px;
     background: #f4f4f4;
   }
 
-  #hero-{{ section.id }}
+  .hero-section
   .hero-text-overlay {
     position: absolute;
     padding: 2rem;
@@ -335,70 +338,31 @@
     color: #2b3c35;
   }
 
-  #hero-{{ section.id }}
-  .hero-text-top-left {
-    top: 0;
-    left: 0;
-  }
-  #hero-{{ section.id }}
-  .hero-text-top-right {
-    top: 30px;
-    right: 11px;
-    text-align: right;
-  }
-  #hero-{{ section.id }}
-  .hero-text-center {
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-  }
-  #hero-{{ section.id }}
-  .hero-text-bottom-left {
-    bottom: 0;
-    left: 0;
-  }
-  #hero-{{ section.id }}
-  .hero-text-bottom-right {
-    bottom: 0;
-    right: 0;
-    text-align: right;
-  }
+  .hero-section .hero-text-top-left { top: 0; left: 0; }
+  .hero-section .hero-text-top-right { top: 30px; right: 11px; text-align: right; }
+  .hero-section .hero-text-center { top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+  .hero-section .hero-text-bottom-left { bottom: 0; left: 0; }
+  .hero-section .hero-text-bottom-right { bottom: 0; right: 0; text-align: right; }
 
-  #hero-{{ section.id }}
-  .hero-title {
-    font-size: 18px;
-    font-weight: 600;
-    text-align: center;
-  }
+  .hero-section .hero-title { font-size: 18px; font-weight: 600; text-align: center; }
+  .hero-section .hero-content { font-size: 14px; font-weight: 300; text-align: center; }
 
-  #hero-{{ section.id }}
-  .hero-content {
-    font-size: 14px;
-    font-weight: 300;
-    text-align: center;
-  }
-
-  #hero-{{ section.id }}
-  .countdown-container {
-    background-color: #6c7257;
+  .hero-section .countdown-container {
+    background-color: #a6bb87;
     width: 100%;
     margin: 0 auto;
     padding: 15px 0;
     transition: none;
-    /* Important to prevent transition lag */
   }
 
-  #hero-{{ section.id }}
-  .countdown-overlay {
+  .hero-section .countdown-overlay {
     width: 100%;
     z-index: 999;
-    /* Ensure it doesn't have transition properties that conflict with JS */
     transition: none;
   }
 
   /* Fixed State */
-  #hero-{{ section.id }} .countdown-overlay.sticky-fixed {
+  .hero-section .countdown-overlay.sticky-fixed {
     position: fixed;
     left: 0;
     right: 0;
@@ -407,63 +371,32 @@
     animation: slideDown 0.3s ease-out forwards;
   }
 
-  /* Smooth entry animation */
   @keyframes slideDown {
-    from {
-      transform: translateY(-100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
+    from { transform: translateY(-100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
   }
 
-  #hero-{{ section.id }}
-  .countdown-text {
+  .hero-section .countdown-text {
     color: #ffffff;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
     text-align: center;
+    /* Ensure numbers don't jump around */
+    font-variant-numeric: tabular-nums; 
   }
 
   @media (min-width: 380px) {
-    #hero-{{ section.id }} .countdown-text {
-      font-size: 13px;
-    }
+    .hero-section .countdown-text { font-size: 13px; }
   }
 
   @media (min-width: 768px) {
-    #hero-{{ section.id }} .hero-text-overlay {
-      padding: 1.5rem;
-      max-width: 90%;
-    }
+    .hero-section .hero-text-overlay { padding: 1.5rem; max-width: 90%; }
   }
   @media (min-width: 1024px) {
-    #hero-{{ section.id }} .hero-title {
-      font-size: 36px;
-    }
-    #hero-{{ section.id }}
-    .hero-content {
-      font-size: 24px;
-    }
-    #hero-{{ section.id }}
-    .hero-text-overlay {
-      position: absolute;
-      padding: 2rem;
-      color: white;
-      width: 299px;
-      color: #2b3c35;
-    }
-    , #hero-{{ section.id }}
-    .hero-text-top-right {
-      top: 40px;
-      right: 130px;
-      text-align: right;
-    }
-    , #hero-{{ section.id }}
-    .countdown-text {
-      font-size: 16px;
-    }
+    .hero-section .hero-title { font-size: 36px; }
+    .hero-section .hero-content { font-size: 24px; }
+    .hero-section .hero-text-overlay { position: absolute; padding: 2rem; color: white; width: 299px; color: #2b3c35; }
+    .hero-section .hero-text-top-right { top: 40px; right: 130px; text-align: right; }
+    .hero-section .countdown-text { font-size: 16px; }
   }
 {% endstylesheet %}

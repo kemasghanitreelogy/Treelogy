@@ -4,13 +4,23 @@
   style="text-align: {{ section.settings.text_alignment }};">
   <div class="content">
     <div class="simple-text" style="
-        color: {{ section.settings.text_color }}; 
-        font-weight: {{ section.settings.font_weight }};
-        --mobile-size: {{ section.settings.font_size }}px;
-        --tablet-size: {{ section.settings.font_size | times: 1.3 | round }}px;
-        --desktop-size: {{ section.settings.font_size | times: 1.6 | round }}px;
-      ">
-      {{ section.settings.text }}
+          color: {{ section.settings.text_color }}; 
+          font-weight: {{ section.settings.font_weight }};
+          --mobile-size: {{ section.settings.font_size }}px;
+          --tablet-size: {{ section.settings.font_size | times: 1.3 | round }}px;
+          --desktop-size: {{ section.settings.font_size | times: 1.6 | round }}px;
+  ">
+
+      {% comment %} 
+                        1. Get the dynamic word from the setting
+                        2. Create the replacement string: "word" + "<br>"
+                        3. Replace all occurrences in the text
+                  {% endcomment %}
+
+      {% assign word_to_replace = section.settings.word_to_replace %}
+      {% assign replacement_string = word_to_replace | append: '<br>' %}
+
+      {{ section.settings.text | replace: word_to_replace, replacement_string }}
     </div>
   </div>
 </div>
@@ -28,6 +38,13 @@
         "default": "<p>Enter your text here</p>"
       },
       {
+        "type": "text",
+        "id": "word_to_replace",
+        "label": "Word to break after",
+        "info": "The exact word to be followed by a line break (<br>). Case-sensitive.",
+        "default": "our"
+      },
+      {
         "type": "color",
         "id": "text_color",
         "label": "Text Color",
@@ -39,8 +56,7 @@
         "label": "Font Size - Mobile (px)",
         "info": "Auto-scales: Tablet +10%, Desktop +15%",
         "default": 16
-      },
-      {
+      }, {
         "type": "select",
         "id": "text_alignment",
         "label": "Text Alignment",
@@ -140,9 +156,6 @@
 </style>
 
 {% stylesheet %}
-  .simple-text-container {
-    padding: 0 35px;
-  }
 
   .simple-text {
     font-size: var(--mobile-size);
@@ -151,10 +164,6 @@
 
   /* Tablet breakpoint (768px - 1023px) */
   @media screen and (min-width: 768px) {
-    .simple-text-container {
-      padding: 0 48px;
-    }
-
     .simple-text {
       font-size: var(--tablet-size);
     }
@@ -165,9 +174,6 @@
     .simple-text {
       font-size: var(--desktop-size);
     }
-
-    .simple-text-container {
-      padding: 0 32%;
-    }
   }
+
 {% endstylesheet %}

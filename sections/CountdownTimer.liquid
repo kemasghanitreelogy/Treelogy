@@ -63,9 +63,17 @@
     
     if (!section) return;
     
-    const targetMinutes = {{ section.settings.countdown_minutes }};
-    const endTime = Date.now() + (targetMinutes * 60 * 1000);
+    // The target date string from the new setting (Format: YYYY-MM-DD HH:MM)
+    const targetDateString = '{{ section.settings.target_datetime }}'; 
     
+    // Convert the date string into a Unix timestamp (milliseconds)
+    const endTime = Date.parse(targetDateString);
+    
+    // Check if the date string was invalid
+    if (isNaN(endTime)) {
+        return;
+    }
+
     // Query within the specific section only
     const days = section.querySelector('[data-days]');
     const hours = section.querySelector('[data-hours]');
@@ -77,24 +85,34 @@
     
     function update() {
       const now = Date.now();
+      // Calculate the difference in milliseconds
       const diff = endTime - now;
       
       if (diff <= 0) {
         days.textContent = '00';
         hours.textContent = '00';
         minutes.textContent = '00';
+        // Stop the interval when the countdown is finished
+        clearInterval(interval); 
         return;
       }
       
-      const d = Math.floor(diff / 86400000);
-      const h = Math.floor((diff % 86400000) / 3600000);
-      const m = Math.floor((diff % 3600000) / 60000);
+      // Constants for time unit conversion in milliseconds
+      const MS_PER_DAY = 86400000;
+      const MS_PER_HOUR = 3600000;
+      const MS_PER_MINUTE = 60000;
+      
+      // Calculate remaining time
+      const d = Math.floor(diff / MS_PER_DAY);
+      const h = Math.floor((diff % MS_PER_DAY) / MS_PER_HOUR);
+      const m = Math.floor((diff % MS_PER_HOUR) / MS_PER_MINUTE);
       
       days.textContent = pad(d);
       hours.textContent = pad(h);
       minutes.textContent = pad(m);
     }
     
+    // Initial call and set interval
     update();
     const interval = setInterval(update, 1000);
     
@@ -114,11 +132,11 @@
     "name": "Countdown Timer",
     "settings": [
       {
-        "type": "number",
-        "id": "countdown_minutes",
-        "label": "Countdown Duration (minutes)",
-        "default": 14400,
-        "info": "Enter total minutes. Example: 14400 = 10 days"
+        "type": "text",
+        "id": "target_datetime",
+        "label": "Countdown Target Date/Time",
+        "default": "2025-12-31 23:59",
+        "info": "Format: YYYY-MM-DD HH:MM (e.g., 2025-12-31 23:59). Time is relative to the viewer's device clock."
       },
       {
         "type": "text",
@@ -185,10 +203,10 @@
 
 {% stylesheet %}
 
-  .countdown-section .countdown-container {
+  .countdown-container {
     padding: 0 40px;
   }
-  .countdown-section .countdown-section {
+  .countdown-section {
     text-align: center;
     display: flex;
     flex-direction: column;
