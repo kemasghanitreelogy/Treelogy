@@ -10,14 +10,12 @@
           --tablet-size: {{ section.settings.font_size | times: 1.3 | round }}px;
           --desktop-size: {{ section.settings.font_size | times: 1.6 | round }}px;
   ">
+      {% if request.locale.iso_code == 'id' %}
+        {% assign word_to_replace = section.settings.word_to_replace_id %}
+      {% else %}
+        {% assign word_to_replace = section.settings.word_to_replace_en %}
+      {% endif %}
 
-      {% comment %} 
-                        1. Get the dynamic word from the setting
-                        2. Create the replacement string: "word" + "<br>"
-                        3. Replace all occurrences in the text
-                  {% endcomment %}
-
-      {% assign word_to_replace = section.settings.word_to_replace %}
       {% assign replacement_string = word_to_replace | append: '<br>' %}
 
       {{ section.settings.text | replace: word_to_replace, replacement_string }}
@@ -39,18 +37,22 @@
       },
       {
         "type": "text",
-        "id": "word_to_replace",
-        "label": "Word to break after",
-        "info": "The exact word to be followed by a line break (<br>). Case-sensitive.",
+        "id": "word_to_replace_en",
+        "label": "Word to break after (English)",
         "default": "our"
+      },
+      {
+        "type": "text",
+        "id": "word_to_replace_id",
+        "label": "Word to break after (Indonesian)",
+        "default": "dan"
       },
       {
         "type": "color",
         "id": "text_color",
         "label": "Text Color",
         "default": "#000000"
-      },
-      {
+      }, {
         "type": "number",
         "id": "font_size",
         "label": "Font Size - Mobile (px)",
