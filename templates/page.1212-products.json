@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero_baner_CNgjbw": {
@@ -6,16 +15,16 @@
       "settings": {
         "image": "shopify://shop_images/Copy_of_Copy_of_DSC01052_2.png",
         "image_mobile": "shopify://shop_images/Copy_of_Copy_of_DSC01052_1.png",
-        "alt": "Coming Soon",
+        "alt": "Hero image",
         "loading_priority": true,
         "title": "Coming Soon",
-        "content": "<p>We are preparing something special for you.</p>",
+        "content": "<p>Your Private access to our exclusive bundles</p>",
         "text_position": "top-right",
-        "show_countdown": false,
+        "show_countdown": true,
         "day_label": "hari",
         "hour_label": "jam",
         "countdown_date": "2025-12-09 10:00",
-        "countdown_message": "Launching in",
+        "countdown_message": "Only 100 orders accepted",
         "enable_sticky": true,
         "sticky_top_offset": 100,
         "margin_top": 0,
@@ -24,8 +33,6 @@
     }
   },
   "order": [
-    "hero_baner_CNgjbw",
-    "simple_text_jQLyFa",
-    "feature_product_list_GDRky7"
+    "hero_baner_CNgjbw"
   ]
 }
