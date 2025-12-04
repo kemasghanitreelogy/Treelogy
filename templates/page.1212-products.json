@@ -9,10 +9,10 @@
         "image_mobile": "shopify://shop_images/Copy_of_Copy_of_DSC01052_1.png",
         "alt": "Hero image",
         "loading_priority": true,
-        "title": "Coming Soon",
+        "title": "12.12 Hari Ibu",
         "content": "<p>Your Private access to our exclusive bundles</p>",
         "text_position": "top-right",
-        "show_countdown": false,
+        "show_countdown": true,
         "day_label": "hari",
         "hour_label": "jam",
         "countdown_date": "2025-12-09 10:00",
@@ -22,9 +22,36 @@
         "margin_top": 0,
         "margin_bottom": 0
       }
+    },
+    "simple_text_jQLyFa": {
+      "type": "SimpleText",
+      "name": "Simple Text",
+      "settings": {
+        "text": "<p><strong>Fresh batches protect product quality and our team’s well being. First come, first served 🌿</strong></p>",
+        "word_to_replace": "our",
+        "text_color": "#2b3c35",
+        "font_size": 13,
+        "text_alignment": "center",
+        "font_weight": "400",
+        "margin_top": 30,
+        "margin_bottom": 0
+      }
+    },
+    "feature_product_list_GDRky7": {
+      "type": "FeatureProductList",
+      "name": "Featured Products List",
+      "settings": {
+        "collection": "early-vip-access",
+        "products_limit": 8,
+        "show_view_all": false,
+        "view_all_text": "View All",
+        "empty_text": "No products found. Please select a collection."
+      }
     }
   },
   "order": [
-    "hero_baner_CNgjbw"
+    "hero_baner_CNgjbw",
+    "simple_text_jQLyFa",
+    "feature_product_list_GDRky7"
   ]
 }
