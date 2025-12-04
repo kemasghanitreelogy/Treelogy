@@ -20,7 +20,7 @@
         "title": "Coming Soon",
         "content": "<p>Your Private access to our exclusive bundles</p>",
         "text_position": "top-right",
-        "show_countdown": true,
+        "show_countdown": false,
         "day_label": "hari",
         "hour_label": "jam",
         "countdown_date": "2025-12-09 10:00",
