@@ -24,7 +24,7 @@
         "day_label": "hari",
         "hour_label": "jam",
         "countdown_date": "2025-12-09 10:00",
-        "countdown_message": "Hanya menerima 100 pesanan",
+        "countdown_message": "Only 100 orders accepted",
         "enable_sticky": true,
         "sticky_top_offset": 0,
         "margin_top": 0,
