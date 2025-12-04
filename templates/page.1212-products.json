@@ -26,7 +26,7 @@
         "countdown_date": "2025-12-09 10:00",
         "countdown_message": "Only 100 orders accepted",
         "enable_sticky": true,
-        "sticky_top_offset": 0,
+        "sticky_top_offset": 100,
         "margin_top": 0,
         "margin_bottom": 0
       }
