@@ -30,13 +30,19 @@
     {% assign original_price = variant.metafields.custom.use_doubling_prices %}
     {% assign discount_percent = variant.metafields.custom.discount_percent_variant | default: 0 %}
 
-    {% if original_price %}
-      {% assign price_diff = cur_cents | minus: variant.price %}
+      {% if original_price %}
 
-      {% if variant_size > 1 %}
-        {% assign discount_percent = price_diff | times: 100 | divided_by: cur_cents %}
+      {% comment %} 1. Calculate the numeric difference {% endcomment %}
+    {% assign price_diff = variant.compare_at_price | minus: variant.price %}
+
+      {% comment %} 2. Calculate percent: (Difference * 100) / Original Price {% endcomment %}
+      {% assign discount_percent = price_diff | times: 100 | divided_by: variant.compare_at_price %}
+      {% if discount_percent == 0 %}
+        {% assign price_diff = cur_cents | minus: variant.price %}
+        {% if variant_size > 1 %}
+          {% assign discount_percent = price_diff | times: 100 | divided_by: cur_cents %}
+        {% endif %}
       {% endif %}
-
       <div class="discount-label">-{{ discount_percent }}%</div>
     {% endif %}
 
@@ -66,11 +72,11 @@
       {% if original_price %}
         <div class="custom-discount-price">
           {% if variant_size == 1 %}
-
-            {% assign discount_factor = 100 | minus: discount_percent %}
-            {% assign price_before_discount = variant.price | times: 100 | divided_by: discount_factor %}
-
-            {{ price_before_discount | round: 0 | money_with_currency }}
+            {% if variant.compare_at_price > variant.price %}
+              {{ variant.compare_at_price | money_with_currency }}
+            {% else %}
+              {{ variant.price | money_with_currency }}
+            {% endif %}
           {% else %}
             {{ cur_cents | money_with_currency }}
           {% endif %}
