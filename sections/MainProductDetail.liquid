@@ -1,14 +1,14 @@
 {% assign product_detail = product.metafields.custom.product_detail %}
 
 {%  comment %}
-  LUGUS : Hide the product detail for now because we're using FAQ at the moment. 
-  TODO : Show the product detail again when we would rework the product page. 
-  If you remove the line below, the product detail will be showed back. 
+  LUGUS : Hide the product detail for now because we're using FAQ at the moment.
+  TODO : Show the product detail again when we would rework the product page.
+  If you remove the line below, the product detail will be showed back.
 {% endcomment %}
 {% assign product_detail = blank %}
 
 {%  comment %}
-  LUGUS : Filter product image by language : 
+  LUGUS : Filter product image by language :
 
   We use ALT text to filter product image by language.
 
@@ -17,7 +17,7 @@
 
   This will display the image in English but not for all other languages.
 
-  The format to use is : 
+  The format to use is :
   "LANG:[ISO CODE]|[ALT TEXT]"
 {% endcomment %}
 
@@ -29,9 +29,9 @@
 
           {% assign image_alt = image.alt | escape %}
 
-          {% if image.alt contains 'LANG:' %} 
-            {% assign image_alt = image.alt | split : "|" | last %}
-            {% assign language_code = image.alt | split : "|" | first | remove: "LANG:" | downcase %}
+          {% if image.alt contains 'LANG:' %}
+            {% assign image_alt = image.alt | split: "|" | last %}
+            {% assign language_code = image.alt | split: "|" | first | remove: "LANG:" | downcase %}
 
             {% if language_code != request.locale.iso_code %}
               {% continue %}
@@ -50,8 +50,8 @@
               {% assign image_alt = image.alt | escape %}
 
               {% if image.alt contains 'LANG:' %}
-                {% assign image_alt = image.alt | split : "|" | last %}
-                {% assign language_code = image.alt | split : "|" | first | remove: "LANG:" | downcase %}
+                {% assign image_alt = image.alt | split: "|" | last %}
+                {% assign language_code = image.alt | split: "|" | first | remove: "LANG:" | downcase %}
 
                 {% if language_code != request.locale.iso_code %}
                   {% continue %}
@@ -59,7 +59,7 @@
               {% endif %}
 
               <img src="{{ image.src | img_url: '1440x' }}" alt="{{ image_alt  }}">
-              
+
             {% endfor %}
           </div>
         </div>
@@ -74,23 +74,39 @@
     <h1>{{ product.title }}</h1>
     {% render 'ProductTags' %}
     {% render 'ProductVideos' %}
-    <div class="body-desk description">{{ product.description }}</div>
-    <div class="variant-button">
-      {% if free_product != product.id %}
-        {% render 'VariantsButton', product: product %}
-      {% endif %}
-      {% comment %}
-        {% if section.settings.note or section.settings.note_image %}
-          <div class="note">
-            {{ section.settings.note }}
-            {% render 'Image', image: section.settings.note_image %}
+    <div class="body-desk description">
+      <div>{{ product.description }}</div>
+      <div>
+        {% assign rich_text_data = product.metafields.custom.advantage %}
+
+        {% if rich_text_data != blank %}
+          <div class="rich-text-container">
+            {{ rich_text_data | metafield_tag }}
           </div>
         {% endif %}
-      {% endcomment %}
+      </div>
+    </div>
+    <div class="variant-button">
+      {% if free_product != product.id %}
+        {% render 'VariantsButton'
+          , product: product %}
+      {% endif %}
+    {% comment %}
+      {% if section.settings.note or section.settings.note_image %}
+      <div class="note">
+      {{ section.settings.note }}
+      {% render 'Image', image: section.settings.note_image %}
+      </div>
+      {% endif %}
+    {% endcomment %}
     </div>
 
     {% if free_product != product.id %}
-      <form action="/cart/add" method="post" enctype="multipart/form-data" id="AddToCartForm">
+      <form
+        action="/cart/add"
+        method="post"
+        enctype="multipart/form-data"
+        id="AddToCartForm">
         <select name="id" id="productSelect">
           {% for variant in product.variants %}
             {% if variant.available %}
@@ -111,14 +127,19 @@
           {%- endif -%}
         {% endfor %}
 
-        <input type="hidden" id="Quantity" name="quantity" value="1" min="1" max="1">
+        <input
+          type="hidden"
+          id="Quantity"
+          name="quantity"
+          value="1"
+          min="1"
+          max="1">
         <button
           data-variant="{{ default_variant }}"
           type="submit"
           class="button button-quick-add-cart"
           name="add"
-          id="AddToCart"
-        >
+          id="AddToCart">
           {{ 'products.general.add_to_cart' | t }}
         </button>
       </form>
@@ -129,8 +150,11 @@
           <div class="item __accordion-wrapper">
             <div class="button h3 __accordion-button">
               {{ item.title }}
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 12">
-                <path fill="#2B3C35" d="M7 5V0H5v5H0v2h5v5h2V7h5V5H7Z"/>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 12 12">
+                <path fill="#2B3C35" d="M7 5V0H5v5H0v2h5v5h2V7h5V5H7Z" />
               </svg>
             </div>
             <div class="description __accordion-content">
@@ -143,11 +167,13 @@
     <div class="payment">
       <div class="payment-title">{{ section.settings.payment_title }}</div>
       <div class="payment-image desktop">
-        {% render 'Image', image: section.settings.payment_list %}
+        {% render 'Image'
+          , image: section.settings.payment_list %}
       </div>
       <div class="payment-image mobile">
         {% assign mobile_image = section.settings.payment_list_mob | default: section.settings.payment_list %}
-        {% render 'Image', image: mobile_image %}
+        {% render 'Image'
+          , image: mobile_image %}
       </div>
     </div>
   </div>
@@ -155,64 +181,68 @@
 {% comment %}
   <div style="clear:both"></div>
   <div
-    id="judgeme_product_reviews"
-    class="jdgm-widget jdgm-review-widget"
-    data-product-title="{{ product.title | escape }}"
-    data-id="{{ product.id }}"
-    data-auto-install="false"
+  id="judgeme_product_reviews"
+  class="jdgm-widget jdgm-review-widget"
+  data-product-title="{{ product.title | escape }}"
+  data-id="{{ product.id }}"
+  data-auto-install="false"
   >
-    {{ product.metafields.judgeme.widget }}
+  {{ product.metafields.judgeme.widget }}
   </div>
 {% endcomment %}
 {% schema %}
-{
-  "name": "Product single",
-  "tag": "section",
-  "class": "section",
-  "settings": [
-    {
-      "type": "text",
-      "id": "payment_title",
-      "label": "Payments title"
-    },
-    {
-      "type": "image_picker",
-      "id": "payment_list",
-      "label": "Payments image desktop"
-    },
+  {
+    "name": "Product single",
+    "tag": "section",
+    "class": "section",
+    "settings": [
+      {
+        "type": "text",
+        "id": "payment_title",
+        "label": "Payments title"
+      },
+      {
+        "type": "image_picker",
+        "id": "payment_list",
+        "label": "Payments image desktop"
+      },
 
-    {
-      "type": "image_picker",
-      "id": "payment_list_mob",
-      "label": "Payments image mobile"
-    },
+      {
+        "type": "image_picker",
+        "id": "payment_list_mob",
+        "label": "Payments image mobile"
+      },
 
-    {
-      "type": "header",
-      "content": "Note"
-    },
+      {
+        "type": "header",
+        "content": "Note"
+      }, {
+        "type": "text",
+        "id": "note",
+        "label": "Note"
+      }, {
+        "type": "image_picker",
+        "id": "note_image",
+        "label": "Note image"
+      }
+    ],
 
-    {
-      "type": "text",
-      "id": "note",
-      "label": "Note"
-    },
-
-    {
-      "type": "image_picker",
-      "id": "note_image",
-      "label": "Note image"
-    }
-  ],
-
-  "presets": [
-    {
-      "name": "Product single"
-    }
-  ]
-}
+    "presets": [
+      {
+        "name": "Product single"
+      }
+    ]
+  }
 {% endschema %}
 
 <script>
   const customPriceDiscount = document.querySelectorAll('.custom-discount-price');
 </script>
+
+<style>
+  .rich-text-container ul{
+    margin-top: 7px;
+    list-style-type: disc;
+    list-style-position: inside;
+  }
+</style>
