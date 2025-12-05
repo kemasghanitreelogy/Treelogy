@@ -13,49 +13,7 @@
     "market": "id"
   },
   "sections": {
-    "text_plain_P37YDD": {
-      "settings": {
-        "description": "<p>Hadiah Regenerasi yang Sesungguhnya. Dapatkan hadiah Hari Ibu lebih awal. Beli limited set regenerasi kami mulai 9 Desember, 3 hari sebelum dibuka untuk umum.</p>"
-      }
-    },
-    "countdown_timer_ywwKAN": {
-      "settings": {
-        "description": "<p>* Wajib diisi. Akses publik dimulai 12 Desember.  Akses privat dibuka pada 9 Desember pukul 10.00 WIB.</p>",
-        "footer_text": "<p>Dengan mengirimkan formulir ini, Anda menyetujui untuk menerima updates dan pesan marketing Treelogy melalui email atau WhatsApp. Persetujuan ini tidak menjadi syarat untuk melakukan pembelian. Anda dapat berhenti berlangganan kapan saja dengan membalas STOP atau melalui tautan yang tersedia. Kebijakan Privasi dan S&K berlaku.</p>",
-        "label_days": "HARI",
-        "label_hours": "JAM",
-        "label_minutes": "MENIT"
-      }
-    },
-    "text_plain_NgCBTx": {
-      "settings": {
-        "title": "<p>Mengapa Gabung ke Waiting List?</p>"
-      },
-      "blocks": {
-        "text_block_jWeTtQ": {
-          "settings": {
-            "block_title": "<p>Ketersediaan Terjamin</p>",
-            "block_content": "<p>Untuk menjaga kualitas & kesegaran moringa kami, serta kesejahteraan tim kebun dan pabrik, list ini memberi akses lebih awal untuk 100 pesanan pertama dari total 300 yang sangat terbatas.</p>"
-          }
-        },
-        "text_block_FLcC7b": {
-          "settings": {
-            "block_title": "<p>Pengiriman Tepat Waktu</p>",
-            "block_content": "<p>Pesananmu akan dikirim lebih dahulu, memastikan tiba tepat waktu untuk Hari Ibu (22 Des) tanpa risiko keterlambatan logistik 12.12.</p>"
-          }
-        },
-        "text_block_4bPp8d": {
-          "settings": {
-            "block_title": "<p>Penawaran Eksklusif</p>",
-            "block_content": "<p>Dapatkan harga khusus untuk tiga paket holiday bundling kami (hemat hingga 20%).</p>"
-          }
-        }
-      }
-    },
     "text_plain_MDTpgy": {
-      "settings": {
-        "title": "<p><strong>12.12 Paket Bundling Hari Ibu</strong></p>"
-      },
       "blocks": {
         "text_block_pYKafh": {
           "settings": {
