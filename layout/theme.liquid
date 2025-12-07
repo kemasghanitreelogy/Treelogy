@@ -1,33 +1,27 @@
 <!doctype html>
-<html>
+<html class="no-js" lang="{{ request.locale.iso_code }}">
   <head>
-    {% if request.path == '/collections/all' %}
-      <title>Treelogy | All Products</title>
-    {% elsif request.path == '/blogs/news' %}
-      <title>Treelogy | Blog</title>
-    {% else %}
-      <title>{{ page_title }}</title>
-    {% endif %}
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+    <link rel="canonical" href="{{ canonical_url }}">
+
+    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://t.contentsquare.net" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
     {% if request.path == '/collections/all' %}
-      <meta
-        name="description"
-        content="Browse all Treelogy products made with organic moringa, including powders, capsules, oils, and wellness bundles."
-      >
+      <title>Treelogy | All Products</title>
+      <meta name="description" content="Browse all Treelogy products made with organic moringa, including powders, capsules, oils, and wellness bundles.">
     {% elsif request.path == '/blogs/news' %}
-      <meta
-        name="description"
-        content="Read the Treelogy Journal for wellness tips, moringa recipes, product insights, and stories from our farm and community."
-      >
+      <title>Treelogy | Blog</title>
+      <meta name="description" content="Read the Treelogy Journal for wellness tips, moringa recipes, product insights, and stories from our farm and community.">
     {% else %}
+      <title>{{ page_title }}</title>
       <meta name="description" content="{{ page_description | escape }}">
     {% endif %}
-    <link rel="canonical" href="{{ canonical_url }}">
-    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
-
-    {{ content_for_header }}
 
     {% if request.path contains '/pages/vip-early-access' %}
       <meta property="og:image" content="https://cdn.shopify.com/s/files/1/0668/4776/8764/files/The_Movement_Relief_1__11zon.png?v=1764405259">
@@ -35,15 +29,24 @@
     {% endif %}
 
     {% if settings.favicon != blank %}
-      <link rel="icon" href="{{ settings.favicon | image_url }}" type="image/png">
+      <link rel="icon" href="{{ settings.favicon | image_url: width: 32, height: 32 }}" type="image/png">
     {% endif %}
 
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     
+    {{ content_for_header }}
+
+    {{ 'theme.css' | asset_url | stylesheet_tag }}
+    {{ 'lugus-custom.css' | asset_url | stylesheet_tag }}
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
+    
+    <script src="{{ 'app.bundle.js' | asset_url }}" defer></script>
+    <script src="{{ 'review.bundle.js' | asset_url }}" defer></script>
+    <script src="{{ 'lugus-custom.js' | asset_url }}" defer></script>
+
+    <script src="https://t.contentsquare.net/uxa/b315e3b428943.js" async></script>
+
     <script>
       window.texts = {
           allSet: '{{ 'cart.progress.all_set' | t }}',
@@ -51,41 +54,25 @@
           onlyText: '{{ 'cart.progress.only_text' | t }}',
           cartTitle: '{{ 'cart.title' | t }}',
           cartEmpty: '{{ 'cart.empty_cart_text' | t }}',
-        }
-    </script>
-    <!-- Header hook for plugins -->
-    {% comment %} {{ 'app.css' | asset_url | stylesheet_tag }} {% endcomment %}
-    {{ 'theme.css' | asset_url | stylesheet_tag }}
-    {{ 'app.bundle.js' | asset_url | script_tag }}
-    {{ 'review.bundle.js' | asset_url | script_tag }}
-
-    <script>
+        };
       window.faqs = [];
     </script>
-
-    <!-- Custom assets - Lugus -->
-    <link rel="stylesheet" href="{{ 'lugus-custom.css' | asset_url }}">
-    <script src="{{ 'lugus-custom.js' | asset_url }}" defer></script>
-    
-    <script src="https://t.contentsquare.net/uxa/b315e3b428943.js"></script>
-    
   </head>
+
   <body>
     {% section 'Header' %}
 
     <main id="landing-page" role="main">
       {{ content_for_layout }}
     </main>
+
     {% section 'Footer' %}
-  </body>
-     <script>
+
+    <script>
       window.addEventListener("klaviyoForms", function(e) {
         if (e.detail.type == 'submit') {
-          // Define target VIP Form IDs
           var vipFormIds = ['WM9fu2', 'WhhKjp'];
-          
           if (vipFormIds.includes(e.detail.formId)) {
-            // Check if Facebook Pixel is initialized
             if (typeof fbq !== 'undefined') {
               fbq('track', 'Lead', {
                 content_name: 'VIP Early Access Signup',
@@ -93,11 +80,10 @@
                 content_ids: [e.detail.formId],
                 status: 'success'
               });
-              // Silent debug log (visible only in browser console)
-              console.log('Treelogy Tracking: Meta Lead Event fired for form ' + e.detail.formId);
             }
           }
         }
       });
     </script>
+  </body>
 </html>
