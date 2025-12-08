@@ -70,7 +70,17 @@
   {% assign free_product = settings.free_product.id %}
 
   <div class="detail" id="product-detail-content">
-    <div class="rating body-mobile">{% render 'Rating' %}</div>
+    <div class="rating body-mobile">
+      {% if product.metafields.custom.rating %}
+        <div>
+          {% render 'StarReview' %}
+          <span class="rating-text">{{ product.metafields.custom.rating }}</span>
+        </div>
+      {% else %}
+        {% render 'Rating' %}
+      {% endif %}
+    </div>
+
     <h1>{{ product.title }}</h1>
     {% render 'ProductTags' %}
     {% render 'ProductVideos' %}
@@ -240,7 +250,7 @@
 </script>
 
 <style>
-  .rich-text-container ul{
+  .rich-text-container ul {
     margin-top: 7px;
     list-style-type: disc;
     list-style-position: inside;
