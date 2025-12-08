@@ -1,4 +1,12 @@
-
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero_baner_CNgjbw": {
@@ -15,7 +23,7 @@
         "show_countdown": true,
         "day_label": "hari",
         "hour_label": "jam",
-        "countdown_date": "2025-12-09 10:00",
+        "countdown_date": "2025-12-10 24:59",
         "countdown_message": "Only 100 orders accepted",
         "enable_sticky": true,
         "sticky_top_offset": 100,
@@ -28,7 +36,8 @@
       "name": "Simple Text",
       "settings": {
         "text": "<p><strong>Fresh batches protect product quality and our team’s well being. First come, first served 🌿</strong></p>",
-        "word_to_replace": "our",
+        "word_to_replace_en": "our",
+        "word_to_replace_id": "dan",
         "text_color": "#2b3c35",
         "font_size": 13,
         "text_alignment": "center",
