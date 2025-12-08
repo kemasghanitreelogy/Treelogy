@@ -1,15 +1,26 @@
 <!-- Start of Judge.me code -->
-<div class="header">
-  <h2>{{ "reviews.title" | t }}</h2>
-  {% render 'Rating', product: product %}
-  {% capture button_title %}
-    {{ 'reviews.write_review' | t }}
-  {% endcapture %}
-  {% render 'PrimaryButton', url: '#', title: button_title, id: 'button-add-review' %}
-</div>
-<div id="judgeme_product_reviews" class="jdgm-widget jdgm-review-widget" data-id="{{ product.id }}">
-  {{ product.metafields.judgeme.widget }}
-</div>
+{% unless product.metafields.custom.rating %}
+  <div class="header">
+    <h2>{{ "reviews.title" | t }}</h2>
+    {% render 'Rating'
+      , product: product %}
+
+    {% capture button_title %}
+      {{ 'reviews.write_review' | t }}
+    {% endcapture %}
+    {% render 'PrimaryButton'
+      , url: '#'
+      , title: button_title
+      , id: 'button-add-review' %}
+  </div>
+
+  <div
+    id="judgeme_product_reviews"
+    class="jdgm-widget jdgm-review-widget"
+    data-id="{{ product.id }}">
+    {{ product.metafields.judgeme.widget }}
+  </div>
+{% endunless %}
 <!-- End of Judge.me code -->
 
 <script>
@@ -32,14 +43,14 @@
 </script>
 
 {% schema %}
-{
-  "name": "Product review",
-  "tag": "section",
-  "class": "section product-review-list",
-  "presets": [
-    {
-      "name": "Product review"
-    }
-  ]
-}
+  {
+    "name": "Product review",
+    "tag": "section",
+    "class": "section product-review-list",
+    "presets": [
+      {
+        "name": "Product review"
+      }
+    ]
+  }
 {% endschema %}

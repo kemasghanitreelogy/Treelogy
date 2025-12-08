@@ -8,21 +8,6 @@
       data-href="{{product.url }}"
       data-swiper-autoplay="{{section.settings.interval }}"
     >
-      {% comment %}
-        <style>
-          .background-{{ block.id }}{
-            left: {{ block.settings.banner_x | default: 0 }}%;
-            top: {{ block.settings.banner_y | default: 0 }}%;
-          }
-
-          @media only screen and (max-width: 800px) {
-          .background-{{ block.id }}{
-            left: {{ block.settings.banner_x_mob }}%;
-            top: {{ block.settings.banner_y_mob }}%;
-          }
-          }
-        </style>
-      {% endcomment %}
       <img
         class="background background-{{ block.id }} desktop"
         width="auto"
@@ -30,9 +15,7 @@
         decoding="async"
         src="{{ block.settings.banner | image_url }}"
       >
-
       {% assign mobile_banner = block.settings.banner_mobile | default: block.settings.banner %}
-
       <img
         class="background mobile"
         width="auto"
