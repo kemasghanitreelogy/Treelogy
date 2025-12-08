@@ -5,7 +5,8 @@
     {% assign is_has_icon = true %}
   {% endif %}
 {% endfor %}
-<div class="side-image-video-wrapper {{ section.id }}">
+
+<div class="side-image-video-wrapper {{ section.id }}" id="section-wrapper-{{ section.id }}">
   <div class="main-grid">
     <div class="image-video {% if section.settings.fit_content %} fit-content {% endif %} {% if is_has_icon %} list-has-icon {% endif %}">
       {% if section.settings.video %}
@@ -15,13 +16,16 @@
         {% render 'Image', image: section.settings.banner %}
       {% endif %}
     </div>
+
     <div class="detail">
       <div class="header">
         <h2 class="h1">
           {{ section.settings.title }}
         </h2>
-        <div class="body-desk desc">
-          {{ section.settings.description }}
+        <div class="desc">
+          <div class="text-description">
+            {{ section.settings.description }}
+          </div>
         </div>
         {% if section.settings.button_pos == 'top' %}
           {% render 'PrimaryButton',
@@ -31,33 +35,42 @@
           %}
         {% endif %}
       </div>
+
       {% if section.blocks.size > 0 %}
-        <div class="content-list __accordion {% if is_has_icon %} list-has-icon {% endif %}" data-mobile="1">
+        <div class="content-list-accordion new-acc-container {% if is_has_icon %} list-has-icon {% endif %}">
           {% for block in section.blocks %}
-            <div class="item __accordion-wrapper {% if block.settings.icon %} has-icon {% endif %}">
+            
+            <div class="item new-acc-item {% if block.settings.icon %} has-icon {% endif %}">
+              
               {% if block.settings.icon %}
                 <div class="item-icon">
                   {% render 'Image', image: block.settings.icon %}
                 </div>
               {% endif %}
-              <div class="__accordion-wrapper-inner">
-                <h2 class="sub-head {% unless block.settings.icon %} __accordion-button {% endunless %}">
-                  {{ block.settings.title }}
 
-                  {% unless block.settings.icon %}
-                    <div class="mobile">
-                      {% render 'ArrowDown' %}
-                    </div>
-                  {% endunless %}
-                </h2>
-                <div class="body-desk-s {% unless block.settings.icon %} __accordion-content {% endunless %}">
-                  {{ block.settings.description }}
+              <div class="new-acc-wrapper-inner">
+                <button type="button" class="acc-title new-acc-trigger">
+                  <span class="acc-title-text">{{ block.settings.title }}</span>
+                  
+                  <div class="new-acc-icon">
+                    <svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M1.36812e-07 1.43227L1.26495 0.125L6 5.0252L10.7351 0.125L12 1.43598L7.26495 6.33247C6.92943 6.67985 6.47443 6.875 6 6.875C5.52558 6.875 5.07057 6.67985 4.73505 6.33247L1.36812e-07 1.43227Z" fill="currentColor"></path>
+                    </svg>
+                  </div>
+                </button>
+
+                <div class="new-acc-content">
+                  <div class="new-acc-content-inner text-description">
+                    {{ block.settings.description }}
+                  </div>
                 </div>
               </div>
+
             </div>
           {% endfor %}
         </div>
       {% endif %}
+
       {% if section.settings.button_pos == 'bottom' %}
         {% render 'PrimaryButton',
           url: section.settings.button_url,
@@ -68,18 +81,150 @@
     </div>
   </div>
 </div>
-<style>
-    .side-image-video-wrapper.{{ section.id }} {
-      padding: {{ section.settings.padding_top_dt }}px 0 {{ section.settings.padding_bottom_dt }}px
-    }
 
-   @media only screen and (max-width:900px) {
-      .side-image-video-wrapper.{{ section.id }} {
-        padding: {{ section.settings.padding_top_mb }}px 0 {{ section.settings.padding_bottom_mb }}px
-      }
+<style>
+  .content-list-accordion{
+    margin-top: 27px;
+  }
+  #section-wrapper-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top_dt }}px;
+    padding-bottom: {{ section.settings.padding_bottom_dt }}px;
+  }
+
+  /* Warna Teks Deskripsi */
+  #section-wrapper-{{ section.id }} .text-description {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  
+  /* Warna Teks Judul Accordion */
+  #section-wrapper-{{ section.id }} .acc-title {
+    font-size: 16px; 
+    font-weight: 400;
+    line-height: 1.4;
+    color: #6c7256; /* Warna baru (ikon akan otomatis mengikuti warna ini) */
+    text-align: left;
+  }
+
+  /* --- ACCORDION STYLES --- */
+
+  /* Style untuk Item Wrapper (Garis) */
+  #section-wrapper-{{ section.id }} .new-acc-item {
+    border-bottom: 0.5px solid #6c7256; /* Garis warna baru */
+  }
+
+  /* Style untuk Tombol Trigger (Padding) */
+  #section-wrapper-{{ section.id }} button.new-acc-trigger {
+    background: none;
+    border: none;
+    padding: 15px 0; /* Tambah padding atas bawah agar lega */
+    margin: 0;
+    width: 100%;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Pastikan content visible secara struktur, hanya hidden by height */
+  #section-wrapper-{{ section.id }} .new-acc-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out, opacity 0.4s ease;
+    opacity: 0;
+    display: block !important; 
+  }
+  
+  #section-wrapper-{{ section.id }} .new-acc-item.is-active .new-acc-content {
+    opacity: 1;
+  }
+
+  #section-wrapper-{{ section.id }} .new-acc-content-inner {
+    padding-bottom: 20px; /* Padding bawah sebelum garis */
+  }
+
+  /* Icon Rotation & Size */
+  #section-wrapper-{{ section.id }} .new-acc-icon {
+    transition: transform 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px; /* Memastikan area putar cukup */
+    height: 24px;
+    flex-shrink: 0;
+  }
+  
+  /* Penyesuaian ukuran SVG agar sesuai dengan viewboxnya */
+  #section-wrapper-{{ section.id }} .new-acc-icon svg {
+    width: 12px;
+    height: auto;
+  }
+
+  #section-wrapper-{{ section.id }} .new-acc-item.is-active .new-acc-icon {
+    transform: rotate(180deg);
+  }
+
+  /* --- RESPONSIVE --- */
+  @media only screen and (max-width:900px) {
+    #section-wrapper-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top_mb }}px;
+      padding-bottom: {{ section.settings.padding_bottom_mb }}px;
     }
+    
+    #section-wrapper-{{ section.id }} .text-description {
+      font-size: 14px;
+    }
+    
+    /* Sedikit penyesuaian padding di mobile jika perlu */
+    #section-wrapper-{{ section.id }} button.new-acc-trigger {
+       padding: 12px 0;
+    }
+    #section-wrapper-{{ section.id }} .new-acc-content-inner {
+      padding-bottom: 15px;
+    }
+    .side-image-video-wrapper .main-grid .detail .content-list .item {
+      padding-top: 0px;
+    }
+    #section-wrapper-{{ section.id }} .text-description {
+    font-size: 14px;
+  }
+  
+  /* Warna Teks Judul Accordion */
+  #section-wrapper-{{ section.id }} .acc-title {
+    font-size: 14px; 
+  }
   }
 </style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const wrapper = document.getElementById('section-wrapper-{{ section.id }}');
+    if (!wrapper) return;
+
+    const triggers = wrapper.querySelectorAll('.new-acc-trigger');
+
+    triggers.forEach(trigger => {
+      trigger.addEventListener('click', function(e) {
+        e.preventDefault(); 
+        
+        const item = this.closest('.new-acc-item');
+        const content = item.querySelector('.new-acc-content');
+        const isActive = item.classList.contains('is-active');
+
+        if (isActive) {
+          // CLOSE
+          item.classList.remove('is-active');
+          content.style.maxHeight = null;
+        } else {
+          // OPEN
+          item.classList.add('is-active');
+          content.style.maxHeight = content.scrollHeight + "px";
+        }
+      });
+    });
+  });
+</script>
 
 {% schema %}
 {
@@ -93,77 +238,55 @@
       "label": "Title",
       "default": "Praesent venenatis nibh ex"
     },
-
     {
       "type": "textarea",
       "id": "description",
       "label": "Description",
-      "default": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin a consequat ipsum, id efficitur magna. Mauris convallis sit amet sem in ultrices. Suspendisse id hendrerit felis."
+      "default": "Lorem ipsum dolor sit amet."
     },
-
     {
       "type": "header",
       "content": "Button"
     },
-
     {
       "type": "text",
       "id": "button_label",
       "label": "Label"
     },
-
     {
       "type": "url",
       "id": "button_url",
       "label": "Url"
     },
-
     {
       "type": "select",
       "id": "button_pos",
       "label": "Button position",
       "options": [
-        {
-          "value": "top",
-          "label": "Top"
-        },
-        {
-          "value": "bottom",
-          "label": "Bottom"
-        }
+        { "value": "top", "label": "Top" },
+        { "value": "bottom", "label": "Bottom" }
       ],
       "default": "top"
     },
-
     {
       "type": "header",
       "content": "Media"
     },
-
     {
       "type": "image_picker",
       "id": "banner",
-      "label": "Banner",
-      "info": "If a video is provided, it will be used as a poster."
+      "label": "Banner"
     },
-
     {
       "type": "video",
       "id": "video",
       "label": "Video"
     },
-
     {
       "type": "checkbox",
       "id": "fit_content",
-      "label": "Image fit height",
-      "info": "Image height will follow the height of content"
+      "label": "Image fit height"
     },
-    {
-      "type": "header",
-      "content": "Spacing"
-    },
-
     {
       "type": "header",
       "content": "Spacing"
@@ -177,7 +300,6 @@
       "max": 101,
       "default": 96
     },
-
     {
       "label": "Padding bottom dekstop",
       "type": "range",
@@ -187,7 +309,6 @@
       "max": 101,
       "default": 96
     },
-
     {
       "label": "Padding top mobile",
       "type": "range",
@@ -197,7 +318,6 @@
       "max": 101,
       "default": 48
     },
-
     {
       "label": "Padding bottom mobile",
       "type": "range",
@@ -208,7 +328,6 @@
       "default": 48
     }
   ],
-
   "blocks": [
     {
       "type": "text",
@@ -219,13 +338,11 @@
           "id": "title",
           "label": "Title"
         },
-
         {
           "type": "textarea",
           "id": "description",
           "label": "Description"
         },
-
         {
           "type": "image_picker",
           "id": "icon",
@@ -234,7 +351,6 @@
       ]
     }
   ],
-
   "presets": [
     {
       "name": "Side Image or Video Content"
