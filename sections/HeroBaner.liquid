@@ -54,7 +54,7 @@
   </div>
 
   {% if section.settings.show_countdown %}
-    <div class="countdown-wrapper-{{ section.id }}" style="position: relative;">
+    <div class="countdown-wrapper-{{ section.id }}" style="position: relative;" data-cs-capture>
 
       <div id="countdown-anchor-{{ section.id }}" style="position: absolute; top: -{{ section.settings.sticky_top_offset }}px; width: 100%; height: 1px; visibility: hidden; pointer-events: none;"></div>
 

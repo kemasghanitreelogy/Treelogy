@@ -2,7 +2,7 @@
 {% assign products_limit = section.settings.products_limit | default: 8 %}
 {% assign free_product = settings.free_product.id %}
 
-<div class="featured-products-section">
+<div class="featured-products-section" data-cs-capture>
   <div class="container">
     {% if selected_collection and selected_collection.products.size > 0 %}
       <div class="featured-products-grid">
