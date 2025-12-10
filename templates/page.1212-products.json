@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero_baner_CNgjbw": {
@@ -14,7 +23,7 @@
         "show_countdown": true,
         "day_label": "hari",
         "hour_label": "jam",
-        "countdown_date": "2025-12-10 12:59",
+        "countdown_date": "2025-12-10 23:59",
         "countdown_message": "hours left • Only 100 orders accepted",
         "enable_sticky": true,
         "sticky_top_offset": 100,
