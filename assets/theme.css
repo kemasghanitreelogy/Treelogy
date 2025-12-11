@@ -282,7 +282,7 @@ section {
   height: 12px;
 }
 
-.section featured-slider .star-review svg path {
+.section .featured-slider .star-review svg path {
   fill: white;
 }
 
