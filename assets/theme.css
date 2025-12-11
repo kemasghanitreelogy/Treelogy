@@ -281,6 +281,11 @@ section {
   width: 12px;
   height: 12px;
 }
+
+.product-listing .star-review svg {
+  width: max-content;
+}
+
 .star-review .jdgm-prev-badge__text {
   display: flex;
   gap: 4px;
