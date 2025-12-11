@@ -278,13 +278,10 @@ section {
   align-items: center;
 }
 .star-review svg {
-  width: 12px;
+  width: max-content;
   height: 12px;
 }
 
-.product-listing .star-review svg {
-  width: max-content;
-}
 
 .star-review .jdgm-prev-badge__text {
   display: flex;
