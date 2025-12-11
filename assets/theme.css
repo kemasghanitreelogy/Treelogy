@@ -282,6 +282,9 @@ section {
   height: 12px;
 }
 
+.section featured-slider .star-review svg path {
+  fill: white;
+}
 
 .star-review .jdgm-prev-badge__text {
   display: flex;
