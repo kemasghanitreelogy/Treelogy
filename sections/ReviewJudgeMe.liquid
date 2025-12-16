@@ -1,0 +1,36 @@
+<!-- Start of Judge.me code -->
+ <div class="judgeme-review-wrapper">
+
+      <div style='clear:both'></div>
+      <div
+        id='judgeme_product_reviews'
+        class='jdgm-widget jdgm-review-widget'
+        data-product-title='{{ product.title | escape }}'
+        data-id='{{ product.id }}'
+        data-auto-install='false'>
+        {{ product.metafields.judgeme.widget }}
+      </div>
+  </div>
+<!-- End of Judge.me code -->
+
+
+{% schema %}
+  {
+    "name": "Review Judge.me",
+    "tag": "section",
+    "class": "section",
+    "presets": [
+      {
+        "name": "Review Judge.me"
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+    .judgeme-review-wrapper {
+        padding: 0 25px;
+        margin: auto;
+        max-width: 1100px;
+    }
+{% endstylesheet %}

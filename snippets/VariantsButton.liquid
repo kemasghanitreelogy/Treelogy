@@ -1,3 +1,4 @@
+{% assign is_not_option = is_not_option | default: false %}
 {% assign default_variant = product.variants[0].id %}
 {% assign has_gift = false %}
 {% assign active_currency = cart.currency.iso_code | downcase %}
@@ -25,7 +26,7 @@
 {% for variant in product.variants %}
   <div
     data-value="{{ variant.id }}"
-    class="checkbox-button {% if default_variant == variant.id %} active {% endif %}"
+    class="checkbox-button {% if default_variant == variant.id %} active {% endif %} {% if is_not_option %} static-active {% endif %}"
     data-available="{{ variant.available }}">
     {% assign original_price = variant.metafields.custom.use_doubling_prices %}
     {% assign discount_percent = variant.metafields.custom.discount_percent_variant | default: 0 %}
@@ -47,7 +48,11 @@
     {% endif %}
 
     <div class="left body-desk-s">
-      <div class="check"></div>
+
+      {% unless is_not_option %}
+        <div class="check"></div>
+      {% endunless %}
+
       {% assign meta = variant.metafields.custom.description %}
       <div class="variant-detail">
         <div>

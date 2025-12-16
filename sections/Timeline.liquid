@@ -1,0 +1,321 @@
+{% comment %}
+  Section: Dynamic Timeline List
+  Description: A list of items sourced dynamically from Product Metafields (Metaobject List) or manual blocks.
+{% endcomment %}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  .title-timeline h1 {
+    font-weight: 500;
+    text-align: left;
+  }
+  @media screen and (min-width: 750px) {
+    .title-timeline h1 {
+      text-align: center;
+    }
+    .section-{{ section.id }}
+    -padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  .timeline-list__container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    column-gap: 40px;
+    row-gap: 15px;
+  }
+
+  .timeline-item {
+    width: 400px;
+    display: flex;
+    align-items: flex-start;
+    border-bottom: 1px solid rgba(var(--color-foreground), 0.1);
+    color: {{ section.settings.text_color }};
+    border-bottom: 1px solid #bcbcb9;
+    padding-bottom: 15px;
+  }
+
+  .timeline-item__icon-wrapper {
+    flex-shrink: 0;
+    margin-right: 2rem;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Circular icon container */
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: rgba(var(--color-foreground), 0.03);
+  }
+
+  .timeline-item__icon {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .timeline-item__icon--placeholder {
+    padding: 12px;
+    opacity: 0.6;
+  }
+
+  .timeline-item__content {
+    flex-grow: 1;
+  }
+
+  .timeline-item__title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: {{ section.settings.text_color }};
+    line-height: 1.3;
+  }
+
+  .timeline-item__description {
+    margin: 0;
+    font-weight: 300;
+    font-size: 1rem;
+    opacity: 0.85;
+  }
+
+  .timeline-item__description p:first-child {
+    margin-top: 0;
+  }
+  .timeline-item__description p:last-child {
+    margin-bottom: 0;
+  }
+
+  @media screen and (max-width: 480px) {
+    .timeline-item__icon-wrapper {
+      width: 50px;
+      height: 50px;
+      margin-right: 1rem;
+    }
+  }{%- endstyle -%}
+
+{%- comment -%}
+  LOGIC: Determine source of data
+  1. Try to fetch from Product Metafields based on settings.
+  2. If empty, fall back to Section Blocks.
+{%- endcomment -%}
+
+{%- assign timeline_data = blank -%}
+{%- assign source_type = 'blocks' -%}
+
+{%- if section.settings.mf_key != blank and product != blank -%}
+  {%- assign mf_namespace = section.settings.mf_namespace -%}
+  {%- assign mf_key = section.settings.mf_key -%}
+  {%- assign timeline_metaobject_list = product.metafields[mf_namespace][mf_key].value -%}
+
+  {%- if timeline_metaobject_list != blank -%}
+    {%- assign timeline_data = timeline_metaobject_list -%}
+    {%- assign source_type = 'metafields' -%}
+  {%- endif -%}
+{%- endif -%}
+
+{% if product.metafields.custom.product_timeline != blank %}
+  <div class="section-{{ section.id }}-padding" style="background-color: transparent; max-width: 1100px; margin-left: auto; margin-right: auto;">
+    <div class="title-timeline" style="color: {{ section.settings.heading_color }};">
+      {{ section.settings.heading }}
+    </div>
+    <div class="timeline-list__container">
+      {%- comment -%} RENDER LOOP {%- endcomment -%}
+
+      {%- if source_type == 'metafields' -%}
+        {%- for item in timeline_data -%}
+          {%- comment -%} 
+                                                              Map Metaobject fields. 
+                                                              Assumed keys: item.icon, item.period, item.description 
+                                                  {%- endcomment -%}
+          <div class="timeline-item">
+            <div class="timeline-item__icon-wrapper">
+              {%- if item.icon != blank -%}
+                {{
+                  item.icon | image_url: width: 128, height: 128 | image_tag: loading: 'lazy', class: 'timeline-item__icon', widths: '64, 128', alt: item.period | escape
+                }}
+              {%- else -%}
+                <svg
+                  class="timeline-item__icon timeline-item__icon--placeholder"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"><path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              {%- endif -%}
+            </div>
+            <div class="timeline-item__content">
+              {%- if item.period != blank -%}
+                <h3 class="timeline-item__title">{{ item.period }}</h3>
+              {%- endif -%}
+              {%- if item.description != blank -%}
+                <div class="timeline-item__description rte">
+                  {{ item.description | metafield_tag }}
+                </div>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endfor -%}
+
+      {%- else -%}
+        {%- comment -%} FALLBACK TO BLOCKS {%- endcomment -%}
+        {%- for block in section.blocks -%}
+          <div class="timeline-item" {{ block.shopify_attributes }}>
+            <div class="timeline-item__icon-wrapper">
+              {%- if block.settings.icon != blank -%}
+                {{
+                  block.settings.icon | image_url: width: 128, height: 128 | image_tag: loading: 'lazy', class: 'timeline-item__icon', widths: '64, 128', alt: block.settings.title | escape
+                }}
+              {%- else -%}
+                <svg
+                  class="timeline-item__icon timeline-item__icon--placeholder"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"><path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              {%- endif -%}
+            </div>
+            <div class="timeline-item__content">
+              {%- if block.settings.title != blank -%}
+                <h3 class="timeline-item__title">{{ block.settings.title }}</h3>
+              {%- endif -%}
+              {%- if block.settings.description != blank -%}
+                <div class="timeline-item__description rte">
+                  {{ block.settings.description }}
+                </div>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endfor -%}
+      {%- endif -%}
+
+      {% if source_type == 'blocks' and section.blocks.size == 0 %}
+        <div class="timeline-item" style="border:none;">
+          <p style="opacity: 0.6;">
+            <strong>Setup Guide:</strong><br>
+            1. Add "blocks" below to use manually.<br>
+            2. OR connect a Product Metafield in Section Settings (Namespace & Key).
+          </p>
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+{% endif %}
+
+{% schema %}
+  {
+    "name": "Timeline List (Dynamic)",
+    "tag": "section",
+    "class": "section",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Dynamic Data Source"
+      },
+      {
+        "type": "richtext",
+        "id": "heading",
+        "label": "Heading Title",
+        "default": "<h1>Project Timeline</h1>"
+      },
+      {
+        "type": "paragraph",
+        "content": "To use dynamic data, create a 'List of Metaobjects' product metafield. Enter the namespace and key below."
+      },
+      {
+        "type": "header",
+        "content": "Colors"
+      }, {
+        "type": "color",
+        "id": "heading_color",
+        "label": "Heading Color",
+        "default": "#6c7256"
+      }, {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text Color",
+        "default": "#58645a"
+      }, {
+        "type": "header",
+        "content": "Layout"
+      }, {
+        "type": "range",
+        "id": "max_width",
+        "min": 600,
+        "max": 1200,
+        "step": 20,
+        "unit": "px",
+        "label": "Maximum Width",
+        "default": 800
+      }, {
+        "type": "range",
+        "id": "padding_top",
+        "min": 0,
+        "max": 100,
+        "step": 4,
+        "unit": "px",
+        "label": "Top padding",
+        "default": 36
+      }, {
+        "type": "range",
+        "id": "padding_bottom",
+        "min": 0,
+        "max": 100,
+        "step": 4,
+        "unit": "px",
+        "label": "Bottom padding",
+        "default": 36
+      }
+    ],
+    "blocks": [
+      {
+        "type": "timeline_item",
+        "name": "Manual Item (Fallback)",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "icon",
+            "label": "Icon Image"
+          }, {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Day 1 to 3"
+          }, {
+            "type": "richtext",
+            "id": "description",
+            "label": "Description",
+            "default": "<p>Description of the timeline phase.</p>"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Timeline List (Dynamic)",
+        "blocks": [
+          {
+            "type": "timeline_item"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}
