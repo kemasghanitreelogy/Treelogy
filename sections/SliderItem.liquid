@@ -1,0 +1,248 @@
+<div id="UspSection-{{ section.id }}" class="usp-section" style="max-width: 1100px; margin-left: auto; margin-right: auto;">
+  <div class="page-width">
+
+    <div class="usp-custom-container">
+      <div class="usp-wrapper">
+        {% for block in section.blocks %}
+          <div class="usp-slide">
+            <div class="usp-content">
+              {% if block.settings.heading != blank %}
+                <h3 class="usp-heading">{{ block.settings.heading }}</h3>
+              {% endif %}
+
+              {% if block.settings.text != blank %}
+                <div class="usp-text">{{ block.settings.text }}</div>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="usp-pagination"></div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  /* --- SECTION BASE STYLES --- */
+  #UspSection-{{ section.id }} {
+    background-color: transparent;
+    color: {{ section.settings.text_color }};
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    overflow: hidden;
+  }
+
+  .usp-content {
+    text-align: center;
+    padding: 0 15px;
+  }
+
+  .usp-heading {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: inherit;
+  }
+
+  .usp-text {
+    font-size: 0.95rem;
+    opacity: 0.8;
+  }
+
+  /* --- DESKTOP: GRID LAYOUT (> 769px) --- */
+  @media screen and (min-width: 769px) {
+    .usp-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+    }
+
+    .usp-slide {
+      /* Adjust width based on needs, auto fits content here */
+      flex: 0 1 auto;
+      min-width: 200px;
+      width: auto;
+    }
+
+    .usp-pagination {
+      display: none;
+    }
+  }
+
+  /* --- MOBILE: SWIPER LAYOUT (< 769px) --- */
+  @media screen and (max-width: 768px) {
+
+    .usp-custom-container {
+      overflow: hidden;
+      position: relative;
+      padding-bottom: 30px;
+      /* Space for dots */
+    }
+
+    .usp-wrapper {
+      display: flex;
+      width: 100%;
+    }
+
+    .usp-slide {
+      flex-shrink: 0;
+      width: 100%;
+      position: relative;
+    }
+
+    .usp-pagination {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      z-index: 10;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* --- DOT STYLES (MATCHING TESTIMONIAL LOGIC) --- */
+    #UspSection-{{ section.id }} .swiper-pagination-bullet {
+      background-color: {{ section.settings.text_color }};
+      opacity: 0.3;
+      width: 6px;
+      height: 6px;
+      margin: 0 4px !important;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    #UspSection-{{ section.id }}
+    .swiper-pagination-bullet-active {
+      background-color: {{ section.settings.text_color }}
+       !important;
+      opacity: 1;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var uspSwiper = null;
+    var sectionId = '{{ section.id }}';
+    // Target our custom container
+    var containerSelector = '#UspSection-' + sectionId + ' .usp-custom-container';
+    var paginationSelector = '#UspSection-' + sectionId + ' .usp-pagination';
+    
+    function initUspSwiper() {
+      var isMobile = window.innerWidth < 769;
+
+      if (isMobile) {
+        // Initialize ONLY if it doesn't exist yet
+        if (!uspSwiper) {
+          uspSwiper = new Swiper(containerSelector, {
+            // CRITICAL: Tell Swiper to use our custom classes
+            wrapperClass: 'usp-wrapper',
+            slideClass: 'usp-slide',
+            
+            slidesPerView: 1,
+            spaceBetween: 20,
+            // Only loop if there's more than 1 slide
+            loop: {% if section.blocks.size > 1 %}true{% else %}false{% endif %},
+            autoHeight: true, 
+            
+            pagination: {
+              el: paginationSelector,
+              clickable: true,
+            },
+            autoplay: {
+              delay: 4000,
+              disableOnInteraction: false,
+            }
+          });
+        }
+      } else {
+        // Desktop: Destroy Swiper cleanly to enable CSS Grid
+        if (uspSwiper) {
+          uspSwiper.destroy(true, true);
+          uspSwiper = null;
+        }
+      }
+    }
+
+    // 1. Initialize on page load
+    initUspSwiper();
+
+    // 2. Re-initialize on window resize
+    var resizeTimer;
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(initUspSwiper, 200); // Debounce for performance
+    });
+  });
+</script>
+
+{% schema %}
+  {
+    "name": "USP Slider",
+    "tag": "section",
+    "class": "section",
+    "settings": [
+     {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text Color",
+        "default": "#333333"
+      }, {
+        "type": "range",
+        "id": "padding_top",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "unit": "px",
+        "label": "Padding Top",
+        "default": 40
+      }, {
+        "type": "range",
+        "id": "padding_bottom",
+        "min": 0,
+        "max": 100,
+        "step": 5,
+        "unit": "px",
+        "label": "Padding Bottom",
+        "default": 40
+      }
+    ],
+    "blocks": [
+      {
+        "type": "usp",
+        "name": "Feature Item",
+        "settings": [
+          {
+            "type": "text",
+            "id": "heading",
+            "label": "Heading",
+            "default": "Fast Delivery"
+          }, {
+            "type": "text",
+            "id": "text",
+            "label": "Subtext",
+            "default": "within 3-4 business days"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "USP Slider",
+        "blocks": [
+          {
+            "type": "usp"
+          }, {
+            "type": "usp"
+          }, {
+            "type": "usp"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

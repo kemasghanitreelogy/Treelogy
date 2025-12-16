@@ -1,30 +1,10 @@
 {% assign product_detail = product.metafields.custom.product_detail %}
-
-{%  comment %}
-  LUGUS : Hide the product detail for now because we're using FAQ at the moment.
-  TODO : Show the product detail again when we would rework the product page.
-  If you remove the line below, the product detail will be showed back.
-{% endcomment %}
 {% assign product_detail = blank %}
-
-{%  comment %}
-  LUGUS : Filter product image by language :
-
-  We use ALT text to filter product image by language.
-
-  Example of ALT text :
-  "LANG:EN|TRADITTIONAL ALT TEXT OF THE IMAGE"
-
-  This will display the image in English but not for all other languages.
-
-  The format to use is :
-  "LANG:[ISO CODE]|[ALT TEXT]"
-{% endcomment %}
 
 <div class="main-grid product-detail-wrapper" data-cs-capture>
   <div class="gallery-wrapper">
     <div id="product-geallery-wrapper">
-      <div class="media-gallery sticky desktop">
+      <div class="media-gallery-custom sticky">
         {% for image in product.images %}
 
           {% assign image_alt = image.alt | escape %}
@@ -39,13 +19,13 @@
           {% endif %}
 
           <a href="{{ image.src | img_url: '1440x' }}">
-            <img src="{{ image.src | img_url: 'compact' }}" alt="{{ image.alt | escape }}">
+            <img src="{{ image. src | img_url: 'compact' }}" alt="{{ image.alt | escape }}">
           </a>
         {% endfor %}
       </div>
       <div class="main-image sticky">
         <div class="wrapper">
-          <div class="main-image-wrapper">
+          <div class="main-image-wrapper-custom">
             {% for image in product.images %}
               {% assign image_alt = image.alt | escape %}
 
@@ -101,14 +81,6 @@
         {% render 'VariantsButton'
           , product: product %}
       {% endif %}
-    {% comment %}
-      {% if section.settings.note or section.settings.note_image %}
-      <div class="note">
-      {{ section.settings.note }}
-      {% render 'Image', image: section.settings.note_image %}
-      </div>
-      {% endif %}
-    {% endcomment %}
     </div>
 
     {% if free_product != product.id %}
@@ -187,19 +159,10 @@
       </div>
     </div>
   </div>
+
 </div>
-{% comment %}
-  <div style="clear:both"></div>
-  <div
-  id="judgeme_product_reviews"
-  class="jdgm-widget jdgm-review-widget"
-  data-product-title="{{ product.title | escape }}"
-  data-id="{{ product.id }}"
-  data-auto-install="false"
-  >
-  {{ product.metafields.judgeme.widget }}
-  </div>
-{% endcomment %}
+
+
 {% schema %}
   {
     "name": "Product single",
@@ -246,8 +209,133 @@
 {% endschema %}
 
 <script>
-  const customPriceDiscount = document.querySelectorAll('.custom-discount-price');
+  document.addEventListener("DOMContentLoaded", function() {
+
+    // ==================================================
+    // 1. DATA SOURCE: VARIANT & METAFIELD MAP
+    // ==================================================
+    const mainProductData = {};
+    
+    {% for variant in product.variants %}
+      {% assign linked_variant = variant.metafields.custom.product_integration.value %}
+      mainProductData["{{ variant.id }}"] = {
+        title: "{{ variant.title | escape }}",
+        {% if linked_variant %}
+          hasMetafield: true,
+          linkedId: "{{ linked_variant.id }}",
+          linkedTitle: "{{ linked_variant.title | escape }}"
+        {% else %}
+          hasMetafield: false,
+          linkedId: null
+        {% endif %}
+      };
+    {% endfor %}
+
+    console.log("✅ [Main Product] Data Map Loaded");
+
+    // ==================================================
+    // 2. CORE SYNC FUNCTION (Reusable)
+    // ==================================================
+    /**
+     * Handles the logic of broadcasting the change to the Bundle
+     * regardless of whether it came from a Click or Page Load.
+     */
+    function broadcastVariantChange(variantId) {
+      const data = mainProductData[variantId];
+
+      if (data && data.hasMetafield) {
+        // A. Save to Storage (Persistence)
+        sessionStorage.setItem('target_bundle_id', data.linkedId);
+        
+        // B. Dispatch Event (Immediate Sync)
+        const event = new CustomEvent('custom-variant-change', { 
+          detail: { targetId: data.linkedId } 
+        });
+        window.dispatchEvent(event);
+        
+        console.log(`📡 [Sync] Broadcasting Target ID: ${data.linkedId} (Source: ${data.title})`);
+      } else {
+        // C. Cleanup if no link
+        sessionStorage.removeItem('target_bundle_id');
+        
+        // Dispatch event with null to reset bundle visibility
+        const event = new CustomEvent('custom-variant-change', { detail: { targetId: null } });
+        window.dispatchEvent(event);
+        
+        console.log(`Start [Sync] No link found for variant: ${variantId}`);
+      }
+    }
+
+    // ==================================================
+    // 3. GALLERY LOGIC
+    // ==================================================
+    const thumbnails = document.querySelectorAll('.media-gallery-custom a');
+    const mainImages = document.querySelectorAll('.main-image-wrapper-custom img');
+
+    if (thumbnails.length > 0 && mainImages.length > 0) {
+      thumbnails[0].classList.add('active');
+      mainImages[0].classList.add('active');
+
+      thumbnails.forEach((thumb, index) => {
+        thumb.addEventListener('click', function(e) {
+          e.preventDefault(); 
+          for (let i = 0; i < thumbnails.length; i++) { thumbnails[i].classList.remove('active'); }
+          for (let i = 0; i < mainImages.length; i++) { mainImages[i].classList.remove('active'); }
+          this.classList.add('active');
+          if (mainImages[index]) { mainImages[index].classList.add('active'); }
+        });
+      });
+    }
+
+    // ==================================================
+    // 4. VARIANT LOGIC (The Fix)
+    // ==================================================
+    const mainWrapper = document.querySelector('.product-detail-wrapper');
+    const productSelect = document.getElementById('productSelect');
+    
+    if (mainWrapper) {
+      const buttons = mainWrapper.querySelectorAll('.checkbox-button');
+
+      // A. EVENT LISTENER (Click Interaction)
+      buttons.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          // Prevent Theme Conflict / Glitch
+          e.preventDefault();
+          e.stopPropagation(); 
+
+          const id = this.getAttribute('data-value');
+
+          // 1. UI UPDATE
+          buttons.forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          if(productSelect) productSelect.value = id;
+
+          // 2. RUN SYNC LOGIC
+          broadcastVariantChange(id);
+        });
+      });
+
+      // B. INITIAL LOAD CHECK (Pre-Select Logic)
+      // Find the button that is ALREADY active (set by Liquid or Theme JS)
+      const initialActiveBtn = mainWrapper.querySelector('.checkbox-button.active');
+      
+      if (initialActiveBtn) {
+        const initialId = initialActiveBtn.getAttribute('data-value');
+        console.log("🚀 [Main Product] Initializing Pre-selected Variant...");
+        broadcastVariantChange(initialId);
+      } else {
+        // Fallback: If no button is active, trigger the first one logic
+        const firstBtn = buttons[0];
+        if (firstBtn) {
+           const firstId = firstBtn.getAttribute('data-value');
+           console.log("🚀 [Main Product] Initializing First Variant (Fallback)...");
+           broadcastVariantChange(firstId);
+        }
+      }
+    }
+  });
 </script>
+
 
 <style>
   .rich-text-container ul {

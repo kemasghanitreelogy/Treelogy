@@ -1,0 +1,512 @@
+{% assign selected_product = all_products[section.settings.feature_product] %}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top }}px;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top | times: 2 }}px;
+      padding-bottom: {{ section.settings.padding_bottom | times: 2 }}px;
+    }
+  }
+  .featured-bundle-section .gallery-wrapper {
+    transform: translateX(24px);
+  }
+  /* --- NEW GALLERY STYLES --- */
+  .product-detail-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+  .bundle-gallery-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  .featured-bundle-section .section-heading {
+    padding: 0 24px
+  }
+
+  .main-image-display {
+    width: 100%;
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .main-image-display img {
+    width: 100%;
+    height: auto;
+    display: none;
+    /* Hidden by default, JS toggles active */
+    object-fit: cover;
+    aspect-ratio: 1 / 1;
+    /* Square aspect ratio, adjust as needed */
+  }
+
+  .main-image-display img.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+  }
+
+  /* Slider / Thumbnails Row */
+  .slider-row {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE */
+  }
+  .slider-row::-webkit-scrollbar {
+    display: none;
+    /* Chrome/Safari */
+  }
+
+  .slider-item {
+    flex-shrink: 0;
+    cursor: pointer;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    border: 2px solid transparent;
+    transition: border-color 0.2s;
+    scroll-snap-align: start;
+  }
+
+  .slider-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .slider-item.active {
+    border-color: #000;
+    /* Active border color */
+  }
+
+  /* --- MOBILE SPECIFIC (The 100% / 70% Logic) --- */
+  @media screen and (max-width: 749px) {
+    /* Hide the 'Main Display' on mobile, we only use the slider */
+    .main-image-display {
+      display: none;
+    }
+
+    .slider-row {
+      gap: 3px;
+      padding-right: 20px;
+      /* Space to show there's more to scroll */
+    }
+
+    .slider-item {
+      height: auto;
+      aspect-ratio: 4 / 5;
+      /* Taller on mobile usually looks better */
+    }
+    .slider-item.active {
+      border-color: transparent;
+    }
+
+    /* First item 100% width */
+    .slider-item {
+      width: 55%;
+      height: 190px;
+    }
+  }
+
+  /* --- DESKTOP SPECIFIC --- */
+  @media screen and (min-width: 750px) {
+    .product-detail-wrapper {
+      flex-direction: row;
+      column-gap: 40px;
+    }
+    .slider-item {
+      width: 80px;
+      /* Thumbnail size */
+      height: 80px;
+    }
+
+    /* On desktop, the first item is just a thumbnail like the others */
+    .slider-item:first-child {
+      width: 80px;
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0.5;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+{%- endstyle -%}
+
+{% if selected_product == blank %}
+  <div class="page-width" style="text-align: center; padding: 50px;">
+    <p>Please select a product in the theme editor.</p>
+  </div>
+{% else %}
+
+  {% assign current_variant = selected_product.selected_or_first_available_variant %}
+
+  <div class="featured-bundle-section section-{{ section.id }} page-width section-{{ section.id }}-padding">
+    {% if section.settings.heading != blank %}
+      <h2 class="section-heading text-center">{{ section.settings.heading }}</h2>
+    {% endif %}
+
+    <div class="bundle-grid product-detail-wrapper">
+
+      {% comment %} 
+                                    === NEW GALLERY STRUCTURE === 
+                        {% endcomment %}
+      <div class="gallery-wrapper">
+        <div id="bundle-gallery-wrapper-{{ section.id }}" class="bundle-gallery-grid">
+
+          <div class="main-image-display">
+            {% for image in selected_product.images limit: 5 %}
+              <img
+                src="{{ image.src | img_url: '1000x' }}"
+                alt="{{ image.alt | escape }}"
+                data-index="{{ forloop.index0 }}"
+                class="{% if forloop.first %}active{% endif %}">
+            {% endfor %}
+          </div>
+
+          <div class="slider-row">
+            {% for image in selected_product.images limit: 5 %}
+              <div class="slider-item {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}">
+                <img src="{{ image.src | img_url: '600x' }}" alt="{{ image.alt | escape }}">
+              </div>
+            {% endfor %}
+          </div>
+
+        </div>
+      </div>
+
+      {% comment %} DETAILS {% endcomment %}
+      <div class="detail bundle-details">
+        <div class="rating">
+          {% if selected_product.metafields.custom.rating %}
+            {% render 'StarReview' %}
+            <span class="rating-text">{{ selected_product.metafields.custom.rating }}</span>
+          {% else %}
+            <span class="shopify-product-reviews-badge" data-id="{{ selected_product.id }}"></span>
+          {% endif %}
+        </div>
+
+        <h1>{{ selected_product.title }}</h1>
+        <div class="description body-desk">{{ selected_product.description }}</div>
+
+        <div class="bundle-purchase-area mt-8">
+          <form
+            action="/cart/add"
+            method="post"
+            enctype="multipart/form-data"
+            id="AddToCartForm-{{ section.id }}">
+            <div class="variant-button" id="VariantContainer-{{ section.id }}">
+              {% if selected_product.has_only_default_variant == false %}
+                {% render 'VariantsButton'
+                  , product: selected_product
+                  , is_not_option: true
+                %}
+              {% endif %}
+            </div>
+
+            <select
+              name="id"
+              id="RealProductSelect-{{ section.id }}"
+              style="display: none;">
+              {% for variant in selected_product.variants %}
+                <option
+                  value="{{ variant.id }}"
+                  data-available="{{ variant.available }}"
+                  {% if variant == current_variant %}
+                  selected="selected"
+                  {% endif %}>
+                  {{ variant.title }}
+                </option>
+              {% endfor %}
+            </select>
+
+            <input
+              type="hidden"
+              name="quantity"
+              value="1">
+
+            <button
+              type="submit"
+              name="add"
+              id="AddToCartBtn-{{ section.id }}"
+              class="button AddToCartBtn button--full-width button--primary mt-4"
+              {% unless current_variant.available %}
+              disabled
+              {% endunless %}>
+              {% if current_variant.available %}Add to Cart{% else %}Sold Out{% endif %}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // 0. CONFIG
+      const sectionId = "{{ section.id }}";
+      const bundleContainer = document.querySelector(`.section-${sectionId}`);
+      const variantContainer = document.getElementById(`VariantContainer-${sectionId}`);
+      const realSelect = document.getElementById(`RealProductSelect-${sectionId}`);
+      const cartBtn = document.getElementById(`AddToCartBtn-${sectionId}`);
+
+      // ============================================
+      // 1. INTERNAL BUNDLE LOGIC (Standard Click)
+      // ============================================
+      if (variantContainer && realSelect) {
+        const buttons = variantContainer.querySelectorAll('.checkbox-button');
+        
+        buttons.forEach(btn => {
+          btn.addEventListener('click', function(e) {
+            
+            // UI Update
+            buttons.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Data Update
+            const variantId = this.getAttribute('data-value');
+            const isAvailable = this.getAttribute('data-available') === 'true';
+            
+            realSelect.value = variantId;
+            
+            // Stock Update
+            if (isAvailable) {
+              cartBtn.textContent = "Add to Cart";
+              cartBtn.disabled = false;
+            } else {
+              cartBtn.textContent = "Sold Out";
+              cartBtn.disabled = true;
+            }
+
+            // Gift Update
+            const giftContainer = bundleContainer.querySelector(`.gift-products`);
+            if (giftContainer) {
+               const gifts = giftContainer.querySelectorAll('.product');
+               gifts.forEach(g => g.classList.remove('active')); 
+               const activeGift = document.getElementById(`gift-${variantId}`);
+               if (activeGift) activeGift.classList.add('active');
+            }
+          });
+        });
+      }
+
+      // ============================================
+      // NEW GALLERY LOGIC (Matches New UI)
+      // ============================================
+      if (window.innerWidth > 749) {
+        const wrapper = document.getElementById(`bundle-gallery-wrapper-${sectionId}`);
+        if(wrapper) {
+            // Select the new classes
+            const thumbs = wrapper.querySelectorAll('.slider-item');
+            const mains = wrapper.querySelectorAll('.main-image-display img');
+
+            thumbs.forEach(t => {
+                t.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Reset Active States
+                    thumbs.forEach(i => i.classList.remove('active'));
+                    mains.forEach(i => i.classList.remove('active'));
+                    
+                    // Set New Active State
+                    this.classList.add('active');
+                    const idx = this.getAttribute('data-index');
+                    
+                    // Find matching main image
+                    const target = wrapper.querySelector(`.main-image-display img[data-index="${idx}"]`);
+                    if(target) target.classList.add('active');
+                });
+            });
+        }
+      }
+
+      // ============================================
+      // 2. VISIBILITY & FILTER LOGIC
+      // ============================================
+      function updateBundleVisibility(targetId) {
+        if (!variantContainer) return;
+        
+        const buttons = variantContainer.querySelectorAll('.checkbox-button');
+        let matchFound = false;
+
+        buttons.forEach(btn => {
+          const btnId = btn.getAttribute('data-value');
+          
+          if (!targetId) {
+            btn.style.display = ''; 
+          } else {
+            if (btnId === targetId) {
+              btn.style.display = ''; 
+              if (!btn.classList.contains('active')) {
+                console.log(`🔄 [Bundle] Sync & Filter: Selecting ID ${targetId}`);
+                btn.click(); 
+              }
+              matchFound = true;
+            } else {
+              btn.style.display = 'none'; 
+            }
+          }
+        });
+
+        if (targetId && !matchFound) {
+           console.warn(`⚠️ [Bundle] Target ID ${targetId} not found.`);
+        }
+      }
+
+      // ============================================
+      // 3. EVENT LISTENERS (Subscriber)
+      // ============================================
+
+      // A. Listen for the Custom Event from Main Product
+      window.addEventListener('custom-variant-change', function(e) {
+        const targetId = e.detail.targetId;
+        updateBundleVisibility(targetId);
+      });
+
+      // B. Initial Load Check (From Storage)
+      const storedId = sessionStorage.getItem('target_bundle_id');
+      updateBundleVisibility(storedId);
+
+      // ============================================
+      // 4. AJAX ADD TO CART LOGIC (ADDED)
+      // ============================================
+      if (cartBtn) {
+        const textAdding = "{{ 'products.product.adding' | t | default: 'Adding...' }}";
+        const textError = "{{ 'products.product.error' | t | default: 'Error' }}";
+
+        cartBtn.addEventListener('click', function(e) {
+          // Prevent default form submit (page reload)
+          e.preventDefault();
+          
+          // Get the current Variant ID from the hidden select
+          const variantId = realSelect ? realSelect.value : null;
+          
+          if (!variantId) {
+            console.error("No variant ID selected");
+            return;
+          }
+
+          const originalText = this.innerHTML;
+          this.innerHTML = textAdding;
+          this.style.opacity = '0.7';
+
+          let formData = {
+           'items': [{
+            'id': variantId,
+            'quantity': 1
+            }]
+          };
+
+          fetch(window.Shopify.routes.root + 'cart/add.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+          })
+          .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+          })
+          .then(data => {
+            // Success Reset
+            this.innerHTML = originalText;
+            this.style.opacity = '1';
+            
+            // Trigger Cart Drawer / Mini Cart
+            // Method 1: Click the header icon
+            const cartIcon = document.querySelector('a[href="/cart"]') || 
+                             document.querySelector('.header__icon--cart') || 
+                             document.querySelector('.mini-cart-toggle');
+
+            if (cartIcon) {
+              cartIcon.click();
+            } else {
+              // Method 2: Fallback events
+              const miniCart = document.querySelector('.mini-cart');
+              if (miniCart) {
+                miniCart.classList.add('active');
+              }
+              document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', { bubbles: true }));
+              document.documentElement.dispatchEvent(new CustomEvent('cart:open', { bubbles: true })); // Some themes use this
+            }
+
+            // Update Cart Count Bubbles
+            const cartBubble = document.querySelectorAll('.cart-count-bubble span, .header__cart-count');
+            cartBubble.forEach(el => {
+                let currentCount = parseInt(el.innerText || 0);
+                el.innerText = currentCount + 1;
+            });
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            this.innerHTML = textError;
+            this.style.opacity = '1';
+            // Reset text after 2 seconds
+            setTimeout(() => {
+                this.innerHTML = originalText;
+            }, 2000);
+          });
+        });
+      }
+
+    });
+  </script>
+{% endif %}
+
+{% schema %}
+  {
+    "name": "Featured Bundle",
+    "tag": "section",
+    "class": "section",
+    "settings": [
+      {
+        "type": "product",
+        "id": "feature_product",
+        "label": "Featured Product (The Bundle)"
+      }, {
+        "type": "text",
+        "id": "heading",
+        "label": "Heading",
+        "default": "Complete Your Set"
+      }, {
+        "type": "range",
+        "id": "padding_top",
+        "min": 0,
+        "max": 100,
+        "step": 4,
+        "unit": "px",
+        "label": "Padding Top",
+        "default": 36
+      }, {
+        "type": "range",
+        "id": "padding_bottom",
+        "min": 0,
+        "max": 100,
+        "step": 4,
+        "unit": "px",
+        "label": "Padding Bottom",
+        "default": 36
+      }
+    ],
+    "presets": [
+      {
+        "name": "Featured Bundle"
+      }
+    ]
+  }
+{% endschema %}
