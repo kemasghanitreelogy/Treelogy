@@ -1,1 +1,169 @@
-{"current":{"favicon":"shopify:\/\/shop_images\/faviconV2.png","tax_footer_setting":"","active_free_shipping_progress":true,"free_shipping_info":"free shipping","min_shipping":750000,"shipping_selected_country":"ID","bonus_1_icon":"shopify:\/\/shop_images\/free_shipping.png","min_free_product_checkout":2000000,"active_free_product":false,"free_product":"sample-free-pouch","free_product_info":"Free Product","free_product_selected_country":"ID","bonus_2_icon":"shopify:\/\/shop_images\/free_item.png","complete_text":"All set!","sections":{"Header":{"type":"Header","blocks":{"text_UY8Rx3":{"type":"text","settings":{"title":"11.11 Offer | Free Shipping all over Indonesia","url":"shopify:\/\/collections\/all"}},"text_wnH9BG":{"type":"text","settings":{"title":"We accept credit cards · bank transfer · e-wallet · QRIS","url":"shopify:\/\/collections\/all"}}},"block_order":["text_UY8Rx3","text_wnH9BG"],"settings":{"logo":"shopify:\/\/shop_images\/treelogy-header-logo.png","header_product":"organic-moringa-powder","main_menu":"main-menu","up_selling_products":["organic-moringa-oil","moringa-ritual-set","organic-moringa-capsules","organic-moringa-powder"]}},"Footer":{"type":"Footer","blocks":{"Footer-0":{"type":"social","settings":{"title":"IG","url":"https:\/\/www.instagram.com\/treelogy\/","icon":"shopify:\/\/shop_images\/ig.png"}},"social_Gy4igq":{"type":"social","settings":{"title":"FB","url":"https:\/\/www.facebook.com\/treelogy.moringa","icon":"shopify:\/\/shop_images\/facebook.png"}},"social_jTHL3F":{"type":"social","settings":{"title":"TikTok","url":"https:\/\/www.tiktok.com\/@treelogy.moringa","icon":"shopify:\/\/shop_images\/tiktok-icon.png"}},"social_UcPPJc":{"type":"social","settings":{"title":"Pinterest","url":"https:\/\/www.pinterest.com\/treelogymoringa\/","icon":"shopify:\/\/shop_images\/pinterest-icon.png"}},"social_VtERWp":{"type":"social","settings":{"title":"LinkedIn","url":"https:\/\/www.linkedin.com\/company\/treelogy%C2%AE\/about\/","icon":"shopify:\/\/shop_images\/linkedin-icon.png"}},"social_JfAUxd":{"type":"social","settings":{"title":"WhatsApp","url":"https:\/\/api.whatsapp.com\/send?phone=6281139603993","icon":"shopify:\/\/shop_images\/whatsapp-icon.png"}}},"block_order":["Footer-0","social_Gy4igq","social_jTHL3F","social_UcPPJc","social_VtERWp","social_JfAUxd"],"settings":{"footer_logo":"shopify:\/\/shop_images\/treelogy-footer-logo.png","newsletter_title":"Subscribe our newsletter","newsletter_heading":"At Treelogy, we elevate moringa into exceptional products, grown and crafted by us to deliver pure quality, complete transparency, and lasting well-being.","newsletter_button_label":"Notify Me","footer_menu":"footer-left","footer_menu_secondary":"footer","payment_title":"We accept","desktop_image":"shopify:\/\/shop_images\/payment_65cf5e5d-7df9-45fa-a1dc-def54aeff888.png","mobile_image":"shopify:\/\/shop_images\/Frame_598.png","privacy_url":"shopify:\/\/policies\/privacy-policy"}}},"content_for_index":[],"blocks":{"14060646107696862457":{"type":"shopify:\/\/apps\/judge-me-reviews\/blocks\/judgeme_core\/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8","disabled":false,"settings":{}},"855628211100114053":{"type":"shopify:\/\/apps\/klaviyo-email-marketing-sms\/blocks\/klaviyo-onsite-embed\/2632fe16-c075-4321-a88b-50b567f42507","disabled":false,"settings":{}},"10605408327587305396":{"type":"shopify:\/\/apps\/eg-auto-add-to-cart\/blocks\/app-embed\/0f7d4f74-1e89-4820-aec4-6564d7e535d2","disabled":false,"settings":{"version":"v3"}}}},"presets":{"Default":{}}}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "current": {
+    "favicon": "shopify://shop_images/faviconV2.png",
+    "tax_footer_setting": "",
+    "active_free_shipping_progress": true,
+    "free_shipping_info": "free shipping",
+    "min_shipping": 750000,
+    "shipping_selected_country": "ID",
+    "bonus_1_icon": "shopify://shop_images/free_shipping.png",
+    "min_free_product_checkout": 2000000,
+    "active_free_product": false,
+    "free_product": "sample-free-pouch",
+    "free_product_info": "Free Product",
+    "free_product_selected_country": "ID",
+    "bonus_2_icon": "shopify://shop_images/free_item.png",
+    "complete_text": "All set!",
+    "sections": {
+      "Header": {
+        "type": "Header",
+        "blocks": {
+          "text_UY8Rx3": {
+            "type": "text",
+            "settings": {
+              "title": "11.11 Offer | Free Shipping all over Indonesia",
+              "url": "shopify://collections/all"
+            }
+          },
+          "text_wnH9BG": {
+            "type": "text",
+            "settings": {
+              "title": "We accept credit cards · bank transfer · e-wallet · QRIS",
+              "url": "shopify://collections/all"
+            }
+          }
+        },
+        "block_order": [
+          "text_UY8Rx3",
+          "text_wnH9BG"
+        ],
+        "settings": {
+          "logo": "shopify://shop_images/treelogy-header-logo.png",
+          "header_product": "organic-moringa-powder",
+          "main_menu": "main-menu",
+          "up_selling_products": [
+            "organic-moringa-oil",
+            "moringa-ritual-set",
+            "organic-moringa-capsules",
+            "organic-moringa-powder"
+          ]
+        }
+      },
+      "Footer": {
+        "type": "Footer",
+        "blocks": {
+          "Footer-0": {
+            "type": "social",
+            "settings": {
+              "title": "IG",
+              "url": "https://www.instagram.com/treelogy/",
+              "icon": "shopify://shop_images/ig.png"
+            }
+          },
+          "social_Gy4igq": {
+            "type": "social",
+            "settings": {
+              "title": "FB",
+              "url": "https://www.facebook.com/treelogy.moringa",
+              "icon": "shopify://shop_images/facebook.png"
+            }
+          },
+          "social_jTHL3F": {
+            "type": "social",
+            "settings": {
+              "title": "TikTok",
+              "url": "https://www.tiktok.com/@treelogy.moringa",
+              "icon": "shopify://shop_images/tiktok-icon.png"
+            }
+          },
+          "social_UcPPJc": {
+            "type": "social",
+            "settings": {
+              "title": "Pinterest",
+              "url": "https://www.pinterest.com/treelogymoringa/",
+              "icon": "shopify://shop_images/pinterest-icon.png"
+            }
+          },
+          "social_VtERWp": {
+            "type": "social",
+            "settings": {
+              "title": "LinkedIn",
+              "url": "https://www.linkedin.com/company/treelogy%C2%AE/about/",
+              "icon": "shopify://shop_images/linkedin-icon.png"
+            }
+          },
+          "social_JfAUxd": {
+            "type": "social",
+            "settings": {
+              "title": "WhatsApp",
+              "url": "https://api.whatsapp.com/send?phone=6281139603993",
+              "icon": "shopify://shop_images/whatsapp-icon.png"
+            }
+          }
+        },
+        "block_order": [
+          "Footer-0",
+          "social_Gy4igq",
+          "social_jTHL3F",
+          "social_UcPPJc",
+          "social_VtERWp",
+          "social_JfAUxd"
+        ],
+        "settings": {
+          "footer_logo": "shopify://shop_images/treelogy-footer-logo.png",
+          "newsletter_title": "Subscribe our newsletter",
+          "newsletter_heading": "At Treelogy, we elevate moringa into exceptional products, grown and crafted by us to deliver pure quality, complete transparency, and lasting well-being.",
+          "newsletter_button_label": "Notify Me",
+          "footer_menu": "footer-left",
+          "footer_menu_secondary": "footer",
+          "payment_title": "We accept",
+          "desktop_image": "shopify://shop_images/payment_65cf5e5d-7df9-45fa-a1dc-def54aeff888.png",
+          "mobile_image": "shopify://shop_images/Frame_598.png",
+          "privacy_url": "shopify://policies/privacy-policy"
+        }
+      }
+    },
+    "content_for_index": [],
+    "blocks": {
+      "14060646107696862457": {
+        "type": "shopify://apps/judge-me-reviews/blocks/judgeme_core/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+        "disabled": false,
+        "settings": {}
+      },
+      "855628211100114053": {
+        "type": "shopify://apps/klaviyo-email-marketing-sms/blocks/klaviyo-onsite-embed/2632fe16-c075-4321-a88b-50b567f42507",
+        "disabled": false,
+        "settings": {}
+      },
+      "10605408327587305396": {
+        "type": "shopify://apps/eg-auto-add-to-cart/blocks/app-embed/0f7d4f74-1e89-4820-aec4-6564d7e535d2",
+        "disabled": false,
+        "settings": {
+          "version": "v3"
+        }
+      },
+      "14167655181940180261": {
+        "type": "shopify://apps/quinn-shoppable-reel/blocks/app-embed/483fa771-9c4d-49e4-8c0d-0155f4b872d6",
+        "disabled": false,
+        "settings": {}
+      },
+      "2766656906679212237": {
+        "type": "shopify://apps/quinn-shoppable-reel/blocks/app-embed-legacy/483fa771-9c4d-49e4-8c0d-0155f4b872d6",
+        "disabled": false,
+        "settings": {}
+      }
+    }
+  },
+  "presets": {
+    "Default": {}
+  }
+}
