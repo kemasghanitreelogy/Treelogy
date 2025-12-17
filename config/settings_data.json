@@ -153,12 +153,12 @@
       },
       "14167655181940180261": {
         "type": "shopify://apps/quinn-shoppable-reel/blocks/app-embed/483fa771-9c4d-49e4-8c0d-0155f4b872d6",
-        "disabled": false,
+        "disabled": true,
         "settings": {}
       },
       "2766656906679212237": {
         "type": "shopify://apps/quinn-shoppable-reel/blocks/app-embed-legacy/483fa771-9c4d-49e4-8c0d-0155f4b872d6",
-        "disabled": false,
+        "disabled": true,
         "settings": {}
       }
     }
