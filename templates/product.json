@@ -82,8 +82,8 @@
         "bg_color": "#fbfbf9",
         "heading_color": "#5e6d55",
         "text_color": "#757575",
-        "font_size": 16,
-        "text_align": "center",
+        "font_size": 14,
+        "text_align": "left",
         "max_width": 800,
         "padding_top": 20,
         "padding_bottom": 20
@@ -255,8 +255,8 @@
         "rating_count": "berdasarkan 65 ulasan",
         "bg_color": "#f8f8f4",
         "text_color": "#2b3c35",
-        "padding_top": 100,
-        "padding_bottom": 100
+        "padding_top": 50,
+        "padding_bottom": 50
       }
     },
     "content_with_accordion_list_4eNghP": {
@@ -277,9 +277,12 @@
       ],
       "name": "Accordion List",
       "settings": {
-        "title": "Frequently asked questions",
+        "margin_top_mobile": 40,
+        "margin_bottom_mobile": 40,
+        "title": "Common Questions",
         "heading_color": "#6c7256",
-        "custom_icon": "",
+        "custom_icon": "<svg width=\"12\" height=\"7\" viewbox=\"0 0 12 7\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M-5.71428e-08 1.30727L1.26495 -4.69244e-07L6 4.9002L10.7351 -5.52926e-08L12 1.31098L7.26495 6.20747C6.92943 6.55485 6.47443 6.75 6 6.75C5.52557 6.75 5.07057 6.55485 4.73505 6.20747L-5.71428e-08 1.30727Z\" fill=\"#2B3C35\"></path>\n</svg>",
+        "accordion_header_weight": "300",
         "limit_count": 5,
         "see_more_label": "See More",
         "see_less_label": "See Less",
@@ -292,10 +295,10 @@
       "blocks": {
         "text_iLLcN7": {
           "type": "text",
-          "repeater": "{{ product.metafields.product.faq.value.faq_items.value }}",
+          "repeater": "{{ product.metafields.custom.product_detail.value }}",
           "settings": {
             "title": "{{ block.repeater.title.value }}",
-            "description": "{{ block.repeater.answer | metafield_tag }}",
+            "description": "{{ block.repeater.description | metafield_tag }}",
             "accordion_text_color": "#567350"
           }
         }
@@ -305,9 +308,12 @@
       ],
       "name": "Accordion List",
       "settings": {
-        "title": "Frequently asked questions",
+        "margin_top_mobile": 32,
+        "margin_bottom_mobile": 32,
+        "title": "More Information",
         "heading_color": "#6c7256",
         "custom_icon": "",
+        "accordion_header_weight": "500",
         "limit_count": 5,
         "see_more_label": "See More",
         "see_less_label": "See Less",
@@ -347,7 +353,7 @@
       "name": "Featured Bundle Set",
       "settings": {
         "feature_product": "moringa-ritual-set",
-        "heading": "Complete Your Ritual with our Moringa Set",
+        "heading": "Complete Your Ritual <br>\nwith our Moringa Set",
         "padding_top": 36,
         "padding_bottom": 36
       }

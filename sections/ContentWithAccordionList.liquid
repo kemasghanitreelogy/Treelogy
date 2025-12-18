@@ -3,8 +3,43 @@
   {% if block.settings.title != blank %}
     {% assign should_be_showed = true %}
     {% break %}
-  {% endif %}
-{% endfor %}
+  {% endif %}{% endfor %}
+
+{% comment %} 
+    ---------------------------------------------------------
+    SECTION SPACING LOGIC
+    Calculates spacing based on Mobile setting:
+    - Mobile: Base value
+    - Tablet: Base x 1.5
+    - Desktop: Base x 2
+    ---------------------------------------------------------
+{% endcomment %}
+{%- assign mt = section.settings.margin_top_mobile -%}
+{%- assign mb = section.settings.margin_bottom_mobile -%}
+
+<style>
+  /* Mobile (Base) */
+  #shopify-section-{{ section.id }} {
+    margin-top: {{ mt }}px;
+    margin-bottom: {{ mb }}px;
+  }
+
+  /* Tablet */
+  @media only screen and (min-width: 768px) {
+    #shopify-section-{{ section.id }} {
+      margin-top: {{ mt | times: 1.5 | round }}px;
+      margin-bottom: {{ mb | times: 1.5 | round }}px;
+    }
+  }
+
+  /* Desktop */
+  @media only screen and (min-width: 1024px) {
+    #shopify-section-{{ section.id }} {
+      margin-top: {{ mt | times: 2 | round }}px;
+      margin-bottom: {{ mb | times: 2 | round }}px;
+    }
+  }
+</style>
 
 {% unless should_be_showed %}
   <style>
@@ -26,6 +61,25 @@
   /* 2. By default, hide items that have the 'extended-item' class */
   .accordion-list-item.extended-item {
     display: none;
+  }
+
+  .accordion-list.accordion-list-section {
+    padding: 0 !important;
+  }
+
+  @media only screen and (max-width: 900px) {
+    .accordion-list.accordion-list-section {
+      padding: 0 !important;
+    }
+  }
+  #Accordion-{{ section.id }}
+  .scroll-container .accordion-header h2 {
+    font-size: 14px;
+    font-weight: {{ section.settings.accordion_header_weight }};
+    color: #567350;
+    line-height: 25px;
+    margin-bottom: 0;
+    margin-right: 30px;
   }
 
   /* 3. When checkbox is CHECKED, show the extended items */
@@ -66,6 +120,8 @@
     cursor: pointer;
     display: inline-block;
     user-select: none;
+    color: #567350;
+    font-size: 14px;
   }
 
   /* 5. ICON STYLING */
@@ -77,7 +133,7 @@
   }
 </style>
 
-<div class="main-grid">
+<div class="main-grid" id="Accordion-{{ section.id }}">
   <div class="left-content">
     <h2 class="title-section-accordion" style="color: {{ section.settings.heading_color }};">
       {{ section.settings.title }}
@@ -150,21 +206,48 @@
     "class": "section accordion-list accordion-list-section",
     "settings": [
       {
+        "type": "header",
+        "content": "Section Spacing"
+      },
+      {
+        "type": "paragraph",
+        "content": "Settings apply to Mobile. Tablet scales by 1.5x, Desktop scales by 2x."
+      },
+      {
+        "type": "range",
+        "id": "margin_top_mobile",
+        "min": 0,
+        "max": 100,
+        "step": 4,
+        "unit": "px",
+        "label": "Margin Top (Mobile)",
+        "default": 32
+      },
+      {
+        "type": "range",
+        "id": "margin_bottom_mobile",
+        "min": 0,
+        "max": 100,
+        "step": 4,
+        "unit": "px",
+        "label": "Margin Bottom (Mobile)",
+        "default": 32
+      }, {
+        "type": "header",
+        "content": "Content Settings"
+      }, {
         "type": "text",
         "id": "title",
         "label": "Title"
-      },
-      {
+      }, {
         "type": "color",
         "id": "heading_color",
         "label": "Heading Color",
         "default": "#6c7256"
-      },
-      {
+      }, {
         "type": "header",
         "content": "Icon Settings"
-      },
-      {
+      }, {
         "type": "html",
         "id": "custom_icon",
         "label": "Custom SVG Icon",
@@ -172,6 +255,38 @@
       }, {
         "type": "header",
         "content": "List Settings"
+      }, {
+        "type": "select",
+        "id": "accordion_header_weight",
+        "label": "Header Font Weight",
+        "options": [
+          {
+            "value": "300",
+            "label": "Light (300)"
+          },
+          {
+            "value": "400",
+            "label": "Normal (400)"
+          },
+          {
+            "value": "500",
+            "label": "Medium (500)"
+          },
+          {
+            "value": "600",
+            "label": "Semi-bold (600)"
+          }, {
+            "value": "700",
+            "label": "Bold (700)"
+          }, {
+            "value": "800",
+            "label": "Extra Bold (800)"
+          }, {
+            "value": "900",
+            "label": "Black (900)"
+          }
+        ],
+        "default": "500"
       }, {
         "type": "range",
         "id": "limit_count",

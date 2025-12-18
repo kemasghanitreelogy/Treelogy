@@ -360,8 +360,8 @@ ul {
 }
 @media only screen and (max-width: 900px) {
   .primary-button a {
-    font-size: 14px !important;
-    line-height: 17.5px !important;
+    font-size: 12px !important;
+    padding: 0 0px !important;
   }
 }
 @media only screen and (min-width: 900px) {
@@ -768,6 +768,10 @@ input.red {
 .product-detail-wrapper {
   padding: 64px 24px;
 }
+
+.featured-bundle-section .product-detail-wrapper {
+  padding: 0;
+}
 @media only screen and (max-width: 900px) {
   .product-detail-wrapper {
     padding: 12px 0;
@@ -986,7 +990,7 @@ input.red {
 }
 @media only screen and (max-width: 900px) {
   .product-detail-wrapper .detail {
-    margin-top: 32px;
+    margin-top: 15px;
     padding: 0 24px;
   }
   .product-detail-wrapper .detail h1 {
@@ -1004,7 +1008,7 @@ input.red {
   gap: 4px;
   display: flex;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 5px;
 }
 .product-detail-wrapper .detail .rating svg path {
   fill: #56734F;
@@ -1166,7 +1170,6 @@ input.red {
   height: 40px;
   color: #F8F8F2;
   cursor: pointer;
-  margin-top: 32px;
   border-radius: 32px;
   transition: all 0.45s ease-out;
   background-color: #526547;
@@ -4708,16 +4711,9 @@ input.red {
 }
 .accordion-list .right-list .scroll-container .accordion-header {
   display: flex;
-  padding: 19px 0;
+  padding: 12px 0;
   align-items: center;
   justify-content: space-between;
-}
-.accordion-list .right-list .scroll-container .accordion-header h2 {
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 25px;
-  margin-bottom: 0;
-  margin-right: 30px;
 }
 .accordion-list .right-list .scroll-container .accordion-header svg {
   width: 12px;
@@ -6553,6 +6549,26 @@ input.red {
 .product-review-list #judgeme_product_reviews {
   grid-column: 5/12;
 }
+.jdgm-rev-widg__sort-wrapper {
+  display:flex;
+  justify-content: center;
+}
+
+.jdgm-sort-dropdown-wrapper {
+  border: 1px solid #28413f;
+  padding: 2px 20px;
+  border-radius: 30px;
+}
+select.jdgm-sort-dropdown:focus {
+  outline: none;
+}
+.jdgm-sort-dropdown-arrow {
+  right: 15px !important;
+}
+
+.jdgm-rev-widg {
+  padding: 0 !important;
+}
 .product-review-list #judgeme_product_reviews .jdgm-rev-widg {
   padding: 0;
 }
@@ -7608,6 +7624,10 @@ html {
   margin: 128px 0;
 }
 @media only screen and (max-width: 900px) {
+  .featured-product .product-detail .buttons .button-quick-add-cart {
+    font-size: 12px;
+    padding: 0 9px;
+  }
   .default-content {
     margin: 64px 0;
   }
