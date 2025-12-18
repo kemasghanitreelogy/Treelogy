@@ -10,14 +10,6 @@
     padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
     background-color: transparent;
   }
-
-  @media screen and (min-width: 750px) {
-    .section-{{ section.id }}-padding {
-      padding-top: {{ section.settings.padding_top }}px;
-      padding-bottom: {{ section.settings.padding_bottom }}px;
-    }
-  }
-
   .concerns-list__container {
     max-width: {{ section.settings.max_width }}px;
     margin: 0 auto;
@@ -27,6 +19,15 @@
     font-size: {{ section.settings.font_size }}px;
     line-height: 1.6;
     color: {{ section.settings.text_color }};
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+    .concerns-list__container {
+      text-align: center;
+    }
   }
 
   /* The bold label at the start */
@@ -40,6 +41,7 @@
   /* The individual list items */
   .concerns-list__item {
     display: inline;
+    font-weight: 300;
   }
 
   /* The separator dot */
@@ -127,7 +129,7 @@
         "step": 1,
         "unit": "px",
         "label": "Font Size",
-        "default": 16
+        "default": 14
       }, {
         "type": "select",
         "id": "text_align",

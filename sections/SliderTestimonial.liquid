@@ -1,4 +1,7 @@
-<div id="TestimonialSection-{{ section.id }}" class="testimonial-section" style="max-width: 1100px; margin-left: auto; margin-right: auto;">
+<div
+  id="TestimonialSection-{{ section.id }}"
+  class="testimonial-section"
+  style="max-width: 1100px; margin-left: auto; margin-right: auto;">
   <div class="page-width tm-layout">
 
     <div class="testimonial-header">
@@ -7,22 +10,24 @@
       {% endif %}
 
       <div class="rating-summary">
-        <div class="rating-stars">
-          {% for i in (1..5) %}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              class="icon-star">
-              <path
-                fill-rule="evenodd"
-                d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.007z"
-                clip-rule="evenodd" />
-            </svg>
-          {% endfor %}
+        <div class="left-rating">
+          <div class="rating-stars">
+            {% for i in (1..5) %}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                class="icon-star">
+                <path
+                  fill-rule="evenodd"
+                  d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.007z"
+                  clip-rule="evenodd" />
+              </svg>
+            {% endfor %}
+          </div>
+          <span class="rating-score">{{ section.settings.rating_score }}</span>
         </div>
         <div class="rating-text">
-          <span class="rating-score">{{ section.settings.rating_score }}</span>
           <span class="rating-count">{{ section.settings.rating_count }}</span>
         </div>
       </div>
@@ -85,7 +90,7 @@
   }
 
   .testimonial-heading {
-    font-size: 1.6rem;
+    font-size: 24px;
     font-weight: 500;
     margin-bottom: 10px;
     line-height: 1.2;
@@ -93,13 +98,20 @@
   }
 
   /* --- Ratings --- */
+  .left-rating {
+    display: flex;
+    gap: 10px;
+  }
   .rating-summary {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: 8px;
     font-size: 0.95rem;
   }
-
+  .rating-score {
+    font-size: 20px;
+    font-weight: 300;
+  }
   .rating-stars {
     display: flex;
     color: #4A6741;
@@ -108,10 +120,6 @@
   .icon-star {
     width: 18px;
     height: 18px;
-  }
-
-  .rating-score {
-    font-weight: bold;
   }
 
   .rating-count {
@@ -148,7 +156,7 @@
   }
 
   .tm-quote {
-    font-size: 1.2rem;
+    font-size: 16px;
     font-weight: 600;
     line-height: 1.5;
     margin: 0 0 15px;
@@ -178,8 +186,8 @@
   .testimonial-section .swiper-pagination-bullet {
     background-color: {{ section.settings.text_color }};
     opacity: 0.3;
-    width: 8px;
-    height: 8px;
+    width: 5px;
+    height: 5px;
     margin: 0 5px !important;
     border-radius: 50%;
     transition: opacity 0.3s ease;

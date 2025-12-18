@@ -14,11 +14,43 @@
       padding-bottom: {{ section.settings.padding_bottom | times: 2 }}px;
     }
   }
+  .featured-bundle-section .description {
+    padding-right: 0;
+  }
+  .inside-set-wrapper p {
+    font-weight: 600;
+  }
+  /* 1. Hide the default browser marker */
+  .inside-set-content.rte ul {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  /* 2. Create a custom layout for the list item */
+  .inside-set-content.rte li {
+    display: flex;
+    /* This aligns the dot and text side-by-side */
+    align-items: flex-start;
+    /* Keeps dot at top if text wraps */
+    gap: 6px;
+    /* <--- CHANGE THIS VALUE to control the "margin right" */
+  }
+
+  /* 3. Add your own bullet point */
+  .inside-set-content.rte li::before {
+    content: "•";
+    /* The dot character */
+    font-size: 1.2em;
+    /* Size of the dot */
+    line-height: 1;
+    /* Ensures vertical alignment */
+  }
+
   .featured-bundle-section .gallery-wrapper {
     transform: translateX(24px);
   }
   /* --- NEW GALLERY STYLES --- */
-  .product-detail-wrapper {
+  .featured-bundle-section .product-detail-wrapper {
     display: flex;
     flex-direction: column;
   }
@@ -28,7 +60,15 @@
     gap: 15px;
   }
   .featured-bundle-section .section-heading {
-    padding: 0 24px
+    padding: 0 24px;
+    color: #6c7256;
+  }
+
+  @media screen and (min-width: 749px) {
+    .featured-bundle-section .section-heading {
+      text-align: center;
+      margin-bottom: 40px;
+    }
   }
 
   .main-image-display {
@@ -123,7 +163,7 @@
 
   /* --- DESKTOP SPECIFIC --- */
   @media screen and (min-width: 750px) {
-    .product-detail-wrapper {
+    .featured-bundle-section .product-detail-wrapper {
       flex-direction: row;
       column-gap: 40px;
     }
@@ -165,8 +205,8 @@
     <div class="bundle-grid product-detail-wrapper">
 
       {% comment %} 
-                                    === NEW GALLERY STRUCTURE === 
-                        {% endcomment %}
+                                                                                                                                    === NEW GALLERY STRUCTURE === 
+                                                                                                {% endcomment %}
       <div class="gallery-wrapper">
         <div id="bundle-gallery-wrapper-{{ section.id }}" class="bundle-gallery-grid">
 
@@ -194,16 +234,32 @@
       {% comment %} DETAILS {% endcomment %}
       <div class="detail bundle-details">
         <div class="rating">
-          {% if selected_product.metafields.custom.rating %}
-            {% render 'StarReview' %}
-            <span class="rating-text">{{ selected_product.metafields.custom.rating }}</span>
-          {% else %}
-            <span class="shopify-product-reviews-badge" data-id="{{ selected_product.id }}"></span>
-          {% endif %}
+          {% render 'Rating' %}
         </div>
 
         <h1>{{ selected_product.title }}</h1>
-        <div class="description body-desk">{{ selected_product.description }}</div>
+        <div class="description body-desk">
+          {{ selected_product.description }}
+          {% assign inside_set = selected_product.metafields.custom.inside_set %}
+
+          {% if inside_set != blank %}
+            <div class="inside-set-wrapper">
+
+              {% comment %} Title {% endcomment %}
+              <p>Inside the Set</p>
+
+              {% comment %} 
+                                                                                                                                                      Metafield Content (Rich Text) 
+                                                                                                                                                      The '| metafield_tag' filter automatically converts the rich text JSON/HTML 
+                                                                                                                                                      into proper HTML elements (p, ul, li, bold, etc.)
+                                                                                                                                  {% endcomment %}
+              <div class="inside-set-content rte">
+                {{ inside_set | metafield_tag }}
+              </div>
+
+            </div>
+          {% endif %}
+        </div>
 
         <div class="bundle-purchase-area mt-8">
           <form
@@ -266,9 +322,6 @@
       const realSelect = document.getElementById(`RealProductSelect-${sectionId}`);
       const cartBtn = document.getElementById(`AddToCartBtn-${sectionId}`);
 
-      // ============================================
-      // 1. INTERNAL BUNDLE LOGIC (Standard Click)
-      // ============================================
       if (variantContainer && realSelect) {
         const buttons = variantContainer.querySelectorAll('.checkbox-button');
         
@@ -479,9 +532,9 @@
         "id": "feature_product",
         "label": "Featured Product (The Bundle)"
       }, {
-        "type": "text",
+        "type": "textarea",
         "id": "heading",
-        "label": "Heading",
+        "label": "Heading textarea",
         "default": "Complete Your Set"
       }, {
         "type": "range",
