@@ -146,6 +146,7 @@
         {% endfor %}
       </div>
     {% endif %}
+
     <div class="payment">
       <div class="payment-title">{{ section.settings.payment_title }}</div>
       <div class="payment-image desktop">
@@ -158,6 +159,8 @@
           , image: mobile_image %}
       </div>
     </div>
+
+    {% render 'ProductStories' %}
   </div>
 
 </div>
@@ -179,13 +182,11 @@
         "id": "payment_list",
         "label": "Payments image desktop"
       },
-
       {
         "type": "image_picker",
         "id": "payment_list_mob",
         "label": "Payments image mobile"
       },
-
       {
         "type": "header",
         "content": "Note"
@@ -197,9 +198,35 @@
         "type": "image_picker",
         "id": "note_image",
         "label": "Note image"
+      }, {
+        "type": "header",
+        "content": "Product Stories / Reels"
+      }, {
+        "type": "text",
+        "id": "story_title",
+        "label": "Story Title"
+      }, {
+        "type": "text",
+        "id": "story_cta_text",
+        "label": "Story Button Label",
+        "default": "Add to Cart"
+      }, {
+        "type": "color",
+        "id": "story_text_color",
+        "label": "Story Title Color",
+        "default": "#000000"
+      }, {
+        "type": "color",
+        "id": "story_btn_bg",
+        "label": "Story Button Background",
+        "default": "#526547"
+      }, {
+        "type": "color",
+        "id": "story_btn_text",
+        "label": "Story Button Text",
+        "default": "#ffffff"
       }
     ],
-
     "presets": [
       {
         "name": "Product single"
@@ -236,18 +263,12 @@
     // ==================================================
     // 2. CORE SYNC FUNCTION (Reusable)
     // ==================================================
-    /**
-     * Handles the logic of broadcasting the change to the Bundle
-     * regardless of whether it came from a Click or Page Load.
-     */
     function broadcastVariantChange(variantId) {
       const data = mainProductData[variantId];
 
       if (data && data.hasMetafield) {
-        // A. Save to Storage (Persistence)
         sessionStorage.setItem('target_bundle_id', data.linkedId);
         
-        // B. Dispatch Event (Immediate Sync)
         const event = new CustomEvent('custom-variant-change', { 
           detail: { targetId: data.linkedId } 
         });
@@ -255,10 +276,8 @@
         
         console.log(`📡 [Sync] Broadcasting Target ID: ${data.linkedId} (Source: ${data.title})`);
       } else {
-        // C. Cleanup if no link
         sessionStorage.removeItem('target_bundle_id');
         
-        // Dispatch event with null to reset bundle visibility
         const event = new CustomEvent('custom-variant-change', { detail: { targetId: null } });
         window.dispatchEvent(event);
         
@@ -288,7 +307,7 @@
     }
 
     // ==================================================
-    // 4. VARIANT LOGIC (The Fix)
+    // 4. VARIANT LOGIC
     // ==================================================
     const mainWrapper = document.querySelector('.product-detail-wrapper');
     const productSelect = document.getElementById('productSelect');
@@ -296,27 +315,21 @@
     if (mainWrapper) {
       const buttons = mainWrapper.querySelectorAll('.checkbox-button');
 
-      // A. EVENT LISTENER (Click Interaction)
       buttons.forEach(btn => {
         btn.addEventListener('click', function(e) {
-          // Prevent Theme Conflict / Glitch
           e.preventDefault();
           e.stopPropagation(); 
 
           const id = this.getAttribute('data-value');
 
-          // 1. UI UPDATE
           buttons.forEach(b => b.classList.remove('active'));
           this.classList.add('active');
           if(productSelect) productSelect.value = id;
 
-          // 2. RUN SYNC LOGIC
           broadcastVariantChange(id);
         });
       });
 
-      // B. INITIAL LOAD CHECK (Pre-Select Logic)
-      // Find the button that is ALREADY active (set by Liquid or Theme JS)
       const initialActiveBtn = mainWrapper.querySelector('.checkbox-button.active');
       
       if (initialActiveBtn) {
@@ -324,7 +337,6 @@
         console.log("🚀 [Main Product] Initializing Pre-selected Variant...");
         broadcastVariantChange(initialId);
       } else {
-        // Fallback: If no button is active, trigger the first one logic
         const firstBtn = buttons[0];
         if (firstBtn) {
            const firstId = firstBtn.getAttribute('data-value');
@@ -335,7 +347,6 @@
     }
   });
 </script>
-
 
 <style>
   .rich-text-container ul {
