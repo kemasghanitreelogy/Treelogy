@@ -1,0 +1,409 @@
+
+.story-section-wrapper {
+  margin-top: 20px;
+  width: 100%;
+  overflow: hidden;
+  /* Prevent layout shift */
+  min-height: 200px; 
+}
+
+/* Grid Scroll Container */
+.reels-grid {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 15px; /* Space for scrollbar/shadow */
+  padding-left: 2px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; 
+}
+.reels-grid::-webkit-scrollbar { display: none; }
+
+/* KARTU 9:16 */
+.reel-card {
+  position: relative;
+  width: fit-content; /* Lebar kartu */
+  aspect-ratio: 9 / 16;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  scroll-snap-align: start;
+  background: #eee;
+  touch-action: manipulation; 
+  transform: translateZ(0);
+  transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.reel-card:active { transform: scale(0.96); }
+
+.reel-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+/* GRADIENT OVERLAY (Text readability) */
+.reel-gradient {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* TEXT TITLE */
+.reel-title {
+  position: absolute;
+  bottom: 12px;
+  left: 5px;
+  right: 5px;
+  text-align: center;
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  z-index: 2;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  pointer-events: none;
+}
+
+/* =========================================
+   2. THUMBNAIL ICONS (Video Only)
+   ========================================= */
+
+/* NOTE: Image content has NO icon based on your reference image */
+
+/* STYLE KHUSUS VIDEO (Large, Blurred, with SVG) */
+.reel-icon-video, .reel-icon-image {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 34px; /* Large size */
+  height: 34px;
+  background: rgba(255, 255, 255, 0.65); /* Semi-transparent White */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  pointer-events: none;
+  backdrop-filter: blur(6px); /* Strong Blur Effect */
+}
+
+/* Play Triangle SVG Style */
+.reel-icon-video svg, .reel-icon-image svg {
+  width: 24px;
+  height: 24px;
+  fill: #000000; 
+  display: block;
+}
+
+/* =========================================
+   3. OVERLAY PLAYER UI
+   ========================================= */
+
+#story-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: #000;
+  z-index: 2147483647;
+}
+
+.story-player-container {
+  position: relative;
+  width: 100%; height: 100%;
+  max-width: 480px; 
+  margin: 0 auto;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+}
+
+.story-media-wrapper {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+}
+
+.story-media-wrapper img, 
+.story-media-wrapper video {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.story-loader {
+  position: absolute;
+  width: 30px; height: 30px;
+  border: 3px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  display: none; 
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Progress Bars */
+.story-progress-bars {
+  position: absolute;
+  top: 10px; left: 0;
+  width: 100%;
+  padding: 0 8px;
+  display: flex; gap: 4px;
+  z-index: 20;
+}
+
+.story-bar {
+  flex: 1; height: 2px; 
+  background: rgba(255,255,255,0.3);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.story-bar-fill {
+  width: 0%; height: 100%;
+  background: #fff;
+  will-change: width;
+  transform: translateZ(0); 
+}
+
+/* =========================================
+   4. BUTTONS (Close & Toggle Mute)
+   ========================================= */
+
+/* Close Button (Glassmorphism) */
+.story-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 36px;
+  height: 36px;
+  z-index: 30;
+  background: rgba(0, 0, 0, 0.4);
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  backdrop-filter: blur(4px);
+  transition: background 0.2s;
+}
+
+.story-close:active {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* Volume Toggle Button (Seamless Animation) */
+.story-volume-btn {
+  position: absolute;
+  top: 20px;
+  right: 65px; /* Positioned to left of Close button */
+  z-index: 30;
+  background: rgba(0, 0, 0, 0.4);
+  border: none;
+  border-radius: 24px;
+  height: 36px;
+  padding: 0 12px; /* Padding for text mode */
+  display: none; /* JS toggles this */
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smooth Transition */
+}
+
+.story-volume-btn:active {
+  background: rgba(0, 0, 0, 0.6);
+  transform: scale(0.95);
+}
+
+/* STATE: Sound ON (Icon Only Mode) */
+.story-volume-btn.sound-on {
+  padding: 0;
+  width: 36px; /* Shrink to circle */
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Hide Text when Sound is ON */
+.story-volume-btn.sound-on span {
+  display: none;
+}
+
+/* Toggle Logic for Icons */
+.icon-muted, .icon-unmuted {
+  display: flex;
+  align-items: center;
+}
+
+.story-volume-btn .icon-unmuted { display: none; } /* Default hidden */
+.story-volume-btn.sound-on .icon-muted { display: none; } /* Hide mute icon when sound on */
+.story-volume-btn.sound-on .icon-unmuted { display: flex; } /* Show sound icon */
+
+/* =========================================
+   5. CONTROLS & CTA
+   ========================================= */
+
+.tap-prev { position: absolute; top: 0; left: 0; width: 30%; height: 85%; z-index: 10; }
+.tap-next { position: absolute; top: 0; right: 0; width: 70%; height: 85%; z-index: 10; }
+
+.story-cta {
+  position: absolute; bottom: 40px; left: 50%;
+  transform: translateX(-50%);
+  width: 90%; z-index: 30;
+}
+
+.story-cta button {
+  width: 100%; padding: 14px;
+  border: none; border-radius: 50px;
+  font-weight: 700; font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  transition: transform 0.1s;
+}
+.story-cta button:active { transform: translateX(-50%) scale(0.98); }
+
+/* ... [Keep all previous CSS] ... */
+
+/* =========================================
+   6. NEW: VARIANT SELECTOR & CTA WRAPPER
+   ========================================= */
+
+/* Wrapper to hold CTA and Selector together */
+.story-cta-container {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* 1. The Trigger Button (Shows current variant + Arrow) */
+.story-variant-trigger {
+  background: #e3e9d7;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #515e56;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+
+.story-variant-trigger svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.3s ease; /* Smooth rotation */
+}
+
+/* Arrow Rotation State */
+.story-variant-trigger.is-open svg {
+  transform: rotate(180deg);
+}
+
+/* 2. The Expandable List (Hidden by default) */
+.story-variant-list {
+  background: #e3e9d7;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 4px;
+  max-height: 0; /* Hidden */
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  position: absolute;
+  bottom: 100%; /* Sits on top of the trigger */
+  left: 0; 
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+/* Open State for List */
+.story-variant-list.is-open {
+  max-height: 200px; /* Limit height, allow scroll */
+  opacity: 1;
+  transform: translateY(0);
+  overflow-y: auto;
+  pointer-events: auto;
+}
+
+/* List Items */
+.variant-option {
+  padding: 12px 16px;
+  color: #526547;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  transition: background 0.2s;
+}
+
+.variant-option:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.variant-option.selected {
+  background: rgba(255, 255, 255, 0.2);
+  font-weight: 700;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.variant-option.sold-out {
+  opacity: 0.5;
+  text-decoration: line-through;
+  pointer-events: none;
+}
+
+/* 3. The ATC Button (Cleaned up) */
+.story-atc-btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  transition: transform 0.1s;
+  /* Dynamic colors handled by inline styles in Liquid */
+}
+
+.story-atc-btn:active {
+  transform: scale(0.98);
+}
