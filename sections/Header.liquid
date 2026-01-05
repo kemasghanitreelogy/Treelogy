@@ -86,9 +86,6 @@
               localStorage.setItem('_userCountry', data.country.toLowerCase())
 
             })
-            .catch((error) => {
-              console.error('Error:', error);
-            });
           }
         </script>
 
@@ -128,7 +125,7 @@
         {% endcomment %}
       </div>
       {% if section.settings.header_product != null %}
-        <div class="featured-header-product">
+        <div class="featured-header-product" data-cs-capture>
           <div class="h2 heading desktop">{{ 'products.featured.title' | t }}</div>
           {% render 'ProductCard', item: section.settings.header_product, button_cart: true %}
         </div>

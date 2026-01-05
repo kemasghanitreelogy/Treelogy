@@ -1,6 +1,6 @@
 {% if item %}
   {% assign first_variant = item.variants.first %}
-  <div class="card swiper-slide">
+  <div class="card swiper-slide" data-cs-capture>
     <figure>
       <a href="{{ item.url }}"><img src="{{ item.media.first | img_url : '350x' }}" alt="{{ item.title }}"></a>
 

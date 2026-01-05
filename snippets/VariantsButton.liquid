@@ -31,10 +31,10 @@
     {% assign original_price = variant.metafields.custom.use_doubling_prices %}
     {% assign discount_percent = variant.metafields.custom.discount_percent_variant | default: 0 %}
 
-      {% if original_price %}
+    {% if original_price %}
 
       {% comment %} 1. Calculate the numeric difference {% endcomment %}
-    {% assign price_diff = variant.compare_at_price | minus: variant.price %}
+      {% assign price_diff = variant.compare_at_price | minus: variant.price %}
 
       {% comment %} 2. Calculate percent: (Difference * 100) / Original Price {% endcomment %}
       {% assign discount_percent = price_diff | times: 100 | divided_by: variant.compare_at_price %}
@@ -44,7 +44,11 @@
           {% assign discount_percent = price_diff | times: 100 | divided_by: cur_cents %}
         {% endif %}
       {% endif %}
-      <div class="discount-label">-{{ discount_percent }}%</div>
+      {% if variant.metafields.custom.custom_badge_text %}
+        <div class="discount-label custom-badge-text">{{ variant.metafields.custom.custom_badge_text }}</div>
+      {% else %}
+        <div class="discount-label">save -{{ discount_percent }}%</div>
+      {% endif %}
     {% endif %}
 
     <div class="left body-desk-s">
@@ -74,6 +78,8 @@
       </div>
     </div>
     <div class="body-desk-s right">
+      {% assign saving = variant.metafields.custom.saving %}
+      {{ variant.price | money_with_currency }}
       {% if original_price %}
         <div class="custom-discount-price">
           {% if variant_size == 1 %}
@@ -87,8 +93,6 @@
           {% endif %}
         </div>
       {% endif %}
-      {% assign saving = variant.metafields.custom.saving %}
-      {{ variant.price | money_with_currency }}
 
       {% unless disabled_detail %}
         {% if saving %}

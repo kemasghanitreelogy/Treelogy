@@ -9,7 +9,7 @@
   </div>
 {% endif %}
 
-<div class="main-grid cart-page">
+<div class="main-grid cart-page" data-cs-capture>
   {% render 'LoginForm', checkout_button: true %}
   <div class="cart" id="cart-summary">
     {% if cart.item_count > 0 %}
