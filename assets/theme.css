@@ -26,6 +26,125 @@
   --mobile-size: 900 ;
 }
 
+/* --- Scoped Reset Password CSS --- */
+
+/* Main Wrapper */
+.auth-container {
+  background-color: #F9F9F4; /* Light cream background from image */
+  color: #33413A;            /* Dark green/grey text */
+  padding: 80px 20px;
+  min-height: 60vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; /* Clean fallback font */
+}
+
+/* Inner Content Width */
+.auth-container .auth-content {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* Heading Typography */
+.auth-container .auth-heading {
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1.3;
+  color: #33413A;
+  margin-bottom: 40px;
+  text-align: left;
+  letter-spacing: 0.5px;
+}
+
+/* Accessibility: Hide labels visually but keep readable for screen readers */
+.auth-container .visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* Input Group Wrapper */
+.auth-container .input-group {
+  margin-bottom: 20px;
+}
+
+/* Input Fields (Pill Shape) */
+.auth-container .input-field {
+  width: 100%;
+  padding: 18px 25px; /* Taller padding to match image */
+  font-size: 16px;
+  background-color: transparent;
+  border: 1px solid #C0C0C0;
+  border-radius: 9999px; /* Ensures fully rounded pill shape */
+  box-sizing: border-box;
+  outline: none;
+  color: #33413A;
+  transition: border-color 0.3s ease;
+}
+
+/* Input Focus State */
+.auth-container .input-field:focus {
+  border-color: #33413A;
+}
+
+/* Input Placeholder Text */
+.auth-container .input-field::placeholder {
+  color: #999999;
+  opacity: 1;
+}
+
+/* Button Wrapper */
+.auth-container .action-group {
+  margin-top: 35px;
+  text-align: left;
+}
+
+/* Submit Button (Green Pill) */
+.auth-container .btn-primary {
+  background-color: #5B6F57; /* Olive green from image */
+  color: #FFFFFF;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 16px 45px;
+  border: none;
+  border-radius: 9999px; /* Pill shape */
+  cursor: pointer;
+  transition: opacity 0.3s ease, background-color 0.3s;
+  display: inline-block;
+  min-width: 120px;
+  text-decoration: none;
+  text-align: center;
+}
+
+.auth-container .btn-primary:hover {
+  opacity: 0.9;
+}
+
+/* Error Messages */
+.auth-container .auth-errors {
+  color: #D0021b;
+  background-color: #fff5f5;
+  border: 1px solid #ecccd1;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+  font-size: 14px;
+}
+
+/* Remove bullets from error lists */
+.auth-container .auth-errors ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
 :root {
   --base-container-size: 1440;
 }
