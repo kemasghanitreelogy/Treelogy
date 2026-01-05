@@ -61,7 +61,7 @@
   </svg>
 </a>
 
-<div class="language-picker button" onclick="this.querySelector('.language-picker__list').toggleAttribute('hidden');">
+<div class="language-picker button" onclick="this.querySelector('.language-picker__list').toggleAttribute('hidden');" data-cs-capture>
   {{ localization.language.iso_code | upcase }}
   <div class="language-picker__list" hidden>
     {% for language in localization.available_languages %}

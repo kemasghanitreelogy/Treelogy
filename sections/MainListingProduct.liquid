@@ -1,4 +1,4 @@
-<div class="collection-listing">
+<div class="collection-listing" data-cs-capture>
   <div class="header box-container">
     <h2 class="h1">
       {{ section.settings.collection.title }}
@@ -44,12 +44,14 @@
         "type": "collection",
         "id": "collection",
         "label": "Choose collection"
-      }, {
+      }, 
+      {
         "type": "range",
         "id": "product_limit",
         "label": "Products per page",
         "default": 8,
         "min": 1,
+        "step": 1,
         "max": 50
       }
     ],

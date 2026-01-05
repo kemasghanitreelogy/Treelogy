@@ -258,8 +258,6 @@
       };
     {% endfor %}
 
-    console.log("✅ [Main Product] Data Map Loaded");
-
     // ==================================================
     // 2. CORE SYNC FUNCTION (Reusable)
     // ==================================================
@@ -273,15 +271,11 @@
           detail: { targetId: data.linkedId } 
         });
         window.dispatchEvent(event);
-        
-        console.log(`📡 [Sync] Broadcasting Target ID: ${data.linkedId} (Source: ${data.title})`);
       } else {
         sessionStorage.removeItem('target_bundle_id');
         
         const event = new CustomEvent('custom-variant-change', { detail: { targetId: null } });
         window.dispatchEvent(event);
-        
-        console.log(`Start [Sync] No link found for variant: ${variantId}`);
       }
     }
 
@@ -334,13 +328,11 @@
       
       if (initialActiveBtn) {
         const initialId = initialActiveBtn.getAttribute('data-value');
-        console.log("🚀 [Main Product] Initializing Pre-selected Variant...");
         broadcastVariantChange(initialId);
       } else {
         const firstBtn = buttons[0];
         if (firstBtn) {
            const firstId = firstBtn.getAttribute('data-value');
-           console.log("🚀 [Main Product] Initializing First Variant (Fallback)...");
            broadcastVariantChange(firstId);
         }
       }

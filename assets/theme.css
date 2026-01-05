@@ -1,4 +1,4 @@
-/*!***************************************************************************************************************************************************************************************************************************************!*\
+x/*!***************************************************************************************************************************************************************************************************************************************!*\
   !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[1].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[1].use[2]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[1].use[3]!./scss/main.scss ***!
   \***************************************************************************************************************************************************************************************************************************************/
 :root {
@@ -214,6 +214,15 @@ body {
   line-height: 20px;
   font-family: var(--font-base);
 }
+body .jdgm-rev__body {
+  font-size: 14px;
+  font-weight: 300;
+}
+
+body .jdgm-btn {
+  font-size: 14px;
+  font-weight: 600;
+}
 
 input,
 button {
@@ -361,7 +370,6 @@ ul {
 @media only screen and (max-width: 900px) {
   .primary-button a {
     font-size: 12px !important;
-    padding: 0 0px !important;
   }
 }
 @media only screen and (min-width: 900px) {
@@ -1064,20 +1072,23 @@ input.red {
 
 .product-detail-wrapper .detail .variant-button .checkbox-button .discount-label {
   top: -9px;
-  height: 18px;
   right: -11px;
   display: flex;
-  font-size: 10px;
+  font-size: 13px;
   color: #F8F8F2;
   font-weight: 700;
   line-height: 125%;
-  padding-left: 8px;
-  padding-right: 8px;
+  padding: 4px 12px;
   position: absolute;
   border-radius: 50px;
   align-items: center;
   justify-content: center;
   background-color: #56734F;
+}
+
+.product-detail-wrapper .detail .variant-button .checkbox-button .discount-label.custom-badge-text {
+  font-size: 14px;
+  padding: 6px 16px;
 }
 @media only screen and (max-width: 900px) {
   .product-detail-wrapper .detail .variant-button .checkbox-button {
@@ -1173,6 +1184,9 @@ input.red {
   border-radius: 32px;
   transition: all 0.45s ease-out;
   background-color: #526547;
+}
+.product-detail-wrapper .detail #AddToCart {
+  margin-top: 20px;
 }
 @media only screen and (min-width: 900px) {
   .product-detail-wrapper .detail #AddToCart:hover {

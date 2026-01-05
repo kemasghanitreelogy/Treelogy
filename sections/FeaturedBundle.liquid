@@ -407,7 +407,6 @@
             if (btnId === targetId) {
               btn.style.display = ''; 
               if (!btn.classList.contains('active')) {
-                console.log(`🔄 [Bundle] Sync & Filter: Selecting ID ${targetId}`);
                 btn.click(); 
               }
               matchFound = true;
@@ -416,10 +415,6 @@
             }
           }
         });
-
-        if (targetId && !matchFound) {
-           console.warn(`⚠️ [Bundle] Target ID ${targetId} not found.`);
-        }
       }
 
       // ============================================
@@ -451,7 +446,6 @@
           const variantId = realSelect ? realSelect.value : null;
           
           if (!variantId) {
-            console.error("No variant ID selected");
             return;
           }
 
@@ -506,7 +500,6 @@
             });
           })
           .catch((error) => {
-            console.error('Error:', error);
             this.innerHTML = textError;
             this.style.opacity = '1';
             // Reset text after 2 seconds

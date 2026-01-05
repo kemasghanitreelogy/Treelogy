@@ -35,33 +35,10 @@
                   {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
                 {% endif %}
               </a>
-
-            {% comment %} {% if has_available_variant and free_product != product.id %}
-                                                                                                                                                                                                                    <div class="button-wrapper">
-                                                                                                                                                                                                                      {% if product.variants.size > 1 %}
-                                                                                                                                                                                                                        <a
-                                                                                                                                                                                                                          href="#"
-                                                                                                                                                                                                                          class="button-cart button-quick-add-cart overlay-button open-popup-variants"
-                                                                                                                                                                                                                          data-title="{{ product.title }}"
-                                                                                                                                                                                                                          data-slug="{{ product.url }}">
-                                                                                                                                                                                                                          {{ 'products.general.add_to_cart' | t }}
-                                                                                                                                                                                                                        </a>
-                                                                                                                                                                                                                      {% else %}
-                                                                                                                                                                                                                        <button
-                                                                                                                                                                                                                          type="button"
-                                                                                                                                                                                                                          class="button-cart button-quick-add-cart overlay-button button-direct-add"
-                                                                                                                                                                                                                          data-variant-id="{{ first_available_variant.id }}">
-                                                                                                                                                                                                                          {{ 'products.general.add_to_cart' | t }}
-                                                                                                                                                                                                                        </button>
-                                                                                                                                                                                                                      {% endif %}
-                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                      {% endif %} {% endcomment %}
             </div>
             <a href="{{ product.url }}">
               <div class="product-info">
                 <div class="top">
-                  {% comment %} {% render 'Rating'
-                                                                                                                                                                                                                                            , product: product %} {% endcomment %}
                   <div>
                     {% render 'StarReview' %}
                     <span class="rating-text">{{ product.metafields.custom.rating }}</span>
@@ -203,7 +180,6 @@
         });
       })
       .catch((error) => {
-        console.error('Error:', error);
         this.innerHTML = textError;
         this.style.opacity = '1';
       });

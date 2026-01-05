@@ -1,4 +1,4 @@
-<div class="menu-listing">
+<div class="menu-listing" data-cs-capture>
   {% for link in menu.links %}
     <div class="menu-listing__item">
       <a href="{{ link.url }}" class="{% if request.path == link.url %}active{% endif %}">
