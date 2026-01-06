@@ -205,8 +205,8 @@
     <div class="bundle-grid product-detail-wrapper">
 
       {% comment %} 
-                                                                                                                                    === NEW GALLERY STRUCTURE === 
-                                                                                                {% endcomment %}
+                                                                                                                                            === NEW GALLERY STRUCTURE === 
+                                                                                                      {% endcomment %}
       <div class="gallery-wrapper">
         <div id="bundle-gallery-wrapper-{{ section.id }}" class="bundle-gallery-grid">
 
@@ -244,15 +244,7 @@
 
           {% if inside_set != blank %}
             <div class="inside-set-wrapper">
-
-              {% comment %} Title {% endcomment %}
               <p>Inside the Set</p>
-
-              {% comment %} 
-                                                                                                                                                      Metafield Content (Rich Text) 
-                                                                                                                                                      The '| metafield_tag' filter automatically converts the rich text JSON/HTML 
-                                                                                                                                                      into proper HTML elements (p, ul, li, bold, etc.)
-                                                                                                                                  {% endcomment %}
               <div class="inside-set-content rte">
                 {{ inside_set | metafield_tag }}
               </div>
@@ -434,6 +426,9 @@
       // ============================================
       // 4. AJAX ADD TO CART LOGIC (ADDED)
       // ============================================
+     // ============================================
+      // 4. AJAX ADD TO CART LOGIC (UPDATED)
+      // ============================================
       if (cartBtn) {
         const textAdding = "{{ 'products.product.adding' | t | default: 'Adding...' }}";
         const textError = "{{ 'products.product.error' | t | default: 'Error' }}";
@@ -449,7 +444,11 @@
             return;
           }
 
-          const originalText = this.innerHTML;
+          const originalText = "{{ 'products.product.add_to_cart' | t | default: 'Add to Cart' }}"; // Ensure we have the base text
+          // Or use: const originalText = this.getAttribute('data-original-text') || this.innerHTML; if you saved it previously
+          // But in your current code, you capture it right before clicking:
+          const btnContent = this.innerHTML; 
+
           this.innerHTML = textAdding;
           this.style.opacity = '0.7';
 
@@ -470,12 +469,20 @@
             return response.json();
           })
           .then(data => {
-            // Success Reset
-            this.innerHTML = originalText;
+            // --- START CHANGE: SHOW "ITEM ADDED" ---
+            
+            // 1. Show Success Message
+            this.innerHTML = "Item Added!"; 
             this.style.opacity = '1';
+
+            // 2. Wait 2 seconds, then revert to original text
+            setTimeout(() => {
+                this.innerHTML = "Add to Cart"; // Or variable 'btnContent' if you want to be dynamic
+            }, 2000);
+
+            // --- END CHANGE ---
             
             // Trigger Cart Drawer / Mini Cart
-            // Method 1: Click the header icon
             const cartIcon = document.querySelector('a[href="/cart"]') || 
                              document.querySelector('.header__icon--cart') || 
                              document.querySelector('.mini-cart-toggle');
@@ -483,13 +490,12 @@
             if (cartIcon) {
               cartIcon.click();
             } else {
-              // Method 2: Fallback events
               const miniCart = document.querySelector('.mini-cart');
               if (miniCart) {
                 miniCart.classList.add('active');
               }
               document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', { bubbles: true }));
-              document.documentElement.dispatchEvent(new CustomEvent('cart:open', { bubbles: true })); // Some themes use this
+              document.documentElement.dispatchEvent(new CustomEvent('cart:open', { bubbles: true })); 
             }
 
             // Update Cart Count Bubbles
@@ -504,7 +510,7 @@
             this.style.opacity = '1';
             // Reset text after 2 seconds
             setTimeout(() => {
-                this.innerHTML = originalText;
+                this.innerHTML = "Add to Cart";
             }, 2000);
           });
         });

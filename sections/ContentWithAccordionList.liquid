@@ -5,15 +5,6 @@
     {% break %}
   {% endif %}{% endfor %}
 
-{% comment %} 
-    ---------------------------------------------------------
-    SECTION SPACING LOGIC
-    Calculates spacing based on Mobile setting:
-    - Mobile: Base value
-    - Tablet: Base x 1.5
-    - Desktop: Base x 2
-    ---------------------------------------------------------
-{% endcomment %}
 {%- assign mt = section.settings.margin_top_mobile -%}
 {%- assign mb = section.settings.margin_bottom_mobile -%}
 
