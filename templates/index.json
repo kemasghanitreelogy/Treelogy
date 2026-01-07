@@ -12,6 +12,17 @@
     "featured_image_hero_U7tQjE": {
       "type": "FeaturedImageHero",
       "blocks": {
+        "image_type_3_fxT4Vd": {
+          "type": "image_type_3",
+          "settings": {
+            "image_en": "shopify://shop_images/treelogy-organic-moringa-capsule-sustainable-product-award-2025.webp",
+            "image_mobile_en": "shopify://shop_images/treelogy-organic-moringa-capsules-sustainable-product-award-2025.webp",
+            "alt_text_en": "Treelogy Organic Moringa Capsules, winner of The Punch Awards 2025 Sustainable Product of the Year, with a Buy 2 Get 1 Free offer",
+            "image_id": "shopify://shop_images/treelogy-kapsul-kelor-organik-sustainable-products-award-2025.webp",
+            "image_mobile_id": "shopify://shop_images/treelogy-kapsul-kelor-organik-sustainable-product-award-2025.webp",
+            "alt_text_id": "Kapsul Kelor Organik Treelogy pemenang Sustainable Product of the Year 2025, bersertifikat BPOM dan Halal, promo beli 2 gratis 1"
+          }
+        },
         "image_picker_TbYBwc": {
           "type": "image_picker",
           "settings": {
@@ -20,7 +31,9 @@
             "content": "Nourish your health from inside & out with our Premium Organic Moringa regeneratively farmed and ethically crafted on the volcanic foothills of Bali.",
             "product": "organic-moringa-powder",
             "banner": "shopify://shop_images/moringa_powder_6843067d-e069-4558-b277-7fa63b80b23d_11zon.webp",
-            "banner_mobile": "shopify://shop_images/20250912_Product_MoringaPowder_Tin_45g_11zon_1.webp"
+            "banner_mobile": "shopify://shop_images/20250912_Product_MoringaPowder_Tin_45g_11zon_1.webp",
+            "alt_text_en": "",
+            "alt_text_id": ""
           }
         },
         "image_type_2_XFTqMR": {
@@ -32,11 +45,14 @@
             "content": "**As of June 9th, Treelogy's moringa capsules are the only\nproduct in Indonesia officially certified to contain pure\nmoringa leaf powder under BPOM Traditional Medicine.",
             "content_mobile": "**As of June 9th, Treelogy's moringa capsules are the\nonly product in Indonesia officially certified to contain pure\nmoringa leaf powder under BPOM Traditional Medicine.",
             "banner": "shopify://shop_images/Moringa-Capsules_11zon.webp",
-            "banner_mobile": "shopify://shop_images/moringa-capsules-mobile-V2_11zon.webp"
+            "banner_mobile": "shopify://shop_images/moringa-capsules-mobile-V2_11zon.webp",
+            "alt_text_en": "",
+            "alt_text_id": ""
           }
         }
       },
       "block_order": [
+        "image_type_3_fxT4Vd",
         "image_picker_TbYBwc",
         "image_type_2_XFTqMR"
       ],
