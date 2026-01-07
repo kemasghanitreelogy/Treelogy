@@ -1,6 +1,16 @@
 <div
   class="hero-slider swiper-wrapper"
 >
+  {% comment %} --- LOGIC: Handle Alt Text based on Language --- {% endcomment %}
+    {% assign current_alt_text = block.settings.alt_text_en %}
+
+    {% comment %} Check if the current store language is Indonesian (id) {% endcomment %}
+    {% if request.locale.iso_code == 'id' %}
+      {% if block.settings.alt_text_id != blank %}
+        {% assign current_alt_text = block.settings.alt_text_id %}
+      {% endif %}
+    {% endif %}
+    {% comment %} ------------------------------------------------ {% endcomment %}
   {% for block in section.blocks %}
     {% assign product = block.settings.product %}
     <div
@@ -14,6 +24,7 @@
         height="auto"
         decoding="async"
         src="{{ block.settings.banner | image_url }}"
+        alt="{{ current_alt_text | escape }}"
       >
       {% assign mobile_banner = block.settings.banner_mobile | default: block.settings.banner %}
       <img
@@ -22,6 +33,7 @@
         height="auto"
         decoding="async"
         src="{{ mobile_banner | image_url }}"
+        alt="{{ current_alt_text | escape }}"
       >
       <div class="main-grid">
         <div class="content {{ block.type }}">
@@ -98,7 +110,18 @@
           "type": "image_picker",
           "id": "banner_mobile",
           "label": "Background mobile"
-        }
+        },
+        {
+            "type": "text",
+            "id": "alt_text_en",
+            "label": "Alt Text (English)",
+            "info": "Describe the image for English users."
+          }, {
+            "type": "text",
+            "id": "alt_text_id",
+            "label": "Alt Text (Bahasa Indonesia)",
+            "info": "Describe the image for Indonesian users."
+          }
       ]
     },
 
