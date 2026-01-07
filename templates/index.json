@@ -12,17 +12,6 @@
     "featured_image_hero_U7tQjE": {
       "type": "FeaturedImageHero",
       "blocks": {
-        "image_type_3_fxT4Vd": {
-          "type": "image_type_3",
-          "settings": {
-            "image_en": "shopify://shop_images/treelogy-organic-moringa-capsule-sustainable-product-award-2025.webp",
-            "image_mobile_en": "shopify://shop_images/treelogy-organic-moringa-capsules-sustainable-product-award-2025.webp",
-            "alt_text_en": "Treelogy Organic Moringa Capsules, winner of The Punch Awards 2025 Sustainable Product of the Year, with a Buy 2 Get 1 Free offer",
-            "image_id": "shopify://shop_images/treelogy-kapsul-kelor-organik-sustainable-products-award-2025.webp",
-            "image_mobile_id": "shopify://shop_images/treelogy-kapsul-kelor-organik-sustainable-product-award-2025.webp",
-            "alt_text_id": "Kapsul Kelor Organik Treelogy pemenang Sustainable Product of the Year 2025, bersertifikat BPOM dan Halal, promo beli 2 gratis 1"
-          }
-        },
         "image_picker_TbYBwc": {
           "type": "image_picker",
           "settings": {
@@ -52,7 +41,6 @@
         }
       },
       "block_order": [
-        "image_type_3_fxT4Vd",
         "image_picker_TbYBwc",
         "image_type_2_XFTqMR"
       ],
