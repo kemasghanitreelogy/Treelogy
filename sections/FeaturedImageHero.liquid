@@ -4,19 +4,16 @@
 
     {% comment %} --- LOGIC: Handle Image and Alt Text based on Language --- {% endcomment %}
     {% if block.type == 'image_type_3' %}
-      {% comment %} Logic for the new Image-Only block {% endcomment %}
-      {% assign current_banner = block.settings.image_en %}
-      {% assign current_alt_text = block.settings.alt_text_en %}
-
+      {% comment %} Logic for Image-Only block with Mobile Support {% endcomment %}
       {% if request.locale.iso_code == 'id' %}
-        {% if block.settings.image_id != blank %}
-          {% assign current_banner = block.settings.image_id %}
-        {% endif %}
-        {% if block.settings.alt_text_id != blank %}
-          {% assign current_alt_text = block.settings.alt_text_id %}
-        {% endif %}
+        {% assign current_banner = block.settings.image_id | default: block.settings.image_en %}
+        {% assign mobile_banner = block.settings.image_mobile_id | default: current_banner %}
+        {% assign current_alt_text = block.settings.alt_text_id | default: block.settings.alt_text_en %}
+      {% else %}
+        {% assign current_banner = block.settings.image_en %}
+        {% assign mobile_banner = block.settings.image_mobile_en | default: block.settings.image_en %}
+        {% assign current_alt_text = block.settings.alt_text_en %}
       {% endif %}
-      {% assign mobile_banner = current_banner %}
     {% else %}
       {% comment %} Logic for original blocks {% endcomment %}
       {% assign current_banner = block.settings.banner %}
@@ -56,7 +53,6 @@
           {% elsif block.type == 'image_type_2' %}
             {% render 'HeroBannerSliderType2', block: block %}
           {% endif %}
-          {% comment %} image_type_3 intentionally renders no content snippet {% endcomment %}
         </div>
       </div>
     </div>
@@ -118,11 +114,13 @@
       "type": "image_type_3",
       "name": "Image Only (Bilingual)",
       "settings": [
-        { "type": "header", "content": "English" },
-        { "type": "image_picker", "id": "image_en", "label": "Image (EN)" },
+        { "type": "header", "content": "English Version" },
+        { "type": "image_picker", "id": "image_en", "label": "Desktop Image (EN)" },
+        { "type": "image_picker", "id": "image_mobile_en", "label": "Mobile Image (EN)" },
         { "type": "text", "id": "alt_text_en", "label": "Alt Text (EN)" },
-        { "type": "header", "content": "Indonesian" },
-        { "type": "image_picker", "id": "image_id", "label": "Image (ID)" },
+        { "type": "header", "content": "Indonesian Version" },
+        { "type": "image_picker", "id": "image_id", "label": "Desktop Image (ID)" },
+        { "type": "image_picker", "id": "image_mobile_id", "label": "Mobile Image (ID)" },
         { "type": "text", "id": "alt_text_id", "label": "Alt Text (ID)" }
       ]
     }
