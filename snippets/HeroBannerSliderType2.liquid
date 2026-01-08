@@ -1,7 +1,7 @@
 <div class="title">
   {%- if block.settings.title_one -%}
     <div class="line-one {% unless request.design_mode %} stagger {% endunless %} type-2">
-      {{ block.settings.title_one | newline_to_br }}
+      {{ block.settings.title_one }}
     </div>
   {%- endif -%}
   <div class="badge-content">
@@ -13,16 +13,16 @@
 
     {%- if block.settings.bagde_desc -%}
       <div class="badge-content-desc {% unless request.design_mode %} stagger {% endunless %} ">
-        {{ block.settings.bagde_desc | newline_to_br }}
+        {{ block.settings.bagde_desc }}
       </div>
     {%- endif -%}
   </div>
 </div>
 
 <div class="description desktop {% unless request.design_mode %} stagger {% endunless %} ">
-  {{ block.settings.content | newline_to_br }}
+  {{ block.settings.content }}
 </div>
 
 <div class="description mobile {% unless request.design_mode %} stagger {% endunless %} ">
-  {{ block.settings.content_mobile | default: block.settings.content | newline_to_br }}
+  {{ block.settings.content_mobile | default: block.settings.content }}
 </div>
