@@ -18,7 +18,7 @@
         </div>
       </div>
       <div class="h1">
-        {{ section.settings.title }}
+        {{ section.settings.title |  newline_to_br}}
       </div>
     </div>
     <div class="card">
@@ -62,7 +62,7 @@
   "class": "section featured-comment",
   "settings": [
     {
-      "type": "text",
+      "type": "textarea",
       "id": "title",
       "label": "Title"
     },
