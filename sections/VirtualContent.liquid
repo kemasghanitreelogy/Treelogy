@@ -29,7 +29,7 @@
   </div>
   <div class="content">
     <h2 class="h1">
-      {{ section.settings.title | newline_to_br }}
+      {{ section.settings.title }}
     </h2>
     <div class="block-content desktop">
       {% for block in section.blocks %}
@@ -43,66 +43,60 @@
         </div>
       {% endfor %}
     </div>
-    {% render 'PrimaryButton',
-      url: section.settings.button_url,
-      title: section.settings.button_title,
-      type: 'transparent'
+    {% render 'PrimaryButton'
+      , url: section.settings.button_url
+      , title: section.settings.button_title
+      , type: 'transparent'
     %}
   </div>
 </div>
 
 {% schema %}
-{
-  "name": "Virtual Content",
-  "tag": "section",
-  "class": "section virtual-content",
-  "settings": [
-    {
-      "type": "textarea",
-      "id": "title",
-      "label": "Title"
-    },
-    {
-      "type": "text",
-      "id": "button_title",
-      "label": "Button title"
-    },
-    {
-      "type": "url",
-      "id": "button_url",
-      "label": "Button url"
-    },
+  {
+    "name": "Virtual Content",
+    "tag": "section",
+    "class": "section virtual-content",
+    "settings": [
+      {
+        "type": "textarea",
+        "id": "title",
+        "label": "Title"
+      }, {
+        "type": "text",
+        "id": "button_title",
+        "label": "Button title"
+      }, {
+        "type": "url",
+        "id": "button_url",
+        "label": "Button url"
+      }, {
+        "type": "image_picker",
+        "id": "main_graphic",
+        "label": "Artwork"
+      }
+    ],
 
-    {
-      "type": "image_picker",
-      "id": "main_graphic",
-      "label": "Artwork"
-    }
-  ],
-
-  "blocks": [
-    {
-      "type": "text",
-      "name": "Content",
-      "settings": [
-        {
-          "type": "text",
-          "id": "title",
-          "label": "Title"
-        },
-
-        {
-          "type": "textarea",
-          "id": "description",
-          "label": "Description"
-        }
-      ]
-    }
-  ],
-  "presets": [
-    {
-      "name": "Virtual Content"
-    }
-  ]
-}
+    "blocks": [
+      {
+        "type": "text",
+        "name": "Content",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title"
+          }, {
+            "type": "textarea",
+            "id": "description",
+            "label": "Description"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Virtual Content"
+      }
+    ]
+  }
 {% endschema %}

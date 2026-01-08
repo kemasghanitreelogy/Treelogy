@@ -3656,6 +3656,10 @@ input.red {
 .featured-banner-text-wrapper .inner .title {
   font-weight: 300;
 }
+
+.featured-banner-text-wrapper .inner .title.h1.desktop {
+  width: 88%;
+}
 @media only screen and (max-width: 900px) {
   .featured-banner-text-wrapper .inner .title {
     font-size: 20px;
