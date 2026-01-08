@@ -3408,7 +3408,7 @@ input.red {
 .featured-slider .description {
   gap: 32px;
   display: flex;
-  grid-column: 2/6;
+  grid-column: 1/6;
   justify-content: center;
   flex-direction: column;
 }
