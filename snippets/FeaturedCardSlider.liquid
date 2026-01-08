@@ -4,7 +4,7 @@
       {{ section.settings.title }}
     </div>
     <div class="excerpt">
-      {{ section.settings.description }}
+      {{ section.settings.description | newline_to_br }}
     </div>
 
     {% unless section.settings.remove_button %}
