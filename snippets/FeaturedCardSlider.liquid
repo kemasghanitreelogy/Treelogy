@@ -1,10 +1,10 @@
 <div class="main-grid">
   <div class="description">
     <div class="title h1">
-      {{ section.settings.title }}
+      {{ section.settings.title |  newline_to_br }}
     </div>
     <div class="excerpt">
-      {{ section.settings.description }}
+      {{ section.settings.description | newline_to_br }}
     </div>
 
     {% unless section.settings.remove_button %}
@@ -17,15 +17,21 @@
               {% capture button_title %}
                 {{ 'collections.all_products' | t }}
               {% endcapture %}
-              {% render 'PrimaryButton', url: '/collection/all', title: button_title %}
+              {% render 'PrimaryButton'
+                , url: '/collection/all'
+                , title: button_title %}
             {% when 'blog' %}
               {% capture button_title %}
                 {{ 'collections.discover_all' | t }}
               {% endcapture %}
-              {% render 'PrimaryButton', url: '/collection/all', title: button_title %}
+              {% render 'PrimaryButton'
+                , url: '/collection/all'
+                , title: button_title %}
           {% endcase %}
         {% else %}
-          {% render 'PrimaryButton', url: section.settings.button_url, title: section.settings.button_label %}
+          {% render 'PrimaryButton'
+            , url: section.settings.button_url
+            , title: section.settings.button_label %}
         {% endif %}
       </div>
     {% endunless %}
@@ -43,16 +49,17 @@
 
           {% for item in products limit: 5 %}
             {% if template != 'product' or product.id != item.id %}
-              {% render 'ProductCard', item: item %}
+              {% render 'ProductCard'
+                , item: item %}
             {% endif %}
           {% endfor %}
 
         {% when 'blog' %}
-          {% assign articles = section.settings.products.articles %}
+        {% assign articles = section.settings.products.articles %}
 
           {% comment %}
             {% for article in articles limit: 5 %}
-              {% render 'BlogCard', item: article, settings: section %}
+            {% render 'BlogCard', item: article, settings: section %}
             {% endfor %}
           {% endcomment %}
 
@@ -81,13 +88,17 @@
                 {% endfor %}
 
                 {% if include_article %}
-                  {% render 'BlogCard', item: article, settings: section %}
+                  {% render 'BlogCard'
+                    , item: article
+                    , settings: section %}
                   {% assign result_count = result_count | plus: 1 %}
                 {% endif %}
               {% endif %}
 
             {% else %}
-              {% render 'BlogCard', item: article, settings: section %}
+              {% render 'BlogCard'
+                , item: article
+                , settings: section %}
             {% endif %}
           {% endfor %}
       {% endcase %}
@@ -97,8 +108,8 @@
 </div>
 
 {% stylesheet %}
-.excerpt {
-  max-width: 400px;
-  text-wrap: pretty;
-}
+  .excerpt {
+    max-width: 400px;
+    text-wrap: pretty;
+  }
 {% endstylesheet %}
