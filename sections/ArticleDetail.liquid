@@ -4,7 +4,8 @@
     <div class="header">
       <div class="tags technical">
         <div class="tag">{{ article.tags | join: ',' }}</div>
-        {% render 'Date', date: article.published_at %}
+        {% render 'Date'
+          , date: article.published_at %}
       </div>
       <h1>{{ article.title }}</h1>
     </div>
@@ -15,11 +16,13 @@
       <div class="featrued-product">
         <div class="thumb">
           {%- assign thumb = featured_product.media.first -%}
-          {% render 'Image', image: thumb %}
+          {% render 'Image'
+            , image: thumb %}
         </div>
         <div class="content">
           <div class="sub-head top">Best Seller</div>
-          {% render 'Rating', product: featured_product %}
+          {% render 'Rating'
+            , product: featured_product %}
           <div class="sub-head-alt prod-title">{{ featured_product.title }}</div>
           <div class="body-desk exerpt">
             {{ featured_product.content | strip_html | truncate: '125' }}
@@ -27,7 +30,9 @@
           {% capture button_title %}
             {{ 'products.general.shop_now' | t }}
           {% endcapture %}
-          {% render 'PrimaryButton', url: featured_product.url, title: button_title %}
+          {% render 'PrimaryButton'
+            , url: featured_product.url
+            , title: button_title %}
         </div>
       </div>
     {% endif %}
@@ -47,7 +52,8 @@
                 {% assign skip_articles = skip_articles | concat: temp %}
                 <a href="{{ related_article.url }}" class="list-item">
                   <div class="thumb">
-                    {%- render 'Image', image: related_article.image -%}
+                    {%- render 'Image'
+                      , image: related_article.image -%}
                   </div>
                   <div class="content">
                     <h3 class="sub-head">{{ related_article.title | truncate: '54' }}</h3>

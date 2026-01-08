@@ -25,7 +25,6 @@
 :root {
   --mobile-size: 900 ;
 }
-
 /* --- Scoped Reset Password CSS --- */
 
 /* Main Wrapper */
@@ -3294,6 +3293,15 @@ input.red {
   min-height: 559px;
   max-width: 753px;
 }
+
+.hero-slider .main-grid .content.image_type_2 .line-one {
+  max-width: 85%;
+}
+
+.hero-slider .main-grid .content.image_type_2 .badge-content {
+  max-width: 65%;
+}
+
 .hero-slider .main-grid .content.image_type_2 .title, .hero-slider .product-review-list .content.image_type_2 .title, .hero-slider .featured-banner-text-wrapper .wrapper.full-width .content .content.image_type_2 .title, .featured-banner-text-wrapper .wrapper.full-width .hero-slider .content .content.image_type_2 .title {
   display: block;
 }
@@ -3404,6 +3412,7 @@ input.red {
   justify-content: center;
   flex-direction: column;
 }
+
 .featured-slider .description .excerpt {
   font-weight: 300;
 }
@@ -3422,6 +3431,7 @@ input.red {
     font-weight: 300;
     line-height: 17.5px;
     margin-bottom: 16px;
+    width: 70%;
   }
 }
 .featured-slider .product-slider {
