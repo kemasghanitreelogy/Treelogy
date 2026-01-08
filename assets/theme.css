@@ -3425,6 +3425,7 @@ input.red {
     font-size: 20px;
     font-weight: 300;
     line-height: 25px;
+    width: 80%;
   }
   .featured-slider .description .excerpt {
     font-size: 14px;
