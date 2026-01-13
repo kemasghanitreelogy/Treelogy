@@ -133,6 +133,34 @@
     },
     "side_image_video_content_FhLaYA": {
       "type": "SideImageVideoContent",
+      "blocks": {
+        "text_PcDKRL": {
+          "type": "text",
+          "settings": {
+            "title": "Harvested at Dawn",
+            "description": "We begin the harvest of our moringa trees at the first light of sunrise. This timing is crucial as it ensures the leaves are at their peak moisture and nutrient content, capturing their full potential for health benefits."
+          }
+        },
+        "text_3eULpm": {
+          "type": "text",
+          "settings": {
+            "title": "Stem-Free Purity",
+            "description": "We strive to work with Nature rather than against it. Our practices  foster a symbiotic relationship that enriches our ecosystem, making it more resilient and providing our Moringa, high-quality organic nutrients."
+          }
+        },
+        "text_6m48pg": {
+          "type": "text",
+          "settings": {
+            "title": "Low-Temperature Dehydration",
+            "description": "To maintain optimal nutrient retention, we process the leaves right on-site. After washing and wringing out excess water, we dehydrate the leaves at a controlled temperature of 38°C for 22 hours. This careful and precise method locks in the essential nutrients of the moringa leaves, ensuring a superior final product."
+          }
+        }
+      },
+      "block_order": [
+        "text_PcDKRL",
+        "text_3eULpm",
+        "text_6m48pg"
+      ],
       "name": "Side Image or Video Content",
       "settings": {
         "title": "Treelogy's Difference",
