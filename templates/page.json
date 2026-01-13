@@ -1,1 +1,31 @@
-{"sections":{"main":{"type":"DefaultContent","settings":{}}},"order":["main"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "DefaultContent",
+      "settings": {}
+    },
+    "video_banner_RXcd7H": {
+      "type": "VideoBanner",
+      "name": "Video or image hero",
+      "settings": {
+        "first_text": "Moringa Oleifera",
+        "bottom_text": "The Miracle Tree",
+        "text_offset": 10,
+        "video": "shopify://files/videos/moringa-tree-section-video.mp4"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "video_banner_RXcd7H"
+  ]
+}
