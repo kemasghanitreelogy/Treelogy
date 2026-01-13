@@ -91,10 +91,58 @@
         "description": "",
         "description_mobile": ""
       }
+    },
+    "content_with_accordion_list_3UmXtU": {
+      "type": "ContentWithAccordionList",
+      "blocks": {
+        "text_mAEtXx": {
+          "type": "text",
+          "settings": {
+            "title": "Blood Sugar Regulation",
+            "description": "<p>Moringa leaves help regulate blood sugar levels due to their content of chlorogenic acid, which affects how the body processes sugar. Additionally, the presence of essential amino acids supports insulin sensitivity, contributing to diabetes management.</p>"
+          }
+        },
+        "text_hT9jhA": {
+          "type": "text",
+          "settings": {
+            "title": "Cholesterol Management",
+            "description": "<p>Niaziminin, a specific bioactive compound in moringa, is instrumental in lowering bad cholesterol (LDL). This action is supported by its vitamin E content, known for its cholesterol-lowering effects, promoting cardiovascular health.</p>"
+          }
+        },
+        "text_NQM6wk": {
+          "type": "text",
+          "settings": {
+            "title": "",
+            "description": ""
+          }
+        }
+      },
+      "block_order": [
+        "text_mAEtXx",
+        "text_hT9jhA",
+        "text_NQM6wk"
+      ],
+      "name": "Accordion List",
+      "settings": {
+        "title": "From The Inside And Out!",
+        "desc_desktop": "Moringa oleifera, often hailed as the \"Miracle Tree\", stands at the crossroads of nutrition and beauty, offering a treasure of health benefits that radiate from the inside out. This powerhouse tree is not only a key element in enhancing bodily health through its rich nutritional profile but also plays a pivotal role in enhancing beauty by nourishing the skin and hair.",
+        "desc_mobile": "Moringa oleifera, often hailed as the \"Miracle Tree\", stands at the crossroads of nutrition and beauty, offering a treasure of health benefits that radiate from the inside out.",
+        "button_label": "Read The Science",
+        "button_url": "shopify://pages/benefit"
+      }
+    },
+    "featured_product_An37Ca": {
+      "type": "FeaturedProduct",
+      "name": "Featured product",
+      "settings": {
+        "product": ""
+      }
     }
   },
   "order": [
     "video_banner_RXcd7H",
-    "benefits_content_wEbFVU"
+    "benefits_content_wEbFVU",
+    "content_with_accordion_list_3UmXtU",
+    "featured_product_An37Ca"
   ]
 }
