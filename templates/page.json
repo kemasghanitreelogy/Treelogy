@@ -115,12 +115,20 @@
             "title": "Antioxidant Boost",
             "description": "<p>Moringa is rich in vitamins C and E, both powerful antioxidants that protect the body from oxidative stress. This includes combating free radicals, which can lead to chronic diseases and premature aging.</p>"
           }
+        },
+        "text_gh8BnQ": {
+          "type": "text",
+          "settings": {
+            "title": "Anti-inflammatory Properties",
+            "description": "<p>Quercetin, an anti-inflammatory compound found in moringa, along with other anti-inflammatory agents like beta-sitosterol, helps reduce inflammation, beneficial for conditions like arthritis and reducing overall inflammation in the body.</p>"
+          }
         }
       },
       "block_order": [
         "text_mAEtXx",
         "text_hT9jhA",
-        "text_NQM6wk"
+        "text_NQM6wk",
+        "text_gh8BnQ"
       ],
       "name": "Accordion List",
       "settings": {
