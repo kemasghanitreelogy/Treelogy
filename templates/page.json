@@ -131,6 +131,23 @@
         "button_url": "shopify://pages/benefit"
       }
     },
+    "side_image_video_content_FhLaYA": {
+      "type": "SideImageVideoContent",
+      "name": "Side Image or Video Content",
+      "settings": {
+        "title": "Treelogy's Difference",
+        "description": "Ethically grown with regenerative agriculture by dedicated farmers on our organically certified farm, our moringa products deliver unique nourishment and essence of care, setting them apart in both quality and impact.",
+        "button_label": "Discover The Farm",
+        "button_url": "shopify://pages/farm",
+        "button_pos": "top",
+        "video": "shopify://files/videos/moringa-tree-section-video.mp4",
+        "fit_content": false,
+        "padding_top_dt": 96,
+        "padding_bottom_dt": 96,
+        "padding_top_mb": 48,
+        "padding_bottom_mb": 48
+      }
+    },
     "featured_products_hWeEzn": {
       "type": "FeaturedProducts",
       "name": "Featured Products",
@@ -138,7 +155,7 @@
         "title": "Different Forms of Moringa",
         "description": "Discover what fits your routine and experience the powerful benefits of moringa with Treelogy's premium, handcrafted products.",
         "products": [],
-        "button_label": "",
+        "button_label": "All Products",
         "button_url": "shopify://collections"
       }
     }
@@ -147,6 +164,7 @@
     "video_banner_RXcd7H",
     "benefits_content_wEbFVU",
     "content_with_accordion_list_3UmXtU",
+    "side_image_video_content_FhLaYA",
     "featured_products_hWeEzn"
   ]
 }
