@@ -9,10 +9,6 @@
  */
 {
   "sections": {
-    "main": {
-      "type": "DefaultContent",
-      "settings": {}
-    },
     "video_banner_RXcd7H": {
       "type": "VideoBanner",
       "name": "Video or image hero",
@@ -22,10 +18,83 @@
         "text_offset": 10,
         "video": "shopify://files/videos/moringa-tree-section-video.mp4"
       }
+    },
+    "benefits_content_wEbFVU": {
+      "type": "BenefitsContent",
+      "blocks": {
+        "text_efjC77": {
+          "type": "text",
+          "settings": {
+            "card_1_num": "46",
+            "card_1_label_1": "",
+            "card_1_small_style": false,
+            "card_1_label_2": "Antioxidants",
+            "card_2_num": "36",
+            "card_2_label_1": "anti",
+            "card_2_small_style": false,
+            "card_2_label_2": "Inflammatory",
+            "card_3_num": "13",
+            "card_3_label_1": "",
+            "card_3_small_style": false,
+            "card_3_label_2": "Vitamins",
+            "card_4_num": "10",
+            "card_4_label_1": "",
+            "card_4_small_style": false,
+            "card_4_label_2": "Minerals",
+            "card_5_num": "18",
+            "card_5_label_1": "",
+            "card_5_small_style": false,
+            "card_5_label_2": "AMINO ACIDS",
+            "card_6_num": "3-6-9",
+            "card_6_label_1": "OMEGA",
+            "card_6_small_style": false,
+            "card_6_label_2": "AMINO ACIDS"
+          }
+        },
+        "text_X3cLme": {
+          "type": "text",
+          "settings": {
+            "card_1_num": "13x",
+            "card_1_label_1": "",
+            "card_1_small_style": false,
+            "card_1_label_2": "MORE VITAMIN E THAN MATCHA",
+            "card_2_num": "7x",
+            "card_2_label_1": "",
+            "card_2_small_style": false,
+            "card_2_label_2": "MORE VITAMIN C THAN ORANGES",
+            "card_3_num": "4x",
+            "card_3_label_1": "",
+            "card_3_small_style": false,
+            "card_3_label_2": "MORE CALCIUM THAN OATS",
+            "card_4_num": "3x",
+            "card_4_label_1": "",
+            "card_4_small_style": false,
+            "card_4_label_2": "MORE POTASSIUM THAN BANANAS",
+            "card_5_num": "2x",
+            "card_5_label_1": "",
+            "card_5_small_style": false,
+            "card_5_label_2": "MORE PROTEIN THAN YOGURT",
+            "card_6_num": "3x",
+            "card_6_label_1": "",
+            "card_6_small_style": false,
+            "card_6_label_2": "MORE IRON THAN ALMONDS"
+          }
+        }
+      },
+      "block_order": [
+        "text_efjC77",
+        "text_X3cLme"
+      ],
+      "name": "Benefit",
+      "settings": {
+        "title": "",
+        "description": "",
+        "description_mobile": ""
+      }
     }
   },
   "order": [
-    "main",
-    "video_banner_RXcd7H"
+    "video_banner_RXcd7H",
+    "benefits_content_wEbFVU"
   ]
 }
