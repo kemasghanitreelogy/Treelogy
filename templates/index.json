@@ -63,8 +63,8 @@
     "featured_products_riADma": {
       "type": "FeaturedProducts",
       "settings": {
-        "title": "Health From \nthe Inside & Out.",
-        "description": "At Treelogy, we elevate moringa into exceptional products, grown and crafted by us to deliver pure quality, complete transparency, and lasting well-being.",
+        "title": "Health From the Inside & Out.",
+        "description": "At Treelogy, we elevate moringa into exceptional \nproducts, grown and crafted by us to deliver \npure quality, complete transparency, \nand lasting well-being.",
         "products": [
           "organic-moringa-powder",
           "organic-moringa-oil",
@@ -81,8 +81,8 @@
         "title": "A Timeless Healer, Now \nBacked by Modern Science",
         "description": "Moringa, nature’s quiet wonder, holds an unrivaled nutrient profile. Rooted in ancient traditions, it nourished civilizations for centuries. Today, science unveils its profound benefits—connecting timeless wisdom with modern well-being.",
         "background": "shopify://shop_images/moringa-tree-in-pot.webp",
-        "title_mobile": "A Timeless Healer, Now\nBacked by Modern\nScience.",
-        "description_mobile": "Moringa, nature’s quiet wonder, holds\nan unrivaled nutrient profile. Rooted in\nancient traditions, it nourished\ncivilizations for centuries. Today,\nscience unveils its profound benefits—\nconnecting timeless wisdom with\nmodern well-being.",
+        "title_mobile": "A Timeless Healer, Now\nBacked by Modern Science.",
+        "description_mobile": "Moringa, nature’s quiet wonder, holds\nan unrivaled nutrient profile. Rooted in\nancient traditions, it nourished\ncivilizations for centuries. Today,\nscience unveils its profound \nbenefits—connecting timeless \nwisdom withmodern well-being.",
         "background_mobile": "shopify://shop_images/moringa-plant-in-clay-pot.jpg",
         "button_label": "Discover Moringa",
         "button_url": "shopify://pages/moringa-tree",
@@ -127,7 +127,7 @@
         "image_picker_hCC7WB"
       ],
       "settings": {
-        "title": "They Speak About It Better Than Us",
+        "title": "They Speak About It \nBetter Than Us",
         "review_text": "4.8/5 based on 239 reviews"
       }
     },
@@ -138,7 +138,7 @@
         "description": "From seed to you, we control every step. By farming and crafting our products ourselves, we deliver exceptional quality with complete transparency—so you know what you’re consuming, how it’s made, and the people behind it.",
         "background": "shopify://shop_images/treelogy-natural-fiber-sorting-landscape_11zon_11zon_1.webp",
         "title_mobile": "From Seed To You, Regeneratively\nFarmed, Ethically Crafted.",
-        "description_mobile": "Moringa, nature’s quiet wonder, holds an unrivaled nutrient profile. Rooted in ancient traditions, it nourished civilizations for centuries. Today, science unveils its profound benefits—connecting timeless wisdom with modern well-being.",
+        "description_mobile": "Moringa, nature’s quiet wonder, holds an \nunrivaled nutrient profile. Rooted in ancient \ntraditions, it nourished civilizations for \ncenturies. Today, science unveils its \nprofound benefits—connecting timeless \nwisdom with modern well-being.",
         "background_mobile": "shopify://shop_images/treelogy-natural-fiber-sorting.jpg",
         "button_label": "Discover Moringa",
         "button_url": "shopify://pages/farm",
@@ -186,7 +186,7 @@
     "featured_blog_LeFg6M": {
       "type": "FeaturedBlog",
       "settings": {
-        "title": "Rooted in Wisdom, \nGrowing Through Knowledge.",
+        "title": "Rooted in Wisdom, Growing \nThrough Knowledge.",
         "description": "Explore the science of Moringa, discover recipes we love, and learn about our farm, factory, and well-being practices.",
         "products": "news",
         "button_label": "Discover All",
