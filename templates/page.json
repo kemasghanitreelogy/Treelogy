@@ -131,11 +131,15 @@
         "button_url": "shopify://pages/benefit"
       }
     },
-    "featured_product_An37Ca": {
-      "type": "FeaturedProduct",
-      "name": "Featured product",
+    "featured_products_hWeEzn": {
+      "type": "FeaturedProducts",
+      "name": "Featured Products",
       "settings": {
-        "product": ""
+        "title": "Different Forms of Moringa",
+        "description": "Discover what fits your routine and experience the powerful benefits of moringa with Treelogy's premium, handcrafted products.",
+        "products": [],
+        "button_label": "",
+        "button_url": "shopify://collections"
       }
     }
   },
@@ -143,6 +147,6 @@
     "video_banner_RXcd7H",
     "benefits_content_wEbFVU",
     "content_with_accordion_list_3UmXtU",
-    "featured_product_An37Ca"
+    "featured_products_hWeEzn"
   ]
 }
