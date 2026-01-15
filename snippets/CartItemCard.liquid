@@ -66,23 +66,60 @@
             </svg>
           </div>
         </div>
-        <a
-          href="/cart/change?line={{ forloop.index }}&amp;quantity=0"
-          class="button-remove-item-cart ghanisampurna"
-          data-id="{{ item.variant.id }}">
-          <svg
-            width="12"
-            height="13"
-            viewBox="0 0 12 13"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg">
-            <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
-              d="M7.73754 1.81312V1.3874C7.73754 0.897163 7.32767 0.500248 6.82163 0.500092H5.17941C4.67337 0.500092 4.2627 0.897163 4.2627 1.3874V1.81312H7.73754ZM8.02963 5.70681C8.02963 5.40666 7.7796 5.16444 7.46978 5.16444C7.1593 5.16444 6.90911 5.40666 6.90911 5.70681V10.4156C6.90911 10.7164 7.1593 10.9577 7.46978 10.9577C7.7796 10.9577 8.02963 10.7164 8.02963 10.4156V5.70681ZM5.09088 5.70681C5.09088 5.40666 4.84086 5.16444 4.53022 5.16444C4.22056 5.16444 3.97069 5.40666 3.97069 5.70681V10.4156C3.97069 10.7164 4.22056 10.9577 4.53022 10.9577C4.84086 10.9577 5.09088 10.7164 5.09088 10.4156V5.70681ZM0.499084 2.48733C0.57149 2.45477 0.657472 2.43598 0.756869 2.4377H11.2444C11.3437 2.43598 11.4287 2.45477 11.5011 2.48733C11.7931 2.59255 12 2.86249 12 3.31029C12 3.75872 11.6861 4.07578 11.4219 4.09065C11.1583 4.10615 10.9126 4.24394 10.8982 4.424L10.3764 10.974C10.3453 11.3565 10.2115 11.7171 9.96649 12.0041C9.72147 12.2903 9.33924 12.4999 8.91337 12.4999H3.0876C2.66173 12.4999 2.2795 12.2903 2.03448 12.0041C1.78882 11.7171 1.65499 11.3565 1.6238 10.974L1.10274 4.424C1.08754 4.24394 0.842689 4.10615 0.57844 4.09065C0.313867 4.07594 0 3.75872 0 3.31029C0 2.86249 0.207036 2.59255 0.499084 2.48733Z"
-              fill="#111111" />
-          </svg>
-        </a>
+        <div 
+  role="button" 
+  class="button-remove-force" 
+  data-key="{{ item.key }}" 
+  style="cursor: pointer; display: inline-block;"
+  onclick="
+    event.preventDefault();
+    var btn = this;
+    
+    // 1. Identify the specific row for THIS item only
+    // We look for the class 'cart-item' which is standard in your code
+    var row = btn.closest('.cart-item') || btn.closest('.item') || btn.closest('div[data-variant]');
+    
+    // 2. Visual Feedback: Fade it out immediately so it feels fast
+    if(row) row.style.opacity = '0.2';
+
+    // 3. Send command to Shopify to delete the item
+    fetch('/cart/change.js', {
+      method: 'POST', 
+      headers: {'Content-Type': 'application/json'}, 
+      body: JSON.stringify({id: btn.getAttribute('data-key'), quantity: 0})
+    })
+    .then(function(res){ 
+       if(res.ok) {
+         // 4. SURGERY: Remove ONLY this row from the screen
+         if(row) {
+            row.remove();
+         }
+         
+         // 5. Optional: If you want to update the subtotal without reload, 
+         // we can trigger a refresh of the cart sections if your theme supports it.
+         // Otherwise, this is enough to manage the item removal.
+         
+         // Check if cart is empty now?
+         fetch('/cart.js')
+         .then(r => r.json())
+         .then(cart => {
+            if(cart.item_count === 0) {
+                // If cart is empty, reload to show 'Empty Cart' message
+                window.location.reload(); 
+            }
+         });
+       }
+    })
+    .catch(function(err){
+      console.error('Error removing item:', err);
+      if(row) row.style.opacity = '1'; // Undo fade on error
+    });
+  "
+>
+  <svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M7.73754 1.81312V1.3874C7.73754 0.897163 7.32767 0.500248 6.82163 0.500092H5.17941C4.67337 0.500092 4.2627 0.897163 4.2627 1.3874V1.81312H7.73754ZM8.02963 5.70681C8.02963 5.40666 7.7796 5.16444 7.46978 5.16444C7.1593 5.16444 6.90911 5.40666 6.90911 5.70681V10.4156C6.90911 10.7164 7.1593 10.9577 7.46978 10.9577C7.7796 10.9577 8.02963 10.7164 8.02963 10.4156V5.70681ZM5.09088 5.70681C5.09088 5.40666 4.84086 5.16444 4.53022 5.16444C4.22056 5.16444 3.97069 5.40666 3.97069 5.70681V10.4156C3.97069 10.7164 4.22056 10.9577 4.53022 10.9577C4.84086 10.9577 5.09088 10.7164 5.09088 10.4156V5.70681ZM0.499084 2.48733C0.57149 2.45477 0.657472 2.43598 0.756869 2.4377H11.2444C11.3437 2.43598 11.4287 2.45477 11.5011 2.48733C11.7931 2.59255 12 2.86249 12 3.31029C12 3.75872 11.6861 4.07578 11.4219 4.09065C11.1583 4.10615 10.9126 4.24394 10.8982 4.424L10.3764 10.974C10.3453 11.3565 10.2115 11.7171 9.96649 12.0041C9.72147 12.2903 9.33924 12.4999 8.91337 12.4999H3.0876C2.66173 12.4999 2.2795 12.2903 2.03448 12.0041C1.78882 11.7171 1.65499 11.3565 1.6238 10.974L1.10274 4.424C1.08754 4.24394 0.842689 4.10615 0.57844 4.09065C0.313867 4.07594 0 3.75872 0 3.31029C0 2.86249 0.207036 2.59255 0.499084 2.48733Z" fill="#111111"></path>
+  </svg>
+</div>
       </div>
     {% endunless %}
   </div>
