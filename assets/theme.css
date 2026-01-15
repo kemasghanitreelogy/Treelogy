@@ -2291,6 +2291,16 @@ input.red {
   justify-content: center;
   border: 1px solid #2B3C35;
 }
+
+.cart-item .detail .action div.button-remove-force {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #2B3C35;
+}
 .cart-item .detail .action .qty {
   gap: 12px;
   width: 96px;
