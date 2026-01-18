@@ -54,11 +54,11 @@
     {{ 'theme.css' | asset_url | stylesheet_tag: preload: true }}
     {{ 'lugus-custom.css' | asset_url | stylesheet_tag }}
 
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
-    <script src="{{ 'app.bundle.js' | asset_url }}" defer></script>
-    <script src="{{ 'review.bundle.js' | asset_url }}" defer></script>
-    <script src="{{ 'lugus-custom.js' | asset_url }}" defer></script>
+    <script src="{{ 'app.bundle.js' | asset_url }}"></script>
+    <script src="{{ 'review.bundle.js' | asset_url }}"></script>
+    <script src="{{ 'lugus-custom.js' | asset_url }}"></script>
 
     <script src="https://t.contentsquare.net/uxa/b315e3b428943.js" async></script>
 
