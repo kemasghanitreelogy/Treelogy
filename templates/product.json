@@ -14,7 +14,12 @@
       "settings": {
         "payment_title": "We accept:",
         "payment_list": "shopify://shop_images/payment-desktop.png",
-        "note": "or 4 interest-free installments of IDR 135.000 by"
+        "note": "or 4 interest-free installments of IDR 135.000 by",
+        "story_title": "",
+        "story_cta_text": "Add to Cart",
+        "story_text_color": "#000000",
+        "story_btn_bg": "#526547",
+        "story_btn_text": "#ffffff"
       }
     },
     "slider_item_idCzQA": {
@@ -59,7 +64,7 @@
       "settings": {
         "text_color": "#33423b",
         "padding_top": 30,
-        "padding_bottom": 30
+        "padding_bottom": 10
       }
     },
     "text_list_t89zyD": {
@@ -82,7 +87,7 @@
         "bg_color": "#fbfbf9",
         "heading_color": "#5e6d55",
         "text_color": "#757575",
-        "font_size": 14,
+        "font_size": 16,
         "text_align": "left",
         "max_width": 800,
         "padding_top": 20,
@@ -167,8 +172,8 @@
       "name": "Text Plain",
       "settings": {
         "title": "<p>Awarded sustainable brand of the Year 2024 by the Punch Community </p>",
-        "title_weight": "400",
-        "font_size": 20,
+        "title_weight": "600",
+        "font_size": 24,
         "font_size_desc": 14,
         "description": "",
         "text_alignment": "left",
@@ -181,7 +186,7 @@
         "margin_top": 0,
         "margin_bottom": 0,
         "font_size_title_block": 14,
-        "font_size_content_block": 14
+        "font_size_content_block": 16
       }
     },
     "timeline_LXqAmL": {
@@ -202,11 +207,11 @@
       ],
       "name": "Timeline List (Dynamic)",
       "settings": {
-        "heading": "<h2><strong>What to expect <br/>over time </strong></h2>",
+        "heading": "<h2>What to expect over time </h2>",
         "heading_color": "#334e40",
         "text_color": "#58645a",
         "max_width": 600,
-        "padding_top": 36,
+        "padding_top": 0,
         "padding_bottom": 36
       }
     },
@@ -255,8 +260,8 @@
         "rating_count": "berdasarkan 65 ulasan",
         "bg_color": "#f8f8f4",
         "text_color": "#2b3c35",
-        "padding_top": 50,
-        "padding_bottom": 50
+        "padding_top": 20,
+        "padding_bottom": 15
       }
     },
     "content_with_accordion_list_4eNghP": {
@@ -277,7 +282,7 @@
       ],
       "name": "Accordion List",
       "settings": {
-        "margin_top_mobile": 40,
+        "margin_top_mobile": 0,
         "margin_bottom_mobile": 40,
         "title": "Common Questions",
         "heading_color": "#6c7256",
@@ -321,6 +326,16 @@
         "button_url": ""
       }
     },
+    "featured_bundle_KcrzKt": {
+      "type": "FeaturedBundle",
+      "name": "Featured Bundle Set",
+      "settings": {
+        "feature_product": "moringa-ritual-set",
+        "heading": "Complete Your Ritual <br>\nwith our Moringa Set",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
     "hero_baner_CX6VQR": {
       "type": "HeroBaner",
       "name": "Hero Image Only",
@@ -347,16 +362,6 @@
       "type": "ReviewJudgeMe",
       "name": "Review Judge.me",
       "settings": {}
-    },
-    "featured_bundle_KcrzKt": {
-      "type": "FeaturedBundle",
-      "name": "Featured Bundle Set",
-      "settings": {
-        "feature_product": "moringa-ritual-set",
-        "heading": "Complete Your Ritual <br>\nwith our Moringa Set",
-        "padding_top": 36,
-        "padding_bottom": 36
-      }
     },
     "side_image_video_content_hjYMcH": {
       "type": "SideImageVideoContent",
@@ -443,7 +448,7 @@
       "type": "FeaturedProducts",
       "settings": {
         "title": "Different Forms of Moringa",
-        "description": "Discover what fits your routine and experience the powerful benefits of moringa with Treelogy's premium, handcrafted products.",
+        "description": "Discover what fits your routine and\nexperience the powerful benefits of \nmoringa with Treelogy's premium,\nhandcrafted products.",
         "products": [],
         "button_label": "All Products",
         "button_url": "shopify://collections/all"
@@ -460,9 +465,9 @@
     "slider_testimonial_FyrUUC",
     "content_with_accordion_list_4eNghP",
     "content_with_accordion_list_nqD3E3",
+    "featured_bundle_KcrzKt",
     "hero_baner_CX6VQR",
     "review_judge_me_aJGGPd",
-    "featured_bundle_KcrzKt",
     "side_image_video_content_hjYMcH",
     "section_how_to_9WPERG",
     "section_results_HDj6ei",

@@ -42,6 +42,7 @@
   .concerns-list__item {
     display: inline;
     font-weight: 300;
+    color: #6c7256;
   }
 
   /* The separator dot */
@@ -64,7 +65,7 @@
       {%- for block in section.blocks -%}
         {%- if block.settings.text != blank -%}
           <span class="concerns-list__item" {{ block.shopify_attributes }}>
-            {{ block.settings.text }}
+            {{ block.settings.text | join: ' • ' }}
           </span>
 
           {%- unless forloop.last -%}
@@ -94,13 +95,6 @@
         "id": "label",
         "label": "Label",
         "default": "Concerns:"
-      },
-      {
-        "type": "text",
-        "id": "separator",
-        "label": "Separator Symbol",
-        "default": "•",
-        "info": "The character displayed between items."
       },
       {
         "type": "header",

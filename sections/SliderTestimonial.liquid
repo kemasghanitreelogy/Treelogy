@@ -86,13 +86,13 @@
   /* --- Header --- */
   .testimonial-header {
     text-align: left;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
   }
 
   .testimonial-heading {
     font-size: 24px;
-    font-weight: 500;
-    margin-bottom: 10px;
+    font-weight: 600;
+    margin-bottom: 20px;
     line-height: 1.2;
     color: inherit;
   }
@@ -105,12 +105,13 @@
   .rating-summary {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    font-size: 0.95rem;
+    gap: 10px;
+    font-size: 14px;
   }
   .rating-score {
     font-size: 20px;
     font-weight: 300;
+    color: #2b3c35;
   }
   .rating-stars {
     display: flex;
@@ -123,14 +124,13 @@
   }
 
   .rating-count {
-    opacity: 0.7;
+    font-weight: 300;
   }
 
   /* --- Swiper Container --- */
   .tm-custom-container {
     position: relative;
     overflow: hidden;
-    /* Ensure padding at bottom for dots so they don't overlap text */
     padding-bottom: 40px;
     width: 100%;
   }
@@ -138,7 +138,6 @@
   .tm-wrapper {
     display: flex;
     width: 100%;
-    /* Align items start prevents slides from stretching weirdly */
     align-items: flex-start;
   }
 
@@ -153,18 +152,20 @@
   .tm-content {
     text-align: left;
     max-width: 100%;
+    color: #2b3c35;
   }
 
   .tm-quote {
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 700;
     line-height: 1.5;
     margin: 0 0 15px;
     font-family: inherit;
+    width: 93%;
   }
 
   .tm-author {
-    font-size: 0.9rem;
+    font-size: 16px;
     opacity: 0.8;
   }
 
@@ -184,7 +185,8 @@
 
   /* Swiper Bullet Styles */
   .testimonial-section .swiper-pagination-bullet {
-    background-color: {{ section.settings.text_color }};
+    background-color: transparent;
+    border: 0.3px solid black;
     opacity: 0.3;
     width: 5px;
     height: 5px;

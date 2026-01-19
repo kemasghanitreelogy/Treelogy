@@ -5,7 +5,7 @@
   {{ 'product-stories.css' | asset_url | stylesheet_tag }}
   <script src="{{ 'product-stories.js' | asset_url }}" defer="defer"></script>
 
-  <div class="story-section-wrapper" style="margin-top: 30px;">
+  <div class="story-section-wrapper">
     
     {% if section.settings.story_title != blank %}
       <div class="reels-title" style="padding: 0 5px; margin-bottom: 10px; font-weight: bold; color: {{ section.settings.story_text_color }};">

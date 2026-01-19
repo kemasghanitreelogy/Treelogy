@@ -9,9 +9,18 @@
     padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
     padding-left: 20px;
     padding-right: 20px;
+    padding-top: 15px;
+  }
+
+  .inner-container {
+    border-top: 1px solid #bcbcb9;
   }
   .title-timeline h2 {
     text-align: left;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.5;
+    margin-top: 15px;
   }
   @media screen and (min-width: 750px) {
     .title-timeline h2 {
@@ -55,6 +64,12 @@
     overflow: hidden;
     background-color: rgba(var(--color-foreground), 0.03);
   }
+  .container-timeline-item__icon-wrapper {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
   .timeline-item__icon {
     width: 100%;
@@ -74,7 +89,7 @@
 
   .timeline-item__title {
     margin: 0;
-    font-size: 1.1rem;
+    font-size: 16px;
     font-weight: 500;
     color: {{ section.settings.text_color }};
     line-height: 1.3;
@@ -83,7 +98,7 @@
   .timeline-item__description {
     margin: 0;
     font-weight: 300;
-    font-size: 1rem;
+    font-size: 16px;
     opacity: 0.85;
   }
 
@@ -124,96 +139,98 @@
 
 {% if product.metafields.custom.product_timeline != blank %}
   <div class="section-{{ section.id }}-padding" style="background-color: transparent; max-width: 1100px; margin-left: auto; margin-right: auto;">
-    <div class="title-timeline" style="color: {{ section.settings.heading_color }};">
-      {{ section.settings.heading }}
-    </div>
-    <div class="timeline-list__container">
-      {%- comment -%} RENDER LOOP {%- endcomment -%}
+    <div class="inner-container">
+      <div class="title-timeline" style="color: {{ section.settings.heading_color }};">
+        {{ section.settings.heading }}
+      </div>
+      <div class="timeline-list__container">
+        {%- comment -%} RENDER LOOP {%- endcomment -%}
 
-      {%- if source_type == 'metafields' -%}
-        {%- for item in timeline_data -%}
-          {%- comment -%} 
-                                                              Map Metaobject fields. 
-                                                              Assumed keys: item.icon, item.period, item.description 
-                                                  {%- endcomment -%}
-          <div class="timeline-item">
-            <div class="timeline-item__icon-wrapper">
-              {%- if item.icon != blank -%}
-                {{
-                  item.icon | image_url: width: 128, height: 128 | image_tag: loading: 'lazy', class: 'timeline-item__icon', widths: '64, 128', alt: item.period | escape
-                }}
-              {%- else -%}
-                <svg
-                  class="timeline-item__icon timeline-item__icon--placeholder"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"><path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-              {%- endif -%}
-            </div>
-            <div class="timeline-item__content">
-              {%- if item.period != blank -%}
-                <h3 class="timeline-item__title">{{ item.period }}</h3>
-              {%- endif -%}
-              {%- if item.description != blank -%}
-                <div class="timeline-item__description rte">
-                  {{ item.description | metafield_tag }}
+        {%- if source_type == 'metafields' -%}
+          {%- for item in timeline_data -%}
+            <div class="timeline-item">
+              <div class="container-timeline-item__icon-wrapper">
+                <div class="timeline-item__icon-wrapper">
+                  {%- if item.icon != blank -%}
+                    {{
+                      item.icon | image_url: width: 128, height: 128 | image_tag: loading: 'lazy', class: 'timeline-item__icon', widths: '64, 128', alt: item.period | escape
+                    }}
+                  {%- else -%}
+                    <svg
+                      class="timeline-item__icon timeline-item__icon--placeholder"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"><path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  {%- endif -%}
                 </div>
-              {%- endif -%}
+              </div>
+              <div class="timeline-item__content">
+                {%- if item.period != blank -%}
+                  <h3 class="timeline-item__title">{{ item.period }}</h3>
+                {%- endif -%}
+                {%- if item.description != blank -%}
+                  <div class="timeline-item__description rte">
+                    {{ item.description | metafield_tag }}
+                  </div>
+                {%- endif -%}
+              </div>
             </div>
-          </div>
-        {%- endfor -%}
+          {%- endfor -%}
 
-      {%- else -%}
-        {%- comment -%} FALLBACK TO BLOCKS {%- endcomment -%}
-        {%- for block in section.blocks -%}
-          <div class="timeline-item" {{ block.shopify_attributes }}>
-            <div class="timeline-item__icon-wrapper">
-              {%- if block.settings.icon != blank -%}
-                {{
-                  block.settings.icon | image_url: width: 128, height: 128 | image_tag: loading: 'lazy', class: 'timeline-item__icon', widths: '64, 128', alt: block.settings.title | escape
-                }}
-              {%- else -%}
-                <svg
-                  class="timeline-item__icon timeline-item__icon--placeholder"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"><path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-              {%- endif -%}
-            </div>
-            <div class="timeline-item__content">
-              {%- if block.settings.title != blank -%}
-                <h3 class="timeline-item__title">{{ block.settings.title }}</h3>
-              {%- endif -%}
-              {%- if block.settings.description != blank -%}
-                <div class="timeline-item__description rte">
-                  {{ block.settings.description }}
+        {%- else -%}
+          {%- comment -%} FALLBACK TO BLOCKS {%- endcomment -%}
+          {%- for block in section.blocks -%}
+            <div class="timeline-item" {{ block.shopify_attributes }}>
+              <div class="container-timeline-item__icon-wrapper">
+                <div class="timeline-item__icon-wrapper">
+                  {%- if block.settings.icon != blank -%}
+                    {{
+                      block.settings.icon | image_url: width: 128, height: 128 | image_tag: loading: 'lazy', class: 'timeline-item__icon', widths: '64, 128', alt: block.settings.title | escape
+                    }}
+                  {%- else -%}
+                    <svg
+                      class="timeline-item__icon timeline-item__icon--placeholder"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"><path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  {%- endif -%}
                 </div>
-              {%- endif -%}
+              </div>
+              <div class="timeline-item__content">
+                {%- if block.settings.title != blank -%}
+                  <h3 class="timeline-item__title">{{ block.settings.title }}</h3>
+                {%- endif -%}
+                {%- if block.settings.description != blank -%}
+                  <div class="timeline-item__description rte">
+                    {{ block.settings.description }}
+                  </div>
+                {%- endif -%}
+              </div>
             </div>
+          {%- endfor -%}
+        {%- endif -%}
+
+        {% if source_type == 'blocks' and section.blocks.size == 0 %}
+          <div class="timeline-item" style="border:none;">
+            <p style="opacity: 0.6;">
+              <strong>Setup Guide:</strong><br>
+              1. Add "blocks" below to use manually.<br>
+              2. OR connect a Product Metafield in Section Settings (Namespace & Key).
+            </p>
           </div>
-        {%- endfor -%}
-      {%- endif -%}
+        {% endif %}
 
-      {% if source_type == 'blocks' and section.blocks.size == 0 %}
-        <div class="timeline-item" style="border:none;">
-          <p style="opacity: 0.6;">
-            <strong>Setup Guide:</strong><br>
-            1. Add "blocks" below to use manually.<br>
-            2. OR connect a Product Metafield in Section Settings (Namespace & Key).
-          </p>
-        </div>
-      {% endif %}
-
+      </div>
     </div>
   </div>
 {% endif %}

@@ -7,36 +7,42 @@
   width: 100%;
   overflow: hidden;
   /* Prevent layout shift */
-  min-height: 200px; 
+  min-height: 100px; 
 }
 
-/* Grid Scroll Container */
+/* Container: Forces items to fill the width */
 .reels-grid {
   display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  padding-bottom: 15px; /* Space for scrollbar/shadow */
-  padding-left: 2px;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none; 
+  width: 100%;
+  gap: 8px; /* Smaller gap to ensure they fit nicely */
+  padding: 0 5px; /* Tiny padding on sides */
+  
+  /* Disable scrolling */
+  overflow-x: hidden; 
+  flex-wrap: nowrap;
 }
-.reels-grid::-webkit-scrollbar { display: none; }
 
-/* KARTU 9:16 */
+/* Card: Flexible width instead of fixed width */
 .reel-card {
   position: relative;
-  width: fit-content;
+  
+  /* 1. FLEXIBLE WIDTH (The Magic Part) */
+  flex: 1;       /* Grow to fill space equally */
+  width: auto;   /* Let flex controls the width */
+  min-width: 0;  /* CRITICAL FOR SAFARI: Allows card to shrink below content size */
+  
+  /* 2. Maintain 9:16 Aspect Ratio */
   aspect-ratio: 9 / 16;
+  
+  /* Standard Styles */
   border-radius: 12px;
   overflow: hidden;
   cursor: pointer;
-  scroll-snap-align: start;
   background: #eee;
-  touch-action: manipulation; 
-  transform: translateZ(0);
-  transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transform: translateZ(0); /* Hardware acceleration for iOS */
 }
+
+.reels-grid::-webkit-scrollbar { display: none; }
 
 .reel-card:active { transform: scale(0.96); }
 

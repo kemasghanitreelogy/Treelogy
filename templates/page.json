@@ -253,8 +253,6 @@
       "name": "Accordion List",
       "settings": {
         "title": "From The Inside And Out!",
-        "desc_desktop": "Moringa oleifera, often hailed as the \"Miracle Tree\", stands at the crossroads of nutrition and beauty, offering a treasure of health benefits that radiate from the inside out. This powerhouse tree is not only a key element in enhancing bodily health through its rich nutritional profile but also plays a pivotal role in enhancing beauty by nourishing the skin and hair.",
-        "desc_mobile": "Moringa oleifera, often hailed as the \"Miracle Tree\", stands at the crossroads of nutrition and beauty, offering a treasure of health benefits that radiate from the inside out.",
         "button_label": "Read The Science",
         "button_url": "shopify://pages/benefit"
       }

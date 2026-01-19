@@ -1,52 +1,59 @@
 {% assign product_detail = product.metafields.custom.product_detail %}
 {% assign product_detail = blank %}
 
-<div class="main-grid product-detail-wrapper" data-cs-capture>
-  <div class="gallery-wrapper">
-    <div id="product-geallery-wrapper">
-      <div class="media-gallery-custom sticky">
-        {% for image in product.images %}
+<div class="main-grid product-detail-wrapper">
 
+  <div class="gallery-wrapper">
+    <div id="product-geallery-wrapper" class="native-gallery">
+
+      <div class="native-gallery__main-scroll" id="MainSlider">
+        {% assign slide_index = 0 %}
+          {% for image in product.images %}
           {% assign image_alt = image.alt | escape %}
 
+          {% comment %} Language Filter Logic {% endcomment %}
           {% if image.alt contains 'LANG:' %}
             {% assign image_alt = image.alt | split: "|" | last %}
             {% assign language_code = image.alt | split: "|" | first | remove: "LANG:" | downcase %}
-
             {% if language_code != request.locale.iso_code %}
-              {% continue %}
-            {% endif %}
+              {% continue %}{% endif %}
           {% endif %}
 
-          <a href="{{ image.src | img_url: '1440x' }}">
-            <img src="{{ image. src | img_url: 'compact' }}" alt="{{ image.alt | escape }}">
-          </a>
+          <div class="native-gallery__slide" data-index="{{ slide_index }}">
+            <img
+              src="{{ image.src | img_url: '1440x' }}"
+              alt="{{ image_alt }}"
+              loading="lazy"
+              class="gallery-image">
+          </div>
+          {% assign slide_index = slide_index | plus: 1 %}
         {% endfor %}
       </div>
-      <div class="main-image sticky">
-        <div class="wrapper">
-          <div class="main-image-wrapper-custom">
-            {% for image in product.images %}
-              {% assign image_alt = image.alt | escape %}
 
-              {% if image.alt contains 'LANG:' %}
-                {% assign image_alt = image.alt | split: "|" | last %}
-                {% assign language_code = image.alt | split: "|" | first | remove: "LANG:" | downcase %}
+      <div class="native-gallery__thumbs-scroll" id="ThumbSlider">
+        {% assign thumb_index = 0 %}
+          {% for image in product.images %}
+          {% comment %} Language Logic for Thumbs {% endcomment %}
+          {% if image.alt contains 'LANG:' %}
+            {% assign language_code = image.alt | split: "|" | first | remove: "LANG:" | downcase %}
+            {% if language_code != request.locale.iso_code %}
+              {% continue %}{% endif %}
+          {% endif %}
 
-                {% if language_code != request.locale.iso_code %}
-                  {% continue %}
-                {% endif %}
-              {% endif %}
-
-              <img src="{{ image.src | img_url: '1440x' }}" alt="{{ image_alt  }}">
-
-            {% endfor %}
-          </div>
-        </div>
+          <button
+            class="native-gallery__thumb {% if thumb_index == 0 %}active{% endif %}"
+            data-index="{{ thumb_index }}"
+            aria-label="View Image {{ thumb_index | plus: 1 }}">
+            <div class="thumb-inner">
+              <img src="{{ image.src | img_url: 'compact' }}" alt="{{ image.alt | escape }}">
+            </div>
+          </button>
+          {% assign thumb_index = thumb_index | plus: 1 %}
+        {% endfor %}
       </div>
+
     </div>
   </div>
-
   {% assign free_product = settings.free_product.id %}
 
   <div class="detail" id="product-detail-content">
@@ -64,6 +71,7 @@
     <h1>{{ product.title }}</h1>
     {% render 'ProductTags' %}
     {% render 'ProductVideos' %}
+
     <div class="body-desk description">
       <div>{{ product.description }}</div>
       <div>
@@ -76,6 +84,9 @@
         {% endif %}
       </div>
     </div>
+
+    {% render 'ProductStories' %}
+
     <div class="variant-button">
       {% if free_product != product.id %}
         {% render 'VariantsButton'
@@ -126,6 +137,7 @@
         </button>
       </form>
     {% endif %}
+
     {% if product_detail.value.count > 0 %}
       <div class="product-detail-wrapper__list-description __accordion">
         {% for item in product_detail.value %}
@@ -146,25 +158,9 @@
         {% endfor %}
       </div>
     {% endif %}
-
-    <div class="payment">
-      <div class="payment-title">{{ section.settings.payment_title }}</div>
-      <div class="payment-image desktop">
-        {% render 'Image'
-          , image: section.settings.payment_list %}
-      </div>
-      <div class="payment-image mobile">
-        {% assign mobile_image = section.settings.payment_list_mob | default: section.settings.payment_list %}
-        {% render 'Image'
-          , image: mobile_image %}
-      </div>
-    </div>
-
-    {% render 'ProductStories' %}
   </div>
 
 </div>
-
 
 {% schema %}
   {
@@ -259,7 +255,7 @@
     {% endfor %}
 
     // ==================================================
-    // 2. CORE SYNC FUNCTION (Reusable)
+    // 2. CORE SYNC FUNCTION
     // ==================================================
     function broadcastVariantChange(variantId) {
       const data = mainProductData[variantId];
@@ -280,23 +276,53 @@
     }
 
     // ==================================================
-    // 3. GALLERY LOGIC
+    // 3. NATIVE GALLERY LOGIC (Replaces Swiper)
     // ==================================================
-    const thumbnails = document.querySelectorAll('.media-gallery-custom a');
-    const mainImages = document.querySelectorAll('.main-image-wrapper-custom img');
-
-    if (thumbnails.length > 0 && mainImages.length > 0) {
-      thumbnails[0].classList.add('active');
-      mainImages[0].classList.add('active');
-
-      thumbnails.forEach((thumb, index) => {
-        thumb.addEventListener('click', function(e) {
-          e.preventDefault(); 
-          for (let i = 0; i < thumbnails.length; i++) { thumbnails[i].classList.remove('active'); }
-          for (let i = 0; i < mainImages.length; i++) { mainImages[i].classList.remove('active'); }
-          this.classList.add('active');
-          if (mainImages[index]) { mainImages[index].classList.add('active'); }
+    const mainSlider = document.getElementById('MainSlider');
+    const thumbSlider = document.getElementById('ThumbSlider');
+    const thumbs = document.querySelectorAll('.native-gallery__thumb');
+    
+    if (mainSlider && thumbs.length > 0) {
+      
+      // A. Handle Thumbnail Clicks
+      thumbs.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          const index = parseInt(this.getAttribute('data-index'));
+          const slideWidth = mainSlider.offsetWidth;
+          
+          // Scroll main slider to specific position
+          mainSlider.scrollTo({
+            left: slideWidth * index,
+            behavior: 'smooth'
+          });
         });
+      });
+
+      // B. Handle Scroll Spy (Update Active Thumb on Scroll)
+      let isScrolling;
+      mainSlider.addEventListener('scroll', function() {
+        window.clearTimeout( isScrolling );
+        
+        // Debounce slightly to prevent flicker
+        isScrolling = setTimeout(function() {
+          const slideWidth = mainSlider.offsetWidth;
+          const scrollPos = mainSlider.scrollLeft;
+          
+          // Calculate current index
+          const currentIndex = Math.round(scrollPos / slideWidth);
+          
+          // Update active classes
+          thumbs.forEach(t => t.classList.remove('active'));
+          
+          const activeThumb = document.querySelector(`.native-gallery__thumb[data-index="${currentIndex}"]`);
+          if (activeThumb) {
+            activeThumb.classList.add('active');
+            
+            // Keep active thumbnail visible in strip
+            activeThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          }
+        }, 60);
       });
     }
 
@@ -345,5 +371,116 @@
     margin-top: 7px;
     list-style-type: disc;
     list-style-position: inside;
+  }
+
+  /* GRID LAYOUT */
+  .product-detail-wrapper .gallery-wrapper {
+    grid-column: 2 / 8;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  /* NATIVE GALLERY STYLES */
+  .native-gallery {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+  }
+
+  /* 1. Main Slider Container */
+  .native-gallery__main-scroll {
+    display: flex;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    /* CSS Scroll Snap Magic */
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+
+    /* Hide Scrollbar */
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE 10+ */
+  }
+  .native-gallery__main-scroll::-webkit-scrollbar {
+    display: none;
+    /* Chrome/Safari */
+  }
+
+  /* 2. Main Slide */
+  .native-gallery__slide {
+    flex: 0 0 100%;
+    /* Force 100% width */
+    width: 100%;
+    scroll-snap-align: start;
+    /* Snap exactly to start */
+    scroll-snap-stop: always;
+    /* Prevent skipping slides */
+    position: relative;
+  }
+
+  .native-gallery__slide img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+  }
+
+  /* 3. Thumbnail Strip */
+  .native-gallery__thumbs-scroll {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+    margin-left: 24px;
+    /* Matches legacy padding */
+    scrollbar-width: thin;
+    scrollbar-color: #ddd transparent;
+  }
+
+  .native-gallery__thumb {
+    flex: 0 0 70px;
+    /* Fixed width thumbs */
+    height: 65px;
+    border: none;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+  }
+
+  .native-gallery__thumb .thumb-inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 2px solid transparent;
+  }
+
+  .native-gallery__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Active State */
+  .native-gallery__thumb.active {
+    opacity: 1;
+  }
+  .native-gallery__thumb.active .thumb-inner {
+    border-color: #567350;
+  }
+
+  /* MOBILE ADJUSTMENTS */
+  @media only screen and (max-width: 768px) {
+    .native-gallery__thumbs-scroll {
+      margin-left: 24px;
+    }
   }
 </style>
