@@ -303,8 +303,8 @@ h3,
 }
 
 .body-s, footer .top-footer .form__inputs .button-wrapper button, footer .top-footer .form__inputs .input-wrapper input {
-  font-size: 14px;
-  font-weight: 300;
+  font-size: 16px;
+  font-weight: 200;
   line-height: 17.5px;
 }
 
@@ -327,7 +327,7 @@ h3,
 }
 
 .technical {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 300;
   line-height: 15px;
 }
@@ -403,7 +403,7 @@ ul {
 }
 @media only screen and (max-width: 900px) {
   .primary-button a {
-    font-size: 12px !important;
+    font-size: 16px !important;
   }
 }
 @media only screen and (min-width: 900px) {
@@ -3011,7 +3011,7 @@ input.red {
 .card .card-detail .top {
   gap: 4px;
   display: flex;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 300;
   line-height: 15px;
   align-items: center;
@@ -3028,8 +3028,8 @@ input.red {
 }
 @media only screen and (max-width: 900px) {
   .card .card-detail__description .sort-desc {
-    font-weight: 300;
-    font-size: 14px;
+    font-weight: 200;
+    font-size: 16px;
     line-height: 17.5px;
     width: 90%;
     display: -webkit-box;
@@ -3442,7 +3442,7 @@ input.red {
     width: 80%;
   }
   .featured-slider .description .excerpt {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 300;
     line-height: 17.5px;
     margin-bottom: 16px;
@@ -3676,7 +3676,7 @@ input.red {
 }
 @media only screen and (max-width: 900px) {
   .featured-banner-text-wrapper .inner .title {
-    font-size: 20px;
+    font-size: 24px;
     line-height: 25px;
     letter-spacing: 0%;
   }
@@ -3688,7 +3688,7 @@ input.red {
 @media only screen and (max-width: 900px) {
   .featured-banner-text-wrapper .inner .description {
     margin: 8px 0 24px;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 17.5px;
     letter-spacing: 0%;
   }
@@ -3759,7 +3759,7 @@ input.red {
 }
 @media only screen and (max-width: 900px) {
   .featured-comment .inner .header .h1 {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 300;
     line-height: 25px;
   }

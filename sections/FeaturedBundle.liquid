@@ -20,36 +20,24 @@
   .inside-set-wrapper p {
     font-weight: 600;
   }
-  /* 1. Hide the default browser marker */
   .inside-set-content.rte ul {
     list-style: none;
     padding-left: 0;
   }
-
-  /* 2. Create a custom layout for the list item */
   .inside-set-content.rte li {
     display: flex;
-    /* This aligns the dot and text side-by-side */
     align-items: flex-start;
-    /* Keeps dot at top if text wraps */
     gap: 6px;
-    /* <--- CHANGE THIS VALUE to control the "margin right" */
   }
-
-  /* 3. Add your own bullet point */
   .inside-set-content.rte li::before {
     content: "•";
-    /* The dot character */
     font-size: 1.2em;
-    /* Size of the dot */
     line-height: 1;
-    /* Ensures vertical alignment */
   }
 
   .featured-bundle-section .gallery-wrapper {
     transform: translateX(24px);
   }
-  /* --- NEW GALLERY STYLES --- */
   .featured-bundle-section .product-detail-wrapper {
     display: flex;
     flex-direction: column;
@@ -82,31 +70,25 @@
     width: 100%;
     height: auto;
     display: none;
-    /* Hidden by default, JS toggles active */
     object-fit: cover;
     aspect-ratio: 1 / 1;
-    /* Square aspect ratio, adjust as needed */
   }
 
-  .main-image-display img.active {
+  .main-image-display img.activeBundle {
     display: block;
     animation: fadeIn 0.3s ease;
   }
 
-  /* Slider / Thumbnails Row */
   .slider-row {
     display: flex;
     gap: 10px;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
-    /* Firefox */
     -ms-overflow-style: none;
-    /* IE */
   }
   .slider-row::-webkit-scrollbar {
     display: none;
-    /* Chrome/Safari */
   }
 
   .slider-item {
@@ -127,14 +109,11 @@
     display: block;
   }
 
-  .slider-item.active {
+  .slider-item.activeBundle {
     border-color: #000;
-    /* Active border color */
   }
 
-  /* --- MOBILE SPECIFIC (The 100% / 70% Logic) --- */
   @media screen and (max-width: 749px) {
-    /* Hide the 'Main Display' on mobile, we only use the slider */
     .main-image-display {
       display: none;
     }
@@ -142,26 +121,22 @@
     .slider-row {
       gap: 3px;
       padding-right: 20px;
-      /* Space to show there's more to scroll */
     }
 
     .slider-item {
       height: auto;
       aspect-ratio: 4 / 5;
-      /* Taller on mobile usually looks better */
     }
-    .slider-item.active {
+    .slider-item.activeBundle {
       border-color: transparent;
     }
 
-    /* First item 100% width */
     .slider-item {
       width: 55%;
       height: 190px;
     }
   }
 
-  /* --- DESKTOP SPECIFIC --- */
   @media screen and (min-width: 750px) {
     .featured-bundle-section .product-detail-wrapper {
       flex-direction: row;
@@ -169,11 +144,8 @@
     }
     .slider-item {
       width: 80px;
-      /* Thumbnail size */
       height: 80px;
     }
-
-    /* On desktop, the first item is just a thumbnail like the others */
     .slider-item:first-child {
       width: 80px;
     }
@@ -197,6 +169,13 @@
 
   {% assign current_variant = selected_product.selected_or_first_available_variant %}
 
+  {% for variant in selected_product.variants %}
+    {% if variant.metafields.custom.set_default == true %}
+      {% assign current_variant = variant %}
+      {% break %}
+    {% endif %}
+  {% endfor %}
+
   <div class="featured-bundle-section section-{{ section.id }} page-width section-{{ section.id }}-padding">
     {% if section.settings.heading != blank %}
       <h2 class="section-heading text-center">{{ section.settings.heading }}</h2>
@@ -204,30 +183,24 @@
 
     <div class="bundle-grid product-detail-wrapper">
 
-      {% comment %} 
-                                                                                                                                            === NEW GALLERY STRUCTURE === 
-                                                                                                      {% endcomment %}
       <div class="gallery-wrapper">
         <div id="bundle-gallery-wrapper-{{ section.id }}" class="bundle-gallery-grid">
-
           <div class="main-image-display">
             {% for image in selected_product.images limit: 5 %}
               <img
                 src="{{ image.src | img_url: '1000x' }}"
                 alt="{{ image.alt | escape }}"
                 data-index="{{ forloop.index0 }}"
-                class="{% if forloop.first %}active{% endif %}">
+                class="{% if forloop.first %}activeBundle{% endif %}">
             {% endfor %}
           </div>
-
           <div class="slider-row">
             {% for image in selected_product.images limit: 5 %}
-              <div class="slider-item {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}">
+              <div class="slider-item {% if forloop.first %}activeBundle{% endif %}" data-index="{{ forloop.index0 }}">
                 <img src="{{ image.src | img_url: '600x' }}" alt="{{ image.alt | escape }}">
               </div>
             {% endfor %}
           </div>
-
         </div>
       </div>
 
@@ -241,14 +214,12 @@
         <div class="description body-desk">
           {{ selected_product.description }}
           {% assign inside_set = selected_product.metafields.custom.inside_set %}
-
           {% if inside_set != blank %}
             <div class="inside-set-wrapper">
               <p>Inside the Set</p>
               <div class="inside-set-content rte">
                 {{ inside_set | metafield_tag }}
               </div>
-
             </div>
           {% endif %}
         </div>
@@ -259,11 +230,13 @@
             method="post"
             enctype="multipart/form-data"
             id="AddToCartForm-{{ section.id }}">
+
             <div class="variant-button" id="VariantContainer-{{ section.id }}">
               {% if selected_product.has_only_default_variant == false %}
                 {% render 'VariantsButton'
                   , product: selected_product
                   , is_not_option: true
+                  , current_variant: current_variant
                 %}
               {% endif %}
             </div>
@@ -276,7 +249,7 @@
                 <option
                   value="{{ variant.id }}"
                   data-available="{{ variant.available }}"
-                  {% if variant == current_variant %}
+                  {% if variant.id == current_variant.id %}
                   selected="selected"
                   {% endif %}>
                   {{ variant.title }}
@@ -316,11 +289,36 @@
 
       if (variantContainer && realSelect) {
         const buttons = variantContainer.querySelectorAll('.checkbox-button');
-        
+
+        // ========================================================
+        // 1. FUNCTION: FORCE ACTIVE STATE (Fixes Double Click)
+        // ========================================================
+        function setActiveButton() {
+           const initialValue = realSelect.value;
+           if(!initialValue) return;
+
+           const targetBtn = variantContainer.querySelector(`.checkbox-button[data-value="${initialValue}"]`);
+           if(targetBtn) {
+             // Clean Slate
+             buttons.forEach(b => b.classList.remove('active'));
+             // Force Add
+             targetBtn.classList.add('active');
+           }
+        }
+
+        // Run Immediately to sync Liquid state with JS state
+        setActiveButton();
+        // Run again shortly after to beat any Theme JS interference
+        setTimeout(setActiveButton, 100);
+
+
+        // ========================================================
+        // 2. CLICK LISTENERS
+        // ========================================================
         buttons.forEach(btn => {
           btn.addEventListener('click', function(e) {
             
-            // UI Update
+            // UI Update: Remove active from all, add to this
             buttons.forEach(b => b.classList.remove('active'));
             this.classList.add('active');
             
@@ -352,28 +350,23 @@
       }
 
       // ============================================
-      // NEW GALLERY LOGIC (Matches New UI)
+      // GALLERY LOGIC (Using 'active')
       // ============================================
       if (window.innerWidth > 749) {
         const wrapper = document.getElementById(`bundle-gallery-wrapper-${sectionId}`);
         if(wrapper) {
-            // Select the new classes
             const thumbs = wrapper.querySelectorAll('.slider-item');
             const mains = wrapper.querySelectorAll('.main-image-display img');
 
             thumbs.forEach(t => {
                 t.addEventListener('click', function(e) {
                     e.preventDefault();
-                    
-                    // Reset Active States
                     thumbs.forEach(i => i.classList.remove('active'));
                     mains.forEach(i => i.classList.remove('active'));
                     
-                    // Set New Active State
                     this.classList.add('active');
                     const idx = this.getAttribute('data-index');
                     
-                    // Find matching main image
                     const target = wrapper.querySelector(`.main-image-display img[data-index="${idx}"]`);
                     if(target) target.classList.add('active');
                 });
@@ -382,26 +375,25 @@
       }
 
       // ============================================
-      // 2. VISIBILITY & FILTER LOGIC
+      // VISIBILITY LOGIC (Fixes Double Click in Filter)
       // ============================================
       function updateBundleVisibility(targetId) {
         if (!variantContainer) return;
-        
         const buttons = variantContainer.querySelectorAll('.checkbox-button');
-        let matchFound = false;
-
+        
         buttons.forEach(btn => {
           const btnId = btn.getAttribute('data-value');
-          
           if (!targetId) {
             btn.style.display = ''; 
           } else {
             if (btnId === targetId) {
               btn.style.display = ''; 
+              // Directly set class instead of simulating click
               if (!btn.classList.contains('active')) {
-                btn.click(); 
+                 buttons.forEach(b => b.classList.remove('active'));
+                 btn.classList.add('active');
+                 if(realSelect) realSelect.value = btnId;
               }
-              matchFound = true;
             } else {
               btn.style.display = 'none'; 
             }
@@ -410,54 +402,33 @@
       }
 
       // ============================================
-      // 3. EVENT LISTENERS (Subscriber)
+      // EVENTS & STORAGE
       // ============================================
-
-      // A. Listen for the Custom Event from Main Product
       window.addEventListener('custom-variant-change', function(e) {
-        const targetId = e.detail.targetId;
-        updateBundleVisibility(targetId);
+        updateBundleVisibility(e.detail.targetId);
       });
 
-      // B. Initial Load Check (From Storage)
       const storedId = sessionStorage.getItem('target_bundle_id');
-      updateBundleVisibility(storedId);
+      if (storedId) {
+         updateBundleVisibility(storedId);
+      }
 
       // ============================================
-      // 4. AJAX ADD TO CART LOGIC (ADDED)
-      // ============================================
-     // ============================================
-      // 4. AJAX ADD TO CART LOGIC (UPDATED)
+      // AJAX ADD TO CART
       // ============================================
       if (cartBtn) {
         const textAdding = "{{ 'products.product.adding' | t | default: 'Adding...' }}";
         const textError = "{{ 'products.product.error' | t | default: 'Error' }}";
 
         cartBtn.addEventListener('click', function(e) {
-          // Prevent default form submit (page reload)
           e.preventDefault();
-          
-          // Get the current Variant ID from the hidden select
           const variantId = realSelect ? realSelect.value : null;
-          
-          if (!variantId) {
-            return;
-          }
-
-          const originalText = "{{ 'products.product.add_to_cart' | t | default: 'Add to Cart' }}"; // Ensure we have the base text
-          // Or use: const originalText = this.getAttribute('data-original-text') || this.innerHTML; if you saved it previously
-          // But in your current code, you capture it right before clicking:
-          const btnContent = this.innerHTML; 
+          if (!variantId) return;
 
           this.innerHTML = textAdding;
           this.style.opacity = '0.7';
 
-          let formData = {
-           'items': [{
-            'id': variantId,
-            'quantity': 1
-            }]
-          };
+          let formData = { 'items': [{ 'id': variantId, 'quantity': 1 }] };
 
           fetch(window.Shopify.routes.root + 'cart/add.js', {
             method: 'POST',
@@ -469,36 +440,19 @@
             return response.json();
           })
           .then(data => {
-            // --- START CHANGE: SHOW "ITEM ADDED" ---
-            
-            // 1. Show Success Message
             this.innerHTML = "Item Added!"; 
             this.style.opacity = '1';
-
-            // 2. Wait 2 seconds, then revert to original text
-            setTimeout(() => {
-                this.innerHTML = "Add to Cart"; // Or variable 'btnContent' if you want to be dynamic
-            }, 2000);
-
-            // --- END CHANGE ---
+            setTimeout(() => { this.innerHTML = "Add to Cart"; }, 2000);
             
-            // Trigger Cart Drawer / Mini Cart
-            const cartIcon = document.querySelector('a[href="/cart"]') || 
-                             document.querySelector('.header__icon--cart') || 
-                             document.querySelector('.mini-cart-toggle');
-
+            const cartIcon = document.querySelector('a[href="/cart"]') || document.querySelector('.header__icon--cart');
             if (cartIcon) {
               cartIcon.click();
             } else {
-              const miniCart = document.querySelector('.mini-cart');
-              if (miniCart) {
-                miniCart.classList.add('active');
-              }
               document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', { bubbles: true }));
               document.documentElement.dispatchEvent(new CustomEvent('cart:open', { bubbles: true })); 
             }
-
-            // Update Cart Count Bubbles
+            
+            // Update Cart Count
             const cartBubble = document.querySelectorAll('.cart-count-bubble span, .header__cart-count');
             cartBubble.forEach(el => {
                 let currentCount = parseInt(el.innerText || 0);
@@ -508,10 +462,7 @@
           .catch((error) => {
             this.innerHTML = textError;
             this.style.opacity = '1';
-            // Reset text after 2 seconds
-            setTimeout(() => {
-                this.innerHTML = "Add to Cart";
-            }, 2000);
+            setTimeout(() => { this.innerHTML = "Add to Cart"; }, 2000);
           });
         });
       }
