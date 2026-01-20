@@ -4744,7 +4744,7 @@ input.red {
 @media only screen and (max-width: 900px) {
   .fullwidth-content-thumbnail .header .description {
     font-weight: 300;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 17.5px;
   }
 }
@@ -4847,7 +4847,7 @@ input.red {
 }
 @media only screen and (max-width: 900px) {
   .fullwidth-content-thumbnail .card-item .detail h3 {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 400;
     padding-top: 4px;
     line-height: 17.5px;
@@ -4949,7 +4949,7 @@ input.red {
 }
 @media only screen and (max-width: 900px) {
   .crew-carousel .header h2 {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 300;
     line-height: 25px;
   }
@@ -4957,7 +4957,7 @@ input.red {
 @media only screen and (max-width: 900px) {
   .crew-carousel .header .description {
     font-weight: 300;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 17.5px;
   }
 }
@@ -5038,7 +5038,7 @@ input.red {
 }
 @media only screen and (max-width: 900px) {
   .benefits .content.header .title {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 300;
     line-height: 25px;
   }
@@ -5048,7 +5048,7 @@ input.red {
 }
 @media only screen and (max-width: 900px) {
   .benefits .content.header .desc {
-    font-size: 12px;
+    font-size: 16px;
     font-weight: 300;
     line-height: 15px;
   }
@@ -5198,7 +5198,7 @@ input.red {
 }
 @media only screen and (max-width: 900px) {
   .logo-side-text .text h2 {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 300;
     line-height: 25px;
   }
@@ -5232,7 +5232,7 @@ input.red {
 @media only screen and (max-width: 900px) {
   .logo-side-text .large-image .text .body-desk {
     font-weight: 300;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 17.5px;
   }
 }
@@ -5306,7 +5306,7 @@ input.red {
 @media only screen and (max-width: 900px) {
   .column-card .cards-item .content h5 {
     font-weight: 300;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 17.5px;
   }
 }
@@ -5366,7 +5366,7 @@ input.red {
 }
 @media only screen and (max-width: 900px) {
   .column-card-with-background .main-grid .content.header h2, .column-card-with-background .product-review-list .content.header h2, .column-card-with-background .featured-banner-text-wrapper .wrapper.full-width .content .content.header h2, .featured-banner-text-wrapper .wrapper.full-width .column-card-with-background .content .content.header h2 {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 300;
     line-height: 25px;
   }
@@ -5374,7 +5374,7 @@ input.red {
 @media only screen and (max-width: 900px) {
   .column-card-with-background .main-grid .content.header .body-desk, .column-card-with-background .product-review-list .content.header .body-desk, .column-card-with-background .featured-banner-text-wrapper .wrapper.full-width .content .content.header .body-desk, .featured-banner-text-wrapper .wrapper.full-width .column-card-with-background .content .content.header .body-desk {
     font-weight: 300;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 17.5px;
   }
 }
@@ -5406,15 +5406,15 @@ input.red {
 }
 @media only screen and (max-width: 900px) {
   .column-card-with-background .main-grid .content.cards h3, .column-card-with-background .product-review-list .content.cards h3, .column-card-with-background .featured-banner-text-wrapper .wrapper.full-width .content .content.cards h3, .featured-banner-text-wrapper .wrapper.full-width .column-card-with-background .content .content.cards h3 {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 400;
     line-height: 17.5px;
   }
 }
 @media only screen and (max-width: 900px) {
   .column-card-with-background .main-grid .content.cards .body-desk, .column-card-with-background .product-review-list .content.cards .body-desk, .column-card-with-background .featured-banner-text-wrapper .wrapper.full-width .content .content.cards .body-desk, .featured-banner-text-wrapper .wrapper.full-width .column-card-with-background .content .content.cards .body-desk {
-    font-weight: 300;
-    font-size: 14px;
+    font-weight: 200;
+    font-size: 16px;
     line-height: 17.5px;
   }
 }
@@ -5527,7 +5527,7 @@ input.red {
   }
   .faq-wrapper .content.header .header-content p {
     font-weight: 300;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 17.5px;
     letter-spacing: 0%;
   }
@@ -5537,7 +5537,7 @@ input.red {
 }
 @media only screen and (max-width: 900px) {
   .faq-wrapper .content.header .header-content h1 {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 300;
     line-height: 25px;
   }
@@ -5607,7 +5607,7 @@ input.red {
 @media only screen and (max-width: 900px) {
   .faq-wrapper .accordion-nav .menu .item .button, .faq-wrapper .accordion-nav .menu .item .side-image-video-wrapper .main-grid .primary-button a, .faq-wrapper .accordion-nav .menu .item .side-image-video-wrapper .product-review-list .primary-button a, .side-image-video-wrapper .main-grid .primary-button .faq-wrapper .accordion-nav .menu .item a, .side-image-video-wrapper .product-review-list .primary-button .faq-wrapper .accordion-nav .menu .item a, .faq-wrapper .accordion-nav .menu .item .side-image-video-wrapper .featured-banner-text-wrapper .wrapper.full-width .content .primary-button a, .side-image-video-wrapper .featured-banner-text-wrapper .wrapper.full-width .content .primary-button .faq-wrapper .accordion-nav .menu .item a, .faq-wrapper .accordion-nav .menu .item .featured-banner-text-wrapper .wrapper.full-width .side-image-video-wrapper .content .primary-button a, .featured-banner-text-wrapper .wrapper.full-width .side-image-video-wrapper .content .primary-button .faq-wrapper .accordion-nav .menu .item a {
     border: 1px solid rgba(43, 60, 53, 0.5019607843);
-    font-size: 10px;
+    font-size: 16px;
     font-weight: 300;
     line-height: 12.5px;
   }
@@ -5697,7 +5697,7 @@ input.red {
   .faq-wrapper .accordion-item .group-list .group-item .accordion-desc {
     padding-right: 0;
     font-weight: 300;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 17.5px;
   }
 }
@@ -5707,7 +5707,7 @@ input.red {
 }
 @media only screen and (max-width: 900px) {
   .faq-wrapper .accordion-item .group-list .group-item .h3 {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 400;
     line-height: 17.5px;
   }
@@ -5726,7 +5726,7 @@ input.red {
 }
 @media only screen and (max-width: 900px) {
   .login-form h2 {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 300;
     line-height: 25px;
   }
@@ -5789,7 +5789,7 @@ input.red {
 }
 @media only screen and (max-width: 900px) {
   .login-form .form .button-login input {
-    font-size: 12px;
+    font-size: 16px;
     font-weight: 300;
     line-height: 15px;
     margin-bottom: 0;
@@ -5863,7 +5863,7 @@ input.red {
 }
 @media only screen and (max-width: 900px) {
   .login-form .sub-head, .login-form footer .menu-listing__item a, footer .menu-listing__item .login-form a, .login-form .blog-listng .navigation a, .blog-listng .navigation .login-form a {
-    font-size: 10px;
+    font-size: 14px;
     font-weight: 300;
     line-height: 12.5px;
   }

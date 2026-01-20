@@ -1,7 +1,7 @@
 <div class="main-grid">
   <div class="content header">
     <h1 class="h1 title">
-      {{ section.settings.title }}
+      {{ section.settings.title | newline_to_br }}
     </h1>
     <div class="body-desk desc">{{ section.settings.description }}</div>
 
@@ -41,7 +41,7 @@
   "class": "section benefits",
   "settings": [
     {
-      "type": "text",
+      "type": "textarea",
       "id": "title",
       "label": "Title"
     },
