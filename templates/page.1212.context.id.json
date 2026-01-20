@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "parent": "page.1212.json",
   "context": {
@@ -11,7 +20,7 @@
     },
     "countdown_timer_ywwKAN": {
       "settings": {
-        "description": "<p>* Wajib diisi. Akses publik dimulai 12 Desember.  Akses privat dibuka pada 9 Desember pukul 10.00 WIB.</p>",
+        "description": "<p>* Wajib diisi. Akses publik dimulai 12 Desember. Akses privat dibuka pada 9 Desember pukul 10.00 WIB.</p>",
         "footer_text": "<p>Dengan mengirimkan formulir ini, Anda menyetujui untuk menerima updates dan pesan marketing Treelogy melalui email atau WhatsApp. Persetujuan ini tidak menjadi syarat untuk melakukan pembelian. Anda dapat berhenti berlangganan kapan saja dengan membalas STOP atau melalui tautan yang tersedia. Kebijakan Privasi dan S&K berlaku.</p>",
         "label_days": "HARI",
         "label_hours": "JAM",
@@ -73,7 +82,7 @@
     },
     "countdown_timer_BKt7bN": {
       "settings": {
-        "description": "<p>* Wajib diisi. Akses publik dimulai 12 Desember.  Akses privat dibuka pada 9 Desember pukul 10.00 WIB.</p>",
+        "description": "<p>* Wajib diisi. Akses publik dimulai 12 Desember. Akses privat dibuka pada 9 Desember pukul 10.00 WIB.</p>",
         "footer_text": "<p>Dengan mengirimkan formulir ini, Anda menyetujui untuk menerima updates dan pesan marketing Treelogy melalui email atau WhatsApp. Persetujuan ini tidak menjadi syarat untuk melakukan pembelian. Anda dapat berhenti berlangganan kapan saja dengan membalas STOP atau melalui tautan yang tersedia. Kebijakan Privasi dan S&K berlaku.</p>"
       }
     },
