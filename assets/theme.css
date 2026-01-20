@@ -277,11 +277,37 @@ h2,
   line-height: 26.4px;
 }
 
+.rating-text {
+  margin-left: 8px;
+}
 h3,
 .h3 {
   font-size: 20px;
   font-weight: 300;
   line-height: 25px;
+}
+
+@media only screen and (max-width: 900px) {
+  h1,
+  .h1 {
+    font-size: 28px;
+    font-weight: 300;
+    line-height: 35.2px;
+  }
+
+  h2,
+  .h2 {
+    font-size: 24px;
+    font-weight: 300;
+    line-height: 26.4px;
+  }
+
+  h3,
+  .h3 {
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 25px;
+  }
 }
 
 .big-title {
@@ -404,6 +430,11 @@ ul {
 @media only screen and (max-width: 900px) {
   .primary-button a {
     font-size: 16px !important;
+  }
+}
+@media only screen and (max-width: 400px) {
+  .product-detail .primary-button a {
+    font-size: 14px !important;
   }
 }
 @media only screen and (min-width: 900px) {
@@ -781,7 +812,7 @@ input.red {
     margin-top: 4px;
   }
   .collection-listing .product-listing .card a h2 {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 400;
     line-height: 17.5px;
   }
@@ -795,8 +826,8 @@ input.red {
     word-break: break-word;
   }
   .collection-listing .product-listing .card a .sort-desc {
-    font-size: 12px;
-    font-weight: 300;
+    font-size: 16px;
+    font-weight: 200;
     line-height: 15px;
   }
   .collection-listing .product-listing .card a .sort-desc:not(.expanded) {
@@ -809,8 +840,8 @@ input.red {
     word-break: break-word;
   }
   .collection-listing .product-listing .card a .price-wrapper {
-    font-size: 14px;
-    font-weight: 300;
+    font-size: 16px;
+    font-weight: 400;
     line-height: 17.5px;
   }
 }
@@ -3093,8 +3124,8 @@ input.red {
 }
 @media only screen and (max-width: 900px) {
   .card .card-detail.blog-type .product-detail__description .sort-desc {
-    font-size: 14px;
-    font-weight: 300;
+    font-size: 16px;
+    font-weight: 200;
     line-height: 17.5px;
   }
 }
@@ -3955,7 +3986,7 @@ input.red {
     flex-direction: column;
   }
   .virtual-content .content h2 {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 300;
     line-height: 25px;
     text-align: center;
@@ -4060,7 +4091,7 @@ input.red {
 }
 @media only screen and (max-width: 900px) {
   .featured-product .product-detail .inner h1 {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 300;
     line-height: 25px;
   }
@@ -4281,7 +4312,7 @@ input.red {
 }
 @media only screen and (max-width: 900px) {
   .side-image-video-wrapper .main-grid .detail .header h2, .side-image-video-wrapper .product-review-list .detail .header h2, .side-image-video-wrapper .featured-banner-text-wrapper .wrapper.full-width .content .detail .header h2, .featured-banner-text-wrapper .wrapper.full-width .side-image-video-wrapper .content .detail .header h2 {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 300;
     line-height: 25px;
   }
@@ -4666,8 +4697,8 @@ input.red {
   transition: transform 500ms !important;
 }
 .accordion-list .right-list .scroll-container .accordion-description {
-  font-size: 14px;
-  font-weight: 300;
+  font-size: 16px;
+  font-weight: 200;
   padding-bottom: 19px;
 }
 .accordion-list .right-list .scroll-container .accordion.active svg {
@@ -7570,11 +7601,17 @@ html {
 }
 @media only screen and (max-width: 900px) {
   .featured-product .product-detail .buttons .button-quick-add-cart {
-    font-size: 12px;
+    font-size: 16px;
     padding: 0 9px;
   }
   .default-content {
     margin: 64px 0;
+  }
+}
+
+@media only screen and (max-width: 400px) {
+  .featured-product .product-detail .buttons .button-quick-add-cart {
+    font-size: 14px;
   }
 }
 .default-content .box-container {
