@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
@@ -6,7 +15,7 @@
         "first_text": "",
         "bottom_text": "",
         "text_offset": 0,
-        "video": "shopify:\/\/files\/videos\/Farm_compressed.mp4"
+        "video": "shopify://files/videos/Farm_compressed.mp4"
       }
     },
     "fullwidth_content_thumbnail_6xcKhM": {
@@ -17,7 +26,7 @@
           "settings": {
             "title": "Harvesting Rainwater",
             "description": "By ingeniously redesigning our farm's landscape to align with the earth's natural contours, we've established a robust system for harvesting rainwater. This approach prevents erosion and maximizes water conservation, ensuring effective distribution across the farm. The result is a promotion of healthy plant growth and soil regeneration, crucial for sustaining our farm's vibrant ecosystem and supporting our overarching goal of environmental stewardship.",
-            "video": "shopify:\/\/files\/videos\/tree-1.mp4"
+            "video": "shopify://files/videos/tree-1.mp4"
           }
         },
         "image_picker_FUQ4YW": {
@@ -25,7 +34,7 @@
           "settings": {
             "title": "Co-Working with Animals",
             "description": "Treelogy ensures our animals lead happy, healthy lives, which results in nitrogen-rich manure for our compost. This sustainable cycle enhances soil fertility, embodying our commitment to athriving, balanced ecosystem and showcasing the symbiotic relationship between animal welfare and agricultural productivity.",
-            "video": "shopify:\/\/files\/videos\/tree-2.mp4"
+            "video": "shopify://files/videos/tree-2.mp4"
           }
         },
         "image_picker_kLKRxi": {
@@ -33,7 +42,7 @@
           "settings": {
             "title": "Tailored Compost",
             "description": "Treelogy's approach to composting is highly customized, designed to replenish the soil with precisely what it loses in the farming process. This bespoke method ensures our soil remains rich and productive, maintaining a healthy balance within our ecosystem. It's a reflection of our philosophy to not just take from the Earth but to give back, fostering a symbiotic relationship between the land and our farming practices.",
-            "video": "shopify:\/\/files\/videos\/tree-3.mp4"
+            "video": "shopify://files/videos/tree-3.mp4"
           }
         },
         "image_picker_9xWMkd": {
@@ -41,7 +50,7 @@
           "settings": {
             "title": "Innovative Earthwork",
             "description": "Our innovative earthwork, including the strategic reshaping of the landscape and the establishment of raised beds and no-walk zones, ensures better rain water absorption and reduces soil compaction. This thoughtful design respects the soil's integrity, allowing for a flourishing natural ecosystem and creating the ideal conditions for plant growth and microbial activity. It underscores our respect for the land and our commitment to creating a sustainable farming environment.",
-            "video": "shopify:\/\/files\/videos\/tree-4.mp4"
+            "video": "shopify://files/videos/tree-4.mp4"
           }
         },
         "image_picker_qHXVyL": {
@@ -49,7 +58,7 @@
           "settings": {
             "title": "Welcoming Wildlife",
             "description": "Choosing not to fence our farm, we embrace the natural world, inviting wild life and allowing endogenous plants and trees to flourish. This open ecosystem approach enriches the farm's biodiversity, enhancing its resilience and health. It reflects our belief in living in harmony with nature and our dedication to supporting a diverse, thriving ecosystem where life in all its forms can prosper.",
-            "video": "shopify:\/\/files\/videos\/tree-5.mp4"
+            "video": "shopify://files/videos/tree-5.mp4"
           }
         }
       },
@@ -61,7 +70,7 @@
         "image_picker_qHXVyL"
       ],
       "settings": {
-        "title": "The First Regenerative Organic Moringa Farm In the World",
+        "title": "The First Regenerative \nOrganic Moringa Farm \nIn the World",
         "description": "We've embraced regenerative agriculture from the start, already Organic Certified and now nearing Regenerative Organic Alliance Certification. This certification is a formal acknowledgment of our longstanding commitment to practices that rejuvenate the earth. Our approach to Moringa cultivation has always prioritized the health of the soil and ecosystem, ensuring every product is a testament to truly sustainable and ethical farming."
       }
     },
@@ -96,12 +105,12 @@
         "text_M7pqfc"
       ],
       "settings": {
-        "title": "A Hidden Gem On The Foothills Of Bali's Iconic Volcano",
+        "title": "A Hidden Gem On The \nFoothills Of Bali's \nIconic Volcano",
         "description": "Nestled 500 meters high in the volcanic foothills of Bali, Treelogy's farm sets a global standard, uniting regenerative agriculture with social enrichment. Here, we craft more than just Moringa leaves, seeds, and flowers; we forge a new, ethical paradigm that nourishes you while enriching life. Reshaping the symbiosis between humans and nature.",
         "button_label": "",
         "button_url": "",
         "button_pos": "top",
-        "video": "shopify:\/\/files\/videos\/Farm_compressed.mp4",
+        "video": "shopify://files/videos/Farm_compressed.mp4",
         "fit_content": false,
         "padding_top_dt": 96,
         "padding_bottom_dt": 96,
@@ -117,7 +126,7 @@
           "settings": {
             "position": "Farm Manager",
             "title": "Novitasari Napitupulu",
-            "portrait": "shopify:\/\/shop_images\/treelogy-team-novitasari-napitupulu.webp"
+            "portrait": "shopify://shop_images/treelogy-team-novitasari-napitupulu.webp"
           }
         },
         "image_picker_Pw4Nmb": {
@@ -125,7 +134,7 @@
           "settings": {
             "position": "Regenerator",
             "title": "Fery Kurniawan",
-            "portrait": "shopify:\/\/shop_images\/treelogy-team-fery-kurniawan.webp"
+            "portrait": "shopify://shop_images/treelogy-team-fery-kurniawan.webp"
           }
         },
         "image_picker_YM6tNU": {
@@ -133,7 +142,7 @@
           "settings": {
             "position": "Regenerator",
             "title": "I Gede Suastika",
-            "portrait": "shopify:\/\/shop_images\/treelogy-team-i-gede-suastika.webp"
+            "portrait": "shopify://shop_images/treelogy-team-i-gede-suastika.webp"
           }
         },
         "image_picker_yx6YMP": {
@@ -141,7 +150,7 @@
           "settings": {
             "position": "Regenerator",
             "title": "I Gede Sukra",
-            "portrait": "shopify:\/\/shop_images\/treelogy-team-i-gede-sukra.webp"
+            "portrait": "shopify://shop_images/treelogy-team-i-gede-sukra.webp"
           }
         },
         "image_picker_G4aBLn": {
@@ -149,7 +158,7 @@
           "settings": {
             "position": "Regenerator",
             "title": "I Kadek Juniantara",
-            "portrait": "shopify:\/\/shop_images\/treelogy-team-i-kadek-juniantara.webp"
+            "portrait": "shopify://shop_images/treelogy-team-i-kadek-juniantara.webp"
           }
         },
         "image_picker_jh6nHC": {
@@ -157,7 +166,7 @@
           "settings": {
             "position": "Regenerator",
             "title": "I Kadek Pande Suastika",
-            "portrait": "shopify:\/\/shop_images\/treelogy-team-i-kadek-pande-suastika.webp"
+            "portrait": "shopify://shop_images/treelogy-team-i-kadek-pande-suastika.webp"
           }
         },
         "image_picker_8nXz6Y": {
@@ -165,7 +174,7 @@
           "settings": {
             "position": "Regenerator",
             "title": "I Ketut De Juliana",
-            "portrait": "shopify:\/\/shop_images\/treelogy-team-i-ketut-de-juliana.webp"
+            "portrait": "shopify://shop_images/treelogy-team-i-ketut-de-juliana.webp"
           }
         },
         "image_picker_V9dFK8": {
@@ -173,7 +182,7 @@
           "settings": {
             "position": "Regenerator",
             "title": "I Ketut Suatra",
-            "portrait": "shopify:\/\/shop_images\/treelogy-team-i-ketut-suatra.webp"
+            "portrait": "shopify://shop_images/treelogy-team-i-ketut-suatra.webp"
           }
         },
         "image_picker_JfU3Xc": {
@@ -181,7 +190,7 @@
           "settings": {
             "position": "Regenerator",
             "title": "I Komang Adi Ariasa",
-            "portrait": "shopify:\/\/shop_images\/treelogy-team-i-komang-adi-ariasa.webp"
+            "portrait": "shopify://shop_images/treelogy-team-i-komang-adi-ariasa.webp"
           }
         },
         "image_picker_n6gah7": {
@@ -189,7 +198,7 @@
           "settings": {
             "position": "Regenerator",
             "title": "I Komang Darma",
-            "portrait": "shopify:\/\/shop_images\/treelogy-team-i-komang-darma.webp"
+            "portrait": "shopify://shop_images/treelogy-team-i-komang-darma.webp"
           }
         },
         "image_picker_CGtA8H": {
@@ -197,7 +206,7 @@
           "settings": {
             "position": "Regenerator",
             "title": "I Komang Mertayasa",
-            "portrait": "shopify:\/\/shop_images\/treelogy-team-i-komang-mertayasa.webp"
+            "portrait": "shopify://shop_images/treelogy-team-i-komang-mertayasa.webp"
           }
         },
         "image_picker_pPTfYJ": {
@@ -205,7 +214,7 @@
           "settings": {
             "position": "Regenerator",
             "title": "I Nengah Sueta",
-            "portrait": "shopify:\/\/shop_images\/treelogy-team-i-nengah-sueta.webp"
+            "portrait": "shopify://shop_images/treelogy-team-i-nengah-sueta.webp"
           }
         },
         "image_picker_RgakkQ": {
@@ -213,7 +222,7 @@
           "settings": {
             "position": "Regenerator",
             "title": "I Wayan Belasin",
-            "portrait": "shopify:\/\/shop_images\/treelogy-team-i-wayan-belasin.webp"
+            "portrait": "shopify://shop_images/treelogy-team-i-wayan-belasin.webp"
           }
         },
         "image_picker_4t3KH9": {
@@ -221,7 +230,7 @@
           "settings": {
             "position": "Regenerator",
             "title": "Nyoman Bingin",
-            "portrait": "shopify:\/\/shop_images\/treelogy-team-nyoman-bingin.webp"
+            "portrait": "shopify://shop_images/treelogy-team-nyoman-bingin.webp"
           }
         },
         "image_picker_GKYA8H": {
@@ -229,7 +238,7 @@
           "settings": {
             "position": "Regenerator",
             "title": "Setiadi Jitendhriyawan Suwarno",
-            "portrait": "shopify:\/\/shop_images\/treelogy-team-setiadi-jitendhriyawan-suwarno.webp"
+            "portrait": "shopify://shop_images/treelogy-team-setiadi-jitendhriyawan-suwarno.webp"
           }
         }
       },
@@ -305,7 +314,7 @@
         "description": "Discover what fits your routine and experience the powerful benefits of moringa with Treelogy's premium, handcrafted products.",
         "products": [],
         "button_label": "All Products",
-        "button_url": "https:\/\/treelogy.com\/collections\/all"
+        "button_url": "https://treelogy.com/collections/all"
       }
     }
   },

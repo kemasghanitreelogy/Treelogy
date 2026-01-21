@@ -76,7 +76,7 @@
     "side_image_video_content_LrdCQ9": {
       "type": "SideImageVideoContent",
       "settings": {
-        "title": "A Mother And A Son Teaming Up For Change!",
+        "title": "A Mother And A Son \nTeaming Up For Change!",
         "description": "During Bali's COVID-19 crisis, founders Alexa and Sacha launched Treelogy, aiming to diversify the local economy beyond tourism. Drawing inspiration from the Balinese philosophy of Tri Hita Karana, they advocate for a holistic business model that benefits both people and earth, fostering a brighter future for all.",
         "button_label": "The Story of Legacy +",
         "button_url": "shopify://blogs/news/the-story-of-a-legacy",
@@ -169,7 +169,7 @@
       ],
       "settings": {
         "title": "In Harmony With Tri Hita Karana",
-        "description": "The Balinese philosophy of Tri Hita Karana serves as our spiritual bedrock, \nguiding us toward harmonious coexistence with people, nature, and the spiritual universe.",
+        "description": "The Balinese philosophy of Tri Hita Karana serves as our spiritual bedrock, guiding us toward harmonious coexistence with people, nature, and the spiritual universe.",
         "background": "shopify://shop_images/bg-farm.7fb31c98_1.jpg"
       }
     },
