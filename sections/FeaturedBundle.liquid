@@ -1,5 +1,5 @@
-{% assign selected_product = all_products[section.settings.feature_product] %}
-{% assign selected_bundle = selected_product.metafields.bundle_set.value %}
+
+{% assign selected_bundle = product.metafields.custom.bundle_set.value %}
 
 {%- style -%}
   .section-{{ section.id }}-padding {
@@ -162,15 +162,11 @@
   }
 {%- endstyle -%}
 
-{% if selected_product == blank %}
-  <div class="page-width" style="text-align: center; padding: 50px;">
-    <p>Please select a product in the theme editor.</p>
-  </div>
-{% else %}
+{% if selected_bundle != blank %}
 
-  {% assign current_variant = selected_product.selected_or_first_available_variant %}
+  {% assign current_variant = selected_bundle.selected_or_first_available_variant %}
 
-  {% for variant in selected_product.variants %}
+  {% for variant in selected_bundle.variants %}
     {% if variant.metafields.custom.set_default == true %}
       {% assign current_variant = variant %}
       {% break %}
@@ -187,7 +183,7 @@
       <div class="gallery-wrapper">
         <div id="bundle-gallery-wrapper-{{ section.id }}" class="bundle-gallery-grid">
           <div class="main-image-display">
-            {% for image in selected_product.images limit: 5 %}
+            {% for image in selected_bundle.images limit: 5 %}
               <img
                 src="{{ image.src | img_url: '1000x' }}"
                 alt="{{ image.alt | escape }}"
@@ -196,7 +192,7 @@
             {% endfor %}
           </div>
           <div class="slider-row">
-            {% for image in selected_product.images limit: 5 %}
+            {% for image in selected_bundle.images limit: 5 %}
               <div class="slider-item {% if forloop.first %}activeBundle{% endif %}" data-index="{{ forloop.index0 }}">
                 <img src="{{ image.src | img_url: '600x' }}" alt="{{ image.alt | escape }}">
               </div>
@@ -211,10 +207,10 @@
           {% render 'Rating' %}
         </div>
 
-        <h1>{{ selected_product.title }}</h1>
+        <h1>{{ selected_bundle.title }}</h1>
         <div class="description body-desk">
-          {{ selected_product.description }}
-          {% assign inside_set = selected_product.metafields.custom.inside_set %}
+          {{ selected_bundle.description }}
+          {% assign inside_set = selected_bundle.metafields.custom.inside_set %}
           {% if inside_set != blank %}
             <div class="inside-set-wrapper">
               <p>Inside the Set</p>
@@ -233,9 +229,9 @@
             id="AddToCartForm-{{ section.id }}">
 
             <div class="variant-button" id="VariantContainer-{{ section.id }}">
-              {% if selected_product.has_only_default_variant == false %}
+              {% if selected_bundle.has_only_default_variant == false %}
                 {% render 'VariantsButton'
-                  , product: selected_product
+                  , product: selected_bundle
                   , is_not_option: true
                   , current_variant: current_variant
                 %}
@@ -246,7 +242,7 @@
               name="id"
               id="RealProductSelect-{{ section.id }}"
               style="display: none;">
-              {% for variant in selected_product.variants %}
+              {% for variant in selected_bundle.variants %}
                 <option
                   value="{{ variant.id }}"
                   data-available="{{ variant.available }}"
