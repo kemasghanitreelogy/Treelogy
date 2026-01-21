@@ -1,7 +1,7 @@
 <div class="main-grid">
   <div class="content">
     <h2 class="h1">
-      {{ section.settings.title }}
+      {{ section.settings.title | newline_to_br }}
     </h2>
     <div class="sub-head-alt desktop">
       {{ section.settings.description }}
@@ -67,7 +67,7 @@
   "class": "section benefit-wrapper",
   "settings": [
     {
-      "type": "text",
+      "type": "textarea",
       "id": "title",
       "label": "Title"
     },

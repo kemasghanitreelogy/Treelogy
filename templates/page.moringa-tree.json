@@ -87,7 +87,7 @@
       ],
       "name": "Benefit",
       "settings": {
-        "title": "A Powerhouse of Nutrition and Wellness  Now Backed by Science",
+        "title": "A Powerhouse of Nutrition \nand Wellness  Now Backed \nby Science",
         "description": "Rooted in the mystical foothills of the Himalayas, the Moringa oleifera has been worshipped as a 'divine healer' for thousands of years. Fast forward to the present, and cutting-edge scientific research is validating what ancient cultures always knew: this is a tree of extraordinary health benefits. Packed with 92 unique nutrients and encompassing all nine essential amino acids, including methionine and cysteine, our Moringa leaves are a powerhouse of nourishment. Fresh, dried, or in powdered forms, the leaves of the Moringa tree will seamlessly blend into your daily wellness journey, enriching life with their profound benefits.",
         "description_mobile": "Rooted in the mystical foothills of the Himalayas, the Moringa oleifera has been worshipped as a 'divine healer' for thousands of years. Fast forward to the present, and cutting-edge scientific research is validating what ancient cultures always knew: this is a tree of extraordinary health benefits.\n\nPacked with 92 unique nutrients and encompassing all nine essential amino acids, including methionine and cysteine, our Moringa leaves are a powerhouse of nourishment. Fresh, dried, or in powdered forms, the leaves of the Moringa tree will seamlessly blend into your daily wellness journey, enriching life with their profound benefits.",
         "background": "shopify://shop_images/moringa-tree-in-pot.webp"
@@ -100,133 +100,152 @@
           "type": "text",
           "settings": {
             "title": "Blood Sugar Regulation",
-            "description": "<p>Moringa leaves help regulate blood sugar levels due to their content of chlorogenic acid, which affects how the body processes sugar. Additionally, the presence of essential amino acids supports insulin sensitivity, contributing to diabetes management.</p>"
+            "description": "<p>Moringa leaves help regulate blood sugar levels due to their content of chlorogenic acid, which affects how the body processes sugar. Additionally, the presence of essential amino acids supports insulin sensitivity, contributing to diabetes management.</p>",
+            "accordion_text_color": "#567350"
           }
         },
         "text_hT9jhA": {
           "type": "text",
           "settings": {
             "title": "Cholesterol Management",
-            "description": "<p>Niaziminin, a specific bioactive compound in moringa, is instrumental in lowering bad cholesterol (LDL). This action is supported by its vitamin E content, known for its cholesterol-lowering effects, promoting cardiovascular health.</p>"
+            "description": "<p>Niaziminin, a specific bioactive compound in moringa, is instrumental in lowering bad cholesterol (LDL). This action is supported by its vitamin E content, known for its cholesterol-lowering effects, promoting cardiovascular health.</p>",
+            "accordion_text_color": "#567350"
           }
         },
         "text_NQM6wk": {
           "type": "text",
           "settings": {
             "title": "Antioxidant Boost",
-            "description": "<p>Moringa is rich in vitamins C and E, both powerful antioxidants that protect the body from oxidative stress. This includes combating free radicals, which can lead to chronic diseases and premature aging.</p>"
+            "description": "<p>Moringa is rich in vitamins C and E, both powerful antioxidants that protect the body from oxidative stress. This includes combating free radicals, which can lead to chronic diseases and premature aging.</p>",
+            "accordion_text_color": "#567350"
           }
         },
         "text_gh8BnQ": {
           "type": "text",
           "settings": {
             "title": "Anti-inflammatory Properties",
-            "description": "<p>Quercetin, an anti-inflammatory compound found in moringa, along with other anti-inflammatory agents like beta-sitosterol, helps reduce inflammation, beneficial for conditions like arthritis and reducing overall inflammation in the body.</p>"
+            "description": "<p>Quercetin, an anti-inflammatory compound found in moringa, along with other anti-inflammatory agents like beta-sitosterol, helps reduce inflammation, beneficial for conditions like arthritis and reducing overall inflammation in the body.</p>",
+            "accordion_text_color": "#567350"
           }
         },
         "text_RXchhU": {
           "type": "text",
           "settings": {
             "title": "Nutritional Supplement",
-            "description": "<p>Moringa's high content of vitamins A and C, calcium, and iron, along with all nine essential amino acids, makes it a powerful nutritional supplement. It boosts the immune system, supports bone health, and aids in muscle repair and growth.</p>"
+            "description": "<p>Moringa's high content of vitamins A and C, calcium, and iron, along with all nine essential amino acids, makes it a powerful nutritional supplement. It boosts the immune system, supports bone health, and aids in muscle repair and growth.</p>",
+            "accordion_text_color": "#567350"
           }
         },
         "text_HtNYmR": {
           "type": "text",
           "settings": {
             "title": "Anti-hypertensive Agent",
-            "description": "<p>Isothiocyanates, found in moringa, have been shown to have blood pressure-lowering effects. This, along with potassium, a mineral known for its role in managing blood pressure, contributes to cardiovascular health.</p>"
+            "description": "<p>Isothiocyanates, found in moringa, have been shown to have blood pressure-lowering effects. This, along with potassium, a mineral known for its role in managing blood pressure, contributes to cardiovascular health.</p>",
+            "accordion_text_color": "#567350"
           }
         },
         "text_rKamTU": {
           "type": "text",
           "settings": {
             "title": "Immune System Support",
-            "description": "<p>The high levels of vitamin C in moringa strengthen the immune system's defenses against infections. Zinc, also present in moringa, plays a critical role in immune function and wound healing.</p>"
+            "description": "<p>The high levels of vitamin C in moringa strengthen the immune system's defenses against infections. Zinc, also present in moringa, plays a critical role in immune function and wound healing.</p>",
+            "accordion_text_color": "#567350"
           }
         },
         "text_YmfJHX": {
           "type": "text",
           "settings": {
             "title": "Anti-asthmatic Activity",
-            "description": "<p>The anti-inflammatory properties of moringa, enriched with vitamins C and E, can improve respiratory health. These nutrients help in reducing airway inflammation, making it beneficial for people with asthma.</p>"
+            "description": "<p>The anti-inflammatory properties of moringa, enriched with vitamins C and E, can improve respiratory health. These nutrients help in reducing airway inflammation, making it beneficial for people with asthma.</p>",
+            "accordion_text_color": "#567350"
           }
         },
         "text_8akFrA": {
           "type": "text",
           "settings": {
             "title": "Detoxification",
-            "description": "<p>Moringa supports liver function and detoxification processes, thanks to its content of chlorophyll, vitamins C and E, which have been associated with liver health and the ability to enhance the body's natural detoxification pathways.</p>"
+            "description": "<p>Moringa supports liver function and detoxification processes, thanks to its content of chlorophyll, vitamins C and E, which have been associated with liver health and the ability to enhance the body's natural detoxification pathways.</p>",
+            "accordion_text_color": "#567350"
           }
         },
         "text_VcHmkn": {
           "type": "text",
           "settings": {
             "title": "Digestive Health",
-            "description": "<p>The fiber content in moringa aids in digestive health by promoting regular bowel movements and helping to maintain a healthy digestive tract. This is supplemented by vitamin B, which supports metabolism and nutrient absorption.</p>"
+            "description": "<p>The fiber content in moringa aids in digestive health by promoting regular bowel movements and helping to maintain a healthy digestive tract. This is supplemented by vitamin B, which supports metabolism and nutrient absorption.</p>",
+            "accordion_text_color": "#567350"
           }
         },
         "text_ecbykw": {
           "type": "text",
           "settings": {
             "title": "Weight Management",
-            "description": "<p>Moringa contains compounds like isothiocyanates that can help in managing weight by boosting metabolism and increasing satiety. The fiber in moringa also aids in this process by helping to keep you fuller for longer.</p>"
+            "description": "<p>Moringa contains compounds like isothiocyanates that can help in managing weight by boosting metabolism and increasing satiety. The fiber in moringa also aids in this process by helping to keep you fuller for longer.</p>",
+            "accordion_text_color": "#567350"
           }
         },
         "text_Q3yaDc": {
           "type": "text",
           "settings": {
             "title": "Anti-diabetic Properties",
-            "description": "<p>Improved insulin sensitivity and diabetes management contribute to overall health and prevent diabetes-related skin conditions.</p>"
+            "description": "<p>Improved insulin sensitivity and diabetes management contribute to overall health and prevent diabetes-related skin conditions.</p>",
+            "accordion_text_color": "#567350"
           }
         },
         "text_tVkhpV": {
           "type": "text",
           "settings": {
             "title": "Cardiovascular Health",
-            "description": "<p>The presence of vitamin C, beta-carotene, and potassium in moringa supports cardiovascular health. These nutrients help in maintaining the integrity of blood vessels and ensuring efficient blood circulation.</p>"
+            "description": "<p>The presence of vitamin C, beta-carotene, and potassium in moringa supports cardiovascular health. These nutrients help in maintaining the integrity of blood vessels and ensuring efficient blood circulation.</p>",
+            "accordion_text_color": "#567350"
           }
         },
         "text_LwiaGG": {
           "type": "text",
           "settings": {
             "title": "Anti-cancer Potential",
-            "description": "<p>Compounds in moringa, such as niazimicin, are studied for their potential anti-cancer properties. Antioxidants like vitamin C and beta-carotene play a role in protecting cells from damage that could lead to cancer.</p>"
+            "description": "<p>Compounds in moringa, such as niazimicin, are studied for their potential anti-cancer properties. Antioxidants like vitamin C and beta-carotene play a role in protecting cells from damage that could lead to cancer.</p>",
+            "accordion_text_color": "#567350"
           }
         },
         "text_wabTNT": {
           "type": "text",
           "settings": {
             "title": "Hair Health",
-            "description": "<p>Nourishing oil improves scalp health and hair strength, preventing hair loss and promoting growth.</p>"
+            "description": "<p>Nourishing oil improves scalp health and hair strength, preventing hair loss and promoting growth.</p>",
+            "accordion_text_color": "#567350"
           }
         },
         "text_gGbHtG": {
           "type": "text",
           "settings": {
             "title": "Bone Health",
-            "description": "<p>Moringa is rich in calcium and magnesium, essential minerals for bone health and density. Vitamin K in moringa also plays a crucial role in bone mineralization, further supporting skeletal health.</p>"
+            "description": "<p>Moringa is rich in calcium and magnesium, essential minerals for bone health and density. Vitamin K in moringa also plays a crucial role in bone mineralization, further supporting skeletal health.</p>",
+            "accordion_text_color": "#567350"
           }
         },
         "text_Rn6HrD": {
           "type": "text",
           "settings": {
             "title": "Anti-microbial and Anti-fungal Properties",
-            "description": "<p>Certain compounds in moringa, including terpenoids and saponins, have anti-microbial and anti-fungal effects. These properties help protect against various infections, contributing to overall health and skin hygiene.</p>"
+            "description": "<p>Certain compounds in moringa, including terpenoids and saponins, have anti-microbial and anti-fungal effects. These properties help protect against various infections, contributing to overall health and skin hygiene.</p>",
+            "accordion_text_color": "#567350"
           }
         },
         "text_MQ4Cti": {
           "type": "text",
           "settings": {
             "title": "Anxiety and Stress Reduction",
-            "description": "<p>Magnesium in moringa has a calming effect on the nervous system, which can help reduce anxiety and stress levels. This is complemented by the amino acid tryptophan, which is precursor to serotonin, a neurotransmitter that contributes to feelings of well-being and happiness.</p>"
+            "description": "<p>Magnesium in moringa has a calming effect on the nervous system, which can help reduce anxiety and stress levels. This is complemented by the amino acid tryptophan, which is precursor to serotonin, a neurotransmitter that contributes to feelings of well-being and happiness.</p>",
+            "accordion_text_color": "#567350"
           }
         },
         "text_nbQagB": {
           "type": "text",
           "settings": {
             "title": "Vision Improvement",
-            "description": "<p>Magnesium in moringa has a calming effect on the nervous system, which can help reduce anxiety and stress levels. This is complemented by the amino acid tryptophan, which is precursor to serotonin, a neurotransmitter that contributes to feelings of well-being and happiness.</p>"
+            "description": "<p>Magnesium in moringa has a calming effect on the nervous system, which can help reduce anxiety and stress levels. This is complemented by the amino acid tryptophan, which is precursor to serotonin, a neurotransmitter that contributes to feelings of well-being and happiness.</p>",
+            "accordion_text_color": "#567350"
           }
         }
       },
@@ -253,9 +272,16 @@
       ],
       "name": "Accordion List",
       "settings": {
+        "margin_top_mobile": 32,
+        "margin_bottom_mobile": 32,
         "title": "From The Inside And Out!",
-        "desc_desktop": "",
-        "desc_mobile": "",
+        "description": "Moringa oleifera, often hailed as the \"Miracle Tree\", stands at the crossroads of nutrition and beauty, offering a treasure of health benefits that radiate from the inside out.",
+        "heading_color": "#6c7256",
+        "custom_icon": "",
+        "accordion_header_weight": "500",
+        "limit_count": 5,
+        "see_more_label": "See More",
+        "see_less_label": "See Less",
         "button_label": "Read The Science",
         "button_url": "shopify://pages/benefit"
       }

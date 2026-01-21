@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "benefits_rGyQGD": {
@@ -7,71 +16,71 @@
           "type": "text",
           "settings": {
             "title": "Nutrition",
-            "url": "shopify:\/\/blogs\/news\/nutrition",
-            "icon": "shopify:\/\/shop_images\/icon.png",
-            "background": "shopify:\/\/shop_images\/nutrition.webp"
+            "url": "shopify://blogs/news/nutrition",
+            "icon": "shopify://shop_images/icon.png",
+            "background": "shopify://shop_images/nutrition.webp"
           }
         },
         "text_H6wwNm": {
           "type": "text",
           "settings": {
             "title": "Antioxidant",
-            "url": "shopify:\/\/blogs\/news\/antioxidant",
-            "icon": "shopify:\/\/shop_images\/icon.png",
-            "background": "shopify:\/\/shop_images\/antioxidant.webp"
+            "url": "shopify://blogs/news/antioxidant",
+            "icon": "shopify://shop_images/icon.png",
+            "background": "shopify://shop_images/antioxidant.webp"
           }
         },
         "text_EeHf9R": {
           "type": "text",
           "settings": {
             "title": "Immunity",
-            "url": "shopify:\/\/blogs\/news\/immunity",
-            "icon": "shopify:\/\/shop_images\/immunity.svg",
-            "background": "shopify:\/\/shop_images\/immunity.webp"
+            "url": "shopify://blogs/news/immunity",
+            "icon": "shopify://shop_images/immunity.svg",
+            "background": "shopify://shop_images/immunity.webp"
           }
         },
         "text_4ApyiC": {
           "type": "text",
           "settings": {
             "title": "Detoxification",
-            "url": "shopify:\/\/blogs\/news\/detoxification",
-            "icon": "shopify:\/\/shop_images\/detoxification.svg",
-            "background": "shopify:\/\/shop_images\/detoxification.webp"
+            "url": "shopify://blogs/news/detoxification",
+            "icon": "shopify://shop_images/detoxification.svg",
+            "background": "shopify://shop_images/detoxification.webp"
           }
         },
         "text_JLdKyX": {
           "type": "text",
           "settings": {
             "title": "Anti-Diabetic",
-            "url": "shopify:\/\/blogs\/news\/anti-diabetic",
-            "background": "shopify:\/\/shop_images\/anti-diabetic.webp"
+            "url": "shopify://blogs/news/anti-diabetic",
+            "background": "shopify://shop_images/anti-diabetic.webp"
           }
         },
         "text_Wx4zXa": {
           "type": "text",
           "settings": {
             "title": "Anti-Asthmatic",
-            "url": "shopify:\/\/blogs\/news\/anti-asthmatic",
-            "icon": "shopify:\/\/shop_images\/anti-asthmatic.svg",
-            "background": "shopify:\/\/shop_images\/anti-asthmatic.webp"
+            "url": "shopify://blogs/news/anti-asthmatic",
+            "icon": "shopify://shop_images/anti-asthmatic.svg",
+            "background": "shopify://shop_images/anti-asthmatic.webp"
           }
         },
         "text_H6FXHT": {
           "type": "text",
           "settings": {
             "title": "Anti-Hypertensive",
-            "url": "shopify:\/\/blogs\/news\/anti-hypertensive",
-            "icon": "shopify:\/\/shop_images\/anti-hypertensive.svg",
-            "background": "shopify:\/\/shop_images\/anti-hypertensive.webp"
+            "url": "shopify://blogs/news/anti-hypertensive",
+            "icon": "shopify://shop_images/anti-hypertensive.svg",
+            "background": "shopify://shop_images/anti-hypertensive.webp"
           }
         },
         "text_wMzAbd": {
           "type": "text",
           "settings": {
             "title": "Regeneration",
-            "url": "shopify:\/\/blogs\/news\/regeneration",
-            "icon": "shopify:\/\/shop_images\/regeneration.svg",
-            "background": "shopify:\/\/shop_images\/study-1.webp"
+            "url": "shopify://blogs/news/regeneration",
+            "icon": "shopify://shop_images/regeneration.svg",
+            "background": "shopify://shop_images/study-1.webp"
           }
         }
       },
@@ -86,9 +95,9 @@
         "text_wMzAbd"
       ],
       "settings": {
-        "title": "Moringa Oleifera Health Benefits",
+        "title": "Moringa Oleifera \nHealth Benefits",
         "description": "In an age focused on wellness and ethical living, Moringa Oleifera has become a subject of extensive scholarly attention. Its lush leaves and multifaceted oil have captivated experts in healthcare, nourishment, and eco-conscious studies. Researchers across the globe are delving into the tree's extensive influence on well-being and ecological balance. We have condensed and organized a few scientific studies by benefit for you.",
-        "background": "shopify:\/\/shop_images\/benefit-1.png"
+        "background": "shopify://shop_images/benefit-1.png"
       }
     },
     "featured_products_QbBDtp": {
@@ -98,7 +107,7 @@
         "description": "Discover what fits your routine and experience the powerful benefits of moringa with Treelogy's premium, handcrafted products.",
         "products": [],
         "button_label": "All Products",
-        "button_url": "https:\/\/treelogy.com\/collections\/all"
+        "button_url": "https://treelogy.com/collections/all"
       }
     }
   },

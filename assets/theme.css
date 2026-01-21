@@ -1024,7 +1024,7 @@ input.red {
   position: relative;
   border: 1px solid #515E56;
   justify-content: space-between;
-  flex-wrap: wrap;
+  flex-direction: column;
   row-gap: 10px;
 }
 
@@ -1388,7 +1388,7 @@ input.red {
 }
 @media only screen and (max-width: 900px) {
   .blog-listng .navigation a {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 400;
     line-height: 17.5px;
   }
@@ -1404,7 +1404,7 @@ input.red {
 }
 @media only screen and (max-width: 900px) {
   .blog-listng .posts .header {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 300;
     line-height: 25px;
   }
@@ -4533,7 +4533,7 @@ input.red {
     width: 100vw;
     flex: 0 0 100vw;
     font-weight: 300;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 17.5px;
     padding: 0 24px;
     text-align: center;
@@ -4635,7 +4635,7 @@ input.red {
   }
 }
 .accordion-list .left-content h2 {
-  margin-bottom: 0;
+  margin-bottom: 5px;
 }
 
 .accordion-list .left-content .primary-button a {
@@ -4678,7 +4678,7 @@ input.red {
 .accordion-list .right-list .scroll-container .accordion {
   color: #2B3C35;
   overflow: hidden;
-  border-top: 1px solid #E0E0DA;
+  border-bottom: 1px solid #E0E0DA;
 }
 
 
@@ -5177,6 +5177,11 @@ input.red {
 }
 @media only screen and (max-width: 900px) {
   .logo-side-text .main-grid, .logo-side-text .product-review-list, .logo-side-text .featured-banner-text-wrapper .wrapper.full-width .content, .featured-banner-text-wrapper .wrapper.full-width .logo-side-text .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 20px;
+    margin: 40px 0 10px;
     text-align: center;
   }
 }
@@ -5232,6 +5237,7 @@ input.red {
 @media only screen and (max-width: 900px) {
   .logo-side-text .large-image .text .body-desk {
     font-weight: 300;
+    width: 87%;
     font-size: 16px;
     line-height: 17.5px;
   }
@@ -5474,7 +5480,7 @@ input.red {
 }
 @media only screen and (max-width: 900px) {
   .featured-article .content h1 {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 300;
     line-height: 25px;
   }
@@ -5484,7 +5490,7 @@ input.red {
 }
 @media only screen and (max-width: 900px) {
   .featured-article .content .body-desk {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 300;
     line-height: 17.5px;
   }

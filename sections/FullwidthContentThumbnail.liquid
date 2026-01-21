@@ -1,6 +1,6 @@
 <div class="main-grid">
   <div class="header">
-    <h1 class="h1">{{ section.settings.title }}</h1>
+    <h1 class="h1">{{ section.settings.title | newline_to_br }}</h1>
     <div class="description body-desk">
       {{ section.settings.description }}
     </div>
@@ -36,7 +36,7 @@
   "class": "section fullwidth-content-thumbnail",
   "settings": [
     {
-      "type": "text",
+      "type": "textarea",
       "id": "title",
       "label": "Title"
     },
