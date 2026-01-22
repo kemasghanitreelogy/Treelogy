@@ -48,8 +48,7 @@
   /* The separator dot */
   .concerns-list__separator {
     display: inline-block;
-    margin: 0 0.4em;
-    opacity: 0.6;
+    margin: 0 0.1em;
     font-weight: 400;
   }
 {%- endstyle -%}
@@ -60,25 +59,28 @@
 
       {%- if section.settings.label != blank -%}
         <span class="concerns-list__label">{{ section.settings.label }}</span>
-      {%- endif -%}
+    {%- endif -%}
 
-      {%- for block in section.blocks -%}
-        {%- if block.settings.text != blank -%}
-          <span class="concerns-list__item" {{ block.shopify_attributes }}>
-            {{ block.settings.text | join: ' • ' }}
-          </span>
+      {% comment %} 
+                CHANGED: We capture the raw array value to prevent Shopify from stringifying it 
+            {% endcomment %}
+      {% assign concerns_list = product.metafields.custom.concerns.value %}
 
-          {%- unless forloop.last -%}
-            <span class="concerns-list__separator">{{ section.settings.separator }}</span>
-          {%- endunless -%}
-        {%- endif -%}
-      {%- endfor -%}
-
-      {%- if section.blocks.size == 0 -%}
-        <span style="opacity: 0.5; display:block; margin-top: 1rem;">
-          (Add "Text Item" blocks in the editor to see content here)
+      {%- for item in concerns_list -%}
+        <span class="concerns-list__item">
+          {{ item }}
         </span>
-      {%- endif -%}
+
+        {%- unless forloop.last -%}
+          <span class="concerns-list__separator">
+            {% if section.settings.separator != blank %}
+              {{ section.settings.separator }}
+            {% else %}
+              •
+            {% endif %}
+          </span>
+        {%- endunless -%}
+      {%- endfor -%}
 
     </div>
   </div>
@@ -105,7 +107,8 @@
         "id": "bg_color",
         "label": "Background Color",
         "default": "#fbfbf9"
-      }, {
+      },
+      {
         "type": "color",
         "id": "heading_color",
         "label": "Label Color",

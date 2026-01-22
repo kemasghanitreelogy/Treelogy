@@ -1,2 +1,175 @@
-<h1>{{ 'general.404.title' | t }}</h1>
-<p>{{ 'general.404.subtext_html' | t }}</p>
+<div class="page-width custom-404-container">
+
+  <div class="error-404-hero">
+    <p class="error-code">404</p>
+    <p class="error-subtext">
+      The page you are looking for isn't here! It might have been moved or deleted.   
+      Try check out our favorites.
+    </p>
+    <a href="{{ routes.root_url }}" class="button primary-btn">Back to Homepage</a>
+  </div>
+
+  <hr class="divider">
+
+  {% assign highlighted_collection = collections['highlighted-product'] %}
+
+  {% if highlighted_collection.products_count > 0 %}
+    <div class="highlighted-products-section">
+      <h3>While you're here, see what's trending:</h3>
+
+      <div class="product-grid">
+        {% for product in highlighted_collection.products limit: 4 %}
+          <div class="product-card">
+            <a href="{{ product.url }}" class="product-link">
+              <div class="product-image-wrapper">
+                {% if product.featured_image %}
+                  <img
+                    src="{{ product.featured_image | image_url: width: 400 }}"
+                    loading="lazy"
+                    alt="{{ product.featured_image.alt | escape }}"
+                    width="400"
+                    height="{{ 400 | divided_by: product.featured_image.aspect_ratio | ceil }}">
+                {% else %}
+                  {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                {% endif %}
+              </div>
+              <div class="product-details">
+                <p class="product-title">{{ product.title }}</p>
+                <p class="product-price">{{ product.price | money }}</p>
+              </div>
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+</div>
+
+<style>
+  .custom-404-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 20px;
+    text-align: center;
+  }
+
+  /* Hero Section Styles */
+  .error-404-hero {
+    margin-bottom: 50px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .error-code {
+    font-size: 8rem;
+    font-weight: 700;
+    line-height: 1;
+    margin: 0;
+    color: #e0e0e0;
+    /* Light gray for background effect */
+  }
+
+  .custom-404-container h1 {
+    font-size: 2.5rem;
+    margin-top: -40px;
+    /* Overlap effect */
+    margin-bottom: 20px;
+    position: relative;
+    /* Bring to front */
+  }
+
+  .error-subtext {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 30px;
+  }
+
+  /* Search Bar Styles */
+  .error-search-wrapper {
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .search-form {
+    display: flex;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .search-input {
+    border: none;
+    padding: 12px 15px;
+    flex-grow: 1;
+    font-size: 1rem;
+  }
+
+  .search-button {
+    background: white;
+    border: none;
+    padding: 0 15px;
+    cursor: pointer;
+  }
+
+  .primary-btn {
+    display: inline-block;
+    padding: 12px 30px;
+    background-color: #526547;
+    border-radius: 32px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 300;
+    transition: opacity 0.3s;
+  }
+
+  .primary-btn:hover {
+    opacity: 0.8;
+  }
+
+  .divider {
+    border: 0;
+    border-top: 1px solid #eee;
+    margin: 20px 0;
+  }
+
+  /* Grid Styles (From previous step) */
+  .highlighted-products-section h3 {
+    margin-bottom: 30px;
+    font-size: 1.5rem;
+  }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  @media (min-width: 768px) {
+    .product-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .product-link {
+    text-decoration: none;
+    color: inherit;
+  }
+  .product-image-wrapper img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  .product-title {
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 5px;
+  }
+  .product-price {
+    color: #555;
+  }
+</style>

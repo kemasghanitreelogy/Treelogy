@@ -21,6 +21,11 @@ x/*!****************************************************************************
   --mobile-viewport: 700px;
   --cb: cubic-bezier(0.645, 0.045, 0.355, 1.000);
 }
+
+#shopify-pc__banner { 
+  display: none !important; 
+}
+
 .jdgm-write-rev-link.jdgm-write-rev-link{
   font-weight: 400;
 }
@@ -808,7 +813,7 @@ input.red {
     position: absolute;
   }
   .collection-listing .product-listing .card a {
-    gap: 4px;
+    gap: 8px;
     margin-top: 4px;
   }
   .collection-listing .product-listing .card a h2 {
@@ -829,6 +834,7 @@ input.red {
     font-size: 16px;
     font-weight: 200;
     line-height: 15px;
+    margin-top: 3px;
   }
   .collection-listing .product-listing .card a .sort-desc:not(.expanded) {
     overflow: hidden;
@@ -3118,7 +3124,7 @@ input.red {
   .card .card-detail.blog-type a h2 {
     font-weight: 400;
     font-size: 16px;
-    margin-bottom: 2px;
+    margin-bottom: 8px;
     line-height: 20px;
   }
 }
@@ -3471,6 +3477,7 @@ input.red {
     font-weight: 300;
     line-height: 25px;
     width: 80%;
+    margin-bottom: 7px;
   }
   .featured-slider .description .excerpt {
     font-size: 16px;
@@ -3710,6 +3717,7 @@ input.red {
     font-size: 24px;
     line-height: 25px;
     letter-spacing: 0%;
+    margin-bottom: 7px;
   }
 }
 .featured-banner-text-wrapper .inner .description {
@@ -5664,7 +5672,7 @@ input.red {
 }
 @media only screen and (max-width: 900px) {
   .faq-wrapper .accordion-item .group-list .group-item {
-    max-height: 48px;
+    max-height: 58px;
     padding: 16px 0;
   }
   .faq-wrapper .accordion-item .group-list .group-item .accordion-header {
