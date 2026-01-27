@@ -9,7 +9,8 @@
  */
 {
   "current": {
-    "favicon": "shopify://shop_images/favicon_-_picto_-_treelogy.png",
+    "favicon_light_mode": "shopify://shop_images/favicon_-_picto_-_treelogy.png",
+    "favicon_dark_mode": "shopify://shop_images/favicon_-_picto_-_treelogy_dark_mode.png",
     "tax_footer_setting": "",
     "active_free_shipping_progress": true,
     "free_shipping_info": "free shipping",
@@ -23,6 +24,7 @@
     "free_product_selected_country": "ID",
     "bonus_2_icon": "shopify://shop_images/free_item.png",
     "complete_text": "All set!",
+    "favicon": "shopify://shop_images/favicon_-_picto_-_treelogy.png",
     "sections": {
       "Header": {
         "type": "Header",
