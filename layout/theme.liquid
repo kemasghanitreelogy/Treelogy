@@ -43,14 +43,14 @@
     {% if settings.favicon_light_mode != blank %}
       <link
         rel="icon"
-        href="{{ settings.favicon_light_mode | image_url: width: 32, height: 32 }}"
+        href="{{ settings.favicon_light_mode | image_url: width: 32, height: 32 }}&v=2026"
         type="image/png"
         media="(prefers-color-scheme: light)">
     {% endif %}
     {% if settings.favicon_dark_mode != blank %}
       <link
         rel="icon"
-        href="{{ settings.favicon_dark_mode | image_url: width: 32, height: 32 }}"
+        href="{{ settings.favicon_dark_mode | image_url: width: 32, height: 32 }}&v=2026"
         type="image/png"
         media="(prefers-color-scheme: dark)">
     {% endif %}
@@ -59,14 +59,14 @@
       <link
         rel="icon"
         type="image/png"
-        href="{{ settings.favicon_light_mode | image_url: width: 32, height: 32 }}">
+        href="{{ settings.favicon_light_mode | image_url: width: 32, height: 32 }}&v=2026">
     {%- endif -%}
 
     {%- if settings.favicon_light_mode != blank -%}
       <!-- Apple Touch Icon (Safari iOS, Home Screen) -->
       <link
         rel="apple-touch-icon"
-        href="{{ settings.favicon_light_mode | image_url: width: 180, height: 180 }}">
+        href="{{ settings.favicon_light_mode | image_url: width: 180, height: 180 }}&v=2026">
     {%- endif -%}
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
