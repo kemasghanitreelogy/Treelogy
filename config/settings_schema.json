@@ -12,8 +12,13 @@
     "settings": [
       {
         "type": "image_picker",
-        "id": "favicon",
-        "label": "Upload Favicon"
+        "id": "favicon_light_mode",
+        "label": "Upload Favicon For Light Mode"
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon_dark_mode",
+        "label": "Upload Favicon For Dark Mod"
       }
     ]
   },

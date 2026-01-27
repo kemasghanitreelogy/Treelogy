@@ -40,10 +40,16 @@
       <meta name="twitter:image" content="https://cdn.shopify.com/s/files/1/0668/4776/8764/files/The_Movement_Relief_1__11zon.png?v=1764405259">
     {% endif %}
 
-    {% if settings.favicon != blank %}
+    {% if settings.favicon_light_mode != blank %}
       <link
         rel="icon"
-        href="{{ settings.favicon | image_url: width: 32, height: 32 }}"
+        href="{{ settings.favicon_light_mode | image_url: width: 32, height: 32 }}"
+        type="image/png">
+    {% endif %}
+    {% if settings.favicon_dark_mode != blank %}
+      <link
+        rel="icon"
+        href="{{ settings.favicon_dark_mode | image_url: width: 32, height: 32 }}"
         type="image/png">
     {% endif %}
 
