@@ -45,19 +45,19 @@
       <link
         rel="icon"
         type="image/png"
-        href="{{ settings.favicon_dark_mode | image_url: width: 32, height: 32 }}&v=2029">
+        href="{{ settings.favicon_dark_mode | image_url: width: 28, height: 28 }}&v=2029">
     {%- endif -%}
     {% if settings.favicon_light_mode != blank %}
       <link
         rel="icon"
-        href="{{ settings.favicon_light_mode | image_url: width: 32, height: 32 }}&v=2029"
+        href="{{ settings.favicon_light_mode | image_url: width: 28, height: 28 }}&v=2029"
         type="image/png"
         media="(prefers-color-scheme: light)">
     {% endif %}
     {% if settings.favicon_dark_mode != blank %}
       <link
         rel="icon"
-        href="{{ settings.favicon_dark_mode | image_url: width: 32, height: 32 }}&v=2029"
+        href="{{ settings.favicon_dark_mode | image_url: width: 28, height: 28 }}&v=2029"
         type="image/png"
         media="(prefers-color-scheme: dark)">
     {% endif %}
