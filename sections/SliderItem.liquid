@@ -63,7 +63,6 @@
     }
 
     .usp-slide {
-      /* Adjust width based on needs, auto fits content here */
       flex: 0 1 auto;
       min-width: 200px;
       width: auto;
@@ -80,8 +79,7 @@
     .usp-custom-container {
       overflow: hidden;
       position: relative;
-      padding-bottom: 30px;
-      /* Space for dots */
+      padding-bottom: 30px; /* Space for dots */
     }
 
     .usp-wrapper {
@@ -106,7 +104,7 @@
       justify-content: center;
     }
 
-    /* --- DOT STYLES (MATCHING TESTIMONIAL LOGIC) --- */
+    /* --- DOT STYLES --- */
     #UspSection-{{ section.id }} .swiper-pagination-bullet {
       background-color: transparent;
       opacity: 0.3;
@@ -120,8 +118,7 @@
 
     #UspSection-{{ section.id }}
     .swiper-pagination-bullet-active {
-      background-color: {{ section.settings.text_color }}
-       !important;
+      background-color: {{ section.settings.text_color }} !important;
       opacity: 1;
     }
   }
@@ -131,7 +128,6 @@
   document.addEventListener('DOMContentLoaded', function() {
     var uspSwiper = null;
     var sectionId = '{{ section.id }}';
-    // Target our custom container
     var containerSelector = '#UspSection-' + sectionId + ' .usp-custom-container';
     var paginationSelector = '#UspSection-' + sectionId + ' .usp-pagination';
     
@@ -139,31 +135,48 @@
       var isMobile = window.innerWidth < 769;
 
       if (isMobile) {
-        // Initialize ONLY if it doesn't exist yet
         if (!uspSwiper) {
           uspSwiper = new Swiper(containerSelector, {
-            // CRITICAL: Tell Swiper to use our custom classes
             wrapperClass: 'usp-wrapper',
             slideClass: 'usp-slide',
-            
             slidesPerView: 1,
             spaceBetween: 20,
-            // Only loop if there's more than 1 slide
             loop: {% if section.blocks.size > 1 %}true{% else %}false{% endif %},
             autoHeight: true, 
+            
+            // Interaction settings
+            threshold: 10, // Helps distinguish a scroll from a swipe
             
             pagination: {
               el: paginationSelector,
               clickable: true,
             },
+            
             autoplay: {
               delay: 4000,
-              disableOnInteraction: false,
+              disableOnInteraction: false, 
+              pauseOnMouseEnter: true 
+            },
+
+            // --- THE FIX: MANUAL EVENT LISTENERS ---
+            on: {
+              init: function() {
+                // Ensure autoplay starts on load
+                this.autoplay.start();
+              },
+              touchStart: function() {
+                // Force STOP when finger touches screen
+                this.autoplay.stop();
+              },
+              touchEnd: function() {
+                // Force START when finger leaves screen
+                this.autoplay.start();
+              }
             }
           });
         }
       } else {
-        // Desktop: Destroy Swiper cleanly to enable CSS Grid
+        // Desktop: Destroy Swiper cleanly
         if (uspSwiper) {
           uspSwiper.destroy(true, true);
           uspSwiper = null;
@@ -171,14 +184,12 @@
       }
     }
 
-    // 1. Initialize on page load
     initUspSwiper();
 
-    // 2. Re-initialize on window resize
     var resizeTimer;
     window.addEventListener('resize', function() {
       clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(initUspSwiper, 200); // Debounce for performance
+      resizeTimer = setTimeout(initUspSwiper, 200);
     });
   });
 </script>

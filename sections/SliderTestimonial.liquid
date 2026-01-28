@@ -1,356 +1,211 @@
-<div
-  id="TestimonialSection-{{ section.id }}"
-  class="testimonial-section"
-  style="max-width: 1100px; margin-left: auto; margin-right: auto;">
-  <div class="page-width tm-layout">
+<div id="UspSection-{{ section.id }}" class="usp-section" style="max-width: 1100px; margin-left: auto; margin-right: auto;">
+  <div class="page-width">
 
-    <div class="testimonial-header">
-      {% if section.settings.heading != blank %}
-        <h2 class="testimonial-heading">{{ section.settings.heading }}</h2>
-      {% endif %}
-
-      <div class="rating-summary">
-        <div class="left-rating">
-          <div class="rating-stars">
-            {% for i in (1..5) %}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                class="icon-star">
-                <path
-                  fill-rule="evenodd"
-                  d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.007z"
-                  clip-rule="evenodd" />
-              </svg>
-            {% endfor %}
-          </div>
-          <span class="rating-score">{{ section.settings.rating_score }}</span>
-        </div>
-        <div class="rating-text">
-          <span class="rating-count">{{ section.settings.rating_count }}</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="tm-custom-container">
-      <div class="tm-wrapper">
+    <div class="usp-custom-container">
+      <div class="usp-wrapper">
         {% for block in section.blocks %}
-          <div class="tm-slide">
-            <div class="tm-content">
-              {% if block.settings.quote != blank %}
-                <blockquote class="tm-quote">“{{ block.settings.quote }}”</blockquote>
+          <div class="usp-slide">
+            <div class="usp-content">
+              {% if block.settings.heading != blank %}
+                <h3 class="usp-heading">{{ block.settings.heading }}</h3>
               {% endif %}
 
-              {% if block.settings.author != blank %}
-                <div class="tm-author">{{ block.settings.author }}</div>
+              {% if block.settings.text != blank %}
+                <div class="usp-text">{{ block.settings.text }}</div>
               {% endif %}
             </div>
           </div>
         {% endfor %}
       </div>
 
-      <div class="tm-pagination"></div>
+      <div class="usp-pagination"></div>
     </div>
 
   </div>
 </div>
 
 <style>
-
-
-  /*
-   =========================================
-   1. BASE STYLES (Mobile First)
-   These styles apply to ALL screens
-   =========================================
-*/
-
-  #TestimonialSection-{{ section.id }} {
-    background-color: {{ section.settings.bg_color }};
+  /* --- SECTION BASE STYLES --- */
+  #UspSection-{{ section.id }} {
+    background-color: transparent;
     color: {{ section.settings.text_color }};
     padding-top: {{ section.settings.padding_top }}px;
     padding-bottom: {{ section.settings.padding_bottom }}px;
     overflow: hidden;
-    padding-left: 20px;
-    padding-right: 20px;
   }
 
-  .tm-layout {
-    /* Default: Stack vertically */
-    display: block;
-    max-width: 1360px;
-    margin: 0 auto;
+  .usp-content {
+    text-align: center;
+    padding: 0 15px;
   }
 
-  /* --- Header --- */
-  .testimonial-header {
-    text-align: left;
-    margin-bottom: 20px;
-  }
-
-  .testimonial-heading {
-    font-size: 24px;
+  .usp-heading {
+    font-size: 16px;
     font-weight: 600;
-    margin-bottom: 20px;
-    line-height: 1.2;
+    margin-bottom: 5px;
     color: inherit;
   }
 
-  /* --- Ratings --- */
-  .left-rating {
-    display: flex;
-    gap: 10px;
-  }
-  .rating-summary {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    font-size: 14px;
-  }
-  .rating-score {
-    font-size: 20px;
-    font-weight: 300;
-    color: #2b3c35;
-  }
-  .rating-stars {
-    display: flex;
-    color: #4A6741;
-  }
-
-  .icon-star {
-    width: 18px;
-    height: 18px;
-  }
-
-  .rating-count {
-    font-weight: 300;
-  }
-
-  /* --- Swiper Container --- */
-  .tm-custom-container {
-    position: relative;
-    overflow: hidden;
-    padding-bottom: 40px;
-    width: 100%;
-  }
-
-  .tm-wrapper {
-    display: flex;
-    width: 100%;
-    align-items: flex-start;
-  }
-
-  .tm-slide {
-    flex-shrink: 0;
-    width: 100%;
-    position: relative;
-    display: block;
-  }
-
-  /* --- Content --- */
-  .tm-content {
-    text-align: left;
-    max-width: 100%;
-    color: #2b3c35;
-  }
-
-  .tm-quote {
-    font-size: 16px;
-    font-weight: 700;
-    line-height: 1.5;
-    margin: 0 0 15px;
-    font-family: inherit;
-    width: 93%;
-  }
-
-  .tm-author {
+  .usp-text {
     font-size: 16px;
     opacity: 0.8;
+    font-weight: 300;
+    color: inherit;
   }
 
-  /* --- Pagination Dots (Base) --- */
-  .tm-pagination {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    z-index: 10;
-    /* Mobile Default: Right aligned */
-    justify-content: flex-end;
-  }
-
-  /* Swiper Bullet Styles */
-  .testimonial-section .swiper-pagination-bullet {
-    background-color: transparent;
-    border: 0.3px solid black;
-    opacity: 0.3;
-    width: 5px;
-    height: 5px;
-    margin: 0 5px !important;
-    border-radius: 50%;
-    transition: opacity 0.3s ease;
-    cursor: pointer;
-  }
-
-  .testimonial-section .swiper-pagination-bullet-active {
-    opacity: 1;
-    background-color: {{ section.settings.text_color }}
-     !important;
-  }
-
-
-  /*
-   =========================================
-   2. DESKTOP / TABLET STYLES (>= 769px)
-   Adjusts layout to side-by-side
-   =========================================
-*/
-
+  /* --- DESKTOP: GRID LAYOUT (> 769px) --- */
   @media screen and (min-width: 769px) {
-
-    #TestimonialSection-{{ section.id }} {
-      padding-left: 40px;
-      padding-right: 40px;
-    }
-
-    /* 1. Flex Layout */
-    .tm-layout {
+    .usp-wrapper {
       display: flex;
-      flex-direction: row;
-      align-items: center;
-      /* Vertically center header and slider */
-      justify-content: space-between;
-      gap: 60px;
-      /* Space between columns */
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
     }
 
-    /* 2. Header Column */
-    .testimonial-header {
-      /* Fixed width for header, prevent shrinking */
-      flex: 0 0 320px;
-      margin-bottom: 0;
+    .usp-slide {
+      flex: 0 1 auto;
+      min-width: 200px;
+      width: auto;
     }
 
-    .testimonial-heading {
-      font-size: 2.2rem;
-      /* Larger font on desktop */
+    .usp-pagination {
+      display: none;
+    }
+  }
+
+  /* --- MOBILE: SWIPER LAYOUT (< 769px) --- */
+  @media screen and (max-width: 768px) {
+
+    .usp-custom-container {
+      overflow: hidden;
+      position: relative;
+      padding-bottom: 30px; /* Space for dots */
     }
 
-    .icon-star {
-      width: 20px;
-      height: 20px;
+    .usp-wrapper {
+      display: flex;
+      width: 100%;
     }
 
-    .rating-summary {
-      font-size: 1.1rem;
+    .usp-slide {
+      flex-shrink: 0;
+      width: 100%;
+      position: relative;
     }
 
-    /* 3. Slider Column */
-    .tm-custom-container {
-      /* Take remaining space */
-      flex: 1;
-      /* Critical: allows swiper to calculate width inside flex container */
-      min-width: 0;
-      padding-bottom: 50px;
-      /* More breathing room for dots */
+    .usp-pagination {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      z-index: 10;
+      display: flex;
+      justify-content: center;
     }
 
-    .tm-quote {
-      font-size: 1.6rem;
-      /* Larger quote on desktop */
-      line-height: 1.4;
+    /* --- DOT STYLES --- */
+    #UspSection-{{ section.id }} .swiper-pagination-bullet {
+      background-color: transparent;
+      opacity: 0.3;
+      width: 6px;
+      height: 6px;
+      margin: 0 4px !important;
+      border: 0.3px solid black;
+      border-radius: 50%;
+      display: inline-block;
     }
 
-    /* 4. Desktop Pagination Alignment */
-    .tm-pagination {
-      /* Change alignment to Left to match text flow */
-      justify-content: flex-start;
+    #UspSection-{{ section.id }}
+    .swiper-pagination-bullet-active {
+      background-color: {{ section.settings.text_color }} !important;
+      opacity: 1;
     }
   }
 </style>
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
+    var uspSwiper = null;
     var sectionId = '{{ section.id }}';
-    var containerSelector = '#TestimonialSection-' + sectionId + ' .tm-custom-container';
-    var paginationSelector = '#TestimonialSection-' + sectionId + ' .tm-pagination';
+    var containerSelector = '#UspSection-' + sectionId + ' .usp-custom-container';
+    var paginationSelector = '#UspSection-' + sectionId + ' .usp-pagination';
     
-    var tmSwiper = new Swiper(containerSelector, {
-      // Classes
-      wrapperClass: 'tm-wrapper',
-      slideClass: 'tm-slide',
-      
-      // Behavior
-      slidesPerView: 1,
-      spaceBetween: 40,
-      loop: {% if section.blocks.size > 1 %}true{% else %}false{% endif %},
-      autoHeight: true, 
-      grabCursor: true, // Improves UX on desktop mouse drag
-      
-      // Pagination
-      pagination: {
-        el: paginationSelector,
-        clickable: true,
-        type: 'bullets',
-      },
-      
-      // Autoplay
-      autoplay: {
-        delay: 6000,
-        disableOnInteraction: false,
-        pauseOnMouseEnter: true, // Nice to have for desktop
+    function initUspSwiper() {
+      var isMobile = window.innerWidth < 769;
+
+      if (isMobile) {
+        if (!uspSwiper) {
+          uspSwiper = new Swiper(containerSelector, {
+            wrapperClass: 'usp-wrapper',
+            slideClass: 'usp-slide',
+            slidesPerView: 1,
+            spaceBetween: 20,
+            loop: {% if section.blocks.size > 1 %}true{% else %}false{% endif %},
+            autoHeight: true, 
+            
+            // Interaction settings
+            threshold: 10, // Helps distinguish a scroll from a swipe
+            
+            pagination: {
+              el: paginationSelector,
+              clickable: true,
+            },
+            
+            autoplay: {
+              delay: 4000,
+              disableOnInteraction: false, 
+              pauseOnMouseEnter: true 
+            },
+
+            // --- THE FIX: MANUAL EVENT LISTENERS ---
+            on: {
+              init: function() {
+                // Ensure autoplay starts on load
+                this.autoplay.start();
+              },
+              touchStart: function() {
+                // Force STOP when finger touches screen
+                this.autoplay.stop();
+              },
+              touchEnd: function() {
+                // Force START when finger leaves screen
+                this.autoplay.start();
+              }
+            }
+          });
+        }
+      } else {
+        // Desktop: Destroy Swiper cleanly
+        if (uspSwiper) {
+          uspSwiper.destroy(true, true);
+          uspSwiper = null;
+        }
       }
+    }
+  
+
+    initUspSwiper();
+
+    var resizeTimer;
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(initUspSwiper, 200);
     });
   });
 </script>
 
 {% schema %}
   {
-    "name": "Testimonials (Swiper)",
+    "name": "USP Slider",
     "tag": "section",
     "class": "section",
     "settings": [
-      {
-        "type": "header",
-        "content": "Content"
-      },
-      {
-        "type": "text",
-        "id": "heading",
-        "label": "Heading",
-        "default": "from our community"
-      },
-      {
-        "type": "text",
-        "id": "rating_score",
-        "label": "Rating Score",
-        "default": "4.9/5"
-      },
-      {
-        "type": "text",
-        "id": "rating_count",
-        "label": "Rating Count Text",
-        "default": "berdasarkan 65 ulasan"
-      }, {
-        "type": "header",
-        "content": "Style"
-      }, {
-        "type": "color",
-        "id": "bg_color",
-        "label": "Background Color",
-        "default": "#F8F8F4"
-      }, {
+     {
         "type": "color",
         "id": "text_color",
         "label": "Text Color",
-        "default": "#2B3C35"
-      }, {
-        "type": "header",
-        "content": "Padding"
+        "default": "#333333"
       }, {
         "type": "range",
         "id": "padding_top",
@@ -359,7 +214,7 @@
         "step": 5,
         "unit": "px",
         "label": "Padding Top",
-        "default": 60
+        "default": 40
       }, {
         "type": "range",
         "id": "padding_bottom",
@@ -368,40 +223,38 @@
         "step": 5,
         "unit": "px",
         "label": "Padding Bottom",
-        "default": 60
+        "default": 40
       }
     ],
     "blocks": [
       {
-        "type": "testimonial",
-        "name": "Testimonial",
+        "type": "usp",
+        "name": "Feature Item",
         "settings": [
           {
-            "type": "textarea",
-            "id": "quote",
-            "label": "Quote",
-            "default": "After taking this regularly, my body feels lighter, I sleep better, and my skin has fewer breakouts."
+            "type": "text",
+            "id": "heading",
+            "label": "Heading",
+            "default": "Fast Delivery"
           }, {
             "type": "text",
-            "id": "author",
-            "label": "Author Info",
-            "default": "Verified Buyer — Indonesia (45 yo)"
+            "id": "text",
+            "label": "Subtext",
+            "default": "within 3-4 business days"
           }
         ]
       }
     ],
     "presets": [
       {
-        "name": "Testimonials (Swiper)",
+        "name": "USP Slider",
         "blocks": [
           {
-            "type": "testimonial"
+            "type": "usp"
           }, {
-            "type": "testimonial",
-            "settings": {
-              "quote": "Another great review from a happy customer. The product is amazing!",
-              "author": "Jane Doe — Singapore (32 yo)"
-            }
+            "type": "usp"
+          }, {
+            "type": "usp"
           }
         ]
       }
