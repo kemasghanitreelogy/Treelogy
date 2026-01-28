@@ -40,6 +40,13 @@
       <meta name="twitter:image" content="https://cdn.shopify.com/s/files/1/0668/4776/8764/files/The_Movement_Relief_1__11zon.png?v=1764405259">
     {% endif %}
 
+    {%- if settings.favicon_light_mode != blank -%}
+      <!-- Fallback favicon (browser lama) -->
+      <link
+        rel="icon"
+        type="image/png"
+        href="{{ settings.favicon_dark_mode | image_url: width: 32, height: 32 }}&v=2027">
+    {%- endif -%}
     {% if settings.favicon_light_mode != blank %}
       <link
         rel="icon"
@@ -54,13 +61,6 @@
         type="image/png"
         media="(prefers-color-scheme: dark)">
     {% endif %}
-    {%- if settings.favicon_light_mode != blank -%}
-      <!-- Fallback favicon (browser lama) -->
-      <link
-        rel="icon"
-        type="image/png"
-        href="{{ settings.favicon_dark_mode | image_url: width: 32, height: 32 }}&v=2027">
-    {%- endif -%}
 
     {%- if settings.favicon_light_mode != blank -%}
       <!-- Apple Touch Icon (Safari iOS, Home Screen) -->
