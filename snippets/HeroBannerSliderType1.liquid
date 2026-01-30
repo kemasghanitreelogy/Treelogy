@@ -1,12 +1,12 @@
 <div class="title">
   {%- if block.settings.t -%}
     <div class="line-one {% unless request.design_mode %} stagger {% endunless %}">
-      {{ block.settings.title_one }}
+      {{ block.settings.title_one |  newline_to_br }}
     </div>
   {%- endif -%}
   {%- if block.settings.title_two -%}
     <div class="line-two {% unless request.design_mode %} stagger {% endunless %}">
-      <h1>{{ block.settings.title_two }}</h1>
+      <h1>{{ block.settings.title_two | newline_to_br }}</h1>
     </div>
   {%- endif -%}
 </div>

@@ -28,37 +28,29 @@
         "usp_R9zkVp": {
           "type": "usp",
           "settings": {
-            "heading": "Fast Delivery 1",
-            "text": "within 3 to 4 business days"
+            "heading": "⁠Secure Checkout",
+            "text": "QRIS • E-wallet • Debit Card"
           }
         },
         "usp_DdeXXG": {
           "type": "usp",
           "settings": {
-            "heading": "Fast Delivery 2",
-            "text": "within 3 to 4 business days"
+            "heading": "Fast Dispatch Orders",
+            "text": "before 3pm ship same-day"
           }
         },
         "usp_DHgdVh": {
           "type": "usp",
           "settings": {
-            "heading": "Fast Delivery 3",
-            "text": "within 3 to 4 business days"
-          }
-        },
-        "usp_JXx8HH": {
-          "type": "usp",
-          "settings": {
-            "heading": "Fast Delivery 4",
-            "text": "within 3 to 4 business days"
+            "heading": "Real Human Support",
+            "text": "Join 50,000+ healthier customers"
           }
         }
       },
       "block_order": [
         "usp_R9zkVp",
         "usp_DdeXXG",
-        "usp_DHgdVh",
-        "usp_JXx8HH"
+        "usp_DHgdVh"
       ],
       "name": "Slider Item",
       "settings": {
@@ -215,7 +207,7 @@
       }
     },
     "slider_testimonial_FyrUUC": {
-      "type": "SliderTestimonial",
+      "type": "slidertestimonial",
       "blocks": {
         "testimonial_zbByFq": {
           "type": "testimonial",

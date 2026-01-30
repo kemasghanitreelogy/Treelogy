@@ -281,7 +281,7 @@ h2,
 }
 
 .rating-text {
-  margin-left: 8px;
+  margin-left: 4px;
 }
 h3,
 .h3 {
@@ -473,7 +473,7 @@ section {
 }
 .star-review svg {
   width: max-content;
-  height: 12px;
+  height: 14px;
 }
 
 .product-detail-wrapper .bundle-details .description {
@@ -511,6 +511,12 @@ section {
 }
 
 @media only screen and (max-width: 900px) {
+  .star-review .jdgm-prev-badge__text {
+    font-size: 12px;
+  }
+  .star-review .rating-text {
+    font-size: 12px;
+  }
   .desktop {
     display: none;
   }
@@ -784,6 +790,9 @@ input.red {
   background-color: transparent;
   border: 1px solid #2B3C35;
 }
+.collection-listing .product-listing .card a .sort-desc {
+  color: #515e56;
+}
 .collection-listing .product-listing {
   gap: 32px;
   display: grid;
@@ -811,12 +820,12 @@ input.red {
     position: absolute;
   }
   .collection-listing .product-listing .card a {
-    gap: 8px;
+    gap: 3px;
     margin-top: 4px;
   }
   .collection-listing .product-listing .card a h2 {
-    font-size: 16px;
-    font-weight: 400;
+    font-size: 13px;
+    font-weight: 500;
     line-height: 17.5px;
   }
   .collection-listing .product-listing .card a h2:not(.expanded) {
@@ -829,10 +838,9 @@ input.red {
     word-break: break-word;
   }
   .collection-listing .product-listing .card a .sort-desc {
-    font-size: 16px;
+    font-size: 13px;
     font-weight: 200;
     line-height: 15px;
-    margin-top: 3px;
   }
   .collection-listing .product-listing .card a .sort-desc:not(.expanded) {
     overflow: hidden;
@@ -844,7 +852,7 @@ input.red {
     word-break: break-word;
   }
   .collection-listing .product-listing .card a .price-wrapper {
-    font-size: 16px;
+    font-size: 13px;
     font-weight: 400;
     line-height: 17.5px;
   }
@@ -860,6 +868,10 @@ input.red {
 }
 .collection-listing .product-listing .card .card-detail svg path {
   fill: #2B3C35;
+}
+
+.collection-listing .product-listing .card .card-detail .star-review svg path {
+  fill: #567350;
 }
 
 .product-detail-wrapper {
@@ -3344,11 +3356,11 @@ input.red {
 }
 
 .hero-slider .main-grid .content.image_type_2 .line-one {
-  max-width: 85%;
+  max-width: 90%;
 }
 
 .hero-slider .main-grid .content.image_type_2 .badge-content {
-  max-width: 65%;
+  max-width: 45%;
 }
 
 .hero-slider .main-grid .content.image_type_2 .title, .hero-slider .product-review-list .content.image_type_2 .title, .hero-slider .featured-banner-text-wrapper .wrapper.full-width .content .content.image_type_2 .title, .featured-banner-text-wrapper .wrapper.full-width .hero-slider .content .content.image_type_2 .title {

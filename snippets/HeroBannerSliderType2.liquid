@@ -1,7 +1,7 @@
 <div class="title">
   {%- if block.settings.title_one -%}
     <div class="line-one {% unless request.design_mode %} stagger {% endunless %} type-2">
-      {{ block.settings.title_one }}
+      {{ block.settings.title_one |  newline_to_br }}
     </div>
   {%- endif -%}
   <div class="badge-content">
