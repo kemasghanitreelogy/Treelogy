@@ -131,6 +131,7 @@
         "logo_TVi38q",
         "logo_dH4xHJ"
       ],
+      "disabled": true,
       "name": "Logo List / Trust Badges",
       "settings": {
         "heading": "",
@@ -146,38 +147,25 @@
         "padding_bottom": 40
       }
     },
-    "text_plain_4MUaR8": {
-      "type": "TextPlain",
-      "blocks": {
-        "text_block_WHrMX3": {
-          "type": "text_block",
-          "settings": {
-            "block_title": "",
-            "block_content": "<p>Block content goes We craft organic moringa nutrition and skincare that nourishes your vitality while enriching the land they come from. <br/><br/>Guided by People Care, Earth Care, and Future Care — our principles inspired by the Balinese philosophy of Tri Hita Karana — we control every step from soil to shelf to ensure purity, efficacy, and ethical impact.here</p>"
-          }
-        }
-      },
-      "block_order": [
-        "text_block_WHrMX3"
-      ],
-      "name": "Text Plain",
+    "text_plain_product_AHGqWt": {
+      "type": "TextPlainProduct",
+      "name": "Text Plain Product",
       "settings": {
         "title": "<p>Awarded sustainable brand of the Year 2024 by the Punch Community </p>",
+        "title_award": "<p>Awarded sustainable brand (2024) & Sustainable product (2025)  by The Punch Community </p>",
         "title_weight": "600",
         "font_size": 24,
         "font_size_desc": 14,
-        "description": "",
+        "block_content": "<p>We craft organic moringa nutrition and skincare that nourishes your vitality while enriching the land they come from. <br/><br/>Guided by People Care, Earth Care, and Future Care — our principles inspired by the Balinese philosophy of Tri Hita Karana — we control every step from soil to shelf to ensure purity, efficacy, and ethical impact.</p>",
+        "block_content_award": "<p>Our moringa capsules are the first and only pure moringa leaf powder approved in capsule form under Indonesia’s traditional medicine framework.<br/><br/>Guided by People Care, Earth Care, and Future Care — our principles inspired by the Balinese philosophy of Tri Hita Karana — we control every step from soil to shelf to ensure purity, efficacy, and ethical impact.</p>",
         "text_alignment": "left",
-        "button_label": "",
-        "button_url": "",
-        "padding_horizontal": 24,
         "desktop_layout": "row",
-        "text_color": "#2b3c35",
-        "text_title_color": "#6c7256",
-        "margin_top": 0,
+        "padding_horizontal": 24,
+        "margin_top": 10,
         "margin_bottom": 0,
+        "text_title_color": "#6c7256",
         "font_size_title_block": 14,
-        "font_size_content_block": 16
+        "font_size_content_block": 14
       }
     },
     "timeline_LXqAmL": {
@@ -250,7 +238,7 @@
         "rating_score": "4.9/5",
         "rating_count": "berdasarkan 65 ulasan",
         "bg_color": "#f8f8f4",
-        "text_color": "#2b3c35",
+        "text_color": "#6c7256",
         "padding_top": 20,
         "padding_bottom": 15
       }
@@ -453,7 +441,7 @@
     "slider_item_idCzQA",
     "text_list_t89zyD",
     "logo_list_bYeXpz",
-    "text_plain_4MUaR8",
+    "text_plain_product_AHGqWt",
     "timeline_LXqAmL",
     "slider_testimonial_FyrUUC",
     "content_with_accordion_list_4eNghP",

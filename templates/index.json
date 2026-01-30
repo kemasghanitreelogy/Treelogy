@@ -14,6 +14,7 @@
       "blocks": {
         "image_type_3_BUAFzr": {
           "type": "image_type_3",
+          "disabled": true,
           "settings": {
             "image_en": "shopify://shop_images/JAN26_HOMEPAGE_COVER_DESKTOP_EN_662f1a90-4375-4340-9128-fad83899fbd7.png",
             "image_mobile_en": "shopify://shop_images/JAN26_HOMEPAGE_COVER_MOBILE_EN_1cfb894d-4c39-4d54-a354-97b72178aec7.png",
@@ -25,6 +26,7 @@
         },
         "image_picker_TbYBwc": {
           "type": "image_picker",
+          "disabled": true,
           "settings": {
             "title_one": "Premium Organic",
             "title_two": "Moringa Oleifera",
@@ -137,8 +139,8 @@
         "title": "From Seed To You, Regeneratively Farmed, Ethically Crafted.",
         "description": "From seed to you, we control every step. By farming and crafting our products ourselves, we deliver exceptional quality with complete transparency—so you know what you’re consuming, how it’s made, and the people behind it.",
         "background": "shopify://shop_images/treelogy-natural-fiber-sorting-landscape_11zon_11zon_1.webp",
-        "title_mobile": "From Seed To You, Regeneratively\nFarmed, Ethically Crafted.",
-        "description_mobile": "Moringa, nature’s quiet wonder, holds an \nunrivaled nutrient profile. Rooted in ancient \ntraditions, it nourished civilizations for \ncenturies. Today, science unveils its \nprofound benefits—connecting timeless \nwisdom with modern well-being.",
+        "title_mobile": "From Seed To You, \nRegeneratively Farmed, \nEthically Crafted.",
+        "description_mobile": "Moringa, nature’s quiet wonder, holds an \nunrivaled nutrient profile. Rooted in ancient traditions, it nourished civilizations for centuries. Today, science unveils its profound benefits—connecting timeless wisdom with modern \nwell-being.",
         "background_mobile": "shopify://shop_images/treelogy-natural-fiber-sorting.jpg",
         "button_label": "Discover Moringa",
         "button_url": "shopify://pages/farm",
