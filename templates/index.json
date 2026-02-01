@@ -14,6 +14,7 @@
       "blocks": {
         "image_type_3_BUAFzr": {
           "type": "image_type_3",
+          "disabled": true,
           "settings": {
             "image_en": "shopify://shop_images/JAN26_HOMEPAGE_COVER_DESKTOP_EN_662f1a90-4375-4340-9128-fad83899fbd7.png",
             "image_mobile_en": "shopify://shop_images/JAN26_HOMEPAGE_COVER_MOBILE_EN_1cfb894d-4c39-4d54-a354-97b72178aec7.png",
