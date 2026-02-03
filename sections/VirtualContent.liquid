@@ -1,16 +1,23 @@
-<div class="main-grid">
+<div class="main-grid virtual-content-wrapper">
+
   <div class="graphic">
     <div class="main-circle desktop">
-      <img src="{{ section.settings.main_graphic | image_url }}">
+      <img src="{{ section.settings.main_graphic | image_url }}" loading="lazy">
     </div>
-    <div class="mobile-card mobile">
+
+    <div class="mobile-card mobile" id="VirtualSlider">
+
       <div class="item">
-        <img src="{{ section.settings.main_graphic | image_url }}">
+        <img
+          src="{{ section.settings.main_graphic | image_url }}"
+          loading="lazy"
+          style="width:100%; height:auto;">
       </div>
+
       {% for block in section.blocks %}
         <div class="item">
           <div class="sub-head">
-            <div class="title">
+            <div class="title h3">
               {{ block.settings.title }}
             </div>
           </div>
@@ -20,16 +27,27 @@
         </div>
       {% endfor %}
     </div>
+
     <div class="mobile navigation">
-      <div class="dot"></div>
+      <button
+        class="dot active"
+        data-index="0"
+        aria-label="Go to slide 1"></button>
+
+      {% assign dot_index = 1 %}
       {% for block in section.blocks %}
-        <div class="dot"></div>
+        <button
+          class="dot"
+          data-index="{{ dot_index }}"
+          aria-label="Go to slide {{ dot_index | plus: 1 }}"></button>
+        {% assign dot_index = dot_index | plus: 1 %}
       {% endfor %}
     </div>
   </div>
+
   <div class="content">
     <h2 class="h1">
-      {{ section.settings.title  |  newline_to_br}}
+      {{ section.settings.title | newline_to_br }}
     </h2>
     <div class="block-content desktop">
       {% for block in section.blocks %}
@@ -50,6 +68,131 @@
     %}
   </div>
 </div>
+
+<style>
+  /* Hanya jalankan slider di Mobile */
+  @media only screen and (max-width: 768px) {
+
+    .mobile-card.mobile {
+      display: flex;
+      /* Menyusun item ke samping */
+      overflow-x: auto;
+      /* Izinkan scroll horizontal */
+      scroll-snap-type: x mandatory;
+      /* Wajib snap (berhenti pas di tengah) */
+      -webkit-overflow-scrolling: touch;
+      /* Smooth scroll di iPhone */
+      gap: 0;
+      width: 100%;
+
+      /* Sembunyikan Scrollbar */
+      scrollbar-width: none;
+      /* Firefox */
+      -ms-overflow-style: none;
+      /* IE */
+    }
+
+    .mobile-card.mobile::-webkit-scrollbar {
+      display: none;
+      /* Chrome/Safari */
+    }
+
+    .mobile-card.mobile .item {
+      flex: 0 0 100%;
+      /* Tiap item lebar 100% layar */
+      width: 100%;
+      scroll-snap-align: start;
+      /* Titik berhenti scroll */
+      scroll-snap-stop: always;
+      padding: 0 20px;
+      /* Opsional: padding kiri kanan konten */
+      box-sizing: border-box;
+      text-align: center;
+      /* Opsional: meratakan teks */
+    }
+
+    /* Style untuk Navigasi Dots */
+    .navigation {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .navigation .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: #ccc;
+      /* Warna dot mati */
+      border: none;
+      padding: 0;
+      transition: background-color 0.3s;
+    }
+
+    .navigation .dot.active {
+      background-color: #000;
+      /* Warna dot aktif (Ganti sesuai brand) */
+    }
+  }
+
+  /* Helper untuk menyembunyikan elemen di desktop/mobile sesuai class */
+  @media only screen and (min-width: 769px) {
+    .mobile {
+      display: none !important;
+    }
+  }
+  @media only screen and (max-width: 768px) {
+    .desktop {
+      display: none !important;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+  const slider = document.getElementById('VirtualSlider');
+  const dots = document.querySelectorAll('.virtual-content-wrapper .navigation .dot');
+
+  if (!slider || dots.length === 0) return;
+
+  // 1. Fungsi Klik Dot -> Scroll ke Slide
+  dots.forEach(dot => {
+    dot.addEventListener('click', function() {
+      const index = parseInt(this.getAttribute('data-index'));
+      const slideWidth = slider.offsetWidth;
+      
+      slider.scrollTo({
+        left: slideWidth * index,
+        behavior: 'smooth'
+      });
+    });
+  });
+
+  // 2. Fungsi Scroll -> Update Dot Aktif
+  let isScrolling;
+  slider.addEventListener('scroll', function() {
+    window.clearTimeout(isScrolling);
+    
+    // Debounce performance
+    isScrolling = setTimeout(function() {
+      const slideWidth = slider.offsetWidth;
+      const scrollPos = slider.scrollLeft;
+      
+      // Hitung kita ada di slide nomor berapa
+      const currentIndex = Math.round(scrollPos / slideWidth);
+
+      // Update class active
+      dots.forEach(d => d.classList.remove('active'));
+      const activeDot = document.querySelector(`.virtual-content-wrapper .navigation .dot[data-index="${currentIndex}"]`);
+      
+      if (activeDot) {
+        activeDot.classList.add('active');
+      }
+    }, 0);
+  });
+  });
+</script>
 
 {% schema %}
   {
@@ -75,7 +218,6 @@
         "label": "Artwork"
       }
     ],
-
     "blocks": [
       {
         "type": "text",

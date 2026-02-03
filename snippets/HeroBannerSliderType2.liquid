@@ -1,28 +1,31 @@
-<div class="title">
-  {%- if block.settings.title_one -%}
-    <div class="line-one {% unless request.design_mode %} stagger {% endunless %} type-2">
-      {{ block.settings.title_one |  newline_to_br }}
+<a href="{{ block.settings.link_product.url }}">
+  <div class="title">
+    {%- if block.settings.title_one -%}
+      <div class="line-one {% unless request.design_mode %} stagger {% endunless %} type-2">
+        {{ block.settings.title_one | newline_to_br }}
+      </div>
+    {%- endif -%}
+    <div class="badge-content">
+      {%- if block.settings.bagde -%}
+        <div class="badge-content-icon {% unless request.design_mode %} stagger {% endunless %} ">
+          <img src="{{ block.settings.bagde | image_url }}">
+        </div>
+      {%- endif -%}
+
+      {%- if block.settings.bagde_desc -%}
+        <div class="badge-content-desc {% unless request.design_mode %} stagger {% endunless %} ">
+          {{ block.settings.bagde_desc }}
+        </div>
+      {%- endif -%}
     </div>
-  {%- endif -%}
-  <div class="badge-content">
-    {%- if block.settings.bagde -%}
-      <div class="badge-content-icon {% unless request.design_mode %} stagger {% endunless %} ">
-        <img src="{{ block.settings.bagde | image_url }}">
-      </div>
-    {%- endif -%}
-
-    {%- if block.settings.bagde_desc -%}
-      <div class="badge-content-desc {% unless request.design_mode %} stagger {% endunless %} ">
-        {{ block.settings.bagde_desc }}
-      </div>
-    {%- endif -%}
   </div>
-</div>
 
-<div class="description desktop {% unless request.design_mode %} stagger {% endunless %} ">
-  {{ block.settings.content }}
-</div>
+  <div class="description desktop {% unless request.design_mode %} stagger {% endunless %} ">
+    {{ block.settings.content }}
+  </div>
 
-<div class="description mobile {% unless request.design_mode %} stagger {% endunless %} ">
-  {{ block.settings.content_mobile | default: block.settings.content }}
-</div>
+  <div class="description mobile {% unless request.design_mode %} stagger {% endunless %} ">
+    {{ block.settings.content_mobile | default: block.settings.content }}
+  </div>
+
+</a>

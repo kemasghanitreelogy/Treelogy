@@ -22,6 +22,9 @@ x/*!****************************************************************************
   --cb: cubic-bezier(0.645, 0.045, 0.355, 1.000);
 }
 
+html {
+  scroll-behavior: smooth;
+}
 
 
 .jdgm-write-rev-link.jdgm-write-rev-link{
@@ -1016,7 +1019,6 @@ input.red {
 .product-detail-wrapper .detail .variant-button {
   width: 100%;
   margin-top: 22px;
-  cursor: pointer;
 }
 .product-detail-wrapper .detail .variant-button .note {
   gap: 12px;
@@ -1042,6 +1044,7 @@ input.red {
   justify-content: space-between;
   flex-direction: column;
   row-gap: 10px;
+  cursor: pointer;
 }
 
 
@@ -3494,6 +3497,7 @@ input.red {
     font-weight: 300;
     line-height: 17.5px;
     margin-bottom: 16px;
+    width: 80%;
   }
 }
 .featured-slider .product-slider {
@@ -3737,6 +3741,7 @@ input.red {
 @media only screen and (max-width: 900px) {
   .featured-banner-text-wrapper .inner .description {
     margin: 8px 0 24px;
+    margin-right: 60px;
     font-size: 16px;
     line-height: 17.5px;
     letter-spacing: 0%;
@@ -6822,7 +6827,6 @@ select.jdgm-sort-dropdown:focus {
   width: fit-content;
 }
 .header-nav .running-text {
-  height: 40px;
   width: 100%;
   background-color: #6C7256;
 }

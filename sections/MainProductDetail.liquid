@@ -233,7 +233,28 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {
+    // ==================================================
+    // --- FIX START: FORCE SCROLL TO START ON IOS ---
+    // ==================================================
+    const sliderReset = document.getElementById('MainSlider');
+    
+    // 1. Matikan fitur browser yang mengingat posisi scroll lama
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
 
+    // 2. Paksa scroll ke 0 (kiri) saat load
+    if (sliderReset) {
+      sliderReset.scrollLeft = 0;
+      
+      // 3. Double check: Kadang Safari butuh waktu sepersekian detik setelah render
+      setTimeout(() => {
+         sliderReset.scrollLeft = 0;
+      }, 10);
+    }
+    // ==================================================
+    // --- FIX END ---
+    // ==================================================
     // ==================================================
     // 1. DATA SOURCE: VARIANT & METAFIELD MAP
     // ==================================================
