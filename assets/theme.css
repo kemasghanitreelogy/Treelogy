@@ -3594,7 +3594,6 @@ input.red {
     font-size: 24px;
     font-weight: 300;
     line-height: 25px;
-    width: 80%;
     margin-bottom: 7px;
   }
   .featured-slider .description .excerpt {
@@ -3602,7 +3601,7 @@ input.red {
     font-weight: 300;
     line-height: 17.5px;
     margin-bottom: 16px;
-    width: 80%;
+    width: 90%;
   }
 }
 .featured-slider .product-slider {
@@ -3898,6 +3897,7 @@ input.red {
   }
 }
 .featured-comment .inner .header .review-rating {
+  padding: 0 70px;
   gap: 12px;
   display: flex;
   margin-bottom: 12px;
