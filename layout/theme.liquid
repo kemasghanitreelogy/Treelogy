@@ -40,12 +40,34 @@
       <meta name="twitter:image" content="https://cdn.shopify.com/s/files/1/0668/4776/8764/files/The_Movement_Relief_1__11zon.png?v=1764405259">
     {% endif %}
 
-    {% if settings.favicon != blank %}
+    {%- if settings.favicon_light_mode != blank -%}
+      <!-- Fallback favicon (browser lama) -->
       <link
         rel="icon"
-        href="{{ settings.favicon | image_url: width: 32, height: 32 }}"
-        type="image/png">
+        type="image/png"
+        href="{{ settings.favicon_dark_mode | image_url: width: 32, height: 32 }}&v=3">
+    {%- endif -%}
+    {% if settings.favicon_light_mode != blank %}
+      <link
+        rel="icon"
+        href="{{ settings.favicon_light_mode | image_url: width: 32, height: 32 }}&v=3"
+        type="image/png"
+        media="(prefers-color-scheme: light)">
     {% endif %}
+    {% if settings.favicon_dark_mode != blank %}
+      <link
+        rel="icon"
+        href="{{ settings.favicon_dark_mode | image_url: width: 32, height: 32 }}&v=3"
+        type="image/png"
+        media="(prefers-color-scheme: dark)">
+    {% endif %}
+
+    {%- if settings.favicon_light_mode != blank -%}
+      <!-- Apple Touch Icon (Safari iOS, Home Screen) -->
+      <link
+        rel="apple-touch-icon"
+        href="{{ settings.favicon_light_mode | image_url: width: 180, height: 180 }}&v=3">
+    {%- endif -%}
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
 
@@ -54,11 +76,11 @@
     {{ 'theme.css' | asset_url | stylesheet_tag: preload: true }}
     {{ 'lugus-custom.css' | asset_url | stylesheet_tag }}
 
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
 
     <script src="{{ 'app.bundle.js' | asset_url }}"></script>
-    <script src="{{ 'review.bundle.js' | asset_url }}"></script>
-    <script src="{{ 'lugus-custom.js' | asset_url }}"></script>
+    <script src="{{ 'review.bundle.js' | asset_url }}" defer></script>
+    <script src="{{ 'lugus-custom.js' | asset_url }}" defer></script>
 
     <script src="https://t.contentsquare.net/uxa/b315e3b428943.js" async></script>
 

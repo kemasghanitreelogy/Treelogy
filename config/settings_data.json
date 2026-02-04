@@ -9,7 +9,8 @@
  */
 {
   "current": {
-    "favicon": "shopify://shop_images/faviconV2.png",
+    "favicon_light_mode": "shopify://shop_images/favicon_-_picto_-_treelogy_1.png",
+    "favicon_dark_mode": "shopify://shop_images/favicon_-_picto_-_treelogy_dark_mode_2.png",
     "tax_footer_setting": "",
     "active_free_shipping_progress": true,
     "free_shipping_info": "free shipping",
@@ -23,6 +24,7 @@
     "free_product_selected_country": "ID",
     "bonus_2_icon": "shopify://shop_images/free_item.png",
     "complete_text": "All set!",
+    "favicon": "shopify://shop_images/favicon_-_picto_-_treelogy.png",
     "sections": {
       "Header": {
         "type": "Header",
@@ -30,7 +32,7 @@
           "text_UY8Rx3": {
             "type": "text",
             "settings": {
-              "title": "11.11 Offer | Free Shipping all over Indonesia",
+              "title": "Free Shipping Across Indonesia | from IDR 650,000",
               "url": "shopify://collections/all"
             }
           },
