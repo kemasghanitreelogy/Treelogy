@@ -84,7 +84,18 @@
         {% endif %}
       </div>
     </div>
-
+    {% assign inside_set = product.metafields.custom.inside_set %}
+    {% if inside_set != blank %}
+      <div class="description body-desk inside-set-container">
+        {% assign inside_set = product.metafields.custom.inside_set %}
+        <div class="inside-set-wrapper">
+          <p>Inside the Set</p>
+          <div class="inside-set-content rte">
+            {{ inside_set | metafield_tag }}
+          </div>
+        </div>
+      </div>
+    {% endif %}
     {% render 'ProductStories' %}
 
     <div class="variant-button">
@@ -232,29 +243,52 @@
 {% endschema %}
 
 <script>
+  // 1. Run this immediately to stop browser from remembering scroll position
+  if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+  }
+
   document.addEventListener("DOMContentLoaded", function() {
+    
     // ==================================================
-    // --- FIX START: FORCE SCROLL TO START ON IOS ---
+    // --- FIX START: ROBUST IOS SCROLL RESET ---
     // ==================================================
     const sliderReset = document.getElementById('MainSlider');
-    
-    // 1. Matikan fitur browser yang mengingat posisi scroll lama
-    if ('scrollRestoration' in history) {
-      history.scrollRestoration = 'manual';
+
+    function forceScrollToStart() {
+      if (!sliderReset) return;
+
+      // 1. Temporarily disable CSS smooth scrolling
+      // (iOS often fails to reset position if 'smooth' is active during load)
+      sliderReset.style.scrollBehavior = 'auto';
+      sliderReset.style.webkitOverflowScrolling = 'auto';
+
+      // 2. Force scroll to 0
+      sliderReset.scrollLeft = 0;
+      sliderReset.scrollTo({ left: 0, behavior: 'auto' });
+
+      // 3. Re-enable smooth scrolling after a delay
+      setTimeout(() => {
+        sliderReset.style.scrollBehavior = '';
+        sliderReset.style.webkitOverflowScrolling = '';
+      }, 150);
     }
 
-    // 2. Paksa scroll ke 0 (kiri) saat load
-    if (sliderReset) {
-      sliderReset.scrollLeft = 0;
-      
-      // 3. Double check: Kadang Safari butuh waktu sepersekian detik setelah render
-      setTimeout(() => {
-         sliderReset.scrollLeft = 0;
-      }, 10);
-    }
+    // Trigger 1: Immediately on DOM Ready
+    forceScrollToStart();
+
+    // Trigger 2: Short delay (catches fast renders)
+    setTimeout(forceScrollToStart, 50);
+
+    // Trigger 3: When all images/content are fully loaded (Crucial for iOS)
+    window.addEventListener('load', () => {
+       setTimeout(forceScrollToStart, 10);
+    });
     // ==================================================
     // --- FIX END ---
     // ==================================================
+
+
     // ==================================================
     // 1. DATA SOURCE: VARIANT & METAFIELD MAP
     // ==================================================
@@ -388,6 +422,9 @@
 </script>
 
 <style>
+  .product-detail-wrapper .inside-set-container {
+    margin-top: 18px;
+  }
   .rich-text-container ul {
     margin-top: 7px;
     list-style-type: disc;
@@ -435,6 +472,8 @@
 
   /* 2. Main Slide */
   .native-gallery__slide {
+    border-radius: 8px;
+    overflow: hidden;
     flex: 0 0 100%;
     /* Force 100% width */
     width: 100%;
@@ -458,10 +497,14 @@
     gap: 8px;
     overflow-x: auto;
     padding-bottom: 5px;
-    margin-left: 24px;
     /* Matches legacy padding */
-    scrollbar-width: thin;
-    scrollbar-color: #ddd transparent;
+    scrollbar-width: none;
+  }
+
+  @media only screen and (max-width: 768px) {
+    .native-gallery__thumbs-scroll {
+      margin-left: 24px;
+    }
   }
 
   .native-gallery__thumb {
@@ -479,9 +522,9 @@
   .native-gallery__thumb .thumb-inner {
     width: 100%;
     height: 100%;
-    border-radius: 6px;
+    border-radius: 8px;
     overflow: hidden;
-    border: 2px solid transparent;
+    border: 1px solid transparent;
   }
 
   .native-gallery__thumb img {

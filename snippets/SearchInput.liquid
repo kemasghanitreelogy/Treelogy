@@ -3,12 +3,49 @@
     <div class="main-grid">
       <div class="input-container content">
         <div class="button-colose button-search-close">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 1.26495L10.7351 0L6 4.73505L1.26495 0L0 1.26495L4.73505 6L0 10.7351L1.26495 12L6 7.26495L10.7351 12L12 10.7351L7.26495 6L12 1.26495Z" fill="#2B3C35"/>
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 1.26495L10.7351 0L6 4.73505L1.26495 0L0 1.26495L4.73505 6L0 10.7351L1.26495 12L6 7.26495L10.7351 12L12 10.7351L7.26495 6L12 1.26495Z" fill="#2B3C35" />
           </svg>
         </div>
-        <input type="text" id="search-input" placeholder="{{ 'search.placeholder' | t }}" class="search-input" data-result="search-results">
+        <input
+          type="text"
+          id="search-input"
+          placeholder="{{ 'search.placeholder' | t }}"
+          class="search-input"
+          data-result="search-results">
       </div>
+
+      {% assign upsell_collection = collections['highlighted-product'] %}
+      {% if upsell_collection.products.size > 0 %}
+        <div class="search-upsell-container" id="search-upsell-block">
+          <div class="upsell-header">
+            <span>Trending Now</span>
+          </div>
+          <div class="upsell-grid">
+            {% for product in upsell_collection.products limit: 4 %}
+              <a href="{{ product.url }}" class="upsell-card">
+                <div class="upsell-image-wrapper">
+                  <img
+                    src="{{ product.featured_image | image_url: width: 300 }}"
+                    alt="{{ product.title }}"
+                    loading="lazy"
+                    width="150"
+                    height="150">
+                </div>
+                <div class="upsell-info">
+                  <p class="upsell-title">{{ product.title }}</p>
+                  <p class="upsell-price">{{ product.price | money }}</p>
+                </div>
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
       <div class="search-results content"></div>
     </div>
   </div>

@@ -2,12 +2,12 @@
   <div class="running-text announcement-slider-section">
     <div class="running-text-wrapper">
       <div id="announcement-slider" class="announcement-slider-container">
-        
-        {%- if section.blocks.size > 1 -%}
-          <button class="slider-arrow prev" aria-label="Previous announcement">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-          </button>
-        {%- endif -%}
+
+        {% comment %} {%- if section.blocks.size > 1 -%}
+                    <button class="slider-arrow prev" aria-label="Previous announcement">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </button>
+                {%- endif -%} {% endcomment %}
 
         <div class="slider-window">
           <div class="slider-track" id="slider-track">
@@ -20,13 +20,13 @@
             {% endfor %}
           </div>
         </div>
+      {% comment %} 
+                {%- if section.blocks.size > 1 -%}
+                  <button class="slider-arrow next" aria-label="Next announcement">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </button>
+              {%- endif -%} {% endcomment %}
 
-        {%- if section.blocks.size > 1 -%}
-          <button class="slider-arrow next" aria-label="Next announcement">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-          </button>
-        {%- endif -%}
-        
       </div>
     </div>
   </div>
@@ -34,19 +34,30 @@
     <div class="main-grid">
       <div class="burger item">
         <div class="burger-button" id="burger-button">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 22 17">
-            <path fill="#2B3C35" fill-rule="evenodd" d="M11 .594H0v2.062h11V.594Zm5.5 6.875H0V9.53h16.5V7.47ZM0 14.344h22v2.062H0v-2.062Z" clip-rule="evenodd"/>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 22 17">
+            <path
+              fill="#2B3C35"
+              fill-rule="evenodd"
+              d="M11 .594H0v2.062h11V.594Zm5.5 6.875H0V9.53h16.5V7.47ZM0 14.344h22v2.062H0v-2.062Z"
+              clip-rule="evenodd" />
           </svg>
         </div>
       </div>
       <div class="button button-search mobile" id="button-search">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 13">
-          <path fill="#33423B" d="M12 11.794 8.873 8.667a5.002 5.002 0 1 0-.706.706l3.127 3.127.706-.706Zm-6.99-2.29a3.995 3.995 0 1 1 0-7.99 3.995 3.995 0 0 1 0 7.99Z"/>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 12 13">
+          <path fill="#33423B" d="M12 11.794 8.873 8.667a5.002 5.002 0 1 0-.706.706l3.127 3.127.706-.706Zm-6.99-2.29a3.995 3.995 0 1 1 0-7.99 3.995 3.995 0 0 1 0 7.99Z" />
         </svg>
       </div>
       <div class="logo item">
         <a href="{{ request.locale.root_url }}">
-          {% render 'Image', image: section.settings.logo %}
+          {% render 'Image'
+            , image: section.settings.logo %}
         </a>
       </div>
       <div class="right-menu item">
@@ -112,14 +123,18 @@
     <div class="main-grid">
       <div class="burger item">
         <div class="burger-button" id="close-menu-button">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 12">
-            <path fill="#F8F8F2" d="M12 1.265 10.735 0 6 4.735 1.265 0 0 1.265 4.735 6 0 10.735 1.265 12 6 7.265 10.735 12 12 10.735 7.265 6 12 1.265Z"/>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 12 12">
+            <path fill="#F8F8F2" d="M12 1.265 10.735 0 6 4.735 1.265 0 0 1.265 4.735 6 0 10.735 1.265 12 6 7.265 10.735 12 12 10.735 7.265 6 12 1.265Z" />
           </svg>
         </div>
       </div>
       <div class="logo item">
         <a href="{{ request.locale.root_url }}">
-          {% render 'Image', image: section.settings.logo %}
+          {% render 'Image'
+            , image: section.settings.logo %}
         </a>
       </div>
       <div class="right-menu item">
@@ -129,7 +144,8 @@
   </div>
   <div class="header-inner">
     <div class="main-grid">
-      {% render 'MainNavigation', menu: section.settings.main_menu %}
+      {% render 'MainNavigation'
+        , menu: section.settings.main_menu %}
       <div class="header-selector">
         {% comment %}
           {% render 'CountrySelector' %}
@@ -139,7 +155,9 @@
       {% if section.settings.header_product != null %}
         <div class="featured-header-product" data-cs-capture>
           <div class="h2 heading desktop">{{ 'products.featured.title' | t }}</div>
-          {% render 'ProductCard', item: section.settings.header_product, button_cart: true %}
+          {% render 'ProductCard'
+            , item: section.settings.header_product
+            , button_cart: true %}
         </div>
       {% endif %}
     </div>
@@ -163,14 +181,15 @@
   }
 
   /* --- SLIDER STYLES (SLIDING EFFECT) --- */
-  
+
   .announcement-slider-section {
-    background-color: #000; /* Dark Background */
+    background-color: #000;
+    /* Dark Background */
     color: #ffffff !important;
     width: 100%;
     display: block;
   }
-  
+
   .running-text-wrapper {
     width: 100%;
     margin: 0 auto;
@@ -178,12 +197,14 @@
 
   .announcement-slider-container {
     display: flex;
-    justify-content: center; 
-    align-items: center;    
+    justify-content: center;
+    align-items: center;
     width: 100%;
     position: relative;
     padding: 10px 0;
     min-height: 40px;
+    /* Prevent default touch actions like scroll when swiping horizontally */
+    touch-action: pan-y;
   }
 
   /* The Window (Mask) that hides overflowing slides */
@@ -192,8 +213,7 @@
     overflow: hidden;
     max-width: 800px;
     position: relative;
-    /* Ensure only 1 line of text is visible vertically */
-    display: flex; 
+    display: flex;
     align-items: center;
   }
 
@@ -202,25 +222,28 @@
     display: flex;
     width: 100%;
     align-items: center;
-    /* Transition removed here - handled by JS for infinite loop */
     will-change: transform;
   }
 
   /* Individual Slide */
   .slide-text {
-    min-width: 100%; /* Takes up full width of the window */
+    min-width: 100%;
     flex: 0 0 100%;
     text-align: center;
     box-sizing: border-box;
     padding: 0 5px;
+    user-select: none;
+    /* Prevent text selection during swipe */
   }
 
   .slide-text a {
     text-decoration: none;
     color: #ffffff !important;
-    font-size: 14px;
+    font-size: 12px;
     display: block;
     width: 100%;
+    /* Ensure the link area captures touch */
+    pointer-events: auto;
   }
 
   /* Navigation Arrows */
@@ -242,9 +265,9 @@
   .slider-arrow:hover {
     opacity: 1;
   }
-  
+
   .slider-arrow svg {
-    stroke: #ffffff; 
+    stroke: #ffffff;
   }
 
 </style>
@@ -254,6 +277,24 @@
 
   // --- INFINITE SLIDING & AUTO-SLIDE LOGIC ---
   document.addEventListener("DOMContentLoaded", function() {
+    const searchInput = document.getElementById('search-input');
+  const upsellBlock = document.getElementById('search-upsell-block');
+  const searchResults = document.querySelector('.search-results');
+
+  if (searchInput && upsellBlock) {
+    searchInput.addEventListener('input', function(e) {
+      const query = e.target.value.trim();
+
+      if (query.length > 0) {
+        // User is typing: Hide Upsell
+        upsellBlock.style.display = 'none';
+      } else {
+        // Input is empty: Show Upsell, Clear Results
+        upsellBlock.style.display = 'block';
+        if(searchResults) searchResults.innerHTML = ''; 
+      }
+    });
+  }
     const track = document.getElementById('slider-track');
     const container = document.getElementById('announcement-slider'); // Main container
     if (!track || !container) return;
@@ -288,6 +329,10 @@
       let isAnimating = false;
       let slideInterval;
       const intervalTime = 3000; // 3000ms = 3 seconds
+
+      // Swipe Variables
+      let touchStartX = 0;
+      let touchEndX = 0;
 
       const moveSlide = () => {
         track.style.transition = 'transform 0.5s ease-in-out';
@@ -341,13 +386,32 @@
       container.addEventListener('mouseenter', stopAutoSlide);
       container.addEventListener('mouseleave', startAutoSlide);
 
-      // 6. PAUSE ON HOLD (MOBILE TOUCH)
-      // touchstart = finger down (stop)
-      container.addEventListener('touchstart', stopAutoSlide, { passive: true });
-      // touchend = finger up (start)
-      container.addEventListener('touchend', startAutoSlide);
-      // touchcancel = if touch is interrupted (start)
-      container.addEventListener('touchcancel', startAutoSlide);
+      // 6. TOUCH SWIPE LOGIC
+      
+      const handleGesture = () => {
+        // Threshold: minimum distance (px) to register as a swipe
+        const threshold = 30; 
+        
+        // Calculate difference
+        if (touchEndX < touchStartX - threshold) {
+          // Swiped Left -> Go Next
+          goToNext();
+        } else if (touchEndX > touchStartX + threshold) {
+          // Swiped Right -> Go Prev
+          goToPrev();
+        }
+      };
+
+      container.addEventListener('touchstart', (e) => {
+        stopAutoSlide();
+        touchStartX = e.changedTouches[0].screenX;
+      }, { passive: true });
+
+      container.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleGesture();
+        startAutoSlide();
+      });
 
       // 7. RESET POSITION ON TRANSITION END
       track.addEventListener('transitionend', () => {
@@ -376,64 +440,61 @@
 
 {% render 'SearchInput' %}
 
-{% render 'MiniCart', up_selling: section.settings.up_selling_products %}
+{% render 'MiniCart'
+  , up_selling: section.settings.up_selling_products %}
 
-{% render 'PopupVariants', product: section.settings.header_product %}
+{% render 'PopupVariants'
+  , product: section.settings.header_product %}
 
 {% schema %}
-{
-  "name": "Header",
-  "settings": [
-    {
-      "type": "image_picker",
-      "id": "logo",
-      "label": "Logo"
-    },
+  {
+    "name": "Header",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo"
+      },
 
-    {
-      "type": "product",
-      "id": "header_product",
-      "label": "Featured Product"
-    },
-    {
-      "type": "link_list",
-      "id": "main_menu",
-      "label": "Main Menu"
-    },
-    {
-      "type": "header",
-      "content": "Cart"
-    },
-    {
-      "type": "product_list",
-      "id": "up_selling_products",
-      "label": "Up Selling Products"
-    },
-
-    {
-      "type": "header",
-      "content": "Cart Sidebar Settings"
-    }
-  ],
-  "blocks": [
-    {
-      "limit": 5,
-      "type": "text",
-      "name": "Runing Text",
-      "settings": [
-        {
-          "type": "text",
-          "id": "title",
-          "label": "Title"
-        },
-
-        {
-          "type": "url",
-          "id": "url",
-          "label": "Link to"
-        }
-      ]
-    }
-  ]
-}
+      {
+        "type": "product",
+        "id": "header_product",
+        "label": "Featured Product"
+      },
+      {
+        "type": "link_list",
+        "id": "main_menu",
+        "label": "Main Menu"
+      },
+      {
+        "type": "header",
+        "content": "Cart"
+      }, {
+        "type": "product_list",
+        "id": "up_selling_products",
+        "label": "Up Selling Products"
+      }, {
+        "type": "header",
+        "content": "Cart Sidebar Settings"
+      }
+    ],
+    "blocks": [
+      {
+        "limit": 5,
+        "type": "text",
+        "name": "Runing Text",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title"
+          }, {
+            "type": "url",
+            "id": "url",
+            "label": "Link to"
+          }
+        ]
+      }
+    ]
+  }
 {% endschema %}

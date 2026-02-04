@@ -42,6 +42,33 @@
 {% endunless %}
 
 <style>
+  .accordion-description.rte {
+    line-height: 1.6;
+    word-break: break-word;
+  }
+
+  /* Add spacing between paragraphs */
+  .accordion-description.rte p {
+    margin-bottom: 15px;
+  }
+
+  /* Remove margin from the last element to prevent extra spacing at bottom */
+  .accordion-description.rte > :last-child {
+    margin-bottom: 0;
+  }
+
+  /* Fix List Styles (Bullets and Numbers) */
+  .accordion-description.rte ul,
+  .accordion-description.rte ol {
+    margin-left: 20px;
+    margin-bottom: 15px;
+    list-style-position: outside;
+  }
+
+  .accordion-description.rte ul {
+    list-style: disc;
+    /* Shows standard bullet points */
+  }
   .title-section-accordion {
     font-size: 24px !important;
     font-weight: 600 !important;
@@ -184,7 +211,7 @@
             {% endif %}
 
           </div>
-          <div class="accordion-description __accordion-content" style="color: {{ section.settings.accordion_text_color }};">
+          <div class="accordion-description __accordion-content rte" style="color: {{ section.settings.accordion_text_color }};">
             {{ block.settings.description }}
           </div>
         </div>

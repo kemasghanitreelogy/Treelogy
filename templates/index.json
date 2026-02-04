@@ -12,21 +12,8 @@
     "featured_image_hero_U7tQjE": {
       "type": "FeaturedImageHero",
       "blocks": {
-        "image_type_3_BUAFzr": {
-          "type": "image_type_3",
-          "disabled": true,
-          "settings": {
-            "image_en": "shopify://shop_images/JAN26_HOMEPAGE_COVER_DESKTOP_EN_662f1a90-4375-4340-9128-fad83899fbd7.png",
-            "image_mobile_en": "shopify://shop_images/JAN26_HOMEPAGE_COVER_MOBILE_EN_1cfb894d-4c39-4d54-a354-97b72178aec7.png",
-            "alt_text_en": "Treelogy Organic Moringa Capsules, winner of The Punch Awards 2025 Sustainable Product of the Year, with a Buy 2 Get 1 Free offer",
-            "image_id": "shopify://shop_images/JAN26_HOMEPAGE_COVER_DESKTOP_ID.png",
-            "image_mobile_id": "shopify://shop_images/JAN26_HOMEPAGE_COVER_MOBILE_ID.png",
-            "alt_text_id": "Kapsul Kelor Organik Treelogy pemenang Sustainable Product of the Year 2025, bersertifikat BPOM dan Halal, promo beli 2 gratis"
-          }
-        },
         "image_picker_TbYBwc": {
           "type": "image_picker",
-          "disabled": true,
           "settings": {
             "title_one": "Premium Organic",
             "title_two": "Moringa Oleifera",
@@ -41,6 +28,7 @@
         "image_type_2_XFTqMR": {
           "type": "image_type_2",
           "settings": {
+            "link_product": "organic-moringa-capsules",
             "title_one": "The first and only pure Moringa\ncapsules approved by BPOM\nas traditonal medicine**.",
             "bagde": "shopify://shop_images/badge.png",
             "bagde_desc": "No extracts. No fillers.\nJust 100% real moringa leaves,\nstem-free and nothing else.",
@@ -54,7 +42,6 @@
         }
       },
       "block_order": [
-        "image_type_3_BUAFzr",
         "image_picker_TbYBwc",
         "image_type_2_XFTqMR"
       ],
