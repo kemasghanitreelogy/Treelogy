@@ -1,4 +1,3 @@
-
 {% assign selected_bundle = product.metafields.custom.bundle_set.value %}
 
 {%- style -%}
@@ -98,7 +97,7 @@
     border-radius: 6px;
     overflow: hidden;
     position: relative;
-    border: 2px solid transparent;
+    border: 1px solid transparent;
     transition: border-color 0.2s;
     scroll-snap-align: start;
   }
@@ -347,7 +346,7 @@
       }
 
       // ============================================
-      // GALLERY LOGIC (Using 'active')
+      // GALLERY LOGIC (Using 'activeBundle')
       // ============================================
       if (window.innerWidth > 749) {
         const wrapper = document.getElementById(`bundle-gallery-wrapper-${sectionId}`);
@@ -358,14 +357,19 @@
             thumbs.forEach(t => {
                 t.addEventListener('click', function(e) {
                     e.preventDefault();
-                    thumbs.forEach(i => i.classList.remove('active'));
-                    mains.forEach(i => i.classList.remove('active'));
                     
-                    this.classList.add('active');
+                    // 1. Remove 'activeBundle' from all items (Fix: changed from 'active')
+                    thumbs.forEach(i => i.classList.remove('activeBundle'));
+                    mains.forEach(i => i.classList.remove('activeBundle'));
+                    
+                    // 2. Add 'activeBundle' to the clicked thumbnail
+                    this.classList.add('activeBundle');
+                    
+                    // 3. Find corresponding main image and add 'activeBundle'
                     const idx = this.getAttribute('data-index');
-                    
                     const target = wrapper.querySelector(`.main-image-display img[data-index="${idx}"]`);
-                    if(target) target.classList.add('active');
+                    
+                    if(target) target.classList.add('activeBundle');
                 });
             });
         }
