@@ -163,6 +163,21 @@
 
 {% if selected_bundle != blank %}
 
+  {% comment %} --- LOGIC TRANSLATION SETUP --- {% endcomment %}
+  {% liquid
+    if localization.language.iso_code == 'id'
+      assign add_cart_text = 'Tambahkan ke Keranjang'
+      assign sold_out_text = 'Habis'
+      assign adding_text = 'Menambahkan...'
+      assign added_text = 'Berhasil Ditambahkan!'
+    else
+      assign add_cart_text = 'Add to Cart'
+      assign sold_out_text = 'Sold Out'
+      assign adding_text = 'Adding...'
+      assign added_text = 'Item Added!'
+    endif
+  %}
+
   {% assign current_variant = selected_bundle.selected_or_first_available_variant %}
 
   {% for variant in selected_bundle.variants %}
@@ -274,7 +289,7 @@
               {% unless current_variant.available %}
               disabled
               {% endunless %}>
-              {% if current_variant.available %}Add to Cart{% else %}Sold Out{% endif %}
+              {% if current_variant.available %}{{ add_cart_text }}{% else %}{{ sold_out_text }}{% endif %}
             </button>
           </form>
         </div>
@@ -284,12 +299,19 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", function() {
-      // 0. CONFIG
+      // 0. CONFIG & TRANSLATION VARIABLES
       const sectionId = "{{ section.id }}";
       const bundleContainer = document.querySelector(`.section-${sectionId}`);
       const variantContainer = document.getElementById(`VariantContainer-${sectionId}`);
       const realSelect = document.getElementById(`RealProductSelect-${sectionId}`);
       const cartBtn = document.getElementById(`AddToCartBtn-${sectionId}`);
+
+      // Translatable Strings passed from Liquid
+      const TEXT_ADD_TO_CART = "{{ add_cart_text }}";
+      const TEXT_SOLD_OUT = "{{ sold_out_text }}";
+      const TEXT_ADDING = "{{ adding_text }}";
+      const TEXT_ADDED = "{{ added_text }}";
+      const TEXT_ERROR = "{{ 'products.product.error' | t | default: 'Error' }}";
 
       if (variantContainer && realSelect) {
         const buttons = variantContainer.querySelectorAll('.checkbox-button');
@@ -332,12 +354,12 @@
             
             realSelect.value = variantId;
             
-            // Stock Update
+            // Stock Update (USING TRANSLATED VARIABLE)
             if (isAvailable) {
-              cartBtn.textContent = "Add to Cart";
+              cartBtn.textContent = TEXT_ADD_TO_CART;
               cartBtn.disabled = false;
             } else {
-              cartBtn.textContent = "Sold Out";
+              cartBtn.textContent = TEXT_SOLD_OUT;
               cartBtn.disabled = true;
             }
 
@@ -426,15 +448,14 @@
       // AJAX ADD TO CART
       // ============================================
       if (cartBtn) {
-        const textAdding = "{{ 'products.product.adding' | t | default: 'Adding...' }}";
-        const textError = "{{ 'products.product.error' | t | default: 'Error' }}";
-
+        
         cartBtn.addEventListener('click', function(e) {
           e.preventDefault();
           const variantId = realSelect ? realSelect.value : null;
           if (!variantId) return;
 
-          this.innerHTML = textAdding;
+          // USING TRANSLATED VARIABLE
+          this.innerHTML = TEXT_ADDING;
           this.style.opacity = '0.7';
 
           let formData = { 'items': [{ 'id': variantId, 'quantity': 1 }] };
@@ -449,9 +470,10 @@
             return response.json();
           })
           .then(data => {
-            this.innerHTML = "Item Added!"; 
+            // USING TRANSLATED VARIABLE
+            this.innerHTML = TEXT_ADDED; 
             this.style.opacity = '1';
-            setTimeout(() => { this.innerHTML = "Add to Cart"; }, 2000);
+            setTimeout(() => { this.innerHTML = TEXT_ADD_TO_CART; }, 2000);
             
             const cartIcon = document.querySelector('a[href="/cart"]') || document.querySelector('.header__icon--cart');
             if (cartIcon) {
@@ -469,9 +491,10 @@
             });
           })
           .catch((error) => {
-            this.innerHTML = textError;
+            this.innerHTML = TEXT_ERROR;
             this.style.opacity = '1';
-            setTimeout(() => { this.innerHTML = "Add to Cart"; }, 2000);
+            // USING TRANSLATED VARIABLE
+            setTimeout(() => { this.innerHTML = TEXT_ADD_TO_CART; }, 2000);
           });
         });
       }
