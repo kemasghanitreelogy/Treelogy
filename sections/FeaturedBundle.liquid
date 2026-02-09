@@ -212,7 +212,14 @@
           {% assign inside_set = selected_bundle.metafields.custom.inside_set %}
           {% if inside_set != blank %}
             <div class="inside-set-wrapper">
-              <p>Inside the Set</p>
+              <p>
+  {% if localization.language.iso_code == 'id' %}
+    Isi Set
+  {% else %}
+    Inside the Set
+  {% endif %}
+</p>
+
               <div class="inside-set-content rte">
                 {{ inside_set | metafield_tag }}
               </div>
