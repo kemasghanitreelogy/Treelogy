@@ -21,31 +21,6 @@
       </div>
 
       {% assign upsell_collection = collections['highlighted-product'] %}
-      {% if upsell_collection.products.size > 0 %}
-        <div class="search-upsell-container" id="search-upsell-block">
-          <div class="upsell-header">
-            <span>Trending Now</span>
-          </div>
-          <div class="upsell-grid">
-            {% for product in upsell_collection.products limit: 4 %}
-              <a href="{{ product.url }}" class="upsell-card">
-                <div class="upsell-image-wrapper">
-                  <img
-                    src="{{ product.featured_image | image_url: width: 300 }}"
-                    alt="{{ product.title }}"
-                    loading="lazy"
-                    width="150"
-                    height="150">
-                </div>
-                <div class="upsell-info">
-                  <p class="upsell-title">{{ product.title }}</p>
-                  <p class="upsell-price">{{ product.price | money }}</p>
-                </div>
-              </a>
-            {% endfor %}
-          </div>
-        </div>
-      {% endif %}
       <div class="search-results content"></div>
     </div>
   </div>

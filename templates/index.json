@@ -12,18 +12,6 @@
     "featured_image_hero_U7tQjE": {
       "type": "FeaturedImageHero",
       "blocks": {
-        "image_type_3_BUAFzr": {
-          "type": "image_type_3",
-          "disabled": true,
-          "settings": {
-            "image_en": "shopify://shop_images/JAN26_HOMEPAGE_COVER_DESKTOP_EN_662f1a90-4375-4340-9128-fad83899fbd7.png",
-            "image_mobile_en": "shopify://shop_images/JAN26_HOMEPAGE_COVER_MOBILE_EN_1cfb894d-4c39-4d54-a354-97b72178aec7.png",
-            "alt_text_en": "Treelogy Organic Moringa Capsules, winner of The Punch Awards 2025 Sustainable Product of the Year, with a Buy 2 Get 1 Free offer",
-            "image_id": "shopify://shop_images/JAN26_HOMEPAGE_COVER_DESKTOP_ID.png",
-            "image_mobile_id": "shopify://shop_images/JAN26_HOMEPAGE_COVER_MOBILE_ID.png",
-            "alt_text_id": "Kapsul Kelor Organik Treelogy pemenang Sustainable Product of the Year 2025, bersertifikat BPOM dan Halal, promo beli 2 gratis"
-          }
-        },
         "image_picker_TbYBwc": {
           "type": "image_picker",
           "settings": {
@@ -139,7 +127,7 @@
         "description": "From seed to you, we control every step. By farming and crafting our products ourselves, we deliver exceptional quality with complete transparency—so you know what you’re consuming, how it’s made, and the people behind it.",
         "background": "shopify://shop_images/treelogy-natural-fiber-sorting-landscape_11zon_11zon_1.webp",
         "title_mobile": "From Seed To You, \nRegeneratively Farmed, \nEthically Crafted.",
-        "description_mobile": "Moringa, nature’s quiet wonder, holds an \nunrivaled nutrient profile. Rooted in ancient traditions, it nourished civilizations for centuries. Today, science unveils its profound benefits—connecting timeless wisdom with modern \nwell-being.",
+        "description_mobile": "Moringa, nature’s quiet wonder, holds an unrivaled nutrient profile. Rooted in ancient traditions, it nourished civilizations for centuries. Today, science unveils its profound benefits—connecting timeless wisdom with modern well-being.",
         "background_mobile": "shopify://shop_images/treelogy-natural-fiber-sorting.jpg",
         "button_label": "Discover Moringa",
         "button_url": "shopify://pages/farm",
@@ -187,7 +175,7 @@
     "featured_blog_LeFg6M": {
       "type": "FeaturedBlog",
       "settings": {
-        "title": "Rooted in Wisdom, Growing Through Knowledge.",
+        "title": "Rooted in Wisdom, Growing \nThrough Knowledge.",
         "description": "Explore the science of Moringa, discover recipes we love, and learn about our farm, factory, and well-being practices.",
         "products": "news",
         "button_label": "Discover All",

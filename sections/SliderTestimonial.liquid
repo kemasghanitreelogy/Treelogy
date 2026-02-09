@@ -1,345 +1,379 @@
-<div
-  id="TestimonialSection-{{ section.id }}"
-  class="testimonial-section"
-  style="max-width: 1100px; margin-left: auto; margin-right: auto;">
-  <a href="#judgeme-review-wrapper" class="scrolling-link">
-    <div class="page-width tm-layout">
+{% comment %}
+  1. Assign the Metafield List to a variable
+  2. Check if the list is not empty. If it is empty, the rest of the code is skipped.
+{% endcomment %}
+{% assign reviews_list = product.metafields.custom.reviews.value %}
 
-      <div class="testimonial-header">
-        {% if section.settings.heading != blank %}
-          <h2 class="testimonial-heading">{{ section.settings.heading }}</h2>
-        {% endif %}
+{% if reviews_list != blank %}
 
-        <div class="rating-summary">
-          <div class="left-rating">
-            <div class="rating-stars">
-              {% for i in (1..5) %}
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  class="icon-star">
-                  <path
-                    fill-rule="evenodd"
-                    d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.007z"
-                    clip-rule="evenodd" />
-                </svg>
-              {% endfor %}
-            </div>
-            <span class="rating-score">{{ section.settings.rating_score }}</span>
-          </div>
-          <div class="rating-text">
-            <span class="rating-count">Based on {{ product.metafields.reviews.rating_count }} reviews</span>
-          </div>
-        </div>
-      </div>
+  <div
+    id="TestimonialSection-{{ section.id }}"
+    class="testimonial-section"
+    style="max-width: 1100px; margin-left: auto; margin-right: auto;">
+    <a href="#judgeme-review-wrapper" class="scrolling-link">
+      <div class="page-width tm-layout">
 
-      <div class="tm-custom-container">
-        <div class="tm-wrapper">
-          {% for block in section.blocks %}
-            <div class="tm-slide">
-              <div class="tm-content">
-                {% if block.settings.quote != blank %}
-                  <blockquote class="tm-quote">“{{ block.settings.quote }}”</blockquote>
-                {% endif %}
+        <div class="testimonial-header">
+          {% if section.settings.heading != blank %}
+            <h2 class="testimonial-heading">{{ section.settings.heading }}</h2>
+          {% endif %}
 
-                {% if block.settings.author != blank %}
-                  <div class="tm-author">{{ block.settings.author }}</div>
-                {% endif %}
+          <div class="rating-summary">
+            <div class="left-rating">
+              <div class="rating-stars">
+                {% for i in (1..5) %}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    class="icon-star">
+                    <path
+                      fill-rule="evenodd"
+                      d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.007z"
+                      clip-rule="evenodd" />
+                  </svg>
+                {% endfor %}
               </div>
+              <span class="rating-score">{{ section.settings.rating_score }}</span>
             </div>
-          {% endfor %}
+            <div class="rating-text">
+              <span class="rating-count">
+                {% if request.locale.iso_code == 'id' %}
+                  Berdasarkan {{ reviews_list.count }} ulasan
+                {% else %}
+                  Based on {{ reviews_list.count }} reviews
+                {% endif %}
+              </span>
+            </div>
+          </div>
         </div>
 
-        <div class="tm-pagination"></div>
+        <div class="tm-custom-container">
+          <div class="tm-wrapper">
+
+            {% comment %} --- LOOP THROUGH METAOBJECTS --- {% endcomment %}
+            {% for review_item in reviews_list %}
+              <div class="tm-slide">
+                <div class="tm-content">
+
+                  {% comment %} 
+                                         NOTE: Ensure these keys match your Metaobject definition handles.
+                                         Based on your screenshot, they are likely:
+                                         - 'review_content' 
+                                         - 'reviewer_name' 
+                                    {% endcomment %}
+
+                  {% if review_item.review_content != blank %}
+                    <blockquote class="tm-quote">“{{ review_item.review_content }}”</blockquote>
+                  {% endif %}
+
+                  {% if review_item.reviewer_name != blank %}
+                    <div class="container-author">
+                      <div class="tm-author">{{ review_item.reviewer_name }}</div>
+                      <div>—</div>
+                      <div>Verified Buyer</div>
+                    </div>
+                  {% endif %}
+
+                </div>
+              </div>
+            {% endfor %}
+
+          </div>
+
+          <div class="tm-pagination"></div>
+        </div>
+
       </div>
+    </a>
+  </div>
 
-    </div>
-  </a>
-</div>
+  <style>
+    .container-author {
+      display: flex;
+      column-gap: 4px;
+    }
 
-<style>
 
-
-  /*
+    /*
    =========================================
    1. BASE STYLES (Mobile First)
-   These styles apply to ALL screens
    =========================================
 */
-
-  #TestimonialSection-{{ section.id }} {
-    background-color: {{ section.settings.bg_color }};
-    color: {{ section.settings.text_color }};
-    padding-top: {{ section.settings.padding_top }}px;
-    padding-bottom: {{ section.settings.padding_bottom }}px;
-    overflow: hidden;
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-  .scrolling-link {
-    text-decoration: none;
-    color: inherit;
-    cursor: pointer;
-    display: block;
-    /* Ensures the click area covers the whole block */
-    transition: opacity 0.2s ease;
-  }
-
-  .tm-layout {
-    /* Default: Stack vertically */
-    display: block;
-    max-width: 1360px;
-    margin: 0 auto;
-  }
-
-  /* --- Header --- */
-  .testimonial-header {
-    text-align: left;
-    margin-bottom: 20px;
-  }
-
-  .testimonial-heading {
-    font-size: 24px;
-    font-weight: 600;
-    margin-bottom: 20px;
-    line-height: 1.2;
-    color: inherit;
-  }
-
-  /* --- Ratings --- */
-  .left-rating {
-    display: flex;
-    gap: 10px;
-  }
-  .rating-summary {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    font-size: 14px;
-  }
-  .rating-score {
-    font-size: 20px;
-    font-weight: 300;
-    color: #2b3c35;
-  }
-  .rating-stars {
-    display: flex;
-    color: #4A6741;
-  }
-
-  .icon-star {
-    width: 18px;
-    height: 18px;
-  }
-
-  .rating-count {
-    font-weight: 300;
-  }
-
-  /* --- Swiper Container --- */
-  .tm-custom-container {
-    position: relative;
-    overflow: hidden;
-    padding-bottom: 40px;
-    width: 100%;
-  }
-
-  .tm-wrapper {
-    display: flex;
-    width: 100%;
-    align-items: flex-start;
-  }
-
-  .tm-slide {
-    flex-shrink: 0;
-    width: 100%;
-    position: relative;
-    display: block;
-  }
-
-  /* --- Content --- */
-  .tm-content {
-    text-align: left;
-    max-width: 100%;
-    color: #2b3c35;
-  }
-
-  .tm-quote {
-    font-size: 16px;
-    font-weight: 700;
-    line-height: 1.5;
-    margin: 0 0 15px;
-    font-family: inherit;
-    width: 93%;
-  }
-
-  .tm-author {
-    font-size: 16px;
-    opacity: 0.8;
-  }
-
-  /* --- Pagination Dots (Base) --- */
-  .tm-pagination {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    z-index: 10;
-    /* Mobile Default: Right aligned */
-    justify-content: flex-end;
-  }
-
-  /* Swiper Bullet Styles */
-  .testimonial-section .swiper-pagination-bullet {
-    background-color: transparent;
-    border: 0.3px solid black;
-    opacity: 0.3;
-    width: 5px;
-    height: 5px;
-    margin: 0 5px !important;
-    border-radius: 50%;
-    transition: opacity 0.3s ease;
-    cursor: pointer;
-  }
-
-  .testimonial-section .swiper-pagination-bullet-active {
-    opacity: 1;
-    background-color: {{ section.settings.text_color }}
-     !important;
-  }
-
-
-  /*
-   =========================================
-   2. DESKTOP / TABLET STYLES (>= 769px)
-   Adjusts layout to side-by-side
-   =========================================
-*/
-
-  @media screen and (min-width: 769px) {
 
     #TestimonialSection-{{ section.id }} {
-      padding-left: 40px;
-      padding-right: 40px;
+      background-color: {{ section.settings.bg_color }};
+      color: {{ section.settings.text_color }};
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+      overflow: hidden;
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+    .scrolling-link {
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+      display: block;
+      transition: opacity 0.2s ease;
     }
 
-    /* 1. Flex Layout */
     .tm-layout {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      /* Vertically center header and slider */
-      justify-content: space-between;
-      gap: 60px;
-      /* Space between columns */
+      display: block;
+      max-width: 1360px;
+      margin: 0 auto;
     }
 
-    /* 2. Header Column */
+    /* --- Header --- */
     .testimonial-header {
-      /* Fixed width for header, prevent shrinking */
-      flex: 0 0 320px;
-      margin-bottom: 0;
+      text-align: left;
+      margin-bottom: 20px;
     }
 
     .testimonial-heading {
-      font-size: 2.2rem;
-      /* Larger font on desktop */
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      line-height: 1.2;
+      color: inherit;
+    }
+
+    /* --- Ratings --- */
+    .left-rating {
+      display: flex;
+      gap: 10px;
+    }
+    .rating-summary {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 14px;
+    }
+    .rating-score {
+      font-size: 20px;
+      font-weight: 300;
+      color: #2b3c35;
+    }
+    .rating-stars {
+      display: flex;
+      color: #4A6741;
     }
 
     .icon-star {
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
     }
 
-    .rating-summary {
-      font-size: 1.1rem;
+    .rating-count {
+      font-weight: 300;
     }
 
-    /* 3. Slider Column */
+    /* --- Swiper Container --- */
     .tm-custom-container {
-      /* Take remaining space */
-      flex: 1;
-      /* Critical: allows swiper to calculate width inside flex container */
-      min-width: 0;
-      padding-bottom: 50px;
-      /* More breathing room for dots */
+      position: relative;
+      overflow: hidden;
+      padding-bottom: 40px;
+      width: 100%;
+    }
+
+    .tm-wrapper {
+      display: flex;
+      width: 100%;
+      align-items: flex-start;
+    }
+
+    .tm-slide {
+      flex-shrink: 0;
+      width: 100%;
+      position: relative;
+      display: block;
+    }
+
+    /* --- Content --- */
+    .tm-content {
+      text-align: left;
+      max-width: 100%;
+      color: #2b3c35;
     }
 
     .tm-quote {
-      font-size: 1.6rem;
-      /* Larger quote on desktop */
-      line-height: 1.4;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.5;
+      margin: 0 0 15px;
+      font-family: inherit;
+      width: 93%;
     }
 
-    /* 4. Desktop Pagination Alignment */
+    .tm-author {
+      font-size: 16px;
+      opacity: 0.8;
+    }
+
+    /* --- Pagination Dots (Base) --- */
     .tm-pagination {
-      /* Change alignment to Left to match text flow */
-      justify-content: flex-start;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      z-index: 10;
+      justify-content: flex-end;
     }
-  }
-</style>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var sectionId = '{{ section.id }}';
-    var containerSelector = '#TestimonialSection-' + sectionId + ' .tm-custom-container';
-    var paginationSelector = '#TestimonialSection-' + sectionId + ' .tm-pagination';
-    
-    var tmSwiper = new Swiper(containerSelector, {
-      // Classes
-      wrapperClass: 'tm-wrapper',
-      slideClass: 'tm-slide',
-      
-      // Behavior
-      slidesPerView: 1,
-      spaceBetween: 40,
-      loop: {% if section.blocks.size > 1 %}true{% else %}false{% endif %},
-      autoHeight: true, 
-      grabCursor: true, // Improves UX on desktop mouse drag
-      
-      // Pagination
-      pagination: {
-        el: paginationSelector,
-        clickable: true,
-        type: 'bullets',
-      },
-      
-      // Autoplay
-      autoplay: {
-        delay: 4000,
-        disableOnInteraction: false,
-        pauseOnMouseEnter: true, // Nice to have for desktop
-      },
+    /* Swiper Bullet Styles */
+    .testimonial-section .swiper-pagination-bullet {
+      background-color: transparent;
+      border: 0.3px solid black;
+      opacity: 0.3;
+      width: 5px;
+      height: 5px;
+      margin: 0 5px !important;
+      border-radius: 50%;
+      transition: opacity 0.3s ease;
+      cursor: pointer;
+    }
 
-      // --- THE FIX: MANUAL EVENT LISTENERS ---
-            on: {
-              init: function() {
-                // Ensure autoplay starts on load
-                this.autoplay.start();
-              },
-              touchStart: function() {
-                // Force STOP when finger touches screen
-                this.autoplay.stop();
-              },
-              touchEnd: function() {
-                // Force START when finger leaves screen
-                this.autoplay.start();
-              }
+    .testimonial-section .swiper-pagination-bullet-active {
+      opacity: 1;
+      background-color: {{ section.settings.text_color }}
+       !important;
+    }
+
+
+    /*
+   =========================================
+   2. DESKTOP / TABLET STYLES (>= 769px)
+   =========================================
+*/
+
+    @media screen and (min-width: 769px) {
+
+      #TestimonialSection-{{ section.id }} {
+        padding-left: 40px;
+        padding-right: 40px;
+      }
+
+      /* 1. Flex Layout */
+      .tm-layout {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 60px;
+      }
+
+      /* 2. Header Column */
+      .testimonial-header {
+        flex: 0 0 320px;
+        margin-bottom: 0;
+      }
+
+      .testimonial-heading {
+        font-size: 2.2rem;
+      }
+
+      .icon-star {
+        width: 20px;
+        height: 20px;
+      }
+
+      .rating-summary {
+        font-size: 1.1rem;
+      }
+
+      /* 3. Slider Column */
+      .tm-custom-container {
+        flex: 1;
+        min-width: 0;
+        padding-bottom: 50px;
+      }
+
+      .tm-quote {
+        font-size: 1.6rem;
+        line-height: 1.4;
+      }
+
+      /* 4. Desktop Pagination Alignment */
+      .tm-pagination {
+        justify-content: flex-start;
+      }
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var sectionId = '{{ section.id }}';
+      var containerSelector = '#TestimonialSection-' + sectionId + ' .tm-custom-container';
+      var paginationSelector = '#TestimonialSection-' + sectionId + ' .tm-pagination';
+      
+      // Calculate count dynamically from Liquid
+      var slideCount = {{ reviews_list.count | default: 0 }};
+
+      // Only initialize Swiper if we have slides
+      if (slideCount > 0) {
+        var tmSwiper = new Swiper(containerSelector, {
+          // Classes
+          wrapperClass: 'tm-wrapper',
+          slideClass: 'tm-slide',
+          
+          // Behavior
+          slidesPerView: 1,
+          spaceBetween: 40,
+          loop: slideCount > 1,
+          autoHeight: true, 
+          grabCursor: true, 
+          
+          // Pagination
+          pagination: {
+            el: paginationSelector,
+            clickable: true,
+            type: 'bullets',
+          },
+          
+          // Autoplay
+          autoplay: {
+            delay: 4000,
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true, 
+          },
+
+          // Manual Event Listeners
+          on: {
+            init: function() {
+              this.autoplay.start();
+            },
+            touchStart: function() {
+              this.autoplay.stop();
+            },
+            touchEnd: function() {
+              this.autoplay.start();
             }
+          }
+        });
+      }
     });
-  });
-</script>
+  </script>
+
+{% endif %}
+{% comment %} END OF METAFIELD CHECK {% endcomment %}
 
 {% schema %}
   {
-    "name": "Testimonials (Swiper)",
+    "name": "Testimonials (Meta)",
     "tag": "section",
     "class": "section",
     "settings": [
+      {
+        "type": "header",
+        "content": "Data Source"
+      },
+      {
+        "type": "paragraph",
+        "content": "This section pulls data from the Product Metafield 'Reviews' (List of Metaobjects). If that field is empty, this section will be hidden."
+      },
       {
         "type": "header",
         "content": "Content"
@@ -349,18 +383,11 @@
         "id": "heading",
         "label": "Heading",
         "default": "from our community"
-      },
-      {
+      }, {
         "type": "text",
         "id": "rating_score",
         "label": "Rating Score",
         "default": "4.9/5"
-      },
-      {
-        "type": "text",
-        "id": "rating_count",
-        "label": "Rating Count Text",
-        "default": "berdasarkan 65 ulasan"
       }, {
         "type": "header",
         "content": "Style"
@@ -397,39 +424,9 @@
         "default": 60
       }
     ],
-    "blocks": [
-      {
-        "type": "testimonial",
-        "name": "Testimonial",
-        "settings": [
-          {
-            "type": "textarea",
-            "id": "quote",
-            "label": "Quote",
-            "default": "After taking this regularly, my body feels lighter, I sleep better, and my skin has fewer breakouts."
-          }, {
-            "type": "text",
-            "id": "author",
-            "label": "Author Info",
-            "default": "Verified Buyer — Indonesia (45 yo)"
-          }
-        ]
-      }
-    ],
     "presets": [
       {
-        "name": "Testimonials (Swiper)",
-        "blocks": [
-          {
-            "type": "testimonial"
-          }, {
-            "type": "testimonial",
-            "settings": {
-              "quote": "Another great review from a happy customer. The product is amazing!",
-              "author": "Jane Doe — Singapore (32 yo)"
-            }
-          }
-        ]
+        "name": "Testimonials (Meta)"
       }
     ]
   }

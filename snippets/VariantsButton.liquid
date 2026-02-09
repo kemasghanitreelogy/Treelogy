@@ -1,5 +1,3 @@
-
-
 {% assign default_variant = product.variants[0].id %}
 
 {% if current_variant %}
@@ -113,6 +111,33 @@
       {% endunless %}
     </div>
   </div>
+
+  {% comment %} --- SEPARATOR LOGIC START --- {% endcomment %}
+  {% if forloop.first %}
+    {% assign separator_title = product.metafields.custom.separator_content_variant_title %}
+    {% assign separator_desc = product.metafields.custom.separator_content_variant_description %}
+
+    {% unless is_featuredbundle %}
+      {% if separator_title != blank or separator_desc != blank %}
+        <div class="variant-separator-content">
+          {% if separator_title != blank %}
+            <div class="separator-title">
+              <strong>{{ separator_title | newline_to_br }}</strong>
+            </div>
+          {% endif %}
+
+          {% if separator_desc != blank %}
+            <div class="separator-description">
+              {{ separator_desc }}
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+    {% endunless %}
+
+{% endif %}
+  {% comment %} --- SEPARATOR LOGIC END --- {% endcomment %}
+
   {% assign cur_cents = cur_cents | times: 2 %}
 {% endfor %}
 
