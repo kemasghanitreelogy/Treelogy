@@ -89,7 +89,14 @@
       <div class="description body-desk inside-set-container">
         {% assign inside_set = product.metafields.custom.inside_set %}
         <div class="inside-set-wrapper">
-          <p>Inside the Set</p>
+          <p>
+            {% if localization.language.iso_code == 'id' %}
+              Isi Set
+            {% else %}
+              Inside the Set
+            {% endif %}
+          </p>
+
           <div class="inside-set-content rte">
             {{ inside_set | metafield_tag }}
           </div>

@@ -213,12 +213,12 @@
           {% if inside_set != blank %}
             <div class="inside-set-wrapper">
               <p>
-  {% if localization.language.iso_code == 'id' %}
-    Isi Set
-  {% else %}
-    Inside the Set
-  {% endif %}
-</p>
+                {% if localization.language.iso_code == 'id' %}
+                  Isi Set
+                {% else %}
+                  Inside the Set
+                {% endif %}
+              </p>
 
               <div class="inside-set-content rte">
                 {{ inside_set | metafield_tag }}
