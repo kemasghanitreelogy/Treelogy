@@ -3512,10 +3512,6 @@ input.red {
   max-width: 90%;
 }
 
-.hero-slider .main-grid .content.image_type_2 .badge-content {
-  max-width: 45%;
-}
-
 .hero-slider .main-grid .content.image_type_2 .title, .hero-slider .product-review-list .content.image_type_2 .title, .hero-slider .featured-banner-text-wrapper .wrapper.full-width .content .content.image_type_2 .title, .featured-banner-text-wrapper .wrapper.full-width .hero-slider .content .content.image_type_2 .title {
   display: block;
 }
@@ -3531,6 +3527,9 @@ input.red {
     font-size: 20px;
     letter-spacing: 0;
     line-height: 125%;
+  }
+  .hero-slider .main-grid .content.image_type_2 .badge-content {
+    max-width: 45%;
   }
 }
 .hero-slider .main-grid .content.image_type_2 .badge-content, .hero-slider .product-review-list .content.image_type_2 .badge-content, .hero-slider .featured-banner-text-wrapper .wrapper.full-width .content .content.image_type_2 .badge-content, .featured-banner-text-wrapper .wrapper.full-width .hero-slider .content .content.image_type_2 .badge-content {
@@ -3966,6 +3965,7 @@ input.red {
     font-size: 24px;
     font-weight: 300;
     line-height: 25px;
+    padding: 0 5px;
   }
 }
 .featured-comment .inner .card {
