@@ -36,7 +36,7 @@
               </div>
               <span class="rating-score">{{ section.settings.rating_score }}</span>
             </div>
-            <div class="rating-text">
+            {% comment %} <div class="rating-text">
               <span class="rating-count">
                 {% if request.locale.iso_code == 'id' %}
                   Berdasarkan {{ reviews_list.count }} ulasan
@@ -44,7 +44,7 @@
                   Based on {{ reviews_list.count }} reviews
                 {% endif %}
               </span>
-            </div>
+            </div> {% endcomment %}
           </div>
         </div>
 
