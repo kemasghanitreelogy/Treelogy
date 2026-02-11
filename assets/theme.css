@@ -1356,6 +1356,7 @@ input.red {
 .tags {
   gap: 12px;
   display: flex;
+  flex-wrap: wrap;
   margin-bottom: 16px;
 }
 
