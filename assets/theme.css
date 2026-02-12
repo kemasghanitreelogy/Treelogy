@@ -698,7 +698,7 @@ section {
   height: 0;
 }
 .__accordion-wrapper.active {
-  max-height: 1000px !important;
+  max-height: 2000px !important;
 }
 
 .__accordion-wrapper:not(.active) .__accordion-content {

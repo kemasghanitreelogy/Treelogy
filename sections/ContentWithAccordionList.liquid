@@ -42,54 +42,79 @@
 {% endunless %}
 
 <style>
+  /* --- ACCORDION CORE STYLES --- */
   .accordion-description.rte {
     line-height: 1.6;
     word-break: break-word;
+    /* Hidden State */
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    /* Default Transition: Standard Slide (Bottom to Top) */
+    transition: max-height 0.4s ease-out
+    , opacity 0.4s ease-out;
+    padding-bottom: 0;
+    will-change: max-height
+    , opacity;
   }
 
-  /* Add spacing between paragraphs */
+  /* Open State */
+  .accordion.active .accordion-description.rte {
+    opacity: 1;
+    /* max-height is set by JS */
+  }
+
+  /* --- SPECIAL ANIMATION: Sibling Triggered (Top to Down) --- */
+  .accordion-description.collapse-top-down {
+    /* Wipes content from Top to Bottom */
+    animation: clipTopDown 0.4s ease-out forwards;
+  }
+
+  @keyframes clipTopDown {
+    0% {
+      clip-path: inset(0 0 0 0);
+      opacity: 1;
+    }
+    100% {
+      clip-path: inset(100% 0 0 0);
+      opacity: 0;
+    }
+  }
+
+  /* Standard RTE Styling */
   .accordion-description.rte p {
     margin-bottom: 0;
   }
-
-  /* Remove margin from the last element to prevent extra spacing at bottom */
   .accordion-description.rte > :last-child {
     margin-bottom: 0;
   }
-
-  /* Fix List Styles (Bullets and Numbers) */
   .accordion-description.rte ul,
   .accordion-description.rte ol {
     margin-left: 20px;
     margin-bottom: 15px;
     list-style-position: outside;
   }
-
   .accordion-description.rte ul {
     list-style: disc;
-    /* Shows standard bullet points */
+    display: flex;
+    flex-direction: column;
+    row-gap: 15px;
   }
+
+  /* Header Styling */
   .title-section-accordion {
     font-size: 24px !important;
     font-weight: 600 !important;
   }
-  .accordion-toggle-checkbox {
-    display: none;
-  }
 
-  /* 2. By default, hide items that have the 'extended-item' class */
   .accordion-list-item.extended-item {
     display: none;
   }
-
   .accordion-list.accordion-list-section {
     padding: 0 !important;
   }
 
   @media only screen and (max-width: 900px) {
-    .accordion-list.accordion-list-section {
-      padding: 0 !important;
-    }
     .sub-content-header {
       margin-bottom: 25px;
     }
@@ -97,6 +122,15 @@
       font-weight: 300;
     }
   }
+
+  #Accordion-{{ section.id }}
+  .scroll-container .accordion-header {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
   #Accordion-{{ section.id }}
   .scroll-container .accordion-header h2 {
     font-size: 16px;
@@ -107,20 +141,21 @@
     margin-right: 30px;
   }
 
-  /* 3. When checkbox is CHECKED, show the extended items */
+  /* "See More" Toggle Logic */
+  .accordion-toggle-checkbox {
+    display: none;
+  }
   .accordion-toggle-checkbox:checked ~ .scroll-container .accordion-list-item.extended-item {
     display: block;
     animation: fadeIn 0.5s ease;
   }
 
-  /* 4. TOGGLE LOGIC FOR BUTTON TEXT */
   .text-less {
     display: none;
   }
   .text-more {
     display: inline;
   }
-
   .accordion-toggle-checkbox:checked ~ .see-more-label .text-more {
     display: none;
   }
@@ -128,7 +163,6 @@
     display: inline;
   }
 
-  /* Animation */
   @keyframes fadeIn {
     from {
       opacity: 0;
@@ -149,12 +183,16 @@
     font-size: 16px;
   }
 
-  /* 5. ICON STYLING */
-  /* Ensure the SVG (default or custom) stays a consistent size */.accordion-header svg {
+  .accordion-header svg {
     width: 12px;
     height: 12px;
     flex-shrink: 0;
-    /* Prevents icon from squishing if title is long */
+    transition: transform 0.3s ease;
+  }
+
+  /* Optional: Rotate icon when active */
+  .accordion.active .accordion-header svg {
+    transform: rotate(45deg);
   }
 </style>
 
@@ -192,13 +230,12 @@
           {% assign is_extended = true %}
         {% endif %}
 
-        <div class="accordion __accordion-wrapper accordion-list-item {% if is_extended %}extended-item{% endif %}">
+        <div class="accordion __accordion-wrapper accordion-list-item {% if is_extended %}extended-item{% endif %}" {{ block.shopify_attributes }}>
           <div class="accordion-header __accordion-button">
             <h2 class="text-start py-2 text-2xl md:text-4xl">
               {{ block.settings.title }}
             </h2>
 
-            {% comment %} RENDER ICON: Custom or Default {% endcomment %}
             {% if section.settings.custom_icon != blank %}
               {{ section.settings.custom_icon }}
             {% else %}
@@ -227,6 +264,99 @@
 
   </div>
 </div>
+
+<script>
+  (function() {
+    function initAccordion(container) {
+      if (!container) return;
+      const items = container.querySelectorAll(".accordion");
+
+      items.forEach(item => {
+        // Clone header to remove old listeners (Clean for Theme Editor)
+        const header = item.querySelector(".accordion-header");
+        const newHeader = header.cloneNode(true);
+        header.parentNode.replaceChild(newHeader, header);
+
+        const content = item.querySelector(".accordion-description");
+
+        newHeader.addEventListener("click", () => {
+          const isOpen = item.classList.contains("active");
+
+          // 1. SIBLING LOGIC: Close others
+          items.forEach(sibling => {
+            if (sibling !== item && sibling.classList.contains("active")) {
+              const siblingContent = sibling.querySelector(".accordion-description");
+              
+              // Apply special animation class
+              siblingContent.classList.add("collapse-top-down");
+              sibling.classList.remove("active");
+              siblingContent.style.maxHeight = null;
+
+              // Clean up class after animation
+              setTimeout(() => {
+                siblingContent.classList.remove("collapse-top-down");
+              }, 400); 
+            }
+          });
+
+          // 2. SELF LOGIC: Toggle normally
+          if (isOpen) {
+            // Close Self
+            item.classList.remove("active");
+            content.style.maxHeight = null;
+          } else {
+            // Open Self
+            item.classList.add("active");
+            content.style.maxHeight = content.scrollHeight + "px";
+
+            // --- SMART SCROLL LOGIC ---
+            // Only scroll IF the header has been pushed off-screen.
+            
+            setTimeout(() => {
+              // Get current position of the clicked header
+              const rect = item.getBoundingClientRect();
+              
+              // Define a "Safe Zone" at the top (e.g., for Sticky Headers)
+              // 100px is usually safe. 0 would be the very top edge.
+              const stickyHeaderOffset = 100; 
+
+              // CHECK: Is the header ABOVE the safe zone?
+              // rect.top is the distance from the top of the viewport.
+              // If rect.top is negative (e.g. -50), it's hidden above.
+              // If rect.top is less than our offset (e.g. 20), it's too close to the top.
+              
+              if (rect.top < stickyHeaderOffset) {
+                // It is hidden or too high! Scroll it down.
+                const absoluteTop = rect.top + window.pageYOffset;
+                
+                window.scrollTo({
+                  top: absoluteTop - stickyHeaderOffset,
+                  behavior: 'smooth'
+                });
+              } 
+              // ELSE: If rect.top >= 100, we do NOTHING. The user sees it fine.
+
+            }, 350); // Wait for the collapse animation (approx 350-400ms)
+          }
+        });
+      });
+    }
+
+    // Initialize on Page Load
+    document.addEventListener("DOMContentLoaded", function() {
+      const sectionContainer = document.getElementById("Accordion-{{ section.id }}");
+      initAccordion(sectionContainer);
+    });
+
+    // Initialize in Shopify Design Mode
+    document.addEventListener("shopify:section:load", function(event) {
+      if (event.detail.sectionId === "{{ section.id }}") {
+        const sectionContainer = document.getElementById("Accordion-{{ section.id }}");
+        initAccordion(sectionContainer);
+      }
+    });
+  })();
+</script>
 
 {% schema %}
   {
