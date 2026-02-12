@@ -59,32 +59,6 @@
         "padding_bottom": 10
       }
     },
-    "text_list_t89zyD": {
-      "type": "TextList",
-      "blocks": {
-        "item_YcG9Wb": {
-          "type": "item",
-          "settings": {
-            "text": "{{ product.metafields.custom.concerns | metafield_text }}"
-          }
-        }
-      },
-      "block_order": [
-        "item_YcG9Wb"
-      ],
-      "name": "Text List / Concerns",
-      "settings": {
-        "label": "Concerns:",
-        "bg_color": "#fbfbf9",
-        "heading_color": "#5e6d55",
-        "text_color": "#757575",
-        "font_size": 16,
-        "text_align": "left",
-        "max_width": 800,
-        "padding_top": 20,
-        "padding_bottom": 20
-      }
-    },
     "logo_list_bYeXpz": {
       "type": "LogoList",
       "blocks": {
@@ -146,25 +120,42 @@
         "padding_bottom": 40
       }
     },
-    "text_plain_product_AHGqWt": {
-      "type": "TextPlainProduct",
-      "name": "Text Plain Product",
+    "text_list_t89zyD": {
+      "type": "TextList",
+      "blocks": {
+        "item_YcG9Wb": {
+          "type": "item",
+          "settings": {
+            "text": "{{ product.metafields.custom.concerns | metafield_text }}"
+          }
+        }
+      },
+      "block_order": [
+        "item_YcG9Wb"
+      ],
+      "name": "Text List / Concerns",
       "settings": {
-        "title": "<p>Awarded sustainable brand of the Year 2024 by the Punch Community </p>",
-        "title_award": "<p>Awarded sustainable brand (2024) & Sustainable product (2025)  by The Punch Community </p>",
-        "title_weight": "600",
-        "font_size": 24,
-        "font_size_desc": 14,
-        "block_content": "<p>We craft organic moringa nutrition and skincare that nourishes your vitality while enriching the land they come from. <br/><br/>Guided by People Care, Earth Care, and Future Care — our principles inspired by the Balinese philosophy of Tri Hita Karana — we control every step from soil to shelf to ensure purity, efficacy, and ethical impact.</p>",
-        "block_content_award": "<p>Our moringa capsules are the first and only pure moringa leaf powder approved in capsule form under Indonesia’s traditional medicine framework.<br/><br/>Guided by People Care, Earth Care, and Future Care — our principles inspired by the Balinese philosophy of Tri Hita Karana — we control every step from soil to shelf to ensure purity, efficacy, and ethical impact.</p>",
-        "text_alignment": "left",
-        "desktop_layout": "row",
-        "padding_horizontal": 24,
-        "margin_top": 10,
-        "margin_bottom": 0,
-        "text_title_color": "#6c7256",
-        "font_size_title_block": 14,
-        "font_size_content_block": 14
+        "label": "Concerns:",
+        "bg_color": "#fbfbf9",
+        "heading_color": "#5e6d55",
+        "text_color": "#757575",
+        "font_size": 16,
+        "text_align": "left",
+        "max_width": 800,
+        "padding_top": 20,
+        "padding_bottom": 20
+      }
+    },
+    "slider_testimonial_FyrUUC": {
+      "type": "slidertestimonial",
+      "name": "Testimonials (Swiper)",
+      "settings": {
+        "heading": "from our community",
+        "rating_score": "4.9/5",
+        "bg_color": "#f8f8f4",
+        "text_color": "#6c7256",
+        "padding_top": 20,
+        "padding_bottom": 15
       }
     },
     "timeline_LXqAmL": {
@@ -191,18 +182,6 @@
         "max_width": 600,
         "padding_top": 0,
         "padding_bottom": 36
-      }
-    },
-    "slider_testimonial_FyrUUC": {
-      "type": "slidertestimonial",
-      "name": "Testimonials (Swiper)",
-      "settings": {
-        "heading": "from our community",
-        "rating_score": "4.9/5",
-        "bg_color": "#f8f8f4",
-        "text_color": "#6c7256",
-        "padding_top": 20,
-        "padding_bottom": 15
       }
     },
     "content_with_accordion_list_4eNghP": {
@@ -267,6 +246,28 @@
         "see_less_label": "See Less",
         "button_label": "",
         "button_url": ""
+      }
+    },
+    "text_plain_product_AHGqWt": {
+      "type": "TextPlainProduct",
+      "disabled": true,
+      "name": "Text Plain Product",
+      "settings": {
+        "title": "<p>Awarded sustainable brand of the Year 2024 by the Punch Community </p>",
+        "title_award": "<p>Awarded sustainable brand (2024) & Sustainable product (2025)  by The Punch Community </p>",
+        "title_weight": "600",
+        "font_size": 24,
+        "font_size_desc": 14,
+        "block_content": "<p>We craft organic moringa nutrition and skincare that nourishes your vitality while enriching the land they come from. <br/><br/>Guided by People Care, Earth Care, and Future Care — our principles inspired by the Balinese philosophy of Tri Hita Karana — we control every step from soil to shelf to ensure purity, efficacy, and ethical impact.</p>",
+        "block_content_award": "<p>Our moringa capsules are the first and only pure moringa leaf powder approved in capsule form under Indonesia’s traditional medicine framework.<br/><br/>Guided by People Care, Earth Care, and Future Care — our principles inspired by the Balinese philosophy of Tri Hita Karana — we control every step from soil to shelf to ensure purity, efficacy, and ethical impact.</p>",
+        "text_alignment": "left",
+        "desktop_layout": "row",
+        "padding_horizontal": 24,
+        "margin_top": 10,
+        "margin_bottom": 0,
+        "text_title_color": "#6c7256",
+        "font_size_title_block": 14,
+        "font_size_content_block": 14
       }
     },
     "featured_bundle_KcrzKt": {
@@ -401,13 +402,13 @@
   "order": [
     "main",
     "slider_item_idCzQA",
-    "text_list_t89zyD",
     "logo_list_bYeXpz",
-    "text_plain_product_AHGqWt",
-    "timeline_LXqAmL",
+    "text_list_t89zyD",
     "slider_testimonial_FyrUUC",
+    "timeline_LXqAmL",
     "content_with_accordion_list_4eNghP",
     "content_with_accordion_list_nqD3E3",
+    "text_plain_product_AHGqWt",
     "featured_bundle_KcrzKt",
     "hero_baner_CX6VQR",
     "review_judge_me_aJGGPd",
