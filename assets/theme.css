@@ -1304,7 +1304,7 @@ input.red {
   height: 40px;
   color: #F8F8F2;
   cursor: pointer;
-  border-radius: 32px;
+  border-radius: 8px;
   transition: all 0.45s ease-out;
   background-color: #526547;
 }
