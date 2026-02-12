@@ -425,6 +425,48 @@
         }
       }
     }
+    // ==================================================
+    // 5. FIX: AUTO-TRIGGER VARIANT SWAP (THE "KICKSTART")
+    // ==================================================
+    // We wait 300ms to ensure the conflicting "Featured Bundle" script has finished loading
+    setTimeout(function() {
+      const mainWrapper = document.querySelector('.product-detail-wrapper');
+      if (!mainWrapper) return;
+
+      const activeBtn = mainWrapper.querySelector('.checkbox-button.active');
+      const allBtns = mainWrapper.querySelectorAll('.checkbox-button');
+
+      // Logic: If we have multiple variants, click a different one, then click back.
+      if (activeBtn && allBtns.length > 1) {
+        let otherBtn = null;
+        
+        // Find the first button that is NOT the active one
+        for (let i = 0; i < allBtns.length; i++) {
+          if (allBtns[i] !== activeBtn) {
+            otherBtn = allBtns[i];
+            break;
+          }
+        }
+
+        if (otherBtn) {
+          // 1. Click the "other" variant
+          otherBtn.click();
+          
+          // 2. Immediately click the "original" active variant back
+          // We use a tiny timeout to ensure the DOM registers the change
+          setTimeout(() => {
+            activeBtn.click(); 
+            console.log("Auto-correction: Product selection reset to default.");
+          }, 10);
+        }
+      } 
+      // Logic: If there is only 1 variant, just re-click it to force the ID binding
+      else if (activeBtn) {
+        activeBtn.click();
+        console.log("Auto-correction: Single variant re-initialized.");
+      }
+      
+    }, 500); // 500ms delay to run AFTER other scripts
   });
 </script>
 
