@@ -131,7 +131,6 @@
         "logo_TVi38q",
         "logo_dH4xHJ"
       ],
-      "disabled": true,
       "name": "Logo List / Trust Badges",
       "settings": {
         "heading": "",
@@ -196,47 +195,10 @@
     },
     "slider_testimonial_FyrUUC": {
       "type": "slidertestimonial",
-      "blocks": {
-        "testimonial_zbByFq": {
-          "type": "testimonial",
-          "settings": {
-            "quote": "After taking this regularly, my body feels lighter, I sleep better, and my skin has fewer breakouts.",
-            "author": "Verified Buyer — Indonesia (45 yo)"
-          }
-        },
-        "testimonial_XCdDQM": {
-          "type": "testimonial",
-          "settings": {
-            "quote": "After taking this regularly, my body feels lighter, I sleep better, and my skin has fewer breakouts.",
-            "author": "Verified Buyer — Indonesia (45 yo)"
-          }
-        },
-        "testimonial_bdXqz9": {
-          "type": "testimonial",
-          "settings": {
-            "quote": "After taking this regularly, my body feels lighter, I sleep better, and my skin has fewer breakouts.",
-            "author": "Verified Buyer — Indonesia (45 yo)"
-          }
-        },
-        "testimonial_bUKNLH": {
-          "type": "testimonial",
-          "settings": {
-            "quote": "Another great review from a happy customer. The product is amazing!",
-            "author": "Jane Doe — Singapore (32 yo)"
-          }
-        }
-      },
-      "block_order": [
-        "testimonial_zbByFq",
-        "testimonial_XCdDQM",
-        "testimonial_bdXqz9",
-        "testimonial_bUKNLH"
-      ],
       "name": "Testimonials (Swiper)",
       "settings": {
         "heading": "from our community",
         "rating_score": "4.9/5",
-        "rating_count": "berdasarkan 65 ulasan",
         "bg_color": "#f8f8f4",
         "text_color": "#6c7256",
         "padding_top": 20,
