@@ -1,7 +1,21 @@
-<div id="UspSection-{{ section.id }}" class="usp-section" style="max-width: 1100px; margin-left: auto; margin-right: auto;">
+{{ 'usp-slider.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'usp-slider.js' | asset_url }}" defer="defer"></script>
+
+{%- style -%}
+  #UspSection-{{ section.id }} {
+    --usp-text-color: {{ section.settings.text_color }};
+    --usp-padding-top: {{ section.settings.padding_top }}px;
+    --usp-padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+{%- endstyle -%}
+
+<div id="UspSection-{{ section.id }}" class="usp-section-wrapper">
   <div class="page-width">
 
-    <div class="usp-custom-container">
+    <div class="usp-custom-container" 
+         data-section-id="{{ section.id }}"
+         data-loop="{% if section.blocks.size > 1 %}true{% else %}false{% endif %}">
+         
       <div class="usp-wrapper">
         {% for block in section.blocks %}
           <div class="usp-slide">
@@ -23,176 +37,6 @@
 
   </div>
 </div>
-
-<style>
-  /* --- SECTION BASE STYLES --- */
-  #UspSection-{{ section.id }} {
-    background-color: transparent;
-    color: {{ section.settings.text_color }};
-    padding-top: {{ section.settings.padding_top }}px;
-    padding-bottom: {{ section.settings.padding_bottom }}px;
-    overflow: hidden;
-  }
-
-  .usp-content {
-    text-align: center;
-    padding: 0 15px;
-  }
-
-  .usp-heading {
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 5px;
-    color: inherit;
-  }
-
-  .usp-text {
-    font-size: 16px;
-    opacity: 0.8;
-    font-weight: 300;
-    color: inherit;
-  }
-
-  /* --- DESKTOP: GRID LAYOUT (> 769px) --- */
-  @media screen and (min-width: 769px) {
-    .usp-wrapper {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 30px;
-    }
-
-    .usp-slide {
-      flex: 0 1 auto;
-      min-width: 200px;
-      width: auto;
-    }
-
-    .usp-pagination {
-      display: none;
-    }
-  }
-
-  /* --- MOBILE: SWIPER LAYOUT (< 769px) --- */
-  @media screen and (max-width: 768px) {
-
-    .usp-custom-container {
-      overflow: hidden;
-      position: relative;
-      padding-bottom: 30px; /* Space for dots */
-    }
-
-    .usp-wrapper {
-      display: flex;
-      width: 100%;
-    }
-
-    .usp-slide {
-      flex-shrink: 0;
-      width: 100%;
-      position: relative;
-    }
-
-    .usp-pagination {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      text-align: center;
-      z-index: 10;
-      display: flex;
-      justify-content: center;
-    }
-
-    /* --- DOT STYLES --- */
-    #UspSection-{{ section.id }} .swiper-pagination-bullet {
-      background-color: transparent;
-      opacity: 0.3;
-      width: 6px;
-      height: 6px;
-      margin: 0 4px !important;
-      border: 0.3px solid black;
-      border-radius: 50%;
-      display: inline-block;
-    }
-
-    #UspSection-{{ section.id }}
-    .swiper-pagination-bullet-active {
-      background-color: {{ section.settings.text_color }} !important;
-      opacity: 1;
-    }
-  }
-</style> 
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var uspSwiper = null;
-    var sectionId = '{{ section.id }}';
-    var containerSelector = '#UspSection-' + sectionId + ' .usp-custom-container';
-    var paginationSelector = '#UspSection-' + sectionId + ' .usp-pagination';
-    
-    function initUspSwiper() {
-      var isMobile = window.innerWidth < 769;
-
-      if (isMobile) {
-        if (!uspSwiper) {
-          uspSwiper = new Swiper(containerSelector, {
-            wrapperClass: 'usp-wrapper',
-            slideClass: 'usp-slide',
-            slidesPerView: 1,
-            spaceBetween: 20,
-            loop: {% if section.blocks.size > 1 %}true{% else %}false{% endif %},
-            autoHeight: true, 
-            
-            // Interaction settings
-            threshold: 10, // Helps distinguish a scroll from a swipe
-            
-            pagination: {
-              el: paginationSelector,
-              clickable: true,
-            },
-            
-            autoplay: {
-              delay: 3000,
-              disableOnInteraction: false, 
-              pauseOnMouseEnter: true 
-            },
-
-            // --- THE FIX: MANUAL EVENT LISTENERS ---
-            on: {
-              init: function() {
-                // Ensure autoplay starts on load
-                this.autoplay.start();
-              },
-              touchStart: function() {
-                // Force STOP when finger touches screen
-                this.autoplay.stop();
-              },
-              touchEnd: function() {
-                // Force START when finger leaves screen
-                this.autoplay.start();
-              }
-            }
-          });
-        }
-      } else {
-        // Desktop: Destroy Swiper cleanly
-        if (uspSwiper) {
-          uspSwiper.destroy(true, true);
-          uspSwiper = null;
-        }
-      }
-    }
-
-    initUspSwiper();
-
-    var resizeTimer;
-    window.addEventListener('resize', function() {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(initUspSwiper, 200);
-    });
-  });
-</script>
 
 {% schema %}
   {

@@ -1,0 +1,45 @@
+/* assets/section-logo-list.css */
+
+.logo-list__container {
+  margin: 0 auto;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.logo-list__grid {
+  display: flex;
+  align-items: center;
+  /* Use CSS Variable for alignment */
+  justify-content: var(--grid-alignment); 
+  /* Use CSS Variable for gap */
+  gap: var(--grid-gap-mobile);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.logo-list__image {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* Dynamic constraints */
+  max-height: var(--logo-max-height);
+  max-width: var(--logo-max-width);
+  opacity: var(--logo-opacity);
+  transition: opacity 0.3s ease;
+}
+
+.logo-list__link:hover .logo-list__image {
+  opacity: 1;
+}
+
+/* Tablet & Desktop Adjustments */
+@media screen and (min-width: 750px) {
+  .logo-list__grid {
+    gap: var(--grid-gap-desktop);
+  }
+  
+  .logo-list__item {
+    flex: 0 1 auto;
+  }
+}

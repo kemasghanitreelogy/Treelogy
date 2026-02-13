@@ -1,3 +1,7 @@
+{{ 'section-product-single.css' | asset_url | stylesheet_tag }}
+{% comment %} Load JS with defer {% endcomment %}
+<script src="{{ 'section-product-single.js' | asset_url }}" defer></script>
+
 {% assign product_detail = product.metafields.custom.product_detail %}
 {% assign product_detail = blank %}
 
@@ -5,13 +9,10 @@
 
   <div class="gallery-wrapper">
     <div id="product-geallery-wrapper" class="native-gallery">
-
       <div class="native-gallery__main-scroll" id="MainSlider">
         {% assign slide_index = 0 %}
-          {% for image in product.images %}
+        {% for image in product.images %}
           {% assign image_alt = image.alt | escape %}
-
-          {% comment %} Language Filter Logic {% endcomment %}
           {% if image.alt contains 'LANG:' %}
             {% assign image_alt = image.alt | split: "|" | last %}
             {% assign language_code = image.alt | split: "|" | first | remove: "LANG:" | downcase %}
@@ -32,8 +33,7 @@
 
       <div class="native-gallery__thumbs-scroll" id="ThumbSlider">
         {% assign thumb_index = 0 %}
-          {% for image in product.images %}
-          {% comment %} Language Logic for Thumbs {% endcomment %}
+        {% for image in product.images %}
           {% if image.alt contains 'LANG:' %}
             {% assign language_code = image.alt | split: "|" | first | remove: "LANG:" | downcase %}
             {% if language_code != request.locale.iso_code %}
@@ -51,17 +51,15 @@
           {% assign thumb_index = thumb_index | plus: 1 %}
         {% endfor %}
       </div>
-
     </div>
   </div>
+
   {% assign free_product = settings.free_product.id %}
 
   <div class="detail" id="product-detail-content">
     <div class="rating body-mobile">
       {% if product.metafields.custom.rating %}
-        <div>
-          {% render 'StarReview' %}
-          <span class="rating-text">{{ product.metafields.custom.rating }}</span>
+        <div>{% render 'StarReview' %}<span class="rating-text">{{ product.metafields.custom.rating }}</span>
         </div>
       {% else %}
         {% render 'Rating' %}
@@ -76,33 +74,24 @@
       <div>{{ product.description }}</div>
       <div>
         {% assign rich_text_data = product.metafields.custom.advantage %}
-
         {% if rich_text_data != blank %}
-          <div class="rich-text-container">
-            {{ rich_text_data | metafield_tag }}
-          </div>
+          <div class="rich-text-container">{{ rich_text_data | metafield_tag }}</div>
         {% endif %}
       </div>
     </div>
+
     {% assign inside_set = product.metafields.custom.inside_set %}
     {% if inside_set != blank %}
       <div class="description body-desk inside-set-container">
-        {% assign inside_set = product.metafields.custom.inside_set %}
         <div class="inside-set-wrapper">
           <p>
-            {% if localization.language.iso_code == 'id' %}
-              Isi Set
-            {% else %}
-              Inside the Set
-            {% endif %}
+            {% if localization.language.iso_code == 'id' %}Isi Set{% else %}Inside the Set{% endif %}
           </p>
-
-          <div class="inside-set-content rte">
-            {{ inside_set | metafield_tag }}
-          </div>
+          <div class="inside-set-content rte">{{ inside_set | metafield_tag }}</div>
         </div>
       </div>
     {% endif %}
+
     {% render 'ProductStories' %}
 
     <div class="variant-button">
@@ -129,13 +118,10 @@
         </select>
 
         {% assign default_variant = product.variants[0].id %}
-
         {% for variant in product.variants %}
-          {% assign set_default_varaint = variant.metafields.custom.set_default %}
-
-          {%- if set_default_varaint -%}
+          {% if variant.metafields.custom.set_default %}
             {% assign default_variant = variant.id %}
-          {%- endif -%}
+          {% endif %}
         {% endfor %}
 
         <input
@@ -165,9 +151,7 @@
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
-                viewBox="0 0 12 12">
-                <path fill="#2B3C35" d="M7 5V0H5v5H0v2h5v5h2V7h5V5H7Z" />
-              </svg>
+                viewBox="0 0 12 12"><path fill="#2B3C35" d="M7 5V0H5v5H0v2h5v5h2V7h5V5H7Z" /></svg>
             </div>
             <div class="description __accordion-content">
               {{ item.description | metafield_tag }}
@@ -176,9 +160,209 @@
         {% endfor %}
       </div>
     {% endif %}
-  </div>
 
+    {% comment %} === MULAI LOOP BLOCKS === {% endcomment %}
+    {%- for block in section.blocks -%}
+      {%- case block.type -%}
+
+        {%- when 'usp_slider' -%}
+          {% comment %} === USP SLIDER CODE === {% endcomment %}
+          {{ 'usp-slider.css' | asset_url | stylesheet_tag }}
+          <script src="{{ 'usp-slider.js' | asset_url }}" defer="defer"></script>
+
+          {%- style -%}
+            #UspBlock-{{ block.id }} {
+              --usp-text-color: {{ block.settings.text_color }};
+              --usp-padding-top: {{ block.settings.padding_top }}px;
+              --usp-padding-bottom: {{ block.settings.padding_bottom }}px;
+              margin-top: var(--usp-padding-top);
+              margin-bottom: var(--usp-padding-bottom);
+            }
+            #UspBlock-{{ block.id }}
+            .usp-heading {
+              color: var(--usp-text-color);
+            }
+            #UspBlock-{{ block.id }}
+            .usp-text {
+              color: var(--usp-text-color);
+            }
+          {%- endstyle -%}
+
+          <div
+            id="UspBlock-{{ block.id }}"
+            class="usp-section-wrapper"
+            {{ block.shopify_attributes }}>
+            <div
+              class="usp-custom-container"
+              data-block-id="{{ block.id }}"
+              data-loop="true">
+
+              <div class="usp-wrapper">
+
+                {% comment %} USP ITEM 1 {% endcomment %}
+                {% if block.settings.heading_1 != blank or block.settings.text_1 != blank %}
+                  <div class="usp-slide">
+                    <div class="usp-content">
+                      {% if block.settings.heading_1 != blank %}
+                        <h3 class="usp-heading">{{ block.settings.heading_1 }}</h3>
+                      {% endif %}
+                      {% if block.settings.text_1 != blank %}
+                        <div class="usp-text">{{ block.settings.text_1 }}</div>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+
+                {% comment %} USP ITEM 2 {% endcomment %}
+                {% if block.settings.heading_2 != blank or block.settings.text_2 != blank %}
+                  <div class="usp-slide">
+                    <div class="usp-content">
+                      {% if block.settings.heading_2 != blank %}
+                        <h3 class="usp-heading">{{ block.settings.heading_2 }}</h3>
+                      {% endif %}
+                      {% if block.settings.text_2 != blank %}
+                        <div class="usp-text">{{ block.settings.text_2 }}</div>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+
+                {% comment %} USP ITEM 3 {% endcomment %}
+                {% if block.settings.heading_3 != blank or block.settings.text_3 != blank %}
+                  <div class="usp-slide">
+                    <div class="usp-content">
+                      {% if block.settings.heading_3 != blank %}
+                        <h3 class="usp-heading">{{ block.settings.heading_3 }}</h3>
+                      {% endif %}
+                      {% if block.settings.text_3 != blank %}
+                        <div class="usp-text">{{ block.settings.text_3 }}</div>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+
+              </div>
+              <div class="usp-pagination"></div>
+            </div>
+          </div>
+
+    {%- when 'logo_list' -%}
+      {% comment %} === LOGO LIST START === {% endcomment %}
+      {% comment %} Pastikan file asset section-logo-list.css sudah ada di folder Assets {% endcomment %}
+      {{ 'section-logo-list.css' | asset_url | stylesheet_tag }}
+
+      {%- style -%}
+        /* Scoping ke ID Block supaya tidak bentrok */
+        #LogoList-{{ block.id }} {
+          --grid-gap-mobile: {{ block.settings.gap_mobile }}px;
+          --grid-gap-desktop: {{ block.settings.gap_desktop }}px;
+          --logo-max-height: {{ block.settings.logo_height }}px;
+          --logo-max-width: {{ block.settings.logo_width }}px;
+          --logo-opacity: {{ block.settings.opacity | divided_by: 100.0 }};
+          --grid-alignment: {{ block.settings.alignment }};
+          --container-max-width: {{ block.settings.max_width }}px;
+
+          padding-top: {{ block.settings.padding_top }}px;
+          padding-bottom: {{ block.settings.padding_bottom }}px;
+        }
+      {%- endstyle -%}
+
+      {% comment %} Cek Metafield atau Mode Editor {% endcomment %}
+      {%- if product.metafields.custom.certified == true or request.design_mode -%}
+
+        <div
+          id="LogoList-{{ block.id }}"
+          class="logo-list-wrapper"
+          {{ block.shopify_attributes }}>
+          <div class="logo-list__container" style="max-width: var(--container-max-width);">
+
+            {%- if block.settings.heading != blank -%}
+              <h2 style="text-align: center; color: {{ block.settings.heading_color }}; margin-bottom: 2rem;">
+                {{ block.settings.heading }}
+              </h2>
+            {%- endif -%}
+
+            <div class="logo-list__grid">
+
+              {% comment %} --- LOGO 1 --- {% endcomment %}
+              {% if block.settings.image_1 != blank %}
+                <div class="logo-list__item">
+                  {% if block.settings.link_1 != blank %}<a href="{{ block.settings.link_1 }}" class="logo-list__link">{% endif %}
+                  {{ block.settings.image_1 | image_url: width: 400 | image_tag: loading: 'lazy', class: 'logo-list__image', alt: block.settings.image_1.alt }}
+                  {% if block.settings.link_1 != blank %}</a>{% endif %}
+                </div>
+              {% endif %}
+
+              {% comment %} --- LOGO 2 --- {% endcomment %}
+              {% if block.settings.image_2 != blank %}
+                <div class="logo-list__item">
+                  {% if block.settings.link_2 != blank %}<a href="{{ block.settings.link_2 }}" class="logo-list__link">{% endif %}
+                  {{ block.settings.image_2 | image_url: width: 400 | image_tag: loading: 'lazy', class: 'logo-list__image', alt: block.settings.image_2.alt }}
+                  {% if block.settings.link_2 != blank %}</a>{% endif %}
+                </div>
+              {% endif %}
+
+              {% comment %} --- LOGO 3 --- {% endcomment %}
+              {% if block.settings.image_3 != blank %}
+                <div class="logo-list__item">
+                  {% if block.settings.link_3 != blank %}<a href="{{ block.settings.link_3 }}" class="logo-list__link">{% endif %}
+                  {{ block.settings.image_3 | image_url: width: 400 | image_tag: loading: 'lazy', class: 'logo-list__image', alt: block.settings.image_3.alt }}
+                  {% if block.settings.link_3 != blank %}</a>{% endif %}
+                </div>
+              {% endif %}
+
+              {% comment %} --- LOGO 4 --- {% endcomment %}
+              {% if block.settings.image_4 != blank %}
+                <div class="logo-list__item">
+                  {% if block.settings.link_4 != blank %}<a href="{{ block.settings.link_4 }}" class="logo-list__link">{% endif %}
+                  {{ block.settings.image_4 | image_url: width: 400 | image_tag: loading: 'lazy', class: 'logo-list__image', alt: block.settings.image_4.alt }}
+                  {% if block.settings.link_4 != blank %}</a>{% endif %}
+                </div>
+              {% endif %}
+
+              {% comment %} --- LOGO 5 --- {% endcomment %}
+              {% if block.settings.image_5 != blank %}
+                <div class="logo-list__item">
+                  {% if block.settings.link_5 != blank %}<a href="{{ block.settings.link_5 }}" class="logo-list__link">{% endif %}
+                  {{ block.settings.image_5 | image_url: width: 400 | image_tag: loading: 'lazy', class: 'logo-list__image', alt: block.settings.image_5.alt }}
+                  {% if block.settings.link_5 != blank %}</a>{% endif %}
+                </div>
+              {% endif %}
+
+            </div>
+          </div>
+        </div>
+      {%- endif -%}
+      {%- endcase -%}
+      {% comment %} === LOGO LIST END === {% endcomment %}
+    {%- endfor -%}
+  {% comment %} === AKHIR LOOP BLOCKS === {% endcomment %}
+
+  </div>
 </div>
+
+{% comment %} 
+                    CRITICAL: Pass Liquid Data to JS here using a Global Variable 
+                    This must run BEFORE the external JS file executes logic
+{% endcomment %}
+<script>
+  window.productSingleData = {};
+  
+  {% for variant in product.variants %}
+    {% assign linked_variant = variant.metafields.custom.product_integration.value %}
+    window.productSingleData["{{ variant.id }}"] = {
+      title: "{{ variant.title | escape }}",
+      {% if linked_variant %}
+        hasMetafield: true,
+        linkedId: "{{ linked_variant.id }}",
+        linkedTitle: "{{ linked_variant.title | escape }}"
+      {% else %}
+        hasMetafield: false,
+        linkedId: null
+      {% endif %}
+    };
+  {% endfor %}
+</script>
 
 {% schema %}
   {
@@ -241,317 +425,260 @@
         "default": "#ffffff"
       }
     ],
+    "blocks": [
+      {
+        "type": "usp_slider",
+        "name": "USP Slider",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Styles"
+          },
+          {
+            "type": "color",
+            "id": "text_color",
+            "label": "Text Color",
+            "default": "#333333"
+          },
+          {
+            "type": "range",
+            "id": "padding_top",
+            "min": 0,
+            "max": 100,
+            "step": 5,
+            "unit": "px",
+            "label": "Padding Top",
+            "default": 20
+          },
+          {
+            "type": "range",
+            "id": "padding_bottom",
+            "min": 0,
+            "max": 100,
+            "step": 5,
+            "unit": "px",
+            "label": "Padding Bottom",
+            "default": 20
+          }, {
+            "type": "header",
+            "content": "USP Item 1"
+          }, {
+            "type": "text",
+            "id": "heading_1",
+            "label": "Heading 1",
+            "default": "Fast Delivery"
+          }, {
+            "type": "text",
+            "id": "text_1",
+            "label": "Subtext 1",
+            "default": "Within 3-4 days"
+          }, {
+            "type": "header",
+            "content": "USP Item 2"
+          }, {
+            "type": "text",
+            "id": "heading_2",
+            "label": "Heading 2",
+            "default": "Secure Payment"
+          }, {
+            "type": "text",
+            "id": "text_2",
+            "label": "Subtext 2",
+            "default": "Encrypted transaction"
+          }, {
+            "type": "header",
+            "content": "USP Item 3"
+          }, {
+            "type": "text",
+            "id": "heading_3",
+            "label": "Heading 3",
+            "default": "24/7 Support"
+          }, {
+            "type": "text",
+            "id": "text_3",
+            "label": "Subtext 3",
+            "default": "We are here to help"
+          }
+        ]
+      }, {
+        "type": "logo_list",
+        "name": "Logo List / Trust Badge",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Content"
+          },
+          {
+            "type": "text",
+            "id": "heading",
+            "label": "Heading",
+            "default": "Our Certifications"
+          },
+          {
+            "type": "color",
+            "id": "heading_color",
+            "label": "Heading Color",
+            "default": "#333333"
+          },
+          {
+            "type": "header",
+            "content": "Layout Settings"
+          }, {
+            "type": "range",
+            "id": "max_width",
+            "min": 800,
+            "max": 1600,
+            "step": 50,
+            "unit": "px",
+            "label": "Container Width",
+            "default": 1200
+          }, {
+            "type": "select",
+            "id": "alignment",
+            "label": "Alignment",
+            "options": [
+              {
+                "value": "flex-start",
+                "label": "Left"
+              }, {
+                "value": "center",
+                "label": "Center"
+              }, {
+                "value": "space-between",
+                "label": "Space Between"
+              }, {
+                "value": "space-around",
+                "label": "Space Around"
+              }
+            ],
+            "default": "center"
+          }, {
+            "type": "header",
+            "content": "Logo Styling"
+          }, {
+            "type": "range",
+            "id": "logo_height",
+            "min": 20,
+            "max": 100,
+            "step": 5,
+            "unit": "px",
+            "label": "Max Logo Height",
+            "default": 60
+          }, {
+            "type": "range",
+            "id": "logo_width",
+            "min": 50,
+            "max": 200,
+            "step": 10,
+            "unit": "px",
+            "label": "Max Logo Width",
+            "default": 150
+          }, {
+            "type": "range",
+            "id": "opacity",
+            "min": 10,
+            "max": 100,
+            "step": 10,
+            "unit": "%",
+            "label": "Logo Opacity",
+            "default": 100
+          }, {
+            "type": "range",
+            "id": "gap_desktop",
+            "min": 20,
+            "max": 100,
+            "step": 5,
+            "unit": "px",
+            "label": "Gap (Desktop)",
+            "default": 50
+          }, {
+            "type": "range",
+            "id": "gap_mobile",
+            "min": 10,
+            "max": 50,
+            "step": 5,
+            "unit": "px",
+            "label": "Gap (Mobile)",
+            "default": 20
+          }, {
+            "type": "header",
+            "content": "Padding"
+          }, {
+            "type": "range",
+            "id": "padding_top",
+            "min": 0,
+            "max": 100,
+            "step": 4,
+            "unit": "px",
+            "label": "Top Padding",
+            "default": 40
+          }, {
+            "type": "range",
+            "id": "padding_bottom",
+            "min": 0,
+            "max": 100,
+            "step": 4,
+            "unit": "px",
+            "label": "Bottom Padding",
+            "default": 40
+          }, {
+            "type": "header",
+            "content": "Logos (Max 5)"
+          }, {
+            "type": "image_picker",
+            "id": "image_1",
+            "label": "Logo 1"
+          }, {
+            "type": "url",
+            "id": "link_1",
+            "label": "Link 1"
+          }, {
+            "type": "image_picker",
+            "id": "image_2",
+            "label": "Logo 2"
+          }, {
+            "type": "url",
+            "id": "link_2",
+            "label": "Link 2"
+          }, {
+            "type": "image_picker",
+            "id": "image_3",
+            "label": "Logo 3"
+          }, {
+            "type": "url",
+            "id": "link_3",
+            "label": "Link 3"
+          }, {
+            "type": "image_picker",
+            "id": "image_4",
+            "label": "Logo 4"
+          }, {
+            "type": "url",
+            "id": "link_4",
+            "label": "Link 4"
+          }, {
+            "type": "image_picker",
+            "id": "image_5",
+            "label": "Logo 5"
+          }, {
+            "type": "url",
+            "id": "link_5",
+            "label": "Link 5"
+          }
+        ]
+      }
+    ],
     "presets": [
       {
-        "name": "Product single"
+        "name": "Product single",
+        "blocks": [
+          {
+            "type": "usp_slider"
+          }, {
+            "type": "logo_list"
+          }
+        ]
       }
     ]
   }
 {% endschema %}
-
-<script>
-  // 1. Run this immediately to stop browser from remembering scroll position
-  if ('scrollRestoration' in history) {
-    history.scrollRestoration = 'manual';
-  }
-
-  document.addEventListener("DOMContentLoaded", function() {
-    
-    // ==================================================
-    // --- FIX START: ROBUST IOS SCROLL RESET ---
-    // ==================================================
-    const sliderReset = document.getElementById('MainSlider');
-
-    function forceScrollToStart() {
-      if (!sliderReset) return;
-
-      // 1. Temporarily disable CSS smooth scrolling
-      // (iOS often fails to reset position if 'smooth' is active during load)
-      sliderReset.style.scrollBehavior = 'auto';
-      sliderReset.style.webkitOverflowScrolling = 'auto';
-
-      // 2. Force scroll to 0
-      sliderReset.scrollLeft = 0;
-      sliderReset.scrollTo({ left: 0, behavior: 'auto' });
-
-      // 3. Re-enable smooth scrolling after a delay
-      setTimeout(() => {
-        sliderReset.style.scrollBehavior = '';
-        sliderReset.style.webkitOverflowScrolling = '';
-      }, 150);
-    }
-
-    // Trigger 1: Immediately on DOM Ready
-    forceScrollToStart();
-
-    // Trigger 2: Short delay (catches fast renders)
-    setTimeout(forceScrollToStart, 50);
-
-    // Trigger 3: When all images/content are fully loaded (Crucial for iOS)
-    window.addEventListener('load', () => {
-       setTimeout(forceScrollToStart, 10);
-    });
-    // ==================================================
-    // --- FIX END ---
-    // ==================================================
-
-
-    // ==================================================
-    // 1. DATA SOURCE: VARIANT & METAFIELD MAP
-    // ==================================================
-    const mainProductData = {};
-    
-    {% for variant in product.variants %}
-      {% assign linked_variant = variant.metafields.custom.product_integration.value %}
-      mainProductData["{{ variant.id }}"] = {
-        title: "{{ variant.title | escape }}",
-        {% if linked_variant %}
-          hasMetafield: true,
-          linkedId: "{{ linked_variant.id }}",
-          linkedTitle: "{{ linked_variant.title | escape }}"
-        {% else %}
-          hasMetafield: false,
-          linkedId: null
-        {% endif %}
-      };
-    {% endfor %}
-
-    // ==================================================
-    // 2. CORE SYNC FUNCTION
-    // ==================================================
-    function broadcastVariantChange(variantId) {
-      const data = mainProductData[variantId];
-
-      if (data && data.hasMetafield) {
-        sessionStorage.setItem('target_bundle_id', data.linkedId);
-        
-        const event = new CustomEvent('custom-variant-change', { 
-          detail: { targetId: data.linkedId } 
-        });
-        window.dispatchEvent(event);
-      } else {
-        sessionStorage.removeItem('target_bundle_id');
-        
-        const event = new CustomEvent('custom-variant-change', { detail: { targetId: null } });
-        window.dispatchEvent(event);
-      }
-    }
-
-    // ==================================================
-    // 3. NATIVE GALLERY LOGIC (Replaces Swiper)
-    // ==================================================
-    const mainSlider = document.getElementById('MainSlider');
-    const thumbSlider = document.getElementById('ThumbSlider');
-    const thumbs = document.querySelectorAll('.native-gallery__thumb');
-    
-    if (mainSlider && thumbs.length > 0) {
-      
-      // A. Handle Thumbnail Clicks
-      thumbs.forEach(btn => {
-        btn.addEventListener('click', function(e) {
-          e.preventDefault();
-          const index = parseInt(this.getAttribute('data-index'));
-          const slideWidth = mainSlider.offsetWidth;
-          
-          // Scroll main slider to specific position
-          mainSlider.scrollTo({
-            left: slideWidth * index,
-            behavior: 'smooth'
-          });
-        });
-      });
-
-      // B. Handle Scroll Spy (Update Active Thumb on Scroll)
-      let isScrolling;
-      mainSlider.addEventListener('scroll', function() {
-        window.clearTimeout( isScrolling );
-        
-        // Debounce slightly to prevent flicker
-        isScrolling = setTimeout(function() {
-          const slideWidth = mainSlider.offsetWidth;
-          const scrollPos = mainSlider.scrollLeft;
-          
-          // Calculate current index
-          const currentIndex = Math.round(scrollPos / slideWidth);
-          
-          // Update active classes
-          thumbs.forEach(t => t.classList.remove('active'));
-          
-          const activeThumb = document.querySelector(`.native-gallery__thumb[data-index="${currentIndex}"]`);
-          if (activeThumb) {
-            activeThumb.classList.add('active');
-            
-            // Keep active thumbnail visible in strip
-            activeThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-          }
-        }, 60);
-      });
-    }
-
-    // ==================================================
-    // 4. VARIANT LOGIC
-    // ==================================================
-    const mainWrapper = document.querySelector('.product-detail-wrapper');
-    const productSelect = document.getElementById('productSelect');
-    
-    if (mainWrapper) {
-      const buttons = mainWrapper.querySelectorAll('.checkbox-button');
-
-      buttons.forEach(btn => {
-        btn.addEventListener('click', function(e) {
-          e.preventDefault();
-          e.stopPropagation(); 
-
-          const id = this.getAttribute('data-value');
-
-          buttons.forEach(b => b.classList.remove('active'));
-          this.classList.add('active');
-          if(productSelect) productSelect.value = id;
-
-          broadcastVariantChange(id);
-        });
-      });
-
-      const initialActiveBtn = mainWrapper.querySelector('.checkbox-button.active');
-      
-      if (initialActiveBtn) {
-        const initialId = initialActiveBtn.getAttribute('data-value');
-        broadcastVariantChange(initialId);
-      } else {
-        const firstBtn = buttons[0];
-        if (firstBtn) {
-           const firstId = firstBtn.getAttribute('data-value');
-           broadcastVariantChange(firstId);
-        }
-      }
-    }
-  });
-</script>
-
-<style>
-  .product-detail-wrapper .inside-set-container {
-    margin-top: 18px;
-  }
-  .rich-text-container ul {
-    margin-top: 7px;
-    list-style-type: disc;
-    list-style-position: inside;
-  }
-
-  /* GRID LAYOUT */
-  .product-detail-wrapper .gallery-wrapper {
-    grid-column: 2 / 8;
-    width: 100%;
-    max-width: 100%;
-    overflow: hidden;
-  }
-
-  /* NATIVE GALLERY STYLES */
-  .native-gallery {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    position: relative;
-  }
-
-  /* 1. Main Slider Container */
-  .native-gallery__main-scroll {
-    display: flex;
-    width: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
-    /* CSS Scroll Snap Magic */
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-
-    /* Hide Scrollbar */
-    scrollbar-width: none;
-    /* Firefox */
-    -ms-overflow-style: none;
-    /* IE 10+ */
-  }
-  .native-gallery__main-scroll::-webkit-scrollbar {
-    display: none;
-    /* Chrome/Safari */
-  }
-
-  /* 2. Main Slide */
-  .native-gallery__slide {
-    border-radius: 8px;
-    overflow: hidden;
-    flex: 0 0 100%;
-    /* Force 100% width */
-    width: 100%;
-    scroll-snap-align: start;
-    /* Snap exactly to start */
-    scroll-snap-stop: always;
-    /* Prevent skipping slides */
-    position: relative;
-  }
-
-  .native-gallery__slide img {
-    width: 100%;
-    height: auto;
-    display: block;
-    object-fit: cover;
-  }
-
-  /* 3. Thumbnail Strip */
-  .native-gallery__thumbs-scroll {
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    padding-bottom: 5px;
-    /* Matches legacy padding */
-    scrollbar-width: none;
-  }
-
-  @media only screen and (max-width: 768px) {
-    .native-gallery__thumbs-scroll {
-      margin-left: 24px;
-    }
-  }
-
-  .native-gallery__thumb {
-    flex: 0 0 70px;
-    /* Fixed width thumbs */
-    height: 65px;
-    border: none;
-    background: none;
-    padding: 0;
-    cursor: pointer;
-    opacity: 0.6;
-    transition: opacity 0.3s ease;
-  }
-
-  .native-gallery__thumb .thumb-inner {
-    width: 100%;
-    height: 100%;
-    border-radius: 8px;
-    overflow: hidden;
-    border: 1px solid transparent;
-  }
-
-  .native-gallery__thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  /* Active State */
-  .native-gallery__thumb.active {
-    opacity: 1;
-  }
-  .native-gallery__thumb.active .thumb-inner {
-    border-color: #567350;
-  }
-
-  /* MOBILE ADJUSTMENTS */
-  @media only screen and (max-width: 768px) {
-    .native-gallery__thumbs-scroll {
-      margin-left: 24px;
-    }
-  }
-</style>

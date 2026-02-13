@@ -3,7 +3,10 @@
   id="item-{{ item.variant.id }}"
   data-variant="{{ item.variant.id }}">
   <a href="{{ item.url | within: collections.all }}" class="thumb">
-    <img src="{{ item | img_url: 'medium' }}" alt="{{ item.title | escape }}">
+    {% comment %} Define the image: use variant image if available, else fallback to product image {% endcomment %}
+    {% assign image_to_show = item.image | default: item.product.featured_image %}
+    
+    <img src="{{ image_to_show | img_url: 'medium' }}" alt="{{ item.title | escape }}">
   </a>
 
   {% assign is_free_roduct = false %}
