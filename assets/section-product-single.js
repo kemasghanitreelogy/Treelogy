@@ -1,24 +1,27 @@
 /* assets/section-product-single.js */
 
+console.log('🖼️ [GALLERY] Script loaded at:', new Date().toISOString());
+
 document.addEventListener("DOMContentLoaded", function() {
-    
+  
+  // 1. ISOLATE GALLERY FROM SWIPER
+  // This prevents the Testimonial slider from trying to "swipe" your gallery
+  const nativeGallery = document.querySelector('.native-gallery');
+  if (nativeGallery) {
+    nativeGallery.classList.add('swiper-no-swiping');
+    nativeGallery.classList.add('swiper-no-swiping-class'); 
+  }
+  
   // ==================================================
-  // --- FIX START: ROBUST IOS SCROLL RESET ---
+  // --- IOS SCROLL RESET ---
   // ==================================================
   const sliderReset = document.getElementById('MainSlider');
 
   function forceScrollToStart() {
     if (!sliderReset) return;
-
-    // 1. Disable smooth scrolling temporarily
     sliderReset.style.scrollBehavior = 'auto';
     sliderReset.style.webkitOverflowScrolling = 'auto';
-
-    // 2. Force scroll to 0
     sliderReset.scrollLeft = 0;
-    sliderReset.scrollTo({ left: 0, behavior: 'auto' });
-
-    // 3. Re-enable smooth scrolling
     setTimeout(() => {
       sliderReset.style.scrollBehavior = '';
       sliderReset.style.webkitOverflowScrolling = '';
@@ -26,46 +29,21 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   forceScrollToStart();
-  setTimeout(forceScrollToStart, 50);
-  window.addEventListener('load', () => {
-     setTimeout(forceScrollToStart, 10);
-  });
+  window.addEventListener('load', forceScrollToStart);
 
   // ==================================================
-  // DATA HANDLING (Read from Global Variable)
-  // ==================================================
-  // Kita mengambil data yang di-pass dari Liquid
-  const mainProductData = window.productSingleData || {};
-
-  function broadcastVariantChange(variantId) {
-    const data = mainProductData[variantId];
-
-    if (data && data.hasMetafield) {
-      sessionStorage.setItem('target_bundle_id', data.linkedId);
-      
-      const event = new CustomEvent('custom-variant-change', { 
-        detail: { targetId: data.linkedId } 
-      });
-      window.dispatchEvent(event);
-    } else {
-      sessionStorage.removeItem('target_bundle_id');
-      
-      const event = new CustomEvent('custom-variant-change', { detail: { targetId: null } });
-      window.dispatchEvent(event);
-    }
-  }
-
-  // ==================================================
-  // NATIVE GALLERY LOGIC
+  // NATIVE GALLERY LOGIC (UNIQUE CLASSES)
   // ==================================================
   const mainSlider = document.getElementById('MainSlider');
-  const thumbSlider = document.getElementById('ThumbSlider');
   const thumbs = document.querySelectorAll('.native-gallery__thumb');
   
+  // Define unique class for active state
+  const ACTIVE_CLASS = 'ng-thumb-active'; 
+
   if (mainSlider && thumbs.length > 0) {
     
     // A. Handle Thumbnail Clicks
-    thumbs.forEach(btn => {
+    thumbs.forEach((btn, idx) => {
       btn.addEventListener('click', function(e) {
         e.preventDefault();
         const index = parseInt(this.getAttribute('data-index'));
@@ -88,11 +66,15 @@ document.addEventListener("DOMContentLoaded", function() {
         const scrollPos = mainSlider.scrollLeft;
         const currentIndex = Math.round(scrollPos / slideWidth);
         
-        thumbs.forEach(t => t.classList.remove('active'));
+        // Remove active class from ALL thumbs
+        thumbs.forEach(t => t.classList.remove(ACTIVE_CLASS));
         
+        // Add active class to CURRENT thumb
         const activeThumb = document.querySelector(`.native-gallery__thumb[data-index="${currentIndex}"]`);
         if (activeThumb) {
-          activeThumb.classList.add('active');
+          activeThumb.classList.add(ACTIVE_CLASS);
+          
+          // Optional: Scroll thumbnail into view if it's a long list
           activeThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
         }
       }, 60);
@@ -108,68 +90,18 @@ document.addEventListener("DOMContentLoaded", function() {
   if (mainWrapper) {
     const buttons = mainWrapper.querySelectorAll('.checkbox-button');
 
-    buttons.forEach(btn => {
+    buttons.forEach((btn) => {
       btn.addEventListener('click', function(e) {
         e.preventDefault();
-        e.stopPropagation(); 
-
-        const id = this.getAttribute('data-value');
-
+        
+        // Use a local active class for variants (scoped to this wrapper)
+        // This is safe because it's inside .product-detail-wrapper
         buttons.forEach(b => b.classList.remove('active'));
         this.classList.add('active');
+        
+        const id = this.getAttribute('data-value');
         if(productSelect) productSelect.value = id;
-
-        broadcastVariantChange(id);
       });
     });
-
-    const initialActiveBtn = mainWrapper.querySelector('.checkbox-button.active');
-    
-    if (initialActiveBtn) {
-      const initialId = initialActiveBtn.getAttribute('data-value');
-      broadcastVariantChange(initialId);
-    } else {
-      const firstBtn = buttons[0];
-      if (firstBtn) {
-         const firstId = firstBtn.getAttribute('data-value');
-         broadcastVariantChange(firstId);
-      }
-    }
   }
-
-  // ==================================================
-  // KICKSTART (Auto-Trigger Fix)
-  // ==================================================
-  setTimeout(function() {
-    const mainWrapper = document.querySelector('.product-detail-wrapper');
-    if (!mainWrapper) return;
-
-    const activeBtn = mainWrapper.querySelector('.checkbox-button.active');
-    const allBtns = mainWrapper.querySelectorAll('.checkbox-button');
-
-    if (activeBtn && allBtns.length > 1) {
-      let otherBtn = null;
-      for (let i = 0; i < allBtns.length; i++) {
-        if (allBtns[i] !== activeBtn) {
-          otherBtn = allBtns[i];
-          break;
-        }
-      }
-
-      if (otherBtn) {
-        otherBtn.click();
-        setTimeout(() => {
-          activeBtn.click(); 
-        }, 10);
-      }
-    } else if (activeBtn) {
-      activeBtn.click();
-    }
-  }, 500);
-
 });
-
-// Scroll Restoration
-if ('scrollRestoration' in history) {
-  history.scrollRestoration = 'manual';
-}

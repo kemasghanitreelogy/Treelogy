@@ -1,0 +1,39 @@
+/* assets/section-text-list.css */
+
+.concerns-list__wrapper {
+  background-color: transparent; /* Default, overridden by settings */
+  width: 100%;
+}
+
+.concerns-list__container {
+  margin: 0 auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  line-height: 1.6;
+}
+
+/* The bold label at the start */
+.concerns-list__label {
+  display: inline;
+  font-weight: 700;
+  margin-right: 0.3em;
+}
+
+/* The individual list items */
+.concerns-list__item {
+  display: inline;
+  font-weight: 300;
+}
+
+/* The separator dot */
+.concerns-list__separator {
+  display: inline-block;
+  margin: 0 0.1em;
+  font-weight: 400;
+}
+
+@media screen and (min-width: 750px) {
+  .concerns-list__container {
+    text-align: center; /* Default fallback */
+  }
+}

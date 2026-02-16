@@ -99,7 +99,7 @@
 }
 
 /* Active State */
-.native-gallery__thumb.active {
+.native-gallery__thumb.ng-thumb-active {
   opacity: 1;
 }
 .native-gallery__thumb.active .thumb-inner {

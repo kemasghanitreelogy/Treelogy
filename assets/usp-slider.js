@@ -1,69 +1,138 @@
-document.addEventListener('DOMContentLoaded', function() {
-  
-  function initAllUspSwipers() {
-    var containers = document.querySelectorAll('.usp-custom-container');
+/* assets/usp-slider.js */
+
+(function() {
+  'use strict';
+
+  function initUspSlider(container) {
+    // Prevent double-initialization
+    if (container.classList.contains('native-init')) return;
     
-    containers.forEach(function(container) {
-      // Check if Swiper is already initialized on this element
-      if (container.classList.contains('swiper-initialized')) return;
+    var wrapper = container.querySelector('.usp-wrapper');
+    var slides = container.querySelectorAll('.usp-slide');
+    var pagination = container.querySelector('.usp-pagination');
+    
+    // Safety check
+    if (!wrapper || slides.length === 0) return;
 
-      var isMobile = window.innerWidth < 769;
-      var shouldLoop = container.getAttribute('data-loop') === 'true';
-      var sectionId = container.getAttribute('data-section-id');
-      
-      // We store the swiper instance on the DOM element to access/destroy it later
-      if (isMobile) {
-        var uspSwiper = new Swiper(container, {
-          wrapperClass: 'usp-wrapper',
-          slideClass: 'usp-slide',
-          slidesPerView: 1,
-          spaceBetween: 20,
-          loop: shouldLoop,
-          autoHeight: true, 
-          
-          threshold: 10,
-          
-          pagination: {
-            el: container.querySelector('.usp-pagination'),
-            clickable: true,
-          },
-          
-          autoplay: {
-            delay: 3000,
-            disableOnInteraction: false, 
-            pauseOnMouseEnter: true 
-          },
+    // Mark as initialized
+    container.classList.add('native-init');
 
-          on: {
-            init: function() {
-              this.autoplay.start();
-            },
-            touchStart: function() {
-              this.autoplay.stop();
-            },
-            touchEnd: function() {
-              this.autoplay.start();
-            }
-          }
-        });
+    var currentIndex = 0;
+    var slideCount = slides.length;
+    var autoplayInterval;
+    var touchStartX = 0;
+    var touchEndX = 0;
 
-        // Save instance to element
-        container.swiperInstance = uspSwiper;
+    // --- RENDER DOTS ---
+    function renderDots() {
+      if (!pagination) return;
+      pagination.innerHTML = '';
+      for (var i = 0; i < slideCount; i++) {
+        var dot = document.createElement('button');
+        dot.className = 'usp-dot';
+        if (i === 0) dot.classList.add('active');
+        dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
         
+        (function(idx) {
+          dot.addEventListener('click', function() {
+            goToSlide(idx);
+            resetAutoplay();
+          });
+        })(i);
+        
+        pagination.appendChild(dot);
       }
+    }
+
+    // --- MOVE SLIDE ---
+    function goToSlide(index) {
+      // Loop Logic
+      if (index < 0) index = slideCount - 1;
+      if (index >= slideCount) index = 0;
+
+      currentIndex = index;
+
+      // Move Wrapper (Works on all screens now)
+      wrapper.style.transform = 'translateX(-' + (currentIndex * 100) + '%)';
+
+      // Update Dots
+      if (pagination) {
+        var dots = pagination.querySelectorAll('.usp-dot');
+        dots.forEach(function(d) { d.classList.remove('active'); });
+        if (dots[currentIndex]) dots[currentIndex].classList.add('active');
+      }
+    }
+
+    // --- AUTOPLAY ---
+    function startAutoplay() {
+      stopAutoplay();
+      autoplayInterval = setInterval(function() {
+        goToSlide(currentIndex + 1);
+      }, 3000); // 3 Seconds
+    }
+
+    function stopAutoplay() {
+      if (autoplayInterval) clearInterval(autoplayInterval);
+    }
+
+    function resetAutoplay() {
+      stopAutoplay();
+      startAutoplay();
+    }
+
+    // --- TOUCH / MOUSE SWIPE EVENTS ---
+    // (Added mouse support for Desktop dragging)
+    wrapper.addEventListener('touchstart', function(e) {
+      touchStartX = e.changedTouches[0].screenX;
+      stopAutoplay();
+    }, { passive: true });
+
+    wrapper.addEventListener('touchend', function(e) {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+      startAutoplay();
+    }, { passive: true });
+    
+    // Optional: Pause on hover (Good for Desktop)
+    wrapper.addEventListener('mouseenter', stopAutoplay);
+    wrapper.addEventListener('mouseleave', startAutoplay);
+
+    function handleSwipe() {
+      var diff = touchEndX - touchStartX;
+      var threshold = 50;
+      if (Math.abs(diff) > threshold) {
+        if (diff < 0) goToSlide(currentIndex + 1); // Swipe Left (Next)
+        if (diff > 0) goToSlide(currentIndex - 1); // Swipe Right (Prev)
+      }
+    }
+
+    // --- RESIZE HANDLER ---
+    window.addEventListener('resize', function() {
+      // Just snap to current slide to fix any width changes
+      goToSlide(currentIndex);
+    });
+
+    // --- START ---
+    renderDots();
+    startAutoplay();
+  }
+
+  // --- INIT MANAGER ---
+  function initAll() {
+    var containers = document.querySelectorAll('.usp-custom-container');
+    containers.forEach(function(c) {
+      initUspSlider(c);
     });
   }
 
-  // Initialize on load
-  initAllUspSwipers();
+  // Run immediately if DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAll);
+  } else {
+    initAll();
+  }
 
-  // Handle Resize
-  var resizeTimer;
-  window.addEventListener('resize', function() {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(initAllUspSwipers, 200);
-  });
-  
-  // Optional: Listen for Shopify Theme Editor events to re-init immediately
-  document.addEventListener('shopify:section:load', initAllUspSwipers);
-});
+  // Support for Shopify Theme Editor
+  document.addEventListener('shopify:section:load', initAll);
+
+})();

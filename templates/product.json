@@ -11,6 +11,52 @@
   "sections": {
     "main": {
       "type": "MainProductDetail",
+      "blocks": {
+        "text_list_yrapNb": {
+          "type": "text_list",
+          "settings": {
+            "label": "Concerns:",
+            "bg_color": "rgba(0,0,0,0)",
+            "heading_color": "#5e6d55",
+            "text_color": "#757575",
+            "font_size": 14,
+            "text_align": "center",
+            "max_width": 800,
+            "padding_top": 10,
+            "padding_bottom": 10
+          }
+        },
+        "usp_slider_ezq7C3": {
+          "type": "usp_slider",
+          "settings": {
+            "text_color": "#333333",
+            "padding_top": 20,
+            "padding_bottom": 20,
+            "heading_1": "Fast Delivery",
+            "text_1": "Within 3-4 days",
+            "heading_2": "Secure Payment",
+            "text_2": "Encrypted transaction",
+            "heading_3": "24/7 Support",
+            "text_3": "We are here to help"
+          }
+        },
+        "testimonial_slider_fBtH7t": {
+          "type": "testimonial_slider",
+          "settings": {
+            "heading": "from our community",
+            "rating_score": "4.9/5",
+            "bg_color": "#f8f8f4",
+            "text_color": "#2b3c35",
+            "padding_top": 60,
+            "padding_bottom": 60
+          }
+        }
+      },
+      "block_order": [
+        "text_list_yrapNb",
+        "usp_slider_ezq7C3",
+        "testimonial_slider_fBtH7t"
+      ],
       "settings": {
         "payment_title": "We accept:",
         "payment_list": "shopify://shop_images/payment-desktop.png",

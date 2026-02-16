@@ -1,0 +1,144 @@
+/* assets/accordion-duplicate.css */
+
+/* --- Base Layout --- */
+.ac-dup-block-wrapper {
+  width: 100%;
+  display: block;
+}
+
+.ac-dup-list-container {
+  width: 100%;
+  border-top: 1px solid #e5e5e5; /* Top border for the whole list */
+}
+
+.ac-dup-main-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  /* Color is set via inline style in Liquid */
+}
+
+/* --- Accordion Item (Wrapper) --- */
+.ac-dup-item {
+  border-bottom: 1px solid #e5e5e5;
+  overflow: hidden;
+  position: relative;
+}
+
+/* --- Header (Clickable Area) --- */
+.ac-dup-header {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  background: transparent;
+  user-select: none;
+}
+
+.ac-dup-header h3 {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+  margin: 0;
+  flex: 1;
+  padding-right: 15px;
+  /* Color is set via inline style in Liquid */
+}
+
+/* --- Icon Rotation --- */
+.ac-dup-icon svg {
+  width: 12px;
+  height: 12px;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+/* Rotate icon when active */
+.ac-dup-item.active .ac-dup-icon svg {
+  transform: rotate(180deg);
+}
+
+/* --- Content (Animation Core) --- */
+.ac-dup-description {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease-out, opacity 0.4s ease-out;
+  padding: 0; 
+}
+
+/* Active State for Content */
+.ac-dup-item.active .ac-dup-description {
+  opacity: 1;
+  /* max-height is calculated by JS to allow dynamic height */
+}
+
+/* --- Inner Content Styling --- */
+.ac-dup-description.rte {
+  line-height: 1.6;
+  word-break: break-word;
+}
+
+/* Add padding only to inner elements to prevent jumpy animation */
+.ac-dup-description.rte > div {
+  padding-bottom: 20px;
+  padding-top: 5px;
+}
+
+.ac-dup-description.rte p {
+  margin-bottom: 10px;
+}
+
+.ac-dup-description.rte > :last-child {
+  margin-bottom: 0;
+}
+
+.ac-dup-description.rte ul,
+.ac-dup-description.rte ol {
+  margin-left: 20px;
+  margin-bottom: 15px;
+}
+
+/* --- SEE MORE / SEE LESS WRAPPER --- */
+.ac-extra-wrapper {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.5s ease-out, opacity 0.5s ease-out;
+}
+
+.ac-extra-wrapper.active {
+  opacity: 1;
+  /* max-height handled by JS */
+}
+
+/* --- TOGGLE BUTTON --- */
+.ac-toggle-btn {
+  display: inline-block;
+  margin-top: 20px;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: opacity 0.3s;
+  /* Color inherited or set via inline style */
+}
+
+.ac-toggle-btn:hover {
+  opacity: 0.8;
+}
+
+/* --- Debug Box (Optional) --- */
+.debug-box {
+  background: #fffbe6;
+  border: 2px dashed #ffcc00;
+  padding: 20px;
+  font-family: monospace;
+  font-size: 13px;
+  color: #333;
+  margin-top: 20px;
+}

@@ -1,0 +1,191 @@
+/* assets/section-testimonial-slider.css */
+
+/* --- 1. Main Section Layout --- */
+.testimonial-section {
+  overflow: hidden;
+}
+
+.scrolling-link {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  display: block;
+  transition: opacity 0.2s ease;
+}
+
+.tm-layout {
+  display: block;
+  max-width: 1360px;
+  margin: 0 auto;
+}
+
+/* --- 2. Header --- */
+.testimonial-header {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.testimonial-heading {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  line-height: 1.2;
+  color: inherit;
+}
+
+/* --- 3. Ratings --- */
+.left-rating {
+  display: flex;
+  gap: 10px;
+}
+.rating-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 14px;
+}
+.rating-score {
+  font-size: 20px;
+  font-weight: 300;
+  color: #2b3c35;
+}
+.rating-stars {
+  display: flex;
+  color: #4A6741;
+}
+
+.icon-star {
+  width: 18px;
+  height: 18px;
+}
+
+/* --- 4. Slider Container (The Window) --- */
+.tm-custom-container {
+  position: relative;
+  overflow: hidden; /* Hides slides that are waiting */
+  padding-bottom: 40px;
+  width: 100%;
+}
+
+/* --- 5. Slider Wrapper (The Moving Strip) --- */
+.tm-wrapper {
+  display: flex; /* Puts slides side-by-side */
+  width: 100%;
+  align-items: flex-start;
+  
+  /* THIS CREATES THE SWIPER ANIMATION */
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1); 
+  will-change: transform; /* Performance optimization */
+}
+
+/* --- 6. Individual Slide --- */
+.tm-slide {
+  flex: 0 0 100%; /* Force slide to be 100% width of container */
+  width: 100%;
+  position: relative;
+  display: block;
+}
+
+/* --- 7. Content Styles --- */
+.tm-content {
+  text-align: left;
+  max-width: 100%;
+  color: #2b3c35;
+}
+
+.tm-quote {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  margin: 0 0 15px;
+  font-family: inherit;
+  width: 93%;
+}
+
+.tm-author {
+  font-size: 16px;
+  opacity: 0.8;
+}
+
+.container-author {
+  display: flex;
+  column-gap: 4px;
+}
+
+/* --- 8. Pagination Dots (Native) --- */
+.tm-pagination {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  z-index: 10;
+  justify-content: flex-end; /* Mobile default */
+}
+
+/* Renamed from .swiper-pagination-bullet to .tm-dot */
+.tm-dot {
+  background-color: transparent;
+  border: 0.3px solid black;
+  opacity: 0.3;
+  width: 8px; /* Slightly larger touch target */
+  height: 8px;
+  margin: 0 5px;
+  border-radius: 50%;
+  padding: 0; /* Remove default button padding */
+  transition: opacity 0.3s ease, background-color 0.3s ease;
+  cursor: pointer;
+}
+
+/* Renamed from .swiper-pagination-bullet-active to .tm-dot-active */
+.tm-dot-active {
+  opacity: 1;
+  background-color: var(--tm-text-color, #000) !important;
+  border-color: var(--tm-text-color, #000);
+}
+
+/* --- 9. Desktop Adjustments --- */
+@media screen and (min-width: 769px) {
+  }
+
+  .tm-layout {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 60px;
+  }
+
+  .testimonial-header {
+    flex: 0px;
+    margin-bottom: 0;
+  }
+
+  .testimonial-heading {
+    font-size: 2.2rem;
+  }
+
+  .icon-star {
+    width: 20px;
+    height: 20px;
+  }
+
+  .rating-summary {
+    font-size: 1.1rem;
+  }
+
+  .tm-custom-container {
+    flex: 1;
+    min-width: 0;
+    padding-bottom: 50px;
+  }
+
+  .tm-quote {
+    font-size: 1.6rem;
+    line-height: 1.4;
+  }
+
+  .tm-pagination {
+    justify-content: flex-start; /* Desktop alignment */
+  }

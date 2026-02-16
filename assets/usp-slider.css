@@ -1,4 +1,6 @@
-/* --- SECTION BASE STYLES --- */
+/* assets/usp-slider.css */
+
+/* --- 1. Base Variables & Layout --- */
 .usp-section-wrapper {
   background-color: transparent;
   color: var(--usp-text-color);
@@ -7,9 +9,45 @@
   overflow: hidden;
 }
 
+.usp-custom-container {
+  width: 100%;
+  max-width: 100%;
+  position: relative;
+  overflow: hidden; /* Hides slides that are off-screen */
+  padding-bottom: 30px; /* Space for dots */
+}
+
+/* --- 2. The Slider Wrapper (Always a Row) --- */
+.usp-wrapper {
+  display: flex; /* Makes items sit side-by-side */
+  flex-wrap: nowrap !important; /* CRITICAL: Forces single line on ALL screens */
+  width: 100%;
+  
+  /* Animation Physics */
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: transform;
+}
+
+/* --- 3. Individual Slide --- */
+.usp-slide {
+  /* Each slide takes 100% of the container width */
+  flex: 0 0 100%; 
+  width: 100%;
+  min-width: 100%;
+  
+  /* Content Layout */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0 15px; /* Add some padding so text doesn't touch edges */
+  box-sizing: border-box;
+}
+
 .usp-content {
   text-align: center;
-  padding: 0 15px;
+  max-width: 600px; /* Optional: Keeps text readable on big screens */
+  margin: 0 auto;
 }
 
 .usp-heading {
@@ -20,77 +58,42 @@
 }
 
 .usp-text {
-  font-size: 16px;
+  font-size: 14px;
   opacity: 0.8;
-  font-weight: 300;
+  font-weight: 400;
   color: inherit;
 }
 
-/* --- DESKTOP: GRID LAYOUT (> 769px) --- */
-@media screen and (min-width: 769px) {
-  .usp-wrapper {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 30px;
-  }
-
-  .usp-slide {
-    flex: 0 1 auto;
-    min-width: 200px;
-    width: auto;
-  }
-
-  .usp-pagination {
-    display: none;
-  }
+/* --- 4. Pagination Dots (Visible Everywhere) --- */
+.usp-pagination {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  height: 20px;
+  z-index: 5;
+  pointer-events: none; /* Allows clicking through empty space */
 }
 
-/* --- MOBILE: SWIPER LAYOUT (< 769px) --- */
-@media screen and (max-width: 768px) {
+.usp-dot {
+  pointer-events: auto; /* Buttons are clickable */
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  background: transparent;
+  opacity: 0.4;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
 
-  .usp-custom-container {
-    overflow: hidden;
-    position: relative;
-    padding-bottom: 30px; /* Space for dots */
-  }
-
-  .usp-wrapper {
-    display: flex;
-    width: 100%;
-  }
-
-  .usp-slide {
-    flex-shrink: 0;
-    width: 100%;
-    position: relative;
-  }
-
-  .usp-pagination {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    text-align: center;
-    z-index: 10;
-    display: flex;
-    justify-content: center;
-  }
-
-  /* --- DOT STYLES --- */
-  .usp-section-wrapper .swiper-pagination-bullet {
-    background-color: transparent;
-    opacity: 0.3;
-    width: 6px;
-    height: 6px;
-    margin: 0 4px !important;
-    border: 0.3px solid black;
-    border-radius: 50%;
-    display: inline-block;
-  }
-
-  .usp-section-wrapper .swiper-pagination-bullet-active {
-    background-color: var(--usp-text-color) !important;
-    opacity: 1;
-  }
+.usp-dot.active {
+  background: currentColor; /* Fills with text color */
+  opacity: 1;
+  transform: scale(1.2);
 }
