@@ -59,7 +59,6 @@
 
 .usp-text {
   font-size: 14px;
-  opacity: 0.8;
   font-weight: 400;
   color: inherit;
 }
@@ -81,8 +80,8 @@
 
 .usp-dot {
   pointer-events: auto; /* Buttons are clickable */
-  width: 8px;
-  height: 8px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   border: 1px solid currentColor;
   background: transparent;

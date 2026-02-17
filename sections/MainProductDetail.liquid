@@ -162,682 +162,683 @@
     {% endif %}
 
     {% comment %} === MULAI LOOP BLOCKS === {% endcomment %}
-    {%- for block in section.blocks -%}
-      {%- case block.type -%}
+    <div class="app-block">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
 
-        {%- when 'usp_slider' -%}
-          {% comment %} === USP SLIDER CODE === {% endcomment %}
-          {{ 'usp-slider.css' | asset_url | stylesheet_tag }}
-          <script src="{{ 'usp-slider.js' | asset_url }}" defer="defer"></script>
-
-          {%- style -%}
-            #UspBlock-{{ block.id }} {
-              --usp-text-color: {{ block.settings.text_color }};
-              --usp-padding-top: {{ block.settings.padding_top }}px;
-              --usp-padding-bottom: {{ block.settings.padding_bottom }}px;
-              margin-top: var(--usp-padding-top);
-              margin-bottom: var(--usp-padding-bottom);
-            }
-            #UspBlock-{{ block.id }}
-            .usp-heading {
-              color: var(--usp-text-color);
-            }
-            #UspBlock-{{ block.id }}
-            .usp-text {
-              color: var(--usp-text-color);
-            }
-          {%- endstyle -%}
-
-          <div
-            id="UspBlock-{{ block.id }}"
-            class="usp-section-wrapper"
-            {{ block.shopify_attributes }}>
-            <div
-              class="usp-custom-container"
-              data-block-id="{{ block.id }}"
-              data-loop="true">
-
-              <div class="usp-wrapper">
-
-                {% comment %} USP ITEM 1 {% endcomment %}
-                {% if block.settings.heading_1 != blank or block.settings.text_1 != blank %}
-                  <div class="usp-slide">
-                    <div class="usp-content">
-                      {% if block.settings.heading_1 != blank %}
-                        <h3 class="usp-heading">{{ block.settings.heading_1 }}</h3>
-                      {% endif %}
-                      {% if block.settings.text_1 != blank %}
-                        <div class="usp-text">{{ block.settings.text_1 }}</div>
-                      {% endif %}
-                    </div>
-                  </div>
-                {% endif %}
-
-                {% comment %} USP ITEM 2 {% endcomment %}
-                {% if block.settings.heading_2 != blank or block.settings.text_2 != blank %}
-                  <div class="usp-slide">
-                    <div class="usp-content">
-                      {% if block.settings.heading_2 != blank %}
-                        <h3 class="usp-heading">{{ block.settings.heading_2 }}</h3>
-                      {% endif %}
-                      {% if block.settings.text_2 != blank %}
-                        <div class="usp-text">{{ block.settings.text_2 }}</div>
-                      {% endif %}
-                    </div>
-                  </div>
-                {% endif %}
-
-                {% comment %} USP ITEM 3 {% endcomment %}
-                {% if block.settings.heading_3 != blank or block.settings.text_3 != blank %}
-                  <div class="usp-slide">
-                    <div class="usp-content">
-                      {% if block.settings.heading_3 != blank %}
-                        <h3 class="usp-heading">{{ block.settings.heading_3 }}</h3>
-                      {% endif %}
-                      {% if block.settings.text_3 != blank %}
-                        <div class="usp-text">{{ block.settings.text_3 }}</div>
-                      {% endif %}
-                    </div>
-                  </div>
-                {% endif %}
-
-              </div>
-              <div class="usp-pagination"></div>
-            </div>
-          </div>
-
-        {%- when 'logo_list' -%}
-          {% comment %} === LOGO LIST START === {% endcomment %}
-          {% comment %} Pastikan file asset section-logo-list.css sudah ada di folder Assets {% endcomment %}
-          {{ 'section-logo-list.css' | asset_url | stylesheet_tag }}
-
-          {%- style -%}
-            /* Scoping ke ID Block supaya tidak bentrok */
-            #LogoList-{{ block.id }} {
-              --grid-gap-mobile: {{ block.settings.gap_mobile }}px;
-              --grid-gap-desktop: {{ block.settings.gap_desktop }}px;
-              --logo-max-height: {{ block.settings.logo_height }}px;
-              --logo-max-width: {{ block.settings.logo_width }}px;
-              --logo-opacity: {{ block.settings.opacity | divided_by: 100.0 }};
-              --grid-alignment: {{ block.settings.alignment }};
-              --container-max-width: {{ block.settings.max_width }}px;
-
-              padding-top: {{ block.settings.padding_top }}px;
-              padding-bottom: {{ block.settings.padding_bottom }}px;
-            }
-          {%- endstyle -%}
-
-          {% comment %} Cek Metafield atau Mode Editor {% endcomment %}
-          {%- if product.metafields.custom.certified == true or request.design_mode -%}
-
-            <div
-              id="LogoList-{{ block.id }}"
-              class="logo-list-wrapper"
-              {{ block.shopify_attributes }}>
-              <div class="logo-list__container" style="max-width: var(--container-max-width);">
-
-                {%- if block.settings.heading != blank -%}
-                  <h2 style="text-align: center; color: {{ block.settings.heading_color }}; margin-bottom: 2rem;">
-                    {{ block.settings.heading }}
-                  </h2>
-                {%- endif -%}
-
-                <div class="logo-list__grid">
-
-                  {% comment %} --- LOGO 1 --- {% endcomment %}
-                  {% if block.settings.image_1 != blank %}
-                    <div class="logo-list__item">
-                      {% if block.settings.link_1 != blank %}<a href="{{ block.settings.link_1 }}" class="logo-list__link">{% endif %}
-                      {{ block.settings.image_1 | image_url: width: 400 | image_tag: loading: 'lazy', class: 'logo-list__image', alt: block.settings.image_1.alt }}
-                      {% if block.settings.link_1 != blank %}</a>{% endif %}
-                    </div>
-                  {% endif %}
-
-                  {% comment %} --- LOGO 2 --- {% endcomment %}
-                  {% if block.settings.image_2 != blank %}
-                    <div class="logo-list__item">
-                      {% if block.settings.link_2 != blank %}<a href="{{ block.settings.link_2 }}" class="logo-list__link">{% endif %}
-                      {{ block.settings.image_2 | image_url: width: 400 | image_tag: loading: 'lazy', class: 'logo-list__image', alt: block.settings.image_2.alt }}
-                      {% if block.settings.link_2 != blank %}</a>{% endif %}
-                    </div>
-                  {% endif %}
-
-                  {% comment %} --- LOGO 3 --- {% endcomment %}
-                  {% if block.settings.image_3 != blank %}
-                    <div class="logo-list__item">
-                      {% if block.settings.link_3 != blank %}<a href="{{ block.settings.link_3 }}" class="logo-list__link">{% endif %}
-                      {{ block.settings.image_3 | image_url: width: 400 | image_tag: loading: 'lazy', class: 'logo-list__image', alt: block.settings.image_3.alt }}
-                      {% if block.settings.link_3 != blank %}</a>{% endif %}
-                    </div>
-                  {% endif %}
-
-                  {% comment %} --- LOGO 4 --- {% endcomment %}
-                  {% if block.settings.image_4 != blank %}
-                    <div class="logo-list__item">
-                      {% if block.settings.link_4 != blank %}<a href="{{ block.settings.link_4 }}" class="logo-list__link">{% endif %}
-                      {{ block.settings.image_4 | image_url: width: 400 | image_tag: loading: 'lazy', class: 'logo-list__image', alt: block.settings.image_4.alt }}
-                      {% if block.settings.link_4 != blank %}</a>{% endif %}
-                    </div>
-                  {% endif %}
-
-                  {% comment %} --- LOGO 5 --- {% endcomment %}
-                  {% if block.settings.image_5 != blank %}
-                    <div class="logo-list__item">
-                      {% if block.settings.link_5 != blank %}<a href="{{ block.settings.link_5 }}" class="logo-list__link">{% endif %}
-                      {{ block.settings.image_5 | image_url: width: 400 | image_tag: loading: 'lazy', class: 'logo-list__image', alt: block.settings.image_5.alt }}
-                      {% if block.settings.link_5 != blank %}</a>{% endif %}
-                    </div>
-                  {% endif %}
-
-                </div>
-              </div>
-            </div>
-          {%- endif -%}
-        {%- when 'text_list' -%}
-          {% comment %} === TEXT LIST (CONCERNS) START === {% endcomment %}
-          {{ 'section-text-list.css' | asset_url | stylesheet_tag }}
-
-          {%- style -%}
-            #TextList-{{ block.id }} {
-              background-color: {{ block.settings.bg_color }};
-              padding-top: {{ block.settings.padding_top }}px;
-              padding-bottom: {{ block.settings.padding_bottom }}px;
-            }
-            #TextList-{{ block.id }}
-            .concerns-list__container {
-              max-width: {{ block.settings.max_width }}px;
-              text-align: {{ block.settings.text_align }};
-              font-size: {{ block.settings.font_size }}px;
-              color: {{ block.settings.text_color }};
-            }
-            #TextList-{{ block.id }}
-            .concerns-list__label {
-              color: {{ block.settings.heading_color }};
-            }
-            #TextList-{{ block.id }}
-            .concerns-list__item {
-              color: {{ block.settings.text_color }};
-            }
-        {%- endstyle -%}
-
-          {% comment %} Ambil data dari Metafield List (List of Single Line Text) {% endcomment %}
-          {% assign concerns_list = product.metafields.custom.concerns.value %}
-
-          {% comment %} Tampilkan jika Metafield ada isinya OR sedang di Theme Editor (biar bisa diedit) {% endcomment %}
-          {% if concerns_list != blank or request.design_mode %}
-            <div
-              id="TextList-{{ block.id }}"
-              class="concerns-list__wrapper"
-              {{ block.shopify_attributes }}>
-              <div class="concerns-list__container">
-
-                {%- if block.settings.label != blank -%}
-                  <span class="concerns-list__label">{{ block.settings.label }}</span>
-                {%- endif -%}
-
-                {% if concerns_list != blank %}
-                  {%- for item in concerns_list -%}
-                    <span class="concerns-list__item">
-                      {{ item }}
-                    </span>
-
-                    {%- unless forloop.last -%}
-                      <span class="concerns-list__separator">•</span>
-                    {%- endunless -%}
-                  {%- endfor -%}
-                {% else %}
-                  {% comment %} Placeholder saat di Editor jika metafield kosong {% endcomment %}
-                  <span class="concerns-list__item" style="opacity: 0.5;">
-                    Add items to 'custom.concerns' metafield to see them here.
-                  </span>
-                {% endif %}
-
-              </div>
-            </div>
-          {% endif %}
-        {% comment %} === TEXT LIST END === {% endcomment %}
-        {%- when 'testimonial_slider' -%}
-          {% comment %} === TESTIMONIAL SLIDER START === {% endcomment %}
-          {% assign reviews_list = product.metafields.custom.reviews.value %}
-
-          {% if reviews_list != blank %}
-            {{ 'section-testimonial-slider.css' | asset_url | stylesheet_tag }}
-            <script src="{{ 'section-testimonial-slider.js' | asset_url }}" defer></script>
+          {%- when 'usp_slider' -%}
+            {% comment %} === USP SLIDER CODE === {% endcomment %}
+            {{ 'usp-slider.css' | asset_url | stylesheet_tag }}
+            <script src="{{ 'usp-slider.js' | asset_url }}" defer="defer"></script>
 
             {%- style -%}
-              #Testimonial-{{ block.id }} {
-                background-color: {{ block.settings.bg_color }};
-                color: {{ block.settings.text_color }};
-                padding-top: {{ block.settings.padding_top }}px;
-                padding-bottom: {{ block.settings.padding_bottom }}px;
-                --tm-text-color: {{ block.settings.text_color }};
+              #UspBlock-{{ block.id }} {
+                --usp-text-color: {{ block.settings.text_color }};
+                --usp-padding-top: {{ block.settings.padding_top }}px;
+                --usp-padding-bottom: {{ block.settings.padding_bottom }}px;
+                margin-top: var(--usp-padding-top);
+                margin-bottom: var(--usp-padding-bottom);
+              }
+              #UspBlock-{{ block.id }}
+              .usp-heading {
+                color: var(--usp-text-color);
+              }
+              #UspBlock-{{ block.id }}
+              .usp-text {
+                color: var(--usp-text-color);
               }
             {%- endstyle -%}
 
             <div
-              id="Testimonial-{{ block.id }}"
-              class="testimonial-section"
+              id="UspBlock-{{ block.id }}"
+              class="usp-section-wrapper"
               {{ block.shopify_attributes }}>
-              <a href="#judgeme-review-wrapper" class="scrolling-link">
-                <div class="page-width tm-layout">
+              <div
+                class="usp-custom-container"
+                data-block-id="{{ block.id }}"
+                data-loop="true">
 
-                  <div class="testimonial-header">
-                    {% if block.settings.heading != blank %}
-                      <h2 class="testimonial-heading">{{ block.settings.heading }}</h2>
+                <div class="usp-wrapper">
+
+                  {% comment %} USP ITEM 1 {% endcomment %}
+                  {% if block.settings.heading_1 != blank or block.settings.text_1 != blank %}
+                    <div class="usp-slide">
+                      <div class="usp-content">
+                        {% if block.settings.heading_1 != blank %}
+                          <h3 class="usp-heading">{{ block.settings.heading_1 }}</h3>
+                        {% endif %}
+                        {% if block.settings.text_1 != blank %}
+                          <div class="usp-text">{{ block.settings.text_1 }}</div>
+                        {% endif %}
+                      </div>
+                    </div>
+                  {% endif %}
+
+                  {% comment %} USP ITEM 2 {% endcomment %}
+                  {% if block.settings.heading_2 != blank or block.settings.text_2 != blank %}
+                    <div class="usp-slide">
+                      <div class="usp-content">
+                        {% if block.settings.heading_2 != blank %}
+                          <h3 class="usp-heading">{{ block.settings.heading_2 }}</h3>
+                        {% endif %}
+                        {% if block.settings.text_2 != blank %}
+                          <div class="usp-text">{{ block.settings.text_2 }}</div>
+                        {% endif %}
+                      </div>
+                    </div>
+                  {% endif %}
+
+                  {% comment %} USP ITEM 3 {% endcomment %}
+                  {% if block.settings.heading_3 != blank or block.settings.text_3 != blank %}
+                    <div class="usp-slide">
+                      <div class="usp-content">
+                        {% if block.settings.heading_3 != blank %}
+                          <h3 class="usp-heading">{{ block.settings.heading_3 }}</h3>
+                        {% endif %}
+                        {% if block.settings.text_3 != blank %}
+                          <div class="usp-text">{{ block.settings.text_3 }}</div>
+                        {% endif %}
+                      </div>
+                    </div>
+                  {% endif %}
+
+                </div>
+                <div class="usp-pagination"></div>
+              </div>
+            </div>
+
+          {%- when 'logo_list' -%}
+            {% comment %} === LOGO LIST START === {% endcomment %}
+            {% comment %} Pastikan file asset section-logo-list.css sudah ada di folder Assets {% endcomment %}
+            {{ 'section-logo-list.css' | asset_url | stylesheet_tag }}
+
+            {%- style -%}
+              /* Scoping ke ID Block supaya tidak bentrok */
+              #LogoList-{{ block.id }} {
+                --grid-gap-mobile: {{ block.settings.gap_mobile }}px;
+                --grid-gap-desktop: {{ block.settings.gap_desktop }}px;
+                --logo-max-height: {{ block.settings.logo_height }}px;
+                --logo-max-width: {{ block.settings.logo_width }}px;
+                --logo-opacity: {{ block.settings.opacity | divided_by: 100.0 }};
+                --grid-alignment: {{ block.settings.alignment }};
+                --container-max-width: {{ block.settings.max_width }}px;
+
+                padding-top: {{ block.settings.padding_top }}px;
+                padding-bottom: {{ block.settings.padding_bottom }}px;
+              }
+            {%- endstyle -%}
+
+            {% comment %} Cek Metafield atau Mode Editor {% endcomment %}
+            {%- if product.metafields.custom.certified == true or request.design_mode -%}
+
+              <div
+                id="LogoList-{{ block.id }}"
+                class="logo-list-wrapper"
+                {{ block.shopify_attributes }}>
+                <div class="logo-list__container" style="max-width: var(--container-max-width);">
+
+                  {%- if block.settings.heading != blank -%}
+                    <h2 style="text-align: center; color: {{ block.settings.heading_color }}; margin-bottom: 2rem;">
+                      {{ block.settings.heading }}
+                    </h2>
+                  {%- endif -%}
+
+                  <div class="logo-list__grid">
+
+                    {% comment %} --- LOGO 1 --- {% endcomment %}
+                    {% if block.settings.image_1 != blank %}
+                      <div class="logo-list__item">
+                        {% if block.settings.link_1 != blank %}<a href="{{ block.settings.link_1 }}" class="logo-list__link">{% endif %}
+                        {{ block.settings.image_1 | image_url: width: 400 | image_tag: loading: 'lazy', class: 'logo-list__image', alt: block.settings.image_1.alt }}
+                        {% if block.settings.link_1 != blank %}</a>{% endif %}
+                      </div>
                     {% endif %}
 
-                    <div class="rating-summary">
-                      <div class="left-rating">
-                        <div class="rating-stars">
-                          {% for i in (1..5) %}
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 24 24"
-                              fill="currentColor"
-                              class="icon-star"><path
-                                fill-rule="evenodd"
-                                d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.007z"
-                                clip-rule="evenodd" /></svg>
-                          {% endfor %}
-                        </div>
-                        <span class="rating-score">{{ block.settings.rating_score }}</span>
+                    {% comment %} --- LOGO 2 --- {% endcomment %}
+                    {% if block.settings.image_2 != blank %}
+                      <div class="logo-list__item">
+                        {% if block.settings.link_2 != blank %}<a href="{{ block.settings.link_2 }}" class="logo-list__link">{% endif %}
+                        {{ block.settings.image_2 | image_url: width: 400 | image_tag: loading: 'lazy', class: 'logo-list__image', alt: block.settings.image_2.alt }}
+                        {% if block.settings.link_2 != blank %}</a>{% endif %}
                       </div>
-                    </div>
-                  </div>
+                    {% endif %}
 
-                  <div
-                    class="tm-custom-container"
-                    data-slide-count="{{ reviews_list.count }}"
-                    data-block-id="{{ block.id }}">
-                    <div class="tm-wrapper">
-                      {% for review_item in reviews_list %}
-                        <div class="tm-slide">
-                          <div class="tm-content">
-                            {% if review_item.review_content != blank %}
-                              <blockquote class="tm-quote">“{{ review_item.review_content }}”</blockquote>
-                            {% endif %}
-                            {% if review_item.reviewer_name != blank %}
-                              <div class="container-author">
-                                <div class="tm-author">{{ review_item.reviewer_name }}</div>
-                                <div>—</div>
-                                <div>Verified Buyer</div>
-                              </div>
-                            {% endif %}
-                          </div>
-                        </div>
-                      {% endfor %}
-                    </div>
-                    <div class="tm-pagination" data-block-id="{{ block.id }}"></div>
-                  </div>
-
-                </div>
-              </a>
-            </div>
-          {% endif %}
-        {% comment %} === TESTIMONIAL SLIDER END === {% endcomment %}
-        {% comment %}
-          Section: Dynamic Timeline List
-          Description: A list of items sourced dynamically from Product Metafields or manual blocks.
-        {% endcomment %}
-
-        {%- when 'timeline_list' -%}
-          {{ 'timeline-list.css' | asset_url | stylesheet_tag }}
-
-          {%- style -%}
-            #Timeline-{{ block.id }} {
-              --tl-padding-top: {{ block.settings.padding_top }}px;
-              --tl-padding-bottom: {{ block.settings.padding_bottom }}px;
-              --tl-heading-color: {{ block.settings.heading_color }};
-              --tl-text-color: {{ block.settings.text_color }};
-            }
-        {%- endstyle -%}
-
-          {%- comment -%}
-            LOGIC: Determine source of data
-            1. Check for specific timeline metaobject list.
-            2. Fallback to manual blocks.
-          {%- endcomment -%}
-
-          {%- assign timeline_data = blank -%}
-          {%- assign source_type = 'blocks' -%}
-
-          {%- if block.settings.mf_key != blank and product != blank -%}
-            {%- assign mf_namespace = block.settings.mf_namespace -%}
-            {%- assign mf_key = block.settings.mf_key -%}
-            {%- assign timeline_metaobject_list = product.metafields[mf_namespace][mf_key].value -%}
-
-            {%- if timeline_metaobject_list != blank -%}
-              {%- assign timeline_data = timeline_metaobject_list -%}
-              {%- assign source_type = 'metafields' -%}
-            {%- endif -%}
-          {%- endif -%}
-
-          {%- comment -%} Condition: Show if Custom Metafield exists OR if Blocks exist {%- endcomment -%}
-          {% if product.metafields.custom.product_timeline != blank or block.blocks.size > 0 %}
-
-            <div
-              id="Timeline-{{ block.id }}"
-              class="timeline-section-wrapper"
-              {{ block.shopify_attributes }}>
-              <div class="inner-container">
-
-                {% if block.settings.heading != blank %}
-                  <div class="title-timeline">
-                    {{ block.settings.heading }}
-                  </div>
-                {% endif %}
-
-                <div class="timeline-list__container">
-
-                  {%- comment -%} 1. RENDER METAFIELDS DATA {%- endcomment -%}
-                  {%- if source_type == 'metafields' -%}
-                    {%- for item in timeline_data -%}
-                      <div class="timeline-item">
-                        <div class="container-timeline-item__icon-wrapper">
-                          <div class="timeline-item__icon-wrapper">
-                            {%- if item.icon != blank -%}
-                              {{ item.icon | image_url: width: 128, height: 128 | image_tag: loading: 'lazy', class: 'timeline-item__icon', widths: '64, 128', alt: item.period | escape }}
-                            {%- else -%}
-                              {% render 'icon-placeholder' %}
-                            {%- endif -%}
-                          </div>
-                        </div>
-                        <div class="timeline-item__content">
-                          {%- if item.period != blank -%}
-                            <h3 class="timeline-item__title">{{ item.period }}</h3>
-                          {%- endif -%}
-                          {%- if item.description != blank -%}
-                            <div class="timeline-item__description rte">
-                              {{ item.description | metafield_tag }}
-                            </div>
-                          {%- endif -%}
-                        </div>
+                    {% comment %} --- LOGO 3 --- {% endcomment %}
+                    {% if block.settings.image_3 != blank %}
+                      <div class="logo-list__item">
+                        {% if block.settings.link_3 != blank %}<a href="{{ block.settings.link_3 }}" class="logo-list__link">{% endif %}
+                        {{ block.settings.image_3 | image_url: width: 400 | image_tag: loading: 'lazy', class: 'logo-list__image', alt: block.settings.image_3.alt }}
+                        {% if block.settings.link_3 != blank %}</a>{% endif %}
                       </div>
-                    {%- endfor -%}
+                    {% endif %}
 
-                  {%- else -%}
+                    {% comment %} --- LOGO 4 --- {% endcomment %}
+                    {% if block.settings.image_4 != blank %}
+                      <div class="logo-list__item">
+                        {% if block.settings.link_4 != blank %}<a href="{{ block.settings.link_4 }}" class="logo-list__link">{% endif %}
+                        {{ block.settings.image_4 | image_url: width: 400 | image_tag: loading: 'lazy', class: 'logo-list__image', alt: block.settings.image_4.alt }}
+                        {% if block.settings.link_4 != blank %}</a>{% endif %}
+                      </div>
+                    {% endif %}
 
-                    {%- comment -%} 2. RENDER MANUAL BLOCKS {%- endcomment -%}
-                    {%- for item in block.blocks -%}
+                    {% comment %} --- LOGO 5 --- {% endcomment %}
+                    {% if block.settings.image_5 != blank %}
+                      <div class="logo-list__item">
+                        {% if block.settings.link_5 != blank %}<a href="{{ block.settings.link_5 }}" class="logo-list__link">{% endif %}
+                        {{ block.settings.image_5 | image_url: width: 400 | image_tag: loading: 'lazy', class: 'logo-list__image', alt: block.settings.image_5.alt }}
+                        {% if block.settings.link_5 != blank %}</a>{% endif %}
+                      </div>
+                    {% endif %}
 
-                    {%- endfor -%}
-                  {%- endif -%}
-
-                  {%- comment -%} Fallback Icon SVG (Optional helper) {%- endcomment -%}
-                  {%- capture icon_placeholder -%}
-            <svg class="timeline-item__icon timeline-item__icon--placeholder" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-          {%- endcapture -%}
+                  </div>
                 </div>
               </div>
-            </div>
-          {% endif %}
-        {%- when 'accordion_detail' -%}
-          {{ 'accordion-duplicate.css' | asset_url | stylesheet_tag }}
-          <script src="{{ 'accordion-duplicate.js' | asset_url }}" defer="defer">
-        </script>
-          {%- assign detail_items = product.metafields.custom.product_detail.value -%}
+            {%- endif -%}
+          {%- when 'text_list' -%}
+            {% comment %} === TEXT LIST (CONCERNS) START === {% endcomment %}
+            {{ 'section-text-list.css' | asset_url | stylesheet_tag }}
 
-          {%- assign limit = block.settings.limit_count | default: 6 -%}
+            {%- style -%}
+              #TextList-{{ block.id }} {
+                background-color: {{ block.settings.bg_color }};
+                padding-top: {{ block.settings.padding_top }}px;
+                padding-bottom: {{ block.settings.padding_bottom }}px;
+              }
+              #TextList-{{ block.id }}
+              .concerns-list__container {
+                max-width: {{ block.settings.max_width }}px;
+                text-align: {{ block.settings.text_align }};
+                font-size: {{ block.settings.font_size }}px;
+                color: {{ block.settings.text_color }};
+              }
+              #TextList-{{ block.id }}
+              .concerns-list__label {
+                color: {{ block.settings.heading_color }};
+              }
+              #TextList-{{ block.id }}
+              .concerns-list__item {
+                color: {{ block.settings.text_color }};
+              }
+          {%- endstyle -%}
 
-          {%- if detail_items != blank or request.design_mode -%}
-            <div
-              id="AccordionBlock-{{ block.id }}"
-              class="ac-dup-block-wrapper"
-              data-accordion-block
-              {{ block.shopify_attributes }}>
+            {% comment %} Ambil data dari Metafield List (List of Single Line Text) {% endcomment %}
+            {% assign concerns_list = product.metafields.custom.concerns.value %}
+
+            {% comment %} Tampilkan jika Metafield ada isinya OR sedang di Theme Editor (biar bisa diedit) {% endcomment %}
+            {% if concerns_list != blank or request.design_mode %}
+              <div
+                id="TextList-{{ block.id }}"
+                class="concerns-list__wrapper"
+                {{ block.shopify_attributes }}>
+                <div class="concerns-list__container">
+
+                  {%- if block.settings.label != blank -%}
+                    <span class="concerns-list__label">{{ block.settings.label }}</span>
+                  {%- endif -%}
+
+                  {% if concerns_list != blank %}
+                    {%- for item in concerns_list -%}
+                      <span class="concerns-list__item">
+                        {{ item }}
+                      </span>
+
+                      {%- unless forloop.last -%}
+                        <span class="concerns-list__separator">•</span>
+                      {%- endunless -%}
+                    {%- endfor -%}
+                  {% else %}
+                    {% comment %} Placeholder saat di Editor jika metafield kosong {% endcomment %}
+                    <span class="concerns-list__item" style="opacity: 0.5;">
+                      Add items to 'custom.concerns' metafield to see them here.
+                    </span>
+                  {% endif %}
+
+                </div>
+              </div>
+            {% endif %}
+          {% comment %} === TEXT LIST END === {% endcomment %}
+          {%- when 'testimonial_slider' -%}
+            {% comment %} === TESTIMONIAL SLIDER START === {% endcomment %}
+            {% assign reviews_list = product.metafields.custom.reviews.value %}
+
+            {% if reviews_list != blank %}
+              {{ 'section-testimonial-slider.css' | asset_url | stylesheet_tag }}
+              <script src="{{ 'section-testimonial-slider.js' | asset_url }}" defer></script>
 
               {%- style -%}
-                /* Inline styles specific to this block instance */
-                #AccordionBlock-{{ block.id }} {
-                  margin-top: {{ block.settings.padding_top }}px;
-                  margin-bottom: {{ block.settings.padding_bottom }}px;
-                }
-                #AccordionBlock-{{ block.id }}
-                .ac-dup-header h3 {
-                  color: {{ block.settings.heading_color | default: '#333' }};
-                }
-                #AccordionBlock-{{ block.id }}
-                .ac-dup-description {
-                  color: {{ block.settings.accordion_text_color | default: '#555' }};
-                }
-
-                /* See More Button Styles */
-                .ac-extra-wrapper {
-                  max-height: 0;
-                  overflow: hidden;
-                  opacity: 0;
-                  transition: max-height 0.5s ease-out
-                  , opacity 0.5s ease-out;
-                }
-                .ac-extra-wrapper.active {
-                  opacity: 1;
-                }
-                .ac-toggle-btn {
-                  display: inline-block;
-                  margin-top: 15px;
-                  background: none;
-                  border: none;
-                  padding: 0;
-                  font-size: 14px;
-                  font-weight: 600;
-                  color: {{ block.settings.heading_color | default: '#333' }};
-                  cursor: pointer;
-                  text-decoration: underline;
+                #Testimonial-{{ block.id }} {
+                  background-color: {{ block.settings.bg_color }};
+                  color: {{ block.settings.text_color }};
+                  padding-top: {{ block.settings.padding_top }}px;
+                  padding-bottom: {{ block.settings.padding_bottom }}px;
+                  --tm-text-color: {{ block.settings.text_color }};
                 }
               {%- endstyle -%}
 
-              {%- if block.settings.title != blank -%}
-                <h2 class="ac-dup-main-title" style="color: {{ block.settings.heading_color }};">
-                  {{ block.settings.title }}
-                </h2>
-              {%- endif -%}
+              <div
+                id="Testimonial-{{ block.id }}"
+                class="testimonial-section"
+                {{ block.shopify_attributes }}>
+                <a href="#judgeme-review-wrapper" class="scrolling-link">
+                  <div class="page-width tm-layout">
 
-              <div class="ac-dup-list-container">
-                {%- if detail_items != blank -%}
+                    <div class="testimonial-header">
+                      {% if block.settings.heading != blank %}
+                        <h2 class="testimonial-heading">{{ block.settings.heading }}</h2>
+                      {% endif %}
 
-                  {%- comment -%} === 1. VISIBLE ITEMS === {%- endcomment -%}
-                  {%- for item in detail_items -%}
-                    {%- if forloop.index <= limit -%}
-                      <div class="ac-dup-item">
-                        <div class="ac-dup-header">
-                          <h3>{{ item.title }}</h3>
-                          <div class="ac-dup-icon">
-                            {%- if block.settings.custom_icon != blank -%}
-                              {{ block.settings.custom_icon }}
-                            {%- else -%}
+                      <div class="rating-summary">
+                        <div class="left-rating">
+                          <div class="rating-stars">
+                            {% for i in (1..5) %}
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 12 12"><path fill="currentColor" d="M7 5V0H5v5H0v2h5v5h2V7h5V5H7Z" /></svg>
-                            {%- endif -%}
+                                viewBox="0 0 24 24"
+                                fill="currentColor"
+                                class="icon-star"><path
+                                  fill-rule="evenodd"
+                                  d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.007z"
+                                  clip-rule="evenodd" /></svg>
+                            {% endfor %}
                           </div>
-                        </div>
-                        <div class="ac-dup-description rte">
-                          <div style="padding: 10px 0 15px;">
-                            {{ item.description | metafield_tag }}
-                          </div>
+                          <span class="rating-score">{{ block.settings.rating_score }}</span>
                         </div>
                       </div>
-                    {%- endif -%}
-                  {%- endfor -%}
+                    </div>
 
-                  {%- comment -%} === 2. HIDDEN ITEMS === {%- endcomment -%}
-                  {%- if detail_items.size > limit -%}
-                    <div class="ac-extra-wrapper">
-                      {%- for item in detail_items -%}
-                        {%- if forloop.index > limit -%}
-                          <div class="ac-dup-item">
-                            <div class="ac-dup-header">
-                              <h3>{{ item.title }}</h3>
-                              <div class="ac-dup-icon">
-                                {%- if block.settings.custom_icon != blank -%}
-                                  {{ block.settings.custom_icon }}
-                                {%- else -%}
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 12 12"><path fill="currentColor" d="M7 5V0H5v5H0v2h5v5h2V7h5V5H7Z" /></svg>
-                                {%- endif -%}
-                              </div>
+                    <div
+                      class="tm-custom-container"
+                      data-slide-count="{{ reviews_list.count }}"
+                      data-block-id="{{ block.id }}">
+                      <div class="tm-wrapper">
+                        {% for review_item in reviews_list %}
+                          <div class="tm-slide">
+                            <div class="tm-content">
+                              {% if review_item.review_content != blank %}
+                                <blockquote class="tm-quote">“{{ review_item.review_content }}”</blockquote>
+                              {% endif %}
+                              {% if review_item.reviewer_name != blank %}
+                                <div class="container-author">
+                                  <div class="tm-author">{{ review_item.reviewer_name }}</div>
+                                  <div>—</div>
+                                  <div>Verified Buyer</div>
+                                </div>
+                              {% endif %}
                             </div>
-                            <div class="ac-dup-description rte">
-                              <div style="padding: 10px 0 15px;">
+                          </div>
+                        {% endfor %}
+                      </div>
+                      <div class="tm-pagination" data-block-id="{{ block.id }}"></div>
+                    </div>
+
+                  </div>
+                </a>
+              </div>
+            {% endif %}
+          {% comment %} === TESTIMONIAL SLIDER END === {% endcomment %}
+          {% comment %}
+            Section: Dynamic Timeline List
+            Description: A list of items sourced dynamically from Product Metafields or manual blocks.
+          {% endcomment %}
+
+          {%- when 'timeline_list' -%}
+            {{ 'timeline-list.css' | asset_url | stylesheet_tag }}
+
+            {%- style -%}
+              #Timeline-{{ block.id }} {
+                --tl-padding-top: {{ block.settings.padding_top }}px;
+                --tl-padding-bottom: {{ block.settings.padding_bottom }}px;
+                --tl-heading-color: {{ block.settings.heading_color }};
+                --tl-text-color: {{ block.settings.text_color }};
+              }
+          {%- endstyle -%}
+
+            {%- comment -%}
+              LOGIC: Determine source of data
+              1. Check for specific timeline metaobject list.
+              2. Fallback to manual blocks.
+            {%- endcomment -%}
+
+            {%- assign timeline_data = blank -%}
+            {%- assign source_type = 'blocks' -%}
+
+            {%- if block.settings.mf_key != blank and product != blank -%}
+              {%- assign mf_namespace = block.settings.mf_namespace -%}
+              {%- assign mf_key = block.settings.mf_key -%}
+              {%- assign timeline_metaobject_list = product.metafields[mf_namespace][mf_key].value -%}
+
+              {%- if timeline_metaobject_list != blank -%}
+                {%- assign timeline_data = timeline_metaobject_list -%}
+                {%- assign source_type = 'metafields' -%}
+              {%- endif -%}
+            {%- endif -%}
+
+            {%- comment -%} Condition: Show if Custom Metafield exists OR if Blocks exist {%- endcomment -%}
+            {% if product.metafields.custom.product_timeline != blank or block.blocks.size > 0 %}
+
+              <div
+                id="Timeline-{{ block.id }}"
+                class="timeline-section-wrapper"
+                {{ block.shopify_attributes }}>
+                <div class="inner-container">
+
+                  {% if block.settings.heading != blank %}
+                    <div class="title-timeline">
+                      {{ block.settings.heading }}
+                    </div>
+                  {% endif %}
+
+                  <div class="timeline-list__container">
+
+                    {%- comment -%} 1. RENDER METAFIELDS DATA {%- endcomment -%}
+                    {%- if source_type == 'metafields' -%}
+                      {%- for item in timeline_data -%}
+                        <div class="timeline-item">
+                          <div class="container-timeline-item__icon-wrapper">
+                            <div class="timeline-item__icon-wrapper">
+                              {%- if item.icon != blank -%}
+                                {{ item.icon | image_url: width: 128, height: 128 | image_tag: loading: 'lazy', class: 'timeline-item__icon', widths: '64, 128', alt: item.period | escape }}
+                              {%- else -%}
+                                {% render 'icon-placeholder' %}
+                              {%- endif -%}
+                            </div>
+                          </div>
+                          <div class="timeline-item__content">
+                            {%- if item.period != blank -%}
+                              <h3 class="timeline-item__title">{{ item.period }}</h3>
+                            {%- endif -%}
+                            {%- if item.description != blank -%}
+                              <div class="timeline-item__description rte">
                                 {{ item.description | metafield_tag }}
                               </div>
-                            </div>
-                          </div>
-                        {%- endif -%}
-                      {%- endfor -%}
-                    </div>
-
-                    {%- comment -%} === 3. TOGGLE BUTTON === {%- endcomment -%}
-                    <button class="ac-toggle-btn">
-                      <span class="text-more">{{ block.settings.see_more_text }}</span>
-                      <span class="text-less" style="display:none;">{{ block.settings.see_less_text }}</span>
-                    </button>
-                  {%- endif -%}
-
-                {%- elsif request.design_mode -%}
-                  {%- comment -%} DEBUG: Help you find why it's empty {%- endcomment -%}
-                  <div style="padding: 15px; border: 1px dashed #ccc; margin: 10px 0; font-size: 13px;">
-                    <p>
-                      <strong>Debug: Product Detail List</strong>
-                    </p>
-                    <p>Looking for:
-                      <code>product.metafields.custom.product_detail</code>
-                    </p>
-                    <p>Status:
-                      {% if product.metafields.custom.product_detail != blank %}
-                        <span style="color:green">Found ({{ detail_items.count }} items)</span>
-                      {% else %}
-                        <span style="color:red">Empty / Not Found</span>
-                      {% endif %}
-                    </p>
-                  </div>
-                {%- endif -%}
-              </div>
-            </div>
-          {%- endif -%}
-        {%- when 'accordion_duplicate' -%}
-          {{ 'accordion-duplicate.css' | asset_url | stylesheet_tag }}
-          <script src="{{ 'accordion-duplicate.js' | asset_url }}"></script>
-
-          {%- assign faq_group_metafield = product.metafields.product.faq -%}
-          {%- assign faq_group = faq_group_metafield.value -%}
-          {%- assign faq_items = faq_group.faq_items.value -%}
-
-          {%- assign limit = block.settings.limit_count | default: 6 -%}
-
-          {%- if faq_items != blank or request.design_mode -%}
-            <div
-              id="AccordionBlock-{{ block.id }}"
-              class="ac-dup-block-wrapper"
-              data-accordion-block
-              {{ block.shopify_attributes }}>
-
-              {%- style -%}
-                /* Inline styles for logic-specific elements */
-                .ac-extra-wrapper {
-                  max-height: 0;
-                  overflow: hidden;
-                  opacity: 0;
-                  transition: max-height 0.5s ease-out
-                  , opacity 0.5s ease-out;
-                }
-                .ac-extra-wrapper.active {
-                  opacity: 1;
-                }
-                .ac-toggle-btn {
-                  display: inline-block;
-                  margin-top: 15px;
-                  background: none;
-                  border: none;
-                  padding: 0;
-                  font-size: 14px;
-                  font-weight: 600;
-                  color: {{ block.settings.heading_color | default: '#333' }};
-                  cursor: pointer;
-                  text-decoration: underline;
-                }
-              {%- endstyle -%}
-
-              {%- assign display_title = block.settings.title | default: faq_group.title -%}
-
-              {%- if display_title != blank -%}
-                <h2 class="ac-dup-main-title" style="color: {{ block.settings.heading_color }};">{{ display_title }}</h2>
-              {%- endif -%}
-
-              <div class="ac-dup-list-container">
-                {%- if faq_items != blank -%}
-
-                  {%- comment -%} === 1. VISIBLE ITEMS (First 3) === {%- endcomment -%}
-                  {%- for faq_item in faq_items -%}
-                    {%- if forloop.index <= limit -%}
-                      <div class="ac-dup-item">
-                        <div class="ac-dup-header">
-                          <h3>{{ faq_item.title }}</h3>
-                          <div class="ac-dup-icon">
-                            {%- if block.settings.custom_icon != blank -%}
-                              {{ block.settings.custom_icon }}
-                            {%- else -%}
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 12 12"><path fill="currentColor" d="M7 5V0H5v5H0v2h5v5h2V7h5V5H7Z" /></svg>
                             {%- endif -%}
                           </div>
                         </div>
-                        <div class="ac-dup-description rte">
-                          <div style="padding: 10px 0 15px;">
-                            {{ faq_item.answer | metafield_tag }}
+                      {%- endfor -%}
+
+                    {%- else -%}
+
+                      {%- comment -%} 2. RENDER MANUAL BLOCKS {%- endcomment -%}
+                      {%- for item in block.blocks -%}
+
+                      {%- endfor -%}
+                    {%- endif -%}
+
+                    {%- comment -%} Fallback Icon SVG (Optional helper) {%- endcomment -%}
+                    {%- capture icon_placeholder -%}
+            <svg class="timeline-item__icon timeline-item__icon--placeholder" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          {%- endcapture -%}
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+          {%- when 'accordion_detail' -%}
+            {{ 'accordion-duplicate.css' | asset_url | stylesheet_tag }}
+            <script src="{{ 'accordion-duplicate.js' | asset_url }}" defer="defer"></script>
+            {%- assign detail_items = product.metafields.custom.product_detail.value -%}
+
+            {%- assign limit = block.settings.limit_count | default: 6 -%}
+
+            {%- if detail_items != blank or request.design_mode -%}
+              <div
+                id="AccordionBlock-{{ block.id }}"
+                class="ac-dup-block-wrapper"
+                data-accordion-block
+                {{ block.shopify_attributes }}>
+
+                {%- style -%}
+                  /* Inline styles specific to this block instance */
+                  #AccordionBlock-{{ block.id }} {
+                    margin-top: {{ block.settings.padding_top }}px;
+                    margin-bottom: {{ block.settings.padding_bottom }}px;
+                  }
+                  #AccordionBlock-{{ block.id }}
+                  .ac-dup-header h3 {
+                    color: {{ block.settings.heading_color | default: '#333' }};
+                  }
+                  #AccordionBlock-{{ block.id }}
+                  .ac-dup-description {
+                    color: {{ block.settings.accordion_text_color | default: '#555' }};
+                  }
+
+                  /* See More Button Styles */
+                  .ac-extra-wrapper {
+                    max-height: 0;
+                    overflow: hidden;
+                    opacity: 0;
+                    transition: max-height 0.5s ease-out
+                    , opacity 0.5s ease-out;
+                  }
+                  .ac-extra-wrapper.active {
+                    opacity: 1;
+                  }
+                  .ac-toggle-btn {
+                    display: inline-block;
+                    margin-top: 15px;
+                    background: none;
+                    border: none;
+                    padding: 0;
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: {{ block.settings.heading_color | default: '#333' }};
+                    cursor: pointer;
+                    text-decoration: underline;
+                  }
+                {%- endstyle -%}
+
+                {%- if block.settings.title != blank -%}
+                  <h2 class="ac-dup-main-title" style="color: {{ block.settings.heading_color }};">
+                    {{ block.settings.title }}
+                  </h2>
+                {%- endif -%}
+
+                <div class="ac-dup-list-container">
+                  {%- if detail_items != blank -%}
+
+                    {%- comment -%} === 1. VISIBLE ITEMS === {%- endcomment -%}
+                    {%- for item in detail_items -%}
+                      {%- if forloop.index <= limit -%}
+                        <div class="ac-dup-item">
+                          <div class="ac-dup-header">
+                            <h3>{{ item.title }}</h3>
+                            <div class="ac-dup-icon">
+                              {%- if block.settings.custom_icon != blank -%}
+                                {{ block.settings.custom_icon }}
+                              {%- else -%}
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 12 12"><path fill="currentColor" d="M7 5V0H5v5H0v2h5v5h2V7h5V5H7Z" /></svg>
+                              {%- endif -%}
+                            </div>
+                          </div>
+                          <div class="ac-dup-description rte">
+                            <div style="padding: 10px 0 15px;">
+                              {{ item.description | metafield_tag }}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    {%- endif -%}
-                  {%- endfor -%}
+                      {%- endif -%}
+                    {%- endfor -%}
 
-                  {%- comment -%} === 2. HIDDEN ITEMS (The Rest) === {%- endcomment -%}
-                  {%- if faq_items.size > limit -%}
-                    <div class="ac-extra-wrapper">
-                      {%- for faq_item in faq_items -%}
-                        {%- if forloop.index > limit -%}
-                          <div class="ac-dup-item">
-                            <div class="ac-dup-header">
-                              <h3>{{ faq_item.title }}</h3>
-                              <div class="ac-dup-icon">
-                                {%- if block.settings.custom_icon != blank -%}
-                                  {{ block.settings.custom_icon }}
-                                {%- else -%}
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 12 12"><path fill="currentColor" d="M7 5V0H5v5H0v2h5v5h2V7h5V5H7Z" /></svg>
-                                {%- endif -%}
+                    {%- comment -%} === 2. HIDDEN ITEMS === {%- endcomment -%}
+                    {%- if detail_items.size > limit -%}
+                      <div class="ac-extra-wrapper">
+                        {%- for item in detail_items -%}
+                          {%- if forloop.index > limit -%}
+                            <div class="ac-dup-item">
+                              <div class="ac-dup-header">
+                                <h3>{{ item.title }}</h3>
+                                <div class="ac-dup-icon">
+                                  {%- if block.settings.custom_icon != blank -%}
+                                    {{ block.settings.custom_icon }}
+                                  {%- else -%}
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      fill="none"
+                                      viewBox="0 0 12 12"><path fill="currentColor" d="M7 5V0H5v5H0v2h5v5h2V7h5V5H7Z" /></svg>
+                                  {%- endif -%}
+                                </div>
+                              </div>
+                              <div class="ac-dup-description rte">
+                                <div style="padding: 10px 0 15px;">
+                                  {{ item.description | metafield_tag }}
+                                </div>
                               </div>
                             </div>
-                            <div class="ac-dup-description rte">
-                              <div style="padding: 10px 0 15px;">
-                                {{ faq_item.answer | metafield_tag }}
-                              </div>
+                          {%- endif -%}
+                        {%- endfor -%}
+                      </div>
+
+                      {%- comment -%} === 3. TOGGLE BUTTON === {%- endcomment -%}
+                      <button class="ac-toggle-btn">
+                        <span class="text-more">{{ block.settings.see_more_text }}</span>
+                        <span class="text-less" style="display:none;">{{ block.settings.see_less_text }}</span>
+                      </button>
+                    {%- endif -%}
+
+                  {%- elsif request.design_mode -%}
+                    {%- comment -%} DEBUG: Help you find why it's empty {%- endcomment -%}
+                    <div style="padding: 15px; border: 1px dashed #ccc; margin: 10px 0; font-size: 13px;">
+                      <p>
+                        <strong>Debug: Product Detail List</strong>
+                      </p>
+                      <p>Looking for:
+                        <code>product.metafields.custom.product_detail</code>
+                      </p>
+                      <p>Status:
+                        {% if product.metafields.custom.product_detail != blank %}
+                          <span style="color:green">Found ({{ detail_items.count }} items)</span>
+                        {% else %}
+                          <span style="color:red">Empty / Not Found</span>
+                        {% endif %}
+                      </p>
+                    </div>
+                  {%- endif -%}
+                </div>
+              </div>
+            {%- endif -%}
+          {%- when 'accordion_duplicate' -%}
+            {{ 'accordion-duplicate.css' | asset_url | stylesheet_tag }}
+            <script src="{{ 'accordion-duplicate.js' | asset_url }}"></script>
+
+            {%- assign faq_group_metafield = product.metafields.product.faq -%}
+            {%- assign faq_group = faq_group_metafield.value -%}
+            {%- assign faq_items = faq_group.faq_items.value -%}
+
+            {%- assign limit = block.settings.limit_count | default: 6 -%}
+
+            {%- if faq_items != blank or request.design_mode -%}
+              <div
+                id="AccordionBlock-{{ block.id }}"
+                class="ac-dup-block-wrapper"
+                data-accordion-block
+                {{ block.shopify_attributes }}>
+
+                {%- style -%}
+                  /* Inline styles for logic-specific elements */
+                  .ac-extra-wrapper {
+                    max-height: 0;
+                    overflow: hidden;
+                    opacity: 0;
+                    transition: max-height 0.5s ease-out
+                    , opacity 0.5s ease-out;
+                  }
+                  .ac-extra-wrapper.active {
+                    opacity: 1;
+                  }
+                  .ac-toggle-btn {
+                    display: inline-block;
+                    margin-top: 15px;
+                    background: none;
+                    border: none;
+                    padding: 0;
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: {{ block.settings.heading_color | default: '#333' }};
+                    cursor: pointer;
+                    text-decoration: underline;
+                  }
+                {%- endstyle -%}
+
+                {%- assign display_title = block.settings.title | default: faq_group.title -%}
+
+                {%- if display_title != blank -%}
+                  <h2 class="ac-dup-main-title" style="color: {{ block.settings.heading_color }};">{{ display_title }}</h2>
+                {%- endif -%}
+
+                <div class="ac-dup-list-container">
+                  {%- if faq_items != blank -%}
+
+                    {%- comment -%} === 1. VISIBLE ITEMS (First 3) === {%- endcomment -%}
+                    {%- for faq_item in faq_items -%}
+                      {%- if forloop.index <= limit -%}
+                        <div class="ac-dup-item">
+                          <div class="ac-dup-header">
+                            <h3>{{ faq_item.title }}</h3>
+                            <div class="ac-dup-icon">
+                              {%- if block.settings.custom_icon != blank -%}
+                                {{ block.settings.custom_icon }}
+                              {%- else -%}
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 12 12"><path fill="currentColor" d="M7 5V0H5v5H0v2h5v5h2V7h5V5H7Z" /></svg>
+                              {%- endif -%}
                             </div>
                           </div>
-                        {%- endif -%}
-                      {%- endfor -%}
-                    </div>
+                          <div class="ac-dup-description rte">
+                            <div style="padding: 10px 0 15px;">
+                              {{ faq_item.answer | metafield_tag }}
+                            </div>
+                          </div>
+                        </div>
+                      {%- endif -%}
+                    {%- endfor -%}
 
-                    {%- comment -%} === 3. TOGGLE BUTTON === {%- endcomment -%}
-                    <button class="ac-toggle-btn">
-                      <span class="text-more">{{ block.settings.see_more_text | default: 'See More' }}</span>
-                      <span class="text-less" style="display:none;">{{ block.settings.see_less_text | default: 'See Less' }}</span>
-                    </button>
+                    {%- comment -%} === 2. HIDDEN ITEMS (The Rest) === {%- endcomment -%}
+                    {%- if faq_items.size > limit -%}
+                      <div class="ac-extra-wrapper">
+                        {%- for faq_item in faq_items -%}
+                          {%- if forloop.index > limit -%}
+                            <div class="ac-dup-item">
+                              <div class="ac-dup-header">
+                                <h3>{{ faq_item.title }}</h3>
+                                <div class="ac-dup-icon">
+                                  {%- if block.settings.custom_icon != blank -%}
+                                    {{ block.settings.custom_icon }}
+                                  {%- else -%}
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      fill="none"
+                                      viewBox="0 0 12 12"><path fill="currentColor" d="M7 5V0H5v5H0v2h5v5h2V7h5V5H7Z" /></svg>
+                                  {%- endif -%}
+                                </div>
+                              </div>
+                              <div class="ac-dup-description rte">
+                                <div style="padding: 10px 0 15px;">
+                                  {{ faq_item.answer | metafield_tag }}
+                                </div>
+                              </div>
+                            </div>
+                          {%- endif -%}
+                        {%- endfor -%}
+                      </div>
+
+                      {%- comment -%} === 3. TOGGLE BUTTON === {%- endcomment -%}
+                      <button class="ac-toggle-btn">
+                        <span class="text-more">{{ block.settings.see_more_text | default: 'See More' }}</span>
+                        <span class="text-less" style="display:none;">{{ block.settings.see_less_text | default: 'See Less' }}</span>
+                      </button>
+                    {%- endif -%}
                   {%- endif -%}
-                {%- endif -%}
+                </div>
               </div>
-            </div>
-          {%- endif -%}
-      {%- endcase -%}
+            {%- endif -%}
+        {%- endcase -%}
 
-    {%- endfor -%}
+      {%- endfor -%}
+    </div>
 
   </div>
 </div>

@@ -1,5 +1,9 @@
 /* assets/section-testimonial-slider.css */
 
+.page-width.tm-layout {
+  border-bottom: 1px solid #bcbcb9;
+  padding-bottom: 7px;
+}
 /* --- 1. Main Section Layout --- */
 .testimonial-section {
   overflow: hidden;
@@ -130,8 +134,8 @@
   background-color: transparent;
   border: 0.3px solid black;
   opacity: 0.3;
-  width: 8px; /* Slightly larger touch target */
-  height: 8px;
+  width: 5px; /* Slightly larger touch target */
+  height: 5px;
   margin: 0 5px;
   border-radius: 50%;
   padding: 0; /* Remove default button padding */
@@ -145,47 +149,3 @@
   background-color: var(--tm-text-color, #000) !important;
   border-color: var(--tm-text-color, #000);
 }
-
-/* --- 9. Desktop Adjustments --- */
-@media screen and (min-width: 769px) {
-  }
-
-  .tm-layout {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 60px;
-  }
-
-  .testimonial-header {
-    flex: 0px;
-    margin-bottom: 0;
-  }
-
-  .testimonial-heading {
-    font-size: 2.2rem;
-  }
-
-  .icon-star {
-    width: 20px;
-    height: 20px;
-  }
-
-  .rating-summary {
-    font-size: 1.1rem;
-  }
-
-  .tm-custom-container {
-    flex: 1;
-    min-width: 0;
-    padding-bottom: 50px;
-  }
-
-  .tm-quote {
-    font-size: 1.6rem;
-    line-height: 1.4;
-  }
-
-  .tm-pagination {
-    justify-content: flex-start; /* Desktop alignment */
-  }

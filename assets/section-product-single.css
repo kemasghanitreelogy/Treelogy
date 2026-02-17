@@ -112,3 +112,9 @@
     margin-left: 24px;
   }
 }
+
+@media only screen and (min-width: 768px)  {
+  .app-block {
+    padding: 0 25px;
+  }
+}

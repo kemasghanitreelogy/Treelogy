@@ -2,8 +2,6 @@
 
 .logo-list__container {
   margin: 0 auto;
-  padding-left: 20px;
-  padding-right: 20px;
 }
 
 .logo-list__grid {
@@ -41,5 +39,8 @@
   
   .logo-list__item {
     flex: 0 1 auto;
+  }
+  .logo-list__image {
+    width: 120%;
   }
 }
