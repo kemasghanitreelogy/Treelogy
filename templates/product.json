@@ -18,12 +18,12 @@
             "text_color": "#33423b",
             "padding_top": 15,
             "padding_bottom": 15,
-            "heading_1": "Fast Delivery",
-            "text_1": "Within 3-4 days",
-            "heading_2": "Secure Payment",
-            "text_2": "Encrypted transaction",
-            "heading_3": "24/7 Support",
-            "text_3": "We are here to help"
+            "heading_1": "⁠Secure Checkout",
+            "text_1": "QRIS • E-wallet • Debit Card",
+            "heading_2": "Fast Dispatch Orders",
+            "text_2": "before 3pm ship same-day",
+            "heading_3": "Real Human Support",
+            "text_3": "Join 50,000+ healthier customers"
           }
         },
         "logo_list_nNJ9tH": {
@@ -84,7 +84,7 @@
             "mf_namespace": "custom",
             "mf_key": "product_timeline",
             "heading_color": "#6c7256",
-            "text_color": "#58645a",
+            "text_color": "#567350",
             "padding_top": 16,
             "padding_bottom": 16
           }
@@ -92,12 +92,12 @@
         "accordion_duplicate_4T8yjQ": {
           "type": "accordion_duplicate",
           "settings": {
-            "title": "",
+            "title": "Common Questions",
             "description": "",
-            "heading_color": "#2b3c35",
+            "heading_color": "#6c7256",
             "accordion_text_color": "#567350",
             "custom_icon": "",
-            "padding_top": 16,
+            "padding_top": 56,
             "padding_bottom": 16
           }
         },
@@ -107,11 +107,11 @@
             "limit_count": 6,
             "see_more_text": "See More",
             "see_less_text": "See Less",
-            "title": "Product Details",
-            "heading_color": "#2b3c35",
+            "title": "More Information",
+            "heading_color": "#6c7256",
             "accordion_text_color": "#567350",
             "custom_icon": "",
-            "padding_top": 15,
+            "padding_top": 55,
             "padding_bottom": 15
           }
         }
