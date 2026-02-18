@@ -5784,6 +5784,7 @@ input.red {
   align-items: center;
   justify-content: center;
   transition: all 0.36s ease-in-out;
+  text-align: center;
 }
 @media only screen and (max-width: 900px) {
   .faq-wrapper .accordion-nav .menu .item .button, .faq-wrapper .accordion-nav .menu .item .side-image-video-wrapper .main-grid .primary-button a, .faq-wrapper .accordion-nav .menu .item .side-image-video-wrapper .product-review-list .primary-button a, .side-image-video-wrapper .main-grid .primary-button .faq-wrapper .accordion-nav .menu .item a, .side-image-video-wrapper .product-review-list .primary-button .faq-wrapper .accordion-nav .menu .item a, .faq-wrapper .accordion-nav .menu .item .side-image-video-wrapper .featured-banner-text-wrapper .wrapper.full-width .content .primary-button a, .side-image-video-wrapper .featured-banner-text-wrapper .wrapper.full-width .content .primary-button .faq-wrapper .accordion-nav .menu .item a, .faq-wrapper .accordion-nav .menu .item .featured-banner-text-wrapper .wrapper.full-width .side-image-video-wrapper .content .primary-button a, .featured-banner-text-wrapper .wrapper.full-width .side-image-video-wrapper .content .primary-button .faq-wrapper .accordion-nav .menu .item a {
