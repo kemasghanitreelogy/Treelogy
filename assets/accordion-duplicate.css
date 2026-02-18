@@ -8,7 +8,6 @@
 
 .ac-dup-list-container {
   width: 100%;
-  border-top: 1px solid #e5e5e5; /* Top border for the whole list */
 }
 
 .ac-dup-main-title {
@@ -30,7 +29,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
+  padding: 10px 0;
   background: transparent;
   user-select: none;
 }

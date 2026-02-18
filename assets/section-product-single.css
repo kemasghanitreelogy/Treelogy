@@ -97,6 +97,9 @@
   height: 100%;
   object-fit: cover;
 }
+.native-gallery__thumb.active {
+  opacity: 1;
+}
 
 /* Active State */
 .native-gallery__thumb.ng-thumb-active {
@@ -116,8 +119,5 @@
 @media only screen and (min-width: 768px)  {
   .app-block {
     padding: 0 25px;
-  }
-  .product-detail-wrapper .gallery-wrapper {
-    width: 80%;
   }
 }

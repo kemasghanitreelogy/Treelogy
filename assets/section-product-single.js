@@ -75,6 +75,7 @@ document.addEventListener("DOMContentLoaded", function() {
   const thumbs = document.querySelectorAll('.native-gallery__thumb');
   
   if (mainSlider && thumbs.length > 0) {
+    thumbs[0].classList.add('active');
     
     // A. Handle Thumbnail Clicks
     thumbs.forEach(btn => {

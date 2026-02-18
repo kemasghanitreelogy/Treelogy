@@ -79,20 +79,19 @@
 }
 
 .usp-dot {
-  pointer-events: auto; /* Buttons are clickable */
-  width: 5px;
-  height: 5px;
+  cursor: pointer;
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
-  border: 1px solid currentColor;
+  border: 0.3px solid #2b3c35;
   background: transparent;
   opacity: 0.4;
   padding: 0;
   cursor: pointer;
-  transition: all 0.3s ease;
 }
 
 .usp-dot.active {
-  background: currentColor; /* Fills with text color */
+  background: #2b3c35; /* Fills with text color */
   opacity: 1;
   transform: scale(1.2);
 }

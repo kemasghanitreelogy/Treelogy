@@ -1108,12 +1108,20 @@ input.red {
   grid-column: 8/12;
 }
 
+
 @media only screen and (max-width: 768px) {
   .product-detail-wrapper .detail {
     width: 100%;
     color: #515E56;
     grid-column: 8/12;
   }
+}
+
+@media only screen and (min-width: 768px) {
+  .featured-bundle-section .product-detail-wrapper .detail {
+  width: 78%;
+  margin-left: 50px;
+}
 }
 @media only screen and (max-width: 900px) {
   .product-detail-wrapper .detail {

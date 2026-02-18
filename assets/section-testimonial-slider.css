@@ -146,6 +146,6 @@
 /* Renamed from .swiper-pagination-bullet-active to .tm-dot-active */
 .tm-dot-active {
   opacity: 1;
-  background-color: var(--tm-text-color, #000) !important;
-  border-color: var(--tm-text-color, #000);
+  background-color: #2b3c35 !important;
+  border-color: #2b3c35;
 }

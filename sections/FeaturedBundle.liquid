@@ -149,6 +149,9 @@
     .slider-item:first-child {
       width: 80px;
     }
+    .slider-row {
+      display: none;
+    }
   }
 
   @keyframes fadeIn {
@@ -289,7 +292,10 @@
               {% unless current_variant.available %}
               disabled
               {% endunless %}>
-              {% if current_variant.available %}{{ add_cart_text }}{% else %}{{ sold_out_text }}{% endif %}
+              {% if current_variant.available %}
+                {{ add_cart_text }}
+              {% else %}
+                {{ sold_out_text }}{% endif %}
             </button>
           </form>
         </div>
