@@ -33,11 +33,18 @@
 
       <div class="native-gallery__thumbs-scroll" id="ThumbSlider">
         {% assign thumb_index = 0 %}
-        {% for image in product.images %}
+          {% for image in product.images %}
+
+          {% comment %} --- Filter: Skip if alt is 'variant image' --- {% endcomment %}
+          {% if image.alt == 'variant_image' %}
+            {% continue %}
+          {% endif %}
+
           {% if image.alt contains 'LANG:' %}
             {% assign language_code = image.alt | split: "|" | first | remove: "LANG:" | downcase %}
             {% if language_code != request.locale.iso_code %}
-              {% continue %}{% endif %}
+              {% continue %}
+            {% endif %}
           {% endif %}
 
           <button
@@ -48,6 +55,7 @@
               <img src="{{ image.src | img_url: 'compact' }}" alt="{{ image.alt | escape }}">
             </div>
           </button>
+
           {% assign thumb_index = thumb_index | plus: 1 %}
         {% endfor %}
       </div>
@@ -589,8 +597,8 @@
                 {%- style -%}
                   /* Inline styles specific to this block instance */
                   #AccordionBlock-{{ block.id }} {
-                    margin-top: {{ block.settings.padding_top }}px;
-                    margin-bottom: {{ block.settings.padding_bottom }}px;
+                    padding-top: {{ block.settings.padding_top }}px;
+                    padding-bottom: {{ block.settings.padding_bottom }}px;
                   }
                   #AccordionBlock-{{ block.id }}
                   .ac-dup-header h3 {
@@ -600,7 +608,10 @@
                   .ac-dup-description {
                     color: {{ block.settings.accordion_text_color | default: '#555' }};
                   }
-
+                  .ac-dup-item {
+                    color: {{ block.settings.accordion_text_color }}
+                     !important;
+                  }
                   /* See More Button Styles */
                   .ac-extra-wrapper {
                     max-height: 0;
@@ -737,6 +748,14 @@
 
                 {%- style -%}
                   /* Inline styles for logic-specific elements */
+                  #AccordionBlock-{{ block.id }} {
+                    padding-top: {{ block.settings.padding_top }}px;
+                    padding-bottom: {{ block.settings.padding_bottom }}px;
+                  }
+                  .ac-dup-item {
+                    color: {{ block.settings.accordion_text_color }}
+                     !important;
+                  }
                   .ac-extra-wrapper {
                     max-height: 0;
                     overflow: hidden;

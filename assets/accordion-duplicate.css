@@ -12,10 +12,9 @@
 }
 
 .ac-dup-main-title {
+  margin-bottom: 4px;
   font-size: 24px;
   font-weight: 600;
-  margin-bottom: 1rem;
-  /* Color is set via inline style in Liquid */
 }
 
 /* --- Accordion Item (Wrapper) --- */
@@ -31,7 +30,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 0;
+  padding: 8px 0;
   background: transparent;
   user-select: none;
 }

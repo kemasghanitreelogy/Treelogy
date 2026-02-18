@@ -32,7 +32,7 @@
 .timeline-item {
   width: 400px;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   border-bottom: 1px solid rgba(var(--color-foreground), 0.1); /* Fallback */
   border-bottom: 1px solid #bcbcb9; /* Explicit override */
   color: var(--tl-text-color);

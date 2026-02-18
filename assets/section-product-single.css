@@ -117,4 +117,7 @@
   .app-block {
     padding: 0 25px;
   }
+  .product-detail-wrapper .gallery-wrapper {
+    width: 80%;
+  }
 }
