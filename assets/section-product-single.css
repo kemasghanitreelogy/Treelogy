@@ -71,6 +71,7 @@
   overflow-x: auto;
   padding-bottom: 5px;
   scrollbar-width: none;
+  margin-top: 10px;
 }
 
 .native-gallery__thumb {
@@ -120,4 +121,64 @@
   .app-block {
     padding: 0 25px;
   }
+}
+/* 1. MATIKAN EFEK JS LEGACY */
+/* Target ID elemen yang digerakkan oleh JS */
+#product-geallery-wrapper {
+    /* Paksa transform jadi 'none' agar JS tidak bisa menggeser elemen ini lagi */
+    transform: none !important; 
+    
+    /* Reset properti lain jaga-jaga JS mengubahnya juga */
+    top: auto !important;
+    left: auto !important;
+    position: relative !important; 
+    will-change: auto !important;
+}
+
+/* 2. GANTIKAN DENGAN CSS STICKY MODERN */
+/* Kita pasang sticky di elemen yang sama (atau parent-nya, tergantung layout) */
+#product-geallery-wrapper {
+    display: block; /* Pastikan display bukan inline */
+    position: -webkit-sticky !important; /* Support Safari */
+    position: sticky !important;
+    
+    /* Jarak 'nempel' dari atas layar. Sesuaikan kalau ada header sticky */
+    top: 20px; 
+    
+    /* Agar tidak menimpa atau tertimpa elemen lain */
+    z-index: 10; 
+    
+    /* Penting: Tinggi elemen harus 'fit' kontennya agar bisa sticky di dalam container */
+    height: fit-content; 
+}
+
+/* Tambahan: Pastikan parent container-nya (Grid) mendukung sticky */
+.gallery-wrapper {
+    /* Parent biasanya tidak boleh overflow: hidden agar sticky anak berfungsi */
+    /* Cek inspect element, kalau ada overflow: hidden, timpa dengan visible */
+    overflow: visible !important; 
+    height: 100%; /* Pastikan track-nya setinggi konten sebelahnya */
+}
+
+/* 1. Paksa container utama (Flex) agar anak-anaknya punya tinggi yang sama */
+.main-grid.product-detail-wrapper {
+    align-items: stretch !important; 
+}
+
+/* 2. Pastikan rel/track-nya memanjang penuh */
+.gallery-wrapper {
+    height: auto !important; /* Jangan batasi height */
+    min-height: 100% !important; /* Harus setinggi container utama */
+    overflow: visible !important; /* Wajib visible */
+    display: block !important;
+}
+
+/* 3. Setting Keretanya (Gambar) */
+#product-geallery-wrapper {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 150px !important;
+    z-index: 10;
+    height: fit-content !important; /* Kereta harus pas body-nya, jangan setinggi rel */
+    transform: none !important; /* Matikan JS legacy */
 }

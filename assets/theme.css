@@ -25,6 +25,18 @@ x/*!****************************************************************************
 html {
   scroll-behavior: smooth;
 }
+/* HAPUS overflow-x dan overflow-y yang terpisah */
+
+html, body {
+    height: auto !important;
+}
+
+/* Jika setelah ini muncul scrollbar samping (horizontal scroll), 
+   sembunyikan overflow dari elemen penyebabnya (misal slider/gambar), 
+   BUKAN dari body-nya. */
+.shopify-section, main {
+    overflow: visible !important;
+}
 
 #product-detail-content .jdgm-widget .jdgm-prev-badge__text .total-review {
   display: none;
@@ -3758,7 +3770,7 @@ input.red {
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100vh;
+  height: 100%;
   z-index: 2;
   content: "";
   position: absolute;
