@@ -5786,6 +5786,9 @@ input.red {
   transition: all 0.36s ease-in-out;
   text-align: center;
 }
+.faq-wrapper .accordion-nav .menu .item button {
+  height: fit-content;
+}
 @media only screen and (max-width: 900px) {
   .faq-wrapper .accordion-nav .menu .item .button, .faq-wrapper .accordion-nav .menu .item .side-image-video-wrapper .main-grid .primary-button a, .faq-wrapper .accordion-nav .menu .item .side-image-video-wrapper .product-review-list .primary-button a, .side-image-video-wrapper .main-grid .primary-button .faq-wrapper .accordion-nav .menu .item a, .side-image-video-wrapper .product-review-list .primary-button .faq-wrapper .accordion-nav .menu .item a, .faq-wrapper .accordion-nav .menu .item .side-image-video-wrapper .featured-banner-text-wrapper .wrapper.full-width .content .primary-button a, .side-image-video-wrapper .featured-banner-text-wrapper .wrapper.full-width .content .primary-button .faq-wrapper .accordion-nav .menu .item a, .faq-wrapper .accordion-nav .menu .item .featured-banner-text-wrapper .wrapper.full-width .side-image-video-wrapper .content .primary-button a, .featured-banner-text-wrapper .wrapper.full-width .side-image-video-wrapper .content .primary-button .faq-wrapper .accordion-nav .menu .item a {
     border: 1px solid rgba(43, 60, 53, 0.5019607843);
