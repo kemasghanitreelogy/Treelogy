@@ -5786,7 +5786,7 @@ input.red {
   transition: all 0.36s ease-in-out;
   text-align: center;
 }
-.faq-wrapper .accordion-nav .menu .item button {
+.faq-wrapper .accordion-nav .menu .item .button {
   height: fit-content;
 }
 @media only screen and (max-width: 900px) {
