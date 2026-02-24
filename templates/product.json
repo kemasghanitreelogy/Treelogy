@@ -81,6 +81,7 @@
           "type": "timeline_list",
           "settings": {
             "heading": "<h2>What to expect over time</h2>",
+            "timeline_desc": "Everyone starts from a different baseline",
             "mf_namespace": "custom",
             "mf_key": "product_timeline",
             "heading_color": "#6c7256",
