@@ -19,6 +19,12 @@
   font-weight: 600;
   line-height: 27px;
   color: inherit;
+  margin-bottom: 13px;
+}
+.title-timeline {
+  padding-bottom: 11px;
+  margin-bottom: 11px;
+  border-bottom: 1px solid #bcbcb9;
 }
 
 .timeline-list__container {

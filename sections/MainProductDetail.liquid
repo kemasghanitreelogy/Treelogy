@@ -532,6 +532,7 @@
                   {% if block.settings.heading != blank %}
                     <div class="title-timeline">
                       {{ block.settings.heading }}
+                      <div class="desc-timeline">{{ block.settings.timeline_desc }}</div>
                     </div>
                   {% endif %}
 
@@ -1343,12 +1344,17 @@
           },
           {
             "type": "text",
+            "id": "timeline_desc",
+            "label": "Timeline Description",
+            "default": "Everyone starts from a different baseline."
+          },
+          {
+            "type": "text",
             "id": "mf_namespace",
             "label": "Metafield Namespace",
             "default": "custom",
             "info": "e.g. 'custom'"
-          },
-          {
+          }, {
             "type": "text",
             "id": "mf_key",
             "label": "Metafield Key",
