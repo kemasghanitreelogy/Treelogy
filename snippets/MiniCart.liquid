@@ -51,3 +51,34 @@
 <script>
   const minShipping = {{ settings.min_shipping | default: 1000000 }}
 </script>
+
+
+
+<script>
+  // This automatically locks the background scroll when the cart opens
+  document.addEventListener('DOMContentLoaded', () => {
+    const miniCart = document.querySelector('.mini-cart');
+    if (miniCart) {
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.attributeName === 'class') {
+            if (miniCart.classList.contains('active')) {
+              // Lock the body
+              document.body.style.position = 'fixed';
+              document.body.style.top = `-${window.scrollY}px`;
+              document.body.style.width = '100%';
+            } else {
+              // Unlock the body and restore scroll position
+              const scrollY = document.body.style.top;
+              document.body.style.position = '';
+              document.body.style.top = '';
+              document.body.style.width = '';
+              window.scrollTo(0, parseInt(scrollY || '0') * -1);
+            }
+          }
+        });
+      });
+      observer.observe(miniCart, { attributes: true });
+    }
+  });
+</script>
