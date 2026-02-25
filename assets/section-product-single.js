@@ -106,7 +106,17 @@ document.addEventListener("DOMContentLoaded", function() {
         const activeThumb = document.querySelector(`.native-gallery__thumb[data-index="${currentIndex}"]`);
         if (activeThumb) {
           activeThumb.classList.add('active');
-          activeThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          
+          // Use targeted scrollTo instead of scrollIntoView to prevent body shifting
+          const thumbSlider = document.getElementById('ThumbSlider');
+          if (thumbSlider) {
+            const centerPos = activeThumb.offsetLeft + (activeThumb.offsetWidth / 2) - (thumbSlider.offsetWidth / 2);
+            
+            thumbSlider.scrollTo({ 
+              left: centerPos, 
+              behavior: 'smooth' 
+            });
+          }
         }
       }, 60);
     });
