@@ -27,12 +27,16 @@
           <div class="body-desk exerpt">
             {{ featured_product.content | strip_html | truncate: '125' }}
           </div>
-          {% capture button_title %}
-            {{ 'products.general.shop_now' | t }}
-          {% endcapture %}
+          {% if request.locale.iso_code == 'id' %}
+            {% assign button_text = 'Beli Sekarang' %}
+          {% else %}
+            {% assign button_text = 'Shop Now' %}
+          {% endif %}
+
           {% render 'PrimaryButton'
             , url: featured_product.url
-            , title: button_title %}
+            , title: button_text 
+          %}
         </div>
       </div>
     {% endif %}
