@@ -7845,3 +7845,19 @@ html {
 }
 
 
+/* 1. Prevent iOS from auto-inflating the text size */
+html, body, .announcement-slider-section {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* 2. Force iOS Data Detectors to inherit YOUR styles, not Apple's blue links */
+.slide-text a[x-apple-data-detectors],
+.slide-text a[href^="tel"] {
+  color: #ffffff !important;
+  text-decoration: none !important;
+  font-size: 12px !important;
+  font-family: inherit !important;
+  font-weight: inherit !important;
+  line-height: inherit !important;
+}
