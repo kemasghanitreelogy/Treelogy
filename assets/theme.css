@@ -7839,3 +7839,20 @@ html {
   letter-spacing: 0%;
 }
 
+.mini-cart {
+  /* Use dynamic viewport height for modern iOS */
+  height: 100dvh; 
+  
+  /* Fallback for older browsers that don't support dvh */
+  height: -webkit-fill-available; 
+}
+
+.mini-cart-wrapper {
+  position: fixed;
+  bottom: 0; /* Forces it to stick to the very bottom */
+  max-height: 100dvh;
+  
+  /* Adds padding for the iPhone home indicator line so content isn't cut off */
+  padding-bottom: env(safe-area-inset-bottom); 
+}
+
