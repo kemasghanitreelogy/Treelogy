@@ -5783,7 +5783,8 @@ input.red {
 }
 @media only screen and (max-width: 900px) {
   .faq-wrapper .accordion-nav .menu {
-    gap: 8px;
+    gap: 10px;
+    row-gap: 15px;
     display: flex;
     flex-wrap: wrap;
     margin-bottom: 32px;
@@ -5820,6 +5821,7 @@ input.red {
     font-size: 16px;
     font-weight: 300;
     line-height: 12.5px;
+    padding: 10px 20px;
   }
 }
 .faq-wrapper .accordion-nav .menu .item .button:hover, .faq-wrapper .accordion-nav .menu .item .side-image-video-wrapper .main-grid .primary-button a:hover, .faq-wrapper .accordion-nav .menu .item .side-image-video-wrapper .product-review-list .primary-button a:hover, .side-image-video-wrapper .main-grid .primary-button .faq-wrapper .accordion-nav .menu .item a:hover, .side-image-video-wrapper .product-review-list .primary-button .faq-wrapper .accordion-nav .menu .item a:hover, .faq-wrapper .accordion-nav .menu .item .side-image-video-wrapper .featured-banner-text-wrapper .wrapper.full-width .content .primary-button a:hover, .side-image-video-wrapper .featured-banner-text-wrapper .wrapper.full-width .content .primary-button .faq-wrapper .accordion-nav .menu .item a:hover, .faq-wrapper .accordion-nav .menu .item .featured-banner-text-wrapper .wrapper.full-width .side-image-video-wrapper .content .primary-button a:hover, .featured-banner-text-wrapper .wrapper.full-width .side-image-video-wrapper .content .primary-button .faq-wrapper .accordion-nav .menu .item a:hover {
