@@ -144,7 +144,15 @@
           class="button button-quick-add-cart"
           name="add"
           id="AddToCart">
-          {{ 'products.general.add_to_cart' | t }}
+          {% if product.id == 9291531649212 %}
+            {% if request.locale.iso_code == 'id' %}
+              MULAI PROTOKOL SAYA
+            {% else %}
+              START MY PROTOCOL
+            {% endif %}
+          {% else %}
+            {{ 'products.general.add_to_cart' | t }}
+          {% endif %}
         </button>
       </form>
     {% endif %}
@@ -854,6 +862,46 @@
                 </div>
               </div>
             {%- endif -%}
+          {%- when 'text_plain_block' -%}
+            {% if product.id == 9291531649212 %}
+              <div
+                id="text-plain-block-{{ block.id }}"
+                class="text-plain-block-wrapper"
+                style="
+                  max-width: 1100px;
+                  margin-left: auto;
+                  margin-right: auto;
+                  margin-top: {{ block.settings.margin_top }}px;
+                  margin-bottom: {{ block.settings.margin_bottom }}px;
+                "
+                {{ block.shopify_attributes }}>
+                <div class="text-plain-block-inner" style="text-align: {{ block.settings.text_alignment }};">
+                  {% if block.settings.title != blank %}
+                    <div class="text-plain-block-title" style="
+                      font-weight: {{ block.settings.title_weight }};
+                      color: {{ block.settings.text_title_color }};
+                      font-size: {{ block.settings.font_size }}px;
+                      line-height: 1.3;
+                      margin-bottom: 12px;
+                    ">
+                      {{ block.settings.title }}
+                    </div>
+                  {% endif %}
+                  {% if block.settings.block_content != blank %}
+                    <div class="text-plain-block-content" style="
+                      font-weight: 300;
+                      font-size: {{ block.settings.font_size_content }}px;
+                      line-height: 1.6;
+                      color: {{ block.settings.text_content_color }};
+                    ">
+                      {{ block.settings.block_content }}
+                    </div>
+                  {% endif %}
+                </div>
+                <div class="page-width section-breaker"></div>
+              </div>
+            {% endif %}
+
         {%- endcase -%}
 
       {%- endfor -%}
@@ -1532,6 +1580,106 @@
             "unit": "px",
             "label": "Padding Bottom",
             "default": 20
+          }
+        ]
+      }
+      , {
+        "type": "text_plain_block",
+        "name": "Text Plain Protocol",
+        "settings": [
+          {
+            "type": "paragraph",
+            "content": "This block only renders on product ID 9291531649212."
+          },
+          {
+            "type": "richtext",
+            "id": "title",
+            "label": "Title",
+            "default": "<p>Title</p>"
+          },
+          {
+            "type": "select",
+            "id": "title_weight",
+            "label": "Title Weight",
+            "options": [
+              { "value": "300", "label": "Light" },
+              { "value": "400", "label": "Regular" },
+              { "value": "500", "label": "Medium" },
+              { "value": "600", "label": "Semibold" },
+              { "value": "700", "label": "Bold" }
+            ],
+            "default": "500"
+          },
+          {
+            "type": "number",
+            "id": "font_size",
+            "label": "Title Font Size (px)",
+            "default": 20
+          },
+          {
+            "type": "color",
+            "id": "text_title_color",
+            "label": "Title Color",
+            "default": "#000000"
+          },
+          {
+            "type": "richtext",
+            "id": "block_content",
+            "label": "Content",
+            "default": "<p>Your content goes here</p>"
+          },
+          {
+            "type": "number",
+            "id": "font_size_content",
+            "label": "Content Font Size (px)",
+            "default": 14
+          },
+          {
+            "type": "color",
+            "id": "text_content_color",
+            "label": "Content Color",
+            "default": "#515E56"
+          },
+          {
+            "type": "select",
+            "id": "text_alignment",
+            "label": "Text Alignment",
+            "options": [
+              { "value": "left", "label": "Left" },
+              { "value": "center", "label": "Center" },
+              { "value": "right", "label": "Right" }
+            ],
+            "default": "left"
+          },
+          {
+            "type": "range",
+            "id": "padding_horizontal",
+            "label": "Horizontal Padding",
+            "min": 0,
+            "max": 100,
+            "step": 4,
+            "unit": "px",
+            "default": 24
+          },
+          {
+            "type": "range",
+            "id": "margin_top",
+            "label": "Margin Top",
+            "min": 0,
+            "max": 200,
+            "step": 10,
+            "unit": "px",
+            "default": 0
+          },
+          {
+            "type": "range",
+            "id": "margin_bottom",
+            "label": "Margin Bottom",
+            "min": 0,
+            "max": 200,
+            "step": 10,
+            "unit": "px",
+            "default": 0
           }
         ]
       }

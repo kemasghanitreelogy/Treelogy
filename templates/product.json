@@ -66,6 +66,22 @@
             "padding_bottom": 15
           }
         },
+        "text_plain_block_MzeqPd": {
+          "type": "text_plain_block",
+          "settings": {
+            "title": "<p>Why Inside and Out</p>",
+            "title_weight": "600",
+            "font_size": 24,
+            "text_title_color": "#6c7256",
+            "block_content": "<p>Moringa works from two directions. </p><p>Capsules deliver dense micronutrition from within, supporting joint comfort, deeper sleep, steady energy, and hormonal balance.</p><p>Oil delivers a completely different compound profile from the surface — 70% oleic acid, sterols, and behenic acid that hydrate, protect, and restore your skin barrier and nourish hair from root to tip. </p><p>Same tree. Different biology. One protocol.</p>",
+            "font_size_content": 16,
+            "text_content_color": "#515e56",
+            "text_alignment": "left",
+            "padding_horizontal": 24,
+            "margin_top": 0,
+            "margin_bottom": 20
+          }
+        },
         "testimonial_slider_R3dFeH": {
           "type": "testimonial_slider",
           "settings": {
@@ -121,6 +137,7 @@
         "usp_slider_zBdDDY",
         "logo_list_nNJ9tH",
         "text_list_HgjGwB",
+        "text_plain_block_MzeqPd",
         "testimonial_slider_R3dFeH",
         "timeline_list_XdegX9",
         "accordion_duplicate_4T8yjQ",

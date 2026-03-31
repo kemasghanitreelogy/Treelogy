@@ -182,3 +182,12 @@
     height: fit-content !important; /* Kereta harus pas body-nya, jangan setinggi rel */
     transform: none !important; /* Matikan JS legacy */
 }
+
+.text-plain-block-title p {
+  margin-bottom: 10px !important;
+}
+
+.section-breaker {
+  border-bottom: 1px solid#bcbcb9;
+  margin: 40px 0 10px;
+}
