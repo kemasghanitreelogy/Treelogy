@@ -30,7 +30,13 @@
               | default: 'Superfood, packed with vitamins, minerals, and antioxidants.'
             }}
           </div>
-          <div class="price-wrapper">{{ 'products.general.from' | t }} {% render 'PriceFormat', product: item %}</div>
+          <div class="price-wrapper">
+            {% if item.price_varies %}
+              {{ 'products.general.from' | t }}
+            {% endif %}
+            {% render 'PriceFormat'
+              , product: item %}
+          </div>
         </a>
       </div>
 
