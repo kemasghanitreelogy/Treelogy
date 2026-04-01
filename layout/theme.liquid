@@ -94,29 +94,30 @@
     </script>
 
     {% assign utm_rules = shop.metafields['cart-transform']['utm-rules'].value %}
-    <script>
-      (function() {  
-        try {    
-          var rules = {{ utm_rules | default: '[]' }};    
-          var params = new URLSearchParams(window.location.search);    
-          var utm = params.get('utm_source');    
-          if (utm) sessionStorage.setItem('utm_source', utm);    
-          var saved = sessionStorage.getItem('utm_source');    
-          if (saved && !sessionStorage.getItem('utm_applied_' + saved)) {      
-            var rule = rules.find(function(r) {        
-              return r.utmSource === saved && r.isActive;      
-            });      
-            if (rule && rule.discountCode) {        
-              sessionStorage.setItem('utm_applied_' + saved, '1');        
-              window.location.href = '/discount/'          
-                + encodeURIComponent(rule.discountCode)          
-                + '?redirect='          
-                + encodeURIComponent(window.location.pathname + window.location.search);      
-            }    
-          }  
-        } catch(e) { console.error('UTM discount error:', e); }
-      })();
-    </script>
+<script>
+(function() {
+  try {
+    var rules = {{ utm_rules | default: '[]' }};
+    var params = new URLSearchParams(window.location.search);
+    var utm = params.get('utm_source');
+    if (utm) sessionStorage.setItem('utm_source', utm);
+    var saved = sessionStorage.getItem('utm_source');
+    if (saved && !sessionStorage.getItem('utm_applied_' + saved)) {
+      var rule = rules.find(function(r) {
+        return r.utmSource === saved && r.isActive;
+      });
+      if (rule && rule.discountCode) {
+        sessionStorage.setItem('utm_applied_' + saved, '1');
+        window.location.href = '/discount/'
+          + encodeURIComponent(rule.discountCode)
+          + '?redirect='
+          + encodeURIComponent(window.location.pathname + window.location.search);
+      }
+    }
+  } catch(e) {}
+})();
+</script>
+
   </head>
 
   <body>
