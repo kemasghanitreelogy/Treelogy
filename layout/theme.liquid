@@ -124,22 +124,37 @@
     {% assign utm_rules = shop.metafields['custom']['utm_rules'].value %}
 <script>
 (function() {
+  var UTM_FREE_SHIP_TTL = 15 * 60 * 1000; // 15 minutes
+
+  // Shared helper: check if utm_free_shipping is still valid
+  window.isUtmFreeShipping = function() {
+    var ts = parseInt(sessionStorage.getItem('utm_free_shipping_ts') || '0', 10);
+    if (ts && (Date.now() - ts) < UTM_FREE_SHIP_TTL) return true;
+    // Expired or never set — clean up
+    sessionStorage.removeItem('utm_free_shipping_ts');
+    return false;
+  };
+
   try {
     var rules = {% if utm_rules %}{{ utm_rules | json }}{% else %}[]{% endif %};
     var params = new URLSearchParams(window.location.search);
     var utm = params.get('utm_source');
     if (utm) sessionStorage.setItem('utm_source', utm);
     var saved = sessionStorage.getItem('utm_source');
-    if (saved && !sessionStorage.getItem('utm_applied_' + saved)) {
+    if (saved) {
       var rule = rules.find(function(r) {
         return r.utmSource === saved && r.isActive;
       });
       if (rule && rule.discountCode) {
-        sessionStorage.setItem('utm_applied_' + saved, '1');
-        window.location.href = '/discount/'
-          + encodeURIComponent(rule.discountCode)
-          + '?redirect='
-          + encodeURIComponent(window.location.pathname + window.location.search);
+        // Set free shipping flag with timestamp (refreshed each page load while UTM active)
+        sessionStorage.setItem('utm_free_shipping_ts', String(Date.now()));
+        if (!sessionStorage.getItem('utm_applied_' + saved)) {
+          sessionStorage.setItem('utm_applied_' + saved, '1');
+          window.location.href = '/discount/'
+            + encodeURIComponent(rule.discountCode)
+            + '?redirect='
+            + encodeURIComponent(window.location.pathname + window.location.search);
+        }
       }
     }
   } catch(e) {}
