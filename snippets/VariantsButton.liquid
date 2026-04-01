@@ -253,16 +253,6 @@
   {% assign display_title = product.title %}
 {% endif %}
 
-{% comment %} 
-  Check if the variant title is "Default Title". 
-  If it is, use product.title instead.
-{% endcomment %}
-
-{% assign display_title = variant.title %}
-{% if variant.title == 'Default Title' %}
-  {% assign display_title = product.title %}
-{% endif %}
-
 {% unless is_not_option %}
   <div class="check"></div>
 {% endunless %}
@@ -287,7 +277,6 @@
     {% endif %}
   {% endunless %}
 </div>
-    </div>
 
     <div class="body-desk-s right">
       {% assign saving = variant.metafields.custom.saving %}
