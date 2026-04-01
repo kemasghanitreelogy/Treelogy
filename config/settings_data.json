@@ -32,8 +32,22 @@
           "text_UY8Rx3": {
             "type": "text",
             "settings": {
-              "title": "Free Shipping Across Indonesia | from Rp 650.000",
+              "title": "Free Shipping Across Indonesia | from Rp 750.000",
               "url": "shopify://collections/all"
+            }
+          },
+          "text_UXYzxY": {
+            "type": "text",
+            "settings": {
+              "title": "",
+              "url": ""
+            }
+          },
+          "text_yxkYDz": {
+            "type": "text",
+            "settings": {
+              "title": "",
+              "url": ""
             }
           },
           "text_wnH9BG": {
@@ -46,6 +60,8 @@
         },
         "block_order": [
           "text_UY8Rx3",
+          "text_UXYzxY",
+          "text_yxkYDz",
           "text_wnH9BG"
         ],
         "settings": {
