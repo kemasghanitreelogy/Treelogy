@@ -243,29 +243,40 @@
     {% endif %}
 
     <div class="left body-desk-s">
-      {% unless is_not_option %}
-        <div class="check"></div>
-      {% endunless %}
+      {% comment %} 
+  Check if the variant title is "Default Title". 
+  If it is, use product.title instead.
+{% endcomment %}
 
-      {% assign meta = variant.metafields.custom.description %}
-      <div class="variant-detail">
-        <div>
-          {% if meta %}
-            <strong>{{ variant.title }}</strong>
-          {% else %}
-            {{ variant.title }}
-          {% endif %}
-          {% unless variant.available %}
-            - sold out
-          {% endunless %}
-        </div>
+{% assign display_title = variant.title %}
+{% if variant.title == 'Default Title' %}
+  {% assign display_title = product.title %}
+{% endif %}
 
-        {% unless disabled_detail %}
-          {% if meta %}
-            <div class="description">{{ meta | metafield_tag }}</div>
-          {% endif %}
-        {% endunless %}
-      </div>
+{% unless is_not_option %}
+  <div class="check"></div>
+{% endunless %}
+
+{% assign meta = variant.metafields.custom.description %}
+<div class="variant-detail">
+  <div>
+    {% if meta %}
+      <strong>{{ display_title }}</strong>
+    {% else %}
+      {{ display_title }}
+    {% endif %}
+    
+    {% unless variant.available %}
+      (Sold Out)
+    {% endunless %}
+  </div>
+
+  {% unless disabled_detail %}
+    {% if meta %}
+      <div class="description">{{ meta | metafield_tag }}</div>
+    {% endif %}
+  {% endunless %}
+</div>
     </div>
 
     <div class="body-desk-s right">
