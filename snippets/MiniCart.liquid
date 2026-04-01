@@ -49,10 +49,55 @@
 </div>
 
 <script>
-  const minShipping = {{ settings.min_shipping | default: 1000000 }}
+  const minShipping = {{ settings.min_shipping | default: 1000000 }};
 </script>
 
+<script>
+  // Override free shipping progress bar when UTM free shipping is active (15-min TTL).
+  // The bundled cart.js sets progress text asynchronously via bonusProduct() chain,
+  // so we patch the elements after each cart render using a delayed override.
+  (function() {
+    if (typeof window.isUtmFreeShipping !== 'function' || !window.isUtmFreeShipping()) return;
 
+    function forceAllSet() {
+      // Re-check expiry at override time (handles edge case of drawer open past 15 min)
+      if (!window.isUtmFreeShipping()) return;
+
+      var cartContainer = document.getElementById('cart');
+      if (!cartContainer) return;
+
+      var firstText = cartContainer.querySelector('#first-text');
+      var amountEl = cartContainer.querySelector('#amount-to-get');
+      var progressNote = cartContainer.querySelector('#progress-note');
+      var indicator = cartContainer.querySelector('.indicator .bar');
+      var freeShippingWrapper = cartContainer.querySelector('.free-shipping-progress');
+      var cartHeader = cartContainer.querySelector('.min-cart-template .cart-header');
+
+      if (firstText) firstText.style.display = 'none';
+      if (amountEl) amountEl.style.display = 'none';
+      if (progressNote) progressNote.innerHTML = window.texts ? window.texts.allSet : 'All set!';
+      if (indicator) indicator.style.width = '100%';
+      if (freeShippingWrapper) freeShippingWrapper.classList.add('active');
+      if (cartHeader) cartHeader.classList.add('with-progress');
+    }
+
+    var cartContainer = document.getElementById('cart');
+    if (!cartContainer) return;
+
+    var observer = new MutationObserver(function(mutations) {
+      var dominated = mutations.some(function(m) {
+        return m.type === 'childList' && m.target === cartContainer;
+      });
+      if (!dominated) return;
+
+      // Wait for the bundle's async bonusProduct() chain to finish rendering
+      setTimeout(forceAllSet, 500);
+      setTimeout(forceAllSet, 1000);
+    });
+
+    observer.observe(cartContainer, { childList: true });
+  })();
+</script>
 
 <script>
   // This automatically locks the background scroll when the cart opens
