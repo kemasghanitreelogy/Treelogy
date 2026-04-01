@@ -281,15 +281,15 @@
 
     <div class="body-desk-s right">
       {% assign saving = variant.metafields.custom.saving %}
-      {{ variant.price | money_with_currency }}
+      {{ variant.price | money }}
       {% if original_price %}
         <div class="custom-discount-price">
           {% if variant.compare_at_price > variant.price %}
-            {{ variant.compare_at_price | money_with_currency }}
+            {{ variant.compare_at_price | money }}
           {% elsif variant_size > 1 %}
-            {{ cur_cents | money_with_currency }}
+            {{ cur_cents | money }}
           {% else %}
-            {{ variant.price | money_with_currency }}
+            {{ variant.price | money }}
           {% endif %}
         </div>
       {% endif %}
