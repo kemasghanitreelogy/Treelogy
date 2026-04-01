@@ -14,7 +14,7 @@
     "tax_footer_setting": "",
     "active_free_shipping_progress": true,
     "free_shipping_info": "free shipping",
-    "min_shipping": 650000,
+    "min_shipping": 750000,
     "shipping_selected_country": "ID",
     "bonus_1_icon": "shopify://shop_images/free_shipping.png",
     "min_free_product_checkout": 2000000,
