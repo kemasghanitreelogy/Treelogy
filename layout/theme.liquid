@@ -125,7 +125,7 @@
 <script>
 (function() {
   try {
-    var rules = {{ utm_rules | default: '[]' }};
+    var rules = {% if utm_rules %}{{ utm_rules | json }}{% else %}[]{% endif %};
     var params = new URLSearchParams(window.location.search);
     var utm = params.get('utm_source');
     if (utm) sessionStorage.setItem('utm_source', utm);
@@ -145,6 +145,7 @@
   } catch(e) {}
 })();
 </script>
+
 
   </body>
 </html>
