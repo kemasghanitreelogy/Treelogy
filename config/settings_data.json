@@ -14,7 +14,7 @@
     "tax_footer_setting": "",
     "active_free_shipping_progress": true,
     "free_shipping_info": "free shipping",
-    "min_shipping": 750000,
+    "min_shipping": 650000,
     "shipping_selected_country": "ID",
     "bonus_1_icon": "shopify://shop_images/free_shipping.png",
     "min_free_product_checkout": 2000000,
@@ -70,9 +70,11 @@
           "main_menu": "main-menu",
           "up_selling_products": [
             "organic-moringa-oil",
-            "moringa-ritual-set",
             "organic-moringa-capsules",
-            "organic-moringa-powder"
+            "organic-moringa-powder",
+            "moringa-ritual-set",
+            "bamboo-scoop",
+            "bamboo-whisk"
           ]
         }
       },
