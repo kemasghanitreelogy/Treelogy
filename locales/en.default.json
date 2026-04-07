@@ -52,8 +52,14 @@
     "title": "Cart",
     "checkout_button_label": "Check Out",
     "empty_cart_text": "Cart is empty",
+    "empty_title": "Your cart is empty",
+    "empty_subtitle": "Discover our best-selling products and start your wellness journey",
+    "empty_cta": "Continue Shopping",
     "you_will_alo_like": "You will also like",
     "subtotal_label": "Subtotal",
+    "saving_label": "You're saving",
+    "shipping_label": "Shipping",
+    "secure_checkout": "Secure Checkout",
     "progress": {
       "only_text": "Only",
       "left_text": "left for",
@@ -71,7 +77,21 @@
     },
     "upselling": {
       "title": "You will also like"
-    }
+    },
+    "fbt_title": "Frequently Bought",
+    "fbt_title_bold": "Together",
+    "fbt_add": "ADD [+]",
+    "remove_title": "Remove Item?",
+    "remove_prefix": "Remove",
+    "remove_suffix": "from your cart?",
+    "remove_cancel": "Cancel",
+    "remove_confirm": "Remove",
+    "progress_add": "Add",
+    "progress_more": "more for Free Shipping",
+    "free_shipping_badge": "Free Shipping",
+    "progress_away": "away",
+    "shipping_free": "FREE",
+    "shipping_calculated": "Calculated at checkout"
   },
   "checkout": {
     "login": {

@@ -21,148 +21,158 @@
   {% endif %}
 {% endfor %}
 
-{% assign variant_size = product.variants.size %}
-{% assign first_variant = product.variants.first %}
-{% assign base_cents = first_variant.price %}
-{% assign cur_cents = base_cents %}
+<style>
+  .protocol-variant-card.checkbox-button {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    min-height: 68px !important;
+    padding: 14px 16px !important;
+    gap: 12px !important;
+    row-gap: 0 !important;
+  }
+  .protocol-variant-card.checkbox-button.active,
+  .protocol-variant-card.checkbox-button.static-active {
+    background-color: rgba(165, 187, 135, 0.25) !important;
+  }
+  .protocol-variant-card .pv-check {
+    width: 12px;
+    height: 12px;
+    flex: 0 0 12px;
+    display: flex;
+    margin-top: 3px;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid #515E56;
+    box-sizing: border-box;
+  }
+  .protocol-variant-card.active .pv-check::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    display: block;
+    border-radius: 50%;
+    background-color: #2B3C35;
+  }
+  .protocol-variant-card .pv-content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 10px;
+  }
+  .protocol-variant-card .pv-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .protocol-variant-card .pv-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .protocol-variant-card .pv-time {
+    font-size: 16px;
+    font-weight: 700;
+    color: #2B3C35;
+    line-height: 1.3;
+  }
+  .protocol-variant-card .pv-daily {
+    font-size: 12px;
+    font-weight: 400;
+    color: #515E56;
+    line-height: 1.3;
+  }
+  .protocol-variant-card .pv-desc {
+    font-size: 14px;
+    font-weight: 400;
+    color: #515E56;
+    margin-top: 2px;
+    line-height: 1.4;
+  }
+  .protocol-variant-card .pv-meta-desc {
+    font-size: 13px;
+    font-weight: 300;
+    color: #515E56;
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+  .protocol-variant-card .pv-prices {
+    text-align: right;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .protocol-variant-card .pv-original {
+    font-size: 12px;
+    font-weight: 300;
+    color: #6C7256;
+    text-decoration: line-through;
+    line-height: 1.4;
+  }
+  .protocol-variant-card .pv-sale {
+    font-size: 16px;
+    font-weight: 700;
+    color: #2B3C35;
+    line-height: 1.3;
+  }
+  .protocol-variant-card .pv-badge {
+    top: -10px;
+    right: -10px;
+    display: flex;
+    font-size: 14px;
+    color: #F8F8F2;
+    font-weight: 500;
+    line-height: 125%;
+    padding: 4px 12px;
+    position: absolute;
+    border-radius: 50px;
+    align-items: center;
+    justify-content: center;
+    background-color: #526547;
+    white-space: nowrap;
+  }
+</style>
 
-{% comment %} ===== SPECIAL LAYOUT FOR PRODUCT 9291531649212 ===== {% endcomment %}
-{% if product.id == 9291531649212 %}
-  <style>
-    .protocol-variant-card.checkbox-button {
-      display: flex !important;
-      flex-direction: row !important;
-      align-items: flex-start !important;
-      padding: 14px 16px !important;
-      gap: 12px !important;
-      row-gap: 0 !important;
-    }
-    .protocol-variant-card.checkbox-button.active,
-    .protocol-variant-card.checkbox-button.static-active {
-      background-color: rgba(165, 187, 135, 0.25) !important;
-    }
-    .protocol-variant-card .pv-check {
-      width: 12px;
-      height: 12px;
-      flex: 0 0 12px;
-      display: flex;
-      margin-top: 3px;
-      border-radius: 50%;
-      align-items: center;
-      justify-content: center;
-      border: 1.5px solid #515E56;
-      box-sizing: border-box;
-    }
-    .protocol-variant-card.active .pv-check::before {
-      content: "";
-      width: 6px;
-      height: 6px;
-      display: block;
-      border-radius: 50%;
-      background-color: #2B3C35;
-    }
-    .protocol-variant-card .pv-content {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: flex-end;
-      gap: 10px;
-    }
-    .protocol-variant-card .pv-info {
-      flex: 1;
-      min-width: 0;
-    }
-    .protocol-variant-card .pv-header {
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .protocol-variant-card .pv-time {
-      font-size: 16px;
-      font-weight: 700;
-      color: #2B3C35;
-      line-height: 1.3;
-    }
-    .protocol-variant-card .pv-daily {
-      font-size: 12px;
-      font-weight: 400;
-      color: #515E56;
-      line-height: 1.3;
-    }
-    .protocol-variant-card .pv-desc {
-      font-size: 14px;
-      font-weight: 400;
-      color: #515E56;
-      margin-top: 2px;
-      line-height: 1.4;
-    }
-    .protocol-variant-card .pv-prices {
-      text-align: right;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-    .protocol-variant-card .pv-original {
-      font-size: 12px;
-      font-weight: 300;
-      color: #6C7256;
-      text-decoration: line-through;
-      line-height: 1.4;
-    }
-    .protocol-variant-card .pv-sale {
-      font-size: 16px;
-      font-weight: 700;
-      color: #2B3C35;
-      line-height: 1.3;
-    }
-    .protocol-variant-card .pv-badge {
-      top: -10px;
-      right: -10px;
-      display: flex;
-      font-size: 14px;
-      color: #F8F8F2;
-      font-weight: 500;
-      line-height: 125%;
-      padding: 4px 12px;
-      position: absolute;
-      border-radius: 50px;
-      align-items: center;
-      justify-content: center;
-      background-color: #526547;
-      white-space: nowrap;
-    }
-  </style>
+{% for variant in product.variants %}
+  {% assign v_time_protocol = variant.metafields.custom.time_protocol %}
+  {% assign v_value_per_day = variant.metafields.custom.value_per_day %}
+  {% assign v_compare_price = variant.compare_at_price %}
+  {% assign v_saving = 0 %}
+  {% if v_compare_price and v_compare_price > variant.price %}
+    {% assign v_saving = v_compare_price | minus: variant.price %}
+  {% endif %}
 
-  {% for variant in product.variants %}
-    {% assign v_time_protocol = variant.metafields.custom.time_protocol %}
-    {% assign v_value_per_day = variant.metafields.custom.value_per_day %}
-    {% assign v_compare_price = variant.compare_at_price %}
-    {% assign v_saving = 0 %}
-    {% if v_compare_price and v_compare_price > variant.price %}
-      {% assign v_saving = v_compare_price | minus: variant.price %}
+  <div
+    data-value="{{ variant.id }}"
+    class="checkbox-button protocol-variant-card {% if default_variant == variant.id %} active {% endif %} {% if is_not_option and default_variant == variant.id %} static-active {% endif %}"
+    data-available="{{ variant.available }}">
+
+    {% assign v_custom_badge = variant.metafields.custom.custom_badge_text %}
+    {% if v_custom_badge != blank %}
+      <div class="pv-badge">{{ v_custom_badge }}</div>
+    {% elsif v_saving > 0 %}
+      {% if request.locale.iso_code == 'id' %}
+        <div class="pv-badge">hemat {{ v_saving | money_without_trailing_zeros }}</div>
+      {% else %}
+        <div class="pv-badge">save {{ v_saving | money_without_trailing_zeros }}</div>
+      {% endif %}
     {% endif %}
 
-    <div
-      data-value="{{ variant.id }}"
-      class="checkbox-button protocol-variant-card {% if default_variant == variant.id %} active {% endif %} {% if is_not_option %} static-active {% endif %}"
-      data-available="{{ variant.available }}">
+    {% unless is_not_option %}
+      <div class="pv-check"></div>
+    {% endunless %}
 
-      {% if v_saving > 0 %}
-        {% if request.locale.iso_code == 'id' %}
-          <div class="pv-badge">hemat {{ v_saving | money_without_trailing_zeros }}</div>
-        {% else %}
-          <div class="pv-badge">save {{ v_saving | money_without_trailing_zeros }}</div>
-        {% endif %}
-      {% endif %}
+    {% assign has_header = false %}
+    {% if v_time_protocol != blank or v_value_per_day != blank %}
+      {% assign has_header = true %}
+    {% endif %}
 
-      {% unless is_not_option %}
-        <div class="pv-check"></div>
-      {% endunless %}
-
-      <div class="pv-content">
-        <div class="pv-info">
+    <div class="pv-content">
+      <div class="pv-info">
+        {% if has_header %}
           <div class="pv-header">
             {% if v_time_protocol != blank %}
               <span class="pv-time">{{ v_time_protocol }}</span>
@@ -171,143 +181,29 @@
               <span class="pv-daily">{{ v_value_per_day }}</span>
             {% endif %}
           </div>
-          <div class="pv-desc">
-            {{ variant.title | replace: ' + ', '<br>+ ' }}
-            {% unless variant.available %} - sold out{% endunless %}
-          </div>
+        {% endif %}
+        <div class="pv-desc" {% unless has_header %}style="font-weight:700;"{% endunless %}>
+          {{ variant.title | replace: ' + ', '<br>+ ' }}
+          {% unless variant.available %} - sold out{% endunless %}
         </div>
-
-        <div class="pv-prices">
-          {% if v_compare_price and v_compare_price > variant.price %}
-            <div class="pv-original">{{ v_compare_price | money_without_trailing_zeros }}</div>
+        {% assign meta_desc = variant.metafields.custom.description %}
+        {% unless disabled_detail %}
+          {% if meta_desc %}
+            <div class="pv-meta-desc">{{ meta_desc | metafield_tag }}</div>
           {% endif %}
-          <div class="pv-sale">{{ variant.price | money_without_trailing_zeros }}</div>
-        </div>
+        {% endunless %}
+      </div>
+
+      <div class="pv-prices">
+        {% if v_compare_price and v_compare_price > variant.price %}
+          <div class="pv-original">{{ v_compare_price | money_without_trailing_zeros }}</div>
+        {% endif %}
+        <div class="pv-sale">{{ variant.price | money_without_trailing_zeros }}</div>
       </div>
     </div>
-
-    {% comment %} --- SEPARATOR LOGIC START --- {% endcomment %}
-    {% if forloop.first %}
-      {% assign separator_title = product.metafields.custom.separator_content_variant_title %}
-      {% assign separator_desc = product.metafields.custom.separator_content_variant_description %}
-
-      {% unless is_featuredbundle %}
-        {% if separator_title != blank or separator_desc != blank %}
-          <div class="variant-separator-content">
-            {% if separator_title != blank %}
-              <div class="separator-title">
-                <strong>{{ separator_title | newline_to_br }}</strong>
-              </div>
-            {% endif %}
-
-            {% if separator_desc != blank %}
-              <div class="separator-description">
-                {{ separator_desc }}
-              </div>
-            {% endif %}
-          </div>
-        {% endif %}
-      {% endunless %}
-    {% endif %}
-    {% comment %} --- SEPARATOR LOGIC END --- {% endcomment %}
-  {% endfor %}
-
-{% comment %} ===== DEFAULT LAYOUT FOR ALL OTHER PRODUCTS ===== {% endcomment %}
-{% else %}
-
-{% for variant in product.variants %}
-  <div
-    data-value="{{ variant.id }}"
-    class="checkbox-button {% if default_variant == variant.id %} active {% endif %} {% if is_not_option %} static-active {% endif %}"
-    data-available="{{ variant.available }}">
-
-    {% assign original_price = variant.metafields.custom.use_doubling_prices %}
-    {% assign discount_percent = variant.metafields.custom.discount_percent_variant | default: 0 %}
-
-    {% if original_price %}
-      {% assign price_diff = variant.compare_at_price | minus: variant.price %}
-      {% assign discount_percent = price_diff | times: 100 | divided_by: variant.compare_at_price %}
-
-      {% if discount_percent == 0 %}
-        {% assign price_diff = cur_cents | minus: variant.price %}
-        {% if variant_size > 1 %}
-          {% assign discount_percent = price_diff | times: 100 | divided_by: cur_cents %}
-        {% endif %}
-      {% endif %}
-
-      {% if variant.metafields.custom.custom_badge_text %}
-        <div class="discount-label custom-badge-text">{{ variant.metafields.custom.custom_badge_text }}</div>
-      {% else %}
-        <div class="discount-label">save -{{ discount_percent }}%</div>
-      {% endif %}
-    {% endif %}
-
-    <div class="left body-desk-s">
-      {% comment %} 
-  Check if the variant title is "Default Title". 
-  If it is, use product.title instead.
-{% endcomment %}
-
-{% assign display_title = variant.title %}
-{% if variant.title == 'Default Title' %}
-  {% assign display_title = product.title %}
-{% endif %}
-
-{% unless is_not_option %}
-  <div class="check"></div>
-{% endunless %}
-
-{% assign meta = variant.metafields.custom.description %}
-<div class="variant-detail">
-  <div>
-    {% if meta %}
-      <strong>{{ display_title }}</strong>
-    {% else %}
-      {{ display_title }}
-    {% endif %}
-    
-    {% unless variant.available %}
-      (Sold Out)
-    {% endunless %}
   </div>
 
-  {% unless disabled_detail %}
-    {% if meta %}
-      <div class="description">{{ meta | metafield_tag }}</div>
-    {% endif %}
-  {% endunless %}
-</div>
-</div>
-
-    <div class="body-desk-s right">
-      {% assign saving = variant.metafields.custom.saving %}
-      {{ variant.price | money }}
-      {% if original_price %}
-        <div class="custom-discount-price">
-          {% if variant.compare_at_price > variant.price %}
-            {{ variant.compare_at_price | money }}
-          {% elsif variant_size > 1 %}
-            {{ cur_cents | money }}
-          {% else %}
-            {{ variant.price | money }}
-          {% endif %}
-        </div>
-      {% endif %}
-
-      {% unless disabled_detail %}
-        {% if saving %}
-          {% assign saving_amount_array = saving | split: '|' %}
-          {% for amount in saving_amount_array %}
-            {%- if amount contains active_currency -%}
-              {% comment %} Display logic {% endcomment %}
-            {%- endif -%}
-          {% endfor %}
-        {% endif %}
-      {% endunless %}
-    </div>
-  </div>
-
-  {% comment %} --- SEPARATOR LOGIC START --- {% endcomment %}
+  {% comment %} --- SEPARATOR LOGIC --- {% endcomment %}
   {% if forloop.first %}
     {% assign separator_title = product.metafields.custom.separator_content_variant_title %}
     {% assign separator_desc = product.metafields.custom.separator_content_variant_description %}
@@ -329,21 +225,15 @@
         </div>
       {% endif %}
     {% endunless %}
-
-{% endif %}
-  {% comment %} --- SEPARATOR LOGIC END --- {% endcomment %}
-
-  {% assign cur_cents = cur_cents | times: 2 %}
+  {% endif %}
 {% endfor %}
-
-{% endif %}
 
 {% if has_gift %}
   <div class="gift-products">
     {% for variant in product.variants %}
       {% assign gift_product = variant.metafields.custom.gift_product.value %}
       {% if gift_product %}
-        <div class="product  {% if default_variant == variant.id %} active {% endif %}" id="gift-{{ variant.id }}">
+        <div class="product {% if default_variant == variant.id %} active {% endif %}" id="gift-{{ variant.id }}">
           <h4>Gifts Included with Your Purchase</h4>
           <div class="product-wrapper">
             <div class="thumb">

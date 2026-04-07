@@ -929,6 +929,57 @@
   {% endfor %}
 </script>
 
+<script>
+(function() {
+  if (typeof window.isUtmFreeShipping !== 'function' || !window.isUtmFreeShipping()) return;
+  var utmSource = sessionStorage.getItem('utm_source_matched');
+  if (utmSource !== 'kesehatanwanita_blog') return;
+
+  var form = document.getElementById('AddToCartForm');
+  var btn = document.getElementById('AddToCart');
+  if (!form || !btn) return;
+
+  // Update button text
+  var isID = (typeof Shopify !== 'undefined' && Shopify.locale === 'id');
+  btn.textContent = isID ? 'Beli Sekarang' : 'Buy Now';
+
+  // Intercept form submission
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    if (btn.dataset.processing) return;
+    btn.dataset.processing = '1';
+    btn.textContent = isID ? 'Memproses...' : 'Processing...';
+
+    var variantId = btn.dataset.variant || document.getElementById('productSelect').value;
+
+    // Clear cart, add this item, then go to checkout
+    fetch('/cart/clear.js', { method: 'POST' })
+      .then(function() {
+        return fetch('/cart/add.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items: [{ id: parseInt(variantId), quantity: 1 }] })
+        });
+      })
+      .then(function(res) {
+        if (!res.ok) throw new Error('Failed to add item');
+        window.location.href = '/checkout';
+      })
+      .catch(function() {
+        btn.textContent = isID ? 'Beli Sekarang' : 'Buy Now';
+        delete btn.dataset.processing;
+      });
+  });
+
+  // Also intercept the JS click handler from Product.js (it calls e.preventDefault())
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    form.dispatchEvent(new Event('submit', { cancelable: true }));
+  }, true); // capture phase to run before Product.js handler
+})();
+</script>
+
 {% schema %}
   {
     "name": "Product single",

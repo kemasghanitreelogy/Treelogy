@@ -1,84 +1,748 @@
 <div class="mini-cart">
   <div class="overlay"></div>
+
+  <!-- Remove item confirmation modal -->
+  <div class="cart-remove-modal" id="cart-remove-modal">
+    <div class="cart-remove-backdrop"></div>
+    <div class="cart-remove-dialog">
+      <div class="cart-remove-title">{{ 'cart.remove_title' | t }}</div>
+      <div class="cart-remove-msg">{{ 'cart.remove_prefix' | t }} <span class="cart-remove-name" id="cart-remove-name"></span> {{ 'cart.remove_suffix' | t }}</div>
+      <div class="cart-remove-actions">
+        <button type="button" class="cart-remove-btn cart-remove-cancel" id="cart-remove-cancel">{{ 'cart.remove_cancel' | t }}</button>
+        <button type="button" class="cart-remove-btn cart-remove-confirm" id="cart-remove-confirm">{{ 'cart.remove_confirm' | t }}</button>
+      </div>
+    </div>
+  </div>
+
   <div class="mini-cart-wrapper">
-    <div class="cart-page min-cart-template up-selling">
-      <div class="cart-header">
-        <div>{{ 'cart.you_will_alo_like' | t }}</div>
+    <div class="up-selling fbt-section">
+      <div class="fbt-header">
+        {{ 'cart.fbt_title' | t }} <strong>{{ 'cart.fbt_title_bold' | t }}</strong>
       </div>
-      <div class="cart swiper">
-        {% if up_selling != null %}
-          <div class="swiper-wrapper">
-            {% for product in up_selling %}
-              <div
-                class="card swiper-slide upsel-product-cart"
-                id="upsel-product-{{ product.id }}"
-                style="display: none;"
-              >
-                <div class="card-thumb">
-                  <img
-                    src="{{ product.media.first | img_url: '100x' }}"
-                    alt="{{ product.title | escape }}"
-                    width="100"
-                    height="100"
-                  >
-                </div>
-                <div class="card-detail">
-                  {% render 'Rating', product: product %}
-                  <div class="body-mobile">
-                    {{ product.title }}
-                  </div>
-                  {% render 'PriceFormat', product: product %}
-                </div>
-                <div
-                  class="button-add button-quick-add-cart button-cart-icon"
-                  data-variant="{{ product.variants.first.id }}"
+      {% if up_selling != null %}
+        <div class="fbt-track">
+          {% for product in up_selling %}
+            <div
+              class="fbt-card upsel-product-cart"
+              id="upsel-product-{{ product.id }}"
+              data-handle="{{ product.handle }}"
+              style="display: none;"
+            >
+              <div class="fbt-card-image">
+                <img
+                  src="{{ product.media.first | img_url: '160x' }}"
+                  alt="{{ product.title | escape }}"
+                  width="80"
+                  height="80"
+                  loading="lazy"
                 >
-                  <svg width="32" height="33" viewBox="0 0 32 33" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect y="0.5" width="32" height="32" rx="16" fill="#56734F"/>
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12.7095 16.9997H20.082L20.3525 15.4998H21.368L20.918 17.9997H12.827L12.8925 18.5577C12.9067 18.6794 12.9651 18.7916 13.0567 18.8731C13.1482 18.9546 13.2665 18.9996 13.389 18.9997H20V19.9996H13.389C13.0217 19.9994 12.6672 19.8645 12.3928 19.6204C12.1183 19.3763 11.943 19.0399 11.9 18.6752L11.1075 11.9414C11.0932 11.8198 11.0347 11.7077 10.9432 11.6263C10.8517 11.5449 10.7335 11.5 10.611 11.5H10V10.5H10.611C10.9782 10.5002 11.3327 10.635 11.6071 10.879C11.8815 11.1231 12.0569 11.4593 12.1 11.8239L12.121 11.9999H17V12.9999H12.239L12.7095 16.9997ZM14.5 21.5C14.5 22.0523 14.0523 22.5 13.5 22.5C12.9477 22.5 12.5 22.0523 12.5 21.5C12.5 20.9478 12.9477 20.5001 13.5 20.5001C14.0523 20.5001 14.5 20.9478 14.5 21.5ZM18.5 22.5C19.0523 22.5 19.5 22.0523 19.5 21.5C19.5 20.9478 19.0523 20.5001 18.5 20.5001C17.9477 20.5001 17.5 20.9478 17.5 21.5C17.5 22.0523 17.9477 22.5 18.5 22.5ZM20.5 10.5V11.9999H22V12.9999H20.5V14.4998H19.5V12.9999H18V11.9999H19.5V10.5H20.5Z" fill="#F8F8F2"/>
-                  </svg>
-                </div>
               </div>
-            {% endfor %}
-          </div>
-        {% endif %}
-      </div>
+              <div class="fbt-card-info">
+                <div class="fbt-rating" style="display:none;">
+                  <span class="fbt-star"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 0C5.80302 0 5.63472 0.0961647 5.5078 0.213572C5.38088 0.33098 5.27903 0.47454 5.18487 0.635508C4.99654 0.957443 4.83682 1.3563 4.68095 1.76327C4.52508 2.17024 4.37566 2.58362 4.23302 2.91318C4.09037 3.24274 3.92546 3.48566 3.88535 3.51613C3.84523 3.54659 3.57302 3.63634 3.22908 3.67631C2.88513 3.71627 2.4613 3.73567 2.04284 3.76486C1.62438 3.79405 1.21293 3.8321 0.861812 3.91983C0.686252 3.9637 0.523469 4.01877 0.377421 4.10866C0.231373 4.19855 0.091925 4.33478 0.0310553 4.5306C-0.0298147 4.72641 0.00641869 4.92552 0.0740254 5.08797C0.141632 5.25042 0.241827 5.3939 0.359191 5.53725C0.593919 5.82395 0.905579 6.10823 1.22771 6.38893C1.54984 6.66964 1.88211 6.94619 2.1379 7.18983C2.39368 7.43347 2.56269 7.67186 2.57801 7.72116C2.59334 7.77045 2.59064 8.06882 2.52072 8.42308C2.4508 8.77734 2.33831 9.20397 2.23555 9.62898C2.1328 10.054 2.03896 10.4744 2.01029 10.8505C1.99595 11.0386 1.99576 11.2167 2.03242 11.3897C2.06908 11.5626 2.15172 11.7453 2.31108 11.8663C2.47044 11.9873 2.66192 12.0122 2.83063 11.9952C2.99933 11.9782 3.16004 11.9243 3.32674 11.852C3.66013 11.7072 4.01478 11.4825 4.36974 11.249C4.7247 11.0155 5.07816 10.7729 5.37889 10.594C5.67962 10.415 5.95042 10.3205 6 10.3205C6.04958 10.3205 6.32039 10.415 6.62112 10.594C6.92184 10.7729 7.27531 11.0155 7.63026 11.249C7.98522 11.4825 8.33987 11.7072 8.67327 11.852C8.83997 11.9243 9.00067 11.9782 9.16938 11.9952C9.33808 12.0122 9.52957 11.9873 9.68892 11.8663C9.84828 11.7453 9.93092 11.5626 9.96758 11.3897C10.0042 11.2167 10.0041 11.0386 9.98971 10.8505C9.96103 10.4744 9.8672 10.054 9.76445 9.62898C9.66169 9.20397 9.5492 8.77734 9.47928 8.42308C9.40936 8.06882 9.40666 7.77045 9.42199 7.72116C9.43731 7.67186 9.60632 7.43347 9.86211 7.18983C10.1179 6.94619 10.4502 6.66964 10.7723 6.38893C11.0944 6.10823 11.4061 5.82395 11.6408 5.53725C11.7582 5.3939 11.8584 5.25042 11.926 5.08797C11.9936 4.92552 12.0298 4.72641 11.9689 4.5306C11.9081 4.33478 11.7686 4.19855 11.6226 4.10866C11.4765 4.01877 11.3138 3.9637 11.1382 3.91983C10.7871 3.8321 10.3756 3.79405 9.95716 3.76486C9.5387 3.73567 9.11487 3.71627 8.77093 3.67631C8.42698 3.63634 8.15477 3.54659 8.11465 3.51613C8.07454 3.48566 7.90963 3.24274 7.76699 2.91318C7.62434 2.58362 7.47492 2.17024 7.31906 1.76327C7.16319 1.3563 7.00346 0.957443 6.81513 0.635508C6.72097 0.47454 6.61913 0.33098 6.4922 0.213572C6.36528 0.0961647 6.19698 0 6 0Z" fill="#F8F8F2"/></svg></span>
+                  <span class="fbt-rating-text"></span>
+                </div>
+                <div class="fbt-card-title">{{ product.title }}</div>
+                <div class="fbt-card-variant">{{ product.variants.first.title }}</div>
+                <div class="fbt-card-price">{{ product.price | money }}</div>
+              </div>
+              <div
+                class="fbt-card-action button-quick-add-cart button-cart-icon"
+                data-variant="{{ product.variants.first.id }}"
+              >
+                <span class="fbt-btn-state fbt-btn-idle">{{ 'cart.fbt_add' | t }}</span>
+                <span class="fbt-btn-state fbt-btn-loading">
+                  <svg class="fbt-spinner" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2.5" opacity=".25"/>
+                    <path d="M12 3a9 9 0 0 1 9 9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                  </svg>
+                </span>
+                <span class="fbt-btn-state fbt-btn-success">
+                  <svg width="14" height="11" viewBox="0 0 14 11" fill="none">
+                    <path d="M1 5.5L5 9.5L13 1.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
     </div>
     <div id="cart"></div>
   </div>
 </div>
 
 <script>
+  /* ===== Cart i18n strings (Liquid → JS) ===== */
+  window._cartI18n = {
+    allSet:            {{ 'cart.progress.all_set' | t | json }},
+    progressAdd:       {{ 'cart.progress_add' | t | json }},
+    progressMore:      {{ 'cart.progress_more' | t | json }},
+    freeShippingBadge: {{ 'cart.free_shipping_badge' | t | json }},
+    progressAway:      {{ 'cart.progress_away' | t | json }},
+    shippingFree:      {{ 'cart.shipping_free' | t | json }},
+    shippingCalc:      {{ 'cart.shipping_calculated' | t | json }}
+  };
+
   const minShipping = {{ settings.min_shipping | default: 1000000 }};
+
+  /* ===== Rp formatter (dots, no decimals) ===== */
+  window.formatRp = function(amount) {
+    var n = Math.round(Math.abs(amount));
+    return 'Rp ' + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  };
+
+  /* ===== Loading overlay for cart ===== */
+  window.cartShowLoading = function() {
+    var c = document.getElementById('cart');
+    if (!c) return;
+    var existing = c.querySelector('.cart-loading-overlay');
+    if (existing) { existing.style.display = 'flex'; return; }
+    var ov = document.createElement('div');
+    ov.className = 'cart-loading-overlay';
+    ov.innerHTML = '<div class="cart-loading-spinner"></div>';
+    c.appendChild(ov);
+  };
+  window.cartHideLoading = function() {
+    var ov = document.querySelector('#cart .cart-loading-overlay');
+    if (ov) ov.style.display = 'none';
+  };
+
+  /* ===== Central UI refresh ===== */
+  window.refreshCartUI = function(cart) {
+    var c = document.getElementById('cart');
+    if (!c) return;
+
+    var totalCents = cart.total_price;
+    var total = totalCents / 100;
+    var threshold = minShipping;
+    var remaining = threshold - total;
+    var isFree = remaining <= 0;
+
+    // UTM override
+    var utmFree = (typeof window.isUtmFreeShipping === 'function' && window.isUtmFreeShipping());
+    if (utmFree) { isFree = true; remaining = 0; }
+
+    /* -- Progress fill + indicator position -- */
+    var pf = c.querySelector('.progress-fill');
+    var pct = Math.min((total / threshold) * 100, 100);
+    if (pf) {
+      pf.style.width = pct + '%';
+    }
+
+    /* -- Slide the icon+badge indicator along the track -- */
+    var indicator = c.querySelector('.progress-indicator');
+    if (indicator) {
+      /* Clamp between 12% and 88% to keep icon + badge on-screen */
+      var pos = Math.max(12, Math.min(pct, 88));
+      indicator.style.left = pos + '%';
+    }
+
+    /* -- Progress text -- */
+    var label = c.querySelector('#shipping-progress-label');
+    var i18n = window._cartI18n || {};
+    if (label) {
+      if (isFree) {
+        label.textContent = i18n.allSet || 'All set!';
+      } else {
+        label.textContent = (i18n.progressAdd || 'Add') + ' ' + window.formatRp(remaining) + ' ' + (i18n.progressMore || 'more for Free Shipping');
+      }
+    }
+
+    /* -- Badge -- */
+    var bt = c.querySelector('#badge-text');
+    if (bt) {
+      bt.textContent = isFree ? (i18n.freeShippingBadge || 'Free Shipping') : window.formatRp(remaining) + ' ' + (i18n.progressAway || 'away');
+    }
+
+    /* -- Fulfilled class -- */
+    var pw = c.querySelector('.free-shipping-progress');
+    if (pw) {
+      var wasFulfilled = pw.classList.contains('fulfilled');
+      pw.classList.toggle('fulfilled', isFree);
+      /* Re-trigger animations only on state change (not → fulfilled) */
+      if (isFree && !wasFulfilled) {
+        var icon = pw.querySelector('.progress-icon');
+        var badge = pw.querySelector('.free-shipping-badge');
+        if (icon) { icon.style.animation = 'none'; icon.offsetHeight; icon.style.animation = ''; }
+        if (badge) { badge.style.animation = 'none'; badge.offsetHeight; badge.style.animation = ''; }
+      }
+    }
+
+    /* -- Checkout total -- */
+    var te = c.querySelector('#sub-total-mini');
+    if (te) {
+      te.dataset.total = totalCents;
+      te.textContent = window.formatRp(total);
+    }
+
+    /* -- Shipping row: always visible -- */
+    var shippingRow = c.querySelector('#cart-shipping-row');
+    var sv = c.querySelector('#cart-shipping-value');
+    if (sv) sv.textContent = isFree ? (i18n.shippingFree || 'FREE') : (i18n.shippingCalc || 'Calculated at checkout');
+    if (shippingRow) shippingRow.classList.add('visible');
+
+    /* -- Savings row: recalculate from DOM data attributes -- */
+    window.recalcSavings();
+  };
+
+  /* ===== Qty change handler ===== */
+  window.cartChangeQty = function(sel) {
+    var key = sel.getAttribute('data-key') || sel.getAttribute('data-id');
+    var qty = parseInt(sel.value);
+    var row = sel.closest('.cart-item');
+
+    window.cartShowLoading();
+
+    fetch('/cart/change.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: key, quantity: qty })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(cart) {
+      window.refreshCartUI(cart);
+      // If qty became 0 (shouldn't happen with select 1-10, but safety)
+      if (qty === 0 && row) row.remove();
+      if (cart.item_count === 0) window.location.reload();
+      window.cartHideLoading();
+    })
+    .catch(function() { window.cartHideLoading(); });
+  };
+
+  /* ===== Remove item confirmation modal ===== */
+  (function() {
+    var _pendingBtn = null;
+    var modal = document.getElementById('cart-remove-modal');
+    var nameEl = document.getElementById('cart-remove-name');
+    var cancelBtn = document.getElementById('cart-remove-cancel');
+    var confirmBtn = document.getElementById('cart-remove-confirm');
+
+    function openModal() {
+      if (!modal) return;
+      modal.classList.add('active');
+      /* Trigger reflow so the transition plays */
+      void modal.offsetWidth;
+      modal.classList.add('visible');
+    }
+
+    function closeModal() {
+      if (!modal) return;
+      modal.classList.remove('visible');
+      /* Wait for the exit animation to finish, then hide */
+      setTimeout(function() { modal.classList.remove('active'); }, 250);
+    }
+
+    /* Show confirmation — called from trash button onclick */
+    window.cartRemoveItem = function(btn) {
+      _pendingBtn = btn;
+      var row = btn.closest('.cart-item');
+      var title = row ? (row.querySelector('.title') || {}).textContent : '';
+      if (nameEl) nameEl.textContent = '"' + (title || 'this item').trim() + '"';
+      openModal();
+    };
+
+    /* Cancel — close modal, do nothing */
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', function() {
+        _pendingBtn = null;
+        closeModal();
+      });
+    }
+
+    /* Also close on backdrop click */
+    if (modal) {
+      modal.querySelector('.cart-remove-backdrop').addEventListener('click', function() {
+        _pendingBtn = null;
+        closeModal();
+      });
+    }
+
+    /* Confirm — actually remove the item */
+    if (confirmBtn) {
+      confirmBtn.addEventListener('click', function() {
+        if (!_pendingBtn) return;
+        var btn = _pendingBtn;
+        _pendingBtn = null;
+        closeModal();
+
+        var key = btn.getAttribute('data-key');
+        var row = btn.closest('.cart-item');
+
+        /* Fade + shrink the row out */
+        if (row) {
+          row.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+          row.style.opacity = '0';
+          row.style.transform = 'scale(0.96)';
+        }
+
+        window.cartShowLoading();
+
+        fetch('/cart/change.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: key, quantity: 0 })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(cart) {
+          if (row) row.remove();
+          window.refreshCartUI(cart);
+          if (cart.item_count === 0) window.location.reload();
+          window.cartHideLoading();
+        })
+        .catch(function() {
+          if (row) {
+            row.style.opacity = '1';
+            row.style.transform = '';
+            row.style.transition = '';
+          }
+          window.cartHideLoading();
+        });
+      });
+    }
+  })();
 </script>
 
 <script>
-  // Override free shipping progress bar when UTM free shipping is active (15-min TTL).
-  // The bundled cart.js sets progress text asynchronously via bonusProduct() chain,
-  // so we patch the elements after each cart render using a delayed override.
+  /* ===== Fetch compare_at_price via Section Rendering API ===== */
+  /* Shopify cart context does NOT expose compare_at_price.        */
+  /* Product page context DOES — so we fetch each product's       */
+  /* variant-compare-data section to get the real values.         */
+  window.loadCompareAtPrices = function() {
+    var c = document.getElementById('cart');
+    if (!c) return;
+
+    var cartItems = c.querySelectorAll('.cart-item');
+    if (!cartItems.length) return;
+
+    /* Collect unique product handles from cart item links */
+    var handleMap = {};
+    cartItems.forEach(function(el) {
+      var link = el.querySelector('a.thumb');
+      if (!link) return;
+      var href = link.getAttribute('href') || '';
+      var match = href.match(/\/products\/([^?/#]+)/);
+      if (match) {
+        var handle = match[1];
+        if (!handleMap[handle]) handleMap[handle] = [];
+        handleMap[handle].push(el);
+      }
+    });
+
+    var handles = Object.keys(handleMap);
+    if (!handles.length) return;
+
+    /* Fetch all products in parallel, then update DOM + savings */
+    var fetches = handles.map(function(handle) {
+      return fetch('/products/' + handle + '?section_id=variant-compare-data')
+        .then(function(r) { return r.text(); })
+        .then(function(html) {
+          var doc = new DOMParser().parseFromString(html, 'text/html');
+          var script = doc.querySelector('[data-variant-prices]');
+          if (!script) return;
+          var data;
+          try { data = JSON.parse(script.textContent); } catch(e) { return; }
+          if (!data || !data.variants) return;
+
+          /* Build lookup: variantId → original_price (in IDR display units) */
+          var lookup = {};
+          data.variants.forEach(function(v) {
+            var opSub = v.original_price * 100;
+            if (opSub > 0 && opSub > v.price) {
+              lookup[v.id] = { price: v.price, original_price: v.original_price, opSub: opSub };
+            }
+          });
+
+          /* Update each matching cart-item element */
+          handleMap[handle].forEach(function(el) {
+            var vid = el.getAttribute('data-variant');
+            if (!vid || !lookup[vid]) return;
+            var v = lookup[vid];
+            el.setAttribute('data-compare-at', v.opSub);
+
+            /* Insert or update strikethrough price */
+            var priceRow = el.querySelector('.price-row');
+            if (!priceRow) return;
+            var capSpan = priceRow.querySelector('.compare-at-price');
+            var formatted = window.formatRp(v.original_price);
+            if (capSpan) {
+              capSpan.textContent = formatted;
+            } else {
+              capSpan = document.createElement('span');
+              capSpan.className = 'price-wrapper compare-at-price';
+              capSpan.textContent = formatted;
+              priceRow.insertBefore(capSpan, priceRow.firstChild);
+            }
+          });
+        })
+        .catch(function(err) { console.warn('Original price fetch failed for', handle, err); });
+    });
+
+    /* After ALL fetches complete, recalculate total savings */
+    Promise.all(fetches).then(function() {
+      window.recalcSavings();
+    });
+  };
+
+  /* ===== Fetch Judge.me ratings for FBT products ===== */
+  window.loadFBTRatings = function() {
+    var fbtCards = document.querySelectorAll('.fbt-card[data-handle]');
+    if (!fbtCards.length) return;
+
+    fbtCards.forEach(function(card) {
+      var handle = card.getAttribute('data-handle');
+      if (!handle) return;
+
+      fetch('/products/' + handle + '?section_id=variant-compare-data')
+        .then(function(r) { return r.text(); })
+        .then(function(html) {
+          var doc = new DOMParser().parseFromString(html, 'text/html');
+
+          /* Try to extract data-average-rating from Judge.me badge */
+          var badge = doc.querySelector('[data-rating-badge]');
+          if (!badge) return;
+
+          var ratingEl = badge.querySelector('[data-average-rating]');
+          var rating = ratingEl ? ratingEl.getAttribute('data-average-rating') : null;
+
+          /* Fallback: try to extract from badge text content */
+          if (!rating) {
+            var text = badge.textContent || '';
+            var match = text.match(/([\d.]+)\s*\/\s*5/);
+            if (match) rating = match[1];
+          }
+
+          if (!rating || parseFloat(rating) <= 0) return;
+
+          /* Update the FBT card rating display */
+          var ratingWrap = card.querySelector('.fbt-rating');
+          var ratingText = card.querySelector('.fbt-rating-text');
+          if (ratingWrap && ratingText) {
+            ratingText.textContent = rating + '/5';
+            ratingWrap.style.display = '';
+          }
+        })
+        .catch(function(err) { console.warn('FBT rating fetch failed for', handle, err); });
+    });
+  };
+
+  /* ===== FBT Add-to-Cart: seamless in-place update ========================= */
+  /* Capture-phase intercept blocks app.bundle.js (which does full innerHTML    */
+  /* wipe → flash). Instead we surgically swap ONLY .cart-items & .cart-footer  */
+  /* so the drawer, header, progress bar and FBT never disappear.              */
+  /* After success the added card animates out and the next card slides in.     */
   (function() {
-    if (typeof window.isUtmFreeShipping !== 'function' || !window.isUtmFreeShipping()) return;
+    document.addEventListener('click', function(e) {
+      var btn = e.target.closest('.fbt-card-action');
+      if (!btn || btn.classList.contains('is-loading') || btn.classList.contains('is-success')) return;
 
-    function forceAllSet() {
-      // Re-check expiry at override time (handles edge case of drawer open past 15 min)
-      if (!window.isUtmFreeShipping()) return;
+      var variant = btn.dataset.variant;
+      if (!variant) return;
 
-      var cartContainer = document.getElementById('cart');
-      if (!cartContainer) return;
+      /* Block app.bundle.js — its ajaxCart() does innerHTML='' then innerHTML=html */
+      e.stopImmediatePropagation();
+      e.preventDefault();
 
-      var firstText = cartContainer.querySelector('#first-text');
-      var amountEl = cartContainer.querySelector('#amount-to-get');
-      var progressNote = cartContainer.querySelector('#progress-note');
-      var indicator = cartContainer.querySelector('.indicator .bar');
-      var freeShippingWrapper = cartContainer.querySelector('.free-shipping-progress');
-      var cartHeader = cartContainer.querySelector('.min-cart-template .cart-header');
+      var card = btn.closest('.fbt-card');
 
-      if (firstText) firstText.style.display = 'none';
-      if (amountEl) amountEl.style.display = 'none';
-      if (progressNote) progressNote.innerHTML = window.texts ? window.texts.allSet : 'All set!';
-      if (indicator) indicator.style.width = '100%';
-      if (freeShippingWrapper) freeShippingWrapper.classList.add('active');
-      if (cartHeader) cartHeader.classList.add('with-progress');
+      /* — LOADING — */
+      btn.classList.add('is-loading');
+
+      /* 1. Add item to cart */
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ items: [{ id: parseInt(variant, 10), quantity: 1 }] })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function() {
+        /* 2. Fetch fresh cart HTML (respect locale prefix) */
+        var prefix = (typeof Shopify !== 'undefined' && Shopify.locale === 'id') ? '/id/' : '/';
+        return fetch(prefix + 'cart?view=mini').then(function(r) { return r.text(); });
+      })
+      .then(function(html) {
+        var cartEl = document.getElementById('cart');
+        if (!cartEl) return;
+
+        /* Parse server response — extract only .cart-items and .cart-footer */
+        var doc = new DOMParser().parseFromString(html, 'text/html');
+        var newItems = doc.querySelector('.cart-items');
+        var newFooter = doc.querySelector('.sub-total.cart-footer');
+
+        var oldItems = cartEl.querySelector('.cart-items');
+        var oldFooter = cartEl.querySelector('.sub-total.cart-footer');
+
+        /* 3. Crossfade cart-items only (drawer stays fully visible) */
+        if (oldItems && newItems) {
+          oldItems.style.transition = 'opacity 0.12s ease-out';
+          oldItems.style.opacity = '0';
+
+          setTimeout(function() {
+            oldItems.innerHTML = newItems.innerHTML;
+            oldItems.style.transition = 'opacity 0.18s ease-in';
+            oldItems.style.opacity = '1';
+            setTimeout(function() { oldItems.style.transition = ''; }, 200);
+          }, 120);
+        }
+
+        /* 4. Swap footer (checkout btn, totals structure) */
+        if (oldFooter && newFooter) {
+          oldFooter.innerHTML = newFooter.innerHTML;
+          /* Re-init trust slider after footer DOM swap */
+          window.initCartTrustSlider();
+        }
+
+        /* 5. Fetch cart JSON → update progress bar, totals, shipping/savings rows */
+        fetch('/cart.js').then(function(r) { return r.json(); }).then(function(cart) {
+          window.refreshCartUI(cart);
+          if (cart.item_count > 0) window.loadCompareAtPrices();
+          var indicator = document.getElementById('cart-indicator');
+          if (indicator) {
+            if (cart.item_count > 0) indicator.classList.add('show');
+            else indicator.classList.remove('show');
+          }
+        });
+
+        /* 6. Button ✓ → card out → next card in (fast & snappy) */
+        btn.classList.remove('is-loading');
+        btn.classList.add('is-success');
+
+        if (card) {
+          setTimeout(function() {
+            card.classList.add('fbt-card-exit');
+            card.addEventListener('transitionend', function handler(ev) {
+              if (ev.propertyName !== 'opacity') return;
+              card.removeEventListener('transitionend', handler);
+              card.style.display = 'none';
+              card.classList.remove('is-success', 'fbt-card-exit');
+              btn.classList.remove('is-success');
+              /* Reset scroll so next visible card aligns to start */
+              var track = card.closest('.fbt-track');
+              if (track) track.scrollLeft = 0;
+            });
+          }, 500);
+        }
+      })
+      .catch(function() {
+        btn.classList.remove('is-loading');
+      });
+    }, true); /* ← capture phase: fires before app.bundle.js bubble-phase handler */
+  })();
+</script>
+
+<script>
+  /* ===== Move FBT into cart form flow (insertBefore, NOT clone) ===== */
+  /* Uses backup reference so FBT survives bundle re-renders of #cart. */
+  /* No Swiper — FBT track uses native CSS scroll-snap.               */
+  var _fbtRef = null;
+
+  window.moveFBT = function() {
+    var form = document.querySelector('#cart .min-cart-template .cart form');
+    if (!form) return;
+
+    var footer = form.querySelector('.cart-footer');
+    if (!footer) return;
+
+    /* Already in place? Skip. */
+    if (form.querySelector('.fbt-section')) return;
+
+    /* Get from original position OR backup (after bundle re-render) */
+    var fbt = document.querySelector('.mini-cart-wrapper > .fbt-section') || _fbtRef;
+    if (!fbt) return;
+
+    _fbtRef = fbt;
+    form.insertBefore(fbt, footer);
+  };
+
+  /* ===== Recalculate savings from DOM data attributes ===== */
+  window.recalcSavings = function() {
+    var cartEl = document.getElementById('cart');
+    if (!cartEl) return;
+    var sr = cartEl.querySelector('#cart-saving-row');
+    var sa = cartEl.querySelector('#cart-saving-amount');
+    if (!sr || !sa) return;
+    var saved = 0;
+    cartEl.querySelectorAll('.cart-item[data-compare-at]').forEach(function(el) {
+      var cap = parseInt(el.getAttribute('data-compare-at') || '0', 10);
+      var price = parseInt(el.getAttribute('data-price') || '0', 10);
+      var qtyEl = el.querySelector('.qty-select');
+      var qty = qtyEl ? parseInt(qtyEl.value, 10) : parseInt(el.getAttribute('data-qty') || '1', 10);
+      if (cap > 0 && cap > price) saved += (cap - price) * qty;
+    });
+    if (saved > 0) {
+      sr.style.display = '';
+      sr.classList.add('visible');
+      sa.textContent = window.formatRp(saved / 100);
+    } else {
+      sr.classList.remove('visible');
+    }
+  };
+
+  /* ===== Isolate scroll containers — prevent scroll-chaining ===== */
+  /* Ensures .fbt-track (horizontal) and .cart-items (vertical)     */
+  /* never interfere with each other's scroll. Handles edge cases   */
+  /* where CSS overscroll-behavior alone isn't enough (older iOS).  */
+  window.isolateScrollContainers = function() {
+    var cartEl = document.getElementById('cart');
+    if (!cartEl) return;
+
+    var fbtTrack = cartEl.querySelector('.fbt-track');
+    var cartItems = cartEl.querySelector('.cart-items');
+
+    /* Guard: only bind once per element */
+    if (fbtTrack && !fbtTrack._scrollIsolated) {
+      fbtTrack._scrollIsolated = true;
+
+      /* On touchstart inside FBT track, lock parent vertical scroll */
+      fbtTrack.addEventListener('touchstart', function() {
+        if (cartItems) cartItems.style.overflowY = 'hidden';
+      }, { passive: true });
+
+      /* On touchend / touchcancel, restore parent vertical scroll */
+      fbtTrack.addEventListener('touchend', function() {
+        if (cartItems) cartItems.style.overflowY = 'auto';
+      }, { passive: true });
+      fbtTrack.addEventListener('touchcancel', function() {
+        if (cartItems) cartItems.style.overflowY = 'auto';
+      }, { passive: true });
+
+      /* Pointer-based fallback (desktop trackpad / mouse wheel)        */
+      /* Prevent horizontal scroll at boundaries from chaining upward  */
+      fbtTrack.addEventListener('wheel', function(e) {
+        /* Only intercept if the wheel is mostly horizontal */
+        if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+          var atStart = fbtTrack.scrollLeft <= 0;
+          var atEnd = fbtTrack.scrollLeft + fbtTrack.clientWidth >= fbtTrack.scrollWidth - 1;
+
+          /* At boundary and still scrolling in that direction → stop propagation */
+          if ((atStart && e.deltaX < 0) || (atEnd && e.deltaX > 0)) {
+            return; /* Let browser handle normally — no interference */
+          }
+          e.stopPropagation();
+        }
+      }, { passive: true });
+    }
+
+    if (cartItems && !cartItems._scrollIsolated) {
+      cartItems._scrollIsolated = true;
+
+      /* On touchstart inside cart-items, lock FBT horizontal scroll */
+      cartItems.addEventListener('touchstart', function() {
+        if (fbtTrack) fbtTrack.style.overflowX = 'hidden';
+      }, { passive: true });
+
+      /* On touchend / touchcancel, restore FBT horizontal scroll */
+      cartItems.addEventListener('touchend', function() {
+        if (fbtTrack) fbtTrack.style.overflowX = 'auto';
+      }, { passive: true });
+      cartItems.addEventListener('touchcancel', function() {
+        if (fbtTrack) fbtTrack.style.overflowX = 'auto';
+      }, { passive: true });
+    }
+  };
+
+  /* ===== Cart Trust Badge Slider ===== */
+  /* Scoped to [data-cart-trust-slider] — no conflict with product USP slider */
+  window.initCartTrustSlider = function() {
+    var container = document.querySelector('[data-cart-trust-slider]');
+    if (!container) return;
+
+    /* Prevent double-init on same DOM node */
+    if (container._trustInit) return;
+
+    var wrapper = container.querySelector('.cart-trust-wrapper');
+    var slides = container.querySelectorAll('.cart-trust-slide');
+    var dotsWrap = container.querySelector('.cart-trust-dots');
+
+    if (!wrapper || slides.length < 2) {
+      /* Single slide or none — hide dots, no slider needed */
+      if (dotsWrap) dotsWrap.style.display = 'none';
+      if (container) container.style.paddingBottom = '4px';
+      return;
+    }
+
+    container._trustInit = true;
+
+    var current = 0;
+    var total = slides.length;
+    var interval;
+
+    /* Build dots */
+    dotsWrap.innerHTML = '';
+    for (var i = 0; i < total; i++) {
+      var dot = document.createElement('button');
+      dot.className = 'cart-trust-dot' + (i === 0 ? ' active' : '');
+      dot.setAttribute('aria-label', 'Slide ' + (i + 1));
+      (function(idx) {
+        dot.addEventListener('click', function() {
+          goTo(idx);
+          reset();
+        });
+      })(i);
+      dotsWrap.appendChild(dot);
+    }
+
+    function goTo(idx) {
+      if (idx < 0) idx = total - 1;
+      if (idx >= total) idx = 0;
+      current = idx;
+      wrapper.style.transform = 'translateX(-' + (current * 100) + '%)';
+      var dots = dotsWrap.querySelectorAll('.cart-trust-dot');
+      dots.forEach(function(d) { d.classList.remove('active'); });
+      if (dots[current]) dots[current].classList.add('active');
+    }
+
+    function start() { stop(); interval = setInterval(function() { goTo(current + 1); }, 3000); }
+    function stop() { if (interval) clearInterval(interval); }
+    function reset() { stop(); start(); }
+
+    /* Touch swipe */
+    var sx = 0;
+    wrapper.addEventListener('touchstart', function(e) { sx = e.changedTouches[0].screenX; stop(); }, { passive: true });
+    wrapper.addEventListener('touchend', function(e) {
+      var diff = e.changedTouches[0].screenX - sx;
+      if (Math.abs(diff) > 40) { diff < 0 ? goTo(current + 1) : goTo(current - 1); }
+      start();
+    }, { passive: true });
+
+    start();
+  };
+</script>
+
+<script>
+  /* ===== After bundle renders: move FBT, sync UI, load prices ===== */
+  (function() {
+    function onCartRender() {
+      var c = document.getElementById('cart');
+      if (!c) return;
+
+      /* 1. Always show progress bar (even when cart is empty) */
+      var pw = c.querySelector('.free-shipping-progress');
+      if (pw) pw.classList.add('active');
+      var ch = c.querySelector('.min-cart-template .cart-header');
+      if (ch) ch.classList.add('with-progress');
+
+      /* 2. Move FBT into form flow (between cart-items and footer) */
+      window.moveFBT();
+
+      /* 3. Isolate scroll containers to prevent scroll-chaining conflicts */
+      window.isolateScrollContainers();
+
+      /* 4. Fetch cart data and update UI */
+      fetch('/cart.js').then(function(r) { return r.json(); }).then(function(cart) {
+        window.refreshCartUI(cart);
+
+        /* 5. Fetch original_price from product pages, then recalc savings */
+        if (cart.item_count > 0) {
+          window.loadCompareAtPrices();
+        }
+      });
+
+      /* 6. Fetch Judge.me ratings for FBT products */
+      window.loadFBTRatings();
+
+      /* 7. Init cart trust badge slider */
+      window.initCartTrustSlider();
     }
 
     var cartContainer = document.getElementById('cart');
@@ -89,12 +753,52 @@
         return m.type === 'childList' && m.target === cartContainer;
       });
       if (!dominated) return;
+      setTimeout(onCartRender, 500);
+      setTimeout(onCartRender, 1200);
+    });
+    observer.observe(cartContainer, { childList: true });
+  })();
+</script>
 
-      // Wait for the bundle's async bonusProduct() chain to finish rendering
+<script>
+  /* ===== UTM free shipping override ===== */
+  (function() {
+    if (typeof window.isUtmFreeShipping !== 'function' || !window.isUtmFreeShipping()) return;
+
+    function forceAllSet() {
+      if (!window.isUtmFreeShipping()) return;
+      var c = document.getElementById('cart');
+      if (!c) return;
+
+      var label = c.querySelector('#shipping-progress-label');
+      var pf = c.querySelector('.progress-fill');
+      var pw = c.querySelector('.free-shipping-progress');
+      var bt = c.querySelector('#badge-text');
+      var sv = c.querySelector('#cart-shipping-value');
+      var ch = c.querySelector('.min-cart-template .cart-header');
+      var indicator = c.querySelector('.progress-indicator');
+
+      var i18n = window._cartI18n || {};
+      if (label) label.textContent = i18n.allSet || 'All set!';
+      if (pf) pf.style.width = '100%';
+      if (pw) { pw.classList.add('active'); pw.classList.add('fulfilled'); }
+      if (bt) bt.textContent = i18n.freeShippingBadge || 'Free Shipping';
+      if (sv) sv.textContent = i18n.shippingFree || 'FREE';
+      if (ch) ch.classList.add('with-progress');
+      if (indicator) indicator.style.left = '88%';
+    }
+
+    var cartContainer = document.getElementById('cart');
+    if (!cartContainer) return;
+
+    var observer = new MutationObserver(function(mutations) {
+      var dominated = mutations.some(function(m) {
+        return m.type === 'childList' && m.target === cartContainer;
+      });
+      if (!dominated) return;
       setTimeout(forceAllSet, 500);
       setTimeout(forceAllSet, 1000);
     });
-
     observer.observe(cartContainer, { childList: true });
   })();
 </script>

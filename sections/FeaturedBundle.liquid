@@ -162,6 +162,102 @@
       opacity: 1;
     }
   }
+
+  .featured-bundle-section .protocol-variant-card.checkbox-button {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    min-height: 68px !important;
+    padding: 14px 16px !important;
+    gap: 12px !important;
+    row-gap: 0 !important;
+    cursor: default;
+  }
+  .featured-bundle-section .protocol-variant-card.checkbox-button.static-active {
+    background-color: rgba(165, 187, 135, 0.25) !important;
+  }
+  .featured-bundle-section .protocol-variant-card .pv-content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 10px;
+  }
+  .featured-bundle-section .protocol-variant-card .pv-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .featured-bundle-section .protocol-variant-card .pv-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .featured-bundle-section .protocol-variant-card .pv-time {
+    font-size: 16px;
+    font-weight: 700;
+    color: #2B3C35;
+    line-height: 1.3;
+  }
+  .featured-bundle-section .protocol-variant-card .pv-daily {
+    font-size: 12px;
+    font-weight: 400;
+    color: #515E56;
+    line-height: 1.3;
+  }
+  .featured-bundle-section .protocol-variant-card .pv-desc {
+    font-size: 14px;
+    font-weight: 400;
+    color: #515E56;
+    margin-top: 2px;
+    line-height: 1.4;
+  }
+  .featured-bundle-section .protocol-variant-card .pv-meta-desc {
+    font-size: 13px;
+    font-weight: 300;
+    color: #515E56;
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+  .featured-bundle-section .protocol-variant-card .pv-prices {
+    text-align: right;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .featured-bundle-section .protocol-variant-card .pv-original {
+    font-size: 12px;
+    font-weight: 300;
+    color: #6C7256;
+    text-decoration: line-through;
+    line-height: 1.4;
+  }
+  .featured-bundle-section .protocol-variant-card .pv-sale {
+    font-size: 16px;
+    font-weight: 700;
+    color: #2B3C35;
+    line-height: 1.3;
+  }
+  .featured-bundle-section .protocol-variant-card .pv-badge {
+    top: -10px;
+    right: -10px;
+    display: flex;
+    font-size: 14px;
+    color: #F8F8F2;
+    font-weight: 500;
+    line-height: 125%;
+    padding: 4px 12px;
+    position: absolute;
+    border-radius: 50px;
+    align-items: center;
+    justify-content: center;
+    background-color: #526547;
+    white-space: nowrap;
+  }
+  .featured-bundle-section .protocol-variant-card.checkbox-button.bundle-variant-hidden {
+    display: none !important;
+  }
 {%- endstyle -%}
 
 {% if selected_bundle != blank %}
@@ -254,12 +350,64 @@
 
             <div class="variant-button" id="VariantContainer-{{ section.id }}">
               {% if selected_bundle.has_only_default_variant == false %}
-                {% render 'VariantsButton'
-                  , product: selected_bundle
-                  , is_not_option: true
-                  , current_variant: current_variant
-                  , is_featuredbundle: true
-                %}
+                {% for variant in selected_bundle.variants %}
+                  {% assign v_compare_price = variant.compare_at_price %}
+                  {% assign v_saving = 0 %}
+                  {% if v_compare_price and v_compare_price > variant.price %}
+                    {% assign v_saving = v_compare_price | minus: variant.price %}
+                  {% endif %}
+
+                  <div
+                    data-value="{{ variant.id }}"
+                    class="checkbox-button protocol-variant-card static-active {% unless variant.id == current_variant.id %}bundle-variant-hidden{% endunless %}"
+                    data-available="{{ variant.available }}">
+
+                    {% assign v_custom_badge = variant.metafields.custom.custom_badge_text %}
+                    {% if v_custom_badge != blank %}
+                      <div class="pv-badge">{{ v_custom_badge }}</div>
+                    {% elsif v_saving > 0 %}
+                      {% if request.locale.iso_code == 'id' %}
+                        <div class="pv-badge">hemat {{ v_saving | money_without_trailing_zeros }}</div>
+                      {% else %}
+                        <div class="pv-badge">save {{ v_saving | money_without_trailing_zeros }}</div>
+                      {% endif %}
+                    {% endif %}
+
+                    {% assign has_header = false %}
+                    {% if variant.metafields.custom.time_protocol != blank or variant.metafields.custom.value_per_day != blank %}
+                      {% assign has_header = true %}
+                    {% endif %}
+
+                    <div class="pv-content">
+                      <div class="pv-info">
+                        {% if has_header %}
+                          <div class="pv-header">
+                            {% if variant.metafields.custom.time_protocol != blank %}
+                              <span class="pv-time">{{ variant.metafields.custom.time_protocol }}</span>
+                            {% endif %}
+                            {% if variant.metafields.custom.value_per_day != blank %}
+                              <span class="pv-daily">{{ variant.metafields.custom.value_per_day }}</span>
+                            {% endif %}
+                          </div>
+                        {% endif %}
+                        <div class="pv-desc" {% unless has_header %}style="font-weight:700;"{% endunless %}>
+                          {{ variant.title | replace: ' + ', '<br>+ ' }}
+                          {% unless variant.available %} - sold out{% endunless %}
+                        </div>
+                        {% if variant.metafields.custom.description %}
+                          <div class="pv-meta-desc">{{ variant.metafields.custom.description | metafield_tag }}</div>
+                        {% endif %}
+                      </div>
+
+                      <div class="pv-prices">
+                        {% if v_compare_price and v_compare_price > variant.price %}
+                          <div class="pv-original">{{ v_compare_price | money_without_trailing_zeros }}</div>
+                        {% endif %}
+                        <div class="pv-sale">{{ variant.price | money_without_trailing_zeros }}</div>
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
               {% endif %}
             </div>
 
@@ -271,9 +419,7 @@
                 <option
                   value="{{ variant.id }}"
                   data-available="{{ variant.available }}"
-                  {% if variant.id == current_variant.id %}
-                  selected="selected"
-                  {% endif %}>
+                  {% if variant.id == current_variant.id %}selected="selected"{% endif %}>
                   {{ variant.title }}
                 </option>
               {% endfor %}
@@ -305,206 +451,128 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", function() {
-      // 0. CONFIG & TRANSLATION VARIABLES
       const sectionId = "{{ section.id }}";
-      const bundleContainer = document.querySelector(`.section-${sectionId}`);
       const variantContainer = document.getElementById(`VariantContainer-${sectionId}`);
-      const realSelect = document.getElementById(`RealProductSelect-${sectionId}`);
       const cartBtn = document.getElementById(`AddToCartBtn-${sectionId}`);
+      const realSelect = document.getElementById(`RealProductSelect-${sectionId}`);
 
-      // Translatable Strings passed from Liquid
       const TEXT_ADD_TO_CART = "{{ add_cart_text }}";
       const TEXT_SOLD_OUT = "{{ sold_out_text }}";
       const TEXT_ADDING = "{{ adding_text }}";
       const TEXT_ADDED = "{{ added_text }}";
       const TEXT_ERROR = "{{ 'products.product.error' | t | default: 'Error' }}";
 
-      if (variantContainer && realSelect) {
-        const buttons = variantContainer.querySelectorAll('.checkbox-button');
+      // ============================================
+      // VARIANT SYNC — listen for main product change
+      // ============================================
+      function switchBundleVariant(targetId) {
+        if (!variantContainer || !targetId) return;
+        const cards = variantContainer.querySelectorAll('.checkbox-button');
 
-        // ========================================================
-        // 1. FUNCTION: FORCE ACTIVE STATE (Fixes Double Click)
-        // ========================================================
-        function setActiveButton() {
-           const initialValue = realSelect.value;
-           if(!initialValue) return;
+        cards.forEach(card => {
+          const cardId = card.getAttribute('data-value');
 
-           const targetBtn = variantContainer.querySelector(`.checkbox-button[data-value="${initialValue}"]`);
-           if(targetBtn) {
-             // Clean Slate
-             buttons.forEach(b => b.classList.remove('active'));
-             // Force Add
-             targetBtn.classList.add('active');
-           }
-        }
+          if (cardId === targetId) {
+            card.classList.remove('bundle-variant-hidden');
 
-        // Run Immediately to sync Liquid state with JS state
-        setActiveButton();
-        // Run again shortly after to beat any Theme JS interference
-        setTimeout(setActiveButton, 100);
+            // Sync hidden select
+            if (realSelect) realSelect.value = cardId;
 
-
-        // ========================================================
-        // 2. CLICK LISTENERS
-        // ========================================================
-        buttons.forEach(btn => {
-          btn.addEventListener('click', function(e) {
-            
-            // UI Update: Remove active from all, add to this
-            buttons.forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            
-            // Data Update
-            const variantId = this.getAttribute('data-value');
-            const isAvailable = this.getAttribute('data-available') === 'true';
-            
-            realSelect.value = variantId;
-            
-            // Stock Update (USING TRANSLATED VARIABLE)
-            if (isAvailable) {
-              cartBtn.textContent = TEXT_ADD_TO_CART;
-              cartBtn.disabled = false;
-            } else {
-              cartBtn.textContent = TEXT_SOLD_OUT;
-              cartBtn.disabled = true;
+            // Sync cart button
+            const isAvailable = card.getAttribute('data-available') === 'true';
+            if (cartBtn) {
+              cartBtn.textContent = isAvailable ? TEXT_ADD_TO_CART : TEXT_SOLD_OUT;
+              cartBtn.disabled = !isAvailable;
             }
-
-            // Gift Update
-            const giftContainer = bundleContainer.querySelector(`.gift-products`);
-            if (giftContainer) {
-               const gifts = giftContainer.querySelectorAll('.product');
-               gifts.forEach(g => g.classList.remove('active')); 
-               const activeGift = document.getElementById(`gift-${variantId}`);
-               if (activeGift) activeGift.classList.add('active');
-            }
-          });
-        });
-      }
-
-      // ============================================
-      // GALLERY LOGIC (Using 'activeBundle')
-      // ============================================
-      if (window.innerWidth > 749) {
-        const wrapper = document.getElementById(`bundle-gallery-wrapper-${sectionId}`);
-        if(wrapper) {
-            const thumbs = wrapper.querySelectorAll('.slider-item');
-            const mains = wrapper.querySelectorAll('.main-image-display img');
-
-            thumbs.forEach(t => {
-                t.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    // 1. Remove 'activeBundle' from all items (Fix: changed from 'active')
-                    thumbs.forEach(i => i.classList.remove('activeBundle'));
-                    mains.forEach(i => i.classList.remove('activeBundle'));
-                    
-                    // 2. Add 'activeBundle' to the clicked thumbnail
-                    this.classList.add('activeBundle');
-                    
-                    // 3. Find corresponding main image and add 'activeBundle'
-                    const idx = this.getAttribute('data-index');
-                    const target = wrapper.querySelector(`.main-image-display img[data-index="${idx}"]`);
-                    
-                    if(target) target.classList.add('activeBundle');
-                });
-            });
-        }
-      }
-
-      // ============================================
-      // VISIBILITY LOGIC (Fixes Double Click in Filter)
-      // ============================================
-      function updateBundleVisibility(targetId) {
-        if (!variantContainer) return;
-        const buttons = variantContainer.querySelectorAll('.checkbox-button');
-        
-        buttons.forEach(btn => {
-          const btnId = btn.getAttribute('data-value');
-          if (!targetId) {
-            btn.style.display = ''; 
           } else {
-            if (btnId === targetId) {
-              btn.style.display = ''; 
-              // Directly set class instead of simulating click
-              if (!btn.classList.contains('active')) {
-                 buttons.forEach(b => b.classList.remove('active'));
-                 btn.classList.add('active');
-                 if(realSelect) realSelect.value = btnId;
-              }
-            } else {
-              btn.style.display = 'none'; 
-            }
+            card.classList.add('bundle-variant-hidden');
           }
         });
       }
 
-      // ============================================
-      // EVENTS & STORAGE
-      // ============================================
+      // Listen for variant change from main product
       window.addEventListener('custom-variant-change', function(e) {
-        updateBundleVisibility(e.detail.targetId);
+        if (e.detail && e.detail.targetId) {
+          switchBundleVariant(e.detail.targetId);
+        }
       });
 
+      // Check sessionStorage on load (for page refresh)
       const storedId = sessionStorage.getItem('target_bundle_id');
       if (storedId) {
-         updateBundleVisibility(storedId);
+        switchBundleVariant(storedId);
+      }
+
+      // ============================================
+      // GALLERY LOGIC
+      // ============================================
+      if (window.innerWidth > 749) {
+        const wrapper = document.getElementById(`bundle-gallery-wrapper-${sectionId}`);
+        if (wrapper) {
+          const thumbs = wrapper.querySelectorAll('.slider-item');
+          const mains = wrapper.querySelectorAll('.main-image-display img');
+
+          thumbs.forEach(t => {
+            t.addEventListener('click', function(e) {
+              e.preventDefault();
+              thumbs.forEach(i => i.classList.remove('activeBundle'));
+              mains.forEach(i => i.classList.remove('activeBundle'));
+              this.classList.add('activeBundle');
+              const idx = this.getAttribute('data-index');
+              const target = wrapper.querySelector(`.main-image-display img[data-index="${idx}"]`);
+              if (target) target.classList.add('activeBundle');
+            });
+          });
+        }
       }
 
       // ============================================
       // AJAX ADD TO CART
       // ============================================
       if (cartBtn) {
-        
         cartBtn.addEventListener('click', function(e) {
           e.preventDefault();
           const variantId = realSelect ? realSelect.value : null;
           if (!variantId) return;
 
-          // USING TRANSLATED VARIABLE
           this.innerHTML = TEXT_ADDING;
           this.style.opacity = '0.7';
-
-          let formData = { 'items': [{ 'id': variantId, 'quantity': 1 }] };
 
           fetch(window.Shopify.routes.root + 'cart/add.js', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData)
+            body: JSON.stringify({ items: [{ id: variantId, quantity: 1 }] })
           })
           .then(response => {
             if (!response.ok) throw new Error('Network response was not ok');
             return response.json();
           })
           .then(data => {
-            // USING TRANSLATED VARIABLE
-            this.innerHTML = TEXT_ADDED; 
+            this.innerHTML = TEXT_ADDED;
             this.style.opacity = '1';
             setTimeout(() => { this.innerHTML = TEXT_ADD_TO_CART; }, 2000);
-            
+
             const cartIcon = document.querySelector('a[href="/cart"]') || document.querySelector('.header__icon--cart');
             if (cartIcon) {
               cartIcon.click();
             } else {
               document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', { bubbles: true }));
-              document.documentElement.dispatchEvent(new CustomEvent('cart:open', { bubbles: true })); 
+              document.documentElement.dispatchEvent(new CustomEvent('cart:open', { bubbles: true }));
             }
-            
-            // Update Cart Count
+
             const cartBubble = document.querySelectorAll('.cart-count-bubble span, .header__cart-count');
             cartBubble.forEach(el => {
-                let currentCount = parseInt(el.innerText || 0);
-                el.innerText = currentCount + 1;
+              let currentCount = parseInt(el.innerText || 0);
+              el.innerText = currentCount + 1;
             });
           })
-          .catch((error) => {
+          .catch(() => {
             this.innerHTML = TEXT_ERROR;
             this.style.opacity = '1';
-            // USING TRANSLATED VARIABLE
             setTimeout(() => { this.innerHTML = TEXT_ADD_TO_CART; }, 2000);
           });
         });
       }
-
     });
   </script>
 {% endif %}

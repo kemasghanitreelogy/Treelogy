@@ -30,6 +30,46 @@
         "id": "tax_footer_setting",
         "label": "Cart text shipping",
         "default": "Exclude taxes and shipping"
+      },
+      {
+        "type": "header",
+        "content": "Cart Trust Badges (Slider)"
+      },
+      {
+        "type": "text",
+        "id": "cart_usp_heading_1",
+        "label": "Slide 1 — Heading",
+        "default": "Secure Checkout"
+      },
+      {
+        "type": "text",
+        "id": "cart_usp_text_1",
+        "label": "Slide 1 — Text",
+        "default": "QRIS • E-wallet • Debit Card"
+      },
+      {
+        "type": "text",
+        "id": "cart_usp_heading_2",
+        "label": "Slide 2 — Heading",
+        "default": "Fast Dispatch Orders"
+      },
+      {
+        "type": "text",
+        "id": "cart_usp_text_2",
+        "label": "Slide 2 — Text",
+        "default": "before 3pm ship same-day"
+      },
+      {
+        "type": "text",
+        "id": "cart_usp_heading_3",
+        "label": "Slide 3 — Heading",
+        "default": "Real Human Support"
+      },
+      {
+        "type": "text",
+        "id": "cart_usp_text_3",
+        "label": "Slide 3 — Text",
+        "default": "Join thousands of healthier customers"
       }
     ]
   },

@@ -1,3 +1,5 @@
-<span class="price-wrapper" style="text-decoration: line-through;">
-  {{ product.variant.compare_at_price | money }}
-</span>
+{% if compare_at_price != blank and compare_at_price > 0 and compare_at_price > current_price %}
+  <span class="price-wrapper compare-at-price">
+    {{ compare_at_price | money }}
+  </span>
+{% endif %}

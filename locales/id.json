@@ -44,8 +44,14 @@
     "title": "Keranjang",
     "checkout_button_label": "Check Out",
     "empty_cart_text": "Keranjang masih kosong",
+    "empty_title": "Keranjang kamu kosong",
+    "empty_subtitle": "Temukan produk terbaik kami dan mulai perjalanan wellness kamu",
+    "empty_cta": "Lanjut Belanja",
     "you_will_alo_like": "Mungkin kamu akan suka",
     "subtotal_label": "Subtotal",
+    "saving_label": "Hemat",
+    "shipping_label": "Pengiriman",
+    "secure_checkout": "Pembayaran Aman",
     "progress": {
       "only_text": "Hanya tambah",
       "left_text": "untuk mendapatkan",
@@ -63,7 +69,21 @@
     },
     "upselling": {
       "title": "Mungkin kamu akan suka"
-    }
+    },
+    "fbt_title": "Sering Dibeli",
+    "fbt_title_bold": "Bersamaan",
+    "fbt_add": "TAMBAH [+]",
+    "remove_title": "Hapus Produk?",
+    "remove_prefix": "Hapus",
+    "remove_suffix": "dari keranjang kamu?",
+    "remove_cancel": "Batal",
+    "remove_confirm": "Hapus",
+    "progress_add": "Tambah",
+    "progress_more": "lagi untuk Gratis Ongkir",
+    "free_shipping_badge": "Gratis Ongkir",
+    "progress_away": "lagi",
+    "shipping_free": "GRATIS",
+    "shipping_calculated": "Dihitung saat checkout"
   },
   "checkout": {
     "login": {

@@ -12,11 +12,13 @@
         <div class="slider-window">
           <div class="slider-track" id="slider-track">
             {% for block in section.blocks %}
-              <div class="slide-text" data-index="{{ forloop.index0 }}">
-                <a href="{{ block.settings.url | default : "#" }}">
-                  {{ block.settings.title }}
-                </a>
-              </div>
+              {% if block.settings.title != blank %}
+                <div class="slide-text" data-index="{{ forloop.index0 }}">
+                  <a href="{{ block.settings.url | default : "#" }}">
+                    {{ block.settings.title }}
+                  </a>
+                </div>
+              {% endif %}
             {% endfor %}
           </div>
         </div>
@@ -296,53 +298,80 @@
     });
   }
     const track = document.getElementById('slider-track');
-    const container = document.getElementById('announcement-slider'); // Main container
+    const container = document.getElementById('announcement-slider');
     if (!track || !container) return;
 
-    // Get original slides
     const originalSlides = track.querySelectorAll('.slide-text');
     const nextBtn = document.querySelector('.slider-arrow.next');
     const prevBtn = document.querySelector('.slider-arrow.prev');
-    
-    const totalOriginalSlides = originalSlides.length;
+    const totalOriginal = originalSlides.length;
 
-    // Only run if we have more than 1 slide
-    if (totalOriginalSlides > 1) {
-      
-      // 1. CLONE SLIDES FOR INFINITE EFFECT
+    if (totalOriginal > 1) {
+
+      /* 1. Clone first & last slides for seamless infinite loop */
       const firstClone = originalSlides[0].cloneNode(true);
       firstClone.id = 'first-clone';
-      
-      const lastClone = originalSlides[totalOriginalSlides - 1].cloneNode(true);
+      const lastClone = originalSlides[totalOriginal - 1].cloneNode(true);
       lastClone.id = 'last-clone';
 
       track.appendChild(firstClone);
       track.insertBefore(lastClone, originalSlides[0]);
 
-      // 2. INITIAL SETUP
-      let currentIndex = 1;
+      /* 2. Setup */
       const allSlides = track.querySelectorAll('.slide-text');
-      
-      // Position track at real first slide (no animation initially)
-      track.style.transform = `translateX(-100%)`;
-
+      let currentIndex = 1;
       let isAnimating = false;
       let slideInterval;
-      const intervalTime = 3000; // 3000ms = 3 seconds
+      let jumpTimer = null;
+      const INTERVAL = 3000;
+      const DURATION = 500;
 
-      // Swipe Variables
+      /* Position at real first slide — no animation */
+      track.style.transition = 'none';
+      track.style.transform = 'translateX(-100%)';
+      void track.offsetWidth;
+
       let touchStartX = 0;
       let touchEndX = 0;
 
       const moveSlide = () => {
         track.style.transition = 'transform 0.5s ease-in-out';
         track.style.transform = `translateX(-${currentIndex * 100}%)`;
+
+        /* Fallback: if transitionend never fires (bg tab, reduced-motion),
+           handle the clone-jump after DURATION + 50 ms safety margin */
+        clearTimeout(jumpTimer);
+        jumpTimer = setTimeout(handleCloneJump, DURATION + 50);
+      };
+
+      /* Core jump logic — shared by transitionend & setTimeout fallback */
+      const handleCloneJump = () => {
+        clearTimeout(jumpTimer);
+        jumpTimer = null;
+        isAnimating = false;
+
+        const slide = allSlides[currentIndex];
+        if (!slide) return;
+
+        if (slide.id === 'first-clone') {
+          /* Commit transition:none FIRST, then move */
+          track.style.transition = 'none';
+          void track.offsetWidth;           /* ← flush transition:none */
+          currentIndex = 1;
+          track.style.transform = `translateX(-${currentIndex * 100}%)`;
+          void track.offsetWidth;           /* ← flush new position    */
+        } else if (slide.id === 'last-clone') {
+          track.style.transition = 'none';
+          void track.offsetWidth;
+          currentIndex = allSlides.length - 2;
+          track.style.transform = `translateX(-${currentIndex * 100}%)`;
+          void track.offsetWidth;
+        }
       };
 
       const goToNext = () => {
         if (isAnimating) return;
         if (currentIndex >= allSlides.length - 1) return;
-        
         isAnimating = true;
         currentIndex++;
         moveSlide();
@@ -351,57 +380,24 @@
       const goToPrev = () => {
         if (isAnimating) return;
         if (currentIndex <= 0) return;
-
         isAnimating = true;
         currentIndex--;
         moveSlide();
       };
 
-      // 3. AUTO SLIDE FUNCTIONS
-      const startAutoSlide = () => {
-        clearInterval(slideInterval); // Clear first to avoid duplicates
-        slideInterval = setInterval(goToNext, intervalTime);
-      };
+      /* 3. Auto slide */
+      const startAutoSlide = () => { clearInterval(slideInterval); slideInterval = setInterval(goToNext, INTERVAL); };
+      const stopAutoSlide  = () => { clearInterval(slideInterval); };
 
-      const stopAutoSlide = () => {
-        clearInterval(slideInterval);
-      };
+      /* 4. Arrow buttons */
+      if (nextBtn) nextBtn.addEventListener('click', () => { stopAutoSlide(); goToNext(); });
+      if (prevBtn) prevBtn.addEventListener('click', () => { stopAutoSlide(); goToPrev(); });
 
-      // 4. EVENT LISTENERS FOR BUTTONS
-      if (nextBtn) {
-        nextBtn.addEventListener('click', () => {
-          stopAutoSlide();
-          goToNext();
-        });
-      }
-
-      if (prevBtn) {
-        prevBtn.addEventListener('click', () => {
-          stopAutoSlide();
-          goToPrev();
-        });
-      }
-
-      // 5. PAUSE ON HOVER (DESKTOP)
+      /* 5. Pause on hover */
       container.addEventListener('mouseenter', stopAutoSlide);
       container.addEventListener('mouseleave', startAutoSlide);
 
-      // 6. TOUCH SWIPE LOGIC
-      
-      const handleGesture = () => {
-        // Threshold: minimum distance (px) to register as a swipe
-        const threshold = 30; 
-        
-        // Calculate difference
-        if (touchEndX < touchStartX - threshold) {
-          // Swiped Left -> Go Next
-          goToNext();
-        } else if (touchEndX > touchStartX + threshold) {
-          // Swiped Right -> Go Prev
-          goToPrev();
-        }
-      };
-
+      /* 6. Touch swipe */
       container.addEventListener('touchstart', (e) => {
         stopAutoSlide();
         touchStartX = e.changedTouches[0].screenX;
@@ -409,30 +405,19 @@
 
       container.addEventListener('touchend', (e) => {
         touchEndX = e.changedTouches[0].screenX;
-        handleGesture();
+        const diff = touchEndX - touchStartX;
+        if (diff < -30) goToNext();
+        else if (diff > 30) goToPrev();
         startAutoSlide();
       });
 
-      // 7. RESET POSITION ON TRANSITION END
-      track.addEventListener('transitionend', () => {
-        isAnimating = false;
-
-        // If at the end (Clone of First Slide) -> Jump to Real First Slide
-        if (allSlides[currentIndex].id === 'first-clone') {
-          track.style.transition = 'none';
-          currentIndex = 1;
-          track.style.transform = `translateX(-${currentIndex * 100}%)`;
-        }
-
-        // If at the start (Clone of Last Slide) -> Jump to Real Last Slide
-        if (allSlides[currentIndex].id === 'last-clone') {
-          track.style.transition = 'none';
-          currentIndex = allSlides.length - 2;
-          track.style.transform = `translateX(-${currentIndex * 100}%)`;
-        }
+      /* 7. Transition end — instant jump at clone boundaries */
+      track.addEventListener('transitionend', (e) => {
+        if (e.propertyName !== 'transform') return;
+        handleCloneJump();
       });
 
-      // 8. START AUTO SLIDE ON LOAD
+      /* 8. Go */
       startAutoSlide();
     }
   });

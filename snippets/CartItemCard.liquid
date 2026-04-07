@@ -1,11 +1,20 @@
+{%- liquid
+  assign item_price = item.variant.price
+  if item_price == blank or item_price == nil
+    assign item_price = item.price
+  endif
+  assign original_price = item.variant.metafields.custom.original_price.value | default: 0 | plus: 0
+  assign original_price_sub = original_price | times: 100
+-%}
 <div
   class="cart-item"
   id="item-{{ item.variant.id }}"
-  data-variant="{{ item.variant.id }}">
+  data-variant="{{ item.variant.id }}"
+  data-price="{{ item_price }}"
+  data-compare-at="{{ original_price_sub }}"
+  data-qty="{{ item.quantity }}">
   <a href="{{ item.url | within: collections.all }}" class="thumb">
-    {% comment %} Define the image: use variant image if available, else fallback to product image {% endcomment %}
     {% assign image_to_show = item.image | default: item.product.featured_image %}
-    
     <img src="{{ image_to_show | img_url: 'medium' }}" alt="{{ item.title | escape }}">
   </a>
 
@@ -17,112 +26,74 @@
     endif
   -%}
   <div class="detail">
-    <a href="{{ item.url }}" class="sub-head title">{{ item.product.title }}</a>
-    <div class="variant body-desk-s">
+    <div class="detail-top">
+      <div class="detail-info">
+        <a href="{{ item.url }}" class="sub-head title">{{ item.product.title }}</a>
+        <div class="variant body-desk-s">
+          {% unless is_free_roduct %}
+            {{ item.variant.title }}
+          {% endunless %}
+        </div>
+      </div>
       {% unless is_free_roduct %}
-        {{ item.variant.title }}
+        <div
+          role="button"
+          class="button-remove-force"
+          data-key="{{ item.key }}"
+          style="cursor: pointer;"
+          onclick="window.cartRemoveItem(this)">
+          <svg
+            width="10"
+            height="13"
+            viewBox="0 0 10 13"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <path d="M8.25641 1.48376H6.70085V1.07692C6.70085 0.483108 6.21775 0 5.62393 0H3.7094C3.11559 0 2.63248 0.483108 2.63248 1.07692V1.48376H1.07692C0.48215 1.48376 0 1.96591 0 2.56068V2.91966C0 3.11791 0.160725 3.27863 0.358974 3.27863H8.97436C9.17261 3.27863 9.33333 3.11791 9.33333 2.91966V2.56068C9.33333 1.96591 8.85118 1.48376 8.25641 1.48376ZM3.35043 1.07692C3.35043 0.878985 3.51146 0.717949 3.7094 0.717949H5.62393C5.82187 0.717949 5.98291 0.878985 5.98291 1.07692V1.48376H3.35043V1.07692Z" fill="#2A3B35" />
+            <path d="M1.12456 11.046C1.15206 11.376 1.30137 11.6812 1.54501 11.9053C1.78866 12.1295 2.10518 12.253 2.43625 12.253H6.89684C7.22794 12.253 7.54446 12.1295 7.78808 11.9054C8.0317 11.6812 8.18106 11.376 8.20853 11.0461L8.79601 3.99658H0.537109L1.12456 11.046ZM6.22312 10.3116L6.58209 5.52529C6.59693 5.32759 6.76922 5.17933 6.96691 5.19417C7.16461 5.20901 7.31287 5.38129 7.29803 5.57899L6.93906 10.3653C6.92422 10.563 6.75194 10.7113 6.55424 10.6964C6.35654 10.6816 6.20828 10.5093 6.22312 10.3116ZM4.30758 5.55214C4.30758 5.35389 4.46831 5.19316 4.66656 5.19316C4.86481 5.19316 5.02553 5.35389 5.02553 5.55214V10.3385C5.02553 10.5367 4.86481 10.6974 4.66656 10.6974C4.46831 10.6974 4.30758 10.5367 4.30758 10.3385V5.55214ZM2.3662 5.19417C2.5639 5.17933 2.73619 5.32759 2.75102 5.52529L3.11 10.3116C3.12484 10.5093 2.97658 10.6816 2.77888 10.6964C2.58118 10.7113 2.4089 10.563 2.39406 10.3653L2.03509 5.57899C2.02027 5.38129 2.1685 5.20901 2.3662 5.19417Z" fill="#2A3B35" />
+          </svg>
+        </div>
       {% endunless %}
-    </div>
-    <div style="display: flex; gap: 5px;">
-      {% render 'PriceDiscount'
-        , product: item %}
-      {% render 'PriceFormat'
-        , product: item %}
     </div>
 
     {% unless is_free_roduct %}
-      <div class="action">
-        <div class="qty">
-          <div class="down di-qty" data-id="{{ item.variant.id }}">
-            <svg
-              width="8"
-              height="3"
-              viewBox="0 0 8 3"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg">
-              <rect
-                x="8"
-                y="0.75"
-                width="1.5"
-                height="8"
-                transform="rotate(90 8 0.75)"
-                fill="#2B3C35" />
-            </svg>
-          </div>
-          <div class="total-qty">
-            <input
-              type="number"
-              name="updates[]"
-              data-id="{{ item.variant.id }}"
-              id="updates_{{ item.key }}"
-              value="{{ item.quantity }}"
-              min="0">
-          </div>
-          <div class="up di-qty" data-id="{{ item.variant.id }}">
-            <svg
-              width="8"
-              height="9"
-              viewBox="0 0 8 9"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg">
-              <path d="M4.66667 0.5H3.33333V3.83398H0V5.16732H3.33333V8.5H4.66667V5.16732H8V3.83398H4.66667V0.5Z" fill="#2B3C35" />
-            </svg>
-          </div>
+      <div class="detail-bottom">
+        <div class="price-row">
+          {% if original_price_sub > 0 and original_price_sub > item_price %}
+            <span class="price-wrapper compare-at-price">
+              {{ original_price_sub | money }}
+            </span>
+          {% endif %}
+          {% render 'PriceFormat'
+            , product: item %}
         </div>
-        <div 
-  role="button" 
-  class="button-remove-force" 
-  data-key="{{ item.key }}" 
-  style="cursor: pointer;"
-  onclick="
-    event.preventDefault();
-    var btn = this;
-    
-    // 1. Identify the specific row for THIS item only
-    // We look for the class 'cart-item' which is standard in your code
-    var row = btn.closest('.cart-item') || btn.closest('.item') || btn.closest('div[data-variant]');
-    
-    // 2. Visual Feedback: Fade it out immediately so it feels fast
-    if(row) row.style.opacity = '0.2';
-
-    // 3. Send command to Shopify to delete the item
-    fetch('/cart/change.js', {
-      method: 'POST', 
-      headers: {'Content-Type': 'application/json'}, 
-      body: JSON.stringify({id: btn.getAttribute('data-key'), quantity: 0})
-    })
-    .then(function(res){ 
-       if(res.ok) {
-         // 4. SURGERY: Remove ONLY this row from the screen
-         if(row) {
-            row.remove();
-         }
-         
-         // 5. Optional: If you want to update the subtotal without reload, 
-         // we can trigger a refresh of the cart sections if your theme supports it.
-         // Otherwise, this is enough to manage the item removal.
-         
-         // Check if cart is empty now?
-         fetch('/cart.js')
-         .then(r => r.json())
-         .then(cart => {
-            if(cart.item_count === 0) {
-                // If cart is empty, reload to show 'Empty Cart' message
-                window.location.reload(); 
-            }
-         });
-       }
-    })
-    .catch(function(err){
-      console.error('Error removing item:', err);
-      if(row) row.style.opacity = '1'; // Undo fade on error
-    });
-  "
->
-  <svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path fill-rule="evenodd" clip-rule="evenodd" d="M7.73754 1.81312V1.3874C7.73754 0.897163 7.32767 0.500248 6.82163 0.500092H5.17941C4.67337 0.500092 4.2627 0.897163 4.2627 1.3874V1.81312H7.73754ZM8.02963 5.70681C8.02963 5.40666 7.7796 5.16444 7.46978 5.16444C7.1593 5.16444 6.90911 5.40666 6.90911 5.70681V10.4156C6.90911 10.7164 7.1593 10.9577 7.46978 10.9577C7.7796 10.9577 8.02963 10.7164 8.02963 10.4156V5.70681ZM5.09088 5.70681C5.09088 5.40666 4.84086 5.16444 4.53022 5.16444C4.22056 5.16444 3.97069 5.40666 3.97069 5.70681V10.4156C3.97069 10.7164 4.22056 10.9577 4.53022 10.9577C4.84086 10.9577 5.09088 10.7164 5.09088 10.4156V5.70681ZM0.499084 2.48733C0.57149 2.45477 0.657472 2.43598 0.756869 2.4377H11.2444C11.3437 2.43598 11.4287 2.45477 11.5011 2.48733C11.7931 2.59255 12 2.86249 12 3.31029C12 3.75872 11.6861 4.07578 11.4219 4.09065C11.1583 4.10615 10.9126 4.24394 10.8982 4.424L10.3764 10.974C10.3453 11.3565 10.2115 11.7171 9.96649 12.0041C9.72147 12.2903 9.33924 12.4999 8.91337 12.4999H3.0876C2.66173 12.4999 2.2795 12.2903 2.03448 12.0041C1.78882 11.7171 1.65499 11.3565 1.6238 10.974L1.10274 4.424C1.08754 4.24394 0.842689 4.10615 0.57844 4.09065C0.313867 4.07594 0 3.75872 0 3.31029C0 2.86249 0.207036 2.59255 0.499084 2.48733Z" fill="#111111"></path>
-  </svg>
-</div>
+        <div class="qty-select-wrapper">
+          <select
+            class="qty-select"
+            data-key="{{ item.key }}"
+            data-id="{{ item.variant.id }}"
+            onchange="window.cartChangeQty(this)">
+            {% for i in (1..10) %}
+              <option
+                value="{{ i }}"
+                {% if item.quantity == i %}
+                selected{% endif %}>{{ i }}</option>
+            {% endfor %}
+          </select>
+          <svg
+            class="qty-arrow"
+            width="10"
+            height="6"
+            viewBox="0 0 10 6"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M1 1L5 5L9 1"
+              stroke="#2B3C35"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+        </div>
       </div>
     {% endunless %}
   </div>
