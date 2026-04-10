@@ -1,8 +1,23 @@
 {% if item %}
   {% assign first_variant = item.variants.first %}
+  {% assign card_image = item.media.first %}
+  {% for image in item.media %}
+    {% if image.alt contains 'LANG:' %}
+      {% assign language_code = image.alt | split: "|" | first | remove: "LANG:" | downcase %}
+      {% if language_code == request.locale.iso_code %}
+        {% assign card_image = image %}
+        {% break %}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+  {% if card_image.alt contains 'LANG:' %}
+    {% assign card_alt = card_image.alt | split: "|" | last %}
+  {% else %}
+    {% assign card_alt = card_image.alt | default: item.title %}
+  {% endif %}
   <div class="card swiper-slide" data-cs-capture>
     <figure>
-      <a href="{{ item.url }}"><img src="{{ item.media.first | img_url : '350x' }}" alt="{{ item.title }}"></a>
+      <a href="{{ item.url }}"><img src="{{ card_image | img_url : '350x' }}" alt="{{ card_alt }}"></a>
 
       {% comment %} {% unless button_cart %} {% endcomment %}
       {% if first_variant.available %}
