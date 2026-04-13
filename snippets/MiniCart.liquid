@@ -108,6 +108,82 @@
     if (ov) ov.style.display = 'none';
   };
 
+  /* ===== Sync FBT card visibility with current cart ===== */
+  /* Shows FBT cards whose variant is NOT in the cart,     */
+  /* hides FBT cards whose variant IS in the cart.         */
+  window.syncFBTVisibility = function(cart) {
+    /* Build a set of variant IDs currently in the cart */
+    var inCart = {};
+    (cart.items || []).forEach(function(item) {
+      inCart[String(item.variant_id)] = true;
+    });
+
+    /* Check each FBT card */
+    var fbtCards = document.querySelectorAll('.fbt-card.upsel-product-cart');
+    var anyVisible = false;
+    var anyReturned = false;
+    fbtCards.forEach(function(card) {
+      var btn = card.querySelector('.fbt-card-action');
+      var variantId = btn ? btn.getAttribute('data-variant') : null;
+      if (!variantId) return;
+
+      if (inCart[variantId]) {
+        /* Variant is in cart — keep hidden */
+        card.style.display = 'none';
+        card.classList.remove('fbt-card-enter', 'fbt-card-enter-active');
+      } else {
+        var wasHidden = card.style.display === 'none';
+        /* Variant NOT in cart — restore to FBT */
+        card.style.display = 'flex';
+        card.classList.remove('fbt-card-exit');
+        btn.classList.remove('is-success', 'is-loading');
+        anyVisible = true;
+
+        /* Animate entrance if card was previously hidden (removed from cart) */
+        if (wasHidden) {
+          anyReturned = true;
+          card.classList.add('fbt-card-enter');
+          card.classList.remove('fbt-card-enter-active');
+          /* Force reflow so the initial state is applied before transitioning */
+          void card.offsetWidth;
+          card.classList.add('fbt-card-enter-active');
+          /* Clean up classes after animation completes */
+          card.addEventListener('transitionend', function handler(ev) {
+            if (ev.propertyName !== 'opacity') return;
+            card.removeEventListener('transitionend', handler);
+            card.classList.remove('fbt-card-enter', 'fbt-card-enter-active');
+          });
+        }
+      }
+    });
+
+    /* Show/hide the entire FBT section based on whether any cards are visible */
+    var fbtSection = document.querySelector('.fbt-section');
+    if (fbtSection) {
+      fbtSection.style.display = anyVisible ? '' : 'none';
+    }
+
+    /* If any card returned, smooth-scroll the FBT track back to true zero */
+    if (anyReturned) {
+      var track = document.querySelector('.fbt-track');
+      if (track) {
+        /* Disable scroll-snap so it doesn't fight the scroll position */
+        track.style.scrollSnapType = 'none';
+        track.scrollTo({ left: 0, behavior: 'smooth' });
+
+        /* Re-enable scroll-snap after the smooth scroll finishes */
+        var onDone = function() {
+          track.removeEventListener('scrollend', onDone);
+          clearTimeout(fallback);
+          track.style.scrollSnapType = '';
+        };
+        track.addEventListener('scrollend', onDone, { once: true });
+        /* Fallback for browsers without scrollend */
+        var fallback = setTimeout(onDone, 450);
+      }
+    }
+  };
+
   /* ===== Central UI refresh ===== */
   window.refreshCartUI = function(cart) {
     var c = document.getElementById('cart');
@@ -202,6 +278,7 @@
     .then(function(r) { return r.json(); })
     .then(function(cart) {
       window.refreshCartUI(cart);
+      window.syncFBTVisibility(cart);
       // If qty became 0 (shouldn't happen with select 1-10, but safety)
       if (qty === 0 && row) row.remove();
       if (cart.item_count === 0) window.location.reload();
@@ -287,6 +364,7 @@
         .then(function(cart) {
           if (row) row.remove();
           window.refreshCartUI(cart);
+          window.syncFBTVisibility(cart);
           if (cart.item_count === 0) window.location.reload();
           window.cartHideLoading();
         })
@@ -731,6 +809,7 @@
       /* 4. Fetch cart data and update UI */
       fetch('/cart.js').then(function(r) { return r.json(); }).then(function(cart) {
         window.refreshCartUI(cart);
+        window.syncFBTVisibility(cart);
 
         /* 5. Fetch original_price from product pages, then recalc savings */
         if (cart.item_count > 0) {
