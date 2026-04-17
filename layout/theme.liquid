@@ -136,6 +136,7 @@
   </head>
 
   <body>
+    {%- if settings.show_utm_free_shipping_toast -%}
     <!-- UTM Free Shipping Toast -->
     <div id="utm-toast" aria-live="polite" role="status">
       <div class="utm-toast__overlay"></div>
@@ -239,6 +240,7 @@
       });
     })();
     </script>
+    {%- endif -%}
 
     {% section 'Header' %}
 
