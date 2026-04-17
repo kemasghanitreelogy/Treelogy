@@ -74,6 +74,18 @@
     ]
   },
   {
+    "name": "UTM Free Shipping Toast",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "show_utm_free_shipping_toast",
+        "label": "Show UTM Free Shipping Toast",
+        "default": true,
+        "info": "Toggle to show or hide the UTM Free Shipping Toast component."
+      }
+    ]
+  },
+  {
     "name": "Bonus Checkout",
     "settings": [
       {
