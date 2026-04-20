@@ -95,6 +95,7 @@
 
 .ac-dup-description.rte ul,
 .ac-dup-description.rte ol {
+  list-style-position: outside;
   margin-left: 20px;
   margin-bottom: 15px;
 }
