@@ -183,7 +183,11 @@
           </div>
         {% endif %}
         <div class="pv-desc" {% unless has_header %}style="font-weight:700;"{% endunless %}>
-          {{ variant.title | replace: ' + ', '<br>+ ' }}
+          {% if variant.title == 'Default Title' %}
+            {{ product.title }}
+          {% else %}
+            {{ variant.title | replace: ' + ', '<br>+ ' }}
+          {% endif %}
           {% unless variant.available %} - sold out{% endunless %}
         </div>
         {% assign meta_desc = variant.metafields.custom.description %}
