@@ -150,6 +150,7 @@
 
   <div
     data-value="{{ variant.id }}"
+    data-variant-price="{{ variant.price | divided_by: 100 }}"
     class="checkbox-button protocol-variant-card {% if default_variant == variant.id %} active {% endif %} {% if is_not_option and default_variant == variant.id %} static-active {% endif %}"
     data-available="{{ variant.available }}">
 
