@@ -217,41 +217,31 @@
         aria-live="polite"
         role="status">
         <div class="utm-toast__overlay"></div>
-        <div class="utm-toast__card" aria-label="Dua hadiah aktif: gratis ongkir dan diskon otomatis terpakai">
+        <div class="utm-toast__card" aria-label="Kamu hemat seratus ribu rupiah plus gratis ongkir, otomatis terpakai di checkout">
           <div class="utm-toast__ribbon" aria-hidden="true"></div>
           <span class="utm-toast__spark utm-toast__spark--1" aria-hidden="true"></span>
           <span class="utm-toast__spark utm-toast__spark--2" aria-hidden="true"></span>
-          <span class="utm-toast__spark utm-toast__spark--3" aria-hidden="true"></span>
-          <span class="utm-toast__spark utm-toast__spark--4" aria-hidden="true"></span>
 
-          <div class="utm-toast__kicker">Khusus untukmu</div>
-          <div class="utm-toast__headline">Kejutan untukmu</div>
-          <div class="utm-toast__subhead">2 hadiah aktif</div>
+          <div class="utm-toast__kicker">
+            <span class="utm-toast__kicker-dot" aria-hidden="true"></span>
+            DISKON AKTIF
+          </div>
 
-          <div class="utm-toast__badges">
-            <div class="utm-toast__badge utm-toast__badge--1">
-              <div class="utm-toast__badge-icon" aria-hidden="true">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                  <path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9 1.96 2.5H17V9.5h2.5zM18 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" fill="#56734F"/>
-                </svg>
-              </div>
-              <div class="utm-toast__badge-title">GRATIS ONGKIR</div>
-              <div class="utm-toast__badge-sub">Free shipping</div>
-            </div>
-            <div class="utm-toast__badge utm-toast__badge--2">
-              <div class="utm-toast__badge-icon" aria-hidden="true">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                  <path d="M21.41 11.58 12.41 2.58A2 2 0 0 0 11 2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 .59 1.41l9 9a2 2 0 0 0 2.82 0l7-7a2 2 0 0 0 0-2.83zM6.5 7A1.5 1.5 0 1 1 8 5.5 1.5 1.5 0 0 1 6.5 7z" fill="#56734F"/>
-                </svg>
-              </div>
-              <div class="utm-toast__badge-title" id="utm-toast__discount-label">Rp100.000 OFF</div>
-              <div class="utm-toast__badge-sub">Discount applied</div>
-            </div>
+          <div class="utm-toast__save-label">Kamu hemat</div>
+          <div class="utm-toast__hero" id="utm-toast__discount-label">
+            <span class="utm-toast__hero-currency">Rp</span><span class="utm-toast__hero-amount">100.000</span>
+          </div>
+
+          <div class="utm-toast__bonus">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9 1.96 2.5H17V9.5h2.5zM18 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" fill="#56734F"/>
+            </svg>
+            <span><strong>+ Gratis Ongkir</strong> se-Indonesia</span>
           </div>
 
           <div class="utm-toast__confirm">
-            <svg class="utm-toast__check" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M5 12l5 5L20 7" stroke="#56734F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <svg class="utm-toast__check" width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M5 12l5 5L20 7" stroke="#56734F" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
             <span>Otomatis terpakai di checkout</span>
           </div>
@@ -272,40 +262,37 @@
         .utm-toast__overlay {
           position: absolute;
           inset: 0;
-          background: rgba(43, 60, 53, 0.55);
+          background: rgba(43, 60, 53, 0.6);
           opacity: 0;
-          transition: opacity 250ms ease-out;
-          backdrop-filter: blur(2px);
-          -webkit-backdrop-filter: blur(2px);
+          transition: opacity 180ms ease-out;
+          backdrop-filter: blur(3px);
+          -webkit-backdrop-filter: blur(3px);
         }
         #utm-toast.active .utm-toast__overlay { opacity: 1; }
 
         .utm-toast__card {
           position: relative;
           text-align: center;
-          padding: 28px 36px 22px;
-          border-radius: 24px;
+          padding: 28px 32px 22px;
+          border-radius: 22px;
           background: #f8f8f2;
-          background-image: radial-gradient(circle at 20% 15%, rgba(86,115,79,0.035) 1px, transparent 1px),
-                            radial-gradient(circle at 80% 85%, rgba(86,115,79,0.03) 1px, transparent 1px);
-          background-size: 24px 24px, 32px 32px;
           box-shadow:
-            0 0 0 1px rgba(86, 115, 79, 0.18),
-            0 30px 60px -12px rgba(86, 115, 79, 0.35),
-            0 18px 36px -18px rgba(0, 0, 0, 0.3);
-          max-width: 380px;
+            0 0 0 1px rgba(86, 115, 79, 0.2),
+            0 40px 80px -20px rgba(86, 115, 79, 0.45),
+            0 20px 40px -20px rgba(0, 0, 0, 0.3);
+          max-width: 360px;
           width: 100%;
           opacity: 0;
-          transform: scale(0.92) translateY(8px);
+          transform: scale(0.85);
           transition:
-            opacity 400ms cubic-bezier(0.34, 1.56, 0.64, 1),
-            transform 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+            opacity 220ms ease-out,
+            transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1);
           overflow: hidden;
         }
         #utm-toast.active .utm-toast__card {
           opacity: 1;
-          transform: scale(1) translateY(0);
-          transition-delay: 150ms;
+          transform: scale(1);
+          transition-delay: 80ms;
         }
 
         .utm-toast__ribbon {
@@ -313,142 +300,167 @@
           top: 0;
           left: 0;
           right: 0;
-          height: 3px;
-          background: linear-gradient(90deg, #56734F 0%, #a8c39a 50%, #56734F 100%);
+          height: 4px;
+          background: linear-gradient(90deg, #56734F, #a8c39a, #56734F);
         }
 
         .utm-toast__kicker {
-          font-family: 'Inter', sans-serif;
-          font-weight: 600;
-          font-size: 10px;
-          letter-spacing: 2px;
-          text-transform: uppercase;
-          color: #56734F;
-          margin-bottom: 8px;
-        }
-        .utm-toast__headline {
-          font-family: 'Inter', sans-serif;
-          font-weight: 800;
-          font-size: 26px;
-          letter-spacing: -0.5px;
-          color: #2B3C35;
-          line-height: 1.1;
-          margin-bottom: 4px;
-        }
-        .utm-toast__subhead {
-          font-family: 'Inter', sans-serif;
-          font-weight: 500;
-          font-size: 13px;
-          color: #56734F;
-          margin-bottom: 20px;
-        }
-
-        .utm-toast__badges {
-          display: flex;
-          gap: 10px;
-          margin-bottom: 16px;
-        }
-        .utm-toast__badge {
-          flex: 1;
-          padding: 14px 10px 12px;
-          border-radius: 16px;
-          background: #ffffff;
-          border: 1px solid rgba(86, 115, 79, 0.18);
-          opacity: 0;
-          transform: translateY(8px) scale(0.96);
-          transition:
-            opacity 300ms ease-out,
-            transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        #utm-toast.active .utm-toast__badge--1 { opacity: 1; transform: translateY(0) scale(1); transition-delay: 500ms; }
-        #utm-toast.active .utm-toast__badge--2 { opacity: 1; transform: translateY(0) scale(1); transition-delay: 650ms; }
-
-        .utm-toast__badge-icon {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 36px;
-          height: 36px;
-          border-radius: 50%;
-          background: rgba(86, 115, 79, 0.1);
-          margin-bottom: 8px;
-        }
-        .utm-toast__badge-title {
-          font-family: 'Inter', sans-serif;
-          font-weight: 700;
-          font-size: 13px;
-          color: #2B3C35;
-          letter-spacing: 0.3px;
-          line-height: 1.2;
-        }
-        .utm-toast__badge-sub {
-          font-family: 'Inter', sans-serif;
-          font-weight: 400;
-          font-size: 10px;
-          color: #6b7c6b;
-          margin-top: 2px;
-        }
-
-        .utm-toast__confirm {
           display: inline-flex;
           align-items: center;
           gap: 6px;
           font-family: 'Inter', sans-serif;
-          font-weight: 500;
-          font-size: 12px;
+          font-weight: 700;
+          font-size: 10px;
+          letter-spacing: 2px;
+          text-transform: uppercase;
           color: #56734F;
-          opacity: 0;
-          transition: opacity 400ms ease-out;
+          padding: 5px 10px 5px 8px;
+          background: rgba(86, 115, 79, 0.1);
+          border-radius: 999px;
+          margin-bottom: 18px;
         }
-        #utm-toast.active .utm-toast__confirm { opacity: 1; transition-delay: 900ms; }
+        .utm-toast__kicker-dot {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: #56734F;
+          animation: utmPulse 1.6s ease-in-out infinite;
+        }
+        @keyframes utmPulse {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.5; transform: scale(0.85); }
+        }
+
+        .utm-toast__save-label {
+          font-family: 'Inter', sans-serif;
+          font-weight: 500;
+          font-size: 13px;
+          color: #6b7c6b;
+          margin-bottom: 2px;
+        }
+
+        .utm-toast__hero {
+          display: inline-flex;
+          align-items: baseline;
+          justify-content: center;
+          font-family: 'Inter', sans-serif;
+          font-weight: 900;
+          color: #2B3C35;
+          letter-spacing: -2px;
+          line-height: 1;
+          margin-bottom: 14px;
+          opacity: 0;
+          transform: scale(1.25);
+          transition:
+            opacity 200ms ease-out,
+            transform 240ms cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        #utm-toast.active .utm-toast__hero {
+          opacity: 1;
+          transform: scale(1);
+          transition-delay: 260ms;
+        }
+        .utm-toast__hero-currency {
+          font-size: 28px;
+          font-weight: 700;
+          margin-right: 4px;
+          color: #56734F;
+          letter-spacing: -0.5px;
+        }
+        .utm-toast__hero-amount {
+          font-size: 56px;
+          font-weight: 900;
+        }
+
+        .utm-toast__bonus {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 8px 14px;
+          background: rgba(86, 115, 79, 0.08);
+          border-radius: 999px;
+          font-family: 'Inter', sans-serif;
+          font-weight: 500;
+          font-size: 13px;
+          color: #2B3C35;
+          margin-bottom: 14px;
+          opacity: 0;
+          transform: translateY(4px);
+          transition:
+            opacity 200ms ease-out,
+            transform 200ms ease-out;
+        }
+        .utm-toast__bonus strong {
+          font-weight: 700;
+          color: #56734F;
+        }
+        #utm-toast.active .utm-toast__bonus {
+          opacity: 1;
+          transform: translateY(0);
+          transition-delay: 460ms;
+        }
+
+        .utm-toast__confirm {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          font-family: 'Inter', sans-serif;
+          font-weight: 500;
+          font-size: 11px;
+          color: #6b7c6b;
+          opacity: 0;
+          transition: opacity 220ms ease-out;
+        }
+        #utm-toast.active .utm-toast__confirm { opacity: 1; transition-delay: 580ms; }
         .utm-toast__check path {
           stroke-dasharray: 30;
           stroke-dashoffset: 30;
-          transition: stroke-dashoffset 400ms ease-out;
+          transition: stroke-dashoffset 280ms ease-out;
         }
-        #utm-toast.active .utm-toast__check path { stroke-dashoffset: 0; transition-delay: 950ms; }
+        #utm-toast.active .utm-toast__check path { stroke-dashoffset: 0; transition-delay: 620ms; }
 
         .utm-toast__spark {
           position: absolute;
-          width: 6px;
-          height: 6px;
+          width: 5px;
+          height: 5px;
           border-radius: 50%;
           background: #a8c39a;
           opacity: 0;
           pointer-events: none;
         }
-        .utm-toast__spark--1 { top: 18%; left: 10%; }
-        .utm-toast__spark--2 { top: 14%; right: 14%; width: 4px; height: 4px; background: #56734F; }
-        .utm-toast__spark--3 { bottom: 24%; left: 8%;  width: 4px; height: 4px; }
-        .utm-toast__spark--4 { bottom: 20%; right: 10%; }
-        #utm-toast.active .utm-toast__spark { animation: utmTwinkle 2s ease-in-out infinite; animation-delay: 1000ms; }
-        #utm-toast.active .utm-toast__spark--2 { animation-delay: 1250ms; }
-        #utm-toast.active .utm-toast__spark--3 { animation-delay: 1100ms; }
-        #utm-toast.active .utm-toast__spark--4 { animation-delay: 1400ms; }
+        .utm-toast__spark--1 { top: 22%; left: 12%; }
+        .utm-toast__spark--2 { top: 28%; right: 14%; background: #56734F; width: 4px; height: 4px; }
+        #utm-toast.active .utm-toast__spark { animation: utmTwinkle 1.8s ease-in-out infinite; animation-delay: 700ms; }
+        #utm-toast.active .utm-toast__spark--2 { animation-delay: 900ms; }
 
         @keyframes utmTwinkle {
-          0%, 100% { opacity: 0; transform: scale(0.6); }
-          50% { opacity: 0.9; transform: scale(1); }
+          0%, 100% { opacity: 0; transform: scale(0.5); }
+          50% { opacity: 0.9; transform: scale(1.1); }
         }
 
         @media (max-width: 480px) {
-          .utm-toast__card { padding: 24px 20px 18px; max-width: 340px; border-radius: 20px; }
-          .utm-toast__headline { font-size: 22px; }
-          .utm-toast__badges { gap: 8px; }
-          .utm-toast__badge { padding: 12px 8px 10px; border-radius: 14px; }
-          .utm-toast__badge-title { font-size: 12px; }
-          .utm-toast__badge-icon { width: 32px; height: 32px; }
+          .utm-toast__card { padding: 24px 24px 18px; max-width: 320px; border-radius: 20px; }
+          .utm-toast__hero-amount { font-size: 46px; }
+          .utm-toast__hero-currency { font-size: 22px; }
+          .utm-toast__bonus { font-size: 12px; padding: 7px 12px; }
         }
 
         @media (prefers-reduced-motion: reduce) {
           .utm-toast__overlay,
           .utm-toast__card,
-          .utm-toast__badge,
+          .utm-toast__hero,
+          .utm-toast__bonus,
           .utm-toast__confirm,
-          .utm-toast__check path { transition: opacity 200ms ease !important; transition-delay: 0ms !important; }
-          .utm-toast__card { transform: none !important; }
-          .utm-toast__badge { transform: none !important; }
-          #utm-toast.active .utm-toast__spark { animation: none; opacity: 0; }
+          .utm-toast__check path {
+            transition: opacity 180ms ease !important;
+            transition-delay: 0ms !important;
+          }
+          .utm-toast__card,
+          .utm-toast__hero,
+          .utm-toast__bonus { transform: none !important; }
+          #utm-toast.active .utm-toast__spark,
+          .utm-toast__kicker-dot { animation: none; opacity: 1; }
         }
       </style>
 
@@ -488,10 +500,23 @@
                 var toast = document.getElementById('utm-toast');
                 if (!toast) return;
 
-                // Inject dynamic discount label from metafield if provided
+                // Inject dynamic discount label from metafield, preserving currency/amount split
                 var labelEl = document.getElementById('utm-toast__discount-label');
                 if (labelEl && rule.discountLabel) {
-                  labelEl.textContent = rule.discountLabel;
+                  var m = String(rule.discountLabel).match(/^(\D*)(.*)$/);
+                  var currency = (m && m[1] ? m[1].trim() : '');
+                  var amount = (m && m[2] ? m[2].trim() : String(rule.discountLabel));
+                  labelEl.innerHTML = '';
+                  if (currency) {
+                    var c = document.createElement('span');
+                    c.className = 'utm-toast__hero-currency';
+                    c.textContent = currency;
+                    labelEl.appendChild(c);
+                  }
+                  var a = document.createElement('span');
+                  a.className = 'utm-toast__hero-amount';
+                  a.textContent = amount;
+                  labelEl.appendChild(a);
                 }
 
                 try { sessionStorage.setItem('utm_toast_shown_ts', String(Date.now())); } catch (e) {}
@@ -503,14 +528,13 @@
                 function dismiss() {
                   toast.classList.remove('active');
                   document.removeEventListener('keydown', onKey);
-                  setTimeout(function() { if (toast.parentNode) toast.remove(); }, 350);
+                  setTimeout(function() { if (toast.parentNode) toast.remove(); }, 260);
                 }
                 document.addEventListener('keydown', onKey);
 
-                // Enter
-                setTimeout(function() { toast.classList.add('active'); }, 100);
-                // Hold ~4s total, then exit
-                setTimeout(dismiss, 4200);
+                // Enter (snappy) — hold for readability, then exit
+                setTimeout(function() { toast.classList.add('active'); }, 80);
+                setTimeout(dismiss, 2800);
               });
             })();
       </script>
