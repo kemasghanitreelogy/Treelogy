@@ -207,6 +207,73 @@
       })();
     </script>
 
+    <script>
+      // UTM Variant Discount Renderer
+      // When a matched UTM rule has `variantDiscounts`, rewrite each variant card's
+      // displayed price to (original - discount) and inject a strikethrough of the original.
+      (function () {
+        if (typeof window.__findUtmRule !== 'function') return;
+
+        var params = new URLSearchParams(window.location.search);
+        var urlUtm = params.get('utm_source') || sessionStorage.getItem('utm_source');
+        var urlCampaign = params.get('utm_campaign') || sessionStorage.getItem('utm_campaign') || '';
+        if (!urlUtm) return;
+
+        function formatIDR(amount) {
+          return 'Rp ' + Math.round(amount).toLocaleString('id-ID');
+        }
+
+        function apply() {
+          var rule = window.__findUtmRule(urlUtm, urlCampaign);
+          if (!rule || !rule.isActive) return;
+          var list = rule.variantDiscounts;
+          if (!Array.isArray(list) || !list.length) return;
+
+          var map = {};
+          list.forEach(function (d) {
+            if (d && d.variantId != null) {
+              map[String(d.variantId)] = parseInt(d.discountAmount, 10) || 0;
+            }
+          });
+
+          var cards = document.querySelectorAll('.protocol-variant-card[data-variant-price]');
+          cards.forEach(function (card) {
+            var vid = card.getAttribute('data-value');
+            var discount = map[String(vid)];
+            if (!discount) return;
+
+            var originalPrice = parseInt(card.getAttribute('data-variant-price'), 10);
+            if (!originalPrice || originalPrice <= 0) return;
+
+            var newPrice = Math.max(0, originalPrice - discount);
+
+            var prices = card.querySelector('.pv-prices');
+            if (!prices) return;
+            var saleEl = prices.querySelector('.pv-sale');
+            if (!saleEl) return;
+
+            // Inject strikethrough of original price if not already shown (e.g., from compare_at_price)
+            var originalEl = prices.querySelector('.pv-original');
+            if (!originalEl) {
+              originalEl = document.createElement('div');
+              originalEl.className = 'pv-original';
+              originalEl.textContent = formatIDR(originalPrice);
+              prices.insertBefore(originalEl, saleEl);
+            }
+
+            saleEl.textContent = formatIDR(newPrice);
+            card.setAttribute('data-utm-discounted', '1');
+          });
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', apply);
+        } else {
+          apply();
+        }
+      })();
+    </script>
+
   </head>
 
   <body>
