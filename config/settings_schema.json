@@ -82,6 +82,13 @@
         "label": "Show UTM Free Shipping Toast",
         "default": true,
         "info": "Toggle to show or hide the UTM Free Shipping Toast component."
+      },
+      {
+        "type": "text",
+        "id": "utm_free_shipping_eligible_campaigns",
+        "label": "Eligible utm_campaign",
+        "info": "Comma-separated list of utm_campaign values that trigger the toast. Leave empty to allow any utm_campaign.",
+        "default": "5-gejala-usia-45"
       }
     ]
   },
