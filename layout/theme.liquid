@@ -211,24 +211,49 @@
 
   <body>
     {%- if settings.show_utm_free_shipping_toast -%}
-      <!-- UTM Free Shipping Toast -->
+      <!-- UTM Reward Toast -->
       <div
         id="utm-toast"
         aria-live="polite"
         role="status">
         <div class="utm-toast__overlay"></div>
-        <div class="utm-toast__card">
-          <div class="utm-toast__label">Khusus untukmu</div>
-          <div class="utm-toast__headline">GRATIS ONGKIR</div>
-          <div class="utm-toast__sub">
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none">
-              <path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9 1.96 2.5H17V9.5h2.5zM18 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" fill="#56734F" />
+        <div class="utm-toast__card" aria-label="Dua hadiah aktif: gratis ongkir dan diskon otomatis terpakai">
+          <div class="utm-toast__ribbon" aria-hidden="true"></div>
+          <span class="utm-toast__spark utm-toast__spark--1" aria-hidden="true"></span>
+          <span class="utm-toast__spark utm-toast__spark--2" aria-hidden="true"></span>
+          <span class="utm-toast__spark utm-toast__spark--3" aria-hidden="true"></span>
+          <span class="utm-toast__spark utm-toast__spark--4" aria-hidden="true"></span>
+
+          <div class="utm-toast__kicker">Khusus untukmu</div>
+          <div class="utm-toast__headline">Kejutan untukmu</div>
+          <div class="utm-toast__subhead">2 hadiah aktif</div>
+
+          <div class="utm-toast__badges">
+            <div class="utm-toast__badge utm-toast__badge--1">
+              <div class="utm-toast__badge-icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                  <path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9 1.96 2.5H17V9.5h2.5zM18 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" fill="#56734F"/>
+                </svg>
+              </div>
+              <div class="utm-toast__badge-title">GRATIS ONGKIR</div>
+              <div class="utm-toast__badge-sub">Free shipping</div>
+            </div>
+            <div class="utm-toast__badge utm-toast__badge--2">
+              <div class="utm-toast__badge-icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                  <path d="M21.41 11.58 12.41 2.58A2 2 0 0 0 11 2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 .59 1.41l9 9a2 2 0 0 0 2.82 0l7-7a2 2 0 0 0 0-2.83zM6.5 7A1.5 1.5 0 1 1 8 5.5 1.5 1.5 0 0 1 6.5 7z" fill="#56734F"/>
+                </svg>
+              </div>
+              <div class="utm-toast__badge-title" id="utm-toast__discount-label">Rp100.000 OFF</div>
+              <div class="utm-toast__badge-sub">Discount applied</div>
+            </div>
+          </div>
+
+          <div class="utm-toast__confirm">
+            <svg class="utm-toast__check" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M5 12l5 5L20 7" stroke="#56734F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-            <span>Free delivery applied</span>
+            <span>Otomatis terpakai di checkout</span>
           </div>
         </div>
       </div>
@@ -241,78 +266,189 @@
           display: flex;
           align-items: center;
           justify-content: center;
+          padding: 20px;
           pointer-events: none;
-          opacity: 0;
-          transition: opacity 0.35s ease;
         }
-        #utm-toast.active {
-          opacity: 1;
-        }
-
         .utm-toast__overlay {
           position: absolute;
           inset: 0;
-          background: rgba(0, 0, 0, 0.6);
+          background: rgba(43, 60, 53, 0.55);
+          opacity: 0;
+          transition: opacity 250ms ease-out;
+          backdrop-filter: blur(2px);
+          -webkit-backdrop-filter: blur(2px);
         }
+        #utm-toast.active .utm-toast__overlay { opacity: 1; }
 
         .utm-toast__card {
           position: relative;
           text-align: center;
-          padding: 32px 48px 28px;
-          border-radius: 16px;
+          padding: 28px 36px 22px;
+          border-radius: 24px;
           background: #f8f8f2;
-          box-shadow: 0 0 0 1px rgba(86, 115, 79, 0.15)
-          , 0 25px 80px rgba(0, 0, 0, 0.5);
+          background-image: radial-gradient(circle at 20% 15%, rgba(86,115,79,0.035) 1px, transparent 1px),
+                            radial-gradient(circle at 80% 85%, rgba(86,115,79,0.03) 1px, transparent 1px);
+          background-size: 24px 24px, 32px 32px;
+          box-shadow:
+            0 0 0 1px rgba(86, 115, 79, 0.18),
+            0 30px 60px -12px rgba(86, 115, 79, 0.35),
+            0 18px 36px -18px rgba(0, 0, 0, 0.3);
+          max-width: 380px;
+          width: 100%;
+          opacity: 0;
+          transform: scale(0.92) translateY(8px);
+          transition:
+            opacity 400ms cubic-bezier(0.34, 1.56, 0.64, 1),
+            transform 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+          overflow: hidden;
+        }
+        #utm-toast.active .utm-toast__card {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+          transition-delay: 150ms;
         }
 
-        .utm-toast__label {
-          font-family: 'Inter'
-          , sans-serif;
-          font-weight: 500;
-          font-size: 11px;
-          letter-spacing: 1.5px;
+        .utm-toast__ribbon {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 3px;
+          background: linear-gradient(90deg, #56734F 0%, #a8c39a 50%, #56734F 100%);
+        }
+
+        .utm-toast__kicker {
+          font-family: 'Inter', sans-serif;
+          font-weight: 600;
+          font-size: 10px;
+          letter-spacing: 2px;
           text-transform: uppercase;
           color: #56734F;
-          margin-bottom: 6px;
+          margin-bottom: 8px;
         }
-
         .utm-toast__headline {
-          font-family: 'Inter'
-          , sans-serif;
+          font-family: 'Inter', sans-serif;
           font-weight: 800;
-          font-size: 32px;
-          letter-spacing: 1px;
+          font-size: 26px;
+          letter-spacing: -0.5px;
           color: #2B3C35;
-          line-height: 1;
-          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+          line-height: 1.1;
+          margin-bottom: 4px;
+        }
+        .utm-toast__subhead {
+          font-family: 'Inter', sans-serif;
+          font-weight: 500;
+          font-size: 13px;
+          color: #56734F;
+          margin-bottom: 20px;
         }
 
-        .utm-toast__sub {
+        .utm-toast__badges {
           display: flex;
+          gap: 10px;
+          margin-bottom: 16px;
+        }
+        .utm-toast__badge {
+          flex: 1;
+          padding: 14px 10px 12px;
+          border-radius: 16px;
+          background: #ffffff;
+          border: 1px solid rgba(86, 115, 79, 0.18);
+          opacity: 0;
+          transform: translateY(8px) scale(0.96);
+          transition:
+            opacity 300ms ease-out,
+            transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        #utm-toast.active .utm-toast__badge--1 { opacity: 1; transform: translateY(0) scale(1); transition-delay: 500ms; }
+        #utm-toast.active .utm-toast__badge--2 { opacity: 1; transform: translateY(0) scale(1); transition-delay: 650ms; }
+
+        .utm-toast__badge-icon {
+          display: inline-flex;
           align-items: center;
           justify-content: center;
-          gap: 6px;
-          margin-top: 12px;
-          font-family: 'Inter'
-          , sans-serif;
-          font-weight: 400;
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          background: rgba(86, 115, 79, 0.1);
+          margin-bottom: 8px;
+        }
+        .utm-toast__badge-title {
+          font-family: 'Inter', sans-serif;
+          font-weight: 700;
           font-size: 13px;
+          color: #2B3C35;
+          letter-spacing: 0.3px;
+          line-height: 1.2;
+        }
+        .utm-toast__badge-sub {
+          font-family: 'Inter', sans-serif;
+          font-weight: 400;
+          font-size: 10px;
           color: #6b7c6b;
+          margin-top: 2px;
+        }
+
+        .utm-toast__confirm {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          font-family: 'Inter', sans-serif;
+          font-weight: 500;
+          font-size: 12px;
+          color: #56734F;
+          opacity: 0;
+          transition: opacity 400ms ease-out;
+        }
+        #utm-toast.active .utm-toast__confirm { opacity: 1; transition-delay: 900ms; }
+        .utm-toast__check path {
+          stroke-dasharray: 30;
+          stroke-dashoffset: 30;
+          transition: stroke-dashoffset 400ms ease-out;
+        }
+        #utm-toast.active .utm-toast__check path { stroke-dashoffset: 0; transition-delay: 950ms; }
+
+        .utm-toast__spark {
+          position: absolute;
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: #a8c39a;
+          opacity: 0;
+          pointer-events: none;
+        }
+        .utm-toast__spark--1 { top: 18%; left: 10%; }
+        .utm-toast__spark--2 { top: 14%; right: 14%; width: 4px; height: 4px; background: #56734F; }
+        .utm-toast__spark--3 { bottom: 24%; left: 8%;  width: 4px; height: 4px; }
+        .utm-toast__spark--4 { bottom: 20%; right: 10%; }
+        #utm-toast.active .utm-toast__spark { animation: utmTwinkle 2s ease-in-out infinite; animation-delay: 1000ms; }
+        #utm-toast.active .utm-toast__spark--2 { animation-delay: 1250ms; }
+        #utm-toast.active .utm-toast__spark--3 { animation-delay: 1100ms; }
+        #utm-toast.active .utm-toast__spark--4 { animation-delay: 1400ms; }
+
+        @keyframes utmTwinkle {
+          0%, 100% { opacity: 0; transform: scale(0.6); }
+          50% { opacity: 0.9; transform: scale(1); }
         }
 
         @media (max-width: 480px) {
-          .utm-toast__card {
-            padding: 28px 32px 24px;
-          }
-          .utm-toast__headline {
-            font-size: 26px;
-          }
+          .utm-toast__card { padding: 24px 20px 18px; max-width: 340px; border-radius: 20px; }
+          .utm-toast__headline { font-size: 22px; }
+          .utm-toast__badges { gap: 8px; }
+          .utm-toast__badge { padding: 12px 8px 10px; border-radius: 14px; }
+          .utm-toast__badge-title { font-size: 12px; }
+          .utm-toast__badge-icon { width: 32px; height: 32px; }
         }
 
         @media (prefers-reduced-motion: reduce) {
-          #utm-toast {
-            transition: none;
-          }
+          .utm-toast__overlay,
+          .utm-toast__card,
+          .utm-toast__badge,
+          .utm-toast__confirm,
+          .utm-toast__check path { transition: opacity 200ms ease !important; transition-delay: 0ms !important; }
+          .utm-toast__card { transform: none !important; }
+          .utm-toast__badge { transform: none !important; }
+          #utm-toast.active .utm-toast__spark { animation: none; opacity: 0; }
         }
       </style>
 
@@ -332,8 +468,8 @@
                 .map(function(s) { return s.trim().toLowerCase(); })
                 .filter(Boolean);
               if (eligibleCampaigns.length) {
-                var urlCampaign = (params.get('utm_campaign') || '').toLowerCase();
-                if (!urlCampaign || eligibleCampaigns.indexOf(urlCampaign) === -1) return;
+                var urlCampaignLc = (params.get('utm_campaign') || '').toLowerCase();
+                if (!urlCampaignLc || eligibleCampaigns.indexOf(urlCampaignLc) === -1) return;
               }
 
               var urlCampaign = params.get('utm_campaign') || '';
@@ -352,11 +488,29 @@
                 var toast = document.getElementById('utm-toast');
                 if (!toast) return;
 
+                // Inject dynamic discount label from metafield if provided
+                var labelEl = document.getElementById('utm-toast__discount-label');
+                if (labelEl && rule.discountLabel) {
+                  labelEl.textContent = rule.discountLabel;
+                }
+
                 try { sessionStorage.setItem('utm_toast_shown_ts', String(Date.now())); } catch (e) {}
 
-                setTimeout(function() { toast.classList.add('active'); }, 400);
-                setTimeout(function() { toast.classList.remove('active'); }, 2600);
-                setTimeout(function() { toast.remove(); }, 3000);
+                // Allow Esc to dismiss early (a11y)
+                function onKey(e) {
+                  if (e.key === 'Escape') dismiss();
+                }
+                function dismiss() {
+                  toast.classList.remove('active');
+                  document.removeEventListener('keydown', onKey);
+                  setTimeout(function() { if (toast.parentNode) toast.remove(); }, 350);
+                }
+                document.addEventListener('keydown', onKey);
+
+                // Enter
+                setTimeout(function() { toast.classList.add('active'); }, 100);
+                // Hold ~4s total, then exit
+                setTimeout(dismiss, 4200);
               });
             })();
       </script>
