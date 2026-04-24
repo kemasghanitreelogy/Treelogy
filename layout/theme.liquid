@@ -307,6 +307,17 @@
               var urlUtm = params.get('utm_source');
               if (!urlUtm) return;
 
+              // Campaign gate: if eligible list is configured, utm_campaign must be in it
+              var eligibleRaw = {{ settings.utm_free_shipping_eligible_campaigns | default: '' | json }};
+              var eligibleCampaigns = (eligibleRaw || '')
+                .split(',')
+                .map(function(s) { return s.trim().toLowerCase(); })
+                .filter(Boolean);
+              if (eligibleCampaigns.length) {
+                var urlCampaign = (params.get('utm_campaign') || '').toLowerCase();
+                if (!urlCampaign || eligibleCampaigns.indexOf(urlCampaign) === -1) return;
+              }
+
               var rules = window.__utmRules || [];
               var rule = rules.find(function(r) {
                 return r.utmSource === urlUtm && r.isActive && r.discountCode;
