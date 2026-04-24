@@ -236,6 +236,9 @@
             }
           });
 
+          var lang = (document.documentElement.lang || 'en').toLowerCase();
+          var savingWord = (lang === 'id') ? 'hemat ' : 'save ';
+
           var cards = document.querySelectorAll('.protocol-variant-card[data-variant-price]');
           cards.forEach(function (card) {
             var vid = card.getAttribute('data-value');
@@ -262,6 +265,19 @@
             }
 
             saleEl.textContent = formatIDR(newPrice);
+
+            // Override custom badge with savings amount from UTM discount
+            var badgeText = savingWord + formatIDR(discount);
+            var badge = card.querySelector('.pv-badge');
+            if (badge) {
+              badge.textContent = badgeText;
+            } else {
+              badge = document.createElement('div');
+              badge.className = 'pv-badge';
+              badge.textContent = badgeText;
+              card.insertBefore(badge, card.firstChild);
+            }
+
             card.setAttribute('data-utm-discounted', '1');
           });
         }
