@@ -107,20 +107,38 @@
       try {
         var rules = {% if utm_rules %}{{ utm_rules | json }}{% else %}[]{% endif %};
         window.__utmRules = rules;
+
+        // Match rule on (utmSource, utmCampaign). Prefer exact campaign match;
+        // fall back to a rule with empty / "*" utmCampaign (default for that source).
+        window.__findUtmRule = function(source, campaign) {
+          if (!source) return null;
+          campaign = campaign || '';
+          var exact = rules.find(function(r) {
+            return r.isActive && r.utmSource === source && (r.utmCampaign || '') === campaign;
+          });
+          if (exact) return exact;
+          return rules.find(function(r) {
+            return r.isActive && r.utmSource === source && (!r.utmCampaign || r.utmCampaign === '*');
+          }) || null;
+        };
+
         var params = new URLSearchParams(window.location.search);
         var utm = params.get('utm_source');
+        var campaign = params.get('utm_campaign');
         if (utm) sessionStorage.setItem('utm_source', utm);
-        var saved = sessionStorage.getItem('utm_source');
-        if (saved) {
-          var rule = rules.find(function(r) {
-            return r.utmSource === saved && r.isActive;
-          });
+        if (campaign) sessionStorage.setItem('utm_campaign', campaign);
+        var savedSource = sessionStorage.getItem('utm_source');
+        var savedCampaign = sessionStorage.getItem('utm_campaign') || '';
+        if (savedSource) {
+          var rule = window.__findUtmRule(savedSource, savedCampaign);
           if (rule && rule.discountCode) {
             sessionStorage.setItem('utm_free_shipping_ts', String(Date.now()));
             sessionStorage.setItem('utm_discount_code', rule.discountCode);
-            sessionStorage.setItem('utm_source_matched', saved);
-            if (!sessionStorage.getItem('utm_applied_' + saved)) {
-              sessionStorage.setItem('utm_applied_' + saved, '1');
+            sessionStorage.setItem('utm_source_matched', savedSource);
+            sessionStorage.setItem('utm_campaign_matched', rule.utmCampaign || '');
+            var appliedKey = 'utm_applied_' + savedSource + '__' + (rule.utmCampaign || '*');
+            if (!sessionStorage.getItem(appliedKey)) {
+              sessionStorage.setItem(appliedKey, '1');
               window.location.href = '/discount/'
                 + encodeURIComponent(rule.discountCode)
                 + '?redirect='
@@ -318,11 +336,11 @@
                 if (!urlCampaign || eligibleCampaigns.indexOf(urlCampaign) === -1) return;
               }
 
-              var rules = window.__utmRules || [];
-              var rule = rules.find(function(r) {
-                return r.utmSource === urlUtm && r.isActive && r.discountCode;
-              });
-              if (!rule) return;
+              var urlCampaign = params.get('utm_campaign') || '';
+              var rule = typeof window.__findUtmRule === 'function'
+                ? window.__findUtmRule(urlUtm, urlCampaign)
+                : null;
+              if (!rule || !rule.discountCode) return;
 
               // Cooldown gate: skip if toast was shown within the last 10 minutes
               try {
