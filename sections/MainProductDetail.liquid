@@ -942,15 +942,28 @@
   var DISCOUNT_CODE = sessionStorage.getItem('utm_discount_code');
   if (!DISCOUNT_CODE) return;
 
-  // Update button text
-  btn.textContent = 'Beli Sekarang';
+  var LABEL_IDLE = 'Beli Sekarang';
+  var LABEL_BUSY = 'Memproses...';
+
+  function setIdle() {
+    btn.textContent = LABEL_IDLE;
+    btn.disabled = false;
+    delete btn.dataset.processing;
+  }
+
+  function setBusy() {
+    btn.textContent = LABEL_BUSY;
+    btn.disabled = true;
+    btn.dataset.processing = '1';
+  }
+
+  setIdle();
 
   // Intercept form submission
   form.addEventListener('submit', function(e) {
     e.preventDefault();
     if (btn.dataset.processing) return;
-    btn.dataset.processing = '1';
-    btn.textContent = 'Memproses...';
+    setBusy();
 
     var variantId = btn.dataset.variant || document.getElementById('productSelect').value;
 
@@ -967,10 +980,7 @@
         if (!res.ok) throw new Error('Failed to add item');
         window.location.href = '/discount/' + encodeURIComponent(DISCOUNT_CODE) + '?redirect=/checkout';
       })
-      .catch(function() {
-        btn.textContent = 'Beli Sekarang';
-        delete btn.dataset.processing;
-      });
+      .catch(setIdle);
   });
 
   // Also intercept the JS click handler from Product.js (it calls e.preventDefault())
@@ -979,6 +989,13 @@
     e.stopImmediatePropagation();
     form.dispatchEvent(new Event('submit', { cancelable: true }));
   }, true); // capture phase to run before Product.js handler
+
+  // Reset button when page is restored from bfcache (user hits back from checkout)
+  window.addEventListener('pageshow', function(e) {
+    if (e.persisted || (performance.getEntriesByType && (performance.getEntriesByType('navigation')[0] || {}).type === 'back_forward')) {
+      setIdle();
+    }
+  });
 })();
 </script>
 
