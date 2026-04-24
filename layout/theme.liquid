@@ -300,11 +300,7 @@
         aria-live="polite"
         role="status">
         <div class="utm-toast__overlay"></div>
-        <div class="utm-toast__card" aria-label="Kamu hemat seratus ribu rupiah plus gratis ongkir">
-          <div class="utm-toast__ribbon" aria-hidden="true"></div>
-          <span class="utm-toast__spark utm-toast__spark--1" aria-hidden="true"></span>
-          <span class="utm-toast__spark utm-toast__spark--2" aria-hidden="true"></span>
-
+        <div class="utm-toast__card" aria-label="Kamu hemat Rp 100.000 dari Blog Kesehatan Wanita, plus gratis ongkir se-Indonesia">
           <button type="button" class="utm-toast__close" aria-label="Tutup">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M6 6l12 12M18 6l-12 12" stroke="#6b7c6b" stroke-width="2.5" stroke-linecap="round"/>
@@ -313,12 +309,12 @@
 
           <div class="utm-toast__kicker">
             <span class="utm-toast__kicker-dot" aria-hidden="true"></span>
-            DISKON AKTIF
+            PENAWARAN AKTIF
           </div>
 
-          <div class="utm-toast__save-label">Kamu hemat</div>
-          <div class="utm-toast__hero" id="utm-toast__discount-label">
-            <span class="utm-toast__hero-currency">Rp</span><span class="utm-toast__hero-amount">100.000</span>
+          <div class="utm-toast__body">
+            <p>Kamu hemat <strong id="utm-toast__discount-label">Rp 100.000</strong></p>
+            <p>dari Blog Kesehatan Wanita</p>
           </div>
 
           <div class="utm-toast__bonus">
@@ -330,7 +326,7 @@
 
           <button type="button" class="utm-toast__claim" id="utm-toast__claim">
             <span class="utm-toast__claim-idle">
-              <span>Klaim Sekarang</span>
+              <span>Belanja Sekarang &rarr;</span>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
@@ -347,7 +343,7 @@
             <svg class="utm-toast__check" width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M5 12l5 5L20 7" stroke="#56734F" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-            <span>Otomatis terpakai di checkout</span>
+            <span>Otomatis terpakai di keranjang</span>
           </div>
         </div>
       </div>
@@ -376,12 +372,16 @@
 
         .utm-toast__card {
           position: relative;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 10px;
           text-align: center;
           padding: 28px 32px 22px;
           border-radius: 22px;
           background: #f8f8f2;
+          border: 1px solid rgba(86, 115, 79, 0.2);
           box-shadow:
-            0 0 0 1px rgba(86, 115, 79, 0.2),
             0 40px 80px -20px rgba(86, 115, 79, 0.45),
             0 20px 40px -20px rgba(0, 0, 0, 0.3);
           max-width: 360px;
@@ -399,15 +399,6 @@
           transition-delay: 80ms;
         }
 
-        .utm-toast__ribbon {
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          height: 4px;
-          background: linear-gradient(90deg, #56734F, #a8c39a, #56734F);
-        }
-
         .utm-toast__kicker {
           display: inline-flex;
           align-items: center;
@@ -421,7 +412,7 @@
           padding: 5px 10px 5px 8px;
           background: rgba(86, 115, 79, 0.1);
           border-radius: 999px;
-          margin-bottom: 18px;
+          margin-bottom: 8px; /* Figma: extra 8px spacer after kicker */
         }
         .utm-toast__kicker-dot {
           width: 6px;
@@ -435,51 +426,30 @@
           50% { opacity: 0.5; transform: scale(0.85); }
         }
 
-        .utm-toast__save-label {
+        .utm-toast__body {
           font-family: 'Inter', sans-serif;
           font-weight: 500;
           font-size: 13px;
-          color: #6b7c6b;
-          margin-bottom: 2px;
-        }
-
-        .utm-toast__hero {
-          display: inline-flex;
-          align-items: baseline;
-          justify-content: center;
-          font-family: 'Inter', sans-serif;
-          font-weight: 900;
           color: #2B3C35;
-          letter-spacing: -2px;
-          line-height: 1;
-          margin-bottom: 14px;
+          line-height: 1.4;
           opacity: 0;
-          transform: scale(1.25);
+          transform: scale(0.96);
           transition:
             opacity 200ms ease-out,
             transform 240ms cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        #utm-toast.active .utm-toast__hero {
+        #utm-toast.active .utm-toast__body {
           opacity: 1;
           transform: scale(1);
           transition-delay: 260ms;
         }
-        .utm-toast__hero-currency {
-          font-size: 22px;
-          font-weight: 700;
-          margin-right: 3px;
-          color: #56734F;
-          letter-spacing: -0.5px;
-        }
-        .utm-toast__hero-amount {
-          font-size: 42px;
-          font-weight: 900;
-        }
+        .utm-toast__body p { margin: 0; }
+        .utm-toast__body strong { font-weight: 900; }
 
         .utm-toast__close {
           position: absolute;
-          top: 12px;
-          right: 12px;
+          top: 11px;
+          right: 13px;
           width: 32px;
           height: 32px;
           display: flex;
@@ -487,7 +457,7 @@
           justify-content: center;
           background: transparent;
           border: 0;
-          border-radius: 50%;
+          border-radius: 16px;
           cursor: pointer;
           padding: 0;
           pointer-events: auto;
@@ -507,7 +477,6 @@
           justify-content: center;
           width: 100%;
           height: 48px;
-          margin-bottom: 12px;
           background: #56734F;
           color: #ffffff;
           border: 0;
@@ -518,7 +487,7 @@
           letter-spacing: 0.3px;
           cursor: pointer;
           pointer-events: auto;
-          box-shadow: 0 6px 16px -6px rgba(86, 115, 79, 0.6), inset 0 -2px 0 rgba(0, 0, 0, 0.1);
+          box-shadow: 0 6px 16px -6px rgba(86, 115, 79, 0.6);
           overflow: hidden;
           opacity: 0;
           transform: translateY(6px);
@@ -537,7 +506,7 @@
         .utm-toast__claim:focus-visible {
           background: #455e41;
           outline: none;
-          box-shadow: 0 10px 24px -8px rgba(86, 115, 79, 0.7), inset 0 -2px 0 rgba(0, 0, 0, 0.15);
+          box-shadow: 0 10px 24px -8px rgba(86, 115, 79, 0.7);
         }
         .utm-toast__claim:active {
           transform: translateY(1px);
@@ -597,7 +566,6 @@
           font-weight: 500;
           font-size: 13px;
           color: #2B3C35;
-          margin-bottom: 14px;
           opacity: 0;
           transform: translateY(4px);
           transition:
@@ -634,29 +602,9 @@
         }
         #utm-toast.active .utm-toast__check path { stroke-dashoffset: 0; transition-delay: 620ms; }
 
-        .utm-toast__spark {
-          position: absolute;
-          width: 5px;
-          height: 5px;
-          border-radius: 50%;
-          background: #a8c39a;
-          opacity: 0;
-          pointer-events: none;
-        }
-        .utm-toast__spark--1 { top: 22%; left: 12%; }
-        .utm-toast__spark--2 { top: 28%; right: 14%; background: #56734F; width: 4px; height: 4px; }
-        #utm-toast.active .utm-toast__spark { animation: utmTwinkle 1.8s ease-in-out infinite; animation-delay: 700ms; }
-        #utm-toast.active .utm-toast__spark--2 { animation-delay: 900ms; }
-
-        @keyframes utmTwinkle {
-          0%, 100% { opacity: 0; transform: scale(0.5); }
-          50% { opacity: 0.9; transform: scale(1.1); }
-        }
-
         @media (max-width: 480px) {
           .utm-toast__card { padding: 24px 22px 18px; max-width: 320px; border-radius: 20px; }
-          .utm-toast__hero-amount { font-size: 36px; }
-          .utm-toast__hero-currency { font-size: 18px; }
+          .utm-toast__body { font-size: 12.5px; }
           .utm-toast__bonus { font-size: 12px; padding: 7px 12px; }
           .utm-toast__claim { height: 46px; font-size: 13.5px; }
         }
@@ -664,7 +612,7 @@
         @media (prefers-reduced-motion: reduce) {
           .utm-toast__overlay,
           .utm-toast__card,
-          .utm-toast__hero,
+          .utm-toast__body,
           .utm-toast__bonus,
           .utm-toast__claim,
           .utm-toast__claim-idle,
@@ -675,13 +623,12 @@
             transition-delay: 0ms !important;
           }
           .utm-toast__card,
-          .utm-toast__hero,
+          .utm-toast__body,
           .utm-toast__bonus,
           .utm-toast__claim,
           .utm-toast__claim-success { transform: none !important; }
           .utm-toast__claim.is-claimed { animation: none; }
           .utm-toast__claim.is-claimed .utm-toast__claim-check path { animation: none; stroke-dashoffset: 0; }
-          #utm-toast.active .utm-toast__spark,
           .utm-toast__kicker-dot { animation: none; opacity: 1; }
         }
       </style>
@@ -722,23 +669,15 @@
                 var toast = document.getElementById('utm-toast');
                 if (!toast) return;
 
-                // Inject dynamic discount label from metafield, preserving currency/amount split
+                // Inject dynamic discount label from metafield. Strip trailing " OFF" and
+                // normalize "Rp100" → "Rp 100" so inline display matches Figma.
                 var labelEl = document.getElementById('utm-toast__discount-label');
                 if (labelEl && rule.discountLabel) {
-                  var m = String(rule.discountLabel).match(/^(\D*)(.*)$/);
-                  var currency = (m && m[1] ? m[1].trim() : '');
-                  var amount = (m && m[2] ? m[2].trim() : String(rule.discountLabel));
-                  labelEl.innerHTML = '';
-                  if (currency) {
-                    var c = document.createElement('span');
-                    c.className = 'utm-toast__hero-currency';
-                    c.textContent = currency;
-                    labelEl.appendChild(c);
-                  }
-                  var a = document.createElement('span');
-                  a.className = 'utm-toast__hero-amount';
-                  a.textContent = amount;
-                  labelEl.appendChild(a);
+                  var clean = String(rule.discountLabel)
+                    .replace(/\s*OFF\s*$/i, '')
+                    .replace(/^Rp(?=\d)/i, 'Rp ')
+                    .trim();
+                  labelEl.textContent = clean;
                 }
 
                 try { sessionStorage.setItem('utm_toast_shown_ts', String(Date.now())); } catch (e) {}
