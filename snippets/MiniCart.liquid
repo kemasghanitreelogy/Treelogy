@@ -290,13 +290,23 @@
   /* ===== Remove item confirmation modal ===== */
   (function() {
     var _pendingBtn = null;
+    var _closeTimer = null;
     var modal = document.getElementById('cart-remove-modal');
     var nameEl = document.getElementById('cart-remove-name');
     var cancelBtn = document.getElementById('cart-remove-cancel');
     var confirmBtn = document.getElementById('cart-remove-confirm');
 
+    /* Move modal to <body> so it isn't affected by .mini-cart pointer-events
+       or any stacking-context quirks of the cart drawer. */
+    if (modal && modal.parentNode !== document.body) {
+      document.body.appendChild(modal);
+    }
+
     function openModal() {
       if (!modal) return;
+      /* Cancel any pending close — prevents a stale timeout from hiding
+         a freshly-opened modal when the user rapidly re-triggers remove. */
+      if (_closeTimer) { clearTimeout(_closeTimer); _closeTimer = null; }
       modal.classList.add('active');
       /* Trigger reflow so the transition plays */
       void modal.offsetWidth;
@@ -305,9 +315,13 @@
 
     function closeModal() {
       if (!modal) return;
+      if (_closeTimer) { clearTimeout(_closeTimer); _closeTimer = null; }
       modal.classList.remove('visible');
       /* Wait for the exit animation to finish, then hide */
-      setTimeout(function() { modal.classList.remove('active'); }, 250);
+      _closeTimer = setTimeout(function() {
+        modal.classList.remove('active');
+        _closeTimer = null;
+      }, 250);
     }
 
     /* Show confirmation — called from trash button onclick */

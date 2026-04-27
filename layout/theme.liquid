@@ -460,10 +460,11 @@
           border-radius: 16px;
           cursor: pointer;
           padding: 0;
-          pointer-events: auto;
+          pointer-events: none;
           transition: background 150ms ease;
           z-index: 2;
         }
+        #utm-toast.active .utm-toast__close { pointer-events: auto; }
         .utm-toast__close:hover,
         .utm-toast__close:focus-visible {
           background: rgba(86, 115, 79, 0.08);
@@ -486,7 +487,7 @@
           font-size: 14px;
           letter-spacing: 0.3px;
           cursor: pointer;
-          pointer-events: auto;
+          pointer-events: none;
           box-shadow: 0 6px 16px -6px rgba(86, 115, 79, 0.6);
           overflow: hidden;
           opacity: 0;
@@ -500,6 +501,7 @@
         #utm-toast.active .utm-toast__claim {
           opacity: 1;
           transform: translateY(0);
+          pointer-events: auto;
           transition-delay: 580ms;
         }
         .utm-toast__claim:hover,

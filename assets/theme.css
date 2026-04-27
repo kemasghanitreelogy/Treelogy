@@ -2849,9 +2849,11 @@ input.red {
   z-index: 10000;
   align-items: center;
   justify-content: center;
+  pointer-events: none;
 }
 .cart-remove-modal.active {
   display: flex;
+  pointer-events: auto;
 }
 .cart-remove-backdrop {
   position: absolute;
