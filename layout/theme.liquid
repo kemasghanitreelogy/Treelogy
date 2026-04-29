@@ -292,8 +292,15 @@
 
   </head>
 
-  <body>
-    {%- if settings.show_utm_free_shipping_toast -%}
+  {%- liquid
+    assign is_chromeless = false
+    if template == 'page.links'
+      assign is_chromeless = true
+    endif
+  -%}
+
+  <body class="{% if is_chromeless %}t-chromeless{% endif %}">
+    {%- if settings.show_utm_free_shipping_toast and is_chromeless == false -%}
       <!-- UTM Reward Toast -->
       <div
         id="utm-toast"
@@ -718,13 +725,17 @@
       </script>
     {%- endif -%}
 
-    {% section 'Header' %}
+    {%- unless is_chromeless -%}
+      {% section 'Header' %}
+    {%- endunless -%}
 
     <main id="landing-page" role="main">
       {{ content_for_layout }}
     </main>
 
-    {% section 'Footer' %}
+    {%- unless is_chromeless -%}
+      {% section 'Footer' %}
+    {%- endunless -%}
     {% comment %} {% section 'CookieBannerCustom' %} {% endcomment %}
     <script>
       window.addEventListener("klaviyoForms", function(e) {

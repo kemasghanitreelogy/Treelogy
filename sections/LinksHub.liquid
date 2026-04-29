@@ -1,0 +1,788 @@
+{%- liquid
+  assign s = section.settings
+  assign bg_overlay = s.bg_overlay | default: 35
+  assign blur_strength = s.bg_blur | default: 18
+  assign card_tint = s.card_tint | default: '#56734F'
+  assign card_opacity = s.card_opacity | default: 60
+  assign accent = s.accent_color | default: '#F8F8F2'
+  assign title = s.title | default: 'TREELOGY'
+  assign tagline = s.tagline | default: 'Nourishing You, Enriching Life'
+-%}
+
+<section
+  class="lh"
+  aria-label="{{ title | escape }} — link hub"
+  style="
+    --lh-overlay: {{ bg_overlay | divided_by: 100.0 }};
+    --lh-blur: {{ blur_strength }}px;
+    --lh-card-tint: {{ card_tint }};
+    --lh-card-opacity: {{ card_opacity | divided_by: 100.0 }};
+    --lh-accent: {{ accent }};
+  "
+>
+  {%- if s.background != blank -%}
+    <div class="lh__bg" aria-hidden="true">
+      <img
+        class="lh__bg-img"
+        src="{{ s.background | image_url: width: 1600 }}"
+        srcset="
+          {{ s.background | image_url: width: 640 }} 640w,
+          {{ s.background | image_url: width: 1024 }} 1024w,
+          {{ s.background | image_url: width: 1600 }} 1600w,
+          {{ s.background | image_url: width: 2400 }} 2400w
+        "
+        sizes="100vw"
+        alt=""
+        loading="eager"
+        fetchpriority="high"
+        width="{{ s.background.width }}"
+        height="{{ s.background.height }}"
+      >
+      <div class="lh__bg-overlay"></div>
+    </div>
+  {%- else -%}
+    <div class="lh__bg lh__bg--solid" aria-hidden="true"></div>
+  {%- endif -%}
+
+  <div class="lh__shell">
+    <div class="lh__corner lh__corner--left">
+      {%- if s.show_menu_button -%}
+        <button
+          type="button"
+          class="lh__icon-btn"
+          aria-label="{{ s.menu_label | default: 'Open menu' | escape }}"
+          data-lh-menu-trigger
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M8 1.5v13M1.5 8h13M3.2 3.2l9.6 9.6M3.2 12.8l9.6-9.6"
+              stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </button>
+      {%- endif -%}
+    </div>
+
+    <div class="lh__corner lh__corner--right">
+      {%- if s.show_share_button -%}
+        <button
+          type="button"
+          class="lh__icon-btn"
+          aria-label="{{ 'Share this page' | escape }}"
+          data-lh-share
+          data-lh-share-title="{{ title | escape }}"
+          data-lh-share-text="{{ tagline | escape }}"
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M8 10.5V2M8 2L4.5 5.5M8 2l3.5 3.5M3 8.5v4a1 1 0 001 1h8a1 1 0 001-1v-4"
+              stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      {%- endif -%}
+    </div>
+
+    <header class="lh__head">
+      {%- if s.logo != blank -%}
+        <div class="lh__avatar">
+          <img
+            src="{{ s.logo | image_url: width: 240 }}"
+            srcset="{{ s.logo | image_url: width: 240 }} 1x, {{ s.logo | image_url: width: 480 }} 2x"
+            alt="{{ title | escape }}"
+            width="120"
+            height="120"
+            loading="eager"
+          >
+        </div>
+      {%- endif -%}
+
+      <h1 class="lh__title">{{ title }}</h1>
+      {%- if tagline != blank -%}
+        <p class="lh__tagline">{{ tagline }}</p>
+      {%- endif -%}
+    </header>
+
+    {%- assign link_blocks = section.blocks | where: 'type', 'link' -%}
+    {%- assign social_blocks = section.blocks | where: 'type', 'social' -%}
+    {%- assign note_blocks = section.blocks | where: 'type', 'announcement' -%}
+
+    {%- if note_blocks.size > 0 -%}
+      <div class="lh__notes" role="region" aria-label="Announcements">
+        {%- for block in note_blocks -%}
+          <div class="lh__note" {{ block.shopify_attributes }}>
+            {%- if block.settings.icon != blank -%}
+              <img class="lh__note-icon"
+                src="{{ block.settings.icon | image_url: width: 64 }}"
+                alt=""
+                width="20" height="20" loading="lazy">
+            {%- endif -%}
+            <span class="lh__note-text">{{ block.settings.text }}</span>
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {%- if link_blocks.size > 0 -%}
+      <nav class="lh__links" aria-label="Primary links">
+        {%- for block in link_blocks -%}
+          {%- liquid
+            assign label = block.settings.label | default: 'Untitled link'
+            assign url = block.settings.url | default: '#'
+            assign featured = block.settings.featured
+          -%}
+          <a
+            class="lh__link{% if featured %} lh__link--featured{% endif %}"
+            href="{{ url }}"
+            target="_blank"
+            rel="noopener"
+            data-lh-link
+            {{ block.shopify_attributes }}
+          >
+            <span class="lh__link-icon" aria-hidden="true">
+              {%- if block.settings.icon != blank -%}
+                <img
+                  src="{{ block.settings.icon | image_url: width: 96 }}"
+                  alt=""
+                  width="40"
+                  height="40"
+                  loading="lazy"
+                  decoding="async">
+              {%- else -%}
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M9 17l11-11M9 6h11v11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              {%- endif -%}
+            </span>
+            <span class="lh__link-label">{{ label }}</span>
+            <span class="lh__link-tail" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span class="lh__link-shine" aria-hidden="true"></span>
+          </a>
+        {%- endfor -%}
+      </nav>
+    {%- else -%}
+      <p class="lh__empty">Add link blocks in the theme editor to populate this hub.</p>
+    {%- endif -%}
+
+    {%- if social_blocks.size > 0 -%}
+      <ul class="lh__socials" aria-label="Social channels">
+        {%- for block in social_blocks -%}
+          {%- liquid
+            assign platform = block.settings.platform
+            assign url = block.settings.url | default: '#'
+            assign label = block.settings.label | default: platform
+          -%}
+          <li {{ block.shopify_attributes }}>
+            <a class="lh__social" href="{{ url }}" target="_blank" rel="noopener" aria-label="{{ label | escape }}">
+              {%- case platform -%}
+                {%- when 'whatsapp' -%}
+                  <svg viewBox="0 0 24 24" aria-hidden="true" width="22" height="22" fill="currentColor"><path d="M20.5 3.5A10.94 10.94 0 0 0 12 .25C5.92.25.99 5.18.99 11.27c0 2.06.55 4.06 1.6 5.83L1 23.75l6.78-1.78a11 11 0 0 0 4.21.84h.01c6.07 0 10.99-4.93 10.99-11.02 0-2.95-1.15-5.72-3.49-7.79zM12 21.05h-.01a9.05 9.05 0 0 1-4.6-1.26l-.33-.2-4.02 1.05 1.07-3.93-.21-.34a9.06 9.06 0 0 1-1.4-4.83c0-5.02 4.07-9.09 9.5-9.09 2.45 0 4.7.95 6.4 2.66a9.04 9.04 0 0 1 2.65 6.43c0 5.01-4.07 9.07-9.05 9.07zm5.18-6.79c-.28-.14-1.66-.82-1.92-.91-.26-.09-.45-.14-.64.14-.19.28-.74.92-.91 1.11-.17.19-.34.21-.62.07-.28-.14-1.18-.43-2.24-1.39a8.32 8.32 0 0 1-1.55-1.93c-.16-.28-.02-.43.12-.57.13-.13.28-.34.42-.51.14-.17.18-.28.28-.47.09-.19.05-.36-.02-.51-.07-.14-.64-1.55-.88-2.12-.23-.55-.46-.48-.64-.49-.16-.01-.36-.01-.55-.01-.19 0-.51.07-.78.36-.27.28-1.02 1-1.02 2.43 0 1.43 1.05 2.81 1.19 3 .14.19 2.07 3.16 5.01 4.43.7.3 1.25.48 1.68.61.7.22 1.34.19 1.85.12.56-.08 1.66-.68 1.9-1.34.24-.66.24-1.22.16-1.34-.07-.12-.26-.19-.54-.34z"/></svg>
+                {%- when 'instagram' -%}
+                  <svg viewBox="0 0 24 24" aria-hidden="true" width="22" height="22" fill="currentColor"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16M12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.34 4.14.63a5.86 5.86 0 0 0-2.13 1.38A5.86 5.86 0 0 0 .63 4.14C.34 4.9.13 5.78.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.27 2.15.56 2.91.3.79.7 1.46 1.38 2.13.67.67 1.34 1.08 2.13 1.38.76.29 1.64.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.27-.06 2.15-.27 2.91-.56.79-.3 1.46-.71 2.13-1.38.67-.67 1.08-1.34 1.38-2.13.29-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.27-2.15-.56-2.91a5.86 5.86 0 0 0-1.38-2.13A5.86 5.86 0 0 0 19.86.63C19.1.34 18.22.13 16.95.07 15.67.01 15.26 0 12 0zm0 5.84A6.16 6.16 0 1 0 18.16 12 6.16 6.16 0 0 0 12 5.84zm0 10.16A4 4 0 1 1 16 12a4 4 0 0 1-4 4zm6.41-11.85a1.44 1.44 0 1 0 1.44 1.44 1.44 1.44 0 0 0-1.44-1.44z"/></svg>
+                {%- when 'tiktok' -%}
+                  <svg viewBox="0 0 24 24" aria-hidden="true" width="22" height="22" fill="currentColor"><path d="M19.32 5.55c-1.43-.93-2.39-2.43-2.62-4.16h-3.4v13.62a3.4 3.4 0 1 1-2.4-3.25v-3.49a6.86 6.86 0 1 0 5.8 6.74V8.55a8 8 0 0 0 4.7 1.5V6.62a4.84 4.84 0 0 1-2.08-1.07z"/></svg>
+                {%- when 'facebook' -%}
+                  <svg viewBox="0 0 24 24" aria-hidden="true" width="22" height="22" fill="currentColor"><path d="M22.68 0H1.32C.59 0 0 .59 0 1.32v21.36C0 23.41.59 24 1.32 24h11.5v-9.29H9.69v-3.62h3.13V8.41c0-3.1 1.89-4.79 4.66-4.79 1.32 0 2.46.1 2.79.14v3.24h-1.92c-1.5 0-1.79.71-1.79 1.76v2.31h3.59l-.47 3.62h-3.12V24h6.12c.73 0 1.32-.59 1.32-1.32V1.32C24 .59 23.41 0 22.68 0z"/></svg>
+                {%- when 'pinterest' -%}
+                  <svg viewBox="0 0 24 24" aria-hidden="true" width="22" height="22" fill="currentColor"><path d="M12 0a12 12 0 0 0-4.37 23.17c-.1-.94-.2-2.4.04-3.43.22-.93 1.4-5.94 1.4-5.94s-.36-.72-.36-1.78c0-1.66.97-2.91 2.17-2.91 1.02 0 1.52.77 1.52 1.69 0 1.03-.66 2.57-1 4-.28 1.2.6 2.18 1.79 2.18 2.15 0 3.8-2.27 3.8-5.54 0-2.9-2.08-4.92-5.06-4.92-3.45 0-5.47 2.58-5.47 5.25 0 1.04.4 2.16.9 2.77.1.12.11.22.08.34l-.34 1.36c-.05.22-.18.27-.4.16-1.5-.7-2.43-2.88-2.43-4.64 0-3.78 2.74-7.25 7.91-7.25 4.15 0 7.38 2.96 7.38 6.92 0 4.13-2.6 7.45-6.22 7.45-1.21 0-2.36-.63-2.75-1.38l-.75 2.85c-.27 1.04-1 2.34-1.49 3.13A12 12 0 1 0 12 0z"/></svg>
+                {%- when 'youtube' -%}
+                  <svg viewBox="0 0 24 24" aria-hidden="true" width="22" height="22" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1c.4-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg>
+                {%- when 'email' -%}
+                  <svg viewBox="0 0 24 24" aria-hidden="true" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+                {%- else -%}
+                  <svg viewBox="0 0 24 24" aria-hidden="true" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 0 20M12 2a15.3 15.3 0 0 0 0 20"/></svg>
+              {%- endcase -%}
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+    {%- if s.show_credit -%}
+      <p class="lh__credit">
+        © {{ 'now' | date: '%Y' }} {{ shop.name }}
+      </p>
+    {%- endif -%}
+  </div>
+
+  {%- if s.show_menu_button -%}
+    <div class="lh__menu" data-lh-menu hidden>
+      <div class="lh__menu-backdrop" data-lh-menu-close></div>
+      <div class="lh__menu-card" role="dialog" aria-modal="true" aria-label="{{ s.menu_label | default: 'Menu' | escape }}">
+        <button type="button" class="lh__menu-close" aria-label="Close menu" data-lh-menu-close>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <h2 class="lh__menu-title">{{ s.menu_label | default: 'About' }}</h2>
+        <div class="lh__menu-body rte">{{ s.menu_body }}</div>
+      </div>
+    </div>
+  {%- endif -%}
+</section>
+
+{% style %}
+  /* ========================================================================
+     Treelogy Link Hub — premium, mobile-first, accessibility-conscious
+     - Glassmorphism cards over a blurred botanical background
+     - 44px+ touch targets, focus-visible rings, reduced-motion friendly
+     ======================================================================== */
+  .lh {
+    --lh-shell-w: 480px;
+    --lh-radius: 22px;
+    --lh-radius-sm: 14px;
+    --lh-text: #F8F8F2;
+    --lh-text-soft: rgba(248, 248, 242, 0.78);
+    --lh-text-mute: rgba(248, 248, 242, 0.6);
+    --lh-glass: rgba(248, 248, 242, 0.14);
+    --lh-glass-strong: rgba(248, 248, 242, 0.22);
+    --lh-stroke: rgba(248, 248, 242, 0.2);
+    --lh-stroke-soft: rgba(248, 248, 242, 0.1);
+    --lh-shadow-card: 0 30px 60px -20px rgba(15, 24, 20, 0.55), 0 12px 24px -12px rgba(15, 24, 20, 0.35);
+    --lh-shadow-link: 0 8px 22px -10px rgba(15, 24, 20, 0.45);
+
+    position: relative;
+    min-height: 100vh;
+    min-height: 100dvh;
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: clamp(16px, 4vw, 32px) clamp(16px, 5vw, 24px) calc(env(safe-area-inset-bottom, 0px) + 32px);
+    color: var(--lh-text);
+    isolation: isolate;
+  }
+
+  /* ===== Background layers ===== */
+  .lh__bg {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    z-index: -2;
+    background: #1d2a24;
+  }
+  .lh__bg--solid {
+    background: radial-gradient(ellipse at top, #3a4f43 0%, #1d2a24 60%, #11181473 100%);
+  }
+  .lh__bg-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: blur(var(--lh-blur)) saturate(105%);
+    transform: scale(1.08); /* hide blur edges */
+  }
+  .lh__bg-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg,
+      rgba(43, 60, 53, calc(var(--lh-overlay) * 0.85)) 0%,
+      rgba(29, 42, 36, calc(var(--lh-overlay) * 1.05)) 60%,
+      rgba(17, 24, 20, calc(var(--lh-overlay) * 1.2)) 100%);
+  }
+
+  /* ===== Shell — the glass card containing everything ===== */
+  .lh__shell {
+    position: relative;
+    width: 100%;
+    max-width: var(--lh-shell-w);
+    border-radius: var(--lh-radius);
+    padding: clamp(20px, 6vw, 32px) clamp(16px, 5vw, 24px) clamp(20px, 6vw, 32px);
+    background: linear-gradient(180deg, rgba(248, 248, 242, 0.06), rgba(248, 248, 242, 0.02));
+    border: 1px solid var(--lh-stroke-soft);
+    backdrop-filter: blur(14px) saturate(115%);
+    -webkit-backdrop-filter: blur(14px) saturate(115%);
+    box-shadow: var(--lh-shadow-card);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: clamp(14px, 3.4vw, 20px);
+    z-index: 1;
+  }
+
+  /* ===== Top corners (menu / share) ===== */
+  .lh__corner {
+    position: absolute;
+    top: clamp(12px, 3vw, 18px);
+    z-index: 3;
+  }
+  .lh__corner--left { left: clamp(12px, 3vw, 18px); }
+  .lh__corner--right { right: clamp(12px, 3vw, 18px); }
+
+  .lh__icon-btn {
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    border: 1px solid var(--lh-stroke);
+    background: rgba(248, 248, 242, 0.18);
+    color: var(--lh-text);
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: background 200ms ease, transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1), border-color 200ms ease;
+  }
+  .lh__icon-btn:hover { background: rgba(248, 248, 242, 0.3); border-color: var(--lh-stroke); }
+  .lh__icon-btn:active { transform: scale(0.92); }
+  .lh__icon-btn:focus-visible {
+    outline: 2px solid var(--lh-accent);
+    outline-offset: 3px;
+  }
+
+  /* ===== Header (avatar + title + tagline) ===== */
+  .lh__head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 14px;
+    padding-top: 8px;
+  }
+  .lh__avatar {
+    width: clamp(96px, 26vw, 120px);
+    height: clamp(96px, 26vw, 120px);
+    border-radius: 50%;
+    background: var(--lh-card-tint);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 12px 28px -10px rgba(15, 24, 20, 0.6), inset 0 0 0 4px rgba(248, 248, 242, 0.06);
+    transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .lh__avatar img {
+    width: 60%;
+    height: 60%;
+    object-fit: contain;
+  }
+  .lh__title {
+    margin: 0;
+    font-size: clamp(22px, 5.4vw, 28px);
+    font-weight: 700;
+    letter-spacing: 0.32em;
+    line-height: 1.1;
+    color: var(--lh-text);
+    text-shadow: 0 2px 18px rgba(15, 24, 20, 0.35);
+  }
+  .lh__tagline {
+    margin: 0;
+    font-size: clamp(11px, 3vw, 13px);
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--lh-text-soft);
+  }
+
+  /* ===== Announcements ===== */
+  .lh__notes {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .lh__note {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: rgba(86, 115, 79, 0.22);
+    border: 1px solid rgba(86, 115, 79, 0.45);
+    font-size: 13px;
+    color: var(--lh-text);
+  }
+  .lh__note-icon { width: 20px; height: 20px; flex: 0 0 20px; }
+
+  /* ===== Link buttons ===== */
+  .lh__links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .lh__link {
+    --link-bg: color-mix(in srgb, var(--lh-card-tint) calc(var(--lh-card-opacity) * 100%), transparent);
+    position: relative;
+    display: grid;
+    grid-template-columns: 56px 1fr 24px;
+    align-items: center;
+    min-height: 64px;
+    padding: 8px;
+    padding-right: 14px;
+    border-radius: 18px;
+    background: var(--link-bg, rgba(86, 115, 79, 0.6));
+    border: 1px solid rgba(248, 248, 242, 0.18);
+    color: var(--lh-text);
+    overflow: hidden;
+    isolation: isolate;
+    box-shadow: var(--lh-shadow-link);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 220ms ease,
+                background 220ms ease,
+                border-color 220ms ease;
+  }
+  .lh__link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px -12px rgba(15, 24, 20, 0.55);
+    border-color: rgba(248, 248, 242, 0.3);
+  }
+  .lh__link:active {
+    transform: translateY(0) scale(0.985);
+    transition-duration: 120ms;
+  }
+  .lh__link:focus-visible {
+    outline: 2px solid var(--lh-accent);
+    outline-offset: 3px;
+  }
+  .lh__link--featured {
+    background: linear-gradient(135deg,
+      color-mix(in srgb, var(--lh-card-tint) 85%, white 15%) 0%,
+      var(--lh-card-tint) 100%);
+    border-color: rgba(248, 248, 242, 0.42);
+  }
+  .lh__link-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(248, 248, 242, 0.92);
+    color: #2B3C35;
+  }
+  .lh__link-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .lh__link-label {
+    text-align: center;
+    font-size: clamp(14px, 3.6vw, 15px);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    line-height: 1.25;
+    padding-inline: 8px;
+  }
+  .lh__link-tail {
+    opacity: 0.7;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 220ms ease, opacity 220ms ease;
+  }
+  .lh__link:hover .lh__link-tail {
+    opacity: 1;
+    transform: translateX(2px);
+  }
+
+  /* Subtle shimmer that sweeps across on hover */
+  .lh__link-shine {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(120deg,
+      transparent 30%,
+      rgba(248, 248, 242, 0.18) 50%,
+      transparent 70%);
+    transform: translateX(-120%);
+    transition: transform 700ms cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: -1;
+  }
+  .lh__link:hover .lh__link-shine { transform: translateX(120%); }
+
+  .lh__empty {
+    text-align: center;
+    color: var(--lh-text-mute);
+    font-size: 13px;
+    margin: 24px 0;
+  }
+
+  /* ===== Social icons row ===== */
+  .lh__socials {
+    list-style: none;
+    margin: 4px 0 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(14px, 4vw, 22px);
+    flex-wrap: wrap;
+  }
+  .lh__social {
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--lh-text);
+    border-radius: 12px;
+    transition: transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1), color 200ms ease, background 200ms ease;
+  }
+  .lh__social:hover {
+    transform: translateY(-2px) scale(1.06);
+    background: rgba(248, 248, 242, 0.1);
+  }
+  .lh__social:focus-visible {
+    outline: 2px solid var(--lh-accent);
+    outline-offset: 3px;
+  }
+
+  .lh__credit {
+    margin: 8px 0 0;
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--lh-text-mute);
+  }
+
+  /* ===== Menu modal ===== */
+  .lh__menu {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .lh__menu[hidden] { display: none; }
+  .lh__menu-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 24, 20, 0.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    animation: lh-fade 200ms ease both;
+  }
+  .lh__menu-card {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    border-radius: 20px;
+    padding: 28px 24px 24px;
+    background: #F8F8F2;
+    color: #2B3C35;
+    box-shadow: 0 30px 80px -20px rgba(15, 24, 20, 0.6);
+    animation: lh-pop 280ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+  .lh__menu-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    border: 0;
+    background: rgba(43, 60, 53, 0.08);
+    color: #2B3C35;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 180ms ease;
+  }
+  .lh__menu-close:hover { background: rgba(43, 60, 53, 0.16); }
+  .lh__menu-close:focus-visible { outline: 2px solid #56734F; outline-offset: 2px; }
+  .lh__menu-title {
+    margin: 0 0 12px;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: #2B3C35;
+  }
+  .lh__menu-body {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #515E56;
+  }
+  .lh__menu-body a { color: #56734F; text-decoration: underline; }
+
+  @keyframes lh-fade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes lh-pop {
+    from { opacity: 0; transform: scale(0.94) translateY(8px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  /* ===== Reduced motion ===== */
+  @media (prefers-reduced-motion: reduce) {
+    .lh__link, .lh__icon-btn, .lh__social, .lh__avatar, .lh__link-tail, .lh__link-shine,
+    .lh__menu-backdrop, .lh__menu-card {
+      transition: none !important;
+      animation: none !important;
+    }
+    .lh__link:hover { transform: none; }
+    .lh__social:hover { transform: none; }
+  }
+
+  /* ===== Tighter spacing on tiny screens ===== */
+  @media (max-width: 360px) {
+    .lh__shell { padding: 18px 14px; gap: 14px; }
+    .lh__link { grid-template-columns: 48px 1fr 20px; min-height: 60px; }
+    .lh__link-icon { width: 44px; height: 44px; border-radius: 10px; }
+  }
+
+  /* ===== Wider screens — nice centered card ===== */
+  @media (min-width: 768px) {
+    .lh { padding-top: 48px; padding-bottom: 48px; }
+  }
+{% endstyle %}
+
+<script>
+(function () {
+  /* === Native share — falls back to clipboard === */
+  document.querySelectorAll('[data-lh-share]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var url = window.location.href;
+      var title = btn.getAttribute('data-lh-share-title') || document.title;
+      var text = btn.getAttribute('data-lh-share-text') || '';
+      if (navigator.share) {
+        navigator.share({ title: title, text: text, url: url }).catch(function () {});
+      } else if (navigator.clipboard) {
+        navigator.clipboard.writeText(url).then(function () {
+          btn.setAttribute('data-copied', '1');
+          setTimeout(function () { btn.removeAttribute('data-copied'); }, 1500);
+        });
+      }
+    });
+  });
+
+  /* === Menu modal === */
+  var menu = document.querySelector('[data-lh-menu]');
+  if (menu) {
+    var openers = document.querySelectorAll('[data-lh-menu-trigger]');
+    var closers = document.querySelectorAll('[data-lh-menu-close]');
+    var lastFocused = null;
+    function open() {
+      lastFocused = document.activeElement;
+      menu.hidden = false;
+      var closeBtn = menu.querySelector('.lh__menu-close');
+      if (closeBtn) closeBtn.focus();
+      document.addEventListener('keydown', onKey);
+    }
+    function close() {
+      menu.hidden = true;
+      document.removeEventListener('keydown', onKey);
+      if (lastFocused && lastFocused.focus) lastFocused.focus();
+    }
+    function onKey(e) { if (e.key === 'Escape') close(); }
+    openers.forEach(function (b) { b.addEventListener('click', open); });
+    closers.forEach(function (b) { b.addEventListener('click', close); });
+  }
+
+  /* === Lightweight click-tracking hook (optional — fires gtag if present) === */
+  document.querySelectorAll('[data-lh-link]').forEach(function (a) {
+    a.addEventListener('click', function () {
+      try {
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', 'links_hub_click', {
+            link_url: a.href,
+            link_label: (a.querySelector('.lh__link-label') || {}).textContent || ''
+          });
+        }
+      } catch (_) {}
+    });
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Links Hub",
+  "tag": "section",
+  "class": "section-links-hub",
+  "settings": [
+    { "type": "header", "content": "Background" },
+    { "type": "image_picker", "id": "background", "label": "Background image" },
+    { "type": "range", "id": "bg_blur", "label": "Background blur", "min": 0, "max": 40, "step": 2, "default": 18, "unit": "px" },
+    { "type": "range", "id": "bg_overlay", "label": "Overlay darkness", "min": 0, "max": 90, "step": 5, "default": 35, "unit": "%" },
+
+    { "type": "header", "content": "Identity" },
+    { "type": "image_picker", "id": "logo", "label": "Logo (square / transparent)" },
+    { "type": "text", "id": "title", "label": "Title", "default": "TREELOGY" },
+    { "type": "text", "id": "tagline", "label": "Tagline", "default": "Nourishing You, Enriching Life" },
+
+    { "type": "header", "content": "Style" },
+    { "type": "color", "id": "card_tint", "label": "Link button tint", "default": "#56734F" },
+    { "type": "range", "id": "card_opacity", "label": "Link button opacity", "min": 30, "max": 95, "step": 5, "default": 60, "unit": "%" },
+    { "type": "color", "id": "accent_color", "label": "Focus / accent color", "default": "#F8F8F2" },
+
+    { "type": "header", "content": "Header buttons" },
+    { "type": "checkbox", "id": "show_share_button", "label": "Show share button", "default": true },
+    { "type": "checkbox", "id": "show_menu_button", "label": "Show menu button", "default": true },
+    { "type": "text", "id": "menu_label", "label": "Menu title", "default": "About" },
+    { "type": "richtext", "id": "menu_body", "label": "Menu content", "default": "<p>Welcome to Treelogy.</p>" },
+
+    { "type": "header", "content": "Footer" },
+    { "type": "checkbox", "id": "show_credit", "label": "Show copyright line", "default": false }
+  ],
+  "blocks": [
+    {
+      "type": "link",
+      "name": "Link button",
+      "limit": 24,
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "New link" },
+        { "type": "url", "id": "url", "label": "URL" },
+        { "type": "image_picker", "id": "icon", "label": "Icon / thumbnail (square)" },
+        { "type": "checkbox", "id": "featured", "label": "Highlight this link", "default": false }
+      ]
+    },
+    {
+      "type": "social",
+      "name": "Social icon",
+      "limit": 12,
+      "settings": [
+        {
+          "type": "select",
+          "id": "platform",
+          "label": "Platform",
+          "default": "instagram",
+          "options": [
+            { "value": "whatsapp",  "label": "WhatsApp" },
+            { "value": "instagram", "label": "Instagram" },
+            { "value": "tiktok",    "label": "TikTok" },
+            { "value": "facebook",  "label": "Facebook" },
+            { "value": "pinterest", "label": "Pinterest" },
+            { "value": "youtube",   "label": "YouTube" },
+            { "value": "email",     "label": "Email" },
+            { "value": "website",   "label": "Website" }
+          ]
+        },
+        { "type": "url", "id": "url", "label": "URL" },
+        { "type": "text", "id": "label", "label": "Accessible label", "info": "Read by screen readers." }
+      ]
+    },
+    {
+      "type": "announcement",
+      "name": "Announcement chip",
+      "limit": 3,
+      "settings": [
+        { "type": "text", "id": "text", "label": "Text", "default": "Free shipping across Indonesia" },
+        { "type": "image_picker", "id": "icon", "label": "Icon (optional)" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Links Hub",
+      "blocks": [
+        { "type": "link",   "settings": { "label": "30 Days Inside Out Moringa Protocol" } },
+        { "type": "link",   "settings": { "label": "Shop all Treelogy" } },
+        { "type": "link",   "settings": { "label": "Tokopedia Shop" } },
+        { "type": "link",   "settings": { "label": "Shopee Shop" } },
+        { "type": "link",   "settings": { "label": "About Moringa" } },
+        { "type": "social", "settings": { "platform": "whatsapp",  "label": "WhatsApp" } },
+        { "type": "social", "settings": { "platform": "website",   "label": "Website" } },
+        { "type": "social", "settings": { "platform": "instagram", "label": "Instagram" } },
+        { "type": "social", "settings": { "platform": "tiktok",    "label": "TikTok" } },
+        { "type": "social", "settings": { "platform": "facebook",  "label": "Facebook" } },
+        { "type": "social", "settings": { "platform": "pinterest", "label": "Pinterest" } }
+      ]
+    }
+  ],
+  "enabled_on": { "templates": ["page"] }
+}
+{% endschema %}
