@@ -209,14 +209,81 @@
   {%- if s.show_menu_button -%}
     <div class="lh__menu" data-lh-menu hidden>
       <div class="lh__menu-backdrop" data-lh-menu-close></div>
-      <div class="lh__menu-card" role="dialog" aria-modal="true" aria-label="{{ s.menu_label | default: 'Menu' | escape }}">
-        <button type="button" class="lh__menu-close" aria-label="Close menu" data-lh-menu-close>
+      <div class="lh__menu-card" role="dialog" aria-modal="true" aria-labelledby="lh-menu-headline">
+        <button type="button" class="lh__menu-close" aria-label="Close" data-lh-menu-close>
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
             <path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
           </svg>
         </button>
-        <h2 class="lh__menu-title">{{ s.menu_label | default: 'About' }}</h2>
-        <div class="lh__menu-body rte">{{ s.menu_body }}</div>
+
+        {%- if s.menu_kicker != blank -%}
+          <span class="lh__menu-kicker">{{ s.menu_kicker | escape }}</span>
+        {%- endif -%}
+
+        {%- if s.menu_headline != blank -%}
+          <h2 id="lh-menu-headline" class="lh__menu-headline">{{ s.menu_headline }}</h2>
+        {%- endif -%}
+
+        {%- if s.menu_body != blank -%}
+          <div class="lh__menu-body rte">{{ s.menu_body }}</div>
+        {%- endif -%}
+
+        {%- if s.menu_product_title != blank -%}
+          {%- assign p_url = s.menu_product_url | default: '#' -%}
+          <a class="lh__menu-product"
+             href="{{ p_url }}"
+             {% if s.menu_product_url != blank %}target="_blank" rel="noopener"{% endif %}
+             data-lh-product>
+            <span class="lh__menu-product-shine" aria-hidden="true"></span>
+
+            <span class="lh__menu-product-thumb">
+              {%- if s.menu_product_image != blank -%}
+                <img
+                  src="{{ s.menu_product_image | image_url: width: 200 }}"
+                  srcset="{{ s.menu_product_image | image_url: width: 200 }} 1x, {{ s.menu_product_image | image_url: width: 400 }} 2x"
+                  alt="{{ s.menu_product_title | escape }}"
+                  width="80" height="80" loading="lazy" decoding="async">
+              {%- else -%}
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 3c-3 5-5 8-5 11a5 5 0 0010 0c0-3-2-6-5-11z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                  <path d="M12 14v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                </svg>
+              {%- endif -%}
+            </span>
+
+            <span class="lh__menu-product-body">
+              {%- if s.menu_product_badge != blank -%}
+                <span class="lh__menu-product-badge">
+                  <span class="lh__menu-product-badge-dot" aria-hidden="true"></span>
+                  {{ s.menu_product_badge | escape }}
+                </span>
+              {%- endif -%}
+              <span class="lh__menu-product-title">{{ s.menu_product_title }}</span>
+              {%- if s.menu_product_outcomes != blank -%}
+                <span class="lh__menu-product-outcomes">{{ s.menu_product_outcomes }}</span>
+              {%- endif -%}
+              {%- if s.menu_product_pitch != blank -%}
+                <span class="lh__menu-product-pitch">{{ s.menu_product_pitch }}</span>
+              {%- endif -%}
+            </span>
+
+            <span class="lh__menu-product-cta">
+              <span class="lh__menu-product-cta-label">{{ s.menu_product_cta | default: 'Start' }}</span>
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </a>
+        {%- endif -%}
+
+        {%- if s.menu_secondary_url != blank -%}
+          <a class="lh__menu-secondary" href="{{ s.menu_secondary_url }}">
+            {{ s.menu_secondary_label | default: 'Learn more' }}
+            <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        {%- endif -%}
       </div>
     </div>
   {%- endif -%}
@@ -626,7 +693,7 @@
     animation: lh-fade 500ms ease 1300ms forwards;
   }
 
-  /* ===== Menu modal ===== */
+  /* ===== Menu modal — upselling story panel ===== */
   .lh__menu {
     position: fixed;
     inset: 0;
@@ -637,27 +704,52 @@
     padding: 16px;
   }
   .lh__menu[hidden] { display: none; }
+
   .lh__menu-backdrop {
     position: absolute;
     inset: 0;
     background: rgba(15, 24, 20, 0.55);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    animation: lh-fade 220ms ease both;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    opacity: 0;
   }
+  .lh__menu.is-open .lh__menu-backdrop { animation: lh-fade 260ms ease forwards; }
+
   .lh__menu-card {
     position: relative;
     width: 100%;
-    max-width: 420px;
-    border-radius: 22px;
-    padding: 28px 24px 24px;
-    background: #F8F8F2;
+    max-width: 460px;
+    max-height: calc(100vh - 32px);
+    max-height: calc(100dvh - 32px);
+    overflow-y: auto;
+    border-radius: 28px;
+    padding: clamp(28px, 6vw, 36px) clamp(20px, 5vw, 28px) clamp(22px, 5vw, 28px);
+    background: linear-gradient(180deg, #FBFBF5 0%, #F4F4EC 100%);
     color: #2B3C35;
     box-shadow:
-      0 30px 80px -20px rgba(15, 24, 20, 0.6),
-      inset 0 1px 0 rgba(255, 255, 255, 0.6);
-    animation: lh-pop 320ms var(--lh-spring) both;
+      0 40px 100px -28px rgba(15, 24, 20, 0.55),
+      0 16px 48px -20px rgba(15, 24, 20, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    opacity: 0;
+    transform: scale(0.94) translate3d(0, 12px, 0);
+    -webkit-overflow-scrolling: touch;
   }
+  .lh__menu.is-open .lh__menu-card {
+    animation: lh-menu-pop 460ms var(--lh-spring) forwards;
+  }
+  .lh__menu-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(ellipse 70% 40% at 50% 0%,
+      rgba(86, 115, 79, 0.14), transparent 70%);
+  }
+
   .lh__menu-close {
     position: absolute;
     top: 12px;
@@ -672,19 +764,227 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: background 180ms ease, transform 220ms var(--lh-spring);
+    transition: background 220ms ease, transform 360ms var(--lh-spring);
+    z-index: 2;
   }
-  .lh__menu-close:hover { background: rgba(43, 60, 53, 0.16); transform: scale(1.05); }
+  .lh__menu-close:hover { background: rgba(43, 60, 53, 0.16); transform: rotate(90deg); }
   .lh__menu-close:focus-visible { outline: 2px solid #56734F; outline-offset: 2px; }
-  .lh__menu-title {
-    margin: 0 0 12px;
-    font-size: 18px;
+
+  .lh__menu-kicker {
+    font-size: 11px;
     font-weight: 700;
-    letter-spacing: 0.04em;
-    color: #2B3C35;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #56734F;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
   }
-  .lh__menu-body { font-size: 14px; line-height: 1.6; color: #515E56; }
+  .lh__menu-kicker::before {
+    content: '';
+    width: 22px;
+    height: 1px;
+    background: currentColor;
+    display: inline-block;
+    opacity: 0.6;
+  }
+  .lh__menu.is-open .lh__menu-kicker {
+    animation: lh-rise 540ms var(--lh-ease) 160ms forwards;
+  }
+
+  .lh__menu-headline {
+    margin: 0;
+    font-size: clamp(22px, 5vw, 26px);
+    font-weight: 700;
+    line-height: 1.18;
+    letter-spacing: -0.01em;
+    color: #1d2a24;
+    text-wrap: balance;
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+  }
+  .lh__menu.is-open .lh__menu-headline {
+    animation: lh-rise 640ms var(--lh-ease) 240ms forwards;
+  }
+
+  .lh__menu-body {
+    font-size: 14px;
+    line-height: 1.65;
+    color: #4F5C53;
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+  }
+  .lh__menu.is-open .lh__menu-body {
+    animation: lh-rise 540ms var(--lh-ease) 320ms forwards;
+  }
+  .lh__menu-body p { margin: 0; }
+  .lh__menu-body p + p { margin-top: 8px; }
   .lh__menu-body a { color: #56734F; text-decoration: underline; }
+
+  /* Product upsell card */
+  .lh__menu-product {
+    position: relative;
+    display: grid;
+    grid-template-columns: 76px 1fr auto;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 14px 12px 12px;
+    margin-top: 6px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(86, 115, 79, 0.1), rgba(86, 115, 79, 0.04));
+    border: 1px solid rgba(86, 115, 79, 0.2);
+    color: #2B3C35;
+    text-decoration: none;
+    overflow: hidden;
+    isolation: isolate;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.7),
+      0 6px 18px -10px rgba(15, 24, 20, 0.18);
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+    transition:
+      transform 380ms var(--lh-spring),
+      box-shadow 380ms var(--lh-ease),
+      border-color 280ms ease;
+    will-change: transform;
+  }
+  .lh__menu.is-open .lh__menu-product {
+    animation: lh-rise 660ms var(--lh-spring) 400ms forwards;
+  }
+  .lh__menu-product:hover {
+    transform: translate3d(0, -3px, 0);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.8),
+      0 18px 36px -16px rgba(86, 115, 79, 0.4);
+    border-color: rgba(86, 115, 79, 0.4);
+  }
+  .lh__menu-product:active {
+    transform: translate3d(0, 0, 0) scale(0.99);
+    transition-duration: 140ms;
+  }
+  .lh__menu-product:focus-visible { outline: 2px solid #56734F; outline-offset: 3px; }
+  .lh__menu-product > *:not(.lh__menu-product-shine) { position: relative; z-index: 1; }
+
+  .lh__menu-product-shine {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(120deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.45) 50%,
+      transparent 70%);
+    transform: translateX(-130%);
+    z-index: 0;
+  }
+  .lh__menu.is-open .lh__menu-product-shine {
+    animation: lh-shine-loop 6.5s cubic-bezier(0.4, 0, 0.2, 1) 1.6s infinite;
+  }
+
+  .lh__menu-product-thumb {
+    width: 76px;
+    height: 76px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(86, 115, 79, 0.18), rgba(86, 115, 79, 0.08));
+    color: #56734F;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+    transition: transform 380ms var(--lh-spring);
+  }
+  .lh__menu-product:hover .lh__menu-product-thumb { transform: scale(1.05) rotate(-2deg); }
+  .lh__menu-product-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+  .lh__menu-product-body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+  .lh__menu-product-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #56734F;
+    margin-bottom: 1px;
+  }
+  .lh__menu-product-badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: #56734F;
+    display: inline-block;
+    box-shadow: 0 0 0 0 rgba(86, 115, 79, 0.5);
+    animation: lh-pulse 2.4s ease-in-out infinite;
+  }
+  .lh__menu-product-title {
+    font-size: 14.5px;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.005em;
+    color: #1d2a24;
+  }
+  .lh__menu-product-outcomes {
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: #56734F;
+    margin-top: 2px;
+  }
+  .lh__menu-product-pitch {
+    font-size: 12px;
+    line-height: 1.5;
+    color: #5C6A60;
+    margin-top: 2px;
+  }
+  .lh__menu-product-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #56734F;
+    align-self: center;
+    white-space: nowrap;
+    transition: transform 320ms var(--lh-spring);
+  }
+  .lh__menu-product-cta-label { display: inline-block; }
+  .lh__menu-product:hover .lh__menu-product-cta { transform: translateX(3px); color: #455e41; }
+
+  .lh__menu-secondary {
+    align-self: center;
+    margin-top: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: #56734F;
+    text-decoration: none;
+    border-radius: 999px;
+    transition: background 220ms ease, transform 320ms var(--lh-spring);
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+  }
+  .lh__menu.is-open .lh__menu-secondary {
+    animation: lh-rise 520ms var(--lh-ease) 520ms forwards;
+  }
+  .lh__menu-secondary:hover { background: rgba(86, 115, 79, 0.1); }
+  .lh__menu-secondary svg { transition: transform 280ms var(--lh-spring); }
+  .lh__menu-secondary:hover svg { transform: translateX(3px); }
+  .lh__menu-secondary:focus-visible { outline: 2px solid #56734F; outline-offset: 2px; }
 
   /* ===== Keyframes ===== */
   @keyframes lh-fade { to { opacity: 1; } }
@@ -712,25 +1012,41 @@
     100% { transform: scale(1.14) translate3d(-1.2%, -1.2%, 0); }
   }
   @keyframes lh-shine-loop {
-    0%, 100% { transform: translateX(-120%); }
-    50%      { transform: translateX(120%); }
+    0%, 100% { transform: translateX(-130%); }
+    50%      { transform: translateX(130%); }
+  }
+  @keyframes lh-menu-pop {
+    to { opacity: 1; transform: scale(1) translate3d(0, 0, 0); }
+  }
+  @keyframes lh-pulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(86, 115, 79, 0.5); }
+    50%      { transform: scale(1.35); box-shadow: 0 0 0 5px rgba(86, 115, 79, 0); }
   }
 
   /* ===== Reduced motion ===== */
   @media (prefers-reduced-motion: reduce) {
     .lh__shell, .lh__avatar, .lh__title, .lh__tagline, .lh__corner,
     .lh__credit, .lh__link, .lh__socials li, .lh__bg-img, .lh__note,
-    .lh__menu-backdrop, .lh__menu-card, .lh__link--featured .lh__link-shine {
+    .lh__menu-backdrop, .lh__menu-card, .lh__link--featured .lh__link-shine,
+    .lh__menu-kicker, .lh__menu-headline, .lh__menu-body,
+    .lh__menu-product, .lh__menu-secondary, .lh__menu-product-shine,
+    .lh__menu-product-badge-dot {
       animation: none !important;
       opacity: 1 !important;
       transform: none !important;
     }
     .lh__link, .lh__icon-btn, .lh__social, .lh__avatar, .lh__link-tail,
-    .lh__link-shine, .lh__link-icon, .lh__menu-close {
+    .lh__link-shine, .lh__link-icon, .lh__menu-close,
+    .lh__menu-product, .lh__menu-product-thumb, .lh__menu-product-cta,
+    .lh__menu-secondary, .lh__menu-secondary svg {
       transition: none !important;
     }
-    .lh__link:hover, .lh__social:hover, .lh__icon-btn:hover { transform: none; }
-    .lh__link:hover .lh__link-icon { transform: none; }
+    .lh__link:hover, .lh__social:hover, .lh__icon-btn:hover,
+    .lh__menu-product:hover, .lh__menu-close:hover { transform: none; }
+    .lh__link:hover .lh__link-icon,
+    .lh__menu-product:hover .lh__menu-product-thumb,
+    .lh__menu-product:hover .lh__menu-product-cta,
+    .lh__menu-secondary:hover svg { transform: none; }
   }
 
   /* ===== Tiny screens ===== */
@@ -789,28 +1105,49 @@
     });
   });
 
-  /* === Menu modal === */
+  /* === Menu modal — choreographed open/close === */
   var menu = document.querySelector('[data-lh-menu]');
   if (menu) {
     var openers = document.querySelectorAll('[data-lh-menu-trigger]');
     var closers = document.querySelectorAll('[data-lh-menu-close]');
     var lastFocused = null;
+
     function open() {
       lastFocused = document.activeElement;
       menu.hidden = false;
+      // Force a reflow so the staggered child animations restart from frame 0.
+      void menu.offsetWidth;
+      menu.classList.add('is-open');
       var closeBtn = menu.querySelector('.lh__menu-close');
       if (closeBtn) closeBtn.focus();
       document.addEventListener('keydown', onKey);
+      document.body.style.overflow = 'hidden';
     }
     function close() {
+      menu.classList.remove('is-open');
       menu.hidden = true;
       document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
       if (lastFocused && lastFocused.focus) lastFocused.focus();
     }
     function onKey(e) { if (e.key === 'Escape') close(); }
     openers.forEach(function (b) { b.addEventListener('click', open); });
     closers.forEach(function (b) { b.addEventListener('click', close); });
   }
+
+  /* === Product CTA tracking (separate event for upsell card) === */
+  document.querySelectorAll('[data-lh-product]').forEach(function (a) {
+    a.addEventListener('click', function () {
+      try {
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', 'links_hub_upsell_click', {
+            link_url: a.href,
+            link_label: (a.querySelector('.lh__menu-product-title') || {}).textContent || ''
+          });
+        }
+      } catch (_) {}
+    });
+  });
 
   /* === Lightweight click-tracking hook (fires gtag if present) === */
   document.querySelectorAll('[data-lh-link]').forEach(function (a) {
@@ -852,8 +1189,25 @@
     { "type": "header", "content": "Header buttons" },
     { "type": "checkbox", "id": "show_share_button", "label": "Show share button", "default": true },
     { "type": "checkbox", "id": "show_menu_button", "label": "Show menu button", "default": true },
-    { "type": "text", "id": "menu_label", "label": "Menu title", "default": "About" },
-    { "type": "richtext", "id": "menu_body", "label": "Menu content", "default": "<p>Welcome to Treelogy.</p>" },
+    { "type": "text", "id": "menu_label", "label": "Menu button label (a11y)", "default": "About" },
+
+    { "type": "header", "content": "About panel — Story" },
+    { "type": "text", "id": "menu_kicker", "label": "Eyebrow / kicker", "default": "ROOTED IN INDONESIA" },
+    { "type": "text", "id": "menu_headline", "label": "Headline", "default": "Skin, gut, energy, calm — from one tree." },
+    { "type": "richtext", "id": "menu_body", "label": "Body copy", "default": "<p>Indonesian moringa, cold-pressed and bottled into a daily ritual you can finish in 30 days. Grown by us, prepared the way it should be — close to the source.</p>" },
+
+    { "type": "header", "content": "About panel — Featured product" },
+    { "type": "image_picker", "id": "menu_product_image", "label": "Product image" },
+    { "type": "text", "id": "menu_product_badge", "label": "Badge", "default": "BESTSELLER" },
+    { "type": "text", "id": "menu_product_title", "label": "Product title", "default": "30 Days Inside Out Moringa Protocol" },
+    { "type": "text", "id": "menu_product_outcomes", "label": "Outcomes (separator: ·)", "default": "Skin · Energy · Gut · Calm" },
+    { "type": "text", "id": "menu_product_pitch", "label": "One-line pitch", "default": "One supplement. One serum. One habit." },
+    { "type": "text", "id": "menu_product_cta", "label": "CTA label", "default": "Start the protocol" },
+    { "type": "url", "id": "menu_product_url", "label": "CTA URL" },
+
+    { "type": "header", "content": "About panel — Footer link" },
+    { "type": "text", "id": "menu_secondary_label", "label": "Secondary link label", "default": "Why moringa" },
+    { "type": "url", "id": "menu_secondary_url", "label": "Secondary link URL" },
 
     { "type": "header", "content": "Footer" },
     { "type": "checkbox", "id": "show_credit", "label": "Show copyright line", "default": false }

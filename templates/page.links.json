@@ -8,7 +8,17 @@
         "show_share_button": true,
         "show_menu_button": true,
         "menu_label": "About",
-        "menu_body": "<p>Welcome to Treelogy.</p>",
+        "menu_kicker": "ROOTED IN INDONESIA",
+        "menu_headline": "Skin, gut, energy, calm — from one tree.",
+        "menu_body": "<p>Indonesian moringa, cold-pressed and bottled into a daily ritual you can finish in 30 days. Grown by us, prepared the way it should be — close to the source.</p>",
+        "menu_product_badge": "BESTSELLER",
+        "menu_product_title": "30 Days Inside Out Moringa Protocol",
+        "menu_product_outcomes": "Skin · Energy · Gut · Calm",
+        "menu_product_pitch": "One supplement. One serum. One habit.",
+        "menu_product_cta": "Start the protocol",
+        "menu_product_url": "https://treelogy.com/id/products/moringa-inside-out-protocol",
+        "menu_secondary_label": "Why moringa",
+        "menu_secondary_url": "https://treelogy.com/pages/moringa-tree",
         "show_credit": false
       },
       "blocks": {
