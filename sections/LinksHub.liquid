@@ -106,7 +106,7 @@
     {%- if note_blocks.size > 0 -%}
       <div class="lh__notes" role="region" aria-label="Announcements">
         {%- for block in note_blocks -%}
-          <div class="lh__note" {{ block.shopify_attributes }}>
+          <div class="lh__note" style="--i: {{ forloop.index0 }};" {{ block.shopify_attributes }}>
             {%- if block.settings.icon != blank -%}
               <img class="lh__note-icon"
                 src="{{ block.settings.icon | image_url: width: 64 }}"
@@ -133,6 +133,7 @@
             target="_blank"
             rel="noopener"
             data-lh-link
+            style="--i: {{ forloop.index0 }};"
             {{ block.shopify_attributes }}
           >
             <span class="lh__link-icon" aria-hidden="true">
@@ -172,7 +173,7 @@
             assign url = block.settings.url | default: '#'
             assign label = block.settings.label | default: platform
           -%}
-          <li {{ block.shopify_attributes }}>
+          <li style="--i: {{ forloop.index0 }};" {{ block.shopify_attributes }}>
             <a class="lh__social" href="{{ url }}" target="_blank" rel="noopener" aria-label="{{ label | escape }}">
               {%- case platform -%}
                 {%- when 'whatsapp' -%}
@@ -223,23 +224,32 @@
 
 {% style %}
   /* ========================================================================
-     Treelogy Link Hub — premium, mobile-first, accessibility-conscious
-     - Glassmorphism cards over a blurred botanical background
-     - 44px+ touch targets, focus-visible rings, reduced-motion friendly
+     Treelogy Link Hub — premium choreographed motion
+     - Spring entrance cascade + staggered orchestration
+     - Perpetual micro-motion (avatar float, background drift, ambient shine)
+     - Cursor-tracked spotlight on link buttons
+     - Liquid Glass refraction edges (inner border + inner shadow)
+     - Hardware-accelerated (transform / opacity only)
+     - prefers-reduced-motion fully respected
      ======================================================================== */
   .lh {
     --lh-shell-w: 480px;
-    --lh-radius: 22px;
-    --lh-radius-sm: 14px;
+    --lh-radius: 24px;
     --lh-text: #F8F8F2;
     --lh-text-soft: rgba(248, 248, 242, 0.78);
     --lh-text-mute: rgba(248, 248, 242, 0.6);
-    --lh-glass: rgba(248, 248, 242, 0.14);
-    --lh-glass-strong: rgba(248, 248, 242, 0.22);
     --lh-stroke: rgba(248, 248, 242, 0.2);
     --lh-stroke-soft: rgba(248, 248, 242, 0.1);
-    --lh-shadow-card: 0 30px 60px -20px rgba(15, 24, 20, 0.55), 0 12px 24px -12px rgba(15, 24, 20, 0.35);
-    --lh-shadow-link: 0 8px 22px -10px rgba(15, 24, 20, 0.45);
+    --lh-shadow-card:
+      0 32px 80px -28px rgba(15, 24, 20, 0.65),
+      0 12px 28px -14px rgba(15, 24, 20, 0.4),
+      inset 0 1px 0 rgba(248, 248, 242, 0.08);
+    --lh-shadow-link:
+      0 10px 24px -12px rgba(15, 24, 20, 0.5),
+      inset 0 1px 0 rgba(248, 248, 242, 0.12);
+    --lh-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --lh-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --lh-ease-soft: cubic-bezier(0.16, 1, 0.3, 1);
 
     position: relative;
     min-height: 100vh;
@@ -253,7 +263,7 @@
     isolation: isolate;
   }
 
-  /* ===== Background layers ===== */
+  /* ===== Background ===== */
   .lh__bg {
     position: absolute;
     inset: 0;
@@ -262,48 +272,68 @@
     background: #1d2a24;
   }
   .lh__bg--solid {
-    background: radial-gradient(ellipse at top, #3a4f43 0%, #1d2a24 60%, #11181473 100%);
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 0%, #3a4f43 0%, transparent 70%),
+      radial-gradient(ellipse 100% 70% at 50% 100%, rgba(17, 24, 20, 0.7) 0%, transparent 70%),
+      #1d2a24;
   }
   .lh__bg-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: blur(var(--lh-blur)) saturate(105%);
-    transform: scale(1.08); /* hide blur edges */
+    filter: blur(var(--lh-blur)) saturate(110%);
+    transform: scale(1.08) translate3d(0, 0, 0);
+    will-change: transform;
+    animation: lh-bg-drift 32s ease-in-out infinite alternate;
   }
   .lh__bg-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg,
-      rgba(43, 60, 53, calc(var(--lh-overlay) * 0.85)) 0%,
-      rgba(29, 42, 36, calc(var(--lh-overlay) * 1.05)) 60%,
-      rgba(17, 24, 20, calc(var(--lh-overlay) * 1.2)) 100%);
+    background:
+      radial-gradient(ellipse 70% 50% at 50% 35%, transparent 0%, rgba(15, 24, 20, calc(var(--lh-overlay) * 0.5)) 100%),
+      linear-gradient(180deg,
+        rgba(43, 60, 53, calc(var(--lh-overlay) * 0.85)) 0%,
+        rgba(29, 42, 36, calc(var(--lh-overlay) * 1.05)) 60%,
+        rgba(17, 24, 20, calc(var(--lh-overlay) * 1.2)) 100%);
   }
 
-  /* ===== Shell — the glass card containing everything ===== */
+  /* ===== Shell — liquid glass card ===== */
   .lh__shell {
     position: relative;
     width: 100%;
     max-width: var(--lh-shell-w);
     border-radius: var(--lh-radius);
-    padding: clamp(20px, 6vw, 32px) clamp(16px, 5vw, 24px) clamp(20px, 6vw, 32px);
-    background: linear-gradient(180deg, rgba(248, 248, 242, 0.06), rgba(248, 248, 242, 0.02));
+    padding: clamp(22px, 6vw, 34px) clamp(16px, 5vw, 24px);
+    background: linear-gradient(180deg, rgba(248, 248, 242, 0.08), rgba(248, 248, 242, 0.02));
     border: 1px solid var(--lh-stroke-soft);
-    backdrop-filter: blur(14px) saturate(115%);
-    -webkit-backdrop-filter: blur(14px) saturate(115%);
+    backdrop-filter: blur(18px) saturate(125%);
+    -webkit-backdrop-filter: blur(18px) saturate(125%);
     box-shadow: var(--lh-shadow-card);
     display: flex;
     flex-direction: column;
-    align-items: stretch;
     gap: clamp(14px, 3.4vw, 20px);
     z-index: 1;
+    opacity: 0;
+    transform: translate3d(0, 28px, 0);
+    animation: lh-shell-rise 900ms var(--lh-ease) 60ms forwards;
+  }
+  .lh__shell::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(135deg, rgba(248, 248, 242, 0.07), transparent 45%);
+    mix-blend-mode: overlay;
   }
 
-  /* ===== Top corners (menu / share) ===== */
+  /* ===== Corners (menu / share) ===== */
   .lh__corner {
     position: absolute;
     top: clamp(12px, 3vw, 18px);
     z-index: 3;
+    opacity: 0;
+    animation: lh-fade 500ms var(--lh-ease) 720ms forwards;
   }
   .lh__corner--left { left: clamp(12px, 3vw, 18px); }
   .lh__corner--right { right: clamp(12px, 3vw, 18px); }
@@ -321,16 +351,24 @@
     cursor: pointer;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    transition: background 200ms ease, transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1), border-color 200ms ease;
+    box-shadow:
+      inset 0 1px 0 rgba(248, 248, 242, 0.2),
+      0 4px 14px -6px rgba(15, 24, 20, 0.4);
+    transition:
+      background 280ms ease,
+      transform 320ms var(--lh-spring),
+      border-color 280ms ease;
+    will-change: transform;
   }
-  .lh__icon-btn:hover { background: rgba(248, 248, 242, 0.3); border-color: var(--lh-stroke); }
-  .lh__icon-btn:active { transform: scale(0.92); }
-  .lh__icon-btn:focus-visible {
-    outline: 2px solid var(--lh-accent);
-    outline-offset: 3px;
+  .lh__icon-btn:hover {
+    background: rgba(248, 248, 242, 0.28);
+    transform: scale(1.06);
+    border-color: rgba(248, 248, 242, 0.32);
   }
+  .lh__icon-btn:active { transform: scale(0.92); transition-duration: 120ms; }
+  .lh__icon-btn:focus-visible { outline: 2px solid var(--lh-accent); outline-offset: 3px; }
 
-  /* ===== Header (avatar + title + tagline) ===== */
+  /* ===== Header ===== */
   .lh__head {
     display: flex;
     flex-direction: column;
@@ -348,14 +386,19 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    box-shadow: 0 12px 28px -10px rgba(15, 24, 20, 0.6), inset 0 0 0 4px rgba(248, 248, 242, 0.06);
-    transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow:
+      0 18px 40px -14px rgba(15, 24, 20, 0.7),
+      inset 0 0 0 4px rgba(248, 248, 242, 0.08),
+      inset 0 1px 0 rgba(248, 248, 242, 0.18);
+    opacity: 0;
+    transform: scale(0.6);
+    animation:
+      lh-avatar-pop 800ms var(--lh-spring) 220ms forwards,
+      lh-avatar-float 6s ease-in-out 1.4s infinite;
+    will-change: transform;
   }
-  .lh__avatar img {
-    width: 60%;
-    height: 60%;
-    object-fit: contain;
-  }
+  .lh__avatar img { width: 60%; height: 60%; object-fit: contain; }
+
   .lh__title {
     margin: 0;
     font-size: clamp(22px, 5.4vw, 28px);
@@ -363,7 +406,10 @@
     letter-spacing: 0.32em;
     line-height: 1.1;
     color: var(--lh-text);
-    text-shadow: 0 2px 18px rgba(15, 24, 20, 0.35);
+    text-shadow: 0 2px 22px rgba(15, 24, 20, 0.4);
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+    animation: lh-rise 700ms var(--lh-ease-soft) 400ms forwards;
   }
   .lh__tagline {
     margin: 0;
@@ -372,9 +418,12 @@
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--lh-text-soft);
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+    animation: lh-rise 600ms var(--lh-ease-soft) 500ms forwards;
   }
 
-  /* ===== Announcements ===== */
+  /* ===== Notes ===== */
   .lh__notes {
     display: flex;
     flex-direction: column;
@@ -388,8 +437,12 @@
     border-radius: 999px;
     background: rgba(86, 115, 79, 0.22);
     border: 1px solid rgba(86, 115, 79, 0.45);
+    box-shadow: inset 0 1px 0 rgba(248, 248, 242, 0.1);
     font-size: 13px;
     color: var(--lh-text);
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+    animation: lh-rise 600ms var(--lh-ease-soft) calc(560ms + var(--i, 0) * 80ms) forwards;
   }
   .lh__note-icon { width: 20px; height: 20px; flex: 0 0 20px; }
 
@@ -401,46 +454,72 @@
   }
   .lh__link {
     --link-bg: color-mix(in srgb, var(--lh-card-tint) calc(var(--lh-card-opacity) * 100%), transparent);
+    --mx: 50%;
+    --my: 50%;
+
     position: relative;
     display: grid;
     grid-template-columns: 56px 1fr 24px;
     align-items: center;
     min-height: 64px;
-    padding: 8px;
-    padding-right: 14px;
+    padding: 8px 14px 8px 8px;
     border-radius: 18px;
     background: var(--link-bg, rgba(86, 115, 79, 0.6));
     border: 1px solid rgba(248, 248, 242, 0.18);
     color: var(--lh-text);
+    text-decoration: none;
     overflow: hidden;
     isolation: isolate;
     box-shadow: var(--lh-shadow-link);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    transition: transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1),
-                box-shadow 220ms ease,
-                background 220ms ease,
-                border-color 220ms ease;
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+    animation: lh-rise 650ms var(--lh-spring) calc(640ms + var(--i, 0) * 70ms) forwards;
+    transition:
+      transform 380ms var(--lh-spring),
+      box-shadow 380ms var(--lh-ease),
+      border-color 320ms ease;
+    will-change: transform;
   }
+  /* Cursor-tracked spotlight */
+  .lh__link::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(180px circle at var(--mx) var(--my),
+      rgba(248, 248, 242, 0.22), transparent 60%);
+    opacity: 0;
+    transition: opacity 320ms ease;
+    z-index: 0;
+  }
+  .lh__link > * { position: relative; z-index: 1; }
+  .lh__link:hover::before { opacity: 1; }
   .lh__link:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 14px 30px -12px rgba(15, 24, 20, 0.55);
-    border-color: rgba(248, 248, 242, 0.3);
+    transform: translate3d(0, -3px, 0);
+    box-shadow:
+      0 20px 40px -16px rgba(15, 24, 20, 0.6),
+      inset 0 1px 0 rgba(248, 248, 242, 0.2);
+    border-color: rgba(248, 248, 242, 0.32);
   }
   .lh__link:active {
-    transform: translateY(0) scale(0.985);
-    transition-duration: 120ms;
+    transform: translate3d(0, 0, 0) scale(0.985);
+    transition-duration: 140ms;
   }
-  .lh__link:focus-visible {
-    outline: 2px solid var(--lh-accent);
-    outline-offset: 3px;
-  }
+  .lh__link:focus-visible { outline: 2px solid var(--lh-accent); outline-offset: 3px; }
+
   .lh__link--featured {
     background: linear-gradient(135deg,
-      color-mix(in srgb, var(--lh-card-tint) 85%, white 15%) 0%,
+      color-mix(in srgb, var(--lh-card-tint) 88%, white 12%) 0%,
       var(--lh-card-tint) 100%);
     border-color: rgba(248, 248, 242, 0.42);
+    box-shadow:
+      0 16px 34px -14px rgba(15, 24, 20, 0.6),
+      inset 0 1px 0 rgba(248, 248, 242, 0.24);
   }
+
   .lh__link-icon {
     width: 48px;
     height: 48px;
@@ -451,12 +530,12 @@
     justify-content: center;
     background: rgba(248, 248, 242, 0.92);
     color: #2B3C35;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    transition: transform 360ms var(--lh-spring);
   }
-  .lh__link-icon img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
+  .lh__link:hover .lh__link-icon { transform: scale(1.06) rotate(-1.5deg); }
+  .lh__link-icon img { width: 100%; height: 100%; object-fit: cover; }
+
   .lh__link-label {
     text-align: center;
     font-size: clamp(14px, 3.6vw, 15px);
@@ -465,32 +544,34 @@
     line-height: 1.25;
     padding-inline: 8px;
   }
+
   .lh__link-tail {
-    opacity: 0.7;
+    opacity: 0.6;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: transform 220ms ease, opacity 220ms ease;
+    transition: transform 320ms var(--lh-spring), opacity 280ms ease;
   }
-  .lh__link:hover .lh__link-tail {
-    opacity: 1;
-    transform: translateX(2px);
-  }
+  .lh__link:hover .lh__link-tail { opacity: 1; transform: translateX(3px); }
 
-  /* Subtle shimmer that sweeps across on hover */
+  /* Shimmer sweep on hover */
   .lh__link-shine {
     position: absolute;
     inset: 0;
     pointer-events: none;
     background: linear-gradient(120deg,
       transparent 30%,
-      rgba(248, 248, 242, 0.18) 50%,
+      rgba(248, 248, 242, 0.22) 50%,
       transparent 70%);
     transform: translateX(-120%);
-    transition: transform 700ms cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: -1;
+    transition: transform 800ms cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 0;
   }
   .lh__link:hover .lh__link-shine { transform: translateX(120%); }
+  /* Featured: ambient auto-shimmer every ~7s */
+  .lh__link--featured .lh__link-shine {
+    animation: lh-shine-loop 7s cubic-bezier(0.4, 0, 0.2, 1) 3s infinite;
+  }
 
   .lh__empty {
     text-align: center;
@@ -499,7 +580,7 @@
     margin: 24px 0;
   }
 
-  /* ===== Social icons row ===== */
+  /* ===== Socials ===== */
   .lh__socials {
     list-style: none;
     margin: 4px 0 0;
@@ -510,6 +591,11 @@
     gap: clamp(14px, 4vw, 22px);
     flex-wrap: wrap;
   }
+  .lh__socials li {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+    animation: lh-rise 500ms var(--lh-spring) calc(950ms + var(--i, 0) * 60ms) forwards;
+  }
   .lh__social {
     width: 44px;
     height: 44px;
@@ -518,16 +604,16 @@
     justify-content: center;
     color: var(--lh-text);
     border-radius: 12px;
-    transition: transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1), color 200ms ease, background 200ms ease;
+    transition:
+      transform 360ms var(--lh-spring),
+      color 240ms ease,
+      background 240ms ease;
   }
   .lh__social:hover {
-    transform: translateY(-2px) scale(1.06);
-    background: rgba(248, 248, 242, 0.1);
+    transform: translate3d(0, -3px, 0) scale(1.08) rotate(-3deg);
+    background: rgba(248, 248, 242, 0.12);
   }
-  .lh__social:focus-visible {
-    outline: 2px solid var(--lh-accent);
-    outline-offset: 3px;
-  }
+  .lh__social:focus-visible { outline: 2px solid var(--lh-accent); outline-offset: 3px; }
 
   .lh__credit {
     margin: 8px 0 0;
@@ -536,6 +622,8 @@
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--lh-text-mute);
+    opacity: 0;
+    animation: lh-fade 500ms ease 1300ms forwards;
   }
 
   /* ===== Menu modal ===== */
@@ -555,18 +643,20 @@
     background: rgba(15, 24, 20, 0.55);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    animation: lh-fade 200ms ease both;
+    animation: lh-fade 220ms ease both;
   }
   .lh__menu-card {
     position: relative;
     width: 100%;
     max-width: 420px;
-    border-radius: 20px;
+    border-radius: 22px;
     padding: 28px 24px 24px;
     background: #F8F8F2;
     color: #2B3C35;
-    box-shadow: 0 30px 80px -20px rgba(15, 24, 20, 0.6);
-    animation: lh-pop 280ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    box-shadow:
+      0 30px 80px -20px rgba(15, 24, 20, 0.6),
+      inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    animation: lh-pop 320ms var(--lh-spring) both;
   }
   .lh__menu-close {
     position: absolute;
@@ -582,9 +672,9 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: background 180ms ease;
+    transition: background 180ms ease, transform 220ms var(--lh-spring);
   }
-  .lh__menu-close:hover { background: rgba(43, 60, 53, 0.16); }
+  .lh__menu-close:hover { background: rgba(43, 60, 53, 0.16); transform: scale(1.05); }
   .lh__menu-close:focus-visible { outline: 2px solid #56734F; outline-offset: 2px; }
   .lh__menu-title {
     margin: 0 0 12px;
@@ -593,38 +683,64 @@
     letter-spacing: 0.04em;
     color: #2B3C35;
   }
-  .lh__menu-body {
-    font-size: 14px;
-    line-height: 1.6;
-    color: #515E56;
-  }
+  .lh__menu-body { font-size: 14px; line-height: 1.6; color: #515E56; }
   .lh__menu-body a { color: #56734F; text-decoration: underline; }
 
-  @keyframes lh-fade { from { opacity: 0; } to { opacity: 1; } }
+  /* ===== Keyframes ===== */
+  @keyframes lh-fade { to { opacity: 1; } }
+  @keyframes lh-rise {
+    to { opacity: 1; transform: translate3d(0, 0, 0); }
+  }
+  @keyframes lh-shell-rise {
+    to { opacity: 1; transform: translate3d(0, 0, 0); }
+  }
   @keyframes lh-pop {
     from { opacity: 0; transform: scale(0.94) translateY(8px); }
     to { opacity: 1; transform: scale(1) translateY(0); }
   }
+  @keyframes lh-avatar-pop {
+    0%   { opacity: 0; transform: scale(0.6); }
+    60%  { opacity: 1; transform: scale(1.05); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  @keyframes lh-avatar-float {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50%      { transform: translate3d(0, -4px, 0); }
+  }
+  @keyframes lh-bg-drift {
+    0%   { transform: scale(1.08) translate3d(0, 0, 0); }
+    100% { transform: scale(1.14) translate3d(-1.2%, -1.2%, 0); }
+  }
+  @keyframes lh-shine-loop {
+    0%, 100% { transform: translateX(-120%); }
+    50%      { transform: translateX(120%); }
+  }
 
   /* ===== Reduced motion ===== */
   @media (prefers-reduced-motion: reduce) {
-    .lh__link, .lh__icon-btn, .lh__social, .lh__avatar, .lh__link-tail, .lh__link-shine,
-    .lh__menu-backdrop, .lh__menu-card {
-      transition: none !important;
+    .lh__shell, .lh__avatar, .lh__title, .lh__tagline, .lh__corner,
+    .lh__credit, .lh__link, .lh__socials li, .lh__bg-img, .lh__note,
+    .lh__menu-backdrop, .lh__menu-card, .lh__link--featured .lh__link-shine {
       animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
     }
-    .lh__link:hover { transform: none; }
-    .lh__social:hover { transform: none; }
+    .lh__link, .lh__icon-btn, .lh__social, .lh__avatar, .lh__link-tail,
+    .lh__link-shine, .lh__link-icon, .lh__menu-close {
+      transition: none !important;
+    }
+    .lh__link:hover, .lh__social:hover, .lh__icon-btn:hover { transform: none; }
+    .lh__link:hover .lh__link-icon { transform: none; }
   }
 
-  /* ===== Tighter spacing on tiny screens ===== */
+  /* ===== Tiny screens ===== */
   @media (max-width: 360px) {
     .lh__shell { padding: 18px 14px; gap: 14px; }
     .lh__link { grid-template-columns: 48px 1fr 20px; min-height: 60px; }
     .lh__link-icon { width: 44px; height: 44px; border-radius: 10px; }
   }
 
-  /* ===== Wider screens — nice centered card ===== */
+  /* ===== Wider screens ===== */
   @media (min-width: 768px) {
     .lh { padding-top: 48px; padding-bottom: 48px; }
   }
@@ -632,6 +748,30 @@
 
 <script>
 (function () {
+  var prefersReduce = window.matchMedia
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* === Cursor-tracked spotlight on link buttons (rAF-throttled) === */
+  if (!prefersReduce && window.matchMedia('(hover: hover)').matches) {
+    document.querySelectorAll('[data-lh-link]').forEach(function (el) {
+      var raf = null;
+      el.addEventListener('mousemove', function (e) {
+        if (raf) cancelAnimationFrame(raf);
+        var rect = el.getBoundingClientRect();
+        var x = ((e.clientX - rect.left) / rect.width * 100).toFixed(1);
+        var y = ((e.clientY - rect.top) / rect.height * 100).toFixed(1);
+        raf = requestAnimationFrame(function () {
+          el.style.setProperty('--mx', x + '%');
+          el.style.setProperty('--my', y + '%');
+        });
+      }, { passive: true });
+      el.addEventListener('mouseleave', function () {
+        el.style.setProperty('--mx', '50%');
+        el.style.setProperty('--my', '50%');
+      });
+    });
+  }
+
   /* === Native share — falls back to clipboard === */
   document.querySelectorAll('[data-lh-share]').forEach(function (btn) {
     btn.addEventListener('click', function () {
@@ -672,7 +812,7 @@
     closers.forEach(function (b) { b.addEventListener('click', close); });
   }
 
-  /* === Lightweight click-tracking hook (optional — fires gtag if present) === */
+  /* === Lightweight click-tracking hook (fires gtag if present) === */
   document.querySelectorAll('[data-lh-link]').forEach(function (a) {
     a.addEventListener('click', function () {
       try {
