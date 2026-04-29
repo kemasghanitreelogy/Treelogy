@@ -1,0 +1,120 @@
+{
+  "sections": {
+    "links_hub": {
+      "type": "LinksHub",
+      "settings": {
+        "title": "TREELOGY",
+        "tagline": "Nourishing You, Enriching Life",
+        "show_share_button": true,
+        "show_menu_button": true,
+        "menu_label": "About",
+        "menu_body": "<p>Welcome to Treelogy.</p>",
+        "show_credit": false
+      },
+      "blocks": {
+        "link_protocol": {
+          "type": "link",
+          "settings": {
+            "label": "30 Days Inside Out Moringa Protocol",
+            "url": "https://treelogy.com/id/products/moringa-inside-out-protocol",
+            "featured": true
+          }
+        },
+        "link_shop_all": {
+          "type": "link",
+          "settings": {
+            "label": "Shop all Treelogy",
+            "url": "https://treelogy.com/id/collections/all",
+            "featured": false
+          }
+        },
+        "link_tokopedia": {
+          "type": "link",
+          "settings": {
+            "label": "Tokopedia Shop",
+            "url": "https://www.tokopedia.com/treelogy-moringa",
+            "featured": false
+          }
+        },
+        "link_shopee": {
+          "type": "link",
+          "settings": {
+            "label": "Shopee Shop",
+            "url": "https://shopee.co.id/treelogy.moringa",
+            "featured": false
+          }
+        },
+        "link_about": {
+          "type": "link",
+          "settings": {
+            "label": "About Moringa",
+            "url": "https://treelogy.com/pages/moringa-tree",
+            "featured": false
+          }
+        },
+        "social_whatsapp": {
+          "type": "social",
+          "settings": {
+            "platform": "whatsapp",
+            "url": "",
+            "label": "WhatsApp"
+          }
+        },
+        "social_website": {
+          "type": "social",
+          "settings": {
+            "platform": "website",
+            "url": "https://treelogy.com",
+            "label": "Website"
+          }
+        },
+        "social_instagram": {
+          "type": "social",
+          "settings": {
+            "platform": "instagram",
+            "url": "",
+            "label": "Instagram"
+          }
+        },
+        "social_tiktok": {
+          "type": "social",
+          "settings": {
+            "platform": "tiktok",
+            "url": "",
+            "label": "TikTok"
+          }
+        },
+        "social_facebook": {
+          "type": "social",
+          "settings": {
+            "platform": "facebook",
+            "url": "",
+            "label": "Facebook"
+          }
+        },
+        "social_pinterest": {
+          "type": "social",
+          "settings": {
+            "platform": "pinterest",
+            "url": "",
+            "label": "Pinterest"
+          }
+        }
+      },
+      "block_order": [
+        "link_protocol",
+        "link_shop_all",
+        "link_tokopedia",
+        "link_shopee",
+        "link_about",
+        "social_whatsapp",
+        "social_website",
+        "social_instagram",
+        "social_tiktok",
+        "social_facebook",
+        "social_pinterest"
+      ]
+    }
+  },
+  "order": ["links_hub"]
+}

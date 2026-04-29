@@ -290,14 +290,37 @@
       })();
     </script>
 
+    {%- liquid
+      assign is_chromeless = false
+      if template == 'page.links'
+        assign is_chromeless = true
+      endif
+    -%}
+    {%- if is_chromeless -%}
+      <style>
+        html, body.t-chromeless {
+          margin: 0 !important;
+          padding: 0 !important;
+          background: #1d2a24 !important;
+          overflow-x: hidden;
+        }
+        body.t-chromeless #landing-page,
+        body.t-chromeless main#landing-page {
+          margin: 0 !important;
+          padding: 0 !important;
+          min-height: 100vh;
+          min-height: 100dvh;
+          display: block;
+        }
+        body.t-chromeless .announcement-bar,
+        body.t-chromeless #shopify-section-announcement-bar,
+        body.t-chromeless [id^="shopify-section-header"],
+        body.t-chromeless [id^="shopify-section-footer"] {
+          display: none !important;
+        }
+      </style>
+    {%- endif -%}
   </head>
-
-  {%- liquid
-    assign is_chromeless = false
-    if template == 'page.links'
-      assign is_chromeless = true
-    endif
-  -%}
 
   <body class="{% if is_chromeless %}t-chromeless{% endif %}">
     {%- if settings.show_utm_free_shipping_toast and is_chromeless == false -%}
