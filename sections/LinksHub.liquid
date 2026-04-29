@@ -287,6 +287,100 @@
       </div>
     </div>
   {%- endif -%}
+
+  {%- if s.show_share_button -%}
+    {%- assign share_kicker = s.share_kicker | default: 'SHARE TREELOGY' -%}
+    {%- assign share_headline = s.share_headline | default: 'Pass it on.' -%}
+    {%- assign share_sub = s.share_sub | default: 'Send the link, plant the idea.' -%}
+
+    <div class="lh__share" data-lh-share-menu hidden>
+      <div class="lh__share-backdrop" data-lh-share-close></div>
+      <div class="lh__share-card" role="dialog" aria-modal="true" aria-labelledby="lh-share-headline">
+        <button type="button" class="lh__menu-close" aria-label="Close" data-lh-share-close>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </button>
+
+        <span class="lh__share-kicker">{{ share_kicker | escape }}</span>
+        <h2 id="lh-share-headline" class="lh__share-headline">{{ share_headline }}</h2>
+        {%- if share_sub != blank -%}
+          <p class="lh__share-sub">{{ share_sub }}</p>
+        {%- endif -%}
+
+        <button type="button" class="lh__share-copy" data-lh-share-copy aria-label="Copy link to clipboard">
+          <span class="lh__share-copy-icon" aria-hidden="true">
+            <svg class="lh__share-copy-icon-default" width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <rect x="5" y="5" width="9" height="10" rx="2" stroke="currentColor" stroke-width="1.4"/>
+              <path d="M4 11V4a1 1 0 011-1h7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+            <svg class="lh__share-copy-icon-success" width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path d="M4 9.5l3 3 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span class="lh__share-copy-text">
+            <span class="lh__share-copy-state lh__share-copy-state--idle">
+              <span class="lh__share-copy-label">Copy link</span>
+              <span class="lh__share-copy-url" data-lh-share-url>treelogy.com</span>
+            </span>
+            <span class="lh__share-copy-state lh__share-copy-state--done" aria-hidden="true">
+              <span class="lh__share-copy-label">Copied</span>
+              <span class="lh__share-copy-url">Paste it anywhere</span>
+            </span>
+          </span>
+        </button>
+
+        <div class="lh__share-divider" aria-hidden="true">
+          <span>or send via</span>
+        </div>
+
+        <div class="lh__share-channels">
+          {%- if s.share_show_whatsapp -%}
+            <a class="lh__share-channel" data-lh-share-channel="whatsapp" href="#" target="_blank" rel="noopener" aria-label="Share on WhatsApp" style="--c: 0;">
+              <span class="lh__share-channel-bubble" data-brand="whatsapp">
+                <svg viewBox="0 0 24 24" aria-hidden="true" width="20" height="20" fill="currentColor"><path d="M20.5 3.5A10.94 10.94 0 0 0 12 .25C5.92.25.99 5.18.99 11.27c0 2.06.55 4.06 1.6 5.83L1 23.75l6.78-1.78a11 11 0 0 0 4.21.84h.01c6.07 0 10.99-4.93 10.99-11.02 0-2.95-1.15-5.72-3.49-7.79zM12 21.05h-.01a9.05 9.05 0 0 1-4.6-1.26l-.33-.2-4.02 1.05 1.07-3.93-.21-.34a9.06 9.06 0 0 1-1.4-4.83c0-5.02 4.07-9.09 9.5-9.09 2.45 0 4.7.95 6.4 2.66a9.04 9.04 0 0 1 2.65 6.43c0 5.01-4.07 9.07-9.05 9.07zm5.18-6.79c-.28-.14-1.66-.82-1.92-.91-.26-.09-.45-.14-.64.14-.19.28-.74.92-.91 1.11-.17.19-.34.21-.62.07-.28-.14-1.18-.43-2.24-1.39a8.32 8.32 0 0 1-1.55-1.93c-.16-.28-.02-.43.12-.57.13-.13.28-.34.42-.51.14-.17.18-.28.28-.47.09-.19.05-.36-.02-.51-.07-.14-.64-1.55-.88-2.12-.23-.55-.46-.48-.64-.49-.16-.01-.36-.01-.55-.01-.19 0-.51.07-.78.36-.27.28-1.02 1-1.02 2.43 0 1.43 1.05 2.81 1.19 3 .14.19 2.07 3.16 5.01 4.43.7.3 1.25.48 1.68.61.7.22 1.34.19 1.85.12.56-.08 1.66-.68 1.9-1.34.24-.66.24-1.22.16-1.34-.07-.12-.26-.19-.54-.34z"/></svg>
+              </span>
+              <span class="lh__share-channel-label">WhatsApp</span>
+            </a>
+          {%- endif -%}
+
+          {%- if s.share_show_telegram -%}
+            <a class="lh__share-channel" data-lh-share-channel="telegram" href="#" target="_blank" rel="noopener" aria-label="Share on Telegram" style="--c: 1;">
+              <span class="lh__share-channel-bubble" data-brand="telegram">
+                <svg viewBox="0 0 24 24" aria-hidden="true" width="20" height="20" fill="currentColor"><path d="M9.04 15.32 8.7 20a1 1 0 0 0 1.62.79l3.05-2.51 4.62 3.39c.85.47 1.45.22 1.66-.78l3.01-14.16c.31-1.42-.51-2.06-1.34-1.74L1.7 11.4c-1.4.55-1.38 1.34-.24 1.7l5.21 1.63 12.09-7.62c.57-.34 1.09-.16.66.22z"/></svg>
+              </span>
+              <span class="lh__share-channel-label">Telegram</span>
+            </a>
+          {%- endif -%}
+
+          {%- if s.share_show_x -%}
+            <a class="lh__share-channel" data-lh-share-channel="x" href="#" target="_blank" rel="noopener" aria-label="Share on X" style="--c: 2;">
+              <span class="lh__share-channel-bubble" data-brand="x">
+                <svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              </span>
+              <span class="lh__share-channel-label">X</span>
+            </a>
+          {%- endif -%}
+
+          {%- if s.share_show_email -%}
+            <a class="lh__share-channel" data-lh-share-channel="email" href="#" aria-label="Share via email" style="--c: 3;">
+              <span class="lh__share-channel-bubble" data-brand="email">
+                <svg viewBox="0 0 24 24" aria-hidden="true" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+              </span>
+              <span class="lh__share-channel-label">Email</span>
+            </a>
+          {%- endif -%}
+        </div>
+
+        <button type="button" class="lh__share-native" data-lh-share-native hidden>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M8 10.5V2M8 2L4.5 5.5M8 2l3.5 3.5M3 8.5v4a1 1 0 001 1h8a1 1 0 001-1v-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>More options</span>
+        </button>
+      </div>
+    </div>
+  {%- endif -%}
 </section>
 
 {% style %}
@@ -986,6 +1080,344 @@
   .lh__menu-secondary:hover svg { transform: translateX(3px); }
   .lh__menu-secondary:focus-visible { outline: 2px solid #56734F; outline-offset: 2px; }
 
+  /* ===== Share modal — branded share sheet ===== */
+  .lh__share {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .lh__share[hidden] { display: none; }
+
+  .lh__share-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 24, 20, 0.55);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    opacity: 0;
+  }
+  .lh__share.is-open .lh__share-backdrop { animation: lh-fade 260ms ease forwards; }
+
+  .lh__share-card {
+    position: relative;
+    width: 100%;
+    max-width: 440px;
+    max-height: calc(100vh - 32px);
+    max-height: calc(100dvh - 32px);
+    overflow-y: auto;
+    border-radius: 28px;
+    padding: clamp(28px, 6vw, 36px) clamp(20px, 5vw, 28px) clamp(22px, 5vw, 26px);
+    background: linear-gradient(180deg, #FBFBF5 0%, #F4F4EC 100%);
+    color: #2B3C35;
+    box-shadow:
+      0 40px 100px -28px rgba(15, 24, 20, 0.55),
+      0 16px 48px -20px rgba(15, 24, 20, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    opacity: 0;
+    transform: scale(0.94) translate3d(0, 12px, 0);
+    -webkit-overflow-scrolling: touch;
+  }
+  .lh__share.is-open .lh__share-card {
+    animation: lh-menu-pop 460ms var(--lh-spring) forwards;
+  }
+  .lh__share-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(ellipse 70% 40% at 50% 0%,
+      rgba(86, 115, 79, 0.14), transparent 70%);
+  }
+
+  .lh__share-kicker {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #56734F;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+  }
+  .lh__share-kicker::before {
+    content: '';
+    width: 22px;
+    height: 1px;
+    background: currentColor;
+    display: inline-block;
+    opacity: 0.6;
+  }
+  .lh__share.is-open .lh__share-kicker {
+    animation: lh-rise 540ms var(--lh-ease) 160ms forwards;
+  }
+
+  .lh__share-headline {
+    margin: 0;
+    font-size: clamp(22px, 5vw, 26px);
+    font-weight: 700;
+    line-height: 1.18;
+    letter-spacing: -0.01em;
+    color: #1d2a24;
+    text-wrap: balance;
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+  }
+  .lh__share.is-open .lh__share-headline {
+    animation: lh-rise 640ms var(--lh-ease) 240ms forwards;
+  }
+
+  .lh__share-sub {
+    margin: 0;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: #5C6A60;
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+  }
+  .lh__share.is-open .lh__share-sub {
+    animation: lh-rise 540ms var(--lh-ease) 320ms forwards;
+  }
+
+  /* Copy link button */
+  .lh__share-copy {
+    position: relative;
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    align-items: center;
+    gap: 12px;
+    margin-top: 4px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: rgba(86, 115, 79, 0.08);
+    border: 1px dashed rgba(86, 115, 79, 0.32);
+    color: #2B3C35;
+    cursor: pointer;
+    text-align: left;
+    overflow: hidden;
+    isolation: isolate;
+    transition:
+      background 240ms ease,
+      border-color 240ms ease,
+      transform 320ms var(--lh-spring);
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+    will-change: transform;
+  }
+  .lh__share.is-open .lh__share-copy {
+    animation: lh-rise 600ms var(--lh-spring) 400ms forwards;
+  }
+  .lh__share-copy:hover {
+    background: rgba(86, 115, 79, 0.14);
+    border-color: rgba(86, 115, 79, 0.5);
+    transform: translate3d(0, -2px, 0);
+  }
+  .lh__share-copy:active { transform: translate3d(0, 0, 0) scale(0.99); transition-duration: 140ms; }
+  .lh__share-copy:focus-visible { outline: 2px solid #56734F; outline-offset: 3px; }
+  .lh__share-copy.is-copied {
+    background: rgba(86, 115, 79, 0.18);
+    border-style: solid;
+    border-color: rgba(86, 115, 79, 0.55);
+  }
+
+  .lh__share-copy-icon {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: rgba(86, 115, 79, 0.18);
+    color: #56734F;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  }
+  .lh__share-copy-icon-default,
+  .lh__share-copy-icon-success {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    transition: transform 360ms var(--lh-spring), opacity 240ms ease;
+  }
+  .lh__share-copy-icon-success {
+    opacity: 0;
+    transform: scale(0.4) rotate(-30deg);
+  }
+  .lh__share-copy.is-copied .lh__share-copy-icon-default {
+    opacity: 0;
+    transform: scale(0.4) rotate(30deg);
+  }
+  .lh__share-copy.is-copied .lh__share-copy-icon-success {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+
+  .lh__share-copy-text {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 38px;
+  }
+  .lh__share-copy-state {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    transition: opacity 240ms ease, transform 320ms var(--lh-spring);
+  }
+  .lh__share-copy-state--done {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  .lh__share-copy.is-copied .lh__share-copy-state--idle {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  .lh__share-copy.is-copied .lh__share-copy-state--done {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .lh__share-copy-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #56734F;
+  }
+  .lh__share-copy-url {
+    font-size: 13px;
+    font-weight: 500;
+    color: #4F5C53;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* "or send via" divider */
+  .lh__share-divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 4px;
+    color: rgba(43, 60, 53, 0.45);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    opacity: 0;
+  }
+  .lh__share.is-open .lh__share-divider {
+    animation: lh-fade 400ms ease 520ms forwards;
+  }
+  .lh__share-divider::before,
+  .lh__share-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(43, 60, 53, 0.18), transparent);
+  }
+
+  /* Channel buttons */
+  .lh__share-channels {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  .lh__share-channel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    color: #4F5C53;
+    border-radius: 14px;
+    padding: 6px 4px;
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+    transition: transform 320ms var(--lh-spring), color 200ms ease;
+  }
+  .lh__share.is-open .lh__share-channel {
+    animation: lh-rise 540ms var(--lh-spring) calc(580ms + var(--c, 0) * 70ms) forwards;
+  }
+  .lh__share-channel-bubble {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFFFFF;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.25),
+      0 8px 18px -10px rgba(15, 24, 20, 0.4);
+    transition:
+      transform 360ms var(--lh-spring),
+      box-shadow 320ms var(--lh-ease);
+    will-change: transform;
+  }
+  .lh__share-channel-bubble[data-brand="whatsapp"] { background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); }
+  .lh__share-channel-bubble[data-brand="telegram"] { background: linear-gradient(135deg, #2AABEE 0%, #229ED9 100%); }
+  .lh__share-channel-bubble[data-brand="x"]        { background: linear-gradient(135deg, #1d2a24 0%, #0f1814 100%); }
+  .lh__share-channel-bubble[data-brand="email"]    { background: linear-gradient(135deg, #56734F 0%, #455e41 100%); }
+  .lh__share-channel:hover .lh__share-channel-bubble {
+    transform: translate3d(0, -4px, 0) scale(1.06) rotate(-3deg);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.3),
+      0 16px 28px -12px rgba(15, 24, 20, 0.5);
+  }
+  .lh__share-channel:active .lh__share-channel-bubble {
+    transform: translate3d(0, 0, 0) scale(0.95);
+    transition-duration: 120ms;
+  }
+  .lh__share-channel:focus-visible { outline: 2px solid #56734F; outline-offset: 4px; }
+  .lh__share-channel-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: #5C6A60;
+  }
+
+  /* Native share fallback button */
+  .lh__share-native {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 4px;
+    padding: 12px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(86, 115, 79, 0.3);
+    background: transparent;
+    color: #56734F;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: background 220ms ease, transform 320ms var(--lh-spring);
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+  }
+  .lh__share-native[hidden] { display: none !important; }
+  .lh__share-native:not([hidden]) { display: inline-flex; }
+  .lh__share.is-open .lh__share-native:not([hidden]) {
+    animation: lh-rise 520ms var(--lh-ease) 920ms forwards;
+  }
+  .lh__share-native:hover { background: rgba(86, 115, 79, 0.08); transform: translate3d(0, -1px, 0); }
+  .lh__share-native:active { transform: translate3d(0, 0, 0) scale(0.98); transition-duration: 140ms; }
+  .lh__share-native:focus-visible { outline: 2px solid #56734F; outline-offset: 2px; }
+
   /* ===== Keyframes ===== */
   @keyframes lh-fade { to { opacity: 1; } }
   @keyframes lh-rise {
@@ -1030,7 +1462,10 @@
     .lh__menu-backdrop, .lh__menu-card, .lh__link--featured .lh__link-shine,
     .lh__menu-kicker, .lh__menu-headline, .lh__menu-body,
     .lh__menu-product, .lh__menu-secondary, .lh__menu-product-shine,
-    .lh__menu-product-badge-dot {
+    .lh__menu-product-badge-dot,
+    .lh__share-backdrop, .lh__share-card, .lh__share-kicker,
+    .lh__share-headline, .lh__share-sub, .lh__share-copy,
+    .lh__share-divider, .lh__share-channel, .lh__share-native {
       animation: none !important;
       opacity: 1 !important;
       transform: none !important;
@@ -1038,15 +1473,20 @@
     .lh__link, .lh__icon-btn, .lh__social, .lh__avatar, .lh__link-tail,
     .lh__link-shine, .lh__link-icon, .lh__menu-close,
     .lh__menu-product, .lh__menu-product-thumb, .lh__menu-product-cta,
-    .lh__menu-secondary, .lh__menu-secondary svg {
+    .lh__menu-secondary, .lh__menu-secondary svg,
+    .lh__share-copy, .lh__share-channel-bubble, .lh__share-native,
+    .lh__share-copy-icon-default, .lh__share-copy-icon-success,
+    .lh__share-copy-state {
       transition: none !important;
     }
     .lh__link:hover, .lh__social:hover, .lh__icon-btn:hover,
-    .lh__menu-product:hover, .lh__menu-close:hover { transform: none; }
+    .lh__menu-product:hover, .lh__menu-close:hover,
+    .lh__share-copy:hover, .lh__share-native:hover { transform: none; }
     .lh__link:hover .lh__link-icon,
     .lh__menu-product:hover .lh__menu-product-thumb,
     .lh__menu-product:hover .lh__menu-product-cta,
-    .lh__menu-secondary:hover svg { transform: none; }
+    .lh__menu-secondary:hover svg,
+    .lh__share-channel:hover .lh__share-channel-bubble { transform: none; }
   }
 
   /* ===== Tiny screens ===== */
@@ -1088,22 +1528,138 @@
     });
   }
 
-  /* === Native share — falls back to clipboard === */
-  document.querySelectorAll('[data-lh-share]').forEach(function (btn) {
-    btn.addEventListener('click', function () {
+  /* === Branded share modal === */
+  var shareModal = document.querySelector('[data-lh-share-menu]');
+  if (shareModal) {
+    var shareTriggers = document.querySelectorAll('[data-lh-share]');
+    var shareClosers = shareModal.querySelectorAll('[data-lh-share-close]');
+    var shareUrlEl = shareModal.querySelector('[data-lh-share-url]');
+    var copyBtn = shareModal.querySelector('[data-lh-share-copy]');
+    var nativeBtn = shareModal.querySelector('[data-lh-share-native]');
+    var channels = shareModal.querySelectorAll('[data-lh-share-channel]');
+    var lastShareFocused = null;
+    var shareTitle = '';
+    var shareText = '';
+
+    function buildChannelUrls() {
       var url = window.location.href;
-      var title = btn.getAttribute('data-lh-share-title') || document.title;
-      var text = btn.getAttribute('data-lh-share-text') || '';
-      if (navigator.share) {
-        navigator.share({ title: title, text: text, url: url }).catch(function () {});
-      } else if (navigator.clipboard) {
-        navigator.clipboard.writeText(url).then(function () {
-          btn.setAttribute('data-copied', '1');
-          setTimeout(function () { btn.removeAttribute('data-copied'); }, 1500);
-        });
+      var encodedUrl = encodeURIComponent(url);
+      var encodedText = encodeURIComponent(shareTitle);
+      var encodedBody = encodeURIComponent(shareText ? shareText + ' — ' + url : url);
+
+      channels.forEach(function (a) {
+        var brand = a.getAttribute('data-lh-share-channel');
+        if (brand === 'whatsapp') {
+          a.href = 'https://wa.me/?text=' + encodedText + '%20' + encodedUrl;
+        } else if (brand === 'telegram') {
+          a.href = 'https://t.me/share/url?url=' + encodedUrl + '&text=' + encodedText;
+        } else if (brand === 'x') {
+          a.href = 'https://twitter.com/intent/tweet?url=' + encodedUrl + '&text=' + encodedText;
+        } else if (brand === 'email') {
+          a.href = 'mailto:?subject=' + encodedText + '&body=' + encodedBody;
+        }
+      });
+
+      if (shareUrlEl) {
+        var pretty = url
+          .replace(/^https?:\/\//, '')
+          .replace(/\/$/, '');
+        shareUrlEl.textContent = pretty.length > 42 ? pretty.slice(0, 40) + '…' : pretty;
       }
+
+      if (nativeBtn) {
+        if (navigator.share) nativeBtn.removeAttribute('hidden');
+        else nativeBtn.setAttribute('hidden', '');
+      }
+    }
+
+    function openShare(triggerBtn) {
+      lastShareFocused = document.activeElement;
+      shareTitle = (triggerBtn && triggerBtn.getAttribute('data-lh-share-title'))
+        || document.title;
+      shareText = (triggerBtn && triggerBtn.getAttribute('data-lh-share-text')) || '';
+      buildChannelUrls();
+      shareModal.hidden = false;
+      void shareModal.offsetWidth;
+      shareModal.classList.add('is-open');
+      if (copyBtn) copyBtn.classList.remove('is-copied');
+      var firstFocusable = shareModal.querySelector('.lh__menu-close');
+      if (firstFocusable) firstFocusable.focus();
+      document.addEventListener('keydown', onShareKey);
+      document.body.style.overflow = 'hidden';
+    }
+    function closeShare() {
+      shareModal.classList.remove('is-open');
+      shareModal.hidden = true;
+      document.removeEventListener('keydown', onShareKey);
+      document.body.style.overflow = '';
+      if (lastShareFocused && lastShareFocused.focus) lastShareFocused.focus();
+    }
+    function onShareKey(e) { if (e.key === 'Escape') closeShare(); }
+
+    shareTriggers.forEach(function (b) {
+      b.addEventListener('click', function () { openShare(b); });
     });
-  });
+    shareClosers.forEach(function (b) { b.addEventListener('click', closeShare); });
+
+    /* Copy link with success state */
+    if (copyBtn) {
+      var copyResetTimer = null;
+      copyBtn.addEventListener('click', function () {
+        var url = window.location.href;
+        var done = function () {
+          copyBtn.classList.add('is-copied');
+          if (copyResetTimer) clearTimeout(copyResetTimer);
+          copyResetTimer = setTimeout(function () {
+            copyBtn.classList.remove('is-copied');
+          }, 2200);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(url).then(done).catch(function () {
+            // fall back to legacy
+            try {
+              var ta = document.createElement('textarea');
+              ta.value = url;
+              ta.style.position = 'fixed';
+              ta.style.opacity = '0';
+              document.body.appendChild(ta);
+              ta.select();
+              document.execCommand('copy');
+              document.body.removeChild(ta);
+              done();
+            } catch (_) {}
+          });
+        }
+      });
+    }
+
+    /* Native OS share — opens device share sheet */
+    if (nativeBtn) {
+      nativeBtn.addEventListener('click', function () {
+        if (!navigator.share) return;
+        navigator.share({
+          title: shareTitle || document.title,
+          text: shareText,
+          url: window.location.href
+        }).catch(function () {});
+      });
+    }
+
+    /* Track channel clicks for analytics */
+    channels.forEach(function (a) {
+      a.addEventListener('click', function () {
+        try {
+          if (typeof window.gtag === 'function') {
+            window.gtag('event', 'links_hub_share', {
+              channel: a.getAttribute('data-lh-share-channel')
+            });
+          }
+        } catch (_) {}
+        // dismiss after a tick
+        setTimeout(closeShare, 200);
+      });
+    });
+  }
 
   /* === Menu modal — choreographed open/close === */
   var menu = document.querySelector('[data-lh-menu]');
@@ -1208,6 +1764,17 @@
     { "type": "header", "content": "About panel — Footer link" },
     { "type": "text", "id": "menu_secondary_label", "label": "Secondary link label", "default": "Why moringa" },
     { "type": "url", "id": "menu_secondary_url", "label": "Secondary link URL" },
+
+    { "type": "header", "content": "Share panel — Copy" },
+    { "type": "text", "id": "share_kicker", "label": "Eyebrow", "default": "SHARE TREELOGY" },
+    { "type": "text", "id": "share_headline", "label": "Headline", "default": "Pass it on." },
+    { "type": "text", "id": "share_sub", "label": "Subhead", "default": "Send the link, plant the idea." },
+
+    { "type": "header", "content": "Share panel — Channels" },
+    { "type": "checkbox", "id": "share_show_whatsapp", "label": "Show WhatsApp", "default": true },
+    { "type": "checkbox", "id": "share_show_telegram", "label": "Show Telegram", "default": true },
+    { "type": "checkbox", "id": "share_show_x", "label": "Show X (Twitter)", "default": true },
+    { "type": "checkbox", "id": "share_show_email", "label": "Show Email", "default": true },
 
     { "type": "header", "content": "Footer" },
     { "type": "checkbox", "id": "show_credit", "label": "Show copyright line", "default": false }

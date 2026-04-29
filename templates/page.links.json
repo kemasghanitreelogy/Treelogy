@@ -19,6 +19,13 @@
         "menu_product_url": "https://treelogy.com/id/products/moringa-inside-out-protocol",
         "menu_secondary_label": "Why moringa",
         "menu_secondary_url": "https://treelogy.com/pages/moringa-tree",
+        "share_kicker": "SHARE TREELOGY",
+        "share_headline": "Pass it on.",
+        "share_sub": "Send the link, plant the idea.",
+        "share_show_whatsapp": true,
+        "share_show_telegram": true,
+        "share_show_x": true,
+        "share_show_email": true,
         "show_credit": false
       },
       "blocks": {
