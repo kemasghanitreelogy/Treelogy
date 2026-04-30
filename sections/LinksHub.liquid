@@ -49,14 +49,16 @@
       {%- if s.show_menu_button -%}
         <button
           type="button"
-          class="lh__icon-btn"
-          aria-label="{{ s.menu_label | default: 'Open menu' | escape }}"
+          class="lh__icon-btn lh__icon-btn--featured"
+          aria-label="{{ s.menu_label | default: 'See our featured bestseller' | escape }}"
           data-lh-menu-trigger
         >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-            <path d="M8 1.5v13M1.5 8h13M3.2 3.2l9.6 9.6M3.2 12.8l9.6-9.6"
-              stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <span class="lh__icon-btn-halo" aria-hidden="true"></span>
+          <svg class="lh__icon-btn-spark" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+            <path d="M9 1.4c.4 2.6 1.4 4.5 3 5.7 1.6 1.2 3.4 1.8 5.6 1.9-2.2.1-4 .7-5.6 1.9-1.6 1.2-2.6 3.1-3 5.7-.4-2.6-1.4-4.5-3-5.7C4.4 9.7 2.6 9.1.4 9c2.2-.1 4-.7 5.6-1.9 1.6-1.2 2.6-3.1 3-5.7z"
+              fill="currentColor"/>
           </svg>
+          <span class="lh__icon-btn-dot" aria-hidden="true"></span>
         </button>
       {%- endif -%}
     </div>
@@ -532,6 +534,74 @@
   }
   .lh__icon-btn:active { transform: scale(0.92); transition-duration: 120ms; }
   .lh__icon-btn:focus-visible { outline: 2px solid var(--lh-accent); outline-offset: 3px; }
+
+  /* Featured / "tap to discover bestseller" treatment */
+  .lh__icon-btn--featured {
+    position: relative;
+    background: linear-gradient(135deg, rgba(86, 115, 79, 0.55) 0%, rgba(86, 115, 79, 0.32) 100%);
+    border-color: rgba(213, 196, 137, 0.45);
+    color: #FBFBF5;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.22),
+      0 6px 16px -6px rgba(86, 115, 79, 0.55),
+      0 0 0 0 rgba(213, 196, 137, 0.5);
+  }
+  .lh__icon-btn--featured:hover {
+    background: linear-gradient(135deg, rgba(95, 128, 87, 0.7) 0%, rgba(86, 115, 79, 0.45) 100%);
+    border-color: rgba(213, 196, 137, 0.7);
+  }
+  .lh__icon-btn--featured:hover .lh__icon-btn-spark {
+    transform: rotate(72deg) scale(1.08);
+  }
+
+  .lh__icon-btn-spark {
+    position: relative;
+    z-index: 2;
+    color: #E8DAA0;
+    filter: drop-shadow(0 0 6px rgba(232, 218, 160, 0.55));
+    transition: transform 480ms var(--lh-spring);
+  }
+
+  .lh__icon-btn-halo {
+    position: absolute;
+    inset: -2px;
+    border-radius: 999px;
+    pointer-events: none;
+    border: 1.5px solid rgba(232, 218, 160, 0.55);
+    opacity: 0;
+    z-index: 1;
+    animation: lh-halo-pulse 2.6s cubic-bezier(0.4, 0, 0.2, 1) 1.4s infinite;
+  }
+
+  .lh__icon-btn-dot {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    background: #E8DAA0;
+    border: 2px solid #2B3C35;
+    z-index: 3;
+    box-shadow: 0 0 0 0 rgba(232, 218, 160, 0.65);
+    animation: lh-dot-pulse 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+
+  @keyframes lh-halo-pulse {
+    0%   { transform: scale(0.92); opacity: 0; }
+    35%  { opacity: 0.65; }
+    100% { transform: scale(1.45); opacity: 0; }
+  }
+  @keyframes lh-dot-pulse {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(232, 218, 160, 0.65);
+      transform: scale(1);
+    }
+    50% {
+      box-shadow: 0 0 0 5px rgba(232, 218, 160, 0);
+      transform: scale(1.1);
+    }
+  }
 
   /* ===== Header ===== */
   .lh__head {
@@ -1510,6 +1580,7 @@
     .lh__menu-kicker, .lh__menu-headline, .lh__menu-body,
     .lh__menu-product, .lh__menu-secondary, .lh__menu-product-shine,
     .lh__menu-product-badge-dot,
+    .lh__icon-btn-halo, .lh__icon-btn-dot,
     .lh__share-backdrop, .lh__share-card, .lh__share-kicker,
     .lh__share-headline, .lh__share-sub, .lh__share-copy,
     .lh__share-divider, .lh__share-channel, .lh__share-native {
