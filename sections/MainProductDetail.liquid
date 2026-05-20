@@ -98,7 +98,6 @@
         </div>
       </div>
     {% endif %}
-
     {% render 'ProductStories' %}
 
     <div class="variant-button">
@@ -107,7 +106,6 @@
           , product: product %}
       {% endif %}
     </div>
-
     {% if free_product != product.id %}
       <form
         action="/cart/add"
@@ -130,6 +128,107 @@
             {% assign default_variant = variant.id %}
           {% endif %}
         {% endfor %}
+
+        {%- comment -%} === Custom Subscription Selector (replaces .subscriptions_app_embed_block) === {%- endcomment -%}
+        {%- if product.selling_plan_groups.size > 0 -%}
+          {%- assign current_variant = product.selected_or_first_available_variant -%}
+          {%- assign is_id = false -%}
+          {%- if request.locale.iso_code == 'id' -%}{%- assign is_id = true -%}{%- endif -%}
+
+          <div class="sub-frequency" id="SubFrequency">
+            <div class="sub-frequency__header">
+              <span class="sub-frequency__step" aria-hidden="true">2</span>
+              <h3 class="sub-frequency__title">
+                {% if is_id %}Pilih frekuensi pengiriman{% else %}Choose the frequency{% endif %}
+              </h3>
+            </div>
+
+            <div class="sub-frequency__options">
+              {%- for group in product.selling_plan_groups -%}
+                {%- for plan in group.selling_plans -%}
+                  {%- assign adj = plan.price_adjustments.first -%}
+                  {%- assign discount_pct = 0 -%}
+                  {%- assign discount_amount = 0 -%}
+                  {%- assign final_price = current_variant.price -%}
+                  {%- if adj.value_type == 'percentage' -%}
+                    {%- assign discount_pct = adj.value -%}
+                    {%- assign discount_amount = current_variant.price | times: adj.value | divided_by: 100 -%}
+                    {%- assign final_price = current_variant.price | minus: discount_amount -%}
+                  {%- elsif adj.value_type == 'fixed_amount' -%}
+                    {%- assign discount_amount = adj.value -%}
+                    {%- assign final_price = current_variant.price | minus: discount_amount -%}
+                    {%- assign discount_pct = adj.value | times: 100 | divided_by: current_variant.price -%}
+                  {%- elsif adj.value_type == 'price' -%}
+                    {%- assign final_price = adj.value -%}
+                    {%- assign discount_amount = current_variant.price | minus: adj.value -%}
+                    {%- assign discount_pct = discount_amount | times: 100 | divided_by: current_variant.price -%}
+                  {%- endif -%}
+
+                  <label
+                    class="sub-option sub-option--plan"
+                    data-plan-id="{{ plan.id }}"
+                    data-adj-type="{{ adj.value_type }}"
+                    data-adj-value="{{ adj.value }}">
+                    <input
+                      type="radio"
+                      name="selling_plan"
+                      class="sub-option__input"
+                      value="{{ plan.id }}">
+                    <div class="sub-option__row">
+                      <span class="sub-option__radio" aria-hidden="true"></span>
+                      <div class="sub-option__body">
+                        <div class="sub-option__title-row">
+                          <span class="sub-option__title">
+                            {% if is_id %}Berlangganan dan{% else %}Subscribe and{% endif %}
+                          </span>
+                          {%- if discount_pct > 0 -%}
+                            <span class="sub-option__badge">
+                              {% if is_id %}hemat {{ discount_pct }}%{% else %}save {{ discount_pct }}%{% endif %}
+                            </span>
+                          {%- endif -%}
+                        </div>
+                        <div class="sub-option__plan-name">{{ plan.name }}</div>
+                        <ul class="sub-option__benefits">
+                          <li>{% if is_id %}Gratis pengiriman & prioritas{% else %}Free delivery, and prioritised{% endif %}</li>
+                          <li>{% if is_id %}Tanpa komitmen{% else %}Without any commitment{% endif %}</li>
+                          <li>{% if is_id %}Garansi 90 hari uang kembali{% else %}90 days satisfied or reimbursed{% endif %}</li>
+                        </ul>
+                      </div>
+                      <div class="sub-option__price-wrap">
+                        <span class="sub-option__price-original" data-sub-price-original>{{ current_variant.price | money }}</span>
+                        <span class="sub-option__price-final" data-sub-price-final>{{ final_price | money }}</span>
+                      </div>
+                    </div>
+                  </label>
+                {%- endfor -%}
+              {%- endfor -%}
+
+              <label class="sub-option sub-option--onetime is-selected">
+                <input
+                  type="radio"
+                  name="selling_plan"
+                  class="sub-option__input"
+                  value=""
+                  checked>
+                <div class="sub-option__row sub-option__row--single">
+                  <span class="sub-option__radio" aria-hidden="true"></span>
+                  <div class="sub-option__body">
+                    <span class="sub-option__title">
+                      {% if is_id %}Beli sekali{% else %}Product alone{% endif %}
+                    </span>
+                  </div>
+                  <div class="sub-option__price-wrap">
+                    <span class="sub-option__price-final" data-onetime-price>{{ current_variant.price | money }}</span>
+                  </div>
+                </div>
+              </label>
+            </div>
+
+            <p class="sub-frequency__footnote">
+              {% if is_id %}Diperbarui otomatis. Lewati atau batalkan kapan saja.{% else %}Auto-renews, skip or cancel anytime.{% endif %}
+            </p>
+          </div>
+        {%- endif -%}
 
         <input
           type="hidden"
@@ -929,8 +1028,38 @@
   {% endfor %}
 </script>
 
+{%- if product.selling_plan_groups.size > 0 -%}
 <script>
-(function() {
+  /* Pre-rendered price matrix: variant_id → { onetime, plans: { plan_id → { original, final } } }
+     All prices are pre-formatted via Liquid `money` filter so JS only needs to swap text. */
+  window.subscriptionPriceMatrix = {};
+  {%- for variant in product.variants -%}
+    window.subscriptionPriceMatrix["{{ variant.id }}"] = {
+      onetime: {{ variant.price | money | json }},
+      plans: {
+        {%- for group in product.selling_plan_groups -%}
+          {%- for plan in group.selling_plans -%}
+            {%- assign adj = plan.price_adjustments.first -%}
+            {%- assign final_price = variant.price -%}
+            {%- if adj.value_type == 'percentage' -%}
+              {%- assign discount_amount = variant.price | times: adj.value | divided_by: 100 -%}
+              {%- assign final_price = variant.price | minus: discount_amount -%}
+            {%- elsif adj.value_type == 'fixed_amount' -%}
+              {%- assign final_price = variant.price | minus: adj.value -%}
+            {%- elsif adj.value_type == 'price' -%}
+              {%- assign final_price = adj.value -%}
+            {%- endif -%}
+            "{{ plan.id }}": { "original": {{ variant.price | money | json }}, "final": {{ final_price | money | json }} },
+          {%- endfor -%}
+        {%- endfor -%}
+      }
+    };
+  {%- endfor -%}
+</script>
+{%- endif -%}
+
+<script>
+  (function() {
   if (typeof window.isUtmFreeShipping !== 'function' || !window.isUtmFreeShipping()) return;
   var utmSource = sessionStorage.getItem('utm_source_matched');
   if (utmSource !== 'kesehatanwanita_blog') return;
@@ -996,7 +1125,7 @@
       setIdle();
     }
   });
-})();
+  })();
 </script>
 
 {% schema %}
@@ -1652,8 +1781,7 @@
             "default": 20
           }
         ]
-      }
-      , {
+      }, {
         "type": "text_plain_block",
         "name": "Text Plain Protocol",
         "settings": [
@@ -1672,11 +1800,25 @@
             "id": "title_weight",
             "label": "Title Weight",
             "options": [
-              { "value": "300", "label": "Light" },
-              { "value": "400", "label": "Regular" },
-              { "value": "500", "label": "Medium" },
-              { "value": "600", "label": "Semibold" },
-              { "value": "700", "label": "Bold" }
+              {
+                "value": "300",
+                "label": "Light"
+              },
+              {
+                "value": "400",
+                "label": "Regular"
+              },
+              {
+                "value": "500",
+                "label": "Medium"
+              },
+              {
+                "value": "600",
+                "label": "Semibold"
+              }, {
+                "value": "700",
+                "label": "Bold"
+              }
             ],
             "default": "500"
           },
@@ -1685,43 +1827,44 @@
             "id": "font_size",
             "label": "Title Font Size (px)",
             "default": 20
-          },
-          {
+          }, {
             "type": "color",
             "id": "text_title_color",
             "label": "Title Color",
             "default": "#000000"
-          },
-          {
+          }, {
             "type": "richtext",
             "id": "block_content",
             "label": "Content",
             "default": "<p>Your content goes here</p>"
-          },
-          {
+          }, {
             "type": "number",
             "id": "font_size_content",
             "label": "Content Font Size (px)",
             "default": 14
-          },
-          {
+          }, {
             "type": "color",
             "id": "text_content_color",
             "label": "Content Color",
             "default": "#515E56"
-          },
-          {
+          }, {
             "type": "select",
             "id": "text_alignment",
             "label": "Text Alignment",
             "options": [
-              { "value": "left", "label": "Left" },
-              { "value": "center", "label": "Center" },
-              { "value": "right", "label": "Right" }
+              {
+                "value": "left",
+                "label": "Left"
+              }, {
+                "value": "center",
+                "label": "Center"
+              }, {
+                "value": "right",
+                "label": "Right"
+              }
             ],
             "default": "left"
-          },
-          {
+          }, {
             "type": "range",
             "id": "padding_horizontal",
             "label": "Horizontal Padding",
@@ -1730,8 +1873,7 @@
             "step": 4,
             "unit": "px",
             "default": 24
-          },
-          {
+          }, {
             "type": "range",
             "id": "margin_top",
             "label": "Margin Top",
@@ -1740,8 +1882,7 @@
             "step": 10,
             "unit": "px",
             "default": 0
-          },
-          {
+          }, {
             "type": "range",
             "id": "margin_bottom",
             "label": "Margin Bottom",

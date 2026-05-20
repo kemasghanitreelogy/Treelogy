@@ -194,6 +194,87 @@ document.addEventListener("DOMContentLoaded", function() {
     else if (activeBtn) {
       activeBtn.click();
     }
-    
-  }, 500); 
+
+  }, 500);
+
+
+  // ==================================================
+  // 6. CUSTOM SUBSCRIPTION SELECTOR
+  // ==================================================
+  const subFrequency = document.getElementById('SubFrequency');
+  if (subFrequency) {
+    const subOptions = subFrequency.querySelectorAll('.sub-option');
+    const subInputs = subFrequency.querySelectorAll('.sub-option__input');
+    const productSelectEl = document.getElementById('productSelect');
+
+    function syncSelectedState() {
+      subOptions.forEach(opt => {
+        const input = opt.querySelector('.sub-option__input');
+        if (input && input.checked) {
+          opt.classList.add('is-selected');
+        } else {
+          opt.classList.remove('is-selected');
+        }
+      });
+    }
+
+    // Radio change → visual selection
+    subInputs.forEach(input => {
+      input.addEventListener('change', syncSelectedState);
+    });
+
+    // Click anywhere on the card → check its radio
+    subOptions.forEach(opt => {
+      opt.addEventListener('click', function(e) {
+        // Allow native label click for the input; only intercept if user clicked outside the input area
+        if (e.target.tagName === 'INPUT') return;
+        const input = opt.querySelector('.sub-option__input');
+        if (input && !input.checked) {
+          input.checked = true;
+          input.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      });
+    });
+
+    // Update displayed prices when variant changes
+    function refreshSubscriptionPrices() {
+      if (!productSelectEl || !window.subscriptionPriceMatrix) return;
+      const variantId = productSelectEl.value;
+      const matrix = window.subscriptionPriceMatrix[variantId];
+      if (!matrix) return;
+
+      // One-time option
+      subFrequency.querySelectorAll('[data-onetime-price]').forEach(el => {
+        el.textContent = matrix.onetime;
+      });
+
+      // Plan options
+      subFrequency.querySelectorAll('.sub-option--plan').forEach(opt => {
+        const planId = opt.getAttribute('data-plan-id');
+        const planPrices = matrix.plans && matrix.plans[planId];
+        if (!planPrices) return;
+        const origEl = opt.querySelector('[data-sub-price-original]');
+        const finalEl = opt.querySelector('[data-sub-price-final]');
+        if (origEl) origEl.textContent = planPrices.original;
+        if (finalEl) finalEl.textContent = planPrices.final;
+      });
+    }
+
+    // Hook into variant button clicks (defer to next tick so productSelect.value is updated)
+    const variantBtns = document.querySelectorAll('.product-detail-wrapper .checkbox-button');
+    variantBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        setTimeout(refreshSubscriptionPrices, 0);
+      });
+    });
+
+    // Also listen for direct productSelect changes (safety net)
+    if (productSelectEl) {
+      productSelectEl.addEventListener('change', refreshSubscriptionPrices);
+    }
+
+    // Initial sync
+    syncSelectedState();
+    refreshSubscriptionPrices();
+  }
 });
