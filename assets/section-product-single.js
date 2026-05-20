@@ -203,6 +203,106 @@ document.addEventListener("DOMContentLoaded", function() {
   // ==================================================
   const subFrequency = document.getElementById('SubFrequency');
   if (subFrequency) {
+    // --- PATCH FETCH: inject selling_plan into /cart/add calls ---
+    // The theme's app.bundle.js (Product class) intercepts the form submit
+    // and POSTs to /cart/add.js with only { id, quantity }, dropping selling_plan.
+    // We patch fetch to re-inject selling_plan when:
+    //   1) User has selected a subscription option (non-empty radio value)
+    //   2) The item being added is the main product variant (avoid affecting
+    //      related-product carousels on the same page).
+    if (!window.__subscriptionFetchPatched) {
+      window.__subscriptionFetchPatched = true;
+      const originalFetch = window.fetch.bind(window);
+      console.log('[Subscription] fetch patch installed ✓');
+
+      window.fetch = function (input, init) {
+        try {
+          const url = typeof input === 'string' ? input : (input && input.url) || '';
+          if (url.indexOf('/cart/add') !== -1 && init && init.body) {
+            const checked = document.querySelector('#SubFrequency .sub-option__input:checked');
+            const sellingPlan = checked && checked.value;
+            console.log('[Subscription] /cart/add intercepted. selling_plan=', sellingPlan || '(none / one-time)');
+
+            if (sellingPlan) {
+              const productSelectEl = document.getElementById('productSelect');
+              const mainVariantId = productSelectEl ? String(productSelectEl.value) : null;
+
+              if (typeof init.body === 'string') {
+                let bodyObj;
+                try { bodyObj = JSON.parse(init.body); } catch (_) { bodyObj = null; }
+
+                if (bodyObj) {
+                  if (Array.isArray(bodyObj.items)) {
+                    bodyObj.items = bodyObj.items.map(function (item) {
+                      if (item && String(item.id) === mainVariantId) {
+                        return Object.assign({}, item, { selling_plan: sellingPlan });
+                      }
+                      return item;
+                    });
+                  } else if (bodyObj.id && String(bodyObj.id) === mainVariantId) {
+                    bodyObj.selling_plan = sellingPlan;
+                  }
+                  init = Object.assign({}, init, { body: JSON.stringify(bodyObj) });
+                  console.log('[Subscription] payload modified:', bodyObj);
+                }
+              } else if (init.body instanceof FormData) {
+                // Native form submit case (just in case)
+                if (!init.body.has('selling_plan')) {
+                  init.body.append('selling_plan', sellingPlan);
+                }
+              }
+            }
+          }
+        } catch (err) {
+          console.warn('[Subscription] fetch patch error:', err);
+        }
+        return originalFetch(input, init);
+      };
+    }
+
+    // --- ALSO patch the legacy XMLHttpRequest path (defensive) ---
+    if (!window.__subscriptionXhrPatched && window.XMLHttpRequest) {
+      window.__subscriptionXhrPatched = true;
+      const origOpen = XMLHttpRequest.prototype.open;
+      const origSend = XMLHttpRequest.prototype.send;
+
+      XMLHttpRequest.prototype.open = function () {
+        this.__url = arguments[1];
+        return origOpen.apply(this, arguments);
+      };
+
+      XMLHttpRequest.prototype.send = function (body) {
+        try {
+          if (this.__url && this.__url.indexOf('/cart/add') !== -1 && typeof body === 'string') {
+            const checked = document.querySelector('#SubFrequency .sub-option__input:checked');
+            const sellingPlan = checked && checked.value;
+            if (sellingPlan) {
+              let bodyObj;
+              try { bodyObj = JSON.parse(body); } catch (_) { bodyObj = null; }
+              if (bodyObj) {
+                const productSelectEl = document.getElementById('productSelect');
+                const mainVariantId = productSelectEl ? String(productSelectEl.value) : null;
+                if (Array.isArray(bodyObj.items)) {
+                  bodyObj.items = bodyObj.items.map(function (item) {
+                    if (item && String(item.id) === mainVariantId) {
+                      return Object.assign({}, item, { selling_plan: sellingPlan });
+                    }
+                    return item;
+                  });
+                } else if (bodyObj.id && String(bodyObj.id) === mainVariantId) {
+                  bodyObj.selling_plan = sellingPlan;
+                }
+                arguments[0] = JSON.stringify(bodyObj);
+              }
+            }
+          }
+        } catch (err) {
+          console.warn('[Subscription] XHR patch error:', err);
+        }
+        return origSend.apply(this, arguments);
+      };
+    }
+
     const subOptions = subFrequency.querySelectorAll('.sub-option');
     const subInputs = subFrequency.querySelectorAll('.sub-option__input');
     const productSelectEl = document.getElementById('productSelect');
