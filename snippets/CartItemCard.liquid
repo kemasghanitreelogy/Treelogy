@@ -11,10 +11,8 @@
   endif
 
   assign has_selling_plan = false
-  assign sp_savings = 0
   if item.selling_plan_allocation
     assign has_selling_plan = true
-    assign sp_savings = item.original_price | minus: item.final_price
   endif
 
   assign original_price = item.variant.metafields.custom.original_price.value | default: 0 | plus: 0
@@ -24,6 +22,7 @@
   class="cart-item"
   id="item-{{ item.variant.id }}"
   data-variant="{{ item.variant.id }}"
+  data-key="{{ item.key }}"
   data-price="{{ item_price }}"
   data-compare-at="{{ original_price_sub }}"
   data-qty="{{ item.quantity }}">
@@ -49,11 +48,11 @@
           {% endunless %}
         </div>
         {% if has_selling_plan %}
-          <div class="cart-item__sub-badge">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="vertical-align:-2px;margin-right:4px;">
+          <div class="cart-item__sub-tag" aria-label="Subscription item">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path d="M17.65 6.35A7.95 7.95 0 0 0 12 4a8 8 0 1 0 7.74 10h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35Z" fill="currentColor"/>
             </svg>
-            {{ item.selling_plan_allocation.selling_plan.name }}
+            <span>{{ item.selling_plan_allocation.selling_plan.name }}</span>
           </div>
         {% endif %}
       </div>
