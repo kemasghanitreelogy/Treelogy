@@ -1,8 +1,22 @@
 {%- liquid
-  assign item_price = item.variant.price
-  if item_price == blank or item_price == nil
-    assign item_price = item.price
+  comment
+    Price hierarchy:
+      item.final_price    → per-unit after all discounts (incl. selling plan)
+      item.original_price → per-unit before any discount
+      item.variant.price  → variant base price (fallback)
+  endcomment
+  assign item_price = item.final_price
+  if item_price == blank or item_price == nil or item_price == 0
+    assign item_price = item.variant.price
   endif
+
+  assign has_selling_plan = false
+  assign sp_savings = 0
+  if item.selling_plan_allocation
+    assign has_selling_plan = true
+    assign sp_savings = item.original_price | minus: item.final_price
+  endif
+
   assign original_price = item.variant.metafields.custom.original_price.value | default: 0 | plus: 0
   assign original_price_sub = original_price | times: 100
 -%}
@@ -34,6 +48,14 @@
             {{ item.variant.title }}
           {% endunless %}
         </div>
+        {% if has_selling_plan %}
+          <div class="cart-item__sub-badge">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="vertical-align:-2px;margin-right:4px;">
+              <path d="M17.65 6.35A7.95 7.95 0 0 0 12 4a8 8 0 1 0 7.74 10h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35Z" fill="currentColor"/>
+            </svg>
+            {{ item.selling_plan_allocation.selling_plan.name }}
+          </div>
+        {% endif %}
       </div>
       {% unless is_free_roduct %}
         <div
@@ -58,13 +80,18 @@
     {% unless is_free_roduct %}
       <div class="detail-bottom">
         <div class="price-row">
-          {% if original_price_sub > 0 and original_price_sub > item_price %}
+          {%- if has_selling_plan and item.original_price > item.final_price -%}
+            <span class="price-wrapper compare-at-price">
+              {{ item.original_price | money }}
+            </span>
+          {%- elsif original_price_sub > 0 and original_price_sub > item_price -%}
             <span class="price-wrapper compare-at-price">
               {{ original_price_sub | money }}
             </span>
-          {% endif %}
-          {% render 'PriceFormat'
-            , product: item %}
+          {%- endif -%}
+          <div class="sub-head price-wrapper">
+            {{ item_price | money }}
+          </div>
         </div>
         <div class="qty-select-wrapper">
           <select
