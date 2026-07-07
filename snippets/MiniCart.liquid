@@ -43,7 +43,11 @@
                   <span class="fbt-rating-text"></span>
                 </div>
                 <div class="fbt-card-title">{{ product.title }}</div>
-                <div class="fbt-card-variant">{{ product.variants.first.title }}</div>
+                <div class="fbt-card-variant">
+                  {%- unless product.has_only_default_variant -%}
+                    {{- product.variants.first.title -}}
+                  {%- endunless -%}
+                </div>
                 <div class="fbt-card-price">{{ product.price | money }}</div>
               </div>
               <div

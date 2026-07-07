@@ -43,7 +43,7 @@
       <div class="detail-info">
         <a href="{{ item.url }}" class="sub-head title">{{ item.product.title }}</a>
         <div class="variant body-desk-s">
-          {% unless is_free_roduct %}
+          {% unless is_free_roduct or item.product.has_only_default_variant %}
             {{ item.variant.title }}
           {% endunless %}
         </div>
