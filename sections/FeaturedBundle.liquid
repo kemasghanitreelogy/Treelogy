@@ -298,21 +298,19 @@
           <div class="main-image-display">
             {% for image in selected_bundle.images limit: 5 %}
               {% liquid
-                assign bundle_class = ''
-                if forloop.first
-                  assign bundle_class = 'activeBundle'
-                endif
+                assign bundle_w = image.width | at_most: 1000
+                assign bundle_h = bundle_w | divided_by: image.aspect_ratio | round
               %}
-              {{ image
-                | image_url: width: 1000
-                | image_tag:
-                  widths: '375, 550, 750, 1000',
-                  sizes: '(max-width: 749px) 100vw, 50vw',
-                  loading: 'lazy',
-                  alt: image.alt,
-                  class: bundle_class,
-                  data-index: forloop.index0
-              }}
+              <img
+                src="{{ image | image_url: width: 1000 }}"
+                srcset="{{ image | image_url: width: 375 }} 375w, {{ image | image_url: width: 550 }} 550w, {{ image | image_url: width: 750 }} 750w, {{ image | image_url: width: 1000 }} 1000w"
+                sizes="(max-width: 749px) 100vw, 50vw"
+                width="{{ bundle_w }}"
+                height="{{ bundle_h }}"
+                loading="lazy"
+                alt="{{ image.alt | escape }}"
+                data-index="{{ forloop.index0 }}"
+                class="{% if forloop.first %}activeBundle{% endif %}">
             {% endfor %}
           </div>
           <div class="slider-row">
