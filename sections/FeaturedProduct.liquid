@@ -3,7 +3,7 @@
     <div class="inner">
       <div class="thumbnail">
         <div class="wrapper">
-          <img src="{{ section.settings.product.images.first | image_url: width: '550x' }}" width="550" height="550">
+          <img src="{{ section.settings.product.images.first | image_url: width: 550 }}" width="550" height="550" alt="{{ section.settings.product.title | escape }}">
         </div>
       </div>
       <div class="product-detail">

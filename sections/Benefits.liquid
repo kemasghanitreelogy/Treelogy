@@ -5,7 +5,7 @@
     </h1>
     <div class="body-desk desc">{{ section.settings.description }}</div>
 
-    {% render 'Image', image: section.settings.background %}
+    {% render 'Image', image: section.settings.background, loading: 'eager' %}
   </div>
 
   <div class="content">

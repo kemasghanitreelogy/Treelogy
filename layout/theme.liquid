@@ -125,19 +125,21 @@
       // view-transition-name must be unique per page or the browser skips the
       // whole transition, so any previously named element is cleared first.
       (function () {
-        var tagged = null;
+        var candidate = null;
         document.addEventListener('click', function (e) {
           var link = e.target.closest && e.target.closest('a[href*="/products/"]');
           if (!link || e.metaKey || e.ctrlKey || e.shiftKey || link.target === '_blank') return;
-          var img = link.querySelector('img');
-          if (!img) return;
-          if (tagged && tagged !== img) tagged.style.viewTransitionName = '';
-          var pdpHero = document.querySelector('.native-gallery__slide[data-index="0"] img');
-          if (pdpHero && pdpHero !== img) pdpHero.style.viewTransitionName = 'none';
-          img.style.viewTransitionName = 'product-hero';
-          img.style.borderRadius = '8px';
-          tagged = img;
+          candidate = link.querySelector('img');
         }, true);
+        // Names are applied only at pageswap (the snapshot moment), so a click
+        // intercepted by a modal/quick-view leaves no stray styles behind.
+        addEventListener('pageswap', function (e) {
+          if (!candidate || !e.viewTransition) return;
+          var pdpHero = document.querySelector('.native-gallery__slide[data-index="0"] img');
+          if (pdpHero && pdpHero !== candidate) pdpHero.style.viewTransitionName = 'none';
+          candidate.style.viewTransitionName = 'product-hero';
+          candidate.style.borderRadius = '8px';
+        });
       })();
     </script>
 
@@ -145,7 +147,7 @@
       (function () {
         function neutralize() {
           var el = document.getElementById('kl-custom-fonts');
-          if (el && el.textContent) el.textContent = '';
+          if (el && el.textContent.indexOf('family=Inter') !== -1) el.textContent = '';
         }
         new MutationObserver(neutralize).observe(document.documentElement, { childList: true, subtree: true });
         neutralize();

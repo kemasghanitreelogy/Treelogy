@@ -16,7 +16,7 @@
   {% endif %}
 
   {% if image_file and video_file == null %}
-    {% render 'Image', image: image_file %}
+    {% render 'Image', image: image_file, loading: 'eager' %}
   {% endif %}
 </div>
 <style>
