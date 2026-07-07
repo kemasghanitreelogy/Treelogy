@@ -689,19 +689,21 @@
   /* sub-second ops (NN/g); pressed→adding→success morph with a 350ms minimum */
   /* state hold so fast responses never flash.                                */
   (function() {
-    var btn = document.getElementById('AddToCart');
-    if (!btn) return;
+    /* Delegated: this script runs (from the header-rendered MiniCart) before
+       the PDP section exists in the DOM, so the button must be resolved at
+       click time, never at parse time. */
+    function utmFlowOwnsButton() {
+      try {
+        return (
+          typeof window.isUtmFreeShipping === 'function' && window.isUtmFreeShipping()
+          && sessionStorage.getItem('utm_source_matched') === 'kesehatanwanita_blog'
+          && sessionStorage.getItem('utm_discount_code')
+        );
+      } catch (err) {
+        return false;
+      }
+    }
 
-    /* The UTM one-click checkout flow owns this button — leave it alone */
-    try {
-      if (
-        typeof window.isUtmFreeShipping === 'function' && window.isUtmFreeShipping()
-        && sessionStorage.getItem('utm_source_matched') === 'kesehatanwanita_blog'
-        && sessionStorage.getItem('utm_discount_code')
-      ) return;
-    } catch (err) {}
-
-    var L_ADD = btn.textContent.trim();
     var L_ADDING = {% if request.locale.iso_code == 'id' %}'Menambahkan…'{% else %}'Adding…'{% endif %};
     var L_DONE = {% if request.locale.iso_code == 'id' %}'✓ Masuk Keranjang'{% else %}'✓ Added to Cart'{% endif %};
     var L_FAIL = {% if request.locale.iso_code == 'id' %}'Gagal — coba lagi'{% else %}'Failed — try again'{% endif %};
@@ -722,12 +724,14 @@
     }
 
     document.addEventListener('click', function(e) {
-      if (e.target !== btn && !btn.contains(e.target)) return;
+      var btn = e.target.closest && e.target.closest('#AddToCart');
+      if (!btn || utmFlowOwnsButton()) return;
 
       e.stopImmediatePropagation();
       e.preventDefault();
       if (btn.classList.contains('is-adding') || btn.classList.contains('is-added')) return;
 
+      var L_ADD = btn.dataset.idleLabel || (btn.dataset.idleLabel = btn.textContent.trim());
       var select = document.getElementById('productSelect');
       var variantId = parseInt(btn.dataset.variant || (select && select.value), 10);
       if (!variantId) return;
