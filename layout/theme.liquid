@@ -71,6 +71,17 @@
       }
     </style>
 
+    <script>
+      (function () {
+        function neutralize() {
+          var el = document.getElementById('kl-custom-fonts');
+          if (el && el.textContent) el.textContent = '';
+        }
+        new MutationObserver(neutralize).observe(document.documentElement, { childList: true, subtree: true });
+        neutralize();
+      })();
+    </script>
+
     {{ content_for_header }}
 
     {{ 'theme.css' | asset_url | stylesheet_tag: preload: true }}
