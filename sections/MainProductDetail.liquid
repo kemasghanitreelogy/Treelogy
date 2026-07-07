@@ -4,6 +4,7 @@
 
 {% assign product_detail = product.metafields.custom.product_detail %}
 {% assign product_detail = blank %}
+{% assign accordion_assets_loaded = false %}
 
 <div class="main-grid product-detail-wrapper">
   <div class="gallery-wrapper">
@@ -11,7 +12,7 @@
       <div class="native-gallery__main-scroll" id="MainSlider">
         {% assign slide_index = 0 %}
         {% for image in product.images %}
-          {% assign image_alt = image.alt | escape %}
+          {% assign image_alt = image.alt %}
           {% if image.alt contains 'LANG:' %}
             {% assign image_alt = image.alt | split: "|" | last %}
             {% assign language_code = image.alt | split: "|" | first | remove: "LANG:" | downcase %}
@@ -20,11 +21,29 @@
           {% endif %}
 
           <div class="native-gallery__slide" data-index="{{ slide_index }}">
-            <img
-              src="{{ image.src | img_url: '1440x' }}"
-              alt="{{ image_alt }}"
-              loading="lazy"
-              class="gallery-image">
+            {% if slide_index == 0 %}
+              {{ image
+                | image_url: width: 1440
+                | image_tag:
+                  widths: '360, 480, 720, 960, 1200, 1440',
+                  sizes: '(max-width: 749px) 100vw, 50vw',
+                  loading: 'eager',
+                  fetchpriority: 'high',
+                  preload: true,
+                  alt: image_alt,
+                  class: 'gallery-image'
+              }}
+            {% else %}
+              {{ image
+                | image_url: width: 1440
+                | image_tag:
+                  widths: '360, 480, 720, 960, 1200, 1440',
+                  sizes: '(max-width: 749px) 100vw, 50vw',
+                  loading: 'lazy',
+                  alt: image_alt,
+                  class: 'gallery-image'
+              }}
+            {% endif %}
           </div>
           {% assign slide_index = slide_index | plus: 1 %}
         {% endfor %}
@@ -688,8 +707,11 @@
               </div>
             {% endif %}
           {%- when 'accordion_detail' -%}
-            {{ 'accordion-duplicate.css' | asset_url | stylesheet_tag }}
-            <script src="{{ 'accordion-duplicate.js' | asset_url }}" defer="defer"></script>
+            {% unless accordion_assets_loaded %}
+              {{ 'accordion-duplicate.css' | asset_url | stylesheet_tag }}
+              <script src="{{ 'accordion-duplicate.js' | asset_url }}" defer></script>
+              {% assign accordion_assets_loaded = true %}
+            {% endunless %}
             {%- assign detail_items = product.metafields.custom.product_detail.value -%}
 
             {%- assign limit = block.settings.limit_count | default: 6 -%}
@@ -837,8 +859,11 @@
               </div>
             {%- endif -%}
           {%- when 'accordion_duplicate' -%}
-            {{ 'accordion-duplicate.css' | asset_url | stylesheet_tag }}
-            <script src="{{ 'accordion-duplicate.js' | asset_url }}"></script>
+            {% unless accordion_assets_loaded %}
+              {{ 'accordion-duplicate.css' | asset_url | stylesheet_tag }}
+              <script src="{{ 'accordion-duplicate.js' | asset_url }}" defer></script>
+              {% assign accordion_assets_loaded = true %}
+            {% endunless %}
 
             {%- assign faq_group_metafield = product.metafields.product.faq -%}
             {%- assign faq_group = faq_group_metafield.value -%}

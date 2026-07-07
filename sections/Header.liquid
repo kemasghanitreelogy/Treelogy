@@ -85,32 +85,14 @@
           ]
 
 
-          window.activeCountryCode = Shopify.country.toLowerCase();
+          window.activeCountryCode = {{ localization.country.iso_code | json }}.toLowerCase();
           window.activeFreeProduct = null;
           window.activeFreeProductDetailInfo = '{{ settings.free_product_info }}'
 
           window.customCompleteText = '{{ settings.complete_text }}';
 
-          const haveUserCauntry = localStorage.getItem('_userCountry')
-
-          if(haveUserCauntry) {
-            window.activeCountryCode = haveUserCauntry;
-              if({{ settings.active_free_product }}) {
-                window.activeFreeProduct = '{{ variants.id }}';
-              }
-          }else{
-            fetch('https://ipapi.co/json/')
-            .then((response) => response.json())
-            .then((data) => {
-              window.activeCountryCode = data.country.toLowerCase();
-
-              if({{ settings.active_free_product }}) {
-                window.activeFreeProduct = '{{ variants.id }}';
-              }
-
-              localStorage.setItem('_userCountry', data.country.toLowerCase())
-
-            })
+          if({{ settings.active_free_product }}) {
+            window.activeFreeProduct = '{{ variants.id }}';
           }
         </script>
 

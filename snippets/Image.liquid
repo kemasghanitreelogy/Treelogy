@@ -1,9 +1,31 @@
- {% assign image_path = 'placeholder.png' | asset_url %}
-{% assign image_width = width %}
-{% assign image_height = height %}
+{% doc %}
+  Renders an image with valid intrinsic width/height attributes so the
+  browser can reserve space before the file loads (prevents layout shift).
 
-{% if image %}
-  {% assign image_path = image | image_url %}
-{% endif %}
+  @param {image} image - The image to render (falls back to a placeholder)
+  @param {number} [width] - Optional width attribute override
+  @param {number} [height] - Optional height attribute override
 
-<img src="{{ image_path }}" width="{{ image_width | default: "auto" }}" height="{{ image_height| default: "auto" }}">
+  @example
+  {% render 'Image', image: section.settings.logo %}
+{% enddoc %}
+
+{% liquid
+  assign image_path = 'placeholder.png' | asset_url
+  assign image_width = width | default: 1104
+  assign image_height = height | default: 1156
+  assign image_alt = ''
+
+  if image
+    assign image_path = image | image_url
+    assign image_width = width | default: image.width
+    assign image_height = height | default: image.height
+    assign image_alt = image.alt
+  endif
+%}
+
+<img
+  src="{{ image_path }}"
+  width="{{ image_width }}"
+  height="{{ image_height }}"
+  alt="{{ image_alt | escape }}">

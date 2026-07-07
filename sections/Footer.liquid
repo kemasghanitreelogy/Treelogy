@@ -123,18 +123,6 @@
   </div>
 </footer>
 
-<script>
-  const userCountry = localStorage.getItem('__user-country');
-
-  if (!userCountry) {
-    fetch('https://ipapi.co/json/')
-      .then((res) => res.json())
-      .then((data) => {
-        localStorage.setItem('__user-country', data.country_code);
-      });
-  }
-</script>
-
 {% schema %}
 {
   "name": "Footer",

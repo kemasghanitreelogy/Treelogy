@@ -19,10 +19,6 @@
       rel="preconnect"
       href="https://t.contentsquare.net"
       crossorigin>
-    <link
-      rel="preconnect"
-      href="https://cdn.jsdelivr.net"
-      crossorigin>
 
     {% if request.path == '/collections/all' %}
       <title>Treelogy | All Products</title>
@@ -72,9 +68,9 @@
     {{ 'theme.css' | asset_url | stylesheet_tag: preload: true }}
     {{ 'lugus-custom.css' | asset_url | stylesheet_tag }}
 
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="{{ 'swiper-bundle.min.js' | asset_url }}" defer></script>
 
-    <script src="{{ 'app.bundle.js' | asset_url }}"></script>
+    <script src="{{ 'app.bundle.js' | asset_url }}" defer></script>
     <script src="{{ 'review.bundle.js' | asset_url }}" defer></script>
     <script src="{{ 'lugus-custom.js' | asset_url }}" defer></script>
 
