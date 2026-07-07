@@ -66,9 +66,12 @@
 }
 
 /* Shared-element target: the first gallery image receives the morph from
-   the product card image clicked on the previous page. */
+   the product card image clicked on the previous page. border-radius lives on
+   the img itself because the transition snapshot ignores the parent's
+   overflow clip — without it the corners pop square mid-morph. */
 .native-gallery__slide[data-index="0"] img {
   view-transition-name: product-hero;
+  border-radius: 8px;
 }
 
 /* 3. Thumbnail Strip */
