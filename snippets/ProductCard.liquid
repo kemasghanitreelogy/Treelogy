@@ -17,7 +17,12 @@
   {% endif %}
   <div class="card swiper-slide" data-cs-capture>
     <figure>
-      <a href="{{ item.url }}"><img src="{{ card_image | img_url : '350x' }}" alt="{{ card_alt }}"></a>
+      <a href="{{ item.url }}">
+        {{- card_image
+          | image_url: width: 350
+          | image_tag: widths: '175, 350', loading: 'lazy', alt: card_alt
+        -}}
+      </a>
 
       {% comment %} {% unless button_cart %} {% endcomment %}
       {% if first_variant.available %}

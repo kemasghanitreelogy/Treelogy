@@ -297,11 +297,22 @@
         <div id="bundle-gallery-wrapper-{{ section.id }}" class="bundle-gallery-grid">
           <div class="main-image-display">
             {% for image in selected_bundle.images limit: 5 %}
-              <img
-                src="{{ image.src | img_url: '1000x' }}"
-                alt="{{ image.alt | escape }}"
-                data-index="{{ forloop.index0 }}"
-                class="{% if forloop.first %}activeBundle{% endif %}">
+              {% liquid
+                assign bundle_class = ''
+                if forloop.first
+                  assign bundle_class = 'activeBundle'
+                endif
+              %}
+              {{ image
+                | image_url: width: 1000
+                | image_tag:
+                  widths: '375, 550, 750, 1000',
+                  sizes: '(max-width: 749px) 100vw, 50vw',
+                  loading: 'lazy',
+                  alt: image.alt,
+                  class: bundle_class,
+                  data-index: forloop.index0
+              }}
             {% endfor %}
           </div>
           <div class="slider-row">

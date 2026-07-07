@@ -58,7 +58,7 @@
       </div>
       <div class="logo item">
         <a href="{{ request.locale.root_url }}">
-          {% render 'Image', image: section.settings.logo, sizes: '302px' %}
+          {% render 'Image', image: section.settings.logo, sizes: '302px', loading: 'eager' %}
         </a>
       </div>
       <div class="right-menu item">
@@ -116,7 +116,7 @@
       </div>
       <div class="logo item">
         <a href="{{ request.locale.root_url }}">
-          {% render 'Image', image: section.settings.logo, sizes: '302px' %}
+          {% render 'Image', image: section.settings.logo, sizes: '302px', loading: 'eager' %}
         </a>
       </div>
       <div class="right-menu item">

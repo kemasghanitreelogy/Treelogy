@@ -16,7 +16,7 @@
 
 {% liquid
   assign attr_sizes = sizes | default: '100vw'
-  assign attr_loading = loading | default: 'eager'
+  assign attr_loading = loading | default: 'lazy'
 %}
 
 {% if image %}

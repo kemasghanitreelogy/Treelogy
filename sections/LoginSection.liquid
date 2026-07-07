@@ -4,7 +4,7 @@
       {% render 'LoginForm' %}
     </div>
   </div>
-  {% render 'Image', image: section.settings.banner %}
+  {% render 'Image', image: section.settings.banner, loading: 'eager' %}
 </div>
 
 {% schema %}
