@@ -307,7 +307,10 @@
           <div class="slider-row">
             {% for image in selected_bundle.images limit: 5 %}
               <div class="slider-item {% if forloop.first %}activeBundle{% endif %}" data-index="{{ forloop.index0 }}">
-                <img src="{{ image.src | img_url: '600x' }}" alt="{{ image.alt | escape }}">
+                {{ image
+                  | image_url: width: 600
+                  | image_tag: widths: '300, 450, 600', sizes: '(max-width: 749px) 90vw, 600px', loading: 'lazy', alt: image.alt
+                }}
               </div>
             {% endfor %}
           </div>

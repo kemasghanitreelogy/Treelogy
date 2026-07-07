@@ -27,10 +27,10 @@
               ">
               <a href="{{ product.url }}">
                 {% if product.featured_image %}
-                  <img
-                    src="{{ product.featured_image | img_url: '600x' }}"
-                    alt="{{ product.featured_image.alt | escape }}"
-                    loading="lazy">
+                  {{ product.featured_image
+                    | image_url: width: 600
+                    | image_tag: widths: '300, 450, 600', sizes: '(max-width: 749px) 80vw, 300px', loading: 'lazy', alt: product.featured_image.alt
+                  }}
                 {% else %}
                   {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
                 {% endif %}
