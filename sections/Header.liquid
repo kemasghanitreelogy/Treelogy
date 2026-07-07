@@ -147,7 +147,7 @@
 </div>
 <div id="country-code"></div>
 
-<style>
+{% stylesheet %}
   #country-code {
     position: fixed;
     top: 10px;
@@ -252,7 +252,7 @@
     stroke: #ffffff;
   }
 
-</style>
+{% endstylesheet %}
 <script>
   window.country_progress_selection = '{{ settings.shipping_selected_country | downcase }}';
   window.country_progress_is_active = {{ settings.active_free_shipping_progress | default: false}};

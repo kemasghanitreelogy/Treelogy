@@ -384,6 +384,7 @@
       <!-- UTM Reward Toast -->
       <div
         id="utm-toast"
+        hidden
         aria-live="polite"
         role="status">
         <div class="utm-toast__overlay"></div>
@@ -436,6 +437,9 @@
       </div>
 
       <style>
+        #utm-toast[hidden] {
+          display: none !important;
+        }
         #utm-toast {
           position: fixed;
           inset: 0;
@@ -799,6 +803,7 @@
                 }
 
                 // Enter (snappy) — no auto-dismiss, user must claim or close
+                toast.removeAttribute('hidden');
                 setTimeout(function() { toast.classList.add('active'); }, 80);
               });
             })();
