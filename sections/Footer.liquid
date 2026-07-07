@@ -1,7 +1,7 @@
 <footer id="footer">
   <div class="mobile merchand-list">
     <div class="inner">
-      {% render 'Image', image: section.settings.mobile_image %}
+      {% render 'Image', image: section.settings.mobile_image, loading: 'lazy' %}
     </div>
   </div>
   <div class="top-footer">
@@ -96,7 +96,7 @@
   </div>
   <div class="main-grid bottom-footer">
     <div class="logo">
-      {% render 'Image', image: section.settings.footer_logo %}
+      {% render 'Image', image: section.settings.footer_logo, loading: 'lazy', sizes: '(max-width: 900px) 80vw, 552px' %}
     </div>
     <div class="right-content desktop">
       <div class="payment-title">
@@ -104,7 +104,7 @@
       </div>
       <div class="payment-list">
         <div class="desktop">
-          {% render 'Image', image: section.settings.desktop_image %}
+          {% render 'Image', image: section.settings.desktop_image, loading: 'lazy' %}
         </div>
       </div>
     </div>

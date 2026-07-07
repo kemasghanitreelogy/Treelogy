@@ -1,31 +1,41 @@
 {% doc %}
-  Renders an image with valid intrinsic width/height attributes so the
-  browser can reserve space before the file loads (prevents layout shift).
+  Renders a responsive image with srcset and valid intrinsic width/height
+  attributes so the browser can pick the right size and reserve space
+  before the file loads (prevents layout shift and oversized downloads).
 
   @param {image} image - The image to render (falls back to a placeholder)
-  @param {number} [width] - Optional width attribute override
-  @param {number} [height] - Optional height attribute override
+  @param {number} [width] - Max width to request (defaults to intrinsic, capped at 1920)
+  @param {number} [height] - Optional height attribute override for the placeholder
+  @param {string} [sizes] - The sizes attribute (defaults to '100vw')
+  @param {string} [loading] - 'eager' or 'lazy' (defaults to 'eager')
 
   @example
-  {% render 'Image', image: section.settings.logo %}
+  {% render 'Image', image: section.settings.logo, sizes: '302px' %}
+  {% render 'Image', image: section.settings.banner, loading: 'lazy' %}
 {% enddoc %}
 
 {% liquid
-  assign image_path = 'placeholder.png' | asset_url
-  assign image_width = width | default: 1104
-  assign image_height = height | default: 1156
-  assign image_alt = ''
-
-  if image
-    assign image_path = image | image_url
-    assign image_width = width | default: image.width
-    assign image_height = height | default: image.height
-    assign image_alt = image.alt
-  endif
+  assign attr_sizes = sizes | default: '100vw'
+  assign attr_loading = loading | default: 'eager'
 %}
 
-<img
-  src="{{ image_path }}"
-  width="{{ image_width }}"
-  height="{{ image_height }}"
-  alt="{{ image_alt | escape }}">
+{% if image %}
+  {% liquid
+    assign max_width = width | default: image.width | at_most: 1920
+  %}
+  {{ image
+    | image_url: width: max_width
+    | image_tag:
+      widths: '180, 360, 540, 720, 960, 1200, 1600, 1920',
+      sizes: attr_sizes,
+      loading: attr_loading,
+      alt: image.alt
+  }}
+{% else %}
+  <img
+    src="{{ 'placeholder.png' | asset_url }}"
+    width="{{ width | default: 1104 }}"
+    height="{{ height | default: 1156 }}"
+    loading="{{ attr_loading }}"
+    alt="">
+{% endif %}
