@@ -16,7 +16,7 @@
 
     <div class="cart" data-mobile="true">
       <form action="/cart" method="post" novalidate>
-        <div class="cart-items">
+        <div class="cart-items" aria-live="polite">
           {% if cart.item_count > 0 %}
             {% for item in cart.items %}
               {% render 'CartItemCard', item: item %}
