@@ -55,6 +55,7 @@
   scroll-snap-align: start;
   scroll-snap-stop: always;
   position: relative;
+  background-color: #e8ede4;
 }
 
 .native-gallery__slide img {

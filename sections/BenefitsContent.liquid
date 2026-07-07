@@ -52,12 +52,10 @@
   </div>
 </div>
 {% if section.settings.background %}
-  <img
-    alt="Moringa Background"
-    width="1920"
-    height="auto"
-    src="{{ section.settings.background | image_url: width: '1920x' }}"
-  >
+  {{ section.settings.background
+    | image_url: width: 1920
+    | image_tag: loading: 'lazy', decoding: 'async', alt: 'Moringa Background'
+  }}
 {% endif %}
 
 {% schema %}

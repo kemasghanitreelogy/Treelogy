@@ -10,15 +10,6 @@
       rel="preconnect"
       href="https://cdn.shopify.com"
       crossorigin>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link
-      rel="preconnect"
-      href="https://fonts.gstatic.com"
-      crossorigin>
-    <link
-      rel="preconnect"
-      href="https://t.contentsquare.net"
-      crossorigin>
 
     {% if request.path == '/collections/all' %}
       <title>Treelogy | All Products</title>
@@ -61,7 +52,24 @@
       <link rel="apple-touch-icon" href="{{ settings.favicon_light_mode | image_url: width: 180, height: 180 }}&v=3">
     {%- endif -%}
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    {{ 'inter-variable-latin.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+    <style>
+      @font-face {
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 100 900;
+        font-display: swap;
+        src: url('{{ 'inter-variable-latin.woff2' | asset_url }}') format('woff2');
+      }
+      @font-face {
+        font-family: 'Inter Fallback';
+        src: local('Arial');
+        size-adjust: 107%;
+        ascent-override: 90.49%;
+        descent-override: 22.56%;
+        line-gap-override: 0%;
+      }
+    </style>
 
     {{ content_for_header }}
 
@@ -74,7 +82,49 @@
     <script src="{{ 'review.bundle.js' | asset_url }}" defer></script>
     <script src="{{ 'lugus-custom.js' | asset_url }}" defer></script>
 
-    <script src="https://t.contentsquare.net/uxa/b315e3b428943.js" async></script>
+    <script>
+      (function () {
+        var loaded = false;
+        function loadContentsquare() {
+          if (loaded) return;
+          loaded = true;
+          var s = document.createElement('script');
+          s.src = 'https://t.contentsquare.net/uxa/b315e3b428943.js';
+          s.async = true;
+          document.head.appendChild(s);
+        }
+        function arm() {
+          ['scroll', 'touchstart', 'mousemove', 'keydown'].forEach(function (evt) {
+            addEventListener(evt, loadContentsquare, { once: true, passive: true });
+          });
+          setTimeout(loadContentsquare, 5000);
+        }
+        if (document.prerendering) {
+          document.addEventListener('prerenderingchange', arm, { once: true });
+        } else {
+          arm();
+        }
+      })();
+    </script>
+
+    <script type="speculationrules">
+      {
+        "prerender": [{
+          "where": {
+            "and": [
+              { "or": [
+                { "href_matches": "/products/*" },
+                { "href_matches": "/collections/*" }
+              ]},
+              { "not": { "href_matches": "/cart*" } },
+              { "not": { "href_matches": "*/checkouts/*" } },
+              { "not": { "selector_matches": ".no-prerender" } }
+            ]
+          },
+          "eagerness": "moderate"
+        }]
+      }
+    </script>
 
     <script>
       window.texts = {

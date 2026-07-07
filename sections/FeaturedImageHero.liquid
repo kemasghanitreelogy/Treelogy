@@ -32,22 +32,38 @@
       data-href="{{ product.url }}"
       data-swiper-autoplay="{{ section.settings.interval }}"
     >
-      <img
-        class="background background-{{ block.id }} desktop"
-        width="auto"
-        height="auto"
-        decoding="async"
-        src="{{ current_banner | image_url }}"
-        alt="{{ current_alt_text | escape }}"
-      >
-      <img
-        class="background mobile"
-        width="auto"
-        height="auto"
-        decoding="async"
-        src="{{ mobile_banner | image_url }}"
-        alt="{{ current_alt_text | escape }}"
-      >
+      {% liquid
+        if forloop.first
+          assign hero_loading = 'eager'
+        else
+          assign hero_loading = 'lazy'
+        endif
+        assign hero_desktop_class = 'background background-' | append: block.id | append: ' desktop'
+      %}
+      {% if current_banner %}
+        {{ current_banner
+          | image_url: width: 1920
+          | image_tag:
+            widths: '750, 1100, 1500, 1920',
+            sizes: '100vw',
+            loading: hero_loading,
+            decoding: 'async',
+            alt: current_alt_text,
+            class: hero_desktop_class
+        }}
+      {% endif %}
+      {% if mobile_banner %}
+        {{ mobile_banner
+          | image_url: width: 1100
+          | image_tag:
+            widths: '375, 550, 750, 1100',
+            sizes: '100vw',
+            loading: hero_loading,
+            decoding: 'async',
+            alt: current_alt_text,
+            class: 'background mobile'
+        }}
+      {% endif %}
       <div class="main-grid">
         <div class="content {{ block.type }}">
           {% if block.type == 'image_picker' %}

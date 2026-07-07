@@ -387,7 +387,7 @@ p {
 }
 
 :root {
-  --font-base: "Inter", sans-serif;
+  --font-base: "Inter", "Inter Fallback", sans-serif;
 }
 
 body {

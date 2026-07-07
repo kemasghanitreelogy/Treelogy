@@ -70,7 +70,10 @@
             data-index="{{ thumb_index }}"
             aria-label="View Image {{ thumb_index | plus: 1 }}">
             <div class="thumb-inner">
-              <img src="{{ image.src | img_url: 'compact' }}" alt="{{ image.alt | escape }}">
+              {{ image
+                | image_url: width: 160
+                | image_tag: widths: '80, 160', loading: 'lazy', alt: image.alt
+              }}
             </div>
           </button>
 
@@ -673,7 +676,7 @@
                               {%- if item.icon != blank -%}
                                 {{ item.icon | image_url: width: 128, height: 128 | image_tag: loading: 'lazy', class: 'timeline-item__icon', widths: '64, 128', alt: item.period | escape }}
                               {%- else -%}
-                                {% render 'icon-placeholder' %}
+                                <svg class="timeline-item__icon timeline-item__icon--placeholder" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                               {%- endif -%}
                             </div>
                           </div>
@@ -698,10 +701,6 @@
                       {%- endfor -%}
                     {%- endif -%}
 
-                    {%- comment -%} Fallback Icon SVG (Optional helper) {%- endcomment -%}
-                    {%- capture icon_placeholder -%}
-            <svg class="timeline-item__icon timeline-item__icon--placeholder" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-          {%- endcapture -%}
                   </div>
                 </div>
               </div>
