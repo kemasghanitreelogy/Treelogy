@@ -65,6 +65,12 @@
   object-fit: cover;
 }
 
+/* Shared-element target: the first gallery image receives the morph from
+   the product card image clicked on the previous page. */
+.native-gallery__slide[data-index="0"] img {
+  view-transition-name: product-hero;
+}
+
 /* 3. Thumbnail Strip */
 .native-gallery__thumbs-scroll {
   display: flex;

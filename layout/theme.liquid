@@ -69,7 +69,49 @@
         descent-override: 22.56%;
         line-gap-override: 0%;
       }
+
+      /* Smooth cross-page transitions (progressive enhancement, Chromium/Safari 26+) */
+      @view-transition {
+        navigation: auto;
+      }
+      ::view-transition-old(root),
+      ::view-transition-new(root) {
+        animation-duration: 240ms;
+        animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      ::view-transition-group(product-hero) {
+        animation-duration: 320ms;
+        animation-timing-function: cubic-bezier(0.22, 0.9, 0.32, 1);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        ::view-transition-group(*),
+        ::view-transition-old(*),
+        ::view-transition-new(*) {
+          animation: none !important;
+        }
+      }
     </style>
+
+    <script>
+      // Tag the clicked product image so the View Transition morphs it into
+      // the PDP gallery (shared-element transition). No-op where unsupported.
+      // view-transition-name must be unique per page or the browser skips the
+      // whole transition, so any previously named element is cleared first.
+      (function () {
+        var tagged = null;
+        document.addEventListener('click', function (e) {
+          var link = e.target.closest && e.target.closest('a[href*="/products/"]');
+          if (!link || e.metaKey || e.ctrlKey || e.shiftKey || link.target === '_blank') return;
+          var img = link.querySelector('img');
+          if (!img) return;
+          if (tagged && tagged !== img) tagged.style.viewTransitionName = '';
+          var pdpHero = document.querySelector('.native-gallery__slide[data-index="0"] img');
+          if (pdpHero && pdpHero !== img) pdpHero.style.viewTransitionName = 'none';
+          img.style.viewTransitionName = 'product-hero';
+          tagged = img;
+        }, true);
+      })();
+    </script>
 
     <script>
       (function () {
