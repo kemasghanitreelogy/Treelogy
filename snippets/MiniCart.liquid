@@ -72,7 +72,7 @@
         </div>
       {% endif %}
     </div>
-    <div id="cart"></div>
+    <div id="cart">{% render 'CartDrawerContent' %}</div>
   </div>
 </div>
 
@@ -789,10 +789,19 @@
           var newFooter = doc.querySelector('.sub-total.cart-footer');
           var oldItems = cartEl && cartEl.querySelector('.cart-items');
           var oldFooter = cartEl && cartEl.querySelector('.sub-total.cart-footer');
-          if (oldItems && newItems) oldItems.innerHTML = newItems.innerHTML;
-          if (oldFooter && newFooter) {
-            oldFooter.innerHTML = newFooter.innerHTML;
-            if (window.initCartTrustSlider) window.initCartTrustSlider();
+          if (oldItems && newItems) {
+            oldItems.innerHTML = newItems.innerHTML;
+            if (oldFooter && newFooter) {
+              oldFooter.innerHTML = newFooter.innerHTML;
+              if (window.initCartTrustSlider) window.initCartTrustSlider();
+            }
+          } else if (cartEl) {
+            /* Drawer container was never populated — full render like app.bundle */
+            var content = doc.getElementById('mini-cart-content');
+            if (content) {
+              cartEl.innerHTML = content.innerHTML;
+              if (window.initCartTrustSlider) window.initCartTrustSlider();
+            }
           }
           if (window.moveFBT) window.moveFBT();
           return fetch('/cart.js').then(function(r) { return r.json(); });
@@ -811,6 +820,16 @@
           settle('is-error', L_FAIL, 1600);
         });
     }, true); /* capture: runs before (and blocks) the app.bundle.js handler */
+
+    /* Fallback close for the server-rendered drawer (idempotent alongside
+       whatever app.bundle binds after its own re-render). */
+    document.addEventListener('click', function(e) {
+      var mini = e.target.closest && e.target.closest('.mini-cart');
+      if (!mini || !mini.classList.contains('active')) return;
+      if (e.target.closest('.close-button') || e.target.classList.contains('overlay')) {
+        mini.classList.remove('active');
+      }
+    });
   })();
 </script>
 

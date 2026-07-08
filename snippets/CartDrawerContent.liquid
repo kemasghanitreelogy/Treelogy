@@ -1,0 +1,100 @@
+{% doc %}
+  Server-rendered cart drawer content, shared by the cart.mini view
+  (fetched by ajax cart re-renders) and the initial #cart container in
+  MiniCart — so the drawer is never empty on first open.
+{% enddoc %}
+  <div class="cart-page min-cart-template">
+    <div class="cart-header main-header">
+      <div class="title" id="cart-header-title">
+        {{ 'cart.title' | t }}
+      </div>
+      <div class="cart-header-actions">
+        <div class="close-button">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 1.26495L10.7351 0L6 4.73505L1.26495 0L0 1.26495L4.73505 6L0 10.7351L1.26495 12L6 7.26495L10.7351 12L12 10.7351L7.26495 6L12 1.26495Z" fill="#2B3C35"/>
+          </svg>
+        </div>
+      </div>
+      {% render 'FreeShippingCartProgress' %}
+    </div>
+
+    <div class="cart" data-mobile="true">
+      <form action="/cart" method="post" novalidate>
+        <div class="cart-items" aria-live="polite">
+          {% if cart.item_count > 0 %}
+            {% for item in cart.items %}
+              {% render 'CartItemCard', item: item %}
+            {% endfor %}
+          {% else %}
+            <div class="cart-empty-state">
+              <div class="cart-empty-icon">
+                <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 18V14C18 8.48 22.48 4 28 4C33.52 4 38 8.48 38 14V18" stroke="#2B3C35" stroke-width="1.5" stroke-linecap="round" stroke-opacity="0.25"/>
+                  <path d="M10 18H46L43.5 48H12.5L10 18Z" stroke="#2B3C35" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.25"/>
+                  <path d="M22 26V30" stroke="#2B3C35" stroke-width="1.5" stroke-linecap="round" stroke-opacity="0.18"/>
+                  <path d="M34 26V30" stroke="#2B3C35" stroke-width="1.5" stroke-linecap="round" stroke-opacity="0.18"/>
+                </svg>
+              </div>
+              <p class="cart-empty-title">{{ 'cart.empty_title' | t }}</p>
+              <p class="cart-empty-subtitle">{{ 'cart.empty_subtitle' | t }}</p>
+            </div>
+          {% endif %}
+        </div>
+
+        {%- assign total_savings = 0 -%}
+        {%- for item in cart.items -%}
+          {%- assign op = item.variant.metafields.custom.original_price.value | default: 0 | plus: 0 | times: 100 -%}
+          {%- assign vp = item.variant.price -%}
+          {%- if op > 0 and op > vp -%}
+            {%- assign item_saving = op | minus: vp | times: item.quantity -%}
+            {%- assign total_savings = total_savings | plus: item_saving -%}
+          {%- endif -%}
+        {%- endfor -%}
+
+        <div class="sub-total cart-footer">
+          {% if cart.item_count > 0 %}
+            <div class="cart-footer-summary">
+              <div class="cart-footer-row{% if total_savings > 0 %} visible{% endif %}" id="cart-saving-row">
+                <span>{{ 'cart.saving_label' | t }}</span>
+                <span id="cart-saving-amount">{{ total_savings | money }}</span>
+              </div>
+              <div class="cart-footer-row visible" id="cart-shipping-row">
+                <span>{{ 'cart.shipping_label' | t }}</span>
+                <span id="cart-shipping-value" class="cart-shipping-value">{{ 'cart.shipping_calculated' | t }}</span>
+              </div>
+            </div>
+            <button type="submit" name="checkout" id="cart-checkout-btn">
+              {{ 'cart.checkout_button_label' | t | upcase }}&nbsp; - &nbsp;<span id="sub-total-mini" data-total="{{ cart.total_price }}">{{ cart.total_price | money }}</span>
+            </button>
+            <div class="cart-trust-slider" data-cart-trust-slider>
+              <div class="cart-trust-wrapper">
+                {%- if settings.cart_usp_heading_1 != blank or settings.cart_usp_text_1 != blank -%}
+                  <div class="cart-trust-slide">
+                    <span class="cart-trust-heading">{{ settings.cart_usp_heading_1 }}</span>
+                    <span class="cart-trust-text">{{ settings.cart_usp_text_1 }}</span>
+                  </div>
+                {%- endif -%}
+                {%- if settings.cart_usp_heading_2 != blank or settings.cart_usp_text_2 != blank -%}
+                  <div class="cart-trust-slide">
+                    <span class="cart-trust-heading">{{ settings.cart_usp_heading_2 }}</span>
+                    <span class="cart-trust-text">{{ settings.cart_usp_text_2 }}</span>
+                  </div>
+                {%- endif -%}
+                {%- if settings.cart_usp_heading_3 != blank or settings.cart_usp_text_3 != blank -%}
+                  <div class="cart-trust-slide">
+                    <span class="cart-trust-heading">{{ settings.cart_usp_heading_3 }}</span>
+                    <span class="cart-trust-text">{{ settings.cart_usp_text_3 }}</span>
+                  </div>
+                {%- endif -%}
+              </div>
+              <div class="cart-trust-dots"></div>
+            </div>
+          {% else %}
+            <a href="/collections/all" class="cart-empty-shop-btn">
+              {{ 'cart.empty_cta' | t | upcase }}
+            </a>
+          {% endif %}
+        </div>
+      </form>
+    </div>
+  </div>
