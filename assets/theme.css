@@ -2982,7 +2982,7 @@ input.red {
 .mini-cart.active .overlay {
   opacity: 1;
   /* Open: fade in gently */
-  transition: opacity 0.4s ease;
+  transition: opacity 0.28s ease;
 }
 .mini-cart #cart {
   height: 100%;
@@ -3381,8 +3381,8 @@ input.red {
   transform: translateX(0);
   box-shadow: -12px 0 40px rgba(43, 60, 53, 0.1);
   /* Open: smooth glide with gentle deceleration */
-  transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1),
-              box-shadow 0.5s ease;
+  transition: transform 0.34s cubic-bezier(0.32, 0.72, 0, 1),
+              box-shadow 0.34s ease;
 }
 
 .page-account {

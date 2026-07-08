@@ -50,6 +50,9 @@
     }
   },
   "cart": {
+    "atc_adding": "Menambahkan…",
+    "atc_added": "Masuk Keranjang",
+    "atc_failed_generic": "Gagal menambahkan — coba lagi",
     "title": "Keranjang",
     "checkout_button_label": "Check Out",
     "empty_cart_text": "Keranjang masih kosong",
