@@ -919,6 +919,7 @@
           }
           if (window.moveFBT) window.moveFBT();
           if (window.refreshCartUI) window.refreshCartUI(cart);
+          if (window.syncFBTVisibility) window.syncFBTVisibility(cart);
           if (cart.item_count > 0 && window.loadCompareAtPrices) window.loadCompareAtPrices();
           var indicator = document.getElementById('cart-indicator');
           if (indicator) indicator.classList.toggle('show', cart.item_count > 0);
