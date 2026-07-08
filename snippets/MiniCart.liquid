@@ -19,6 +19,26 @@
       <div class="fbt-header">
         {{ 'cart.fbt_title' | t }} <strong>{{ 'cart.fbt_title_bold' | t }}</strong>
       </div>
+      <div class="fbt-skel-track" aria-hidden="true">
+        <div class="fbt-skel-card">
+          <span class="opt-shimmer fbt-skel-img"></span>
+          <div class="fbt-skel-lines">
+            <span class="opt-shimmer fbt-skel-line" style="width: 70%"></span>
+            <span class="opt-shimmer fbt-skel-line" style="width: 45%"></span>
+            <span class="opt-shimmer fbt-skel-line fbt-skel-price" style="width: 38%"></span>
+          </div>
+          <span class="opt-shimmer fbt-skel-btn"></span>
+        </div>
+        <div class="fbt-skel-card">
+          <span class="opt-shimmer fbt-skel-img"></span>
+          <div class="fbt-skel-lines">
+            <span class="opt-shimmer fbt-skel-line" style="width: 62%"></span>
+            <span class="opt-shimmer fbt-skel-line" style="width: 50%"></span>
+            <span class="opt-shimmer fbt-skel-line fbt-skel-price" style="width: 34%"></span>
+          </div>
+          <span class="opt-shimmer fbt-skel-btn"></span>
+        </div>
+      </div>
       {% if up_selling != null %}
         <div class="fbt-track">
           {% for product in up_selling %}
@@ -686,16 +706,62 @@
   @keyframes optIn {
     from { opacity: 0; transform: translateY(8px); }
   }
-  /* Same-document View Transition (drawer reconciliation): plain local
-     crossfade — the cross-page rise-in must NOT apply here. */
-  @keyframes vt-fade-in-local {
-    from { opacity: 0; }
+  /* FBT skeleton — visible while the section waits for its first sync */
+  .fbt-section .fbt-skel-track {
+    display: none;
+    gap: 10px;
   }
-  html.vt-local::view-transition-old(root) {
-    animation: vt-fade-out 140ms ease-out both;
+  .fbt-section.fbt-loading .fbt-skel-track {
+    display: flex;
   }
-  html.vt-local::view-transition-new(root) {
-    animation: vt-fade-in-local 180ms ease-out both;
+  .fbt-section.fbt-loading .fbt-track {
+    display: none;
+  }
+  .fbt-skel-card {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 12px;
+    background: rgba(43, 60, 53, 0.05);
+  }
+  .fbt-skel-img {
+    width: 64px;
+    height: 64px;
+    border-radius: 10px;
+    flex: 0 0 auto;
+  }
+  .fbt-skel-lines {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .fbt-skel-line {
+    height: 11px;
+    border-radius: 4px;
+  }
+  .fbt-skel-price {
+    height: 13px;
+  }
+  .fbt-skel-btn {
+    width: 56px;
+    height: 30px;
+    border-radius: 8px;
+    flex: 0 0 auto;
+  }
+  /* Footer while the very first item is being added to an empty cart:
+     hide the empty-state CTA, show a checkout-bar skeleton instead */
+  .cart-footer.opt-pending .cart-empty-shop-btn {
+    display: none;
+  }
+  .opt-footer-skel {
+    display: block;
+    height: 48px;
+    border-radius: 10px;
   }
   /* FBT entrance: soft rise + card stagger when it first appears */
   .fbt-section.fbt-reveal {
@@ -720,7 +786,7 @@
     .atc-btn { transition: none; }
     .atc-btn.is-adding { transform: none; }
     .cart-item--optimistic { animation: none; }
-    .cart-item--optimistic .opt-shimmer { animation: none; }
+    .opt-shimmer { animation: none; }
     .fbt-section.fbt-reveal,
     .fbt-section.fbt-reveal .fbt-card { animation: none; }
     #atc-error-toast { transition: opacity 200ms ease; transform: translate(-50%, 0); }
@@ -843,19 +909,60 @@
       return el;
     }
 
-    /* Same-document View Transition wrapper for the reconciliation swap —
-       browser crossfades the DOM change; falls back to a plain apply. */
+    /* Scoped crossfade for the reconciliation swap. Deliberately NOT
+       document.startViewTransition: a full-page snapshot freezes every
+       running animation (shimmer, marquee) for ~180ms and reads as a
+       glitch. Fading only the drawer regions keeps the rest alive. */
     function smoothApply(fn) {
       var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (document.startViewTransition && !reduce) {
-        document.documentElement.classList.add('vt-local');
-        var vt = document.startViewTransition(fn);
-        vt.finished.finally(function () {
-          document.documentElement.classList.remove('vt-local');
-        });
-      } else {
+      var sel = ['#cart .cart-items', '#cart .sub-total.cart-footer'];
+      var targets = sel.map(function (q) { return document.querySelector(q); }).filter(Boolean);
+      if (reduce || !targets.length) { fn(); return; }
+      targets.forEach(function (el) {
+        el.style.transition = 'opacity 120ms ease-out';
+        el.style.opacity = '0';
+      });
+      setTimeout(function () {
         fn();
-      }
+        /* re-query: the full-render fallback may have replaced the nodes */
+        var fresh = sel.map(function (q) { return document.querySelector(q); }).filter(Boolean);
+        fresh.forEach(function (el) {
+          el.style.transition = 'none';
+          el.style.opacity = '0';
+        });
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            fresh.forEach(function (el) {
+              el.style.transition = 'opacity 200ms cubic-bezier(0.16, 1, 0.3, 1)';
+              el.style.opacity = '1';
+            });
+            setTimeout(function () {
+              fresh.forEach(function (el) { el.style.transition = ''; el.style.opacity = ''; });
+            }, 280);
+          });
+        });
+      }, 125);
+    }
+
+    /* Central FBT choreography: wraps syncFBTVisibility so EVERY flow
+       (premium ATC, FBT add, app.bundle re-render) resolves the skeleton
+       into real cards with the stagger reveal. */
+    if (window.syncFBTVisibility && !window.syncFBTVisibility.__fbtWrapped) {
+      var __origSyncFBT = window.syncFBTVisibility;
+      window.syncFBTVisibility = function (cart) {
+        var sec = document.querySelector('.fbt-section');
+        var visBefore = !!(sec && sec.querySelector('.fbt-card[style*="flex"]'));
+        __origSyncFBT(cart);
+        if (!sec) return;
+        var visAfter = !!sec.querySelector('.fbt-card[style*="flex"]');
+        var wasLoading = sec.classList.contains('fbt-loading');
+        sec.classList.remove('fbt-loading');
+        if (visAfter && (wasLoading || !visBefore)) {
+          sec.classList.add('fbt-reveal');
+          setTimeout(function () { sec.classList.remove('fbt-reveal'); }, 700);
+        }
+      };
+      window.syncFBTVisibility.__fbtWrapped = true;
     }
 
     function showErrorToast(msg) {
@@ -921,6 +1028,21 @@
         optCard = buildOptimisticCard(ctx, priceText);
         itemsWrap.insertBefore(optCard, itemsWrap.firstChild);
       }
+      /* FBT skeleton immediately — the section is never an empty hole */
+      if (window.moveFBT) window.moveFBT();
+      var fbtSec = document.querySelector('.fbt-section');
+      if (fbtSec && !fbtSec.querySelector('.fbt-card[style*="flex"]')) {
+        fbtSec.classList.add('fbt-loading');
+        fbtSec.style.display = '';
+      }
+      /* Footer: swap the empty-cart CTA for a checkout-bar skeleton */
+      var footerEl = document.querySelector('#cart .sub-total.cart-footer');
+      if (footerEl && footerEl.querySelector('.cart-empty-shop-btn')) {
+        footerEl.classList.add('opt-pending');
+        var fskel = document.createElement('span');
+        fskel.className = 'opt-shimmer opt-footer-skel';
+        footerEl.appendChild(fskel);
+      }
 
       function settle(stateClass, label, hold) {
         var wait = Math.max(0, MIN_STATE - (Date.now() - t0));
@@ -957,12 +1079,8 @@
         .then(function (results) {
           var doc = new DOMParser().parseFromString(results[0], 'text/html');
           var cart = results[1];
-          var fbtSection = document.querySelector('.fbt-section');
-          var fbtVisibleBefore = !!(fbtSection && fbtSection.querySelector('.fbt-card[style*="flex"]'));
-
-          /* All DOM mutations inside one same-document View Transition:
-             optimistic card -> real card, footer totals and the FBT section
-             all crossfade as one smooth frame instead of popping. */
+          /* One scoped crossfade: optimistic card -> real card, footer
+             totals and FBT resolve together instead of popping. */
           smoothApply(function () {
             var cartEl = document.getElementById('cart');
             var newItems = doc.querySelector('.cart-items');
@@ -988,13 +1106,10 @@
             if (window.syncFBTVisibility) window.syncFBTVisibility(cart);
           });
 
-          /* FBT entrance choreography on first appearance */
-          fbtSection = document.querySelector('.fbt-section');
-          var fbtVisibleAfter = !!(fbtSection && fbtSection.querySelector('.fbt-card[style*="flex"]'));
-          if (fbtSection && fbtVisibleAfter && !fbtVisibleBefore) {
-            fbtSection.classList.add('fbt-reveal');
-            setTimeout(function () { fbtSection.classList.remove('fbt-reveal'); }, 700);
-          }
+          /* opt-pending cleanup (footer innerHTML was replaced; the class
+             lives on the container and must be lifted here) */
+          var f2 = document.querySelector('#cart .sub-total.cart-footer');
+          if (f2) f2.classList.remove('opt-pending');
 
           if (cart.item_count > 0 && window.loadCompareAtPrices) window.loadCompareAtPrices();
           var indicator = document.getElementById('cart-indicator');
@@ -1005,6 +1120,17 @@
           /* Rollback the optimistic state, tell the user WHY it failed */
           if (optCard && optCard.parentNode) optCard.parentNode.removeChild(optCard);
           if (emptyState) emptyState.style.display = '';
+          var secRb = document.querySelector('.fbt-section');
+          if (secRb && secRb.classList.contains('fbt-loading')) {
+            secRb.classList.remove('fbt-loading');
+            if (!secRb.querySelector('.fbt-card[style*="flex"]')) secRb.style.display = 'none';
+          }
+          var fRb = document.querySelector('#cart .sub-total.cart-footer');
+          if (fRb) {
+            fRb.classList.remove('opt-pending');
+            var skl = fRb.querySelector('.opt-footer-skel');
+            if (skl) skl.remove();
+          }
           showErrorToast((err && err.description) || L.failed);
           settle('is-error', L.failed, 1600);
         });
