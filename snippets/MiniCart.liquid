@@ -643,24 +643,13 @@
     background-color: #8a3232 !important;
     color: #fff !important;
   }
+  /* Optimistic card reuses the real .cart-item markup/classes so the
+     reconciliation swap is typographically invisible. */
   .cart-item--optimistic {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    animation: optIn 200ms ease-out both;
+    animation: optIn 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
   }
-  .cart-item--optimistic .opt-thumb img {
-    width: 72px;
-    height: 72px;
-    object-fit: cover;
-    border-radius: 8px;
-    background: #e8ede4;
-  }
-  .cart-item--optimistic .opt-title {
-    font-weight: 600;
-  }
-  .cart-item--optimistic .opt-price {
-    margin-top: 6px;
+  .cart-item--optimistic .qty-select {
+    pointer-events: none;
   }
   .cart-item--optimistic .opt-shimmer {
     display: inline-block;
@@ -697,6 +686,33 @@
   @keyframes optIn {
     from { opacity: 0; transform: translateY(8px); }
   }
+  /* Same-document View Transition (drawer reconciliation): plain local
+     crossfade — the cross-page rise-in must NOT apply here. */
+  @keyframes vt-fade-in-local {
+    from { opacity: 0; }
+  }
+  html.vt-local::view-transition-old(root) {
+    animation: vt-fade-out 140ms ease-out both;
+  }
+  html.vt-local::view-transition-new(root) {
+    animation: vt-fade-in-local 180ms ease-out both;
+  }
+  /* FBT entrance: soft rise + card stagger when it first appears */
+  .fbt-section.fbt-reveal {
+    animation: fbtRise 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .fbt-section.fbt-reveal .fbt-card {
+    animation: fbtCard 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .fbt-section.fbt-reveal .fbt-card:nth-child(2) { animation-delay: 60ms; }
+  .fbt-section.fbt-reveal .fbt-card:nth-child(3) { animation-delay: 120ms; }
+  .fbt-section.fbt-reveal .fbt-card:nth-child(n+4) { animation-delay: 180ms; }
+  @keyframes fbtRise {
+    from { opacity: 0; transform: translateY(14px); }
+  }
+  @keyframes fbtCard {
+    from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  }
   @keyframes optShimmer {
     to { background-position: -200% 0; }
   }
@@ -705,6 +721,8 @@
     .atc-btn.is-adding { transform: none; }
     .cart-item--optimistic { animation: none; }
     .cart-item--optimistic .opt-shimmer { animation: none; }
+    .fbt-section.fbt-reveal,
+    .fbt-section.fbt-reveal .fbt-card { animation: none; }
     #atc-error-toast { transition: opacity 200ms ease; transform: translate(-50%, 0); }
   }
 </style>
@@ -742,9 +760,15 @@
     function cardContext(btn) {
       if (btn.id === 'AddToCart') {
         var h1 = document.querySelector('.product-detail-wrapper h1');
+        var sel = document.getElementById('productSelect');
+        var variantText = '';
+        if (sel && sel.options.length > 1 && sel.selectedIndex >= 0) {
+          variantText = (sel.options[sel.selectedIndex].text || '').split(' - ')[0].trim();
+        }
         return {
           img: document.querySelector('.native-gallery__slide img'),
-          title: h1 ? h1.textContent : ''
+          title: h1 ? h1.textContent : '',
+          variant: variantText
         };
       }
       if (btn.id === 'popup-variants-button-bag') {
@@ -779,24 +803,59 @@
       return null;
     }
 
+    /* Markup mirrors snippets/CartItemCard.liquid exactly (same classes,
+       same structure) so fonts, sizes and spacing are identical before and
+       after reconciliation — the swap reads as a data refresh, not a
+       re-layout. Qty ghost is a real disabled <select> for pixel parity. */
     function buildOptimisticCard(ctx, priceText) {
       var el = document.createElement('div');
       el.className = 'cart-item cart-item--optimistic';
       el.innerHTML =
-        '<div class="opt-thumb"></div>'
-        + '<div class="opt-info"><div class="opt-title"></div>'
-        + '<div class="opt-price"></div></div>';
+        '<a class="thumb"></a>'
+        + '<div class="detail">'
+        +   '<div class="detail-top">'
+        +     '<div class="detail-info">'
+        +       '<a class="sub-head title"></a>'
+        +       '<div class="variant body-desk-s"></div>'
+        +     '</div>'
+        +   '</div>'
+        +   '<div class="detail-bottom">'
+        +     '<div class="price-row">'
+        +       '<div class="sub-head price-wrapper"></div>'
+        +     '</div>'
+        +     '<div class="qty-select-wrapper">'
+        +       '<select class="qty-select" disabled aria-hidden="true"><option>1</option></select>'
+        +       '<svg class="qty-arrow" width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="#2B3C35" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        +     '</div>'
+        +   '</div>'
+        + '</div>';
       if (ctx.img) {
         var im = document.createElement('img');
         im.src = ctx.img.currentSrc || ctx.img.src;
         im.alt = '';
-        el.querySelector('.opt-thumb').appendChild(im);
+        el.querySelector('.thumb').appendChild(im);
       }
-      el.querySelector('.opt-title').textContent = (ctx.title || '').trim();
-      var priceEl = el.querySelector('.opt-price');
+      el.querySelector('.title').textContent = (ctx.title || '').trim();
+      if (ctx.variant) el.querySelector('.variant').textContent = ctx.variant;
+      var priceEl = el.querySelector('.price-row .price-wrapper');
       if (priceText) priceEl.textContent = priceText;
       else priceEl.innerHTML = '<span class="opt-shimmer"></span>';
       return el;
+    }
+
+    /* Same-document View Transition wrapper for the reconciliation swap —
+       browser crossfades the DOM change; falls back to a plain apply. */
+    function smoothApply(fn) {
+      var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (document.startViewTransition && !reduce) {
+        document.documentElement.classList.add('vt-local');
+        var vt = document.startViewTransition(fn);
+        vt.finished.finally(function () {
+          document.documentElement.classList.remove('vt-local');
+        });
+      } else {
+        fn();
+      }
     }
 
     function showErrorToast(msg) {
@@ -898,28 +957,45 @@
         .then(function (results) {
           var doc = new DOMParser().parseFromString(results[0], 'text/html');
           var cart = results[1];
-          var cartEl = document.getElementById('cart');
-          var newItems = doc.querySelector('.cart-items');
-          var newFooter = doc.querySelector('.sub-total.cart-footer');
-          var oldItems = cartEl && cartEl.querySelector('.cart-items');
-          var oldFooter = cartEl && cartEl.querySelector('.sub-total.cart-footer');
-          if (oldItems && newItems) {
-            oldItems.innerHTML = newItems.innerHTML;
-            if (oldFooter && newFooter) {
-              oldFooter.innerHTML = newFooter.innerHTML;
-              if (window.initCartTrustSlider) window.initCartTrustSlider();
+          var fbtSection = document.querySelector('.fbt-section');
+          var fbtVisibleBefore = !!(fbtSection && fbtSection.querySelector('.fbt-card[style*="flex"]'));
+
+          /* All DOM mutations inside one same-document View Transition:
+             optimistic card -> real card, footer totals and the FBT section
+             all crossfade as one smooth frame instead of popping. */
+          smoothApply(function () {
+            var cartEl = document.getElementById('cart');
+            var newItems = doc.querySelector('.cart-items');
+            var newFooter = doc.querySelector('.sub-total.cart-footer');
+            var oldItems = cartEl && cartEl.querySelector('.cart-items');
+            var oldFooter = cartEl && cartEl.querySelector('.sub-total.cart-footer');
+            if (oldItems && newItems) {
+              oldItems.innerHTML = newItems.innerHTML;
+              if (oldFooter && newFooter) {
+                oldFooter.innerHTML = newFooter.innerHTML;
+                if (window.initCartTrustSlider) window.initCartTrustSlider();
+              }
+            } else if (cartEl) {
+              /* Container was never populated — full render like app.bundle */
+              var content = doc.getElementById('mini-cart-content');
+              if (content) {
+                cartEl.innerHTML = content.innerHTML;
+                if (window.initCartTrustSlider) window.initCartTrustSlider();
+              }
             }
-          } else if (cartEl) {
-            /* Container was never populated — full render like app.bundle */
-            var content = doc.getElementById('mini-cart-content');
-            if (content) {
-              cartEl.innerHTML = content.innerHTML;
-              if (window.initCartTrustSlider) window.initCartTrustSlider();
-            }
+            if (window.moveFBT) window.moveFBT();
+            if (window.refreshCartUI) window.refreshCartUI(cart);
+            if (window.syncFBTVisibility) window.syncFBTVisibility(cart);
+          });
+
+          /* FBT entrance choreography on first appearance */
+          fbtSection = document.querySelector('.fbt-section');
+          var fbtVisibleAfter = !!(fbtSection && fbtSection.querySelector('.fbt-card[style*="flex"]'));
+          if (fbtSection && fbtVisibleAfter && !fbtVisibleBefore) {
+            fbtSection.classList.add('fbt-reveal');
+            setTimeout(function () { fbtSection.classList.remove('fbt-reveal'); }, 700);
           }
-          if (window.moveFBT) window.moveFBT();
-          if (window.refreshCartUI) window.refreshCartUI(cart);
-          if (window.syncFBTVisibility) window.syncFBTVisibility(cart);
+
           if (cart.item_count > 0 && window.loadCompareAtPrices) window.loadCompareAtPrices();
           var indicator = document.getElementById('cart-indicator');
           if (indicator) indicator.classList.toggle('show', cart.item_count > 0);
