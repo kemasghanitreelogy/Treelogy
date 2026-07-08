@@ -769,9 +769,11 @@
           if (planId && m.plans && m.plans[String(planId)]) return m.plans[String(planId)].final;
           return m.onetime;
         }
+        /* data-variant-price is denominated in rupiah (same contract the UTM
+           discount renderer uses) — NOT cents */
         var card = document.querySelector('.protocol-variant-card[data-value="' + variantId + '"]');
         if (card && card.dataset.variantPrice && window.formatRp) {
-          return window.formatRp(parseInt(card.dataset.variantPrice, 10) / 100);
+          return window.formatRp(parseInt(card.dataset.variantPrice, 10));
         }
       } catch (err) {}
       return null;
