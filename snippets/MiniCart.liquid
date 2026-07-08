@@ -19,28 +19,23 @@
       <div class="fbt-header">
         {{ 'cart.fbt_title' | t }} <strong>{{ 'cart.fbt_title_bold' | t }}</strong>
       </div>
-      <div class="fbt-skel-track" aria-hidden="true">
-        <div class="fbt-skel-card">
-          <span class="opt-shimmer fbt-skel-img"></span>
-          <div class="fbt-skel-lines">
-            <span class="opt-shimmer fbt-skel-line" style="width: 70%"></span>
-            <span class="opt-shimmer fbt-skel-line" style="width: 45%"></span>
-            <span class="opt-shimmer fbt-skel-line fbt-skel-price" style="width: 38%"></span>
-          </div>
-          <span class="opt-shimmer fbt-skel-btn"></span>
-        </div>
-        <div class="fbt-skel-card">
-          <span class="opt-shimmer fbt-skel-img"></span>
-          <div class="fbt-skel-lines">
-            <span class="opt-shimmer fbt-skel-line" style="width: 62%"></span>
-            <span class="opt-shimmer fbt-skel-line" style="width: 50%"></span>
-            <span class="opt-shimmer fbt-skel-line fbt-skel-price" style="width: 34%"></span>
-          </div>
-          <span class="opt-shimmer fbt-skel-btn"></span>
-        </div>
-      </div>
       {% if up_selling != null %}
         <div class="fbt-track">
+          {% for i in (1..2) %}
+            <div class="fbt-card fbt-card--skel" aria-hidden="true">
+              <div class="fbt-card-image"><span class="opt-shimmer opt-shimmer--light fbt-skel-imgfill"></span></div>
+              <div class="fbt-card-info">
+                <div class="fbt-card-title">
+                  <span class="opt-shimmer opt-shimmer--light fbt-skel-line" style="width: 82%"></span>
+                  <span class="opt-shimmer opt-shimmer--light fbt-skel-line" style="width: 48%; margin-top: 7px"></span>
+                </div>
+                <div class="fbt-card-price">
+                  <span class="opt-shimmer opt-shimmer--light fbt-skel-line" style="width: 74px; height: 13px; margin-top: 9px"></span>
+                </div>
+              </div>
+              <span class="opt-shimmer opt-shimmer--light fbt-skel-action"></span>
+            </div>
+          {% endfor %}
           {% for product in up_selling %}
             <div
               class="fbt-card upsel-product-cart"
@@ -706,62 +701,64 @@
   @keyframes optIn {
     from { opacity: 0; transform: translateY(8px); }
   }
-  /* FBT skeleton — visible while the section waits for its first sync */
-  .fbt-section .fbt-skel-track {
-    display: none;
-    gap: 10px;
-  }
-  .fbt-section.fbt-loading .fbt-skel-track {
-    display: flex;
-  }
-  .fbt-section.fbt-loading .fbt-track {
+  /* FBT skeleton: REAL .fbt-card markup+classes, so width (flex 0 0 88%),
+     green #A5BB87, padding and track gap are inherited — pixel-identical to
+     the loaded state; only the content shimmers. */
+  .fbt-card--skel {
     display: none;
   }
-  .fbt-skel-card {
-    flex: 1 1 0;
-    min-width: 0;
+  .fbt-section.fbt-loading .fbt-card--skel {
     display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-    border-radius: 12px;
-    background: rgba(43, 60, 53, 0.05);
   }
-  .fbt-skel-img {
-    width: 64px;
-    height: 64px;
+  .fbt-section.fbt-loading .fbt-card:not(.fbt-card--skel) {
+    display: none !important;
+  }
+  .opt-shimmer--light {
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.32) 25%, rgba(255, 255, 255, 0.58) 50%, rgba(255, 255, 255, 0.32) 75%);
+    background-size: 200% 100%;
+  }
+  .fbt-skel-imgfill {
+    display: block;
+    width: 80px;
+    height: 80px;
     border-radius: 10px;
-    flex: 0 0 auto;
-  }
-  .fbt-skel-lines {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
   }
   .fbt-skel-line {
-    height: 11px;
+    display: block;
+    height: 12px;
     border-radius: 4px;
   }
-  .fbt-skel-price {
-    height: 13px;
-  }
-  .fbt-skel-btn {
-    width: 56px;
-    height: 30px;
-    border-radius: 8px;
-    flex: 0 0 auto;
+  .fbt-skel-action {
+    position: absolute;
+    bottom: 16px;
+    right: 14px;
+    width: 52px;
+    height: 15px;
+    border-radius: 4px;
   }
   /* Footer while the very first item is being added to an empty cart:
      hide the empty-state CTA, show a checkout-bar skeleton instead */
   .cart-footer.opt-pending .cart-empty-shop-btn {
     display: none;
   }
-  .opt-footer-skel {
-    display: block;
+  .opt-footer-skelwrap .cart-footer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+  }
+  .opt-skel-checkout {
     height: 48px;
-    border-radius: 10px;
+    border-radius: 8px;
+    background-color: #526547;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .opt-skel-secure {
+    display: flex;
+    justify-content: center;
+    padding: 10px 0 0;
   }
   /* FBT entrance: soft rise + card stagger when it first appears */
   .fbt-section.fbt-reveal {
@@ -1039,8 +1036,16 @@
       var footerEl = document.querySelector('#cart .sub-total.cart-footer');
       if (footerEl && footerEl.querySelector('.cart-empty-shop-btn')) {
         footerEl.classList.add('opt-pending');
-        var fskel = document.createElement('span');
-        fskel.className = 'opt-shimmer opt-footer-skel';
+        var fskel = document.createElement('div');
+        fskel.className = 'opt-footer-skelwrap';
+        fskel.setAttribute('aria-hidden', 'true');
+        fskel.innerHTML =
+          '<div class="cart-footer-summary">'
+          + '<div class="cart-footer-row visible"><span class="opt-shimmer fbt-skel-line" style="width:96px"></span><span class="opt-shimmer fbt-skel-line" style="width:74px"></span></div>'
+          + '<div class="cart-footer-row visible"><span class="opt-shimmer fbt-skel-line" style="width:64px"></span><span class="opt-shimmer fbt-skel-line" style="width:42px"></span></div>'
+          + '</div>'
+          + '<div class="opt-skel-checkout"><span class="opt-shimmer opt-shimmer--light fbt-skel-line" style="width:172px;height:13px"></span></div>'
+          + '<div class="opt-skel-secure"><span class="opt-shimmer fbt-skel-line" style="width:210px;height:10px"></span></div>';
         footerEl.appendChild(fskel);
       }
 
@@ -1128,7 +1133,7 @@
           var fRb = document.querySelector('#cart .sub-total.cart-footer');
           if (fRb) {
             fRb.classList.remove('opt-pending');
-            var skl = fRb.querySelector('.opt-footer-skel');
+            var skl = fRb.querySelector('.opt-footer-skelwrap');
             if (skl) skl.remove();
           }
           showErrorToast((err && err.description) || L.failed);
