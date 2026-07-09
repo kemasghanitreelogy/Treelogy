@@ -20,7 +20,7 @@
             {% if form.posted_successfully? %}
               Thank you for subscribing! Stay tuned for our latest updates.
             {% else %}
-              <input type="checkbox" class="accept-tnc" data-button="button-register-news" id="accept-tnc">
+              <input type="checkbox" class="accept-tnc" data-button="button-register-news" id="accept-tnc" aria-label="{{ 'forms.newsletter.privacy_accept' | t | strip_html | escape }}">
               <a href="{{ section.settings.privacy_url }}">I accept the privacy policy</a>
             {% endif %}
           </div>
