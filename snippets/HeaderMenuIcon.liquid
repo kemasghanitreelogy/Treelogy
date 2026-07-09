@@ -1,4 +1,4 @@
-<div class="button desktop button-search" id="button-search">
+<div class="button desktop button-search" id="button-search" role="button" tabindex="0" aria-label="Search">
   <svg
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
@@ -7,7 +7,7 @@
   </svg>
 </div>
 
-<a href="{% if template != 'cart' %}/cart{% else %}#{% endif %}" class="button button-cart">
+<a href="{% if template != 'cart' %}/cart{% else %}#{% endif %}" class="button button-cart" aria-label="Cart">
   <div id="cart-indicator" class="indicator {% if cart.item_count > 0 %}show{% endif %}">
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -48,7 +48,7 @@
   {% assign user_url = base_url | append: '/account' %}
 {% endif %}
 
-<a href="{{ user_url }}" class="button button-login desktop">
+<a href="{{ user_url }}" class="button button-login desktop" aria-label="Account">
   <svg
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
