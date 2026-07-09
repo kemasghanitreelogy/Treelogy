@@ -62,7 +62,7 @@
                     {% if form.posted_successfully? %}
                       {{ 'forms.newsletter.success' | t }}
                     {% else %}
-                      <input type="checkbox" data-button="button-register" class="accept-tnc" id="accept-tnc">
+                      <input type="checkbox" data-button="button-register" class="accept-tnc" id="accept-tnc" aria-label="{{ 'forms.newsletter.privacy_accept' | t | strip_html | escape }}">
                       <a href="{{ section.settings.privacy_url }}">{{ 'forms.newsletter.privacy_accept' | t }}</a>
                     {% endif %}
                   </div>
