@@ -1,0 +1,115 @@
+{% doc %}
+  Renders global Organization + WebSite JSON-LD (schema.org) for GEO / AI-search
+  and rich results. Include once in the <head> on every page.
+
+  @example
+  {% render 'structured-data-global' %}
+{% enddoc %}
+
+{%- liquid
+  assign base = request.origin
+  assign org_id = base | append: '/#organization'
+  assign web_id = base | append: '/#website'
+  assign logo_url = ''
+  if shop.brand.logo != blank
+    assign logo_url = shop.brand.logo | image_url: width: 512 | prepend: 'https:'
+  endif
+  assign shop_rating_raw = shop.metafields.judgeme.all_reviews_rating
+  assign shop_count = shop.metafields.judgeme.all_reviews_count | plus: 0
+-%}
+{%- capture org_description -%}
+Treelogy is a premium organic moringa brand that operates the world's first regenerative organic moringa farm, in Karangasem, Bali, Indonesia, on the volcanic foothills of Mount Agung. Fully vertically integrated and single origin (seed to shelf), Treelogy grows, hand-harvests leaves at dawn, gently dehydrates, cold-presses, and encapsulates its moringa powder, moringa capsules, and cold-pressed moringa seed oil in its own BPOM-certified facility, with no fillers or additives. Certified BPOM, USDA Organic, Naturland FAIR, FairTSA, and Halal. Trusted by more than 7,800 customers. Health From the Inside & Out.
+{%- endcapture -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": ["Organization", "OnlineStore"],
+      "@id": {{ org_id | json }},
+      "name": "Treelogy",
+      "legalName": "PT. Treelogy Regenerative Moringa",
+      "alternateName": "Treelogy Premium Organic Moringa",
+      "url": {{ base | json }},
+      "foundingDate": "2020",
+      {%- if logo_url != blank %}
+      "logo": {{ logo_url | json }},
+      "image": {{ logo_url | json }},
+      {%- endif %}
+      "email": "hello@treelogy.com",
+      "slogan": "Health From the Inside & Out",
+      "description": {{ org_description | strip_newlines | strip | json }},
+      "founder": { "@type": "Person", "name": "Sacha" },
+      "foundingLocation": {
+        "@type": "Place",
+        "name": "Karangasem, Bali, Indonesia"
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Jalan Bumbak, Kerobokan, Kec. Kuta Utara",
+        "addressLocality": "Kabupaten Badung",
+        "addressRegion": "Bali",
+        "postalCode": "80361",
+        "addressCountry": "ID"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer support",
+        "email": "hello@treelogy.com",
+        "telephone": "+6281139603993",
+        "availableLanguage": ["en", "id"]
+      },
+      "areaServed": ["Indonesia", "United States", "Australia", "Singapore", "European Union"],
+      "knowsAbout": [
+        "Moringa oleifera",
+        "Organic moringa powder",
+        "Moringa capsules",
+        "Cold-pressed moringa seed oil",
+        "Regenerative organic farming",
+        "Single-origin moringa",
+        "Moringa nutrition",
+        "Plant-based nutrition"
+      ],
+      "hasCertification": [
+        { "@type": "Certification", "name": "USDA Organic", "issuedBy": { "@type": "Organization", "name": "United States Department of Agriculture" } },
+        { "@type": "Certification", "name": "BPOM (CPOTB, CPPOB, CPKB)", "issuedBy": { "@type": "Organization", "name": "Badan Pengawas Obat dan Makanan (BPOM), Indonesia" } },
+        { "@type": "Certification", "name": "Naturland FAIR", "issuedBy": { "@type": "Organization", "name": "Naturland" } },
+        { "@type": "Certification", "name": "FairTSA", "issuedBy": { "@type": "Organization", "name": "Fair Trade Sustainability Alliance" } },
+        { "@type": "Certification", "name": "Halal" }
+      ],
+      {%- if shop_count > 0 and shop_rating_raw != blank %}
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": {{ shop_rating_raw | round: 2 }},
+        "reviewCount": {{ shop_count }},
+        "bestRating": 5,
+        "worstRating": 1
+      },
+      {%- endif %}
+      "sameAs": [
+        "https://www.instagram.com/treelogy/",
+        "https://www.facebook.com/treelogy.moringa",
+        "https://www.tiktok.com/@treelogy.moringa",
+        "https://www.pinterest.com/treelogymoringa/"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": {{ web_id | json }},
+      "url": {{ base | json }},
+      "name": "Treelogy",
+      "alternateName": "Treelogy Premium Organic Moringa",
+      "inLanguage": ["en", "id"],
+      "publisher": { "@id": {{ org_id | json }} },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "{{ base }}/search?q={search_term_string}&type=product"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+  ]
+}
+</script>

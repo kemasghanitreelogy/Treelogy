@@ -1,0 +1,194 @@
+{% doc %}
+  Renders Product + BreadcrumbList + FAQPage JSON-LD (schema.org) for the current
+  product page. AggregateOffer spans variants; AggregateRating renders only when a
+  real per-product review count exists (never fabricated). Moringa-specific facts
+  (origin, sourcing, certifications) are emitted only for certified products so
+  accessories are described accurately. Built for GEO / AI-search and rich results.
+
+  @param {product} product - The product to describe
+
+  @example
+  {% render 'structured-data-product', product: product %}
+{% enddoc %}
+
+{%- liquid
+  assign base = request.origin
+  assign p_url = base | append: product.url
+  assign p_id = p_url | append: '#product'
+  assign org_id = base | append: '/#organization'
+  assign currency = shop.currency
+  assign price_valid_until = 'now' | date: '%Y' | plus: 1 | append: '-12-31'
+
+  assign desc = product.description | strip_html | strip_newlines | strip | truncate: 5000
+  if desc == blank
+    assign desc = product.title | append: ' by Treelogy — premium single-origin organic moringa from Bali.'
+  endif
+
+  assign rating_meta = product.metafields.reviews.rating.value
+  assign rating_count = product.metafields.reviews.rating_count.value | default: product.metafields.custom.rating_count.value | plus: 0
+  assign fallback_rating = product.metafields.custom.rating.value
+
+  assign rating_value = ''
+  assign best_rating = 5
+  if rating_meta != blank
+    assign rating_value = rating_meta.rating
+    assign best_rating = rating_meta.scale_max | default: 5
+  elsif fallback_rating != blank
+    assign rating_value = fallback_rating
+  endif
+
+  assign show_rating = false
+  if rating_count > 0 and rating_value != blank
+    assign show_rating = true
+  endif
+
+  assign availability = 'https://schema.org/OutOfStock'
+  if product.available
+    assign availability = 'https://schema.org/InStock'
+  endif
+
+  assign is_certified_moringa = false
+  if product.metafields.custom.certified == true
+    assign is_certified_moringa = true
+  endif
+
+  assign faq_items = product.metafields.product.faq.value.faq_items.value
+  assign howto_steps = product.metafields.custom.how_to_use.value
+-%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Product",
+      "@id": {{ p_id | json }},
+      "name": {{ product.title | json }}
+      ,"url": {{ p_url | json }}
+      ,"description": {{ desc | json }}
+      {%- if product.images.size > 0 -%}
+      ,"image": [
+        {%- for image in product.images limit: 8 -%}
+        {{ image | image_url: width: 1600 | prepend: 'https:' | json }}{%- unless forloop.last -%},{%- endunless -%}
+        {%- endfor -%}
+      ]
+      {%- endif -%}
+      ,"brand": { "@type": "Brand", "name": "Treelogy" }
+      ,"manufacturer": { "@id": {{ org_id | json }} }
+      {%- if product.type != blank -%}
+      ,"category": {{ product.type | json }}
+      {%- endif -%}
+      {%- if product.selected_or_first_available_variant.sku != blank -%}
+      ,"sku": {{ product.selected_or_first_available_variant.sku | json }}
+      {%- endif -%}
+      {%- if show_rating -%}
+      ,"aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": {{ rating_value | json }},
+        "reviewCount": {{ rating_count | json }},
+        "bestRating": {{ best_rating | json }},
+        "worstRating": 1
+      }
+      {%- endif -%}
+      {%- if is_certified_moringa -%}
+      ,"additionalProperty": [
+        { "@type": "PropertyValue", "name": "Origin", "value": "Karangasem, Bali, Indonesia (foothills of Mount Agung)" },
+        { "@type": "PropertyValue", "name": "Sourcing", "value": "Single origin, seed to shelf, regenerative organic, stem-free" },
+        { "@type": "PropertyValue", "name": "Certifications", "value": "BPOM, USDA Organic, Naturland FAIR, FairTSA, Halal" }
+      ]
+      {%- endif -%}
+      ,"offers": {
+        "@type": "AggregateOffer",
+        "priceCurrency": {{ currency | json }},
+        "lowPrice": {{ product.price_min | divided_by: 100.0 }},
+        "highPrice": {{ product.price_max | divided_by: 100.0 }},
+        "offerCount": {{ product.variants.size }},
+        "availability": {{ availability | json }},
+        "url": {{ p_url | json }},
+        "seller": { "@id": {{ org_id | json }} },
+        "hasMerchantReturnPolicy": {
+          "@type": "MerchantReturnPolicy",
+          "applicableCountry": ["ID", "US", "AU", "SG"],
+          "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+          "merchantReturnDays": 14,
+          "returnMethod": "https://schema.org/ReturnByMail",
+          "returnFees": "https://schema.org/ReturnShippingFees"
+        },
+        "shippingDetails": {
+          "@type": "OfferShippingDetails",
+          "shippingDestination": { "@type": "DefinedRegion", "addressCountry": "ID" },
+          "shippingRate": {
+            "@type": "ShippingRateSettings",
+            "freeShippingThreshold": {
+              "@type": "MonetaryAmount",
+              "value": 650000,
+              "currency": "IDR"
+            }
+          }
+        },
+        "offers": [
+          {%- for variant in product.variants -%}
+          {
+            "@type": "Offer",
+            {% if variant.sku != blank %}"sku": {{ variant.sku | json }},"mpn": {{ variant.sku | json }},{% endif %}
+            "name": {{ variant.title | json }},
+            "price": {{ variant.price | divided_by: 100.0 }},
+            "priceCurrency": {{ currency | json }},
+            "priceValidUntil": {{ price_valid_until | json }},
+            "availability": "https://schema.org/{% if variant.available %}InStock{% else %}OutOfStock{% endif %}",
+            "itemCondition": "https://schema.org/NewCondition",
+            "seller": { "@id": {{ org_id | json }} },
+            "url": {{ p_url | append: '?variant=' | append: variant.id | json }}
+          }{%- unless forloop.last -%},{%- endunless -%}
+          {%- endfor -%}
+        ]
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": {{ base | json }} },
+        { "@type": "ListItem", "position": 2, "name": "Shop", "item": {{ base | append: '/collections/all' | json }} },
+        { "@type": "ListItem", "position": 3, "name": {{ product.title | json }}, "item": {{ p_url | json }} }
+      ]
+    }
+    {%- if faq_items != blank -%}
+    ,{
+      "@type": "FAQPage",
+      "@id": {{ p_url | append: '#faq' | json }},
+      "mainEntity": [
+        {%- for faq_item in faq_items -%}
+        {
+          "@type": "Question",
+          "name": {{ faq_item.title | json }},
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": {{ faq_item.answer | metafield_tag | strip_html | strip_newlines | strip | truncate: 1200 | json }}
+          }
+        }{%- unless forloop.last -%},{%- endunless -%}
+        {%- endfor -%}
+      ]
+    }
+    {%- endif -%}
+    {%- if howto_steps != blank -%}
+    ,{
+      "@type": "HowTo",
+      "@id": {{ p_url | append: '#howto' | json }},
+      "name": {{ product.title | prepend: 'How to use ' | json }},
+      "step": [
+        {%- for card in howto_steps -%}
+        {
+          "@type": "HowToStep",
+          "position": {{ forloop.index }},
+          "name": {{ card.title | json }},
+          "text": {{ card.description | strip_html | strip_newlines | strip | truncate: 800 | json }}
+          {%- if card.thumb != blank -%}
+          ,"image": {{ card.thumb | image_url: width: 800 | prepend: 'https:' | json }}
+          {%- endif -%}
+        }{%- unless forloop.last -%},{%- endunless -%}
+        {%- endfor -%}
+      ]
+    }
+    {%- endif -%}
+  ]
+}
+</script>

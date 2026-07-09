@@ -156,6 +156,13 @@
 
     {{ content_for_header }}
 
+    {% render 'structured-data-global' %}
+    {%- if request.page_type == 'product' -%}
+      {% render 'structured-data-product', product: product %}
+    {%- elsif request.page_type == 'article' -%}
+      {% render 'structured-data-article', article: article, blog: blog %}
+    {%- endif -%}
+
     {{ 'theme.css' | asset_url | stylesheet_tag: preload: true }}
     {{ 'lugus-custom.css' | asset_url | stylesheet_tag }}
 

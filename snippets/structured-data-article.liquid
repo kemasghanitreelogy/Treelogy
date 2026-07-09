@@ -1,0 +1,72 @@
+{% doc %}
+  Renders BlogPosting + BreadcrumbList JSON-LD (schema.org) for the current blog
+  article. Built for GEO / AI-search citation (moringa research articles) and
+  Google article rich results.
+
+  @param {article} article - The article to describe
+  @param {blog} blog - The parent blog
+
+  @example
+  {% render 'structured-data-article', article: article, blog: blog %}
+{% enddoc %}
+
+{%- liquid
+  assign base = request.origin
+  assign a_url = base | append: article.url
+  assign org_id = base | append: '/#organization'
+  assign blog_id = base | append: blog.url | append: '#blog'
+
+  assign excerpt = article.excerpt | strip_html | strip_newlines | strip
+  if excerpt == blank
+    assign excerpt = article.content | strip_html | strip_newlines | strip | truncate: 300
+  endif
+  assign body = article.content | strip_html | strip_newlines | strip | truncate: 6000
+
+  assign img = ''
+  if article.image != blank
+    assign img = article.image | image_url: width: 1600 | prepend: 'https:'
+  endif
+
+  assign pub_date = article.published_at | date: '%Y-%m-%dT%H:%M:%S%z'
+  assign mod_date = article.updated_at | default: article.published_at | date: '%Y-%m-%dT%H:%M:%S%z'
+-%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "@id": {{ a_url | append: '#article' | json }},
+      "mainEntityOfPage": { "@type": "WebPage", "@id": {{ a_url | json }} },
+      "headline": {{ article.title | truncate: 110 | json }}
+      ,"description": {{ excerpt | json }}
+      {%- if body != blank -%}
+      ,"articleBody": {{ body | json }}
+      {%- endif -%}
+      {%- if img != blank -%}
+      ,"image": [ {{ img | json }} ]
+      {%- endif -%}
+      ,"datePublished": {{ pub_date | json }}
+      ,"dateModified": {{ mod_date | json }}
+      {%- if article.author != blank -%}
+      ,"author": { "@type": "Person", "name": {{ article.author | json }} }
+      {%- endif -%}
+      ,"publisher": { "@id": {{ org_id | json }} }
+      ,"about": { "@type": "Thing", "name": "Moringa oleifera" }
+      ,"inLanguage": {{ request.locale.iso_code | default: 'en' | json }}
+      {%- if article.tags.size > 0 -%}
+      ,"keywords": {{ article.tags | join: ', ' | json }}
+      {%- endif -%}
+      ,"isPartOf": { "@type": "Blog", "@id": {{ blog_id | json }}, "name": {{ blog.title | json }} }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": {{ base | json }} },
+        { "@type": "ListItem", "position": 2, "name": {{ blog.title | json }}, "item": {{ base | append: blog.url | json }} },
+        { "@type": "ListItem", "position": 3, "name": {{ article.title | json }}, "item": {{ a_url | json }} }
+      ]
+    }
+  ]
+}
+</script>
