@@ -35,8 +35,10 @@
       {% liquid
         if forloop.first
           assign hero_loading = 'eager'
+          assign hero_priority = 'high'
         else
           assign hero_loading = 'lazy'
+          assign hero_priority = 'auto'
         endif
         assign hero_desktop_class = 'background background-' | append: block.id | append: ' desktop'
       %}
@@ -47,6 +49,7 @@
             widths: '750, 1100, 1500, 1920',
             sizes: '100vw',
             loading: hero_loading,
+            fetchpriority: hero_priority,
             decoding: 'async',
             alt: current_alt_text,
             class: hero_desktop_class
@@ -59,6 +62,7 @@
             widths: '375, 550, 750, 1100',
             sizes: '100vw',
             loading: hero_loading,
+            fetchpriority: hero_priority,
             decoding: 'async',
             alt: current_alt_text,
             class: 'background mobile'
