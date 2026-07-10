@@ -2,7 +2,7 @@
 
   <div class="graphic">
     <div class="main-circle desktop">
-      <img src="{{ section.settings.main_graphic | image_url }}" loading="lazy">
+      <img src="{{ section.settings.main_graphic | image_url }}" loading="lazy" width="{{ section.settings.main_graphic.width }}" height="{{ section.settings.main_graphic.height }}" alt="{{ section.settings.main_graphic.alt | default: 'Treelogy moringa nutrition and benefits' | escape }}">
     </div>
 
     <div class="mobile-card mobile" id="VirtualSlider">
@@ -11,7 +11,10 @@
         <img
           src="{{ section.settings.main_graphic | image_url }}"
           loading="lazy"
-          style="width:100%; height:auto;">
+          width="{{ section.settings.main_graphic.width }}"
+          height="{{ section.settings.main_graphic.height }}"
+          style="width:100%; height:auto;"
+          alt="{{ section.settings.main_graphic.alt | default: 'Treelogy moringa nutrition and benefits' | escape }}">
       </div>
 
       {% for block in section.blocks %}
