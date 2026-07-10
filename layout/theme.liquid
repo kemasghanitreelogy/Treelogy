@@ -29,15 +29,39 @@
       elsif request.page_type == 'article'
         assign og_type = 'article'
       endif
+      assign og_title = page_title | default: shop.name
+      assign og_desc = page_description
+      if request.path == '/collections/all'
+        assign og_title = 'Treelogy | All Products'
+        assign og_desc = 'Browse all Treelogy products made with organic moringa, including powders, capsules, oils, and wellness bundles.'
+      elsif request.path == '/blogs/news'
+        assign og_title = 'Treelogy | Blog'
+        assign og_desc = 'Read the Treelogy Journal for wellness tips, moringa recipes, product insights, and stories from our farm and community.'
+      endif
+      if og_desc == blank and collection.description != blank
+        assign og_desc = collection.description | strip_html | strip_newlines | truncate: 200
+      endif
+      if og_desc == blank
+        assign og_desc = shop.description
+      endif
+      if request.locale.iso_code == 'id'
+        assign og_locale = 'id_ID'
+        assign og_locale_alt = 'en_US'
+      else
+        assign og_locale = 'en_US'
+        assign og_locale_alt = 'id_ID'
+      endif
     -%}
     <meta property="og:site_name" content="{{ shop.name | escape }}">
     <meta property="og:type" content="{{ og_type }}">
     <meta property="og:url" content="{{ canonical_url }}">
-    <meta property="og:title" content="{{ page_title | escape }}">
-    <meta property="og:description" content="{{ page_description | escape }}">
+    <meta property="og:title" content="{{ og_title | escape }}">
+    <meta property="og:description" content="{{ og_desc | escape }}">
+    <meta property="og:locale" content="{{ og_locale }}">
+    <meta property="og:locale:alternate" content="{{ og_locale_alt }}">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{ page_title | escape }}">
-    <meta name="twitter:description" content="{{ page_description | escape }}">
+    <meta name="twitter:title" content="{{ og_title | escape }}">
+    <meta name="twitter:description" content="{{ og_desc | escape }}">
 
     {% if request.path contains '/pages/vip-early-access' %}
       <meta property="og:image" content="https://cdn.shopify.com/s/files/1/0668/4776/8764/files/The_Movement_Relief_1__11zon.png?v=1764405259">
@@ -260,6 +284,21 @@ Treelogy is a premium organic moringa brand that operates the world's first rege
         if desc == blank
           assign desc = product.title | append: ' by Treelogy — premium single-origin organic moringa from Bali.'
         endif
+        assign rating_meta = product.metafields.reviews.rating.value
+        assign rating_count = product.metafields.reviews.rating_count.value | default: product.metafields.custom.rating_count.value | plus: 0
+        assign fallback_rating = product.metafields.custom.rating.value
+        assign rating_value = ''
+        assign best_rating = 5
+        if rating_meta != blank
+          assign rating_value = rating_meta.rating
+          assign best_rating = rating_meta.scale_max | default: 5
+        elsif fallback_rating != blank
+          assign rating_value = fallback_rating
+        endif
+        assign show_rating = false
+        if rating_count > 0 and rating_value != blank
+          assign show_rating = true
+        endif
         assign availability = 'https://schema.org/OutOfStock'
         if product.available
           assign availability = 'https://schema.org/InStock'
@@ -291,6 +330,9 @@ Treelogy is a premium organic moringa brand that operates the world's first rege
             {%- endif -%}
             {%- if product.selected_or_first_available_variant.sku != blank -%}
             ,"sku": {{ product.selected_or_first_available_variant.sku | json }}
+            {%- endif -%}
+            {%- if show_rating -%}
+            ,"aggregateRating": { "@type": "AggregateRating", "ratingValue": {{ rating_value | json }}, "reviewCount": {{ rating_count | json }}, "bestRating": {{ best_rating | json }}, "worstRating": 1 }
             {%- endif -%}
             {%- if is_certified_moringa -%}
             ,"additionalProperty": [
@@ -380,6 +422,10 @@ Treelogy is a premium organic moringa brand that operates the world's first rege
         endif
         assign pub_date = article.published_at | date: '%Y-%m-%dT%H:%M:%S%z'
         assign mod_date = article.updated_at | default: article.published_at | date: '%Y-%m-%dT%H:%M:%S%z'
+        assign article_author = article.author
+        if article_author == blank or article_author == 'My Store Admin'
+          assign article_author = 'Treelogy Editorial Team'
+        endif
       -%}
       <script type="application/ld+json">
       {
@@ -395,7 +441,7 @@ Treelogy is a premium organic moringa brand that operates the world's first rege
             {%- if img != blank -%},"image": [ {{ img | json }} ]{%- endif -%}
             ,"datePublished": {{ pub_date | json }}
             ,"dateModified": {{ mod_date | json }}
-            {%- if article.author != blank -%},"author": { "@type": "Person", "name": {{ article.author | json }} }{%- endif -%}
+            ,"author": { "@type": "Person", "name": {{ article_author | json }} }
             ,"publisher": { "@id": {{ org_id | json }} }
             ,"about": { "@type": "Thing", "name": "Moringa oleifera" }
             ,"inLanguage": {{ request.locale.iso_code | default: 'en' | json }}
