@@ -182,8 +182,6 @@
       if shop.brand.logo != blank
         assign logo_url = shop.brand.logo | image_url: width: 512 | prepend: 'https:'
       endif
-      assign shop_rating_raw = shop.metafields.judgeme.all_reviews_rating
-      assign shop_count = shop.metafields.judgeme.all_reviews_count | plus: 0
     -%}
     {%- capture org_description -%}
 Treelogy is a premium organic moringa brand that operates the world's first regenerative organic moringa farm, in Karangasem, Bali, Indonesia, on the volcanic foothills of Mount Agung. Fully vertically integrated and single origin (seed to shelf), Treelogy grows, hand-harvests leaves at dawn, gently dehydrates, cold-presses, and encapsulates its moringa powder, moringa capsules, and cold-pressed moringa seed oil in its own BPOM-certified facility, with no fillers or additives. Certified BPOM, USDA Organic, Naturland FAIR, FairTSA, and Halal. Trusted by more than 7,800 customers. Health From the Inside & Out.
@@ -233,9 +231,6 @@ Treelogy is a premium organic moringa brand that operates the world's first rege
             { "@type": "Certification", "name": "FairTSA", "issuedBy": { "@type": "Organization", "name": "Fair Trade Sustainability Alliance" } },
             { "@type": "Certification", "name": "Halal" }
           ],
-          {%- if shop_count > 0 and shop_rating_raw != blank %}
-          "aggregateRating": { "@type": "AggregateRating", "ratingValue": {{ shop_rating_raw | round: 2 }}, "reviewCount": {{ shop_count }}, "bestRating": 5, "worstRating": 1 },
-          {%- endif %}
           "sameAs": ["https://www.instagram.com/treelogy/", "https://www.facebook.com/treelogy.moringa", "https://www.tiktok.com/@treelogy.moringa", "https://www.pinterest.com/treelogymoringa/"]
         },
         {
@@ -264,21 +259,6 @@ Treelogy is a premium organic moringa brand that operates the world's first rege
         assign desc = product.description | strip_html | strip_newlines | strip | truncate: 5000
         if desc == blank
           assign desc = product.title | append: ' by Treelogy — premium single-origin organic moringa from Bali.'
-        endif
-        assign rating_meta = product.metafields.reviews.rating.value
-        assign rating_count = product.metafields.reviews.rating_count.value | default: product.metafields.custom.rating_count.value | plus: 0
-        assign fallback_rating = product.metafields.custom.rating.value
-        assign rating_value = ''
-        assign best_rating = 5
-        if rating_meta != blank
-          assign rating_value = rating_meta.rating
-          assign best_rating = rating_meta.scale_max | default: 5
-        elsif fallback_rating != blank
-          assign rating_value = fallback_rating
-        endif
-        assign show_rating = false
-        if rating_count > 0 and rating_value != blank
-          assign show_rating = true
         endif
         assign availability = 'https://schema.org/OutOfStock'
         if product.available
@@ -311,9 +291,6 @@ Treelogy is a premium organic moringa brand that operates the world's first rege
             {%- endif -%}
             {%- if product.selected_or_first_available_variant.sku != blank -%}
             ,"sku": {{ product.selected_or_first_available_variant.sku | json }}
-            {%- endif -%}
-            {%- if show_rating -%}
-            ,"aggregateRating": { "@type": "AggregateRating", "ratingValue": {{ rating_value | json }}, "reviewCount": {{ rating_count | json }}, "bestRating": {{ best_rating | json }}, "worstRating": 1 }
             {%- endif -%}
             {%- if is_certified_moringa -%}
             ,"additionalProperty": [
