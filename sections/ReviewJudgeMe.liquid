@@ -7,7 +7,7 @@
     data-product-title='{{ product.title | escape }}'
     data-id='{{ product.id }}'
     data-auto-install='false'>
-    {{ product.metafields.judgeme.widget }}
+    {{ product.metafields.judgeme.widget | replace: 'schema.org/AggregateRating', 'schema.org/None' }}
   </div>
 </div>
 <!-- End of Judge.me code -->
