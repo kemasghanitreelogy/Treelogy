@@ -6,7 +6,7 @@
     </div>
   {% else %}
     <div class="jdgm-widget jdgm-preview-badge" data-id="{{ product.id }}">
-      {{ product.metafields.judgeme.badge }}
+      {{ product.metafields.judgeme.badge | replace: 'schema.org/AggregateRating', 'schema.org/None' }}
     </div>
   {% endif %}
 </div>
