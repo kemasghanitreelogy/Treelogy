@@ -18,7 +18,7 @@
     id="judgeme_product_reviews"
     class="jdgm-widget jdgm-review-widget"
     data-id="{{ product.id }}">
-    {{ product.metafields.judgeme.widget }}
+    {{ product.metafields.judgeme.widget | replace: 'schema.org/AggregateRating', 'schema.org/None' }}
   </div>
 {% endunless %}
 <!-- End of Judge.me code -->
