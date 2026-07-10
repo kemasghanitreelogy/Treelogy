@@ -174,7 +174,7 @@
       },
       "14330190941940559546": {
         "type": "shopify://apps/apex-attribution/blocks/apex/019f0527-1ddd-78db-9b4c-8b9d95e007bf",
-        "disabled": true,
+        "disabled": false,
         "settings": {}
       }
     }
