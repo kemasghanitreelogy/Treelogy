@@ -22,11 +22,12 @@
 {% if image %}
   {% liquid
     assign max_width = width | default: image.width | at_most: 1920
+    assign srcset_widths = '180, 360, 540, 750, 960, 1200, 1600, 1920' | append: ', ' | append: max_width
   %}
   {{ image
     | image_url: width: max_width
     | image_tag:
-      widths: '180, 360, 540, 750, 960, 1200, 1600, 1920',
+      widths: srcset_widths,
       sizes: attr_sizes,
       loading: attr_loading,
       alt: image.alt
