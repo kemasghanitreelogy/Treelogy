@@ -8,7 +8,7 @@
   <div class="card swiper-slide">
     <a href="{{ item.url }}" class="product-detail__description">
       <figure>
-        {% render 'Image', image: item.image, width: '350' %}
+        {% render 'Image', image: item.image, sizes: '(max-width: 900px) 100vw, 33vw' %}
       </figure>
     </a>
     <div class="card-detail blog-type">
