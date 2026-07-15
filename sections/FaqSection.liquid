@@ -1,29 +1,72 @@
 <div class="hidden" style="display: none">
+  <h2 class="title">{{ section.settings.title | escape }}</h2>
   {% for block in section.blocks %}
-    <h2 class="title">
-      {{ block.settings.title }}
-    </h2>
-    <p>
-      {{ block.settings.description }}
-    </p>
+    <h3>{{ block.settings.title | escape }}</h3>
+    <p>{{ block.settings.description | escape }}</p>
   {% endfor %}
 </div>
 
-<script>
-
-createFaqItem({
-    id: '{{ section.id }}',
-    category: `{{ section.settings.title }}`,
-    lists: [
-            {% for block in section.blocks %}
-                {
-                    title: `{{ block.settings.title }}`,
-                    description: `{{ block.settings.description | strip_html }}`
-                },
-            {% endfor %}
+<script type="application/json" data-faq-data="{{ section.id }}">
+  {
+    "id": {{ section.id | json }},
+    "category": {{ section.settings.title | strip_html | json }},
+    "lists": [
+      {%- for block in section.blocks -%}
+        {
+          "title": {{ block.settings.title | strip_html | json }},
+          "description": {{ block.settings.description | strip_html | json }}
+        }
+        {%- unless forloop.last -%},{%- endunless -%}
+      {%- endfor -%}
     ]
-})
+  }
 </script>
+
+<script>
+  (function () {
+    var dataEl = document.querySelector('[data-faq-data="{{ section.id }}"]');
+    if (!dataEl) return;
+    var detail = JSON.parse(dataEl.textContent);
+
+    function init() {
+      if (!window.createFaqItem) return;
+      var oldGroup = document.getElementById(detail.id);
+      if (oldGroup) oldGroup.remove();
+      var oldMenuItem = document.querySelector('.faq-wrapper .menu .item[data-section="' + detail.id + '"]');
+      if (oldMenuItem) oldMenuItem.remove();
+      window.createFaqItem(detail);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>
+
+{%- if section.blocks.size > 0 -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "@id": {{ canonical_url | append: '#faq-' | append: section.id | json }},
+      "mainEntity": [
+        {%- for block in section.blocks -%}
+          {
+            "@type": "Question",
+            "name": {{ block.settings.title | strip_html | json }},
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": {{ block.settings.description | strip_html | strip_newlines | strip | json }}
+            }
+          }
+          {%- unless forloop.last -%},{%- endunless -%}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+{%- endif -%}
 
 {% schema %}
 {
