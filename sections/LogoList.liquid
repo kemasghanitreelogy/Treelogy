@@ -1,4 +1,4 @@
-{{ 'section-logo-list.css' | asset_url | stylesheet_tag }}
+<style>{{ 'section-logo-list.css' | inline_asset_content }}</style>
 
 {%- style -%}
   .section-{{ section.id }}-padding {
