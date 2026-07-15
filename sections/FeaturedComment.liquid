@@ -3,7 +3,7 @@
     <div class="header">
       <div class="review-rating technical">
         <div class="jdgm-widget jdgm-all-reviews-text">
-          <a href="javascript:void(0)">
+          <span class="jdgm-all-reviews-text__link">
             <span data-score="{{ shop.metafields.judgeme.all_reviews_rating }}" class="jdgm-all-reviews-rating"></span>
             <span
               class="jdgm-all-reviews-text__text"
@@ -12,7 +12,7 @@
               data-locale="en">
               {{ shop.metafields.judgeme.all_reviews_rating | round: 1 }}/5 based on
               {{ shop.metafields.judgeme.all_reviews_count }} reviews.</span>
-          </a>
+          </span>
         </div>
       </div>
       <div class="h1">
