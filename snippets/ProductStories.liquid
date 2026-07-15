@@ -2,7 +2,7 @@
 
 {% if story_metaobjects != blank %}
   
-  {{ 'product-stories.css' | asset_url | stylesheet_tag }}
+  <style>{{ 'product-stories.css' | inline_asset_content }}</style>
   <script src="{{ 'product-stories.js' | asset_url }}" defer="defer"></script>
 
   <div class="story-section-wrapper">
