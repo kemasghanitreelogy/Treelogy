@@ -8,7 +8,12 @@
     <div class="badge-content">
       {%- if block.settings.bagde -%}
         <div class="badge-content-icon {% unless request.design_mode %} stagger {% endunless %} ">
-          <img src="{{ block.settings.bagde | image_url }}">
+          <img
+            src="{{ block.settings.bagde | image_url }}"
+            width="{{ block.settings.bagde.width }}"
+            height="{{ block.settings.bagde.height }}"
+            alt="{{ block.settings.bagde.alt | default: block.settings.bagde_desc | default: block.settings.title_one | strip_html | default: 'Product badge' | escape }}"
+            loading="lazy">
         </div>
       {%- endif -%}
 
