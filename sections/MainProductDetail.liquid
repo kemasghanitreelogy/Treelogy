@@ -1,4 +1,4 @@
-{{ 'section-product-single.css' | asset_url | stylesheet_tag }}
+<style>{{ 'section-product-single.css' | inline_asset_content }}</style>
 {% comment %} Load JS with defer {% endcomment %}
 <script src="{{ 'section-product-single.js' | asset_url }}" defer></script>
 
@@ -303,7 +303,7 @@
 
           {%- when 'usp_slider' -%}
             {% comment %} === USP SLIDER CODE === {% endcomment %}
-            {{ 'usp-slider.css' | asset_url | stylesheet_tag }}
+            <style>{{ 'usp-slider.css' | inline_asset_content }}</style>
             <script src="{{ 'usp-slider.js' | asset_url }}" defer="defer"></script>
 
             {%- style -%}
@@ -385,7 +385,7 @@
           {%- when 'logo_list' -%}
             {% comment %} === LOGO LIST START === {% endcomment %}
             {% comment %} Pastikan file asset section-logo-list.css sudah ada di folder Assets {% endcomment %}
-            {{ 'section-logo-list.css' | asset_url | stylesheet_tag }}
+            <style>{{ 'section-logo-list.css' | inline_asset_content }}</style>
 
             {%- style -%}
               /* Scoping ke ID Block supaya tidak bentrok */
@@ -471,7 +471,7 @@
             {%- endif -%}
           {%- when 'text_list' -%}
             {% comment %} === TEXT LIST (CONCERNS) START === {% endcomment %}
-            {{ 'section-text-list.css' | asset_url | stylesheet_tag }}
+            <style>{{ 'section-text-list.css' | inline_asset_content }}</style>
 
             {%- style -%}
               #TextList-{{ block.id }} {
@@ -537,7 +537,7 @@
             {% assign reviews_list = product.metafields.custom.reviews.value %}
 
             {% if reviews_list != blank %}
-              {{ 'section-testimonial-slider.css' | asset_url | stylesheet_tag }}
+              <style>{{ 'section-testimonial-slider.css' | inline_asset_content }}</style>
               <script src="{{ 'section-testimonial-slider.js' | asset_url }}" defer></script>
 
               {%- style -%}
@@ -617,7 +617,7 @@
           {% endcomment %}
 
           {%- when 'timeline_list' -%}
-            {{ 'timeline-list.css' | asset_url | stylesheet_tag }}
+            <style>{{ 'timeline-list.css' | inline_asset_content }}</style>
 
             {%- style -%}
               #Timeline-{{ block.id }} {
@@ -706,7 +706,7 @@
             {% endif %}
           {%- when 'accordion_detail' -%}
             {% unless accordion_assets_loaded %}
-              {{ 'accordion-duplicate.css' | asset_url | stylesheet_tag }}
+              <style>{{ 'accordion-duplicate.css' | inline_asset_content }}</style>
               <script src="{{ 'accordion-duplicate.js' | asset_url }}" defer></script>
               {% assign accordion_assets_loaded = true %}
             {% endunless %}
@@ -858,7 +858,7 @@
             {%- endif -%}
           {%- when 'accordion_duplicate' -%}
             {% unless accordion_assets_loaded %}
-              {{ 'accordion-duplicate.css' | asset_url | stylesheet_tag }}
+              <style>{{ 'accordion-duplicate.css' | inline_asset_content }}</style>
               <script src="{{ 'accordion-duplicate.js' | asset_url }}" defer></script>
               {% assign accordion_assets_loaded = true %}
             {% endunless %}
