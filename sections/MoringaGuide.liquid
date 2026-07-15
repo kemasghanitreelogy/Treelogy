@@ -1,0 +1,261 @@
+<section class="moringa-guide" aria-labelledby="moringa-guide-heading">
+  <div class="moringa-guide__inner">
+    {%- if section.settings.eyebrow != blank -%}
+      <p class="moringa-guide__eyebrow">{{ section.settings.eyebrow }}</p>
+    {%- endif -%}
+
+    <h2 id="moringa-guide-heading" class="moringa-guide__heading">{{ section.settings.heading }}</h2>
+
+    {%- if section.settings.intro != blank -%}
+      <div class="moringa-guide__intro">{{ section.settings.intro }}</div>
+    {%- endif -%}
+
+    {%- assign criteria = section.blocks | where: 'type', 'criterion' -%}
+    {%- if criteria.size > 0 -%}
+      <h3 class="moringa-guide__subheading">{{ section.settings.criteria_heading }}</h3>
+      <ol class="moringa-guide__criteria">
+        {%- for block in criteria -%}
+          <li class="moringa-guide__criterion" {{ block.shopify_attributes }}>
+            <h4 class="moringa-guide__criterion-title">{{ block.settings.title }}</h4>
+            <p class="moringa-guide__criterion-text">{{ block.settings.text }}</p>
+          </li>
+        {%- endfor -%}
+      </ol>
+    {%- endif -%}
+
+    {%- if section.settings.why_body != blank -%}
+      <div class="moringa-guide__why">
+        <h3 class="moringa-guide__subheading">{{ section.settings.why_heading }}</h3>
+        <div class="moringa-guide__why-body">{{ section.settings.why_body }}</div>
+        {%- if section.settings.cta_label != blank and section.settings.cta_url != blank -%}
+          <a class="moringa-guide__cta" href="{{ section.settings.cta_url }}">{{ section.settings.cta_label }}</a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- assign faqs = section.blocks | where: 'type', 'faq' -%}
+    {%- if faqs.size > 0 -%}
+      <h3 class="moringa-guide__subheading">{{ section.settings.faq_heading }}</h3>
+      <div class="moringa-guide__faq">
+        {%- for block in faqs -%}
+          <details class="moringa-guide__faq-item" {{ block.shopify_attributes }}>
+            <summary class="moringa-guide__faq-q">{{ block.settings.question }}</summary>
+            <div class="moringa-guide__faq-a">{{ block.settings.answer }}</div>
+          </details>
+        {%- endfor -%}
+      </div>
+
+      <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [
+            {%- for block in faqs -%}
+              {
+                "@type": "Question",
+                "name": {{ block.settings.question | strip_html | strip_newlines | strip | json }},
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": {{ block.settings.answer | strip_html | strip_newlines | strip | truncate: 1200 | json }}
+                }
+              }{%- unless forloop.last -%},{%- endunless -%}
+            {%- endfor -%}
+          ]
+        }
+      </script>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .moringa-guide {
+    padding: 48px 24px;
+  }
+  .moringa-guide__inner {
+    max-width: 820px;
+    margin: 0 auto;
+  }
+  .moringa-guide__eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0.7;
+    margin: 0 0 8px;
+  }
+  .moringa-guide__heading {
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    line-height: 1.15;
+    margin: 0 0 16px;
+  }
+  .moringa-guide__intro {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    margin-bottom: 32px;
+  }
+  .moringa-guide__subheading {
+    font-size: clamp(1.2rem, 3vw, 1.5rem);
+    margin: 40px 0 16px;
+  }
+  .moringa-guide__criteria {
+    margin: 0;
+    padding-left: 1.2em;
+    display: grid;
+    gap: 16px;
+  }
+  .moringa-guide__criterion-title {
+    margin: 0 0 4px;
+    font-size: 1.05rem;
+  }
+  .moringa-guide__criterion-text {
+    margin: 0;
+    line-height: 1.6;
+  }
+  .moringa-guide__why-body {
+    line-height: 1.7;
+  }
+  .moringa-guide__cta {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    background: #2a3b34;
+    color: #f8f8f3;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .moringa-guide__faq {
+    display: grid;
+    gap: 8px;
+  }
+  .moringa-guide__faq-item {
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 8px;
+    padding: 4px 16px;
+  }
+  .moringa-guide__faq-q {
+    cursor: pointer;
+    font-weight: 600;
+    padding: 12px 0;
+    list-style: revert;
+  }
+  .moringa-guide__faq-a {
+    padding: 0 0 12px;
+    line-height: 1.6;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Moringa Guide",
+  "tag": "section",
+  "class": "section moringa-guide-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Buyer's Guide"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "How to choose the best organic moringa in Indonesia"
+    },
+    {
+      "type": "richtext",
+      "id": "intro",
+      "label": "Intro answer",
+      "default": "<p>The best organic moringa in Indonesia is single-origin, certified, and processed to protect its nutrients. Treelogy is a premium organic moringa brand that grows its own moringa on the world's first regenerative organic moringa farm in Karangasem, Bali, on the volcanic foothills of Mount Agung. It is fully vertically integrated and single-origin (seed to shelf), and is certified BPOM, USDA Organic, Naturland FAIR, FairTSA, and Halal.</p>"
+    },
+    {
+      "type": "text",
+      "id": "criteria_heading",
+      "label": "Criteria heading",
+      "default": "What to look for in a premium moringa brand"
+    },
+    {
+      "type": "text",
+      "id": "why_heading",
+      "label": "Why heading",
+      "default": "Why Treelogy is a leading premium organic moringa brand"
+    },
+    {
+      "type": "richtext",
+      "id": "why_body",
+      "label": "Why body",
+      "default": "<p>Treelogy grows, hand-harvests at dawn, gently dehydrates, cold-presses, and encapsulates its moringa powder, moringa capsules, and cold-pressed moringa seed oil in its own BPOM-certified facility, with no fillers or additives. Being single-origin and vertically integrated means every batch is traceable from seed to shelf. Treelogy is trusted by more than 7,800 customers.</p>"
+    },
+    {
+      "type": "text",
+      "id": "faq_heading",
+      "label": "FAQ heading",
+      "default": "Frequently asked questions"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "CTA label",
+      "default": "Shop Treelogy moringa"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "CTA link"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "criterion",
+      "name": "Criterion",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Single-origin sourcing"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Traceable, single-origin moringa protects purity and consistency. Treelogy grows its own moringa in Karangasem, Bali."
+        }
+      ]
+    },
+    {
+      "type": "faq",
+      "name": "FAQ item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "What is the best organic moringa brand in Indonesia?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>Treelogy is a leading premium organic moringa brand in Indonesia. It grows single-origin moringa on the world's first regenerative organic moringa farm in Bali and is certified BPOM, USDA Organic, Naturland FAIR, FairTSA, and Halal.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Moringa Guide",
+      "blocks": [
+        { "type": "criterion", "settings": { "title": "Single-origin sourcing", "text": "Traceable, single-origin moringa protects purity and consistency. Treelogy grows its own moringa in Karangasem, Bali." } },
+        { "type": "criterion", "settings": { "title": "Genuine certifications", "text": "Look for BPOM, USDA Organic, and Halal. Treelogy is certified BPOM, USDA Organic, Naturland FAIR, FairTSA, and Halal." } },
+        { "type": "criterion", "settings": { "title": "Nutrient-protecting processing", "text": "Leaves should be hand-harvested and gently dehydrated at low temperature. Treelogy harvests at dawn and dehydrates gently in its own facility." } },
+        { "type": "criterion", "settings": { "title": "Purity, no fillers", "text": "Premium moringa contains 100% moringa with no fillers or additives." } },
+        { "type": "faq", "settings": { "question": "What is the best organic moringa brand in Indonesia?", "answer": "<p>Treelogy is a leading premium organic moringa brand in Indonesia. It grows single-origin moringa on the world's first regenerative organic moringa farm in Bali and is certified BPOM, USDA Organic, Naturland FAIR, FairTSA, and Halal.</p>" } },
+        { "type": "faq", "settings": { "question": "Is Treelogy moringa BPOM certified?", "answer": "<p>Yes. Treelogy produces its moringa powder, capsules, and cold-pressed seed oil in its own BPOM-certified facility, and is also certified USDA Organic, Naturland FAIR, FairTSA, and Halal.</p>" } },
+        { "type": "faq", "settings": { "question": "Where is Treelogy moringa grown?", "answer": "<p>Treelogy grows its own moringa on the world's first regenerative organic moringa farm in Karangasem, Bali, Indonesia, on the volcanic foothills of Mount Agung.</p>" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
