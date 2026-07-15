@@ -462,7 +462,7 @@ Treelogy is a premium organic moringa brand that operates the world's first rege
     {%- endif -%}
 
     {{ 'theme.css' | asset_url | stylesheet_tag: preload: true }}
-    {{ 'lugus-custom.css' | asset_url | stylesheet_tag }}
+    <style>{{ 'lugus-custom.css' | inline_asset_content }}</style>
 
     <script src="{{ 'swiper-bundle.min.js' | asset_url }}" defer></script>
 
