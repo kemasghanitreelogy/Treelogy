@@ -53,7 +53,6 @@
   endif
 
   assign faq_items = product.metafields.product.faq.value.faq_items.value
-  assign howto_steps = product.metafields.custom.how_to_use.value
 -%}
 <script type="application/ld+json">
 {
@@ -164,26 +163,6 @@
             "@type": "Answer",
             "text": {{ faq_item.answer | metafield_tag | strip_html | strip_newlines | strip | truncate: 1200 | json }}
           }
-        }{%- unless forloop.last -%},{%- endunless -%}
-        {%- endfor -%}
-      ]
-    }
-    {%- endif -%}
-    {%- if howto_steps != blank -%}
-    ,{
-      "@type": "HowTo",
-      "@id": {{ p_url | append: '#howto' | json }},
-      "name": {{ product.title | prepend: 'How to use ' | json }},
-      "step": [
-        {%- for card in howto_steps -%}
-        {
-          "@type": "HowToStep",
-          "position": {{ forloop.index }},
-          "name": {{ card.title | json }},
-          "text": {{ card.description | strip_html | strip_newlines | strip | truncate: 800 | json }}
-          {%- if card.thumb != blank -%}
-          ,"image": {{ card.thumb | image_url: width: 800 | prepend: 'https:' | json }}
-          {%- endif -%}
         }{%- unless forloop.last -%},{%- endunless -%}
         {%- endfor -%}
       ]
