@@ -49,6 +49,9 @@
             {%- assign item_saving = op | minus: vp | times: item.quantity -%}
             {%- assign total_savings = total_savings | plus: item_saving -%}
           {%- endif -%}
+          {%- if item.line_level_total_discount > 0 -%}
+            {%- assign total_savings = total_savings | plus: item.line_level_total_discount -%}
+          {%- endif -%}
         {%- endfor -%}
 
         <div class="sub-total cart-footer">
