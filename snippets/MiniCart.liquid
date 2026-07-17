@@ -642,6 +642,102 @@
 </script>
 
 <style>
+  /* ===== EasyGift free-gift line item (see CartItemCard.liquid) ===== */
+  .cart-item--gift {
+    position: relative;
+    border: 1px solid rgba(43, 60, 53, 0.16);
+    border-radius: 12px;
+    padding: 10px;
+    background: linear-gradient(
+      120deg,
+      rgba(43, 60, 53, 0.055) 0%,
+      rgba(242, 242, 232, 0.65) 55%,
+      rgba(43, 60, 53, 0.035) 100%
+    );
+  }
+  .gift-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    width: fit-content;
+    margin: 4px 0 2px;
+    padding: 3px 9px 3px 7px;
+    border-radius: 999px;
+    background: #2b3c35;
+    color: #f2f2e8;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    line-height: 1.4;
+    position: relative;
+    overflow: hidden;
+  }
+  .gift-badge svg { flex: 0 0 auto; }
+  .gift-badge::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 25%,
+      rgba(242, 242, 232, 0.45) 50%,
+      transparent 75%
+    );
+    transform: translateX(-130%);
+    animation: giftShimmer 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.5s 2;
+  }
+  @keyframes giftShimmer {
+    to { transform: translateX(130%); }
+  }
+  .cart-item--gift .detail .price-row .gift-strike {
+    text-decoration: none;
+    position: relative;
+    color: rgba(43, 60, 53, 0.5);
+  }
+  .cart-item--gift .detail .price-row .gift-strike::after {
+    content: "";
+    position: absolute;
+    left: -2%;
+    top: 50%;
+    width: 104%;
+    height: 1.5px;
+    background: rgba(43, 60, 53, 0.55);
+    transform: scaleX(0);
+    transform-origin: left center;
+    animation: giftStrike 500ms cubic-bezier(0.22, 1, 0.36, 1) 350ms forwards;
+  }
+  @keyframes giftStrike {
+    to { transform: scaleX(1); }
+  }
+  .cart-item--gift .detail .price-row .gift-price {
+    color: #2b3c35;
+    font-weight: 700;
+  }
+  .gift-qty {
+    display: inline-flex;
+    align-items: center;
+    font-size: 12px;
+    color: rgba(43, 60, 53, 0.72);
+    border: 1px solid rgba(43, 60, 53, 0.18);
+    background: rgba(242, 242, 232, 0.75);
+    border-radius: 8px;
+    padding: 4px 10px;
+    cursor: default;
+    user-select: none;
+  }
+  .gift-note {
+    margin: 6px 0 0;
+    font-size: 11.5px;
+    line-height: 1.45;
+    color: rgba(43, 60, 53, 0.75);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .gift-badge::after { animation: none; }
+    .cart-item--gift .detail .price-row .gift-strike::after { display: none; animation: none; }
+    .cart-item--gift .detail .price-row .gift-strike { text-decoration: line-through; }
+  }
+
   /* ===== Premium ATC choreography (all quick-add surfaces) ===== */
   .atc-btn {
     transition: transform 80ms ease-out, background-color 160ms ease-out, opacity 160ms ease-out;
