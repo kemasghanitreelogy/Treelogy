@@ -1,15 +1,22 @@
 {% doc %}
-  Renders global Organization + WebSite JSON-LD (schema.org) for GEO / AI-search
-  and rich results. Include once in the <head> on every page.
+  Renders global Organization + WebSite + WebPage JSON-LD (schema.org) for
+  GEO / AI-search and rich results. Include once in the <head> on every page.
+
+  @param {string} [page_published] - Raw timestamp of the page's real publish
+    date (article.published_at, page.published_at, product.published_at).
+  @param {string} [page_modified] - Raw timestamp of the page's last real
+    content change (article.updated_at only). Dates are only emitted when a
+    real timestamp exists — never fabricated.
 
   @example
-  {% render 'structured-data-global' %}
+  {% render 'structured-data-global', page_published: article.published_at, page_modified: article.updated_at %}
 {% enddoc %}
 
 {%- liquid
   assign base = request.origin
   assign org_id = base | append: '/#organization'
   assign web_id = base | append: '/#website'
+  assign webpage_id = canonical_url | append: '#webpage'
   assign logo_url = ''
   if shop.brand.logo != blank
     assign logo_url = shop.brand.logo | image_url: width: 512 | prepend: 'https:'
@@ -39,12 +46,35 @@ Treelogy is a premium organic moringa brand that operates the world's first rege
       "email": "hello@treelogy.com",
       "slogan": "Health From the Inside & Out",
       "description": {{ org_description | strip_newlines | strip | json }},
-      "founder": {
-        "@type": "Person",
-        "name": "Sacha Aguila",
-        "jobTitle": "Founder & CEO",
-        "sameAs": "https://www.linkedin.com/in/sacha-aguila-59688a93/"
-      },
+      "founder": [
+        {
+          "@type": "Person",
+          "@id": {{ base | append: '/#founder-sacha-aguila' | json }},
+          "name": "Sacha Aguila",
+          "jobTitle": "Founder & CEO",
+          "worksFor": { "@id": {{ org_id | json }} },
+          "description": "Founder & CEO of Treelogy, a regenerative single-origin organic moringa brand from Karangasem, Bali. Builds ethical, fully vertically integrated moringa supply chains — from regenerative farming to BPOM-certified production.",
+          "knowsAbout": ["Moringa oleifera", "Regenerative organic farming", "Vertical supply chains", "Ethical sourcing"],
+          "subjectOf": { "@type": "Article", "url": "https://treelogy.com/blogs/news/the-story-of-a-legacy" },
+          "sameAs": [
+            "https://www.linkedin.com/in/sacha-aguila-59688a93/",
+            "https://www.instagram.com/mr.kelor/"
+          ]
+        },
+        {
+          "@type": "Person",
+          "@id": {{ base | append: '/#founder-alexa-genoyer' | json }},
+          "name": "Alexa Genoyer",
+          "alternateName": "Alexa Aguila Genoyer",
+          "description": "Co-founded Treelogy in 2020 together with her son Sacha Aguila. Founder and CEO of Blue Karma Secrets boutique hotels and Oracle Yacht in Indonesia; artist and hospitality entrepreneur, awarded Woman Global Leader 2024.",
+          "subjectOf": { "@type": "Article", "url": "https://treelogy.com/blogs/news/the-story-of-a-legacy" },
+          "sameAs": [
+            "https://www.linkedin.com/in/alexa-genoyer-0629a45a/",
+            "https://www.instagram.com/alexagenoyer/",
+            "https://www.pinterest.com/aaguilagenoyer/"
+          ]
+        }
+      ],
       "foundingLocation": {
         "@type": "Place",
         "name": "Karangasem, Bali, Indonesia"
@@ -91,11 +121,34 @@ Treelogy is a premium organic moringa brand that operates the world's first rege
         "worstRating": 1
       },
       {%- endif %}
+      "subjectOf": [
+        {
+          "@type": "NewsArticle",
+          "headline": "Treelogy introduces world's first premium organic moringa",
+          "url": "https://www.thejakartapost.com/front-row/2024/04/01/treelogy-introduces-worlds-first-premium-organic-moringa.html",
+          "datePublished": "2024-04-01",
+          "publisher": { "@type": "Organization", "name": "The Jakarta Post" }
+        },
+        {
+          "@type": "Article",
+          "headline": "Introducing Treelogy: Crafting Premium Organic Moringa Products",
+          "url": "https://www.nowbali.co.id/introducing-treelogy-crafting-premium-organic-moringa-products/",
+          "datePublished": "2024-05-20",
+          "publisher": { "@type": "Organization", "name": "NOW! Bali Magazine" }
+        },
+        {
+          "@type": "Article",
+          "headline": "Treelogy: An Indonesian Brand Redefining Regenerative Wellness",
+          "url": "https://www.vritimes.com/id/articles/7c0b003f-cc81-44aa-a46b-f642adbaeea1/337bc243-ffe1-11ef-92ea-0a58a9feac02",
+          "publisher": { "@type": "Organization", "name": "VRITimes" }
+        }
+      ],
       "sameAs": [
         "https://www.instagram.com/treelogy/",
         "https://www.facebook.com/treelogy.moringa",
         "https://www.tiktok.com/@treelogy.moringa",
-        "https://www.pinterest.com/treelogymoringa/"
+        "https://www.pinterest.com/treelogymoringa/",
+        "https://www.linkedin.com/company/treelogy%C2%AE/"
       ]
     },
     {
@@ -114,6 +167,24 @@ Treelogy is a premium organic moringa brand that operates the world's first rege
         },
         "query-input": "required name=search_term_string"
       }
+    },
+    {
+      "@type": "WebPage",
+      "@id": {{ webpage_id | json }},
+      "url": {{ canonical_url | json }},
+      "name": {{ page_title | default: shop.name | json }},
+      {%- if page_description != blank %}
+      "description": {{ page_description | strip_html | strip_newlines | truncate: 300 | json }},
+      {%- endif %}
+      {%- if page_published != blank %}
+      "datePublished": {{ page_published | date: '%Y-%m-%dT%H:%M:%S%z' | json }},
+      {%- endif %}
+      {%- if page_modified != blank %}
+      "dateModified": {{ page_modified | date: '%Y-%m-%dT%H:%M:%S%z' | json }},
+      {%- endif %}
+      "isPartOf": { "@id": {{ web_id | json }} },
+      "about": { "@id": {{ org_id | json }} },
+      "inLanguage": {{ request.locale.iso_code | default: 'en' | json }}
     }
   ]
 }
