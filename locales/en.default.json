@@ -43,7 +43,7 @@
       "submit": "search",
       "no_results": "no results"
     },
-    "copyright": "© Copyright Treelogy 2024. All Rights Reserved.",
+    "copyright": "© Copyright Treelogy {{ year }}. All Rights Reserved.",
     "buttons": {
       "add_to_cart": "Add to Cart"
     }
