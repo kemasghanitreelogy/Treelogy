@@ -28,6 +28,45 @@
         {% if paginate.pages > 1 %}
           {{ paginate | default_pagination }}
         {% endif %}
+
+        {%- liquid
+          assign listing_currency = cart.currency.iso_code | default: shop.currency
+          assign position_offset = paginate.current_offset | default: 0
+        -%}
+        <script type="application/ld+json">
+          {
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            "@id": {{ canonical_url | append: '#collection-products' | json }},
+            "name": {{ selected_collection.title | json }},
+            "numberOfItems": {{ selected_collection.products_count }},
+            "itemListElement": [
+              {%- for product in selected_collection.products -%}
+                {
+                  "@type": "ListItem",
+                  "position": {{ forloop.index | plus: position_offset }},
+                  "item": {
+                    "@type": "Product",
+                    "@id": {{ request.origin | append: product.url | append: '#product' | json }},
+                    "name": {{ product.title | json }},
+                    "url": {{ request.origin | append: product.url | json }},
+                    {%- if product.featured_image != blank -%}
+                      "image": {{ product.featured_image | image_url: width: 800 | prepend: 'https:' | json }},
+                    {%- endif -%}
+                    "brand": { "@type": "Brand", "name": "Treelogy" },
+                    "offers": {
+                      "@type": "AggregateOffer",
+                      "priceCurrency": {{ listing_currency | json }},
+                      "lowPrice": {{ product.price_min | divided_by: 100.0 }},
+                      "highPrice": {{ product.price_max | divided_by: 100.0 }},
+                      "availability": "https://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}"
+                    }
+                  }
+                }{%- unless forloop.last -%},{%- endunless -%}
+              {%- endfor -%}
+            ]
+          }
+        </script>
       {% endpaginate %}
     {% else %}
       <p>Please select a collection in the Customizer.</p>
