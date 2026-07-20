@@ -1,0 +1,35 @@
+{% layout none %}
+{% raw %}
+{
+  "name": "Treelogy",
+  "type": "OnlineStore",
+  "url": "https://treelogy.com",
+  "description": "Direct-to-consumer online store for premium single-origin organic moringa products (powder, capsules, cold-pressed seed oil), grown and produced by Treelogy in Bali, Indonesia.",
+  "compiled": "2026-07-19",
+  "capabilities": [
+    "product_catalog",
+    "agent_checkout_links",
+    "ucp_discovery",
+    "mcp_endpoint",
+    "multilingual_storefront"
+  ],
+  "commerce": {
+    "currency": "IDR",
+    "payment": "Native Shopify checkout via Xendit (cards, bank transfer, e-wallet, QRIS). No Shop Pay. Payment is always completed by the human buyer.",
+    "checkout_link_pattern": "https://treelogy.com/cart/{variant_id}:{quantity}",
+    "products_feed": "https://treelogy.com/products.json",
+    "ucp_discovery": "https://treelogy.com/.well-known/ucp",
+    "mcp_endpoint": "https://treelogy.com/api/ucp/mcp",
+    "agent_contract": "https://treelogy.com/agents.md"
+  },
+  "shipping": {
+    "domestic": "Ships across Indonesia; free shipping for orders of Rp 650.000 and above.",
+    "international": "Ships via DHL to the United States, Australia, Singapore, and 50+ European countries."
+  },
+  "support": {
+    "email": "hello@treelogy.com",
+    "faq": "https://treelogy.com/pages/ai-faq",
+    "refund_policy": "https://treelogy.com/policies/refund-policy"
+  }
+}
+{% endraw %}
