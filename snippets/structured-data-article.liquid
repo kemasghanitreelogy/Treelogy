@@ -29,6 +29,10 @@
 
   assign pub_date = article.published_at | date: '%Y-%m-%dT%H:%M:%S%z'
   assign mod_date = article.updated_at | default: article.published_at | date: '%Y-%m-%dT%H:%M:%S%z'
+  assign article_author = article.author
+  if article_author == blank or article_author == 'My Store Admin'
+    assign article_author = 'Treelogy Editorial Team'
+  endif
 -%}
 <script type="application/ld+json">
 {
@@ -48,9 +52,7 @@
       {%- endif -%}
       ,"datePublished": {{ pub_date | json }}
       ,"dateModified": {{ mod_date | json }}
-      {%- if article.author != blank -%}
-      ,"author": { "@type": "Person", "name": {{ article.author | json }} }
-      {%- endif -%}
+      ,"author": { "@type": "Person", "name": {{ article_author | json }} }
       ,"publisher": { "@id": {{ org_id | json }} }
       ,"about": { "@type": "Thing", "name": "Moringa oleifera" }
       ,"inLanguage": {{ request.locale.iso_code | default: 'en' | json }}
