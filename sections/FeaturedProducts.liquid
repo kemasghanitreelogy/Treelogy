@@ -1,4 +1,33 @@
 {% render 'FeaturedCardSlider', card: 'product', section: section %}
+
+{%- liquid
+  assign featured_products = section.settings.products
+  assign featured_count = featured_products | size
+-%}
+{%- if featured_count > 0 -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "@id": {{ canonical_url | append: '#featured-products-' | append: section.id | json }},
+      {%- if section.settings.title != blank %}
+      "name": {{ section.settings.title | strip_html | strip_newlines | strip | json }},
+      {%- endif %}
+      "numberOfItems": {{ featured_count }},
+      "itemListElement": [
+        {%- for featured_product in featured_products -%}
+          {
+            "@type": "ListItem",
+            "position": {{ forloop.index }},
+            "name": {{ featured_product.title | json }},
+            "url": {{ request.origin | append: featured_product.url | json }}
+          }
+          {%- unless forloop.last -%},{%- endunless -%}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+{%- endif -%}
 {% schema %}
 {
   "name": "Featured Products",
