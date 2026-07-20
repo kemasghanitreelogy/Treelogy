@@ -1,10 +1,10 @@
-<div class="hidden" style="display: none">
+<noscript>
   <h2 class="title">{{ section.settings.title | escape }}</h2>
   {% for block in section.blocks %}
     <h3>{{ block.settings.title | escape }}</h3>
     <p>{{ block.settings.description | escape }}</p>
   {% endfor %}
-</div>
+</noscript>
 
 <script type="application/json" data-faq-data="{{ section.id }}">
   {
