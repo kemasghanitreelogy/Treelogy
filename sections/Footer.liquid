@@ -112,7 +112,8 @@
 
   <div class="copy body-s">
     <div class="main-grid">
-      <div class="content">{{ 'general.copyright' | t }}</div>
+      {%- assign current_year = 'now' | date: '%Y' -%}
+      <div class="content">{{ 'general.copyright' | t: year: current_year }}</div>
       <div class="selector desktop">
         {% comment %}
           {% render 'CountrySelector' %}
