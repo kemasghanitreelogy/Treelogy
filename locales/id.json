@@ -44,7 +44,7 @@
       "submit": "cari",
       "no_results": "tidak ada hasil"
     },
-    "copyright": "© Hak Cipta Treelogy 2024. Semua Hak Dilindungi.",
+    "copyright": "© Hak Cipta Treelogy {{ year }}. Semua Hak Dilindungi.",
     "buttons": {
       "add_to_cart": "Tambah ke Keranjang"
     }
