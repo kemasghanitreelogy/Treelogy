@@ -4,7 +4,10 @@
   </div>
 
   <div class="background parallax mobile">
-    {% render 'Image', image: section.settings.background_mobile | default:section.settings.background %}
+    {%- liquid
+      assign mobile_background = section.settings.background_mobile | default: section.settings.background
+    -%}
+    {% render 'Image', image: mobile_background %}
   </div>
 
   <div class="content">
