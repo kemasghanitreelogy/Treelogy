@@ -42,6 +42,15 @@
             "numberOfItems": {{ selected_collection.products_count }},
             "itemListElement": [
               {%- for product in selected_collection.products -%}
+                {%- liquid
+                  assign li_rating_meta = product.metafields.reviews.rating.value
+                  assign li_rating_count = product.metafields.reviews.rating_count.value | plus: 0
+                  assign li_show_rating = false
+                  if li_rating_count > 0 and li_rating_meta != blank
+                    assign li_show_rating = true
+                  endif
+                  assign li_reviews = product.metafields.custom.featured_reviews.value
+                -%}
                 {
                   "@type": "ListItem",
                   "position": {{ forloop.index | plus: position_offset }},
@@ -54,11 +63,34 @@
                       "image": {{ product.featured_image | image_url: width: 800 | prepend: 'https:' | json }},
                     {%- endif -%}
                     "brand": { "@type": "Brand", "name": "Treelogy" },
+                    {%- if li_show_rating -%}
+                      "aggregateRating": {
+                        "@type": "AggregateRating",
+                        "ratingValue": {{ li_rating_meta.rating | json }},
+                        "reviewCount": {{ li_rating_count }},
+                        "bestRating": {{ li_rating_meta.scale_max | default: 5 | json }},
+                        "worstRating": 1
+                      },
+                    {%- endif -%}
+                    {%- if li_reviews != blank -%}
+                      "review": [
+                        {%- for fr in li_reviews -%}
+                        {
+                          "@type": "Review",
+                          "author": { "@type": "Person", "name": {{ fr.author | json }} },
+                          "reviewRating": { "@type": "Rating", "ratingValue": {{ fr.rating | json }}, "bestRating": 5, "worstRating": 1 },
+                          "reviewBody": {{ fr.body | json }}
+                          {%- if fr.date != blank -%},"datePublished": {{ fr.date | json }}{%- endif -%}
+                        }{%- unless forloop.last -%},{%- endunless -%}
+                        {%- endfor -%}
+                      ],
+                    {%- endif -%}
                     "offers": {
                       "@type": "AggregateOffer",
                       "priceCurrency": {{ listing_currency | json }},
                       "lowPrice": {{ product.price_min | divided_by: 100.0 }},
                       "highPrice": {{ product.price_max | divided_by: 100.0 }},
+                      "offerCount": {{ product.variants.size }},
                       "availability": "https://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}"
                     }
                   }
