@@ -54,6 +54,7 @@
 
   assign faq_items = product.metafields.product.faq.value.faq_items.value
   assign howto_steps = product.metafields.custom.how_to_use.value
+  assign featured_reviews = product.metafields.custom.featured_reviews.value
 -%}
 <script type="application/ld+json">
 {
@@ -88,6 +89,19 @@
         "bestRating": {{ best_rating | json }},
         "worstRating": 1
       }
+      {%- endif -%}
+      {%- if featured_reviews != blank -%}
+      ,"review": [
+        {%- for fr in featured_reviews -%}
+        {
+          "@type": "Review",
+          "author": { "@type": "Person", "name": {{ fr.author | json }} },
+          "reviewRating": { "@type": "Rating", "ratingValue": {{ fr.rating | json }}, "bestRating": 5, "worstRating": 1 },
+          "reviewBody": {{ fr.body | json }}
+          {%- if fr.date != blank -%},"datePublished": {{ fr.date | json }}{%- endif -%}
+        }{%- unless forloop.last -%},{%- endunless -%}
+        {%- endfor -%}
+      ]
       {%- endif -%}
       {%- if is_certified_moringa -%}
       ,"additionalProperty": [
