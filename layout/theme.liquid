@@ -220,6 +220,64 @@
     {{ 'theme.css' | asset_url | stylesheet_tag: preload: true }}
     <style>{{ 'lugus-custom.css' | inline_asset_content }}</style>
 
+    {%- if request.page_type == 'policy' -%}
+      <style>
+        .shopify-policy__container {
+          max-width: 75ch !important;
+          margin: 0 auto !important;
+          padding: 48px 20px 80px !important;
+          color: #2a3b34;
+          font-size: 16px;
+          line-height: 1.7;
+        }
+        .shopify-policy__title {
+          text-align: left;
+        }
+        .shopify-policy__title h1 {
+          color: #a5bb86;
+          font-size: 34px;
+          line-height: 1.25;
+          margin-bottom: 8px;
+        }
+        .shopify-policy__body h2 {
+          color: #a5bb86;
+          font-size: 22px;
+          line-height: 1.35;
+          margin: 40px 0 12px;
+        }
+        .shopify-policy__body h3 {
+          color: #a5bb86;
+          font-size: 18px;
+          margin: 28px 0 10px;
+        }
+        .shopify-policy__body p,
+        .shopify-policy__body li {
+          color: #2a3b34;
+          margin-bottom: 14px;
+        }
+        .shopify-policy__body ul {
+          padding-left: 22px;
+          margin-bottom: 18px;
+        }
+        .shopify-policy__body a {
+          color: #a5bb86;
+          text-decoration: underline;
+          text-underline-offset: 2px;
+        }
+        .shopify-policy__body a:hover {
+          color: #2a3b34;
+        }
+        .shopify-policy__body .policy-updated {
+          color: #6b7256;
+          font-size: 14px;
+          margin-bottom: 32px;
+        }
+        .shopify-policy__body strong {
+          color: #2a3b34;
+        }
+      </style>
+    {%- endif -%}
+
     <script src="{{ 'swiper-bundle.min.js' | asset_url }}" defer></script>
 
     <script src="{{ 'app.bundle.js' | asset_url }}" defer></script>
