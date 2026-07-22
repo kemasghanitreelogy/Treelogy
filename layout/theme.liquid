@@ -220,7 +220,13 @@
     {{ 'theme.css' | asset_url | stylesheet_tag: preload: true }}
     <style>{{ 'lugus-custom.css' | inline_asset_content }}</style>
 
-    {%- if request.page_type == 'policy' -%}
+    {%- liquid
+      assign is_policy_page = false
+      if request.page_type == 'policy' or request.path contains '/policies/'
+        assign is_policy_page = true
+      endif
+    -%}
+    {%- if is_policy_page -%}
       <style>
         /* Treelogy policy pages — long-form legal reading. Markup is fixed by
            Shopify (.shopify-policy__*); everything must be CSS-only. */
@@ -410,6 +416,35 @@
           }
         }
       </style>
+      <script>
+        // mailto fallback: browsers without a registered mail handler do
+        // nothing on click, which reads as a broken link. If the page is
+        // still visible shortly after the click (no mail app grabbed focus),
+        // open Gmail compose in a new tab instead.
+        document.addEventListener('click', function (e) {
+          var a = e.target.closest && e.target.closest('a[href^="mailto:"]');
+          if (!a || e.metaKey || e.ctrlKey) return;
+          var email = a.getAttribute('href').replace(/^mailto:/, '').split('?')[0];
+          var timer = setTimeout(function () {
+            if (document.hidden || !document.hasFocus()) return;
+            var win = window.open(
+              'https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(email),
+              '_blank',
+              'noopener'
+            );
+            if (!win && navigator.clipboard) {
+              navigator.clipboard.writeText(email);
+              a.dataset.prevText = a.textContent;
+              a.textContent = email + ' ✓ copied';
+              setTimeout(function () { a.textContent = a.dataset.prevText; }, 2000);
+            }
+          }, 800);
+          window.addEventListener('blur', function onBlur() {
+            clearTimeout(timer);
+            window.removeEventListener('blur', onBlur);
+          });
+        });
+      </script>
     {%- endif -%}
 
     <script src="{{ 'swiper-bundle.min.js' | asset_url }}" defer></script>
