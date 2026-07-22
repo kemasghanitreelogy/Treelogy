@@ -8532,3 +8532,34 @@ html, body, .announcement-slider-section {
   font-weight: inherit !important;
   line-height: inherit !important;
 }
+
+/* Policy pages — brand colors (duplicated from layout inline block so even
+   stale-cached policy HTML gets correct colors once this asset refreshes).
+   main typo #2a3b34 · headings/links #a5bb86 */
+.shopify-policy__container,
+.shopify-policy__body p,
+.shopify-policy__body li {
+  color: #2a3b34 !important;
+}
+.shopify-policy__title h1,
+.shopify-policy__body h2,
+.shopify-policy__body h3 {
+  color: #a5bb86 !important;
+}
+.shopify-policy__body a {
+  color: #a5bb86 !important;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.shopify-policy__body a:hover {
+  color: #2a3b34 !important;
+}
+.shopify-policy__body strong {
+  color: #2a3b34 !important;
+}
+.shopify-policy__container {
+  max-width: 70ch;
+  margin: 0 auto;
+  padding-top: clamp(72px, 10vw, 120px);
+  padding-bottom: 140px;
+}
