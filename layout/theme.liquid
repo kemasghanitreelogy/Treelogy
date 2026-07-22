@@ -236,7 +236,7 @@
         .shopify-policy__container {
           max-width: 70ch !important;
           margin: 0 auto !important;
-          padding: clamp(40px, 7vw, 72px) 20px 96px !important;
+          padding: clamp(72px, 10vw, 120px) 20px 140px !important;
           color: var(--policy-ink);
           font-family: var(--font-base, 'Inter', sans-serif);
           font-size: 1.0625rem;
@@ -288,15 +288,34 @@
           overflow-wrap: break-word;
         }
         .shopify-policy__body ul {
-          margin: 0 0 20px;
-          padding-left: 24px;
+          list-style: disc outside !important;
+          margin: 0 0 20px !important;
+          padding-left: 28px !important;
         }
         .shopify-policy__body li {
-          margin-bottom: 10px;
-          padding-left: 4px;
+          display: list-item !important;
+          list-style: inherit !important;
+          margin: 0 0 10px !important;
+          padding-left: 6px !important;
+          text-indent: 0 !important;
         }
         .shopify-policy__body li::marker {
           color: var(--policy-accent);
+        }
+        .shopify-policy__body ul.policy-contact {
+          list-style: none !important;
+          padding: 18px 22px !important;
+          margin: 8px 0 24px !important;
+          background: rgba(165, 187, 134, 0.09);
+          border-left: 3px solid var(--policy-accent);
+          border-radius: 0 8px 8px 0;
+        }
+        .shopify-policy__body ul.policy-contact li {
+          padding-left: 0 !important;
+          margin-bottom: 8px !important;
+        }
+        .shopify-policy__body ul.policy-contact li:last-child {
+          margin-bottom: 0 !important;
         }
         .shopify-policy__body a {
           color: var(--policy-accent);
