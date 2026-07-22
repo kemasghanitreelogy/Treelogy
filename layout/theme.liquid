@@ -222,58 +222,173 @@
 
     {%- if request.page_type == 'policy' -%}
       <style>
+        /* Treelogy policy pages — long-form legal reading. Markup is fixed by
+           Shopify (.shopify-policy__*); everything must be CSS-only. */
+        :root {
+          --policy-ink: #2a3b34;
+          --policy-accent: #a5bb86;
+          --policy-muted: #6b7256;
+          --policy-hairline: rgba(165, 187, 134, 0.35);
+        }
+        html {
+          scroll-behavior: smooth;
+        }
         .shopify-policy__container {
-          max-width: 75ch !important;
+          max-width: 70ch !important;
           margin: 0 auto !important;
-          padding: 48px 20px 80px !important;
-          color: #2a3b34;
-          font-size: 16px;
-          line-height: 1.7;
+          padding: clamp(40px, 7vw, 72px) 20px 96px !important;
+          color: var(--policy-ink);
+          font-family: var(--font-base, 'Inter', sans-serif);
+          font-size: 1.0625rem;
+          line-height: 1.75;
+          -webkit-font-smoothing: antialiased;
+          text-rendering: optimizeLegibility;
         }
         .shopify-policy__title {
           text-align: left;
+          margin-bottom: 0;
         }
         .shopify-policy__title h1 {
-          color: #a5bb86;
-          font-size: 34px;
-          line-height: 1.25;
-          margin-bottom: 8px;
-        }
-        .shopify-policy__body h2 {
-          color: #a5bb86;
-          font-size: 22px;
-          line-height: 1.35;
-          margin: 40px 0 12px;
-        }
-        .shopify-policy__body h3 {
-          color: #a5bb86;
-          font-size: 18px;
-          margin: 28px 0 10px;
-        }
-        .shopify-policy__body p,
-        .shopify-policy__body li {
-          color: #2a3b34;
-          margin-bottom: 14px;
-        }
-        .shopify-policy__body ul {
-          padding-left: 22px;
-          margin-bottom: 18px;
-        }
-        .shopify-policy__body a {
-          color: #a5bb86;
-          text-decoration: underline;
-          text-underline-offset: 2px;
-        }
-        .shopify-policy__body a:hover {
-          color: #2a3b34;
+          color: var(--policy-accent);
+          font-size: clamp(30px, 5vw, 40px);
+          font-weight: 700;
+          line-height: 1.2;
+          letter-spacing: -0.015em;
+          margin: 0 0 10px;
+          padding-bottom: 18px;
+          border-bottom: 1px solid var(--policy-hairline);
         }
         .shopify-policy__body .policy-updated {
-          color: #6b7256;
-          font-size: 14px;
-          margin-bottom: 32px;
+          color: var(--policy-muted);
+          font-size: 0.875rem;
+          letter-spacing: 0.01em;
+          margin: 18px 0 40px;
+        }
+        .shopify-policy__body h2 {
+          color: var(--policy-accent);
+          font-size: 1.375rem;
+          font-weight: 650;
+          line-height: 1.35;
+          letter-spacing: -0.01em;
+          margin: 52px 0 14px;
+          scroll-margin-top: 110px;
+        }
+        .shopify-policy__body h2:first-of-type {
+          margin-top: 36px;
+        }
+        .shopify-policy__body h3 {
+          color: var(--policy-accent);
+          font-size: 1.125rem;
+          font-weight: 650;
+          margin: 32px 0 10px;
+          scroll-margin-top: 110px;
+        }
+        .shopify-policy__body p {
+          margin: 0 0 16px;
+          overflow-wrap: break-word;
+        }
+        .shopify-policy__body ul {
+          margin: 0 0 20px;
+          padding-left: 24px;
+        }
+        .shopify-policy__body li {
+          margin-bottom: 10px;
+          padding-left: 4px;
+        }
+        .shopify-policy__body li::marker {
+          color: var(--policy-accent);
+        }
+        .shopify-policy__body a {
+          color: var(--policy-accent);
+          font-weight: 550;
+          text-decoration: underline;
+          text-decoration-color: var(--policy-hairline);
+          text-decoration-thickness: 1.5px;
+          text-underline-offset: 3px;
+          transition: color 200ms ease, text-decoration-color 200ms ease;
+        }
+        .shopify-policy__body a:hover {
+          color: var(--policy-ink);
+          text-decoration-color: var(--policy-ink);
+        }
+        .shopify-policy__body a:focus-visible {
+          outline: 2px solid var(--policy-accent);
+          outline-offset: 3px;
+          border-radius: 2px;
         }
         .shopify-policy__body strong {
-          color: #2a3b34;
+          color: var(--policy-ink);
+          font-weight: 650;
+        }
+        .shopify-policy__body em {
+          color: inherit;
+        }
+        .shopify-policy__container ::selection {
+          background: var(--policy-accent);
+          color: #fff;
+        }
+        .shopify-policy__body table {
+          width: 100%;
+          border-collapse: collapse;
+          margin: 0 0 24px;
+          font-size: 0.9375rem;
+        }
+        .shopify-policy__body th,
+        .shopify-policy__body td {
+          text-align: left;
+          padding: 10px 12px;
+          border-bottom: 1px solid var(--policy-hairline);
+          vertical-align: top;
+        }
+        .shopify-policy__body th {
+          color: var(--policy-muted);
+          font-weight: 650;
+        }
+        @media (max-width: 640px) {
+          .shopify-policy__container {
+            font-size: 1rem;
+            line-height: 1.7;
+          }
+          .shopify-policy__body h2 {
+            margin-top: 40px;
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          html {
+            scroll-behavior: auto;
+          }
+          .shopify-policy__body a {
+            transition: none;
+          }
+        }
+        @media print {
+          .shopify-policy__container {
+            max-width: none !important;
+            padding: 0 !important;
+            color: #000;
+            font-size: 11pt;
+          }
+          .shopify-policy__title h1,
+          .shopify-policy__body h2,
+          .shopify-policy__body h3 {
+            color: #000;
+          }
+          .shopify-policy__body a {
+            color: #000;
+          }
+          .shopify-policy__body a[href^='http']::after {
+            content: ' (' attr(href) ')';
+            font-size: 9pt;
+            color: #444;
+          }
+          .shopify-policy__body h2 {
+            break-after: avoid;
+          }
+          .shopify-policy__body p,
+          .shopify-policy__body li {
+            orphans: 3;
+            widows: 3;
+          }
         }
       </style>
     {%- endif -%}
