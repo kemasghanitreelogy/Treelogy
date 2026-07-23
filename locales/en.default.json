@@ -131,7 +131,10 @@
       "view_addresses": "View Addresses",
       "order_history": "Order History",
       "no_orders": "You haven't placed any orders yet.",
-      "my_account": "My Account"
+      "my_account": "My Account",
+      "sign_in": "Sign in",
+      "sign_in_note": "Track orders & faster checkout",
+      "greeting": "Hi, {{ name }}"
     },
     "orders": {
       "order": "Order",
