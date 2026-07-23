@@ -40,26 +40,52 @@
   </svg>
 </a>
 
-{% assign base_url = request.locale.root_url | remove_last: '/' %}
+{% if shop.customer_accounts_enabled %}
+  <shopify-account
+    class="button button-login"
+    {% if account_menu != blank %}
+      menu="{{ account_menu }}"
+    {% endif %}
+  >
+    {% if customer %}
+      <div class="account-avatar-fallback"></div>
+    {% else %}
+      <span slot="signed-out-avatar" aria-hidden="true">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 10 13">
+          <path
+            fill="#33423B"
+            fill-rule="evenodd"
+            d="M3.333 5.994a3 3 0 1 0 3.334-4.989 3 3 0 0 0-3.334 4.99Zm.556-4.157A2 2 0 1 1 6.11 5.163 2 2 0 0 1 3.89 1.837ZM8.5 12.5h1V9.98A2.482 2.482 0 0 0 7.021 7.5H2.98A2.482 2.482 0 0 0 .5 9.98V12.5h1V9.98A1.48 1.48 0 0 1 2.978 8.5h4.043A1.48 1.48 0 0 1 8.5 9.98V12.5Z"
+            clip-rule="evenodd" />
+        </svg>
+      </span>
+    {% endif %}
+  </shopify-account>
+{% else %}
+  {% assign base_url = request.locale.root_url | remove_last: '/' %}
 
-{% assign user_url = base_url | append: '/account/login' %}
+  {% assign user_url = base_url | append: '/account/login' %}
 
-{% if customer %}
-  {% assign user_url = base_url | append: '/account' %}
+  {% if customer %}
+    {% assign user_url = base_url | append: '/account' %}
+  {% endif %}
+
+  <a href="{{ user_url }}" class="button button-login" aria-label="Account" rel="nofollow">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 10 13">
+      <path
+        fill="#33423B"
+        fill-rule="evenodd"
+        d="M3.333 5.994a3 3 0 1 0 3.334-4.989 3 3 0 0 0-3.334 4.99Zm.556-4.157A2 2 0 1 1 6.11 5.163 2 2 0 0 1 3.89 1.837ZM8.5 12.5h1V9.98A2.482 2.482 0 0 0 7.021 7.5H2.98A2.482 2.482 0 0 0 .5 9.98V12.5h1V9.98A1.48 1.48 0 0 1 2.978 8.5h4.043A1.48 1.48 0 0 1 8.5 9.98V12.5Z"
+        clip-rule="evenodd" />
+    </svg>
+  </a>
 {% endif %}
-
-<a href="{{ user_url }}" class="button button-login desktop" aria-label="Account">
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 10 13">
-    <path
-      fill="#33423B"
-      fill-rule="evenodd"
-      d="M3.333 5.994a3 3 0 1 0 3.334-4.989 3 3 0 0 0-3.334 4.99Zm.556-4.157A2 2 0 1 1 6.11 5.163 2 2 0 0 1 3.89 1.837ZM8.5 12.5h1V9.98A2.482 2.482 0 0 0 7.021 7.5H2.98A2.482 2.482 0 0 0 .5 9.98V12.5h1V9.98A1.48 1.48 0 0 1 2.978 8.5h4.043A1.48 1.48 0 0 1 8.5 9.98V12.5Z"
-      clip-rule="evenodd" />
-  </svg>
-</a>
 
 <div class="language-picker button" onclick="this.querySelector('.language-picker__list').toggleAttribute('hidden');" data-cs-capture>
   {{ localization.language.iso_code | upcase }}
@@ -83,3 +109,136 @@
     {% endfor %}
   </div>
 </div>
+
+{% stylesheet %}
+  /* Shopify auto-injects an empty <shopify-store> context element next to
+     <shopify-account>; without this it becomes a flex item and doubles the gap */
+  shopify-store {
+    display: contents;
+  }
+
+  shopify-account.button-login {
+    --shopify-account-color-accent: #2a3b34;
+    --shopify-account-color-background: #f8f8f2;
+    --shopify-account-color-text: #2a3b34;
+    --shopify-account-font-body: 'Inter', sans-serif;
+    --shopify-account-font-heading: 'Inter', sans-serif;
+    --shopify-account-signed-in-avatar-size: 24px;
+    --shopify-account-signed-in-avatar-color-background: #2a3b34;
+    --shopify-account-signed-in-avatar-color-text: #f8f8f2;
+  }
+
+  shopify-account.button-login:not(:defined) {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* The shadow-DOM trigger button ships its own chrome (size, border, ring) —
+     strip it completely and rebuild it as an exact 40px twin of the sibling icons */
+  shopify-account.button-login::part(signed-out-avatar) {
+    all: unset;
+    box-sizing: border-box;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 50%;
+    color: #33423b;
+  }
+
+  shopify-account.button-login::part(signed-out-avatar):focus-visible {
+    outline: 2px solid #a5bb87;
+    outline-offset: 2px;
+  }
+
+  shopify-account.button-login span[slot='signed-out-avatar'] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    line-height: 0;
+  }
+
+  shopify-account.button-login span[slot='signed-out-avatar'] svg {
+    width: 16px;
+    height: 16px;
+    display: block;
+  }
+
+  .account-avatar-fallback {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: #2a3b34;
+  }
+
+  /* --- Premium icon row: uniform hit areas, soft-circle hover, visible focus --- */
+  .header-nav .header-menu .right-menu.item .button {
+    position: relative;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+  }
+
+  .header-nav .header-menu .right-menu.item .button:hover {
+    background-color: rgba(165, 187, 135, 0.22);
+  }
+
+  .header-nav .header-menu .right-menu.item .button:focus-visible {
+    outline: 2px solid #a5bb87;
+    outline-offset: 2px;
+  }
+
+  .header-nav .header-menu .right-menu.item .button svg {
+    transition: opacity 0.2s ease;
+  }
+
+  .header-nav .header-menu .right-menu.item .language-picker {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: #33423b;
+  }
+
+  /* Dark popup header: invert hover + colors */
+  .header-popup .header-menu .right-menu.item .button:hover {
+    background-color: rgba(248, 248, 242, 0.14);
+  }
+
+  .header-popup shopify-account.button-login {
+    --shopify-account-signed-in-avatar-color-background: #f8f8f2;
+    --shopify-account-signed-in-avatar-color-text: #2a3b34;
+  }
+
+  .header-popup shopify-account.button-login::part(signed-out-avatar) {
+    color: #f8f8f2;
+  }
+
+  .header-popup .account-avatar-fallback {
+    background-color: #f8f8f2;
+  }
+
+  .header-popup .header-menu .right-menu.item .language-picker {
+    color: #f8f8f2;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .header-nav .header-menu .right-menu.item .button,
+    .header-nav .header-menu .right-menu.item .button svg {
+      transition: none;
+    }
+  }
+
+  /* Mobile: account entry lives in the drawer, not the header bar */
+  @media only screen and (max-width: 900px) {
+    .header-nav:not(.header-popup) .header-menu .main-grid .button-login {
+      display: none;
+    }
+  }
+{% endstylesheet %}
