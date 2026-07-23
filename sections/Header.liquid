@@ -95,7 +95,7 @@
           }
         </script>
 
-        {% render 'HeaderMenuIcon' %}
+        {% render 'HeaderMenuIcon', account_menu: section.settings.customer_account_menu %}
       </div>
     </div>
   </div>
@@ -120,14 +120,16 @@
         </a>
       </div>
       <div class="right-menu item">
-        {% render 'HeaderMenuIcon' %}
+        {% render 'HeaderMenuIcon', account_menu: section.settings.customer_account_menu %}
       </div>
     </div>
   </div>
   <div class="header-inner">
     <div class="main-grid">
       {% render 'MainNavigation'
-        , menu: section.settings.main_menu %}
+        , menu: section.settings.main_menu
+        , show_account: true
+        , account_menu: section.settings.customer_account_menu %}
       <div class="header-selector">
         {% comment %}
           {% render 'CountrySelector' %}
@@ -430,6 +432,12 @@
         "type": "link_list",
         "id": "main_menu",
         "label": "Main Menu"
+      },
+      {
+        "type": "link_list",
+        "id": "customer_account_menu",
+        "label": "Customer account menu",
+        "default": "customer-account-main-menu"
       },
       {
         "type": "header",
