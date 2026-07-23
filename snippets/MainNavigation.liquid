@@ -1,21 +1,219 @@
 <div class="menu-listing" data-cs-capture>
   {% for link in menu.links %}
-    <div class="menu-listing__item">
+    <div class="menu-listing__item" style="--i: {{ forloop.index }}">
       <a href="{{ link.url }}" class="{% if request.path == link.url %}active{% endif %}">
         {{ link.title }}
       </a>
     </div>
   {% endfor %}
 
-  <div class="menu-listing__item mobile">
-    {% assign user_url = '/account/login' %}
-
-    {% if customer %}
-      {% assign user_url = '/account' %}
-    {% endif %}
-
-    <a href="{{ user_url }}" class="{% if request.path == user_url %}active{% endif %}">
-      {{ 'customer.account.my_account' | t }}
-    </a>
-  </div>
+  {% if show_account and shop.customer_accounts_enabled %}
+    <div class="menu-listing__item drawer-account" style="--i: {{ menu.links.size | plus: 1 }}" data-cs-capture>
+      {% if customer %}
+        <a href="{{ routes.account_url }}" class="drawer-account__row" rel="nofollow">
+          <span class="drawer-account__avatar drawer-account__avatar--initials" aria-hidden="true">
+            {{- customer.first_name | default: customer.email | slice: 0 | upcase -}}
+          </span>
+          <span class="drawer-account__text">
+            <span class="drawer-account__title">{{ 'customer.account.greeting' | t: name: customer.first_name }}</span>
+            <span class="drawer-account__subtitle">{{ 'customer.account.my_account' | t }}</span>
+          </span>
+          <svg class="drawer-account__chevron" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M6 3.5 10.5 8 6 12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </a>
+      {% else %}
+        <shopify-account
+          class="drawer-account__component"
+          {% if account_menu != blank %}
+            menu="{{ account_menu }}"
+          {% endif %}
+        >
+          <span slot="signed-out-avatar" class="drawer-account__row">
+            <span class="drawer-account__avatar" aria-hidden="true">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 10 13">
+                <path
+                  fill="#F8F8F2"
+                  fill-rule="evenodd"
+                  d="M3.333 5.994a3 3 0 1 0 3.334-4.989 3 3 0 0 0-3.334 4.99Zm.556-4.157A2 2 0 1 1 6.11 5.163 2 2 0 0 1 3.89 1.837ZM8.5 12.5h1V9.98A2.482 2.482 0 0 0 7.021 7.5H2.98A2.482 2.482 0 0 0 .5 9.98V12.5h1V9.98A1.48 1.48 0 0 1 2.978 8.5h4.043A1.48 1.48 0 0 1 8.5 9.98V12.5Z"
+                  clip-rule="evenodd" />
+              </svg>
+            </span>
+            <span class="drawer-account__text">
+              <span class="drawer-account__title">{{ 'customer.account.sign_in' | t }}</span>
+              <span class="drawer-account__subtitle">{{ 'customer.account.sign_in_note' | t }}</span>
+            </span>
+            <svg class="drawer-account__chevron" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M6 3.5 10.5 8 6 12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </span>
+        </shopify-account>
+      {% endif %}
+    </div>
+  {% endif %}
 </div>
+
+{% stylesheet %}
+  /* Hidden by default — this snippet is shared with Footer/blog navigation */
+  .drawer-account {
+    display: none;
+  }
+
+  @media only screen and (max-width: 900px) {
+    .header-popup .header-inner .drawer-account {
+      display: block;
+      margin: 0;
+      border-bottom: 1px solid #33423b;
+    }
+
+    .header-popup .header-inner .drawer-account a {
+      border-bottom: none;
+    }
+
+    .header-popup .header-inner .drawer-account .drawer-account__row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 16px 24px;
+      border: none;
+      background: transparent;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .header-popup .header-inner .drawer-account .drawer-account__row:active {
+      background-color: rgba(248, 248, 242, 0.05);
+    }
+
+    .header-popup .header-inner .drawer-account .drawer-account__row:focus-visible,
+    .drawer-account shopify-account::part(signed-out-avatar):focus-visible {
+      outline: 2px solid #a5bb87;
+      outline-offset: 2px;
+    }
+
+    .drawer-account__avatar {
+      flex: 0 0 40px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(165, 187, 135, 0.18);
+      border: 1px solid rgba(165, 187, 135, 0.4);
+    }
+
+    .drawer-account__avatar svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .drawer-account__avatar svg path {
+      fill: #f8f8f2;
+    }
+
+    .drawer-account__avatar--initials {
+      background: #a5bb87;
+      border-color: #a5bb87;
+      color: #2a3b34;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1;
+    }
+
+    .drawer-account__text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .drawer-account__title {
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.3;
+      letter-spacing: 0.01em;
+      color: #f8f8f2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .drawer-account__subtitle {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 300;
+      line-height: 1.35;
+      color: rgba(248, 248, 242, 0.55);
+    }
+
+    .drawer-account__chevron {
+      width: 16px;
+      height: 16px;
+      margin-left: auto;
+      flex: 0 0 16px;
+      color: rgba(248, 248, 242, 0.4);
+      transition: transform 0.2s ease;
+    }
+
+    .header-popup .header-inner .drawer-account .drawer-account__row:active .drawer-account__chevron {
+      transform: translateX(2px);
+    }
+
+    /* The whole slotted row is the component's native shadow trigger */
+    .drawer-account shopify-account {
+      display: block;
+      width: 100%;
+      --shopify-account-color-accent: #2a3b34;
+      --shopify-account-color-background: #f8f8f2;
+      --shopify-account-color-text: #2a3b34;
+      --shopify-account-font-body: 'Inter', sans-serif;
+      --shopify-account-font-heading: 'Inter', sans-serif;
+    }
+
+    .drawer-account shopify-account::part(signed-out-avatar) {
+      all: unset;
+      box-sizing: border-box;
+      display: block;
+      width: 100%;
+      cursor: pointer;
+    }
+
+    /* Entrance: app.bundle.js toggles .active on the sibling <header> while the
+       750ms clip-path reveal runs — items ride it with a soft upward stagger */
+    .header-popup .header-inner .menu-listing__item {
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    header.header-nav.active + .header-popup .header-inner .menu-listing__item {
+      opacity: 1;
+      transform: none;
+      transition-delay: calc(0.12s + var(--i, 0) * 0.045s);
+    }
+
+    header.header-nav.active + .header-popup .header-inner .drawer-account {
+      transition-delay: calc(0.18s + var(--i, 0) * 0.045s);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .header-popup .header-inner .menu-listing__item,
+      .drawer-account__row,
+      .drawer-account__chevron {
+        transition: none !important;
+        opacity: 1;
+        transform: none;
+      }
+    }
+  }
+{% endstylesheet %}
