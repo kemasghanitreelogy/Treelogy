@@ -132,7 +132,10 @@
       "view_addresses": "Lihat Alamat",
       "order_history": "Riwayat Pesanan",
       "no_orders": "Anda belum melakukan pesanan apapun.",
-      "my_account": "Akun Saya"
+      "my_account": "Akun Saya",
+      "sign_in": "Masuk",
+      "sign_in_note": "Lacak pesanan & checkout lebih cepat",
+      "greeting": "Hai, {{ name }}"
     },
     "orders": {
       "order": "Pesanan",
