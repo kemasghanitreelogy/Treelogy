@@ -31,6 +31,9 @@
 
         {%- liquid
           assign listing_currency = cart.currency.iso_code | default: shop.currency
+          if listing_currency == 'XXX'
+            assign listing_currency = shop.currency
+          endif
           assign position_offset = paginate.current_offset | default: 0
         -%}
         <script type="application/ld+json">

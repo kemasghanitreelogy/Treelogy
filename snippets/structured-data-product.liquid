@@ -16,7 +16,11 @@
   assign p_url = base | append: product.url
   assign p_id = p_url | append: '#product'
   assign org_id = base | append: '/#organization'
+  # crawler sessions without a resolved market get ISO placeholder 'XXX' — non-blank, so `default:` can't catch it
   assign currency = cart.currency.iso_code | default: shop.currency
+  if currency == 'XXX'
+    assign currency = shop.currency
+  endif
   assign price_valid_until = 'now' | date: '%Y' | plus: 1 | append: '-12-31'
 
   assign desc = product.description | strip_html | strip_newlines | strip | truncate: 5000
