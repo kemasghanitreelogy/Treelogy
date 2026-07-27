@@ -1,25 +1,168 @@
-<div class="popup-variant" id="popup-variant">
+{% comment %}
+  Quick-add variant picker popup (premium).
+  Contract with assets/app.bundle.js (compiled, do not rename):
+  - IDs: popup-variant, popup-variant-title, popup-variant-rating,
+    variants-wrapper, popup-variants-button-bag, close-varaints
+  - Classes: .active (open state + selected row), .checkbox-button,
+    .button-quick-add-cart, .disabled-opacity
+  - The bundle writes "Please wait..." / "Adding..." into title & CTA;
+    the script below observes those writes to drive is-loading / is-adding.
+{% endcomment %}
+
+{%- assign pv_is_id = false -%}
+{%- if request.locale.iso_code == 'id' -%}{%- assign pv_is_id = true -%}{%- endif -%}
+
+<div
+  class="popup-variant"
+  id="popup-variant"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="popup-variant-title">
   <div class="inner">
+    <span class="pv-handle" aria-hidden="true"></span>
+
+    <button type="button" class="close-button" id="close-varaints" aria-label="{% if pv_is_id %}Tutup{% else %}Close{% endif %}">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 12" aria-hidden="true">
+        <path fill="#526547" d="M12 1.989 10.011 0 6 4.011 1.989 0 0 1.989 4.011 6 0 10.011 1.989 12 6 7.989 10.011 12 12 10.011 7.989 6 12 1.989Z"/>
+      </svg>
+    </button>
+
     <div class="header">
-      <div class="close-button" id="close-varaints">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 12">
-          <path fill="#526547" d="M12 1.989 10.011 0 6 4.011 1.989 0 0 1.989 4.011 6 0 10.011 1.989 12 6 7.989 10.011 12 12 10.011 7.989 6 12 1.989Z"/>
-        </svg>
+      <div class="pv-product">
+        <div class="pv-thumb" id="pv-thumb" aria-hidden="true"></div>
+        <div class="pv-meta">
+          <div class="pv-eyebrow">{% if pv_is_id %}Pilih ukuranmu{% else %}Choose your size{% endif %}</div>
+          <div class="title" id="popup-variant-title">{% if pv_is_id %}Memuat…{% else %}Loading…{% endif %}</div>
+          <div id="popup-variant-rating"></div>
+        </div>
       </div>
-      <div id="popup-variant-rating"></div>
-      <div class="title" id="popup-variant-title">Please wait...</div>
     </div>
+
+    <div class="pv-skeleton" aria-hidden="true">
+      <div class="pv-skel-row"><span class="pv-skel-dot"></span><span class="pv-skel-bar"></span><span class="pv-skel-bar pv-skel-bar--price"></span></div>
+      <div class="pv-skel-row"><span class="pv-skel-dot"></span><span class="pv-skel-bar"></span><span class="pv-skel-bar pv-skel-bar--price"></span></div>
+      <div class="pv-skel-row"><span class="pv-skel-dot"></span><span class="pv-skel-bar"></span><span class="pv-skel-bar pv-skel-bar--price"></span></div>
+    </div>
+
     <div class="variants" id="variants-wrapper">
       {% render 'VariantsButton', product: product, disabled_detail: true %}
     </div>
-    <div class="button-quick-add-cart disabled-opacity" id="popup-variants-button-bag">Add to Cart</div>
+
+    <div class="button-quick-add-cart disabled-opacity" id="popup-variants-button-bag">{{ 'products.general.add_to_cart' | t }}</div>
+
+    <div class="pv-secure">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4.5 7V5.5a3.5 3.5 0 1 1 7 0V7m-8 0h9a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1h-9a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>{% if pv_is_id %}Pembayaran aman &amp; terenkripsi{% else %}Secure, encrypted checkout{% endif %}</span>
+    </div>
   </div>
 </div>
 
 <script>
-  document.getElementById('close-varaints').addEventListener('click', () => {
-    const popup = document.getElementById('popup-variant');
-    popup.classList.remove('active');
-    window.popupVariantActive = false;
-  });
+  (function () {
+    var popup = document.getElementById('popup-variant');
+    if (!popup) return;
+    var title = document.getElementById('popup-variant-title');
+    var bag = document.getElementById('popup-variants-button-bag');
+    var closeBtn = document.getElementById('close-varaints');
+    var thumb = document.getElementById('pv-thumb');
+    var wrapper = document.getElementById('variants-wrapper');
+    var lastTrigger = null;
+
+    function closePopup() {
+      popup.classList.remove('active');
+      window.popupVariantActive = false;
+    }
+
+    closeBtn.addEventListener('click', closePopup);
+
+    popup.addEventListener('mousedown', function (e) {
+      if (e.target === popup) closePopup();
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && popup.classList.contains('active')) closePopup();
+    });
+
+    /* Remember the trigger (focus restore) and lift its product image into the popup. */
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest && e.target.closest('.open-popup-variants');
+      if (!btn) return;
+      lastTrigger = btn;
+      if (!thumb) return;
+      var node = btn;
+      var img = null;
+      for (var i = 0; i < 6 && node && node !== document.body; i++) {
+        img = node.querySelector('img');
+        if (img) break;
+        node = node.parentElement;
+      }
+      thumb.innerHTML = '';
+      if (img && (img.currentSrc || img.src)) {
+        var t = document.createElement('img');
+        t.src = img.currentSrc || img.src;
+        t.alt = '';
+        thumb.appendChild(t);
+        thumb.classList.add('has-image');
+      } else {
+        thumb.classList.remove('has-image');
+      }
+    }, true);
+
+    /* Open/close side effects: scroll lock + focus management. */
+    new MutationObserver(function () {
+      var open = popup.classList.contains('active');
+      document.documentElement.classList.toggle('pv-lock', open);
+      if (open) {
+        setTimeout(function () { closeBtn.focus({ preventScroll: true }); }, 80);
+      } else {
+        popup.classList.remove('is-loading');
+        bag.classList.remove('is-adding');
+        if (lastTrigger && document.contains(lastTrigger)) {
+          lastTrigger.focus({ preventScroll: true });
+        }
+      }
+    }).observe(popup, { attributes: true, attributeFilter: ['class'] });
+
+    /* The bundle writes "Please wait..." then the product title. */
+    new MutationObserver(function () {
+      var t = (title.textContent || '').trim();
+      var loading = t === 'Please wait...' || t === '';
+      popup.classList.toggle('is-loading', loading);
+      popup.setAttribute('aria-busy', loading ? 'true' : 'false');
+    }).observe(title, { childList: true, characterData: true, subtree: true });
+
+    /* The bundle swaps the CTA text to "Adding..." while posting to cart. */
+    new MutationObserver(function () {
+      bag.classList.toggle('is-adding', (bag.textContent || '').trim().indexOf('Adding') === 0);
+    }).observe(bag, { childList: true, characterData: true, subtree: true });
+
+    /* Variant rows are injected by the bundle as plain divs — add keyboard & ARIA. */
+    wrapper.setAttribute('role', 'radiogroup');
+    new MutationObserver(function () {
+      wrapper.querySelectorAll('.checkbox-button').forEach(function (row) {
+        if (!row.hasAttribute('tabindex')) {
+          row.setAttribute('tabindex', '0');
+          row.setAttribute('role', 'radio');
+        }
+        row.setAttribute('aria-checked', row.classList.contains('active') ? 'true' : 'false');
+      });
+    }).observe(wrapper, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+
+    wrapper.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      var row = e.target.closest && e.target.closest('.checkbox-button');
+      if (!row) return;
+      e.preventDefault();
+      row.click();
+    });
+
+    bag.setAttribute('tabindex', '0');
+    bag.setAttribute('role', 'button');
+    bag.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        bag.click();
+      }
+    });
+  })();
 </script>
