@@ -7289,6 +7289,9 @@ html.pv-lock body {
   outline: 2px solid #2B3C35;
   outline-offset: 3px;
 }
+.popup-variant.active .inner .button-quick-add-cart.disabled-opacity {
+  opacity: 0.5;
+}
 .popup-variant .inner .button-quick-add-cart.disabled-opacity {
   cursor: not-allowed;
 }
