@@ -636,11 +636,23 @@
 
             {%- assign timeline_data = blank -%}
             {%- assign source_type = 'blocks' -%}
+            {%- assign timeline_metaobject_list = blank -%}
 
-            {%- if block.settings.mf_key != blank and product != blank -%}
-              {%- assign mf_namespace = block.settings.mf_namespace -%}
-              {%- assign mf_key = block.settings.mf_key -%}
-              {%- assign timeline_metaobject_list = product.metafields[mf_namespace][mf_key].value -%}
+            {%- if product != blank -%}
+              {%- if block.settings.mf_key != blank -%}
+                {%- assign mf_namespace = block.settings.mf_namespace -%}
+                {%- assign mf_key = block.settings.mf_key -%}
+                {%- assign timeline_metaobject_list = product.metafields[mf_namespace][mf_key].value -%}
+              {%- endif -%}
+
+              {%- comment -%}
+                mf_namespace/mf_key are text settings, so Translate & Adapt can localize
+                them per language and break the lookup. Fall back to the canonical
+                custom.product_timeline metafield whenever the settings-based lookup is empty.
+              {%- endcomment -%}
+              {%- if timeline_metaobject_list == blank -%}
+                {%- assign timeline_metaobject_list = product.metafields.custom.product_timeline.value -%}
+              {%- endif -%}
 
               {%- if timeline_metaobject_list != blank -%}
                 {%- assign timeline_data = timeline_metaobject_list -%}
