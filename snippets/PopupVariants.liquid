@@ -108,15 +108,24 @@
       }
     }, true);
 
+    /* Toggle a class only when the state actually changes — observers that
+       write back to their own observed target would otherwise loop forever. */
+    function setClass(el, cls, on) {
+      if (el.classList.contains(cls) !== on) el.classList.toggle(cls, on);
+    }
+
     /* Open/close side effects: scroll lock + focus management. */
+    var wasOpen = false;
     new MutationObserver(function () {
       var open = popup.classList.contains('active');
-      document.documentElement.classList.toggle('pv-lock', open);
+      if (open === wasOpen) return;
+      wasOpen = open;
+      setClass(document.documentElement, 'pv-lock', open);
       if (open) {
         setTimeout(function () { closeBtn.focus({ preventScroll: true }); }, 80);
       } else {
-        popup.classList.remove('is-loading');
-        bag.classList.remove('is-adding');
+        setClass(popup, 'is-loading', false);
+        setClass(bag, 'is-adding', false);
         if (lastTrigger && document.contains(lastTrigger)) {
           lastTrigger.focus({ preventScroll: true });
         }
@@ -127,13 +136,14 @@
     new MutationObserver(function () {
       var t = (title.textContent || '').trim();
       var loading = t === 'Please wait...' || t === '';
-      popup.classList.toggle('is-loading', loading);
-      popup.setAttribute('aria-busy', loading ? 'true' : 'false');
+      setClass(popup, 'is-loading', loading);
+      var busy = loading ? 'true' : 'false';
+      if (popup.getAttribute('aria-busy') !== busy) popup.setAttribute('aria-busy', busy);
     }).observe(title, { childList: true, characterData: true, subtree: true });
 
     /* The bundle swaps the CTA text to "Adding..." while posting to cart. */
     new MutationObserver(function () {
-      bag.classList.toggle('is-adding', (bag.textContent || '').trim().indexOf('Adding') === 0);
+      setClass(bag, 'is-adding', (bag.textContent || '').trim().indexOf('Adding') === 0);
     }).observe(bag, { childList: true, characterData: true, subtree: true });
 
     /* Variant rows are injected by the bundle as plain divs — add keyboard & ARIA. */
@@ -144,7 +154,8 @@
           row.setAttribute('tabindex', '0');
           row.setAttribute('role', 'radio');
         }
-        row.setAttribute('aria-checked', row.classList.contains('active') ? 'true' : 'false');
+        var checked = row.classList.contains('active') ? 'true' : 'false';
+        if (row.getAttribute('aria-checked') !== checked) row.setAttribute('aria-checked', checked);
       });
     }).observe(wrapper, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
 
