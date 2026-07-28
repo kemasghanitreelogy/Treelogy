@@ -4787,6 +4787,7 @@ input.red {
 }
 .virtual-content .graphic .main-circle img {
   width: 100%;
+  height: auto;
 }
 @media only screen and (max-width: 900px) {
   .virtual-content .graphic .mobile-card {
