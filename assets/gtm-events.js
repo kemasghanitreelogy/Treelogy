@@ -1,4 +1,4 @@
-/* GTM interaction events for Treelogy.
+/* GTM interaction events for Treelogy. (r2 — cart journey: view_cart/remove_from_cart)
    Loaded (deferred) by snippets/gtm-head.liquid — only when a GTM container ID
    is configured, so window.dataLayer always exists here.
 
