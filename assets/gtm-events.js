@@ -68,9 +68,24 @@
       item_id: i.sku || String(i.product_id || i.id || ''),
       item_name: i.product_title || i.title || '',
       item_variant: i.variant_title || undefined,
+      item_variant_id: String(i.variant_id || i.id || ''),
       price: (i.final_price != null ? i.final_price : i.price || 0) / 100,
       quantity: i.quantity || 1
     };
+  }
+
+  /* Short-lived attribution stamp: which UI element initiated the add.
+     Set on click (e.g. hero protocol CTAs), consumed by the very next
+     successful /cart/add within 15s. */
+  var atcAttribution = null;
+  function stampAtcSource(source) {
+    atcAttribution = { source: source, t: Date.now() };
+  }
+  function consumeAtcSource() {
+    if (!atcAttribution) return '';
+    var src = Date.now() - atcAttribution.t < 15000 ? atcAttribution.source : '';
+    atcAttribution = null;
+    return src;
   }
 
   function pushAddToCart(data) {
@@ -85,6 +100,7 @@
     push({ ecommerce: null });
     push({
       event: 'add_to_cart',
+      atc_source: consumeAtcSource() || undefined,
       ecommerce: {
         currency: currency,
         value: value,
@@ -231,6 +247,7 @@
         var cta = t.closest('.protocol-cta, .button-quick-add-cart');
         if (cta && hero.contains(cta)) {
           var ctas = hero.querySelectorAll('.protocol-cta, .button-quick-add-cart');
+          stampAtcSource('hero:' + heroVersion);
           push({
             event: 'hero_cta_click',
             hero_version: heroVersion,
