@@ -315,6 +315,20 @@
    {
     "accountId": "0",
     "containerId": "0",
+    "variableId": "16",
+    "name": "JS - is top window",
+    "type": "jsm",
+    "parameter": [
+     {
+      "type": "TEMPLATE",
+      "key": "javascript",
+      "value": "function() {\n  try { return window.self === window.top; } catch (e) { return false; }\n}"
+     }
+    ]
+   },
+   {
+    "accountId": "0",
+    "containerId": "0",
     "variableId": "15",
     "name": "DLV - variant_id",
     "type": "v",
@@ -363,7 +377,7 @@
        {
         "type": "TEMPLATE",
         "key": "arg1",
-        "value": "^(hero_view|hero_cta_click|hero_image_click|view_item|view_item_list|select_item|add_to_cart|begin_checkout|add_shipping_info|add_payment_info|purchase|whatsapp_click|section_view|section_click|links_hub_click|links_hub_share|links_hub_upsell_click)$"
+        "value": "^(hero_view|hero_cta_click|hero_image_click|view_item|view_item_list|select_item|add_to_cart|remove_from_cart|view_cart|begin_checkout|add_shipping_info|add_payment_info|purchase|whatsapp_click|section_view|section_click|links_hub_click|links_hub_share|links_hub_upsell_click)$"
        }
       ]
      }
@@ -382,6 +396,27 @@
       "type": "TEMPLATE",
       "key": "tagId",
       "value": "{{Const - GA4 Measurement ID}}"
+     },
+     {
+      "type": "LIST",
+      "key": "configSettingsTable",
+      "list": [
+       {
+        "type": "MAP",
+        "map": [
+         {
+          "type": "TEMPLATE",
+          "key": "parameter",
+          "value": "send_page_view"
+         },
+         {
+          "type": "TEMPLATE",
+          "key": "parameterValue",
+          "value": "{{JS - is top window}}"
+         }
+        ]
+       }
+      ]
      }
     ],
     "firingTriggerId": [

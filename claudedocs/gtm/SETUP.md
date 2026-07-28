@@ -84,7 +84,9 @@ kapan pun; tracking baru aktif setelah ID diisi di theme editor.
 | `view_item` | Liquid (gtm-head) | load PDP | ecommerce.items, value |
 | `view_item_list` | Liquid | load collection (12 item pertama) | item_list_id/name, index |
 | `select_item` | gtm-events.js | klik link `/products/` | item_handle, from_section |
-| `add_to_cart` | gtm-events.js | response sukses `/cart/add` (fetch & XHR) | ecommerce dari response cart |
+| `add_to_cart` | gtm-events.js | response sukses `/cart/add` (fetch & XHR); juga kenaikan qty via `/cart/change|update` (diff state) | ecommerce dari response cart |
+| `remove_from_cart` | gtm-events.js | penurunan qty / hapus item via `/cart/change|update` (diff vs cache state; `/cart/clear` sengaja di-skip — noise flow buy-now) | ecommerce items yang dihapus |
+| `view_cart` | gtm-events.js + gtm-head | drawer mini-cart terbuka (`.mini-cart` dapat `.active`, delay 600ms) ATAU load halaman `/cart` | ecommerce seluruh isi cart |
 | `begin_checkout` / `add_shipping_info` / `add_payment_info` / `purchase` | custom pixel | checkout events | ecommerce, transaction_id |
 | `whatsapp_click` | gtm-events.js | klik wa.me / api.whatsapp.com / whatsapp: | link_url, from_section |
 | `section_view` | gtm-events.js | section ≥40% terlihat (1× per section per page) | section_id |
@@ -145,6 +147,24 @@ Context di semua hit (via dataLayer awal): `page_locale`, `page_type`, `page_tem
   → share ke Google Ads (setelah link).
 - **Subscription-ready**: saat subscription launch, tambahkan `selling_plan_selected`
   (PDP) + flag `purchase_type` di items — struktur dataLayer sudah siap menerimanya.
+
+## Anti-redundansi (28 Jul 2026, setelah GA4 channel diputus)
+
+- **Custom pixel lazy-load GTM**: pixel Shopify jalan di SEMUA halaman (storefront +
+  checkout). Versi awal memuat GTM di top-level → GTM dobel di storefront
+  (theme + sandbox) → page_view dobel. Fix: `ensureGTM()` dipanggil hanya saat
+  event checkout pertama tiba. Kalau edit pixel, JANGAN kembalikan loader ke top-level.
+- **Guard `send_page_view`**: Google Tag di container memakai config
+  `send_page_view = {{JS - is top window}}` (Custom JS: `window.self === window.top`)
+  → sandbox pixel (iframe) tidak pernah kirim page_view sampah ber-path `/wpm@…`;
+  page_view hanya dari main window theme. Checkout tidak punya page_view — funnel
+  checkout dibaca dari event begin_checkout → purchase (by design).
+- **add_to_cart satu sumber per jalur**: `/cart/add` → langsung; `/cart/change|update`
+  → hanya delta kenaikan (tidak dobel dengan /cart/add karena endpoint berbeda).
+- **`/cart/clear` tidak menghasilkan event** — dipakai flow buy-now replace
+  (MainProductDetail); remove_from_cart dari situ = noise, bukan intent user.
+- **Dedup channel**: koneksi GA4 di app Google & YouTube DIPUTUS 28 Jul
+  (verifikasi: `G-N28QHJH222` 0 kemunculan di HTML storefront). Google Ads (AW-) tetap.
 
 ## Catatan arsitektur
 
