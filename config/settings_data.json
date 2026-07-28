@@ -26,6 +26,7 @@
     "bonus_2_icon": "shopify://shop_images/free_item.png",
     "complete_text": "All set!",
     "favicon": "shopify://shop_images/favicon_-_picto_-_treelogy.png",
+    "gtm_container_id": "GTM-5M855J4V",
     "sections": {
       "Header": {
         "type": "Header",
