@@ -5,6 +5,12 @@
    Events pushed:
    - consent_update   : bridges Shopify Customer Privacy -> Google Consent Mode v2
    - add_to_cart      : GA4 ecommerce, via fetch/XHR intercept on /cart/add
+                        (also on quantity increases via /cart/change|update)
+   - remove_from_cart : quantity decreases/removals via /cart/change|update diff
+                        against a local cart-state cache. /cart/clear is
+                        deliberately ignored (buy-now replace flow = noise).
+   - view_cart        : mini-cart drawer opens (.mini-cart gains .active);
+                        cart page view_cart comes from gtm-head.liquid
    - select_item      : click on any product link (item_handle + source section)
    - whatsapp_click   : click on wa.me / api.whatsapp.com / whatsapp: links
    - section_view     : a .shopify-section became >=40% visible (once per section)
@@ -109,23 +115,118 @@
     });
   }
 
-  function isCartAdd(url) {
-    return typeof url === 'string' && url.indexOf('/cart/add') !== -1;
+  /* ---------- cart-state cache: view_cart + remove_from_cart ---------- */
+  /* Seeded from Liquid ({{ cart.items }} via __gtmCtx.cartItems), kept in sync
+     from every cart endpoint response. Mutation endpoints (/cart/change,
+     /cart/update) return the FULL cart — diffing old vs new state yields
+     remove_from_cart (quantity down) and add_to_cart (quantity up, e.g. the
+     drawer's + button). /cart/add pushes add_to_cart directly (its response is
+     only the added lines), /cart.js refreshes silently, /cart/clear resets
+     silently (buy-now replace flow — events there would be noise). */
+
+  var cartState = {};
+  (function seed() {
+    var seedItems = (window.__gtmCtx && window.__gtmCtx.cartItems) || [];
+    for (var i = 0; i < seedItems.length; i++) {
+      cartState[String(seedItems[i].id)] = seedItems[i];
+    }
+  })();
+
+  function cloneWithQty(item, qty) {
+    var out = {};
+    for (var k in item) out[k] = item[k];
+    out.quantity = qty;
+    return out;
+  }
+
+  function bumpCartState(addedLines) {
+    var items = Array.isArray(addedLines.items) ? addedLines.items : [addedLines];
+    for (var i = 0; i < items.length; i++) {
+      var it = items[i];
+      if (it.id == null) continue;
+      var key = String(it.id);
+      var prev = cartState[key];
+      cartState[key] = cloneWithQty(it, (prev ? prev.quantity : 0) + (it.quantity || 1));
+    }
+  }
+
+  function pushCartDiffEvent(eventName, items) {
+    var value = 0;
+    for (var i = 0; i < items.length; i++) {
+      value += ((items[i].final_price != null ? items[i].final_price : items[i].price) || 0) / 100 * (items[i].quantity || 1);
+    }
+    push({ ecommerce: null });
+    push({
+      event: eventName,
+      ecommerce: { currency: currency, value: value, items: items.map(mapCartItem) }
+    });
+  }
+
+  function syncCartState(fullCart, silent) {
+    if (!fullCart || !Array.isArray(fullCart.items)) return;
+    var newState = {};
+    for (var i = 0; i < fullCart.items.length; i++) {
+      newState[String(fullCart.items[i].id)] = fullCart.items[i];
+    }
+    if (!silent) {
+      var removed = [];
+      var added = [];
+      var key;
+      for (key in cartState) {
+        var oldQ = cartState[key].quantity || 0;
+        var newQ = newState[key] ? newState[key].quantity || 0 : 0;
+        if (newQ < oldQ) removed.push(cloneWithQty(cartState[key], oldQ - newQ));
+      }
+      for (key in newState) {
+        var prevQ = cartState[key] ? cartState[key].quantity || 0 : 0;
+        var curQ = newState[key].quantity || 0;
+        if (curQ > prevQ) added.push(cloneWithQty(newState[key], curQ - prevQ));
+      }
+      if (removed.length) pushCartDiffEvent('remove_from_cart', removed);
+      if (added.length) pushCartDiffEvent('add_to_cart', added);
+    }
+    cartState = newState;
+  }
+
+  function cartEndpoint(url) {
+    if (typeof url !== 'string') return '';
+    if (url.indexOf('/cart/add') !== -1) return 'add';
+    if (url.indexOf('/cart/change') !== -1 || url.indexOf('/cart/update') !== -1) return 'mutate';
+    if (url.indexOf('/cart/clear') !== -1) return 'clear';
+    if (url.indexOf('/cart.js') !== -1) return 'refresh';
+    return '';
+  }
+
+  function handleCartResponse(kind, data) {
+    if (!data) return;
+    if (kind === 'add') {
+      pushAddToCart(data);
+      bumpCartState(data);
+    } else if (kind === 'mutate') {
+      syncCartState(data, false);
+    } else if (kind === 'refresh') {
+      syncCartState(data, true);
+    } else if (kind === 'clear') {
+      cartState = {};
+    }
   }
 
   var origFetch = window.fetch;
   if (origFetch) {
     window.fetch = function (input) {
       var url = typeof input === 'string' ? input : (input && input.url) || '';
+      var kind = cartEndpoint(url);
       var promise = origFetch.apply(this, arguments);
-      if (isCartAdd(url)) {
+      if (kind) {
         promise
           .then(function (res) {
             if (!res.ok) return;
             res
               .clone()
               .json()
-              .then(pushAddToCart)
+              .then(function (data) {
+                handleCartResponse(kind, data);
+              })
               .catch(function () {});
           })
           .catch(function () {});
@@ -136,11 +237,12 @@
 
   var origOpen = XMLHttpRequest.prototype.open;
   XMLHttpRequest.prototype.open = function (method, url) {
-    if (isCartAdd(url)) {
+    var kind = cartEndpoint(url);
+    if (kind) {
       this.addEventListener('load', function () {
         if (this.status < 200 || this.status >= 300) return;
         try {
-          pushAddToCart(JSON.parse(this.responseText));
+          handleCartResponse(kind, JSON.parse(this.responseText));
         } catch (e) {
           /* non-JSON response — ignore */
         }
@@ -148,6 +250,28 @@
     }
     return origOpen.apply(this, arguments);
   };
+
+  /* ---------- view_cart: mini-cart drawer open ---------- */
+  /* The drawer opens optimistically before /cart/add responds — the 600ms
+     delay lets the response land so the snapshot includes the new item. */
+
+  (function () {
+    var mini = document.querySelector('.mini-cart');
+    if (!mini || !('MutationObserver' in window)) return;
+    var wasOpen = mini.classList.contains('active');
+    new MutationObserver(function () {
+      var open = mini.classList.contains('active');
+      if (open && !wasOpen) {
+        setTimeout(function () {
+          var items = [];
+          for (var key in cartState) items.push(cartState[key]);
+          if (!items.length) return;
+          pushCartDiffEvent('view_cart', items);
+        }, 600);
+      }
+      wasOpen = open;
+    }).observe(mini, { attributes: true, attributeFilter: ['class'] });
+  })();
 
   /* ---------- click delegation: select_item, whatsapp_click, section_click ---------- */
 

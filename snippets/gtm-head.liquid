@@ -40,7 +40,20 @@
 
     window.__gtmCtx = {
       currency: {{ dl_currency | json }},
-      locale: {{ request.locale.iso_code | json }}
+      locale: {{ request.locale.iso_code | json }},
+      cartItems: [
+        {%- for dl_item in cart.items %}
+        {
+          id: {{ dl_item.variant_id | json }},
+          sku: {{ dl_item.sku | json }},
+          product_title: {{ dl_item.product.title | json }},
+          variant_title: {{ dl_item.variant.title | json }},
+          variant_id: {{ dl_item.variant_id | json }},
+          final_price: {{ dl_item.final_price | json }},
+          quantity: {{ dl_item.quantity | json }}
+        }{% unless forloop.last %},{% endunless %}
+        {%- endfor %}
+      ]
     };
 
     dataLayer.push({
@@ -70,6 +83,28 @@
               price: {{ dl_variant.price | divided_by: 100.0 | json }},
               quantity: 1
             }
+          ]
+        }
+      });
+    {%- endif %}
+
+    {%- if request.page_type == 'cart' %}
+      dataLayer.push({
+        event: 'view_cart',
+        ecommerce: {
+          currency: {{ dl_currency | json }},
+          value: {{ cart.total_price | divided_by: 100.0 | json }},
+          items: [
+            {%- for dl_item in cart.items %}
+              {
+                item_id: {{ dl_item.sku | default: dl_item.variant_id | json }},
+                item_name: {{ dl_item.product.title | json }},
+                item_variant: {{ dl_item.variant.title | json }},
+                item_variant_id: {{ dl_item.variant_id | append: '' | json }},
+                price: {{ dl_item.final_price | divided_by: 100.0 | json }},
+                quantity: {{ dl_item.quantity | json }}
+              }{% unless forloop.last %},{% endunless %}
+            {%- endfor %}
           ]
         }
       });
