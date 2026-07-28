@@ -2,7 +2,11 @@
   {% assign fp_product = section.settings.product %}
   {% assign fp_v1 = fp_product.variants[0] %}
   {% assign fp_v2 = fp_product.variants[1] %}
-  <div class="main-grid" data-cs-capture>
+  <div
+    class="main-grid"
+    data-cs-capture
+    data-hero-version="iop-protocol-2cta-v1"
+    data-hero-product="{{ fp_product.handle }}">
     <div class="inner">
       <div class="thumbnail">
         <div class="wrapper">

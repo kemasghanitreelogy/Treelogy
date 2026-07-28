@@ -195,6 +195,8 @@
       })();
     </script>
 
+    {% render 'gtm-head' %}
+
     {{ content_for_header }}
 
     {%- comment -%} ===== Structured data (JSON-LD) — single source of truth in snippets/structured-data-*.liquid (GEO / AI-search / rich results) ===== {%- endcomment -%}
@@ -740,6 +742,7 @@
   </head>
 
   <body class="{% if is_chromeless %}t-chromeless{% endif %}">
+    {% render 'gtm-body' %}
     {%- if settings.show_utm_free_shipping_toast and is_chromeless == false -%}
       <!-- UTM Reward Toast -->
       <div

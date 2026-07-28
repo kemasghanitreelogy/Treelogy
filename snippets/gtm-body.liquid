@@ -1,0 +1,22 @@
+{% doc %}
+  GTM noscript fallback iframe. Rendered once in layout/theme.liquid,
+  immediately after the opening <body> tag. No-op unless
+  settings.gtm_container_id is set.
+
+  @example
+  {% render 'gtm-body' %}
+{% enddoc %}
+
+{%- liquid
+  assign gtm_id = settings.gtm_container_id | strip
+-%}
+{%- if gtm_id != blank -%}
+  <noscript>
+    <iframe
+      src="https://www.googletagmanager.com/ns.html?id={{ gtm_id | url_param_escape }}"
+      height="0"
+      width="0"
+      style="display: none; visibility: hidden"
+    ></iframe>
+  </noscript>
+{%- endif -%}

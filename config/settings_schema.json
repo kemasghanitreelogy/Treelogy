@@ -178,5 +178,16 @@
         "default": "Afghanistan[AF]\nAlbania[AL]\nAlgeria[DZ]\nAndorra[AD]\nAngola[AO]\nArgentina[AR]\nAustralia[AU]\nAustria[AT]\nAzerbaijan[AZ]\nBahrain[BH]\nBangladesh[BD]\nBelgium[BE]\nBhutan[BT]\nBolivia[BO]\nBrazil[BR]\nBrunei[BN]\nBulgaria[BG]\nCambodia[KH]\nCanada[CA]\nChile[CL]\nChina[CN]\nColombia[CO]\nCosta Rica[CR]\nCroatia[HR]\nCyprus[CY]\nCzech Republic[CZ]\nDenmark[DK]\nEgypt[EG]\nEstonia[EE]\nFinland[FI]\nFrance[FR]\nGermany[DE]\nGreece[GR]\nHong Kong[HK]\nHungary[HU]\nIceland[IS]\nIndia[IN]\nIndonesia[ID]\nIran[IR]\nIraq[IQ]\nIreland[IE]\nIsrael[IL]\nItaly[IT]\nJapan[JP]\nJordan[JO]\nKazakhstan[KZ]\nKenya[KE]\nKorea, South[KR]\nKuwait[KW]\nLaos[LA]\nLatvia[LV]\nLebanon[LB]\nLibya[LY]\nLithuania[LT]\nLuxembourg[LU]\nMalaysia[MY]\nMexico[MX]\nMorocco[MA]\nMyanmar[MM]\nNetherlands[NL]\nNew Zealand[NZ]\nNigeria[NG]\nNorway[NO]\nPakistan[PK]\nPhilippines[PH]\nPoland[PL]\nPortugal[PT]\nQatar[QA]\nRomania[RO]\nRussia[RU]\nSaudi Arabia[SA]\nSingapore[SG]\nSouth Africa[ZA]\nSpain[ES]\nSri Lanka[LK]\nSweden[SE]\nSwitzerland[CH]\nTaiwan[TW]\nThailand[TH]\nTurkey[TR]\nUkraine[UA]\nUnited Arab Emirates[AE]\nUnited Kingdom[GB]\nUnited States[US]\nVietnam[VN]\nYemen[YE]"
       }
     ]
+  },
+  {
+    "name": "Analytics (GTM)",
+    "settings": [
+      {
+        "type": "text",
+        "id": "gtm_container_id",
+        "label": "Google Tag Manager container ID",
+        "info": "Format: GTM-XXXXXXX. Kosongkan untuk menonaktifkan GTM & dataLayer di storefront."
+      }
+    ]
   }
 ]

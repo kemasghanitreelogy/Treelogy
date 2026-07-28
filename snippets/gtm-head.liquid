@@ -1,0 +1,116 @@
+{% doc %}
+  GTM foundation, rendered once in layout/theme.liquid <head> BEFORE content_for_header.
+  Does four things, in order:
+  1. Google Consent Mode v2 defaults (granted globally, denied in EEA/UK/CH until update)
+  2. dataLayer page-context push (locale, page type, template, market, customer state)
+  3. GA4 ecommerce page-load events: view_item (product) / view_item_list (collection)
+  4. GTM container loader + deferred gtm-events.js
+
+  No-op unless settings.gtm_container_id is set (Theme settings > Analytics (GTM)).
+
+  @example
+  {% render 'gtm-head' %}
+{% enddoc %}
+
+{%- liquid
+  assign gtm_id = settings.gtm_container_id | strip
+  assign dl_currency = cart.currency.iso_code
+  if dl_currency == 'XXX' or dl_currency == blank
+    assign dl_currency = shop.currency
+  endif
+-%}
+{%- if gtm_id != blank -%}
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('consent', 'default', {
+      ad_storage: 'granted',
+      ad_user_data: 'granted',
+      ad_personalization: 'granted',
+      analytics_storage: 'granted'
+    });
+    gtag('consent', 'default', {
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+      analytics_storage: 'denied',
+      wait_for_update: 500,
+      region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH']
+    });
+
+    window.__gtmCtx = {
+      currency: {{ dl_currency | json }},
+      locale: {{ request.locale.iso_code | json }}
+    };
+
+    dataLayer.push({
+      page_locale: {{ request.locale.iso_code | json }},
+      page_type: {{ request.page_type | json }},
+      page_template: {{ template | json }},
+      market_country: {{ localization.country.iso_code | json }},
+      market_currency: {{ dl_currency | json }},
+      customer_logged_in: {% if customer %}true{% else %}false{% endif %}{% if customer %},
+      customer_orders_count: {{ customer.orders_count | json }}{% endif %}
+    });
+
+    {%- if request.page_type == 'product' and product %}
+      {%- assign dl_variant = product.selected_or_first_available_variant %}
+      dataLayer.push({
+        event: 'view_item',
+        ecommerce: {
+          currency: {{ dl_currency | json }},
+          value: {{ dl_variant.price | divided_by: 100.0 | json }},
+          items: [
+            {
+              item_id: {{ dl_variant.sku | default: dl_variant.id | json }},
+              item_name: {{ product.title | json }},
+              item_brand: {{ product.vendor | json }},
+              item_category: {{ product.type | json }},
+              item_variant: {{ dl_variant.title | json }},
+              price: {{ dl_variant.price | divided_by: 100.0 | json }},
+              quantity: 1
+            }
+          ]
+        }
+      });
+    {%- endif %}
+
+    {%- if request.page_type == 'collection' and collection %}
+      dataLayer.push({
+        event: 'view_item_list',
+        ecommerce: {
+          item_list_id: {{ collection.handle | json }},
+          item_list_name: {{ collection.title | json }},
+          items: [
+            {%- for dl_product in collection.products limit: 12 %}
+              {%- assign dl_variant = dl_product.selected_or_first_available_variant %}
+              {
+                item_id: {{ dl_variant.sku | default: dl_variant.id | json }},
+                item_name: {{ dl_product.title | json }},
+                item_brand: {{ dl_product.vendor | json }},
+                item_category: {{ dl_product.type | json }},
+                price: {{ dl_variant.price | divided_by: 100.0 | json }},
+                index: {{ forloop.index | json }},
+                item_list_id: {{ collection.handle | json }},
+                item_list_name: {{ collection.title | json }},
+                quantity: 1
+              }{% unless forloop.last %},{% endunless %}
+            {%- endfor %}
+          ]
+        }
+      });
+    {%- endif %}
+
+    (function (w, d, s, l, i) {
+      w[l] = w[l] || [];
+      w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+      var f = d.getElementsByTagName(s)[0],
+        j = d.createElement(s),
+        dl = l != 'dataLayer' ? '&l=' + l : '';
+      j.async = true;
+      j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+      f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', {{ gtm_id | json }});
+  </script>
+  <script src="{{ 'gtm-events.js' | asset_url }}" defer></script>
+{%- endif -%}
