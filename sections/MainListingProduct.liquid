@@ -15,15 +15,37 @@
   <div class="product-listing box-container" id="products-listing">
     {% assign selected_collection = section.settings.collection %}
     {% assign product_limit = section.settings.product_limit | default: 20 %}
+    {% assign order_handles = section.settings.custom_order | remove: ' ' | split: ',' %}
 
     {% if selected_collection != blank %}
       {% paginate selected_collection.products by product_limit %}
-        {% for product in selected_collection.products %}
-          {% render 'ProductCard'
-            , item: product %}
+        {% if order_handles.size > 0 and paginate.pages <= 1 %}
+          {% comment %}
+            Curated order: listed handles first (in the given order),
+            then any remaining collection products in their normal order.
+            Only applies when everything fits on one page — with pagination
+            a per-page reorder would shuffle items between pages.
+          {% endcomment %}
+          {% for handle in order_handles %}
+            {% for product in selected_collection.products %}
+              {% if product.handle == handle %}
+                {% render 'ProductCard', item: product %}
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+          {% for product in selected_collection.products %}
+            {% unless order_handles contains product.handle %}
+              {% render 'ProductCard', item: product %}
+            {% endunless %}
+          {% endfor %}
         {% else %}
-          <p>No product(s)</p>
-        {% endfor %}
+          {% for product in selected_collection.products %}
+            {% render 'ProductCard'
+              , item: product %}
+          {% else %}
+            <p>No product(s)</p>
+          {% endfor %}
+        {% endif %}
 
         {% if paginate.pages > 1 %}
           {{ paginate | default_pagination }}
@@ -44,61 +66,40 @@
             "name": {{ selected_collection.title | json }},
             "numberOfItems": {{ selected_collection.products_count }},
             "itemListElement": [
-              {%- for product in selected_collection.products -%}
-                {%- liquid
-                  assign li_rating_meta = product.metafields.reviews.rating.value
-                  assign li_rating_count = product.metafields.reviews.rating_count.value | plus: 0
-                  assign li_show_rating = false
-                  if li_rating_count > 0 and li_rating_meta != blank
-                    assign li_show_rating = true
-                  endif
-                  assign li_reviews = product.metafields.custom.featured_reviews.value
-                -%}
-                {
-                  "@type": "ListItem",
-                  "position": {{ forloop.index | plus: position_offset }},
-                  "item": {
-                    "@type": "Product",
-                    "@id": {{ request.origin | append: product.url | append: '#product' | json }},
-                    "name": {{ product.title | json }},
-                    "url": {{ request.origin | append: product.url | json }},
-                    {%- if product.featured_image != blank -%}
-                      "image": {{ product.featured_image | image_url: width: 800 | prepend: 'https:' | json }},
+              {%- assign li_pos = position_offset -%}
+              {%- if order_handles.size > 0 and paginate.pages <= 1 -%}
+                {%- for handle in order_handles -%}
+                  {%- for product in selected_collection.products -%}
+                    {%- if product.handle == handle -%}
+                      {%- assign li_pos = li_pos | plus: 1 -%}
+                      {%- if li_pos == 1 -%}
+                        {%- render 'ProductListItemSchema', product: product, pos: li_pos, listing_currency: listing_currency, is_first: true -%}
+                      {%- else -%}
+                        {%- render 'ProductListItemSchema', product: product, pos: li_pos, listing_currency: listing_currency, is_first: false -%}
+                      {%- endif -%}
                     {%- endif -%}
-                    "brand": { "@type": "Brand", "name": "Treelogy" },
-                    {%- if li_show_rating -%}
-                      "aggregateRating": {
-                        "@type": "AggregateRating",
-                        "ratingValue": {{ li_rating_meta.rating | json }},
-                        "reviewCount": {{ li_rating_count }},
-                        "bestRating": {{ li_rating_meta.scale_max | default: 5 | json }},
-                        "worstRating": 1
-                      },
+                  {%- endfor -%}
+                {%- endfor -%}
+                {%- for product in selected_collection.products -%}
+                  {%- unless order_handles contains product.handle -%}
+                    {%- assign li_pos = li_pos | plus: 1 -%}
+                    {%- if li_pos == 1 -%}
+                      {%- render 'ProductListItemSchema', product: product, pos: li_pos, listing_currency: listing_currency, is_first: true -%}
+                    {%- else -%}
+                      {%- render 'ProductListItemSchema', product: product, pos: li_pos, listing_currency: listing_currency, is_first: false -%}
                     {%- endif -%}
-                    {%- if li_reviews != blank -%}
-                      "review": [
-                        {%- for fr in li_reviews -%}
-                        {
-                          "@type": "Review",
-                          "author": { "@type": "Person", "name": {{ fr.author | json }} },
-                          "reviewRating": { "@type": "Rating", "ratingValue": {{ fr.rating | json }}, "bestRating": 5, "worstRating": 1 },
-                          "reviewBody": {{ fr.body | json }}
-                          {%- if fr.date != blank -%},"datePublished": {{ fr.date | json }}{%- endif -%}
-                        }{%- unless forloop.last -%},{%- endunless -%}
-                        {%- endfor -%}
-                      ],
-                    {%- endif -%}
-                    "offers": {
-                      "@type": "AggregateOffer",
-                      "priceCurrency": {{ listing_currency | json }},
-                      "lowPrice": {{ product.price_min | divided_by: 100.0 }},
-                      "highPrice": {{ product.price_max | divided_by: 100.0 }},
-                      "offerCount": {{ product.variants.size }},
-                      "availability": "https://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}"
-                    }
-                  }
-                }{%- unless forloop.last -%},{%- endunless -%}
-              {%- endfor -%}
+                  {%- endunless -%}
+                {%- endfor -%}
+              {%- else -%}
+                {%- for product in selected_collection.products -%}
+                  {%- assign li_pos = li_pos | plus: 1 -%}
+                  {%- if forloop.first -%}
+                    {%- render 'ProductListItemSchema', product: product, pos: li_pos, listing_currency: listing_currency, is_first: true -%}
+                  {%- else -%}
+                    {%- render 'ProductListItemSchema', product: product, pos: li_pos, listing_currency: listing_currency, is_first: false -%}
+                  {%- endif -%}
+                {%- endfor -%}
+              {%- endif -%}
             ]
           }
         </script>
@@ -118,7 +119,7 @@
         "type": "collection",
         "id": "collection",
         "label": "Choose collection"
-      }, 
+      },
       {
         "type": "range",
         "id": "product_limit",
@@ -127,6 +128,12 @@
         "min": 1,
         "step": 1,
         "max": 50
+      },
+      {
+        "type": "textarea",
+        "id": "custom_order",
+        "label": "Custom product order (comma-separated handles)",
+        "info": "Listed products appear first in this order; the rest follow in collection order. Leave empty to use the collection's own order."
       }
     ],
     "presets": [

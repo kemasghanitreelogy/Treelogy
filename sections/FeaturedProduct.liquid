@@ -1,16 +1,21 @@
 {% if section.settings.product %}
+  {% assign fp_product = section.settings.product %}
+  {% assign fp_v1 = fp_product.variants[0] %}
+  {% assign fp_v2 = fp_product.variants[1] %}
   <div class="main-grid" data-cs-capture>
     <div class="inner">
       <div class="thumbnail">
         <div class="wrapper">
-          <img src="{{ section.settings.product.images.first | image_url: width: 550 }}" width="550" height="550" alt="{{ section.settings.product.title | escape }}">
+          <a href="{{ fp_product.url }}" aria-label="{{ fp_product.title | escape }}">
+            <img src="{{ fp_product.images.first | image_url: width: 550 }}" width="550" height="550" alt="{{ fp_product.title | escape }}">
+          </a>
         </div>
       </div>
       <div class="product-detail">
         <div class="inner">
-          <div class="rating body-mobile">{% render 'Rating', product: section.settings.product %}</div>
-          <h1>{{ section.settings.product.title }}</h1>
-          {% assign meta = section.settings.product.metafields.custom.excerpt
+          <div class="rating body-mobile">{% render 'Rating', product: fp_product %}</div>
+          <h1>{{ fp_product.title }}</h1>
+          {% assign meta = fp_product.metafields.custom.excerpt
             | default: section.settings.description
             | strip_html
           %}
@@ -22,30 +27,82 @@
           {% endif %}
           <div class="price-outer">
             {{ 'products.general.from' | t }} &nbsp;
-            {% render 'PriceFormat', product: section.settings.product %}
+            {% render 'PriceFormat', product: fp_product %}
           </div>
         </div>
 
-        {%  capture button_title 
-        %}
-          {{ 'products.general.about_product' | t }}
-        {% endcapture %}
+        {% comment %}
+          Protocol CTAs: direct add-to-cart (no popup, no product page).
+          data-variant + .button-quick-add-cart without .open-popup-variants
+          makes app.bundle.js post straight to /cart/add.js and open the mini cart.
+        {% endcomment %}
         <div class="buttons">
-          {% render 'PrimaryButton', url: section.settings.product.url, title: button_title, type: 'green' %}
-
-          
-          <a
-            href="#"
-            class="primary-button button-quick-add-cart open-popup-variants button-cart"
-            data-slug="{{section.settings.product.url }}"
-            data-title="{{ section.settings.product.title }}"
-          >
-            {{ 'products.general.add_to_cart' | t }}
-          </a>
+          {% if fp_v1 %}
+            <a
+              href="#"
+              class="button-quick-add-cart button-cart button-direct-add protocol-cta"
+              data-variant="{{ fp_v1.id }}"
+            >
+              {{ section.settings.cta_label_1 | default: '30 Day Protocol' }}
+            </a>
+          {% endif %}
+          {% if fp_v2 %}
+            <a
+              href="#"
+              class="button-quick-add-cart button-cart button-direct-add protocol-cta"
+              data-variant="{{ fp_v2.id }}"
+            >
+              {{ section.settings.cta_label_2 | default: '60 Day Protocol' }}
+            </a>
+          {% endif %}
         </div>
       </div>
     </div>
   </div>
+
+  {% style %}
+    .featured-product .thumbnail .wrapper a {
+      display: block;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    /* First-load cascade for the copy (rating → title → excerpt → price → CTAs) */
+    .featured-product .product-detail .rating,
+    .featured-product .product-detail .inner h1,
+    .featured-product .product-detail .inner .excerpt,
+    .featured-product .product-detail .inner .price-outer,
+    .featured-product .product-detail .buttons {
+      animation: fpTextRise 0.7s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    }
+    .featured-product .product-detail .rating { animation-delay: 0.05s; }
+    .featured-product .product-detail .inner h1 { animation-delay: 0.14s; }
+    .featured-product .product-detail .inner .excerpt { animation-delay: 0.24s; }
+    .featured-product .product-detail .inner .price-outer { animation-delay: 0.32s; }
+    .featured-product .product-detail .buttons { animation-delay: 0.4s; }
+    @keyframes fpTextRise {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .featured-product .product-detail .rating,
+      .featured-product .product-detail .inner h1,
+      .featured-product .product-detail .inner .excerpt,
+      .featured-product .product-detail .inner .price-outer,
+      .featured-product .product-detail .buttons {
+        animation: none;
+      }
+    }
+  {% endstyle %}
 {% endif %}
 
 {% schema %}
@@ -58,6 +115,18 @@
       "type": "product",
       "id": "product",
       "label": "Product"
+    },
+    {
+      "type": "text",
+      "id": "cta_label_1",
+      "label": "CTA label — first variant",
+      "default": "30 Day Protocol"
+    },
+    {
+      "type": "text",
+      "id": "cta_label_2",
+      "label": "CTA label — second variant",
+      "default": "60 Day Protocol"
     }
   ],
   "presets": [

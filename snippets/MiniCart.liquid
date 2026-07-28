@@ -939,7 +939,7 @@
         scope = scope.parentElement;
         if (scope) img = scope.querySelector('img');
       }
-      var titleEl = scope && scope.querySelector('.product-info, .title, h3, h2');
+      var titleEl = scope && scope.querySelector('.product-info, .title, h3, h2, h1');
       return { img: img, title: titleEl ? titleEl.textContent : '' };
     }
 

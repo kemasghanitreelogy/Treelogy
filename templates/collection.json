@@ -12,14 +12,17 @@
     "featured_product_pTELCE": {
       "type": "FeaturedProduct",
       "settings": {
-        "product": "organic-moringa-powder"
+        "product": "moringa-inside-out-protocol",
+        "cta_label_1": "30 Day Protocol",
+        "cta_label_2": "60 Day Protocol"
       }
     },
     "main": {
       "type": "MainListingProduct",
       "settings": {
         "collection": "all-products",
-        "product_limit": 20
+        "product_limit": 20,
+        "custom_order": "organic-moringa-capsules,organic-moringa-oil,organic-moringa-powder,moringa-inside-out-protocol,the-discovery-pack,moringa-ritual-set,bamboo-whisk,bamboo-scoop"
       }
     },
     "featured_text_CkWmqN": {

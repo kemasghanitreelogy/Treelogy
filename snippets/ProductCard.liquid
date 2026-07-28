@@ -27,6 +27,14 @@
       {% comment %} {% unless button_cart %} {% endcomment %}
       {% if first_variant.available %}
         <div class="button-wrapper">
+        {% comment %}
+          Hidden rating copy: app.bundle.js opens the variant popup by reading
+          btn.parentNode.parentNode.querySelector('.star-review'), which for this
+          overlay button resolves to <figure>. The visible rating lives in
+          .card-detail (outside figure), so without this copy the lookup returns
+          null and the click throws before the popup opens.
+        {% endcomment %}
+        <span hidden aria-hidden="true">{% render 'Rating', product: item %}</span>
         <a
           href="#"
           class="button-cart button-quick-add-cart overlay-button open-popup-variants"
