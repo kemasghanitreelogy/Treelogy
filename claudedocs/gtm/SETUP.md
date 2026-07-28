@@ -168,6 +168,11 @@ Context di semua hit (via dataLayer awal): `page_locale`, `page_type`, `page_tem
 
 ## Catatan arsitektur
 
+- **Semantik `/cart/add.js` (diverifikasi live 28 Jul):** response berisi `quantity`
+  = TOTAL baris setelah merge dengan line yang sudah ada (add 1 + add 1 → response
+  kedua qty 2, `final_line_price` = seluruh baris). Karena itu add_to_cart WAJIB
+  dihitung sebagai DELTA vs cache cart-state (gtm-events.js r3) — jangan pernah
+  laporkan response mentah, itu over-count.
 - add_to_cart mengandalkan intercept fetch/XHR — meng-cover semua jalur AJAX
   (MainProductDetail, FeaturedBundle, MiniCart, quick-add). Kalau suatu saat ada form
   cart yang submit native (non-AJAX), event tidak tertangkap — cek dulu sebelum menambah listener
