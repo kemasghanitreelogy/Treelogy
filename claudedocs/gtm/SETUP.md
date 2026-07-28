@@ -169,6 +169,13 @@ Context di semua hit (via dataLayer awal): `page_locale`, `page_type`, `page_tem
   checkout dibaca dari event begin_checkout → purchase (by design).
 - **add_to_cart satu sumber per jalur**: `/cart/add` → langsung; `/cart/change|update`
   → hanya delta kenaikan (tidak dobel dengan /cart/add karena endpoint berbeda).
+- **RESET PARAM EPHEMERAL (r5)**: model dataLayer GTM mem-persist nilai hasil merge —
+  tanpa reset, `atc_source` dari satu klik hero menempel ke SEMUA event berikutnya
+  di halaman itu (ATC organik ikut terlabel hero), `item_handle`/`section_id`/dll.
+  bocor serupa. Setiap event push di gtm-events.js diikuti push `EPHEMERAL_RESET`
+  (11 param → null; null menghapus model & di-drop dari hit GA4). Param context
+  (page_locale, market_*, customer_*) sengaja persist. Event baru apa pun WAJIB
+  lewat `pushEvent()`, bukan `push()`.
 - **`/cart/clear` tidak menghasilkan event** — dipakai flow buy-now replace
   (MainProductDetail); remove_from_cart dari situ = noise, bukan intent user.
 - **Dedup channel**: koneksi GA4 di app Google & YouTube DIPUTUS 28 Jul
