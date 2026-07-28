@@ -1,4 +1,4 @@
-/* GTM interaction events for Treelogy. (r4 — prerender gate)
+/* GTM interaction events for Treelogy. (r5 — ephemeral param reset)
    Loaded (deferred) by snippets/gtm-head.liquid — only when a GTM container ID
    is configured, so window.dataLayer always exists here.
 
@@ -35,6 +35,32 @@
 
   function push(obj) {
     dl.push(obj);
+  }
+
+  /* GTM's data layer model merges pushes recursively and PERSISTS values —
+     without a reset, atc_source from one hero click would stick to every
+     later event on the page (an organic add_to_cart would be mislabeled as
+     hero-attributed), item_handle/section_id/etc. likewise. The GA4 tag reads
+     all 14 params on every event, so each event push is followed by a reset
+     of the ephemeral ones; null clears the model and null params are dropped
+     from the GA4 hit. Page-context params (page_locale, market_*, customer_*)
+     intentionally persist. */
+  var EPHEMERAL_RESET = {
+    section_id: null,
+    from_section: null,
+    item_handle: null,
+    link_url: null,
+    link_label: null,
+    channel: null,
+    hero_version: null,
+    atc_source: null,
+    cta_label: null,
+    cta_position: null,
+    variant_id: null
+  };
+  function pushEvent(obj) {
+    dl.push(obj);
+    dl.push(EPHEMERAL_RESET);
   }
 
   function gtag() {
@@ -129,7 +155,7 @@
     }
     if (!deltas.length) return;
     push({ ecommerce: null });
-    push({
+    pushEvent({
       event: 'add_to_cart',
       atc_source: consumeAtcSource() || undefined,
       ecommerce: {
@@ -170,7 +196,7 @@
       value += ((items[i].final_price != null ? items[i].final_price : items[i].price) || 0) / 100 * (items[i].quantity || 1);
     }
     push({ ecommerce: null });
-    push({
+    pushEvent({
       event: eventName,
       ecommerce: { currency: currency, value: value, items: items.map(mapCartItem) }
     });
@@ -345,7 +371,7 @@
           .split('?')[0]
           .split('/')[0];
         if (handle) {
-          push({
+          pushEvent({
             event: 'select_item',
             item_handle: handle,
             from_section: sectionIdOf(productLink),
@@ -358,7 +384,7 @@
         'a[href*="wa.me/"], a[href*="api.whatsapp.com"], a[href^="whatsapp:"]'
       );
       if (waLink) {
-        push({
+        pushEvent({
           event: 'whatsapp_click',
           link_url: waLink.href,
           from_section: sectionIdOf(waLink),
@@ -370,7 +396,7 @@
       if (actionable) {
         var sid = sectionIdOf(actionable);
         if (sid) {
-          push({
+          pushEvent({
             event: 'section_click',
             section_id: sid,
             link_url: actionable.href || undefined,
@@ -401,7 +427,7 @@
         function (entries) {
           entries.forEach(function (entry) {
             if (!entry.isIntersecting) return;
-            push({
+            pushEvent({
               event: 'hero_view',
               hero_version: heroVersion,
               item_handle: heroHandle,
@@ -425,7 +451,7 @@
         if (cta && hero.contains(cta)) {
           var ctas = hero.querySelectorAll('.protocol-cta, .button-quick-add-cart');
           stampAtcSource('hero:' + heroVersion);
-          push({
+          pushEvent({
             event: 'hero_cta_click',
             hero_version: heroVersion,
             item_handle: heroHandle,
@@ -439,7 +465,7 @@
 
         var imgLink = t.closest('.thumbnail a');
         if (imgLink && hero.contains(imgLink)) {
-          push({
+          pushEvent({
             event: 'hero_image_click',
             hero_version: heroVersion,
             item_handle: heroHandle,
@@ -462,7 +488,7 @@
           var id = (entry.target.id || '').replace('shopify-section-', '');
           if (id && !seen[id]) {
             seen[id] = true;
-            push({ event: 'section_view', section_id: id, page_path: location.pathname });
+            pushEvent({ event: 'section_view', section_id: id, page_path: location.pathname });
           }
           io.unobserve(entry.target);
         });
