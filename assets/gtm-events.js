@@ -1,4 +1,4 @@
-/* GTM interaction events for Treelogy. (r3 — delta-correct add_to_cart, cart resync)
+/* GTM interaction events for Treelogy. (r4 — prerender gate)
    Loaded (deferred) by snippets/gtm-head.liquid — only when a GTM container ID
    is configured, so window.dataLayer always exists here.
 
@@ -19,6 +19,18 @@
 (function () {
   'use strict';
 
+  /* Prerender gate — mirrors gtm-head.liquid: Shopify speculation rules
+     prerender product/collection pages on hover; IntersectionObservers and
+     network intercepts must not run until the page is actually shown.
+     gtm-head's own prerenderingchange listener registers first, so __gtmCtx
+     is always seeded before this init runs. */
+  if (document.prerendering) {
+    document.addEventListener('prerenderingchange', init, { once: true });
+  } else {
+    init();
+  }
+
+  function init() {
   var dl = (window.dataLayer = window.dataLayer || []);
 
   function push(obj) {
@@ -468,5 +480,6 @@
     } else {
       initSections();
     }
+  }
   }
 })();

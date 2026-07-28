@@ -21,6 +21,13 @@
 -%}
 {%- if gtm_id != blank -%}
   <script>
+    (function () {
+    /* Shopify injects speculation rules that PRERENDER /products/* and
+       /collections/* on hover — scripts execute in the hidden prerender, so
+       without this gate every hovered product card emits a phantom view_item
+       (observed live: view_item > page_view). Defer ALL tracking until the
+       page is actually shown; never-activated prerenders emit nothing. */
+    function gtmInit() {
     window.dataLayer = window.dataLayer || [];
     function gtag() { dataLayer.push(arguments); }
     gtag('consent', 'default', {
@@ -146,6 +153,13 @@
       j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
       f.parentNode.insertBefore(j, f);
     })(window, document, 'script', 'dataLayer', {{ gtm_id | json }});
+    }
+    if (document.prerendering) {
+      document.addEventListener('prerenderingchange', gtmInit, { once: true });
+    } else {
+      gtmInit();
+    }
+    })();
   </script>
   <script src="{{ 'gtm-events.js' | asset_url }}" defer></script>
 {%- endif -%}
