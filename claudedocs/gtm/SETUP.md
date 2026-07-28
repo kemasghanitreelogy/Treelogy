@@ -150,6 +150,14 @@ Context di semua hit (via dataLayer awal): `page_locale`, `page_type`, `page_tem
 
 ## Anti-redundansi (28 Jul 2026, setelah GA4 channel diputus)
 
+- **PRERENDER GATE (jebakan paling halus)**: Shopify menyuntik speculation rules
+  yang me-prerender `/products/*` & `/collections/*` saat hover (eagerness
+  moderate). Script JALAN di prerender tersembunyi → tanpa gate, tiap hover
+  kartu produk memancarkan `view_item` phantom (terlihat live: view_item 45 >
+  page_view 30 — mustahil untuk kunjungan nyata). Fix: SEMUA init tracking
+  (gtm-head inline + gtm-events.js r4) ditunda ke `prerenderingchange`.
+  Kalau menambah script tracking apa pun ke theme, WAJIB pakai gate yang sama.
+
 - **Custom pixel lazy-load GTM**: pixel Shopify jalan di SEMUA halaman (storefront +
   checkout). Versi awal memuat GTM di top-level → GTM dobel di storefront
   (theme + sandbox) → page_view dobel. Fix: `ensureGTM()` dipanggil hanya saat
