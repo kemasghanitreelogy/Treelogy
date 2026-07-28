@@ -1,4 +1,4 @@
-/* GTM interaction events for Treelogy. (r2 — cart journey: view_cart/remove_from_cart)
+/* GTM interaction events for Treelogy. (r3 — delta-correct add_to_cart, cart resync)
    Loaded (deferred) by snippets/gtm-head.liquid — only when a GTM container ID
    is configured, so window.dataLayer always exists here.
 
@@ -94,15 +94,28 @@
     return src;
   }
 
+  /* /cart/add.js returns each line's TOTAL quantity after merging with any
+     existing line (verified live: add 1 + add 1 => second response quantity: 2,
+     final_line_price = whole line). Reporting the response as-is over-counts
+     repeat adds — the true added amount is the delta vs our cached state. */
   function pushAddToCart(data) {
     if (!data) return;
     var items = Array.isArray(data.items) ? data.items : [data];
     if (!items.length || items[0].id == null) return;
+    var deltas = [];
     var value = 0;
     for (var k = 0; k < items.length; k++) {
       var it = items[k];
-      value += (it.final_line_price != null ? it.final_line_price : it.line_price || 0) / 100;
+      var key = String(it.id);
+      var prevQ = cartState[key] ? cartState[key].quantity || 0 : 0;
+      var added = (it.quantity || 0) - prevQ;
+      cartState[key] = it;
+      if (added > 0) {
+        deltas.push(cloneWithQty(it, added));
+        value += ((it.final_price != null ? it.final_price : it.price) || 0) / 100 * added;
+      }
     }
+    if (!deltas.length) return;
     push({ ecommerce: null });
     push({
       event: 'add_to_cart',
@@ -110,7 +123,7 @@
       ecommerce: {
         currency: currency,
         value: value,
-        items: items.map(mapCartItem)
+        items: deltas.map(mapCartItem)
       }
     });
   }
@@ -137,17 +150,6 @@
     for (var k in item) out[k] = item[k];
     out.quantity = qty;
     return out;
-  }
-
-  function bumpCartState(addedLines) {
-    var items = Array.isArray(addedLines.items) ? addedLines.items : [addedLines];
-    for (var i = 0; i < items.length; i++) {
-      var it = items[i];
-      if (it.id == null) continue;
-      var key = String(it.id);
-      var prev = cartState[key];
-      cartState[key] = cloneWithQty(it, (prev ? prev.quantity : 0) + (it.quantity || 1));
-    }
   }
 
   function pushCartDiffEvent(eventName, items) {
@@ -201,7 +203,6 @@
     if (!data) return;
     if (kind === 'add') {
       pushAddToCart(data);
-      bumpCartState(data);
     } else if (kind === 'mutate') {
       syncCartState(data, false);
     } else if (kind === 'refresh') {
@@ -251,23 +252,63 @@
     return origOpen.apply(this, arguments);
   };
 
+  /* ---------- cart re-sync: bfcache restore & tab refocus ---------- */
+  /* A bfcache-restored or refocused tab may hold a stale seed (cart changed
+     elsewhere) — the wrapped fetch classifies /cart.js as 'refresh' and
+     silently re-syncs the cache, so later diffs stay truthful. */
+
+  var lastCartSync = Date.now();
+  function resyncCartState() {
+    if (Date.now() - lastCartSync < 30000) return;
+    lastCartSync = Date.now();
+    try {
+      window.fetch('/cart.js', { headers: { Accept: 'application/json' } });
+    } catch (e) {
+      /* fetch unavailable — cache stays as-is */
+    }
+  }
+  window.addEventListener('pageshow', function (e) {
+    if (e.persisted) {
+      lastCartSync = 0;
+      resyncCartState();
+    }
+  });
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible') resyncCartState();
+  });
+
   /* ---------- view_cart: mini-cart drawer open ---------- */
-  /* The drawer opens optimistically before /cart/add responds — the 600ms
-     delay lets the response land so the snapshot includes the new item. */
+  /* The drawer opens optimistically before /cart/add responds — wait briefly,
+     then snapshot from a fresh /cart.js (which also re-syncs the cache via the
+     wrapped fetch). Falls back to the cache if the request fails. */
 
   (function () {
     var mini = document.querySelector('.mini-cart');
     if (!mini || !('MutationObserver' in window)) return;
+
+    function pushViewCartFromCache() {
+      var items = [];
+      for (var key in cartState) items.push(cartState[key]);
+      if (items.length) pushCartDiffEvent('view_cart', items);
+    }
+
     var wasOpen = mini.classList.contains('active');
     new MutationObserver(function () {
       var open = mini.classList.contains('active');
       if (open && !wasOpen) {
         setTimeout(function () {
-          var items = [];
-          for (var key in cartState) items.push(cartState[key]);
-          if (!items.length) return;
-          pushCartDiffEvent('view_cart', items);
-        }, 600);
+          lastCartSync = Date.now();
+          window
+            .fetch('/cart.js', { headers: { Accept: 'application/json' } })
+            .then(function (res) {
+              return res.json();
+            })
+            .then(function (cart) {
+              var items = (cart && cart.items) || [];
+              if (items.length) pushCartDiffEvent('view_cart', items);
+            })
+            .catch(pushViewCartFromCache);
+        }, 400);
       }
       wasOpen = open;
     }).observe(mini, { attributes: true, attributeFilter: ['class'] });
