@@ -181,12 +181,31 @@ Context di semua hit (via dataLayer awal): `page_locale`, `page_type`, `page_tem
 - **Dedup channel**: koneksi GA4 di app Google & YouTube DIPUTUS 28 Jul
   (verifikasi: `G-N28QHJH222` 0 kemunculan di HTML storefront). Google Ads (AW-) tetap.
 
-## PURCHASE BACKSTOP — paritas 1:1 dengan Shopify (SPEC, BELUM DIBANGUN)
+## PURCHASE BACKSTOP — paritas 1:1 dengan Shopify (DIBANGUN 29 Jul, AKTIVASI TERSISA)
 
-**Status: direncanakan 29 Jul 2026, belum diimplementasi. Prioritas berikutnya.**
-Trigger keputusan: bandingkan dulu Reports → Events → `purchase` tgl 29 Jul vs 13
-order Shopify (cek 30 Jul). Kalau coverage < ~85%, bangun ini. User sudah
-menyatakan MAU paritas 1:1 — jadi bangun saja saat sesi berikutnya.
+**Status implementasi (29 Jul 2026) — fase 1 (paritas count):**
+- ✅ Pixel `custom-pixel-checkout.js`: `transaction_id` = SELALU `checkout.token`
+  (fallback order.id dihapus) → **user WAJIB re-paste ke Customer events**.
+- ✅ Endpoint `POST /api/ga4-purchase-backstop` live di `treelogy-wa-sync`
+  (`server.ts`, deploy dpl_5Rzvv1GQP5TxFrPw2vBtzV4mb5qk) — HMAC verify (reuse
+  SHOPIFY_WEBHOOK_SECRET, app sama dgn webhook customers), skip `test` &
+  `source_name != "web"`, dedup-safe utk redelivery (client_id deterministik
+  `backstop.<order_id>` + transaction_id sama → GA4 drop duplikat), 18/18 unit
+  test pass (scratchpad test-backstop.mjs), 401 utk request tanpa HMAC (diverifikasi live).
+  Param tambahan `purchase_source: "mp_backstop"` utk membedakan MP vs client di GA4.
+- ✅ Script registrasi webhook siap: `claudedocs/gtm/register-orders-paid-webhook.mjs`
+  (mutation tervalidasi live schema, idempoten — cek duplikat dulu).
+- ✅ GA4 MP api_secret dibuat user 29 Jul → terpasang sbg `GA4_API_SECRET`
+  (Vercel production, redeploy OK); payload tervalidasi via `/debug/mp/collect`
+  (validationMessages kosong).
+- ✅ Webhook `orders/paid` TERDAFTAR 29 Jul:
+  `gid://shopify/WebhookSubscription/1666451964092` →
+  `https://treelogy-wa-sync.vercel.app/api/ga4-purchase-backstop`.
+- ✅ Pixel re-pasted user 29 Jul (verifikasi screenshot editor pixel 166920380:
+  `transaction_id = checkout.token` terpasang). **SISTEM LENGKAP & AKTIF.**
+- Validasi H+1 (30 Jul): Reports → Events → `purchase` == order web paid
+  Shopify; Explorations breakdown `transaction_id` tanpa dobel; MP dibedakan
+  via `purchase_source = mp_backstop`.
 
 **Masalah**: `purchase` client-side (custom pixel, thank-you page) bocor kalau
 customer tidak kembali dari redirect pembayaran (QRIS/VA/e-wallet — umum di ID),

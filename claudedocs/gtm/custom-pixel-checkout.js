@@ -99,8 +99,10 @@ analytics.subscribe('payment_info_submitted', function (event) {
 analytics.subscribe('checkout_completed', function (event) {
   var checkout = event.data.checkout || {};
   var payload = checkoutPayload(checkout);
-  payload.transaction_id =
-    (checkout.order && checkout.order.id) || checkout.token || undefined;
+  // SELALU checkout.token — kunci dedup vs purchase backstop server-side
+  // (webhook orders/paid mengirim checkout_token yang sama via Measurement
+  // Protocol). JANGAN fallback ke order.id: kunci beda = purchase dobel.
+  payload.transaction_id = checkout.token || undefined;
   if (checkout.totalTax && checkout.totalTax.amount != null) {
     payload.tax = Number(checkout.totalTax.amount);
   }

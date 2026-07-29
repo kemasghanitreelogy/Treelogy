@@ -573,6 +573,12 @@
         var KEY = 'app_utm_attrs';
         var TTL_MS = 30 * 60 * 1000; // 30 minutes
         var UTM_KEYS = ['utm_source','utm_medium','utm_campaign','utm_term','utm_content'];
+        // Captured BEFORE this script wraps window.fetch. pushToCart MUST use
+        // this reference: through its own wrapper, every re-apply would match
+        // /cart/update and schedule another re-apply — an endless POST loop
+        // after the first cart mutation (confirmed live 29 Jul, one request
+        // every ~2.5s per tab until close).
+        var rawFetch = window.fetch;
 
         // 1. Capture from URL, save to localStorage
         var params = new URLSearchParams(window.location.search);
@@ -598,20 +604,44 @@
       return obj.attrs || null;
           } catch (e) { return null; }
         }
-        var stored = readStored();
-        if (!stored) return;
 
-        // 3. Push to cart attributes
+        // 2b. GA ids for the purchase backstop: the orders/paid webhook reads
+        // _ga_cid/_ga_sid from the order's note_attributes and sends the GA4
+        // Measurement Protocol purchase as the real visitor + session, so
+        // backstop-only orders (QRIS/VA redirect never returns) keep their
+        // attribution and journey instead of landing as synthetic direct
+        // users. Cookies exist only with analytics consent — absent, skip.
+        // Read fresh on every push: the GA cookie appears only after the tag
+        // boots, and the session cookie changes across sessions.
+        function gaAttrs() {
+          var out = {};
+          var m = document.cookie.match(/(?:^|;\s*)_ga=([^;]+)/);
+          var cid = m && decodeURIComponent(m[1]).match(/(\d+\.\d+)$/);
+          if (!cid) return out;
+          out._ga_cid = cid[1];
+          var sm = document.cookie.match(/(?:^|;\s*)_ga_N28QHJH222=([^;]+)/);
+          var sid = sm && decodeURIComponent(sm[1]).match(/^GS\d+\.\d+\.s?(\d+)/);
+          if (sid) out._ga_sid = sid[1];
+          return out;
+        }
+
+        // 3. Push UTM + GA ids to cart attributes
         function pushToCart() {
-          return fetch('/cart/update.js', {
+          var attrs = gaAttrs();
+          var stored = readStored();
+          if (stored) { for (var k in stored) attrs[k] = stored[k]; }
+          if (!Object.keys(attrs).length) return;
+          rawFetch('/cart/update.js', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ attributes: stored }),
+      body: JSON.stringify({ attributes: attrs }),
           }).catch(function () {});
         }
         pushToCart();
 
-        // 4. Re-apply after cart mutations
+        // 4. Re-apply after cart mutations (pushToCart bypasses this wrapper
+        // via rawFetch, so it can never re-trigger itself; /cart/clear in the
+        // buy-now flow wipes attributes, this restores them)
         var origFetch = window.fetch;
         if (origFetch) {
           window.fetch = function (input, init) {
