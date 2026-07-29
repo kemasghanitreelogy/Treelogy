@@ -181,6 +181,19 @@ Context di semua hit (via dataLayer awal): `page_locale`, `page_type`, `page_tem
 - **Dedup channel**: koneksi GA4 di app Google & YouTube DIPUTUS 28 Jul
   (verifikasi: `G-N28QHJH222` 0 kemunculan di HTML storefront). Google Ads (AW-) tetap.
 
+## Karantina spillover pixel Google & YouTube (29 Jul 2026)
+
+Web pixel app Google & YouTube (main window, LAX) mengirim event remarketing
+Ads/Merchant Center (`view_item`, `begin_checkout`, `search`, …) via
+`gtag(send_to: AW/MC)` dengan `event_id` berawalan `sh-`. Config Google tag
+gabungan ikut men-dispatch event itu ke GA4 → duplikat. Fix permanen di GA4:
+**Modify events rule "Quarantine G&Y ads spillover"** (stream Treelogy Website):
+`event_id` starts with `sh-` → `event_name` = `gy_ads_spillover`.
+- Event `gy_ads_spillover` di laporan = sampah terkarantina, abaikan.
+- JANGAN hapus rule ini selama app Google & YouTube masih terpasang.
+- Event theme/pixel kita TIDAK boleh diberi param `event_id` (itu sidik jari
+  pembeda satu-satunya).
+
 ## Catatan arsitektur
 
 - **Semantik `/cart/add.js` (diverifikasi live 28 Jul):** response berisi `quantity`
