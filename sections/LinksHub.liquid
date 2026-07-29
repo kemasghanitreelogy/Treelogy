@@ -1768,11 +1768,14 @@
     channels.forEach(function (a) {
       a.addEventListener('click', function () {
         try {
-          if (typeof window.gtag === 'function') {
-            window.gtag('event', 'links_hub_share', {
-              channel: a.getAttribute('data-lh-share-channel')
-            });
-          }
+          (window.dataLayer = window.dataLayer || []).push({
+            event: 'links_hub_share',
+            channel: a.getAttribute('data-lh-share-channel')
+          });
+          // Model GTM mem-persist param — tanpa reset, channel menempel ke
+          // event berikutnya di halaman ini (aturan r5: tiap event push wajib
+          // diikuti reset param ephemeral-nya).
+          window.dataLayer.push({ channel: null, link_url: null, link_label: null });
         } catch (_) {}
         // dismiss after a tick
         setTimeout(closeShare, 200);
@@ -1814,26 +1817,26 @@
   document.querySelectorAll('[data-lh-product]').forEach(function (a) {
     a.addEventListener('click', function () {
       try {
-        if (typeof window.gtag === 'function') {
-          window.gtag('event', 'links_hub_upsell_click', {
-            link_url: a.href,
-            link_label: (a.querySelector('.lh__menu-product-title') || {}).textContent || ''
-          });
-        }
+        (window.dataLayer = window.dataLayer || []).push({
+          event: 'links_hub_upsell_click',
+          link_url: a.href,
+          link_label: (a.querySelector('.lh__menu-product-title') || {}).textContent || ''
+        });
+        window.dataLayer.push({ channel: null, link_url: null, link_label: null });
       } catch (_) {}
     });
   });
 
-  /* === Lightweight click-tracking hook (fires gtag if present) === */
+  /* === Lightweight click-tracking hook (pushes to GTM dataLayer) === */
   document.querySelectorAll('[data-lh-link]').forEach(function (a) {
     a.addEventListener('click', function () {
       try {
-        if (typeof window.gtag === 'function') {
-          window.gtag('event', 'links_hub_click', {
-            link_url: a.href,
-            link_label: (a.querySelector('.lh__link-label') || {}).textContent || ''
-          });
-        }
+        (window.dataLayer = window.dataLayer || []).push({
+          event: 'links_hub_click',
+          link_url: a.href,
+          link_label: (a.querySelector('.lh__link-label') || {}).textContent || ''
+        });
+        window.dataLayer.push({ channel: null, link_url: null, link_label: null });
       } catch (_) {}
     });
   });

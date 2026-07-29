@@ -1,4 +1,4 @@
-/* GTM interaction events for Treelogy. (r5 — ephemeral param reset)
+/* GTM interaction events for Treelogy. (r6 — item_id konsisten variant-first)
    Loaded (deferred) by snippets/gtm-head.liquid — only when a GTM container ID
    is configured, so window.dataLayer always exists here.
 
@@ -109,7 +109,11 @@
 
   function mapCartItem(i) {
     return {
-      item_id: i.sku || String(i.product_id || i.id || ''),
+      /* item_id priority MUST stay sku-then-VARIANT id: every other path
+         (view_item Liquid, checkout pixel, purchase backstop) resolves
+         sku || variant_id — product_id here would split one product into
+         different item_ids across the funnel for SKU-less variants. */
+      item_id: i.sku || String(i.variant_id || i.id || i.product_id || ''),
       item_name: i.product_title || i.title || '',
       item_variant: i.variant_title || undefined,
       item_variant_id: String(i.variant_id || i.id || ''),

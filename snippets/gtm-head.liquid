@@ -143,6 +143,14 @@
       });
     {%- endif %}
 
+    /* The GA4 event tag has "Send ecommerce data" on and fires on EVERY
+       mapped event — without this clear, the page-load ecommerce payload
+       (view_item / view_cart / view_item_list) would ride along on every
+       later non-ecommerce event on the page (section_view, select_item, …).
+       Queue order matters: the event pushes above are processed first, so
+       their tags still see the payload; this only cleans the model after. */
+    dataLayer.push({ ecommerce: null });
+
     (function (w, d, s, l, i) {
       w[l] = w[l] || [];
       w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
