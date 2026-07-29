@@ -181,6 +181,59 @@ Context di semua hit (via dataLayer awal): `page_locale`, `page_type`, `page_tem
 - **Dedup channel**: koneksi GA4 di app Google & YouTube DIPUTUS 28 Jul
   (verifikasi: `G-N28QHJH222` 0 kemunculan di HTML storefront). Google Ads (AW-) tetap.
 
+## PURCHASE BACKSTOP — paritas 1:1 dengan Shopify (SPEC, BELUM DIBANGUN)
+
+**Status: direncanakan 29 Jul 2026, belum diimplementasi. Prioritas berikutnya.**
+Trigger keputusan: bandingkan dulu Reports → Events → `purchase` tgl 29 Jul vs 13
+order Shopify (cek 30 Jul). Kalau coverage < ~85%, bangun ini. User sudah
+menyatakan MAU paritas 1:1 — jadi bangun saja saat sesi berikutnya.
+
+**Masalah**: `purchase` client-side (custom pixel, thank-you page) bocor kalau
+customer tidak kembali dari redirect pembayaran (QRIS/VA/e-wallet — umum di ID),
+pakai ad-blocker, atau menutup browser.
+
+**Arsitektur**: Shopify webhook `orders/paid` → endpoint Vercel (reuse project
+webhook WA consent) → GA4 **Measurement Protocol** kirim `purchase` →
+GA4 dedup vs purchase client via `transaction_id` yang sama → tiap order
+tercatat TEPAT SEKALI.
+
+**Kunci dedup (WAJIB konsisten)**: `checkout.token` (pixel) = `checkout_token`
+(payload webhook order). Pixel saat ini pakai `checkout.order.id || checkout.token`
+— HARUS diubah jadi SELALU `checkout.token`, lalu user re-paste pixel di
+Customer events. Tanpa ini MP & client memakai kunci beda → dobel.
+
+**Langkah implementasi (urut)**:
+1. Edit `custom-pixel-checkout.js`: `payload.transaction_id = checkout.token`
+   (hapus fallback order.id) → user re-paste ke Shopify Customer events.
+2. GA4: stream Treelogy Website → **Measurement Protocol API secrets** → Create
+   → simpan `api_secret` (taruh di env Vercel, JANGAN commit).
+3. Endpoint Vercel `POST /api/ga4-purchase-backstop`:
+   - Verifikasi HMAC `X-Shopify-Hmac-Sha256` (webhook secret).
+   - Map payload order → MP body:
+     `client_id`: fallback `"backstop.<order_id>"` (fase 1; lihat catatan atribusi),
+     `timestamp_micros`: created_at order,
+     event `purchase`: `transaction_id` = `checkout_token`, `value` =
+     `current_total_price`, `currency`, `tax` = `total_tax`, `shipping` =
+     `total_shipping_price_set`, `coupon` = `discount_codes[0].code`,
+     `items[]` = line_items (item_id = sku || variant_id, item_name, price,
+     quantity, item_variant_id).
+   - POST `https://www.google-analytics.com/mp/collect?measurement_id=G-N28QHJH222&api_secret=…`
+4. Register webhook via Admin API: topic `orders/paid` → URL endpoint.
+5. Validasi H+1: GA4 purchase count == jumlah order web paid Shopify; tidak ada
+   transaction_id dobel (cek Explorations breakdown transaction_id).
+
+**Catatan atribusi (fase 2, opsional)**: MP purchase dengan client_id sintetis
+masuk sebagai user baru "direct" — count benar, atribusi tidak. Untuk atribusi
+penuh: tangkap `_ga` client id di storefront (gtm-events.js) → simpan ke cart
+attribute via `/cart/update.js` (mis. `_ga_cid`) → terbawa ke order
+`note_attributes` → webhook pakai cid asli + `session_id` bila ada. Bangun
+fase 1 dulu (paritas count), fase 2 kalau atribusi purchase backstop dibutuhkan.
+
+**Jangan lupa**: purchase MP TIDAK melewati Modify events client rule apa pun
+yang bergantung event_id (aman — rule karantina hanya menyasar `sh-`), dan
+kirim HANYA untuk order `source_name == "web"` supaya order manual/draft tidak
+mencemari funnel web.
+
 ## Karantina spillover pixel Google & YouTube (29 Jul 2026)
 
 Web pixel app Google & YouTube (main window, LAX) mengirim event remarketing
