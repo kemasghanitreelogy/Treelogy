@@ -178,6 +178,19 @@ Context di semua hit (via dataLayer awal): `page_locale`, `page_type`, `page_tem
   lewat `pushEvent()`, bukan `push()`.
 - **`/cart/clear` tidak menghasilkan event** — dipakai flow buy-now replace
   (MainProductDetail); remove_from_cart dari situ = noise, bukan intent user.
+- **AUDIT 29 Jul (commit `2c2b71d`) — 3 fix higiene data**: (1) LinksHub:
+  tiap push event kini diikuti reset `channel/link_url/link_label` (aturan r5
+  berlaku utk SEMUA push di luar gtm-events juga); (2) gtm-head: push
+  `{ecommerce:null}` setelah blok event page-load — tanpa ini payload
+  view_item/view_cart/view_item_list menempel ke semua event non-ecommerce
+  berikutnya (tag GA4 "Send ecommerce data" menembak di semua event);
+  (3) gtm-events r6: `item_id` = `sku || variant_id` (bukan product_id) —
+  varian tanpa SKU (5 buah, termasuk The Ritual Of Radiance) sebelumnya pecah
+  identitas antar funnel. Endpoint MP juga kirim `engagement_time_msec: 1`
+  (purchaser backstop terhitung active user). SISA yang disadari & belum:
+  refund event, filter internal-traffic GA4 (sesi QA utm looptest/phase2test
+  29 Jul = noise kecil), custom dimension `purchase_source` (daftar manual),
+  UTM Meta /id rusak (fix di template iklan), SKU kosong 5 varian (opsional).
 - **Dedup channel**: koneksi GA4 di app Google & YouTube DIPUTUS 28 Jul
   (verifikasi: `G-N28QHJH222` 0 kemunculan di HTML storefront). Google Ads (AW-) tetap.
 
