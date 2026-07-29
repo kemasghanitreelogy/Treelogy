@@ -241,12 +241,23 @@ Customer events. Tanpa ini MP & client memakai kunci beda → dobel.
 5. Validasi H+1: GA4 purchase count == jumlah order web paid Shopify; tidak ada
    transaction_id dobel (cek Explorations breakdown transaction_id).
 
-**Catatan atribusi (fase 2, opsional)**: MP purchase dengan client_id sintetis
-masuk sebagai user baru "direct" — count benar, atribusi tidak. Untuk atribusi
-penuh: tangkap `_ga` client id di storefront (gtm-events.js) → simpan ke cart
-attribute via `/cart/update.js` (mis. `_ga_cid`) → terbawa ke order
-`note_attributes` → webhook pakai cid asli + `session_id` bila ada. Bangun
-fase 1 dulu (paritas count), fase 2 kalau atribusi purchase backstop dibutuhkan.
+**FASE 2 — ATRIBUSI (DIBANGUN & LIVE 29 Jul, commit `652c4ff`)**: script UTM di
+`theme.liquid` kini juga men-stamp `_ga_cid` (cookie `_ga`) + `_ga_sid` (cookie
+`_ga_N28QHJH222`) ke cart attributes — dibaca fresh tiap push, re-apply setelah
+tiap mutasi cart (termasuk pasca `/cart/clear` buy-now). Webhook memvalidasi
+format ketat (`\d+.\d+` / `\d+`), pakai cid asli + `session_id` → purchase
+backstop menempel ke user & sesi asli (atribusi + funnel utuh); tanpa stamp
+(ad-blocker/consent denied) fallback sintetis. Timestamp di-clamp ≤71 jam
+(order dibayar telat tidak di-drop MP diam-diam). Diverifikasi live headless:
+`cart.attributes` berisi `_ga_cid`/`_ga_sid` valid. Log endpoint menandai
+`cid:real`/`cid:synthetic` per order.
+
+**BUG LOOP UTM DIFIX (29 Jul, commit yang sama)**: `pushToCart()` lama memakai
+`fetch` yang sudah dibungkus wrapper-nya sendiri → SETIAP mutasi cart memicu
+re-apply → yang memicu re-apply lagi → POST `/cart/update.js` tak berujung
+(~tiap 2,5 dtk per tab, terkonfirmasi live) untuk semua pengunjung ber-UTM yang
+menyentuh cart. Fix: `rawFetch` di-capture sebelum wrap. Kalau menyentuh script
+ini lagi, JANGAN kembalikan pushToCart ke `fetch` global.
 
 **Jangan lupa**: purchase MP TIDAK melewati Modify events client rule apa pun
 yang bergantung event_id (aman — rule karantina hanya menyasar `sh-`), dan
