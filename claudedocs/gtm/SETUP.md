@@ -277,6 +277,39 @@ yang bergantung event_id (aman — rule karantina hanya menyasar `sh-`), dan
 kirim HANYA untuk order `source_name == "web"` supaya order manual/draft tidak
 mencemari funnel web.
 
+## ARSITEKTUR FINAL PURCHASE (31 Jul 2026) — MP SUMBER TUNGGAL
+
+Validasi 30 Jul menunjukkan dua sumber (pixel + MP) menghasilkan ~16% event
+dobel (29 event utk 25 order): GA4 hanya dedup `transaction_id` DALAM user
+yang sama, dan utk order tanpa stamp cookie / cross-device cid-nya beda.
+Keputusan final: **pixel TIDAK lagi mengirim purchase** — satu-satunya sumber
+purchase & refund = server (`treelogy-wa-sync`, bukan git repo — deploy via
+`vercel deploy --prod` dari foldernya):
+
+- `POST /api/ga4-purchase-backstop` — webhook `orders/paid` (realtime).
+- `POST /api/ga4-refund` — webhook `refunds/create` → event `refund`
+  (value = transaksi refund sukses; fetch order induk utk checkout_token+cid;
+  skip non-web & restock-only) → revenue GA4 mendekati net.
+- `GET /api/cron-ga4-reconcile` — **self-healing harian 00:30 WIB** (Vercel
+  cron, auth Bearer CRON_SECRET): kirim ulang SEMUA order web-paid kemarin
+  via mapping yang sama (idempoten — cid+transaction_id deterministik, GA4
+  drop duplikat; order yang bocor tertambal dlm jendela 72 jam MP) + cek
+  webhook ORDERS_PAID & REFUNDS_CREATE masih terdaftar, re-register kalau
+  hilang. Diuji nyata 31 Jul: 25/25 sent, 0 failed, REFUNDS_CREATE
+  ter-register otomatis, count GA4 tidak berubah (idempoten terbukti).
+- Mapping tunggal `buildMpPurchase()` dipakai webhook & cron (tidak bisa
+  divergen). 41/41 unit test pass.
+
+**Definisi paritas** (jangan salah bandingkan): GA4 purchase = order WEB,
+PAID, per tanggal DIBUAT (WIB), gross minus event refund. Shopify "Total
+sales" = semua channel + pending − refund. Pembanding yang benar utk GA4 =
+jumlah order web paid.
+
+**Batas yang diketahui & diterima**: ±8% order tanpa stamp cookie
+(ad-blocker/ITP) → atribusi direct, journey yatim; cross-device tanpa login
+tak bisa dijahit (hosted accounts); Safari ITP 7 hari memfragmentasi
+returning-user; UTM Meta /id rusak = dibenahi di Ads Manager, bukan di sini.
+
 ## Karantina spillover pixel Google & YouTube (29 Jul 2026)
 
 Web pixel app Google & YouTube (main window, LAX) mengirim event remarketing

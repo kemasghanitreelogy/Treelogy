@@ -8,9 +8,10 @@
 // yang diisi di Theme settings > Analytics (GTM).
 //
 // Checkout TIDAK bisa dijangkau kode theme — event funnel checkout
-// (begin_checkout, add_shipping_info, add_payment_info, purchase)
-// hanya bisa dikirim dari sini. GTM dimuat di dalam sandbox pixel
-// dan memakai tag/trigger yang sama dengan container storefront.
+// (begin_checkout, add_shipping_info, add_payment_info) hanya bisa
+// dikirim dari sini. GTM dimuat di dalam sandbox pixel dan memakai
+// tag/trigger yang sama dengan container storefront.
+// PURCHASE tidak dikirim dari pixel — lihat catatan di bawah.
 // ============================================================
 
 const GTM_ID = 'GTM-5M855J4V';
@@ -96,22 +97,12 @@ analytics.subscribe('payment_info_submitted', function (event) {
   pushEcommerce('add_payment_info', checkoutPayload(event.data.checkout));
 });
 
-analytics.subscribe('checkout_completed', function (event) {
-  var checkout = event.data.checkout || {};
-  var payload = checkoutPayload(checkout);
-  // SELALU checkout.token — kunci dedup vs purchase backstop server-side
-  // (webhook orders/paid mengirim checkout_token yang sama via Measurement
-  // Protocol). JANGAN fallback ke order.id: kunci beda = purchase dobel.
-  payload.transaction_id = checkout.token || undefined;
-  if (checkout.totalTax && checkout.totalTax.amount != null) {
-    payload.tax = Number(checkout.totalTax.amount);
-  }
-  if (checkout.shippingLine && checkout.shippingLine.price) {
-    payload.shipping = Number(checkout.shippingLine.price.amount);
-  }
-  var discounts = checkout.discountApplications || [];
-  if (discounts.length && discounts[0].title) {
-    payload.coupon = discounts[0].title;
-  }
-  pushEcommerce('purchase', payload);
-});
+// ============================================================
+// PURCHASE SENGAJA TIDAK DIKIRIM DARI SINI (sejak 31 Jul 2026).
+// Sumber tunggal purchase = server (webhook orders/paid -> Vercel ->
+// GA4 Measurement Protocol, transaction_id = checkout_token, client_id
+// asli dari cart attribute _ga_cid). Dua sumber terbukti menghasilkan
+// ~16% purchase dobel karena GA4 hanya dedup dalam user yang sama
+// (validasi 30 Jul: 29 event utk 25 order). JANGAN tambahkan kembali
+// analytics.subscribe('checkout_completed') tanpa mematikan jalur MP.
+// ============================================================
