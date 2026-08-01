@@ -305,8 +305,13 @@ purchase & refund = server (`treelogy-wa-sync`, bukan git repo — deploy via
   itu = hitung transaction_id UNIK di Explorations). Fix: setiap kiriman
   sukses (webhook & cron) menulis flag `ga4.mp_sent` di order; refund punya
   flag per-refund `ga4.mp_refund_<id>`; cron & redelivery cek flag dulu.
-  Backfill flag 98 order (29 Jul–1 Agu) done; cron pasca-fix terverifikasi
-  `already:35, sent:0`. JANGAN PERNAH kirim MP tanpa cek flag. 46/46 test.
+  Backfill flag 98 order (29 Jul–1 Agu) done. Review anti-bug lanjutan
+  (1 Agu): (a) WEBHOOK juga cek flag sebelum kirim — menutup race "cron
+  kirim order semalam → webhook telat tiba 00:31 → dobel" dan redelivery
+  Shopify; (b) jendela reconcile diperlebar ke 3 hari (batas backdating MP)
+  supaya order dibuat-lama-dibayar-baru tetap ter-backfill — aman karena
+  ledger. Verifikasi prod: `checked:96, already:96, sent:0`. JANGAN PERNAH
+  kirim MP tanpa cek flag. 47/47 test.
 - Mapping tunggal `buildMpPurchase()` dipakai webhook & cron (tidak bisa
   divergen).
 
