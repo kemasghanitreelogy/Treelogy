@@ -291,14 +291,24 @@ purchase & refund = server (`treelogy-wa-sync`, bukan git repo — deploy via
   (value = transaksi refund sukses; fetch order induk utk checkout_token+cid;
   skip non-web & restock-only) → revenue GA4 mendekati net.
 - `GET /api/cron-ga4-reconcile` — **self-healing harian 00:30 WIB** (Vercel
-  cron, auth Bearer CRON_SECRET): kirim ulang SEMUA order web-paid kemarin
-  via mapping yang sama (idempoten — cid+transaction_id deterministik, GA4
-  drop duplikat; order yang bocor tertambal dlm jendela 72 jam MP) + cek
-  webhook ORDERS_PAID & REFUNDS_CREATE masih terdaftar, re-register kalau
-  hilang. Diuji nyata 31 Jul: 25/25 sent, 0 failed, REFUNDS_CREATE
-  ter-register otomatis, count GA4 tidak berubah (idempoten terbukti).
+  cron, auth Bearer CRON_SECRET): jalan-i semua order web-paid kemarin,
+  kirim HANYA yang belum ber-flag `ga4.mp_sent` (backfill bocor dlm jendela
+  72 jam MP) + cek webhook ORDERS_PAID & REFUNDS_CREATE masih terdaftar,
+  re-register kalau hilang.
+- **LEDGER `ga4.mp_sent` (metafield order) — PELAJARAN MAHAL 1 Agu**:
+  asumsi awal "resend idempoten karena GA4 dedup transaction_id" TERBUKTI
+  SALAH — dedup GA4 hanya bekerja utk event yang tiba di batch processing
+  yang berdekatan (pasangan client+MP berselisih detik ter-dedup); event
+  identik yang tiba KEESOKAN harinya di-APPEND. Akibat: resend buta cron
+  menggandakan 30 Jul (29→54 event) & 31 Jul (35→71) di laporan standar,
+  PERMANEN (GA4 tak bisa hapus per-transaction_id; angka benar utk hari2
+  itu = hitung transaction_id UNIK di Explorations). Fix: setiap kiriman
+  sukses (webhook & cron) menulis flag `ga4.mp_sent` di order; refund punya
+  flag per-refund `ga4.mp_refund_<id>`; cron & redelivery cek flag dulu.
+  Backfill flag 98 order (29 Jul–1 Agu) done; cron pasca-fix terverifikasi
+  `already:35, sent:0`. JANGAN PERNAH kirim MP tanpa cek flag. 46/46 test.
 - Mapping tunggal `buildMpPurchase()` dipakai webhook & cron (tidak bisa
-  divergen). 41/41 unit test pass.
+  divergen).
 
 **Definisi paritas** (jangan salah bandingkan): GA4 purchase = order WEB,
 PAID, per tanggal DIBUAT (WIB), gross minus event refund. Shopify "Total
