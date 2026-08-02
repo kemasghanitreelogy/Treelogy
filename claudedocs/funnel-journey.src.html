@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Treelogy — Customer Journey Funnel</title>
+<style>
+  @page { size: A4; margin: 14mm 13mm; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font: 10.5pt/1.55 -apple-system, "Segoe UI", Inter, Arial, sans-serif; color: #22302a; }
+  .page { page-break-after: always; }
+  .page:last-child { page-break-after: auto; }
+  h1 { font-size: 21pt; color: #2a3b34; letter-spacing: -0.02em; }
+  h2 { font-size: 13.5pt; color: #2a3b34; margin: 18px 0 8px; border-bottom: 2px solid #a5bb86; padding-bottom: 4px; }
+  h3 { font-size: 11pt; color: #2a3b34; margin: 12px 0 5px; }
+  p, li { color: #3d4b44; }
+  .sub { color: #6b7a72; font-size: 9pt; margin-top: 3px; }
+  .tiles { display: flex; gap: 10px; margin: 14px 0; }
+  .tile { flex: 1; background: #f2f5ef; border: 1px solid #dde5d6; border-radius: 8px; padding: 10px 12px; }
+  .tile .n { font-size: 17pt; font-weight: 700; color: #2a3b34; }
+  .tile .l { font-size: 8.5pt; color: #6b7a72; }
+  .tile.warn { background: #fdf3ee; border-color: #f0d9cc; }
+  .tile.warn .n { color: #a04b22; }
+  .funnel { margin: 10px 0 4px; }
+  .frow { display: flex; align-items: center; gap: 8px; margin: 3px 0; }
+  .flabel { width: 118px; font-size: 9pt; color: #3d4b44; text-align: right; flex-shrink: 0; }
+  .fbarwrap { flex: 1; }
+  .fbar { height: 20px; border-radius: 0 4px 4px 0; min-width: 2px; }
+  .fval { font-size: 9pt; color: #22302a; font-weight: 600; white-space: nowrap; }
+  .fdrop { font-size: 8pt; color: #a04b22; margin-left: 126px; padding: 1px 0 3px; }
+  table { border-collapse: collapse; width: 100%; margin: 8px 0; font-size: 9.5pt; }
+  th { text-align: left; color: #6b7a72; font-weight: 600; font-size: 8.5pt; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1.5px solid #a5bb86; padding: 4px 8px 4px 0; }
+  td { border-bottom: 1px solid #e7ece3; padding: 4px 8px 4px 0; color: #3d4b44; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .hi { font-weight: 700; color: #2a3b34; }
+  .badge { display: inline-block; background: #eef3e7; color: #4a6741; border-radius: 4px; padding: 0 6px; font-size: 8pt; font-weight: 600; }
+  .rec { margin: 10px 0; padding: 9px 12px; background: #f7f9f5; border-left: 3px solid #a5bb86; border-radius: 0 6px 6px 0; }
+  .rec b { color: #2a3b34; }
+  .note { background: #f6f6f4; border: 1px solid #e3e3de; border-radius: 6px; padding: 8px 11px; font-size: 8.5pt; color: #6b7a72; margin: 10px 0; }
+  ol { padding-left: 18px; }
+  .footer { margin-top: 20px; font-size: 8pt; color: #9aa69e; border-top: 1px solid #e7ece3; padding-top: 6px; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <h1>Customer Journey Funnel — Treelogy</h1>
+  <div class="sub">Periode 30 Jul – 2 Agu 2026 (era data bersih pasca-backstop) · GA4 Data API <code>runFunnelReport</code> · closed funnel, basis <b>users</b> (kebal artefak event ganda) · Disusun 2 Agu 2026</div>
+
+  <div class="tiles">
+    <div class="tile"><div class="n">2.302</div><div class="l">Pengunjung masuk funnel</div></div>
+    <div class="tile"><div class="n">60</div><div class="l">Pembeli (users)</div></div>
+    <div class="tile"><div class="n">2,6%</div><div class="l">Konversi ujung-ke-ujung</div></div>
+    <div class="tile warn"><div class="n">86%</div><div class="l">Kebocoran #1: lihat produk → tidak ATC</div></div>
+    <div class="tile warn"><div class="n">71%</div><div class="l">Kebocoran #2: mulai checkout → tidak beli</div></div>
+  </div>
+
+  <h2>1 · Master Funnel</h2>
+  <div class="funnel">
+    <div class="frow"><div class="flabel">Kunjungan</div><div class="fbarwrap"><div class="fbar" style="width:100%;background:#cdd9bf"></div></div><div class="fval">2.302 · 100%</div></div>
+    <div class="frow"><div class="flabel">Lihat Produk</div><div class="fbarwrap"><div class="fbar" style="width:89.3%;background:#aec394"></div></div><div class="fval">2.055 · 89,3%</div></div>
+    <div class="fdrop">▼ 247 pergi tanpa melihat produk (10,7%)</div>
+    <div class="frow"><div class="flabel">Add to Cart</div><div class="fbarwrap"><div class="fbar" style="width:12.3%;background:#8aa96c"></div></div><div class="fval">283 · 12,3%</div></div>
+    <div class="fdrop">▼ 1.772 lihat produk tapi tidak ATC (86,2%) — kebocoran terbesar</div>
+    <div class="frow"><div class="flabel">Mulai Checkout</div><div class="fbarwrap"><div class="fbar" style="width:8.9%;background:#67904d"></div></div><div class="fval">204 · 8,9%</div></div>
+    <div class="fdrop">▼ 79 ATC tapi tidak checkout (27,9%)</div>
+    <div class="frow"><div class="flabel">Purchase</div><div class="fbarwrap"><div class="fbar" style="width:2.6%;background:#41703a"></div></div><div class="fval">60 · 2,6%</div></div>
+    <div class="fdrop">▼ 144 mulai checkout tapi tidak menyelesaikan (70,6%) — kebocoran #2</div>
+  </div>
+
+  <p>Bentuk corongnya sehat di dua transisi (kunjungan→produk 89%, ATC→checkout 72%) dan bocor besar di dua titik: <b>halaman produk</b> (hanya 13,8% penonton produk lanjut ATC) dan <b>proses checkout</b> (hanya 29,4% yang mulai checkout menyelesaikan pembayaran). Dua titik itulah yang menentukan berapa rupiah keluar dari traffic yang sama.</p>
+
+  <h2>2 · Di mana persisnya checkout bocor (micro-funnel)</h2>
+  <div class="funnel">
+    <div class="frow"><div class="flabel">Add to Cart</div><div class="fbarwrap"><div class="fbar" style="width:100%;background:#cdd9bf"></div></div><div class="fval">315</div></div>
+    <div class="frow"><div class="flabel">Lihat Cart</div><div class="fbarwrap"><div class="fbar" style="width:43.5%;background:#aec394"></div></div><div class="fval">137 · 43,5%</div></div>
+    <div class="frow"><div class="flabel">Mulai Checkout</div><div class="fbarwrap"><div class="fbar" style="width:34.9%;background:#8aa96c"></div></div><div class="fval">110 · 80,3% dr cart</div></div>
+    <div class="frow"><div class="flabel">Isi Pembayaran</div><div class="fbarwrap"><div class="fbar" style="width:12.1%;background:#67904d"></div></div><div class="fval">38 · 34,5% dr checkout</div></div>
+    <div class="frow"><div class="flabel">Purchase</div><div class="fbarwrap"><div class="fbar" style="width:9.5%;background:#41703a"></div></div><div class="fval">30 · 78,9% dr pembayaran</div></div>
+  </div>
+  <p>Titik patahnya spesifik: <b>antara "mulai checkout" dan "mengisi info pembayaran" — 65,5% hilang di situ</b> (form kontak/alamat/ongkir). Yang sudah sampai tahap pembayaran menyelesaikan dengan baik (79%). Artinya masalahnya bukan kepercayaan pada pembayaran, melainkan gesekan formulir & momen melihat ongkos kirim.</p>
+
+  <div class="note">Micro-funnel mensyaratkan urutan lengkap termasuk melihat cart, sehingga angkanya lebih kecil dari master funnel — dipakai untuk melokalisasi titik patah, bukan untuk hitung total.</div>
+  <div class="footer">Treelogy · Customer Journey Funnel · hal. 1/3</div>
+</div>
+
+<div class="page">
+  <h2>3 · Siapa yang membeli — new vs returning</h2>
+  <table>
+    <tr><th>Segmen</th><th class="num">Masuk funnel</th><th class="num">Lihat Produk→ATC</th><th class="num">ATC→Checkout</th><th class="num">Checkout→Beli</th><th class="num">± Pembeli</th></tr>
+    <tr><td>Pengunjung baru</td><td class="num">1.856</td><td class="num">8,4%</td><td class="num">67,6%</td><td class="num">25,5%</td><td class="num">±24</td></tr>
+    <tr><td class="hi">Pengunjung kembali</td><td class="num">414</td><td class="num hi">37,2%</td><td class="num hi">75,4%</td><td class="num hi">33,7%</td><td class="num hi">±34</td></tr>
+  </table>
+  <p><b>Pengunjung kembali = mesin konversi:</b> 18% traffic menghasilkan ±56% pembeli. Di tahap produk→ATC mereka mengonversi <span class="badge">4,5× lipat</span> pengunjung baru. Ini konsisten dengan temuan laporan 30-hari Juli (kunjungan ulang = 17% traffic, ±50% pembelian) — pola struktural, bukan kebetulan periode.</p>
+
+  <h2>4 · Funnel per channel</h2>
+  <table>
+    <tr><th>Channel</th><th class="num">Masuk</th><th class="num">ATC</th><th class="num">Checkout</th><th class="num">Beli</th><th class="num">CVR</th></tr>
+    <tr><td>Organic Social*</td><td class="num">1.183</td><td class="num">131</td><td class="num">90</td><td class="num">30</td><td class="num">2,5%</td></tr>
+    <tr><td>Paid Social*</td><td class="num">854</td><td class="num">100</td><td class="num">73</td><td class="num">16</td><td class="num">1,9%</td></tr>
+    <tr><td class="hi">Direct</td><td class="num">103</td><td class="num">24</td><td class="num">20</td><td class="num">8</td><td class="num hi">7,8%</td></tr>
+    <tr><td class="hi">Email</td><td class="num">28</td><td class="num">6</td><td class="num">5</td><td class="num">2</td><td class="num hi">7,1%</td></tr>
+    <tr><td>Organic Search</td><td class="num">61</td><td class="num">6</td><td class="num">5</td><td class="num">2</td><td class="num">3,3%</td></tr>
+    <tr><td>Referral</td><td class="num">25</td><td class="num">5</td><td class="num">5</td><td class="num">1</td><td class="num">4,0%</td></tr>
+  </table>
+  <p>* <b>Peringatan pembacaan:</b> periode ini masih memakai label UTM lama yang rusak — mayoritas "Organic Social" sebenarnya <b>iklan Meta yang salah kamar</b>. Dibaca gabungan: traffic Meta ±2.037 pengunjung → 46 pembeli (<b>CVR 2,3%</b>). Mulai 2 Agu label sudah dinormalkan (lihat annotation ungu di grafik GA4). Poin strategisnya tetap tegas: <b>channel milik sendiri (Direct/Email) mengonversi ±3× lipat traffic iklan</b> — dan pengisi channel itu adalah pembeli lama, kembali ke temuan §3.</p>
+  <p>Nuansa funnel: pasca-checkout, Organic/gabungan Meta menyelesaikan 33% vs Paid Social berlabel-benar 22% — pantau ulang setelah label bersih sebelum menarik kesimpulan per-campaign.</p>
+
+  <h2>5 · Funnel hero (/collections/all — Inside Out Protocol)</h2>
+  <table>
+    <tr><th>Langkah</th><th class="num">Users</th><th class="num">Lanjut</th></tr>
+    <tr><td>Melihat hero</td><td class="num">143</td><td class="num">23,8%</td></tr>
+    <tr><td>Klik CTA protocol</td><td class="num">34</td><td class="num">100%</td></tr>
+    <tr><td>Add to cart</td><td class="num">34</td><td class="num">35,3%</td></tr>
+    <tr><td class="hi">Purchase</td><td class="num hi">12</td><td class="num">—</td></tr>
+  </table>
+  <p>Hero bekerja luar biasa untuk yang melihatnya: <b>23,8% klik CTA</b>, dan <b>35% pengklik CTA berakhir membeli</b> — kontribusi 12 dari 60 pembeli (20%) padahal hanya 6% pengunjung yang pernah melihat hero. CTA direct-add terbukti memotong gesekan funnel.</p>
+  <div class="footer">Treelogy · Customer Journey Funnel · hal. 2/3</div>
+</div>
+
+<div class="page">
+  <h2>6 · Perangkat</h2>
+  <p><b>95% journey terjadi di mobile</b> (2.194 dari 2.302; 59 dari 60 pembeli). Desktop bukan cuma kecil tapi juga anomali (hanya 34% lanjut melihat produk — kemungkinan bot/traffic non-belanja). Konsekuensi praktis: <b>semua keputusan desain, kecepatan, dan eksperimen dinilai di layar HP saja.</b></p>
+
+  <h2>7 · Rekomendasi prioritas</h2>
+  <div class="rec"><b>1 · Serang kebocoran checkout→pembayaran (65% hilang di form).</b> Tampilkan ongkir/estimasi sedini mungkin (sebelum checkout), aktifkan alur WA keranjang-tertinggal (pipeline consent WA + audience "begin_checkout tanpa purchase 3 hari" sudah tersedia), dan uji urutan form yang lebih pendek. Menaikkan penyelesaian checkout dari 29%→40% ≈ <b>+22 order/minggu</b> dari traffic yang sama.</div>
+  <div class="rec"><b>2 · Sprint konversi halaman produk (86% penonton pergi tanpa ATC).</b> Social proof di atas lipatan, kejelasan penawaran & bundel, sticky ATC mobile. Tiap +1 poin view→ATC ≈ +9% pembeli. Ukur dampaknya lewat funnel API ini per minggu.</div>
+  <div class="rec"><b>3 · Perbesar mesin kunjungan-ulang (konversi 4,5×).</b> Jalankan blueprint retensi AKAR: flow Klaviyo email+WA pasca-kunjungan, audience remarketing "PDP ≥2 dalam 7 hari tanpa beli". Menaikkan porsi returning dari 18%→25% traffic bernilai lebih besar daripada menambah budget iklan cold.</div>
+  <div class="rec"><b>4 · Skalakan pola hero.</b> Elemen dengan ekonomi terbaik di seluruh situs (6% eksposur → 20% pembeli). Bawa pola CTA direct-add ini ke homepage & PDP, dan arahkan lebih banyak traffic iklan ke halaman ber-hero. Semua sudah ter-instrumentasi (<code>hero_version</code>) untuk membandingkan iterasi.</div>
+  <div class="rec"><b>5 · Nilai iklan Meta dengan label yang sudah benar (mulai 2 Agu).</b> Setelah normalizer + template baru, Paid vs Organic terbaca jujur — baru saat itu keputusan geser budget per-campaign valid. Sementara ini pegang angka gabungan Meta CVR 2,3% vs owned channel ±7–8%.</div>
+  <div class="rec"><b>6 · Jadikan funnel ini ritme mingguan, bukan laporan sekali jadi.</b> Seluruh angka di sini dihasilkan skrip API yang reproducible — jalankan tiap Senin, bandingkan minggu-ke-minggu per segmen, dan setiap perubahan (hero baru, form checkout baru) dinilai lewat corong yang sama.</div>
+
+  <h2>8 · Metodologi & integritas data</h2>
+  <ul style="font-size:9pt; padding-left:16px;">
+    <li>Closed funnel berurutan, basis <b>users</b> — kebal terhadap artefak event ganda era transisi 29 Jul–1 Agu.</li>
+    <li>Purchase = server-side (webhook Shopify → Measurement Protocol), paritas 1:1 dengan order web-paid, tervalidasi per-transaksi.</li>
+    <li>Rentang 4 hari = sampel kecil; baca arah & lokasi kebocoran, jangan over-fit angka desimalnya. Interval menyempit seiring minggu berjalan.</li>
+    <li>Traffic internal (IP kantor/QA) sudah difilter; spillover pixel Google&YouTube dikarantina; retensi data GA4 14 bulan.</li>
+    <li>Annotations terpasang di GA4 (29 Jul, 1 Agu, 2 Agu) menandai perubahan rezim pengukuran.</li>
+  </ul>
+  <div class="footer">Treelogy · Customer Journey Funnel · 30 Jul–2 Agu 2026 · dihasilkan via GA4 Data API v1alpha runFunnelReport · hal. 3/3</div>
+</div>
+
+</body>
+</html>
