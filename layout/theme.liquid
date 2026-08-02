@@ -224,7 +224,9 @@
             // medium berisi placement (Instagram_Stories dst.) atau literal
             // macro yang gagal render — pindahkan ke term bila slot kosong
             // dan nilainya bukan sampah literal {{...}}.
-            if (!p.get('utm_term') && medium.indexOf('{{') === -1) {
+            // '{'+'{' menghindari kurung ganda literal yang akan dibaca
+            // Liquid sebagai pembuka variabel (file ini .liquid)
+            if (!p.get('utm_term') && medium.indexOf('{' + '{') === -1) {
               p.set('utm_term', medium);
             }
             p.set('utm_medium', 'paid-social');
