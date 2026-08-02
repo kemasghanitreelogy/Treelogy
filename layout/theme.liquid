@@ -3,7 +3,13 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+    {%- comment -%}
+      interactive-widget=resizes-content lets the on-screen keyboard shrink the
+      layout viewport (Chrome 108+, Firefox 132+) so the pinned cart-drawer
+      footer stays above it. iOS Safari ignores it — MiniCart.liquid falls back
+      to a visualViewport listener there.
+    {%- endcomment -%}
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no,interactive-widget=resizes-content">
     <link rel="canonical" href="{{ canonical_url }}">
     {%- if blogs['news'] != blank -%}
       {% # theme-check-disable RemoteAsset %}
@@ -192,6 +198,46 @@
         }
         new MutationObserver(neutralize).observe(document.documentElement, { childList: true, subtree: true });
         neutralize();
+      })();
+    </script>
+
+    <script>
+      // Normalizer UTM iklan Meta — jaring pengaman untuk template URL lama.
+      // Template lama menaruh {{ '{{placement}}' }} di utm_medium sehingga GA4
+      // menggolongkan iklan berbayar sebagai "Organic Social". Sebelum tag
+      // apa pun membaca URL (Google tag, script utm->cart di bawah, Shopify),
+      // rapikan: placement dipindah ke utm_term, medium jadi paid-social,
+      // source meta/fb dipetakan ke facebook (nilai yang dikenali daftar
+      // sosial Google). URL yang sudah benar tidak disentuh; fbclid dan
+      // param lain dibiarkan utuh. Aman dihapus kalau seluruh template
+      // Ads Manager sudah bersih permanen.
+      (function () {
+        try {
+          var url = new URL(window.location.href);
+          var p = url.searchParams;
+          var src = (p.get('utm_source') || '').toLowerCase();
+          if (!/^(meta|facebook|fb|instagram|ig)$/.test(src)) return;
+          var changed = false;
+          var GOOD_MEDIUM = /^(paid|cpc|ppc|retargeting|social-paid|paid[-_]social)/i;
+          var medium = p.get('utm_medium') || '';
+          if (medium && !GOOD_MEDIUM.test(medium)) {
+            // medium berisi placement (Instagram_Stories dst.) atau literal
+            // macro yang gagal render — pindahkan ke term bila slot kosong
+            // dan nilainya bukan sampah literal {{...}}.
+            if (!p.get('utm_term') && medium.indexOf('{{') === -1) {
+              p.set('utm_term', medium);
+            }
+            p.set('utm_medium', 'paid-social');
+            changed = true;
+          }
+          if (src === 'meta' || src === 'fb') {
+            p.set('utm_source', 'facebook');
+            changed = true;
+          }
+          if (changed) {
+            history.replaceState(history.state, '', url.pathname + '?' + p.toString() + url.hash);
+          }
+        } catch (e) {}
       })();
     </script>
 
