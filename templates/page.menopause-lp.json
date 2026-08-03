@@ -159,12 +159,13 @@
         "cta_label": "Mulai Protokol",
         "cta_url": "#pricing",
         "gallery_label": "Galeri produk",
-        "show_save_badge": true,
-        "save_position": "top-right",
-        "save_offset": 52,
-        "save_prefix": "Hemat hingga",
-        "save_amount": "Rp 464.500",
-        "save_suffix": "Hari Ini"
+        "offer_includes": "Termasuk: 90 kapsul (30 hari) · Seed Oil 30ml · Pengiriman ke seluruh Indonesia",
+        "offer_plan": "PROTOKOL INSIDE OUT 30 HARI",
+        "offer_price": "Rp 795.000",
+        "offer_perday": "Setara Rp 26.500 per hari",
+        "offer_note": "Garansi 30 hari · Pengiriman ke seluruh Indonesia",
+        "show_savings": false,
+        "savings_text": "Hemat Rp 464.500"
       }
     },
     "trust": {
