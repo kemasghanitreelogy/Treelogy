@@ -7,13 +7,37 @@
   assign heading_font_italic = heading_font | font_modify: 'style', 'italic'
 %}
 
+{% capture lp_dark_palette %}
+  --lp-forest: #a5bb86;
+  --lp-forest-deep: #141e16;
+  --lp-leaf-hover: #8fa872;
+  --lp-cream: #141e16;
+  --lp-bloom: #1e2820;
+  --lp-surface: #1a221c;
+  --lp-text: #eae9dc;
+  --lp-text-mid: #a5bb86;
+  --lp-text-light: #8f9561;
+  --lp-border: #2a3b34;
+  --lp-alert: #d4705e;
+{% endcapture %}
+
+{% capture lp_dark_rules %}
+  .lp-btn:not(.lp-btn--gold) { background: #3d5a3e; }
+  .lp-btn:not(.lp-btn--gold):hover { background: #4a6b4a; }
+  .lp-stats .lp-btn--gold,
+  .lp-final .lp-btn { color: #1a2b24; }
+  .lp-badge__icon img { filter: brightness(1.6) saturate(0.7); }
+{% endcapture %}
+
 {% style %}
-  {{ body_font | font_face: font_display: 'swap' }}
-  {{ body_font_bold | font_face: font_display: 'swap' }}
-  {{ body_font_italic | font_face: font_display: 'swap' }}
-  {{ heading_font | font_face: font_display: 'swap' }}
-  {{ heading_font_bold | font_face: font_display: 'swap' }}
-  {{ heading_font_italic | font_face: font_display: 'swap' }}
+  {% unless section.settings.use_theme_font %}
+    {{ body_font | font_face: font_display: 'swap' }}
+    {{ body_font_bold | font_face: font_display: 'swap' }}
+    {{ body_font_italic | font_face: font_display: 'swap' }}
+    {{ heading_font | font_face: font_display: 'swap' }}
+    {{ heading_font_bold | font_face: font_display: 'swap' }}
+    {{ heading_font_italic | font_face: font_display: 'swap' }}
+  {% endunless %}
 
   :root {
     --lp-forest: {{ section.settings.color_forest }};
@@ -30,8 +54,13 @@
     --lp-border: {{ section.settings.color_border }};
     --lp-alert: {{ section.settings.color_alert }};
     --lp-on-dark: {{ section.settings.color_on_dark }};
-    --lp-font-display: {{ heading_font.family }}, {{ heading_font.fallback_families }};
-    --lp-font-body: {{ body_font.family }}, {{ body_font.fallback_families }};
+    {% if section.settings.use_theme_font %}
+      --lp-font-display: 'Inter', 'Inter Fallback', system-ui, -apple-system, sans-serif;
+      --lp-font-body: 'Inter', 'Inter Fallback', system-ui, -apple-system, sans-serif;
+    {% else %}
+      --lp-font-display: {{ heading_font.family }}, {{ heading_font.fallback_families }};
+      --lp-font-body: {{ body_font.family }}, {{ body_font.fallback_families }};
+    {% endif %}
     --lp-max-w: {{ section.settings.container_width }}px;
     --lp-max-w-narrow: {{ section.settings.container_width_narrow }}px;
     --lp-radius: {{ section.settings.radius }}px;
@@ -39,6 +68,17 @@
     --lp-pad-block: {{ section.settings.section_padding }}px;
     --lp-pad-block-mobile: {{ section.settings.section_padding_mobile }}px;
   }
+
+  {% if section.settings.color_mode == 'system' %}
+    @media (prefers-color-scheme: dark) {
+      :root { {{ lp_dark_palette }} }
+      {{ lp_dark_rules }}
+    }
+    :root[data-theme='dark'] { {{ lp_dark_palette }} }
+  {% elsif section.settings.color_mode == 'dark' %}
+    :root { {{ lp_dark_palette }} }
+    {{ lp_dark_rules }}
+  {% endif %}
 {% endstyle %}
 
 {% if section.settings.chromeless %}
@@ -48,7 +88,8 @@
 {% stylesheet %}
   body:has(.lp-chromeless) [id^='shopify-section-header' i],
   body:has(.lp-chromeless) [id^='shopify-section-footer' i],
-  body:has(.lp-chromeless) [id^='shopify-section-announcement' i] {
+  body:has(.lp-chromeless) [id^='shopify-section-announcement' i],
+  body:has(.lp-chromeless) #utm-toast {
     display: none !important;
   }
 
@@ -82,7 +123,7 @@
     padding-block: var(--lp-pad-block);
   }
 
-  .lp-eyebrow {
+  :where(.lp-eyebrow) {
     font-family: var(--lp-font-body);
     font-size: 0.8125rem;
     font-weight: 600;
@@ -91,9 +132,7 @@
     color: var(--lp-gold);
   }
 
-  .lp-h1,
-  .lp-h2,
-  .lp-h3 {
+  :where(.lp-h1, .lp-h2, .lp-h3) {
     font-family: var(--lp-font-display);
     line-height: 1.15;
     text-wrap: balance;
@@ -101,26 +140,26 @@
     margin: 0;
   }
 
-  .lp-h1 {
+  :where(.lp-h1) {
     font-size: clamp(2.1rem, 5.5vw, 3.25rem);
     font-weight: 700;
     letter-spacing: -0.03em;
     line-height: 1.1;
   }
 
-  .lp-h2 {
+  :where(.lp-h2) {
     font-size: clamp(1.6rem, 4vw, 2.35rem);
     font-weight: 700;
     letter-spacing: -0.025em;
   }
 
-  .lp-h3 {
+  :where(.lp-h3) {
     font-size: clamp(1.1rem, 2.5vw, 1.3rem);
     font-weight: 600;
     letter-spacing: -0.01em;
   }
 
-  .lp-btn {
+  :where(.lp-btn) {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -161,7 +200,7 @@
     background: var(--lp-gold-light);
   }
 
-  .lp-note {
+  :where(.lp-note) {
     font-size: 0.8125rem;
     color: var(--lp-text-light);
     margin: 0.75rem 0 0;
@@ -258,20 +297,41 @@
       "info": "Halaman tampil penuh tanpa navigasi, seperti landing page berdiri sendiri."
     },
     {
+      "type": "select",
+      "id": "color_mode",
+      "label": "Mode warna",
+      "options": [
+        { "value": "system", "label": "Ikut perangkat pengunjung" },
+        { "value": "light", "label": "Selalu terang" },
+        { "value": "dark", "label": "Selalu gelap" }
+      ],
+      "default": "system",
+      "info": "Palet gelap mengikuti desain asli dan tidak dapat diubah di sini."
+    },
+    {
       "type": "header",
       "content": "Font"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_theme_font",
+      "label": "Pakai Inter bawaan theme",
+      "default": true,
+      "info": "Sesuai desain asli dan tanpa unduhan font tambahan. Matikan untuk memilih font Shopify."
     },
     {
       "type": "font_picker",
       "id": "heading_font",
       "label": "Font judul",
-      "default": "assistant_n4"
+      "default": "assistant_n4",
+      "visible_if": "{{ section.settings.use_theme_font == false }}"
     },
     {
       "type": "font_picker",
       "id": "body_font",
       "label": "Font teks",
-      "default": "assistant_n4"
+      "default": "assistant_n4",
+      "visible_if": "{{ section.settings.use_theme_font == false }}"
     },
     {
       "type": "header",

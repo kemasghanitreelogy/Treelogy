@@ -33,7 +33,9 @@
         "radius": 6,
         "radius_large": 12,
         "section_padding": 80,
-        "section_padding_mobile": 56
+        "section_padding_mobile": 56,
+        "color_mode": "system",
+        "use_theme_font": true
       }
     },
     "urgency": {
@@ -56,22 +58,43 @@
       "blocks": {
         "proof_1": {
           "type": "proof",
-          "settings": { "highlight": "10.000+", "text": "Pelanggan Puas" }
+          "settings": {
+            "prefix": "",
+            "highlight": "10.000+",
+            "text": "Pelanggan Puas"
+          }
         },
         "proof_2": {
           "type": "proof",
-          "settings": { "highlight": "★★★★★ 4,8", "text": "/5" }
+          "settings": {
+            "prefix": "★★★★★",
+            "highlight": "4,8",
+            "text": "/5"
+          }
         },
         "proof_3": {
           "type": "proof",
-          "settings": { "highlight": "✓", "text": "Garansi 30 Hari" }
+          "settings": {
+            "prefix": "✓",
+            "highlight": "",
+            "text": "Garansi 30 Hari"
+          }
         },
         "proof_4": {
           "type": "proof",
-          "settings": { "highlight": "✓", "text": "Gratis Ongkir" }
+          "settings": {
+            "prefix": "✓",
+            "highlight": "",
+            "text": "Gratis Ongkir"
+          }
         }
       },
-      "block_order": ["proof_1", "proof_2", "proof_3", "proof_4"],
+      "block_order": [
+        "proof_1",
+        "proof_2",
+        "proof_3",
+        "proof_4"
+      ],
       "settings": {
         "badge": "Dukungan Menopause · Offer Terbatas",
         "pre_heading": "Jangan Lagi Pasrah Pada",
@@ -88,14 +111,57 @@
     "trust": {
       "type": "lp-badge-row",
       "blocks": {
-        "b1": { "type": "badge", "settings": { "emoji": "✅", "label": "Terdaftar BPOM" } },
-        "b2": { "type": "badge", "settings": { "emoji": "☪️", "label": "Halal" } },
-        "b3": { "type": "badge", "settings": { "emoji": "🌱", "label": "Organik" } },
-        "b4": { "type": "badge", "settings": { "emoji": "🌿", "label": "Bebas Batang" } },
-        "b5": { "type": "badge", "settings": { "emoji": "🔬", "label": "Teruji Lab" } },
-        "b6": { "type": "badge", "settings": { "emoji": "❌", "label": "Tanpa Hormon" } }
+        "b1": {
+          "type": "badge",
+          "settings": {
+            "emoji": "✅",
+            "label": "Terdaftar BPOM"
+          }
+        },
+        "b2": {
+          "type": "badge",
+          "settings": {
+            "emoji": "☮️",
+            "label": "Halal"
+          }
+        },
+        "b3": {
+          "type": "badge",
+          "settings": {
+            "emoji": "🌱",
+            "label": "Organik"
+          }
+        },
+        "b4": {
+          "type": "badge",
+          "settings": {
+            "emoji": "🌿",
+            "label": "Bebas Batang"
+          }
+        },
+        "b5": {
+          "type": "badge",
+          "settings": {
+            "emoji": "🔬",
+            "label": "Teruji Lab"
+          }
+        },
+        "b6": {
+          "type": "badge",
+          "settings": {
+            "emoji": "❌",
+            "label": "Tanpa Hormon"
+          }
+        }
       },
-      "block_order": ["b1", "b2", "b3", "b4", "b5", "b6"],
+      "block_order": [
+        "b1",
+        "b2",
+        "b3",
+        "b4",
+        "b5",
+        "b6"
+      ],
       "settings": {
         "eyebrow": "",
         "heading": "",
@@ -111,7 +177,7 @@
           "type": "testimonial",
           "settings": {
             "rating": 5,
-            "quote": "Habis 30 kapsul dan manfaatnya terasa nyata. Tidur lebih nyenyak, kesemutan di tangan berkurang, nyeri lutut saat naik tangga juga berkurang. Langsung repurchase.",
+            "quote": "\"Habis 30 kapsul dan manfaatnya terasa nyata. Tidur lebih nyenyak, kesemutan di tangan berkurang, nyeri lutut saat naik tangga juga berkurang. Langsung repurchase.\"",
             "author": "Ibu Ratna",
             "detail": "55 Tahun · Surabaya · Pembeli Terverifikasi"
           }
@@ -120,7 +186,7 @@
           "type": "testimonial",
           "settings": {
             "rating": 5,
-            "quote": "Dulu sering terbangun dengan jantung berdebar dan dada terasa panas. Setelah beberapa hari minum Treelogy, keluhan itu berhenti. Tidur saya jauh lebih nyenyak sekarang.",
+            "quote": "\"Dulu sering terbangun dengan jantung berdebar dan dada terasa panas. Setelah beberapa hari minum Treelogy, keluhan itu berhenti. Tidur saya jauh lebih nyenyak sekarang.\"",
             "author": "Nia S.",
             "detail": "47 Tahun · Bandung · Pembeli Terverifikasi"
           }
@@ -129,7 +195,7 @@
           "type": "testimonial",
           "settings": {
             "rating": 5,
-            "quote": "Sudah tidak terhitung berapa kali saya reorder. Kulit halus seperti kulit bayi, tidur nyenyak, stamina olahraga naik drastis. Moringa ini memang sebagus itu.",
+            "quote": "\"Sudah tidak terhitung berapa kali saya reorder. Kulit halus seperti kulit bayi, tidur nyenyak, stamina olahraga naik drastis. Moringa ini memang sebagus itu.\"",
             "author": "Dian P.",
             "detail": "49 Tahun · Jakarta · Pembeli Terverifikasi"
           }
@@ -138,7 +204,7 @@
           "type": "testimonial",
           "settings": {
             "rating": 5,
-            "quote": "Nyeri sendi dan kesemutan hilang. Kista ganglion di pergelangan tangan saya mengempis. Bangun tidur badan segar, tanpa rasa lemas. Hasilnya yang bicara.",
+            "quote": "\"Nyeri sendi dan kesemutan hilang. Kista ganglion di pergelangan tangan saya mengempis. Bangun tidur badan segar, tanpa rasa lemas. Hasilnya yang bicara.\"",
             "author": "Yuni K.",
             "detail": "52 Tahun · Semarang · Pembeli Terverifikasi"
           }
@@ -147,7 +213,7 @@
           "type": "testimonial",
           "settings": {
             "rating": 5,
-            "quote": "Berkat Treelogy, keluhan menopause saya jauh berkurang. Setiap hari terasa lebih bahagia.",
+            "quote": "\"Berkat Treelogy, keluhan menopause saya jauh berkurang. Setiap hari terasa lebih bahagia.\"",
             "author": "Sari W.",
             "detail": "53 Tahun · Jakarta · Pembeli Terverifikasi"
           }
@@ -156,39 +222,103 @@
           "type": "testimonial",
           "settings": {
             "rating": 5,
-            "quote": "Usia saya 50 dan badan banyak berubah karena hormon tidak seimbang. Setelah satu minggu minum Treelogy, nyeri tumit dan sendi mulai berkurang. Badan terasa lebih enak. Terima kasih Treelogy.",
+            "quote": "\"Usia saya 50 dan badan banyak berubah karena hormon tidak seimbang. Setelah satu minggu minum Treelogy, nyeri tumit dan sendi mulai berkurang. Badan terasa lebih enak. Terima kasih Treelogy.\"",
             "author": "Dewi H.",
             "detail": "50 Tahun · Medan · Pembeli Terverifikasi"
           }
         }
       },
-      "block_order": ["t1", "t2", "t3", "t4", "t5", "t6"],
-      "settings": { "duration": 45 }
+      "block_order": [
+        "t1",
+        "t2",
+        "t3",
+        "t4",
+        "t5",
+        "t6"
+      ],
+      "settings": {
+        "duration": 45
+      }
     },
     "ticker_top": {
       "type": "lp-ticker",
       "blocks": {
-        "i1": { "type": "item", "settings": { "text": "Offer Terbatas: 20% Off + Hadiah Gratis" } },
-        "i2": { "type": "item", "settings": { "text": "Gratis Ongkir" } },
-        "i3": { "type": "item", "settings": { "text": "Sertifikasi BPOM & Halal" } },
-        "i4": { "type": "item", "settings": { "text": "Tanpa Hormon · 100% Alami" } },
-        "i5": { "type": "item", "settings": { "text": "Garansi Uang Kembali 30 Hari" } }
+        "i1": {
+          "type": "item",
+          "settings": {
+            "text": "Offer Terbatas: 20% Off + Hadiah Gratis"
+          }
+        },
+        "i2": {
+          "type": "item",
+          "settings": {
+            "text": "Gratis Ongkir"
+          }
+        },
+        "i3": {
+          "type": "item",
+          "settings": {
+            "text": "Sertifikasi BPOM & Halal"
+          }
+        },
+        "i4": {
+          "type": "item",
+          "settings": {
+            "text": "Tanpa Hormon · 100% Alami"
+          }
+        },
+        "i5": {
+          "type": "item",
+          "settings": {
+            "text": "Garansi Uang Kembali 30 Hari"
+          }
+        }
       },
-      "block_order": ["i1", "i2", "i3", "i4", "i5"],
-      "settings": { "duration": 25 }
+      "block_order": [
+        "i1",
+        "i2",
+        "i3",
+        "i4",
+        "i5"
+      ],
+      "settings": {
+        "duration": 25
+      }
     },
     "familiar": {
       "type": "lp-checklist",
       "blocks": {
-        "f1": { "type": "item", "settings": { "text": "Terapi hormon. Khawatir dengan risikonya." } },
-        "f2": { "type": "item", "settings": { "text": "Black cohosh. Bikin sakit kepala, tanpa perubahan." } },
-        "f3": { "type": "item", "settings": { "text": "Isoflavon kedelai. Tidak terasa apa-apa." } },
+        "f1": {
+          "type": "item",
+          "settings": {
+            "text": "Terapi hormon. Khawatir dengan risikonya."
+          }
+        },
+        "f2": {
+          "type": "item",
+          "settings": {
+            "text": "Black cohosh. Bikin sakit kepala, tanpa perubahan."
+          }
+        },
+        "f3": {
+          "type": "item",
+          "settings": {
+            "text": "Isoflavon kedelai. Tidak terasa apa-apa."
+          }
+        },
         "f4": {
           "type": "item",
-          "settings": { "text": "\"Racikan menopause\" mahal. Penuh filler dan harapan palsu." }
+          "settings": {
+            "text": "\"Racikan menopause\" mahal. Penuh filler dan harapan palsu."
+          }
         }
       },
-      "block_order": ["f1", "f2", "f3", "f4"],
+      "block_order": [
+        "f1",
+        "f2",
+        "f3",
+        "f4"
+      ],
       "settings": {
         "eyebrow": "",
         "heading": "Terasa Familiar?",
@@ -200,12 +330,37 @@
     "founder": {
       "type": "lp-founder",
       "blocks": {
-        "l1": { "type": "item", "settings": { "text": "Perempuan yang berjuang dengan PMS" } },
-        "l2": { "type": "item", "settings": { "text": "Ibu baru yang memulihkan nutrisi tubuh" } },
-        "l3": { "type": "item", "settings": { "text": "Ibu yang kesulitan dengan kelancaran ASI" } },
-        "l4": { "type": "item", "settings": { "text": "Eksim, nyeri sendi, gula darah, tekanan darah" } }
+        "l1": {
+          "type": "item",
+          "settings": {
+            "text": "Perempuan yang berjuang dengan PMS"
+          }
+        },
+        "l2": {
+          "type": "item",
+          "settings": {
+            "text": "Ibu baru yang memulihkan nutrisi tubuh"
+          }
+        },
+        "l3": {
+          "type": "item",
+          "settings": {
+            "text": "Ibu yang kesulitan dengan kelancaran ASI"
+          }
+        },
+        "l4": {
+          "type": "item",
+          "settings": {
+            "text": "Eksim, nyeri sendi, gula darah, tekanan darah"
+          }
+        }
       },
-      "block_order": ["l1", "l2", "l3", "l4"],
+      "block_order": [
+        "l1",
+        "l2",
+        "l3",
+        "l4"
+      ],
       "settings": {
         "eyebrow": "Dari Founder",
         "heading": "Halo, saya Sacha.",
@@ -241,7 +396,10 @@
           }
         }
       },
-      "block_order": ["inside", "outside"],
+      "block_order": [
+        "inside",
+        "outside"
+      ],
       "settings": {
         "eyebrow": "Pendekatan Menyeluruh",
         "heading": "The Inside Out Moringa Protocol",
@@ -310,7 +468,14 @@
           }
         }
       },
-      "block_order": ["s1", "s2", "s3", "s4", "s5", "s6"],
+      "block_order": [
+        "s1",
+        "s2",
+        "s3",
+        "s4",
+        "s5",
+        "s6"
+      ],
       "settings": {
         "eyebrow": "Kenapa Daun Ini untuk Menopause",
         "heading": "Nutrisi yang Hilang dari Tubuh. Dipenuhi dari Dalam.",
@@ -365,7 +530,12 @@
           }
         }
       },
-      "block_order": ["o1", "o2", "o3", "o4"],
+      "block_order": [
+        "o1",
+        "o2",
+        "o3",
+        "o4"
+      ],
       "settings": {
         "eyebrow": "Kenapa Minyaknya untuk Kulit Menopause",
         "heading": "Nutrisi yang Hilang dari Tubuh. Dipenuhi dari Luar.",
@@ -437,7 +607,14 @@
           }
         }
       },
-      "block_order": ["m1", "m2", "m3", "m4", "m5", "m6"],
+      "block_order": [
+        "m1",
+        "m2",
+        "m3",
+        "m4",
+        "m5",
+        "m6"
+      ],
       "settings": {
         "eyebrow": "Perjalanan Menopause",
         "heading": "Apa yang Akan Dirasakan Selama Protokol",
@@ -507,7 +684,16 @@
           }
         }
       },
-      "block_order": ["r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8"],
+      "block_order": [
+        "r1",
+        "r2",
+        "r3",
+        "r4",
+        "r5",
+        "r6",
+        "r7",
+        "r8"
+      ],
       "settings": {
         "eyebrow": "Pilihan yang Lebih Aman",
         "heading": "Satu Daun vs. Semua yang Pernah Kamu Coba",
@@ -549,7 +735,11 @@
           }
         }
       },
-      "block_order": ["st1", "st2", "st3"],
+      "block_order": [
+        "st1",
+        "st2",
+        "st3"
+      ],
       "settings": {
         "eyebrow": "Kebiasaan Harian Tanpa Ribet",
         "heading": "Ritual Inside Out",
@@ -564,7 +754,7 @@
         "a1": {
           "type": "card",
           "settings": {
-            "emoji": "🦵",
+            "emoji": "🦿",
             "title": "Perempuan dengan Nyeri Sendi & Lutut",
             "text": "Jari kaku di pagi hari. Lutut nyeri saat naik tangga. Senyawa antiinflamasi yang menyasar nyeri sendi menopause."
           }
@@ -580,7 +770,7 @@
         "a3": {
           "type": "card",
           "settings": {
-            "emoji": "💇",
+            "emoji": "💄",
             "title": "Perempuan dengan Rambut Menipis & Kulit Kusam",
             "text": "Rambut menipis. Kulit kering. Kuku rapuh. Dirawat dari akar DAN dari permukaan."
           }
@@ -603,14 +793,26 @@
         },
         "x1": {
           "type": "exclusion",
-          "settings": { "text": "Yang mencari keajaiban semalam (konsistensi itu kunci)" }
+          "settings": {
+            "text": "Yang mencari keajaiban semalam (konsistensi itu kunci)"
+          }
         },
         "x2": {
           "type": "exclusion",
-          "settings": { "text": "Yang alergi terhadap Moringa oleifera" }
+          "settings": {
+            "text": "Yang alergi terhadap Moringa oleifera"
+          }
         }
       },
-      "block_order": ["a1", "a2", "a3", "a4", "a5", "x1", "x2"],
+      "block_order": [
+        "a1",
+        "a2",
+        "a3",
+        "a4",
+        "a5",
+        "x1",
+        "x2"
+      ],
       "settings": {
         "eyebrow": "",
         "heading": "Untuk Siapa Inside Out Protocol Ini?",
@@ -630,16 +832,47 @@
     "certs": {
       "type": "lp-badge-row",
       "blocks": {
-        "c1": { "type": "badge", "settings": { "label": "BPOM" } },
-        "c2": { "type": "badge", "settings": { "label": "Halal" } },
-        "c3": { "type": "badge", "settings": { "label": "Organik" } },
-        "c4": { "type": "badge", "settings": { "label": "Bebas Batang" } },
-        "c5": { "type": "badge", "settings": { "label": "Teruji Lab" } }
+        "c1": {
+          "type": "badge",
+          "settings": {
+            "label": "BPOM"
+          }
+        },
+        "c2": {
+          "type": "badge",
+          "settings": {
+            "label": "Halal"
+          }
+        },
+        "c3": {
+          "type": "badge",
+          "settings": {
+            "label": "Organik"
+          }
+        },
+        "c4": {
+          "type": "badge",
+          "settings": {
+            "label": "Bebas Batang"
+          }
+        },
+        "c5": {
+          "type": "badge",
+          "settings": {
+            "label": "Teruji Lab"
+          }
+        }
       },
-      "block_order": ["c1", "c2", "c3", "c4", "c5"],
+      "block_order": [
+        "c1",
+        "c2",
+        "c3",
+        "c4",
+        "c5"
+      ],
       "settings": {
         "eyebrow": "Kualitas Terverifikasi",
-        "heading": "Kapsul: Obat Tradisional BPOM. Minyak: Kosmetik Terdaftar BPOM.",
+        "heading": "Kapsul: Obat Tradisional BPOM.\nMinyak: Kosmetik Terdaftar BPOM.",
         "layout": "grid",
         "icon_type": "image",
         "background": "bloom"
@@ -712,7 +945,11 @@
           }
         }
       },
-      "block_order": ["p60", "p30", "pcaps"],
+      "block_order": [
+        "p60",
+        "p30",
+        "pcaps"
+      ],
       "settings": {
         "anchor_id": "pricing",
         "eyebrow": "Offer Terbatas",
@@ -723,33 +960,91 @@
         "evergreen_hours": 72,
         "end_date": "2026-12-31 23:59",
         "storage_key": "lp-offer",
-        "scarcity": "⚠ Stok Agustus berisiko habis · 147 pesanan hari ini",
+        "scarcity": "⚠ Stok Agustus berisiko habis",
         "quote": "\"Nyeri lutut saat naik tangga berkurang. Langsung repurchase.\"",
         "quote_author": "Ibu Ratna, 55, Surabaya",
         "pledge_icon": "🛡️",
         "pledge_title": "Nggak Terasa? Uang Kembali.",
-        "pledge_text": "Jalani protokol setiap hari selama 30 hari. Kalau tidak terasa bedanya, kami kembalikan uang sepenuhnya. Tanpa banyak tanya."
+        "pledge_text": "Jalani protokol setiap hari selama 30 hari. Kalau tidak terasa bedanya, kami kembalikan uang sepenuhnya. Tanpa banyak tanya.",
+        "scarcity_note": "· 147 pesanan hari ini"
       }
     },
     "ticker_bottom": {
       "type": "lp-ticker",
       "blocks": {
-        "j1": { "type": "item", "settings": { "text": "Offer Terbatas: 20% Off + Hadiah Gratis" } },
-        "j2": { "type": "item", "settings": { "text": "Gratis Ongkir" } },
-        "j3": { "type": "item", "settings": { "text": "Garansi 30 Hari" } },
-        "j4": { "type": "item", "settings": { "text": "Sertifikasi BPOM & Halal" } },
-        "j5": { "type": "item", "settings": { "text": "Dukungan Menopause Alami" } }
+        "j1": {
+          "type": "item",
+          "settings": {
+            "text": "Offer Terbatas: 20% Off + Hadiah Gratis"
+          }
+        },
+        "j2": {
+          "type": "item",
+          "settings": {
+            "text": "Gratis Ongkir"
+          }
+        },
+        "j3": {
+          "type": "item",
+          "settings": {
+            "text": "30-Day Guarantee"
+          }
+        },
+        "j4": {
+          "type": "item",
+          "settings": {
+            "text": "Sertifikasi BPOM & Halal"
+          }
+        },
+        "j5": {
+          "type": "item",
+          "settings": {
+            "text": "Natural Menopause Support"
+          }
+        }
       },
-      "block_order": ["j1", "j2", "j3", "j4", "j5"],
-      "settings": { "duration": 25 }
+      "block_order": [
+        "j1",
+        "j2",
+        "j3",
+        "j4",
+        "j5"
+      ],
+      "settings": {
+        "duration": 25
+      }
     },
     "reviews": {
       "type": "lp-reviews",
       "blocks": {
-        "tp1": { "type": "topic", "settings": { "label": "🦵 Nyeri Sendi & Lutut", "key": "sendi" } },
-        "tp2": { "type": "topic", "settings": { "label": "😴 Tidur Lebih Nyenyak", "key": "tidur" } },
-        "tp3": { "type": "topic", "settings": { "label": "⚡ Lebih Berenergi", "key": "energi" } },
-        "tp4": { "type": "topic", "settings": { "label": "❄️ Hot Flashes Berkurang", "key": "hotflashes" } },
+        "tp1": {
+          "type": "topic",
+          "settings": {
+            "label": "🦵 Nyeri Sendi & Lutut",
+            "key": "sendi"
+          }
+        },
+        "tp2": {
+          "type": "topic",
+          "settings": {
+            "label": "😴 Tidur Lebih Nyenyak",
+            "key": "tidur"
+          }
+        },
+        "tp3": {
+          "type": "topic",
+          "settings": {
+            "label": "⚡ Lebih Berenergi",
+            "key": "energi"
+          }
+        },
+        "tp4": {
+          "type": "topic",
+          "settings": {
+            "label": "❄️ Hot Flashes Berkurang",
+            "key": "hotflashes"
+          }
+        },
         "rv1": {
           "type": "review",
           "settings": {
@@ -823,7 +1118,18 @@
           }
         }
       },
-      "block_order": ["tp1", "tp2", "tp3", "tp4", "rv1", "rv2", "rv3", "rv4", "rv5", "rv6"],
+      "block_order": [
+        "tp1",
+        "tp2",
+        "tp3",
+        "tp4",
+        "rv1",
+        "rv2",
+        "rv3",
+        "rv4",
+        "rv5",
+        "rv6"
+      ],
       "settings": {
         "eyebrow": "Hasil Nyata dari Perempuan Nyata",
         "heading": "Cerita Menopause",
@@ -897,7 +1203,16 @@
           }
         }
       },
-      "block_order": ["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8"],
+      "block_order": [
+        "q1",
+        "q2",
+        "q3",
+        "q4",
+        "q5",
+        "q6",
+        "q7",
+        "q8"
+      ],
       "settings": {
         "eyebrow": "Ada Pertanyaan?",
         "heading": "Pertanyaan yang Sering Diajukan",
@@ -908,7 +1223,7 @@
       "type": "lp-final-cta",
       "settings": {
         "eyebrow": "Menopause Itu Alami. Menderita Karenanya Tidak.",
-        "heading": "Nutrisi dari Dalam. Lindungi dari Luar.",
+        "heading": "Nutrisi dari Dalam.\nLindungi dari Luar.",
         "text": "Bergabung dengan 10.000+ perempuan Indonesia yang memilih jalan alami. Dan kembali jadi diri mereka sendiri.",
         "cta_label": "Mulai Inside Out Protocol",
         "cta_url": "#pricing",

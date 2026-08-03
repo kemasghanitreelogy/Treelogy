@@ -5,7 +5,7 @@
     {% endif %}
 
     {% if section.settings.heading != blank %}
-      <h2 class="lp-h2 lp-badges__heading">{{ section.settings.heading }}</h2>
+      <h2 class="lp-h2 lp-badges__heading">{{ section.settings.heading | newline_to_br }}</h2>
     {% endif %}
 
     <div class="lp-badges__list lp-badges__list--{{ section.settings.layout }}">
@@ -130,9 +130,10 @@
       "label": "Eyebrow"
     },
     {
-      "type": "text",
+      "type": "textarea",
       "id": "heading",
-      "label": "Judul"
+      "label": "Judul",
+      "info": "Tekan Enter untuk baris baru."
     },
     {
       "type": "select",
