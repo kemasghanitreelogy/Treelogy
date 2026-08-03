@@ -66,25 +66,43 @@
         "media_2": {
           "type": "media",
           "settings": {
+            "image": "shopify://shop_images/close-up_composite_image_of_a_smiling_woman.webp",
             "alt": "Kapsul moringa bebas batang"
           }
         },
         "media_3": {
           "type": "media",
           "settings": {
+            "image": "shopify://shop_images/woman_s_hand_holds_an_open_can_of_Treelogy_Organic_Moringa_Capsules.webp",
             "alt": "Minyak biji moringa cold-pressed"
           }
         },
         "media_4": {
           "type": "media",
           "settings": {
+            "image": "shopify://shop_images/ertical_timeline_infographic_in_Indonesian_detailing_the_benefits_of_Treelogy_Moringa.webp",
             "alt": "Ritual harian Inside Out"
           }
         },
         "media_5": {
           "type": "media",
           "settings": {
+            "image": "shopify://shop_images/close-up_of_two_open_Treelogy_Organic_Moringa_Capsule.webp",
             "alt": "Sertifikasi & kemurnian"
+          }
+        },
+        "media_mgwW6j": {
+          "type": "media",
+          "settings": {
+            "image": "shopify://shop_images/woman_holds_a_bottle_of_Treelogy_Organic_Moringa_Oil.webp",
+            "alt": ""
+          }
+        },
+        "media_GeqgWn": {
+          "type": "media",
+          "settings": {
+            "image": "shopify://shop_images/detailed_comparison_table_in_Indonesian_showing_Treelogy_Organic_Moringa_Capsules.webp",
+            "alt": ""
           }
         },
         "proof_1": {
@@ -134,6 +152,8 @@
         "media_3",
         "media_4",
         "media_5",
+        "media_mgwW6j",
+        "media_GeqgWn",
         "proof_1",
         "proof_2",
         "proof_3",
