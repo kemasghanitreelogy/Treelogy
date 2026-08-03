@@ -42,9 +42,22 @@
     animation: lp-tmarquee-scroll var(--lp-tmarquee-duration, 45s) linear infinite;
   }
 
-  .lp-tmarquee:hover .lp-tmarquee__track,
-  .lp-tmarquee:focus-within .lp-tmarquee__track {
-    animation-play-state: paused;
+  .lp-tmarquee.is-interactive .lp-tmarquee__track {
+    animation: none;
+  }
+
+  .lp-tmarquee.is-interactive {
+    cursor: grab;
+    touch-action: pan-y;
+  }
+
+  .lp-tmarquee.is-dragging {
+    cursor: grabbing;
+    user-select: none;
+  }
+
+  .lp-tmarquee.is-dragging .lp-tcard {
+    pointer-events: none;
   }
 
   .lp-tcard {
@@ -104,6 +117,82 @@
     }
   }
 {% endstylesheet %}
+
+{% javascript %}
+  (function () {
+    function reducedMotion() {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    }
+
+    function init(root) {
+      var track = root.querySelector('.lp-tmarquee__track');
+      if (!track || root.dataset.lpMarqueeBound === 'true') return;
+      root.dataset.lpMarqueeBound = 'true';
+
+      var seconds = parseFloat(getComputedStyle(root).getPropertyValue('--lp-tmarquee-duration'));
+      var duration = (seconds > 0 ? seconds : 45) * 1000;
+
+      root.classList.add('is-interactive');
+
+      var anim = track.animate(
+        [{ transform: 'translateX(0)' }, { transform: 'translateX(-50%)' }],
+        { duration: duration, iterations: Infinity, easing: 'linear' }
+      );
+
+      if (reducedMotion()) anim.pause();
+
+      var dragging = false;
+      var startX = 0;
+      var startTime = 0;
+
+      function pxPerMs() {
+        var span = track.scrollWidth / 2;
+        return span > 0 ? span / duration : 1;
+      }
+
+      track.addEventListener('pointerdown', function (event) {
+        if (event.button && event.button !== 0) return;
+        dragging = true;
+        startX = event.clientX;
+        startTime = Number(anim.currentTime) || 0;
+        anim.pause();
+        root.classList.add('is-dragging');
+        try { track.setPointerCapture(event.pointerId); } catch (e) {}
+      });
+
+      track.addEventListener('pointermove', function (event) {
+        if (!dragging) return;
+        event.preventDefault();
+        var next = startTime - (event.clientX - startX) / pxPerMs();
+        anim.currentTime = ((next % duration) + duration) % duration;
+      });
+
+      function release(event) {
+        if (!dragging) return;
+        dragging = false;
+        root.classList.remove('is-dragging');
+        try { track.releasePointerCapture(event.pointerId); } catch (e) {}
+        if (!reducedMotion()) anim.play();
+      }
+
+      track.addEventListener('pointerup', release);
+      track.addEventListener('pointercancel', release);
+      track.addEventListener('lostpointercapture', release);
+    }
+
+    function start() {
+      document.querySelectorAll('.lp-tmarquee').forEach(init);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', start);
+    } else {
+      start();
+    }
+
+    document.addEventListener('shopify:section:load', start);
+  })();
+{% endjavascript %}
 
 {% schema %}
 {
