@@ -93,6 +93,12 @@
     display: none !important;
   }
 
+  body:has(.lp-tokens) {
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
   body:has(.lp-chromeless) {
     overflow-x: hidden;
     margin: 0 !important;
@@ -123,7 +129,7 @@
     padding-block: var(--lp-pad-block);
   }
 
-  :where(.lp-eyebrow) {
+  .lp-eyebrow {
     font-family: var(--lp-font-body);
     font-size: 0.8125rem;
     font-weight: 600;
@@ -132,7 +138,7 @@
     color: var(--lp-gold);
   }
 
-  :where(.lp-h1, .lp-h2, .lp-h3) {
+  .lp-h1, .lp-h2, .lp-h3 {
     font-family: var(--lp-font-display);
     line-height: 1.15;
     text-wrap: balance;
@@ -140,26 +146,26 @@
     margin: 0;
   }
 
-  :where(.lp-h1) {
+  .lp-h1 {
     font-size: clamp(2.1rem, 5.5vw, 3.25rem);
     font-weight: 700;
     letter-spacing: -0.03em;
     line-height: 1.1;
   }
 
-  :where(.lp-h2) {
+  .lp-h2 {
     font-size: clamp(1.6rem, 4vw, 2.35rem);
     font-weight: 700;
     letter-spacing: -0.025em;
   }
 
-  :where(.lp-h3) {
+  .lp-h3 {
     font-size: clamp(1.1rem, 2.5vw, 1.3rem);
     font-weight: 600;
     letter-spacing: -0.01em;
   }
 
-  :where(.lp-btn) {
+  .lp-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -200,7 +206,7 @@
     background: var(--lp-gold-light);
   }
 
-  :where(.lp-note) {
+  .lp-note {
     font-size: 0.8125rem;
     color: var(--lp-text-light);
     margin: 0.75rem 0 0;

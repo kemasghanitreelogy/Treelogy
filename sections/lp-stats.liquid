@@ -1,5 +1,5 @@
-<div class="lp-stats lp-pad lp-reveal">
-  <div class="lp-container">
+<div class="lp-stats lp-pad">
+  <div class="lp-container lp-reveal">
     {% if section.settings.eyebrow != blank %}
       <div class="lp-eyebrow lp-stats__eyebrow">{{ section.settings.eyebrow }}</div>
     {% endif %}
@@ -110,12 +110,12 @@
     pointer-events: none;
   }
 
-  .lp-stats__eyebrow {
+  .lp-stats .lp-stats__eyebrow {
     margin-bottom: 0.75rem;
     color: var(--lp-gold-light);
   }
 
-  .lp-stats__heading {
+  .lp-stats .lp-stats__heading {
     margin-bottom: 0.5rem;
     color: var(--lp-on-dark);
   }

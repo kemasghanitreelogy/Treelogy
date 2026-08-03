@@ -3,8 +3,8 @@
   assign reviews = section.blocks | where: 'type', 'review'
 %}
 
-<div class="lp-reviews lp-pad lp-reveal">
-  <div class="lp-container">
+<div class="lp-reviews lp-pad">
+  <div class="lp-container lp-reveal">
     {% if section.settings.eyebrow != blank %}
       <div class="lp-eyebrow lp-reviews__eyebrow">{{ section.settings.eyebrow }}</div>
     {% endif %}
