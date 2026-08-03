@@ -353,6 +353,8 @@
   }
 
   .lp-hero__save {
+    --lp-save-used: var(--lp-save-offset, 40px);
+
     position: absolute;
     z-index: 2;
     display: flex;
@@ -374,25 +376,25 @@
   }
 
   .lp-hero__save--top-right {
-    top: calc(-1 * var(--lp-save-offset, 40px));
-    right: calc(-1 * var(--lp-save-offset, 40px));
+    top: calc(-1 * var(--lp-save-used));
+    right: calc(-1 * var(--lp-save-used));
   }
 
   .lp-hero__save--top-left {
-    top: calc(-1 * var(--lp-save-offset, 40px));
-    left: calc(-1 * var(--lp-save-offset, 40px));
+    top: calc(-1 * var(--lp-save-used));
+    left: calc(-1 * var(--lp-save-used));
     transform: rotate(-8deg);
   }
 
   .lp-hero__save--bottom-right {
-    right: calc(-1 * var(--lp-save-offset, 40px));
-    bottom: calc(-1 * var(--lp-save-offset, 40px));
+    right: calc(-1 * var(--lp-save-used));
+    bottom: calc(-1 * var(--lp-save-used));
     transform: rotate(-8deg);
   }
 
   .lp-hero__save--bottom-left {
-    bottom: calc(-1 * var(--lp-save-offset, 40px));
-    left: calc(-1 * var(--lp-save-offset, 40px));
+    bottom: calc(-1 * var(--lp-save-used));
+    left: calc(-1 * var(--lp-save-used));
   }
 
   .lp-hero__save strong {
@@ -401,6 +403,10 @@
   }
 
   @media screen and (max-width: 768px) {
+    .lp-hero__save {
+      --lp-save-used: 8px;
+    }
+
     .lp-hero__inner {
       grid-template-columns: 1fr;
       text-align: center;
