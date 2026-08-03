@@ -27,6 +27,9 @@
         <div class="lp-hero__proof">
           {% for block in section.blocks %}
             <div class="lp-hero__proof-item" {{ block.shopify_attributes }}>
+              {% if block.settings.prefix != blank %}
+                <span>{{ block.settings.prefix }}</span>
+              {% endif %}
               {% if block.settings.highlight != blank %}
                 <strong>{{ block.settings.highlight }}</strong>
               {% endif %}
@@ -318,6 +321,11 @@
       "name": "Bukti sosial",
       "limit": 6,
       "settings": [
+        {
+          "type": "text",
+          "id": "prefix",
+          "label": "Teks awal"
+        },
         {
           "type": "text",
           "id": "highlight",
