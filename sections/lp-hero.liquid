@@ -59,7 +59,10 @@
     <div class="lp-hero__visual">
       <div class="lp-hero__frame">
         {% if section.settings.show_save_badge %}
-          <div class="lp-hero__save">
+          <div
+            class="lp-hero__save lp-hero__save--{{ section.settings.save_position }}"
+            style="--lp-save-offset: {{ section.settings.save_offset }}px"
+          >
             {{ section.settings.save_prefix }}
             <strong>{{ section.settings.save_amount }}</strong>
             {{ section.settings.save_suffix }}
@@ -139,6 +142,8 @@
     background: var(--lp-cream);
     padding: 4.5rem 0 3.5rem;
     overflow: hidden;
+    overflow: clip;
+    overflow-clip-margin: 120px;
   }
 
   .lp-hero__inner {
@@ -349,8 +354,6 @@
 
   .lp-hero__save {
     position: absolute;
-    top: -14px;
-    right: -14px;
     z-index: 2;
     display: flex;
     flex-direction: column;
@@ -368,6 +371,28 @@
     line-height: 1.25;
     text-align: center;
     transform: rotate(8deg);
+  }
+
+  .lp-hero__save--top-right {
+    top: calc(-1 * var(--lp-save-offset, 40px));
+    right: calc(-1 * var(--lp-save-offset, 40px));
+  }
+
+  .lp-hero__save--top-left {
+    top: calc(-1 * var(--lp-save-offset, 40px));
+    left: calc(-1 * var(--lp-save-offset, 40px));
+    transform: rotate(-8deg);
+  }
+
+  .lp-hero__save--bottom-right {
+    right: calc(-1 * var(--lp-save-offset, 40px));
+    bottom: calc(-1 * var(--lp-save-offset, 40px));
+    transform: rotate(-8deg);
+  }
+
+  .lp-hero__save--bottom-left {
+    bottom: calc(-1 * var(--lp-save-offset, 40px));
+    left: calc(-1 * var(--lp-save-offset, 40px));
   }
 
   .lp-hero__save strong {
@@ -663,6 +688,29 @@
       "id": "show_save_badge",
       "label": "Tampilkan badge hemat",
       "default": true
+    },
+    {
+      "type": "select",
+      "id": "save_position",
+      "label": "Posisi badge",
+      "options": [
+        { "value": "top-right", "label": "Kanan atas" },
+        { "value": "top-left", "label": "Kiri atas" },
+        { "value": "bottom-right", "label": "Kanan bawah" },
+        { "value": "bottom-left", "label": "Kiri bawah" }
+      ],
+      "default": "top-right"
+    },
+    {
+      "type": "range",
+      "id": "save_offset",
+      "label": "Jarak badge ke luar",
+      "min": 0,
+      "max": 72,
+      "step": 4,
+      "unit": "px",
+      "default": 40,
+      "info": "Makin besar makin menepi ke luar gambar."
     },
     {
       "type": "text",

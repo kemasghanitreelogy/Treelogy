@@ -13,8 +13,6 @@
       "type": "lp-tokens",
       "settings": {
         "chromeless": true,
-        "color_mode": "system",
-        "use_theme_font": true,
         "heading_font": "assistant_n4",
         "body_font": "assistant_n4",
         "color_forest": "#2a3b34",
@@ -35,7 +33,9 @@
         "radius": 6,
         "radius_large": 12,
         "section_padding": 80,
-        "section_padding_mobile": 56
+        "section_padding_mobile": 56,
+        "color_mode": "system",
+        "use_theme_font": true
       }
     },
     "urgency": {
@@ -59,50 +59,31 @@
         "media_1": {
           "type": "media",
           "settings": {
-            "image": "shopify://shop_images/treelogy-organic-moringa-oil-and-capsules-product-set.png",
             "alt": "Kapsul & minyak Inside Out Protocol"
           }
         },
         "media_2": {
           "type": "media",
           "settings": {
-            "image": "shopify://shop_images/close-up_composite_image_of_a_smiling_woman.webp",
             "alt": "Kapsul moringa bebas batang"
           }
         },
         "media_3": {
           "type": "media",
           "settings": {
-            "image": "shopify://shop_images/woman_s_hand_holds_an_open_can_of_Treelogy_Organic_Moringa_Capsules.webp",
             "alt": "Minyak biji moringa cold-pressed"
           }
         },
         "media_4": {
           "type": "media",
           "settings": {
-            "image": "shopify://shop_images/ertical_timeline_infographic_in_Indonesian_detailing_the_benefits_of_Treelogy_Moringa.webp",
             "alt": "Ritual harian Inside Out"
           }
         },
         "media_5": {
           "type": "media",
           "settings": {
-            "image": "shopify://shop_images/close-up_of_two_open_Treelogy_Organic_Moringa_Capsule.webp",
             "alt": "Sertifikasi & kemurnian"
-          }
-        },
-        "media_mgwW6j": {
-          "type": "media",
-          "settings": {
-            "image": "shopify://shop_images/woman_holds_a_bottle_of_Treelogy_Organic_Moringa_Oil.webp",
-            "alt": ""
-          }
-        },
-        "media_GeqgWn": {
-          "type": "media",
-          "settings": {
-            "image": "shopify://shop_images/detailed_comparison_table_in_Indonesian_showing_Treelogy_Organic_Moringa_Capsules.webp",
-            "alt": ""
           }
         },
         "proof_1": {
@@ -110,9 +91,7 @@
           "settings": {
             "prefix": "",
             "highlight": "10.000+",
-            "text": "Pelanggan Puas",
-            "link_url": "",
-            "link_label": ""
+            "text": "Pelanggan Puas"
           }
         },
         "proof_2": {
@@ -130,9 +109,7 @@
           "settings": {
             "prefix": "✓",
             "highlight": "",
-            "text": "Garansi 30 Hari",
-            "link_url": "",
-            "link_label": ""
+            "text": "Garansi 30 Hari"
           }
         },
         "proof_4": {
@@ -140,9 +117,7 @@
           "settings": {
             "prefix": "✓",
             "highlight": "",
-            "text": "Gratis Ongkir",
-            "link_url": "",
-            "link_label": ""
+            "text": "Gratis Ongkir"
           }
         }
       },
@@ -152,8 +127,6 @@
         "media_3",
         "media_4",
         "media_5",
-        "media_mgwW6j",
-        "media_GeqgWn",
         "proof_1",
         "proof_2",
         "proof_3",
@@ -166,11 +139,13 @@
         "subheading": "Inside Out Moringa Protocol. Cara perempuan Indonesia mendapatkan kembali sendi yang nyaman, energi, tidur nyenyak, dan rasa percaya diri. Tanpa hormon. Tanpa resep dokter.",
         "cta_label": "Mulai Protokol",
         "cta_url": "#pricing",
-        "gallery_label": "Galeri produk",
         "show_save_badge": true,
         "save_prefix": "Hemat hingga",
         "save_amount": "Rp 464.500",
-        "save_suffix": "Hari Ini"
+        "save_suffix": "Hari Ini",
+        "gallery_label": "Galeri produk",
+        "save_position": "top-right",
+        "save_offset": 40
       }
     },
     "trust": {
@@ -427,13 +402,11 @@
         "l4"
       ],
       "settings": {
-        "avatar": "shopify://shop_images/treelogy-moringa-brand-cap-founder-portrait-bali.jpg",
         "eyebrow": "Dari Founder",
         "heading": "Halo, saya Sacha.",
         "role": "Founder Treelogy",
         "content_top": "<p>Saya pertama kali tiba di Bali umur 13 tahun. Itu 17 tahun lalu. Sejak itu saya jatuh cinta pada moringa. Daunnya membantu saya melawan kelelahan kronis. Minyaknya membereskan masalah kulit yang saya bawa bertahun-tahun. <strong>Bukan tanpa alasan ia dijuluki Miracle Tree.</strong></p><p>Tapi saya tidak menemukan brand yang bisa saya percaya. Tidak ada yang menunjukkan bagaimana moringa mereka dibuat. Atau oleh siapa.</p><p>Maka saya mendirikan Treelogy. Sepenuhnya berbasis di Bali. <strong>Kami menanam, mengolah, dan mengantar moringa dari tanah kami sampai ke tanganmu.</strong> Kamu bisa melihat bagaimana ia dibuat. Dan siapa yang membuatnya.</p><p>Kebanyakan brand menggiling seluruh ranting, termasuk batangnya. Tubuh kita tidak bisa mencerna batang. Itu sebabnya moringa mereka cokelat, pahit, dan menimbulkan rasa begah. <strong>Moringa kami dipisahkan helai demi helai. Dengan tangan.</strong></p>",
         "show_compare": true,
-        "compare_image": "shopify://shop_images/moringa-powder-quality-comparison-dull-vs-vibrant-green.png",
         "compare_label_left": "Lainnya",
         "compare_label_right": "Treelogy",
         "compare_caption": "Daun yang sama. Standar yang berbeda.",
@@ -447,7 +420,6 @@
         "inside": {
           "type": "side",
           "settings": {
-            "image": "shopify://shop_images/treelogy-organic-moringa-capsules-tin-luxury-flatlay-bali.jpg",
             "image_position": "center",
             "title": "Inside",
             "product_name": "Organic Moringa Capsules",
@@ -457,7 +429,6 @@
         "outside": {
           "type": "side",
           "settings": {
-            "image": "shopify://shop_images/treelogy-organic-moringa-oil-30ml-cold-pressed-poolside-bali.png",
             "image_position": "top",
             "title": "Outside",
             "product_name": "Moringa Cold-Pressed Seed Oil",
@@ -611,13 +582,10 @@
         "subheading": "Dulu estrogen membuat kulit memproduksi minyak alaminya sendiri. Menopause memperlambatnya. Cold-pressed seed oil mengembalikan apa yang berhenti diproduksi kulit.",
         "columns": 4,
         "show_before_after": true,
-        "before_image": "shopify://shop_images/moringa-oil-before-eczema-dry-skin-hand-treelogy.jpg",
         "before_label": "Sebelum",
-        "after_image": "shopify://shop_images/moringa-oil-after-clear-skin-hand-results-treelogy.jpg",
         "after_label": "Sesudah",
         "before_after_caption": "Hasil nyata. Ritual minyak di malam hari.",
         "cta_label": "",
-        "cta_url": "",
         "footnote": "Profil nutrisi yang sama sekali berbeda dari daunnya. Kapsul menutrisi tubuh. Minyak menutrisi kulit."
       }
     },
@@ -907,35 +875,30 @@
         "c1": {
           "type": "badge",
           "settings": {
-            "emoji": "",
             "label": "BPOM"
           }
         },
         "c2": {
           "type": "badge",
           "settings": {
-            "emoji": "",
             "label": "Halal"
           }
         },
         "c3": {
           "type": "badge",
           "settings": {
-            "emoji": "",
             "label": "Organik"
           }
         },
         "c4": {
           "type": "badge",
           "settings": {
-            "emoji": "",
             "label": "Bebas Batang"
           }
         },
         "c5": {
           "type": "badge",
           "settings": {
-            "emoji": "",
             "label": "Teruji Lab"
           }
         }
@@ -973,11 +936,11 @@
             "price_label": "Hari ini saja:",
             "price": "Rp 1.365.000",
             "per_day": "Setara Rp 22.750 per hari",
-            "guarantee_marker": "✓",
             "guarantee": "Garansi uang kembali 30 hari",
             "cta_label": "Ambil Protokol 60 Hari",
             "cta_url": "/products/organic-moringa-capsules",
-            "footer_note": "Pesan hari ini, dikirim besok"
+            "footer_note": "Pesan hari ini, dikirim besok",
+            "guarantee_marker": "✓"
           }
         },
         "p30": {
@@ -995,11 +958,11 @@
             "price_label": "Hari ini saja:",
             "price": "Rp 795.000",
             "per_day": "Setara Rp 26.500 per hari",
-            "guarantee_marker": "✓",
             "guarantee": "Garansi uang kembali 30 hari",
             "cta_label": "Ambil Protokol 30 Hari",
             "cta_url": "/products/organic-moringa-capsules",
-            "footer_note": "Pesan hari ini, dikirim besok"
+            "footer_note": "Pesan hari ini, dikirim besok",
+            "guarantee_marker": "✓"
           }
         },
         "pcaps": {
@@ -1017,11 +980,11 @@
             "price_label": "",
             "price": "",
             "per_day": "",
-            "guarantee_marker": "✓",
             "guarantee": "Garansi uang kembali 30 hari",
             "cta_label": "Belanja Capsules",
             "cta_url": "/products/organic-moringa-capsules",
-            "footer_note": "Pesan hari ini, dikirim besok"
+            "footer_note": "Pesan hari ini, dikirim besok",
+            "guarantee_marker": "✓"
           }
         }
       },
@@ -1041,12 +1004,12 @@
         "end_date": "2026-12-31 23:59",
         "storage_key": "lp-offer",
         "scarcity": "⚠ Stok Agustus berisiko habis",
-        "scarcity_note": "· 147 pesanan hari ini",
         "quote": "\"Nyeri lutut saat naik tangga berkurang. Langsung repurchase.\"",
         "quote_author": "Ibu Ratna, 55, Surabaya",
         "pledge_icon": "🛡️",
         "pledge_title": "Nggak Terasa? Uang Kembali.",
-        "pledge_text": "Jalani protokol setiap hari selama 30 hari. Kalau tidak terasa bedanya, kami kembalikan uang sepenuhnya. Tanpa banyak tanya."
+        "pledge_text": "Jalani protokol setiap hari selama 30 hari. Kalau tidak terasa bedanya, kami kembalikan uang sepenuhnya. Tanpa banyak tanya.",
+        "scarcity_note": "· 147 pesanan hari ini"
       }
     },
     "ticker_bottom": {
@@ -1140,7 +1103,6 @@
         "rv2": {
           "type": "review",
           "settings": {
-            "avatar": "shopify://shop_images/treelogy-moringa-capsules-testimonial-senior-woman-wellness.jpg",
             "initials": "IR",
             "name": "Ibu Ratna",
             "meta": "55 Tahun · Surabaya · Pembeli Terverifikasi",
@@ -1165,7 +1127,6 @@
         "rv4": {
           "type": "review",
           "settings": {
-            "avatar": "shopify://shop_images/treelogy-organic-moringa-capsules-customer-review-indonesia.jpg",
             "initials": "DH",
             "name": "Dewi H.",
             "meta": "50 Tahun · Medan · Pembeli Terverifikasi",
@@ -1190,7 +1151,6 @@
         "rv6": {
           "type": "review",
           "settings": {
-            "avatar": "shopify://shop_images/treelogy-moringa-capsules-testimonial-woman-bali-home.jpg",
             "initials": "LM",
             "name": "Linda M.",
             "meta": "48 Tahun · Yogyakarta · Pembeli Terverifikasi",
@@ -1214,18 +1174,18 @@
         "rv6"
       ],
       "settings": {
-        "anchor_id": "ulasan",
         "eyebrow": "Hasil Nyata dari Perempuan Nyata",
         "heading": "Cerita Menopause",
         "score_text": "4,8 dari 5 · 10.000+ ulasan",
-        "empty_text": "Belum ada ulasan untuk topik ini.",
         "topics_label": "Paling sering disebut di ulasan",
         "show_breakdown": true,
         "percent_5": 86,
         "percent_4": 10,
         "percent_3": 2,
         "percent_2": 1,
-        "percent_1": 1
+        "percent_1": 1,
+        "empty_text": "Belum ada ulasan untuk topik ini.",
+        "anchor_id": "ulasan"
       }
     },
     "faq": {
@@ -1324,11 +1284,11 @@
         "sticky_text": "· Offer Terbatas",
         "cta_label": "Belanja Sekarang",
         "cta_url": "#pricing",
-        "fab_gutter": 16,
         "show_whatsapp": true,
         "whatsapp_number": "6281139603993",
         "whatsapp_message": "Halo Treelogy, saya ingin bertanya tentang Inside Out Protocol",
-        "whatsapp_label": "Chat dengan Treelogy di WhatsApp"
+        "whatsapp_label": "Chat dengan Treelogy di WhatsApp",
+        "fab_gutter": 16
       }
     }
   },
