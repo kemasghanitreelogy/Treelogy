@@ -74,10 +74,27 @@
                 {% for line in variant_lines %}
                   {%- assign parts = line | split: '|' -%}
                   {% if parts.size > 1 %}
-                    <div class="lp-plan__variant">
+                    {%- liquid
+                      assign row_tag = 'div'
+                      assign row_href = ''
+                      if parts.size > 2
+                        assign row_variant = parts[2] | strip
+                        if row_variant != blank
+                          assign row_tag = 'a'
+                          assign row_href = '/cart/' | append: row_variant
+                          unless row_variant contains ':'
+                            assign row_href = row_href | append: ':1'
+                          endunless
+                        endif
+                      endif
+                    -%}
+                    <{{ row_tag }}
+                      class="lp-plan__variant{% if row_tag == 'a' %} lp-plan__variant--link{% endif %}"
+                      {% if row_tag == 'a' %}href="{{ row_href }}"{% endif %}
+                    >
                       <span>{{ parts[0] | strip }}</span>
                       <span class="lp-plan__price">{{ parts[1] | strip }}</span>
-                    </div>
+                    </{{ row_tag }}>
                   {% endif %}
                 {% endfor %}
               </div>
@@ -340,6 +357,22 @@
 
   .lp-plan__variant:last-child {
     border-bottom: none;
+  }
+
+  .lp-pricing .lp-plan__variant--link {
+    color: inherit;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s ease;
+  }
+
+  .lp-pricing .lp-plan__variant--link:hover {
+    background: color-mix(in srgb, var(--lp-gold) 12%, transparent);
+  }
+
+  .lp-pricing .lp-plan__variant--link:focus-visible {
+    outline: 2px solid var(--lp-forest);
+    outline-offset: 2px;
   }
 
   .lp-plan__stack {
@@ -676,7 +709,7 @@
           "type": "textarea",
           "id": "variants",
           "label": "Baris varian",
-          "info": "Satu baris per item. Format: Nama | Harga"
+          "info": "Satu baris per item. Format: Nama | Harga — tambahkan | IDvarian agar baris itu langsung ke checkout."
         },
         {
           "type": "textarea",
