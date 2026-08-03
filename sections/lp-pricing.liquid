@@ -29,15 +29,8 @@
       </div>
     {% endif %}
 
-    {% if section.settings.scarcity != blank or section.settings.scarcity_note != blank %}
-      <p class="lp-pricing__scarcity">
-        {%- if section.settings.scarcity != blank -%}
-          <strong>{{ section.settings.scarcity }}</strong>
-        {%- endif -%}
-        {%- if section.settings.scarcity_note != blank -%}
-          <span class="lp-pricing__scarcity-note"> {{ section.settings.scarcity_note }}</span>
-        {%- endif -%}
-      </p>
+    {% if section.settings.scarcity != blank %}
+      <p class="lp-pricing__scarcity">{{ section.settings.scarcity }}</p>
     {% endif %}
 
     {% if section.settings.quote != blank %}
@@ -212,11 +205,6 @@
     color: var(--lp-forest-deep);
     font-size: 0.75rem;
     font-weight: 800;
-  }
-
-  .lp-pricing__scarcity-note {
-    color: var(--lp-text-light);
-    font-weight: 400;
   }
 
   .lp-pricing__scarcity {
@@ -576,12 +564,7 @@
     {
       "type": "text",
       "id": "scarcity",
-      "label": "Teks kelangkaan (tebal)"
-    },
-    {
-      "type": "text",
-      "id": "scarcity_note",
-      "label": "Lanjutan teks kelangkaan"
+      "label": "Teks kelangkaan"
     },
     {
       "type": "textarea",

@@ -789,13 +789,8 @@
 
     {%- liquid
       assign is_chromeless = false
-      assign chromeless_bg = '#1d2a24'
       if template == 'page.links'
         assign is_chromeless = true
-      endif
-      if template == 'page.menopause-lp'
-        assign is_chromeless = true
-        assign chromeless_bg = '#f8f8f2'
       endif
     -%}
     {%- if is_chromeless -%}
@@ -803,7 +798,7 @@
         html, body.t-chromeless {
           margin: 0 !important;
           padding: 0 !important;
-          background: {{ chromeless_bg }} !important;
+          background: #1d2a24 !important;
           overflow-x: hidden;
         }
         body.t-chromeless #landing-page,
