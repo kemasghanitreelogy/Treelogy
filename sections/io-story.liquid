@@ -1,0 +1,471 @@
+{% render 'io-base' %}
+
+<div class="io-section io-story io-section--{{ section.settings.color_scheme }}">
+  <div class="io-container io-container--narrow io-story__inner io-story__inner--{{ section.settings.alignment }}">
+    {%- if section.settings.avatar != blank or section.settings.avatar_placeholder -%}
+      <div class="io-story__avatar">
+        {% render 'io-image',
+          image: section.settings.avatar,
+          alt: section.settings.avatar_alt,
+          placeholder: 'lifestyle-1',
+          sizes: '160px',
+          ratio: '1 / 1'
+        %}
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.eyebrow != blank -%}
+      <p class="io-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.heading != blank -%}
+      <h2 class="io-h2 io-story__heading">{{ section.settings.heading | escape }}</h2>
+    {%- endif -%}
+
+    {%- if section.settings.subheading != blank -%}
+      <p class="io-story__role">{{ section.settings.subheading | escape }}</p>
+    {%- endif -%}
+
+    <div class="io-story__body">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'text' -%}
+            <div class="io-story__text io-reveal" {{ block.shopify_attributes }}>
+              {{ block.settings.text }}
+            </div>
+
+          {%- when 'bullets' -%}
+            {%- assign io_items = block.settings.items | strip | newline_to_br | split: '<br />' -%}
+            <ul class="io-story__bullets io-reveal" {{ block.shopify_attributes }}>
+              {%- for item in io_items -%}
+                {%- assign io_item = item | strip -%}
+                {%- if io_item != blank -%}
+                  <li>
+                    {% render 'io-icon', name: block.settings.icon, size: 20 %}
+                    <span>{{ io_item }}</span>
+                  </li>
+                {%- endif -%}
+              {%- endfor -%}
+            </ul>
+
+          {%- when 'highlight' -%}
+            <div class="io-story__highlight io-reveal" {{ block.shopify_attributes }}>
+              {{ block.settings.text }}
+            </div>
+
+          {%- when 'big_stat' -%}
+            <div class="io-story__stat io-reveal" {{ block.shopify_attributes }}>
+              <span class="io-story__stat-number">{{ block.settings.number | escape }}</span>
+              {%- if block.settings.label != blank -%}
+                <span class="io-story__stat-label">{{ block.settings.label | escape }}</span>
+              {%- endif -%}
+            </div>
+
+          {%- when 'image' -%}
+            <figure class="io-story__figure io-reveal" {{ block.shopify_attributes }}>
+              {%- if block.settings.label_left != blank or block.settings.label_right != blank -%}
+                <div class="io-story__figure-labels">
+                  <span class="io-story__figure-label io-story__figure-label--left">
+                    {{- block.settings.label_left | escape -}}
+                  </span>
+                  <span class="io-story__figure-label io-story__figure-label--right">
+                    {{- block.settings.label_right | escape -}}
+                  </span>
+                </div>
+              {%- endif -%}
+
+              {% render 'io-image',
+                image: block.settings.image,
+                alt: block.settings.image_alt,
+                placeholder: 'lifestyle-2',
+                sizes: '(min-width: 760px) 700px, 92vw'
+              %}
+
+              {%- if block.settings.caption != blank -%}
+                <figcaption class="io-note io-story__caption">{{ block.settings.caption | escape }}</figcaption>
+              {%- endif -%}
+            </figure>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+
+    {%- if section.settings.cta_label != blank -%}
+      <div class="io-cta">
+        <a class="io-btn io-btn--{{ section.settings.cta_style }}" href="{{ section.settings.cta_url | default: '#io-pricing' }}">
+          {{- section.settings.cta_label | escape -}}
+        </a>
+        {%- if section.settings.cta_note != blank -%}
+          <p class="io-note">{{ section.settings.cta_note | escape }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .io-story__inner--center {
+    text-align: center;
+  }
+
+  .io-story__inner--center .io-story__bullets {
+    text-align: left;
+    max-width: 34rem;
+    margin-inline: auto;
+  }
+
+  .io-story__avatar {
+    width: 128px;
+    margin: 0 0 1.5rem;
+  }
+
+  .io-story__inner--center .io-story__avatar {
+    margin-inline: auto;
+  }
+
+  .io-story__avatar .io-media,
+  .io-story__avatar .io-media-frame {
+    border-radius: 50%;
+  }
+
+  .io-story__role {
+    margin: 0.5rem 0 0;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--io-text-soft);
+  }
+
+  .io-story__body {
+    margin-top: 1.75rem;
+  }
+
+  .io-story__text p {
+    margin: 0 0 1.125rem;
+  }
+
+  .io-story__text p:last-child {
+    margin-bottom: 0;
+  }
+
+  .io-story__text + .io-story__text {
+    margin-top: 1.125rem;
+  }
+
+  .io-story__bullets {
+    margin: 1.75rem 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .io-story__bullets li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .io-story__bullets .io-icon {
+    flex: none;
+    margin-top: 0.25rem;
+    color: var(--io-forest);
+  }
+
+  .io-section--forest .io-story__bullets .io-icon {
+    color: var(--io-gold);
+  }
+
+  .io-story__highlight {
+    margin: 1.75rem 0;
+    padding: 1.5rem;
+    border-left: 4px solid var(--io-gold);
+    border-radius: var(--io-radius);
+    background: var(--io-bloom);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    text-align: left;
+  }
+
+  .io-section--forest .io-story__highlight {
+    background: rgba(248, 248, 242, 0.08);
+  }
+
+  .io-story__highlight p {
+    margin: 0 0 0.75rem;
+  }
+
+  .io-story__highlight p:last-child {
+    margin-bottom: 0;
+  }
+
+  .io-story__stat {
+    display: flex;
+    flex-direction: column;
+    align-items: inherit;
+    margin: 1.5rem 0;
+  }
+
+  .io-story__stat-number {
+    font-family: var(--io-font-heading);
+    font-size: clamp(3.5rem, 12vw, 6.5rem);
+    font-weight: 600;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    color: var(--io-forest);
+  }
+
+  .io-section--forest .io-story__stat-number {
+    color: var(--io-gold);
+  }
+
+  .io-story__stat-label {
+    margin-top: 0.5rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--io-text-soft);
+  }
+
+  .io-story__figure {
+    margin: 2rem 0;
+  }
+
+  .io-story__figure-labels {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .io-story__figure-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--io-text-soft);
+  }
+
+  .io-story__figure-label--right {
+    color: var(--io-forest);
+  }
+
+  .io-story__caption {
+    margin-top: 0.75rem;
+    text-align: center;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "IO story",
+  "tag": "section",
+  "class": "io-section-wrapper",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "A narrow, editorial block for founder letters, heritage and any long-form story. Build the body from the blocks below."
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Background",
+      "options": [
+        { "value": "cream", "label": "Cream" },
+        { "value": "white", "label": "White" },
+        { "value": "bloom", "label": "Alternate" },
+        { "value": "forest", "label": "Deep green" }
+      ],
+      "default": "white"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Centred" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Dari Founder"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Halo, saya Sacha."
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Founder Treelogy"
+    },
+    {
+      "type": "image_picker",
+      "id": "avatar",
+      "label": "Portrait"
+    },
+    {
+      "type": "checkbox",
+      "id": "avatar_placeholder",
+      "label": "Show a placeholder while no portrait is uploaded",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "avatar_alt",
+      "label": "Portrait description",
+      "default": "Sacha, founder Treelogy"
+    },
+    {
+      "type": "header",
+      "content": "Call to action"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button link"
+    },
+    {
+      "type": "select",
+      "id": "cta_style",
+      "label": "Button style",
+      "options": [
+        { "value": "primary", "label": "Solid green" },
+        { "value": "gold", "label": "Gold" },
+        { "value": "ghost", "label": "Outline" }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "text",
+      "id": "cta_note",
+      "label": "Text below button"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "text",
+      "name": "Paragraphs",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Saya pertama kali tiba di Bali umur 13 tahun. Sejak itu saya jatuh cinta pada moringa.</p>"
+        }
+      ]
+    },
+    {
+      "type": "bullets",
+      "name": "Bullet list",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "check", "label": "Check" },
+            { "value": "leaf", "label": "Leaf" },
+            { "value": "sparkles", "label": "Sparkles" },
+            { "value": "heart", "label": "Heart" },
+            { "value": "cross", "label": "Cross" }
+          ],
+          "default": "leaf"
+        },
+        {
+          "type": "textarea",
+          "id": "items",
+          "label": "Items",
+          "info": "One item per line.",
+          "default": "Perempuan yang berjuang dengan PMS\nIbu baru yang memulihkan nutrisi tubuh\nIbu yang kesulitan dengan kelancaran ASI\nEksim, nyeri sendi, gula darah, tekanan darah"
+        }
+      ]
+    },
+    {
+      "type": "highlight",
+      "name": "Highlight box",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Untuk perempuan yang sedang menopause: moringa mendukung sendi yang nyeri, energi yang drop di siang hari, tidur lebih nyenyak, dan kulit lebih sehat.</p>"
+        }
+      ]
+    },
+    {
+      "type": "big_stat",
+      "name": "Large number",
+      "settings": [
+        {
+          "type": "text",
+          "id": "number",
+          "label": "Number",
+          "default": "5.000"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Tahun penggunaan tradisional"
+        }
+      ]
+    },
+    {
+      "type": "image",
+      "name": "Image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "image_alt",
+          "label": "Image description",
+          "default": "Perbandingan bubuk moringa"
+        },
+        {
+          "type": "text",
+          "id": "label_left",
+          "label": "Label above left side"
+        },
+        {
+          "type": "text",
+          "id": "label_right",
+          "label": "Label above right side"
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "Caption"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "IO story",
+      "blocks": [{ "type": "text" }, { "type": "highlight" }]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,882 @@
+{
+  "sections": {
+    "io_settings": {
+      "type": "io-tokens",
+      "settings": {
+        "color_forest": "#2a3b34",
+        "color_forest_deep": "#1a2b24",
+        "color_gold": "#f5d053",
+        "color_clay": "#b5503c",
+        "color_cream": "#f8f8f2",
+        "color_bloom": "#eae9dc",
+        "color_text": "#22302a",
+        "color_border": "#d6d4c8",
+        "heading_font": "serif",
+        "container_width": 1120,
+        "corner_radius": 16,
+        "section_spacing": 7
+      }
+    },
+    "io_hero": {
+      "type": "io-hero",
+      "blocks": {
+        "proof_customers": {
+          "type": "proof",
+          "settings": { "icon": "heart", "highlight": "10.000+", "text": "pelanggan Treelogy" }
+        },
+        "proof_rating": {
+          "type": "rating",
+          "settings": {
+            "highlight": "4,8",
+            "text": "/5 dari ulasan pembeli terverifikasi",
+            "rating_label": "Dinilai 4,8 dari 5 bintang"
+          }
+        },
+        "proof_origin": {
+          "type": "proof",
+          "settings": { "icon": "sprout", "highlight": "", "text": "Ditanam & diolah di Bali" }
+        },
+        "proof_bpom": {
+          "type": "proof",
+          "settings": { "icon": "shield", "highlight": "", "text": "Terdaftar BPOM & Halal" }
+        }
+      },
+      "block_order": ["proof_customers", "proof_rating", "proof_origin", "proof_bpom"],
+      "settings": {
+        "color_scheme": "cream",
+        "badge": "Untuk Perempuan di Masa Henti Haid",
+        "pre_heading": "Dukungan Nutrisi Harian",
+        "heading": "Daun Kelor untuk Perempuan Indonesia yang Sedang Melewati Menopause",
+        "subheading": "<p>Inside Out Moringa Protocol: kapsul daun kelor dan minyak biji kelor cold-pressed. Ditanam, dipilah helai demi helai, dan diolah sendiri di Karangasem, Bali.</p><p>Secara tradisional digunakan untuk membantu meringankan gejala henti haid pada lanjut usia.</p>",
+        "cta_label": "Pelajari Protokolnya",
+        "cta_url": "#io-pricing",
+        "cta_style": "primary",
+        "cta_note": "Kebijakan pengembalian 30 hari · Gratis ongkir seluruh Indonesia",
+        "image_alt": "Kapsul daun kelor organik dan minyak biji kelor cold-pressed Treelogy",
+        "preload_image": true,
+        "save_label": "",
+        "save_value": "",
+        "media_position": "right"
+      }
+    },
+    "io_trust": {
+      "type": "io-badge-strip",
+      "blocks": {
+        "b_bpom": { "type": "badge", "settings": { "icon": "shield", "text": "Terdaftar BPOM" } },
+        "b_halal": { "type": "badge", "settings": { "icon": "award", "text": "Bersertifikat Halal" } },
+        "b_organic": { "type": "badge", "settings": { "icon": "sprout", "text": "Organik" } },
+        "b_stemfree": { "type": "badge", "settings": { "icon": "leaf", "text": "Bebas Batang" } },
+        "b_bali": { "type": "badge", "settings": { "icon": "heart", "text": "Kebun Sendiri di Bali" } },
+        "b_return": { "type": "badge", "settings": { "icon": "truck", "text": "Gratis Ongkir" } }
+      },
+      "block_order": ["b_bpom", "b_halal", "b_organic", "b_stemfree", "b_bali", "b_return"],
+      "settings": { "layout": "grid", "color_scheme": "white", "speed": 40 }
+    },
+    "io_problem": {
+      "type": "io-checklist",
+      "blocks": {
+        "p_joints": {
+          "type": "item",
+          "settings": { "icon": "check", "title": "", "text": "Lutut terasa nyeri saat naik tangga, jari kaku di pagi hari." }
+        },
+        "p_energy": {
+          "type": "item",
+          "settings": { "icon": "check", "title": "", "text": "Tenaga habis sebelum sore, padahal aktivitas biasa saja." }
+        },
+        "p_sleep": {
+          "type": "item",
+          "settings": { "icon": "check", "title": "", "text": "Sering terbangun tengah malam, bangun pagi tetap terasa lelah." }
+        },
+        "p_skin": {
+          "type": "item",
+          "settings": { "icon": "check", "title": "", "text": "Kulit terasa lebih kering, rambut menipis, kuku mudah patah." }
+        },
+        "p_tried": {
+          "type": "item",
+          "settings": { "icon": "check", "title": "", "text": "Sudah mencoba beberapa suplemen, tapi belum menemukan yang cocok." }
+        }
+      },
+      "block_order": ["p_joints", "p_energy", "p_sleep", "p_skin", "p_tried"],
+      "settings": {
+        "color_scheme": "cream",
+        "tone": "positive",
+        "eyebrow": "",
+        "heading": "Apakah Ini Terdengar Seperti Kamu?",
+        "subheading": "Masa henti haid mengubah banyak hal sekaligus. Ini beberapa yang paling sering diceritakan pelanggan kami.",
+        "punchline": "Kalau sebagian besar terasa familiar, halaman ini ditulis untukmu.",
+        "cta_label": "",
+        "cta_url": "#io-pricing",
+        "cta_style": "primary"
+      }
+    },
+    "io_reviews": {
+      "type": "io-reviews",
+      "blocks": {
+        "chip_joints": { "type": "topic", "settings": { "icon": "bone", "label": "Sendi & Lutut", "key": "sendi" } },
+        "chip_sleep": { "type": "topic", "settings": { "icon": "moon", "label": "Tidur", "key": "tidur" } },
+        "chip_energy": { "type": "topic", "settings": { "icon": "bolt", "label": "Energi", "key": "energi" } },
+        "chip_skin": { "type": "topic", "settings": { "icon": "sparkles", "label": "Kulit & Rambut", "key": "kulit" } },
+        "rev_ratna": {
+          "type": "review",
+          "settings": {
+            "author": "Ibu Ratna",
+            "detail": "55 Tahun · Surabaya · Pembeli Terverifikasi",
+            "rating": 5,
+            "quote": "<p>Bulan depan saya 56 tahun. Baru habis 30 kapsul dan saya merasa cocok. Kualitas tidur terasa lebih baik dan badan lebih nyaman saat naik tangga. Langsung repurchase.</p>",
+            "topics": "tidur sendi",
+            "tag": "Tidur · Sendi · 55 Tahun"
+          }
+        },
+        "rev_nia": {
+          "type": "review",
+          "settings": {
+            "author": "Nia S.",
+            "detail": "47 Tahun · Bandung · Pembeli Terverifikasi",
+            "rating": 5,
+            "quote": "<p>Beli karena faktor usia. Baru beberapa hari, saya merasa lebih nyaman saat tidur malam. Sekarang jadi kebiasaan pagi saya.</p>",
+            "topics": "tidur",
+            "tag": "Tidur"
+          }
+        },
+        "rev_dewi": {
+          "type": "review",
+          "settings": {
+            "author": "Dewi H.",
+            "detail": "50 Tahun · Medan · Pembeli Terverifikasi",
+            "rating": 5,
+            "quote": "<p>Usia saya 50 tahun dan banyak perubahan di tubuh. Setelah minum Treelogy seminggu, badan terasa lebih enak dan nyaman. Terima kasih Treelogy.</p>",
+            "topics": "sendi energi",
+            "tag": "Keseharian · 50 Tahun"
+          }
+        },
+        "rev_dian": {
+          "type": "review",
+          "settings": {
+            "author": "Dian P.",
+            "detail": "49 Tahun · Jakarta · Pembeli Terverifikasi",
+            "rating": 5,
+            "quote": "<p>Sudah tidak terhitung berapa kali saya reorder. Kulit terasa lebih halus dan stamina olahraga saya lebih terjaga.</p>",
+            "topics": "kulit energi",
+            "tag": "Kulit · Energi"
+          }
+        },
+        "rev_linda": {
+          "type": "review",
+          "settings": {
+            "author": "Linda M.",
+            "detail": "48 Tahun · Yogyakarta · Pembeli Terverifikasi",
+            "rating": 5,
+            "quote": "<p>Yang paling terasa buat saya, tidur jadi lebih nyenyak dan kulit lebih lembap. Badan terasa segar.</p>",
+            "topics": "tidur kulit",
+            "tag": "Tidur · Kulit"
+          }
+        },
+        "rev_sari": {
+          "type": "review",
+          "settings": {
+            "author": "Sari W.",
+            "detail": "53 Tahun · Jakarta · Pembeli Terverifikasi",
+            "rating": 5,
+            "quote": "<p>Sudah setahun saya pakai dan cocok. Rasanya tidak pahit seperti produk kelor lain yang pernah saya coba.</p>",
+            "topics": "energi",
+            "tag": "Keseharian"
+          }
+        }
+      },
+      "block_order": [
+        "chip_joints",
+        "chip_sleep",
+        "chip_energy",
+        "chip_skin",
+        "rev_ratna",
+        "rev_nia",
+        "rev_dewi",
+        "rev_dian",
+        "rev_linda",
+        "rev_sari"
+      ],
+      "settings": {
+        "color_scheme": "bloom",
+        "eyebrow": "Cerita Pelanggan",
+        "heading": "Dari Perempuan Seusia Kamu",
+        "show_summary": true,
+        "average": "4,8",
+        "count_label": "dari 5 · berdasarkan ulasan pembeli terverifikasi",
+        "distribution": "86, 10, 2, 1, 1",
+        "topics_label": "Paling sering disebut di ulasan",
+        "cta_label": "",
+        "cta_url": "#io-pricing",
+        "cta_style": "primary",
+        "footnote": "Ulasan dari pembeli terverifikasi, ditampilkan atas persetujuan tertulis mereka. Hasil tiap orang bisa berbeda. Ganti keterangan ini dengan sumber dan tanggal data ulasan Anda."
+      }
+    },
+    "io_protocol": {
+      "type": "io-duo",
+      "blocks": {
+        "d_inside": {
+          "type": "side",
+          "settings": {
+            "image_alt": "Kaleng Organic Moringa Capsules Treelogy digenggam di tangan",
+            "label": "Inside",
+            "title": "Organic Moringa Capsules",
+            "benefits": "Kapsul daun kelor murni, tanpa batang dan tanpa filler\nSecara tradisional digunakan untuk membantu meringankan gejala henti haid pada lanjut usia\nSumber kalsium, zat besi, dan vitamin B dari pangan utuh\n3 kapsul sehari bersama sarapan\nTerdaftar BPOM sebagai Obat Tradisional"
+          }
+        },
+        "d_outside": {
+          "type": "side",
+          "settings": {
+            "image_alt": "Botol Moringa Cold-Pressed Seed Oil Treelogy",
+            "label": "Outside",
+            "title": "Moringa Cold-Pressed Seed Oil",
+            "benefits": "Minyak biji kelor cold-pressed, satu bahan tanpa campuran\nMelembapkan kulit yang terasa kering\nMembantu menjaga kelembutan rambut dan kulit kepala\nRingan, cepat meresap, tidak menyumbat pori\n3-4 tetes setiap malam\nTerdaftar BPOM sebagai Kosmetika"
+          }
+        }
+      },
+      "block_order": ["d_inside", "d_outside"],
+      "settings": {
+        "color_scheme": "white",
+        "eyebrow": "Apa Isi Protokolnya",
+        "heading": "The Inside Out Moringa Protocol",
+        "subheading": "Dua produk dari satu pohon. Satu untuk tubuh, satu untuk kulit dan rambut.",
+        "show_plus": true,
+        "cta_label": "",
+        "cta_url": "#io-pricing",
+        "cta_style": "primary",
+        "cta_note": ""
+      }
+    },
+    "io_nutrients_inside": {
+      "type": "io-stat-grid",
+      "blocks": {
+        "n_calcium": {
+          "type": "stat",
+          "settings": {
+            "number": "17x",
+            "label": "Kalsium",
+            "compared_to": "dibanding susu, gram per gram",
+            "note": "Kalsium adalah salah satu zat gizi yang kebutuhannya meningkat pada perempuan lanjut usia"
+          }
+        },
+        "n_iron": {
+          "type": "stat",
+          "settings": {
+            "number": "25x",
+            "label": "Zat Besi",
+            "compared_to": "dibanding bayam, gram per gram",
+            "note": "Zat besi berperan dalam pembentukan sel darah merah"
+          }
+        },
+        "n_vita": {
+          "type": "stat",
+          "settings": {
+            "number": "10x",
+            "label": "Vitamin A",
+            "compared_to": "dibanding wortel, gram per gram",
+            "note": "Vitamin A berperan menjaga kesehatan kulit dan penglihatan"
+          }
+        },
+        "n_potassium": {
+          "type": "stat",
+          "settings": {
+            "number": "15x",
+            "label": "Kalium",
+            "compared_to": "dibanding pisang, gram per gram",
+            "note": "Kalium berperan menjaga keseimbangan cairan tubuh"
+          }
+        },
+        "n_amino": {
+          "type": "stat",
+          "settings": {
+            "number": "9",
+            "label": "Asam Amino Esensial",
+            "compared_to": "lengkap, dari satu bahan",
+            "note": "Asam amino esensial hanya bisa diperoleh dari makanan"
+          }
+        },
+        "n_total": {
+          "type": "stat",
+          "settings": {
+            "number": "92",
+            "label": "Zat Gizi & Senyawa",
+            "compared_to": "teridentifikasi pada daun kelor",
+            "note": "Satu bahan pangan, bukan campuran banyak ekstrak"
+          }
+        }
+      },
+      "block_order": ["n_calcium", "n_iron", "n_vita", "n_potassium", "n_amino", "n_total"],
+      "settings": {
+        "color_scheme": "cream",
+        "align_center": true,
+        "eyebrow": "Kenapa Daun Kelor",
+        "heading": "Apa yang Ada di Dalam Daunnya",
+        "subheading": "Daun kelor sudah lama menjadi sumber pangan bergizi di Indonesia. Ini kandungan yang membuatnya menonjol.",
+        "columns": 3,
+        "columns_mobile": "1",
+        "show_comparison": false,
+        "cta_label": "",
+        "cta_url": "#io-pricing",
+        "cta_style": "primary",
+        "footnote": "Perbandingan gram per gram antara bubuk daun kelor kering dan bahan segar. Angka mengacu pada data komposisi pangan; cantumkan sumber dan tahun data Anda di sini. Produk ini bukan obat."
+      }
+    },
+    "io_nutrients_outside": {
+      "type": "io-stat-grid",
+      "blocks": {
+        "o_oleic": {
+          "type": "stat",
+          "settings": {
+            "number": "70%",
+            "label": "Asam Oleat",
+            "compared_to": "omega-9",
+            "note": "Asam lemak yang membantu menjaga kelembapan kulit"
+          }
+        },
+        "o_vite": {
+          "type": "stat",
+          "settings": {
+            "number": "E",
+            "label": "Vitamin E",
+            "compared_to": "tokoferol alfa, gamma & delta",
+            "note": "Antioksidan alami yang terkandung dalam minyak biji kelor"
+          }
+        },
+        "o_behenic": {
+          "type": "stat",
+          "settings": {
+            "number": "6%",
+            "label": "Asam Behenat",
+            "compared_to": "asal nama ben oil",
+            "note": "Memberi hasil akhir yang lembut di kulit"
+          }
+        },
+        "o_unsat": {
+          "type": "stat",
+          "settings": {
+            "number": "78%",
+            "label": "Asam Lemak Tak Jenuh",
+            "compared_to": "ringan & cepat meresap",
+            "note": "Tidak menyumbat pori"
+          }
+        }
+      },
+      "block_order": ["o_oleic", "o_vite", "o_behenic", "o_unsat"],
+      "settings": {
+        "color_scheme": "white",
+        "align_center": true,
+        "eyebrow": "Kenapa Minyak Bijinya",
+        "heading": "Profil yang Berbeda dari Daunnya",
+        "subheading": "Biji kelor menghasilkan minyak dengan komposisi asam lemak yang sama sekali berbeda dari daunnya.",
+        "columns": 4,
+        "columns_mobile": "2",
+        "show_comparison": false,
+        "compare_before_alt": "Kulit punggung tangan tampak kering",
+        "compare_before_label": "Sebelum",
+        "compare_after_alt": "Tangan yang sama tampak lebih lembap",
+        "compare_after_label": "Sesudah",
+        "compare_caption": "Foto pemakaian nyata, tanpa retouch. Hasil tiap orang bisa berbeda.",
+        "cta_label": "",
+        "cta_url": "#io-pricing",
+        "cta_style": "gold",
+        "footnote": "Kapsul menutrisi tubuh dari dalam. Minyak merawat kulit dan rambut dari luar."
+      }
+    },
+    "io_founder": {
+      "type": "io-story",
+      "blocks": {
+        "s_intro": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Saya pertama kali tiba di Bali umur 13 tahun. Itu 17 tahun lalu. Sejak itu saya jatuh cinta pada kelor.</p><p>Tapi saya tidak menemukan brand yang bisa saya percaya. Tidak ada yang menunjukkan bagaimana kelor mereka dibuat. Atau oleh siapa.</p><p>Maka saya mendirikan Treelogy di Karangasem, Bali. <strong>Kami menanam, mengolah, dan mengantar kelor dari kebun kami sampai ke tanganmu.</strong> Kamu bisa datang dan melihat sendiri.</p><p>Kebanyakan produsen menggiling seluruh ranting, termasuk batangnya. Batang sulit dicerna tubuh. Itu sebabnya bubuk mereka cokelat dan pahit. <strong>Daun kami dipisahkan helai demi helai. Dengan tangan.</strong> Satu jam kerja hanya menghasilkan sekitar 12 gram bubuk daun murni.</p>"
+          }
+        },
+        "s_compare": {
+          "type": "image",
+          "settings": {
+            "image_alt": "Perbandingan bubuk kelor: cokelat kusam dari produsen lain di sebelah bubuk hijau cerah bebas batang milik Treelogy",
+            "label_left": "Digiling utuh",
+            "label_right": "Treelogy",
+            "caption": "Daun yang sama. Cara pengolahan yang berbeda."
+          }
+        },
+        "s_community": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Hari ini, para perempuan dari komunitas kami di Karangasem memilah setiap batch dengan tangan. Kami membayar 36,9% di atas upah minimum regional.</p>"
+          }
+        }
+      },
+      "block_order": ["s_intro", "s_compare", "s_community"],
+      "settings": {
+        "color_scheme": "bloom",
+        "alignment": "left",
+        "eyebrow": "Siapa di Balik Treelogy",
+        "heading": "Halo, saya Sacha.",
+        "subheading": "Founder Treelogy · Karangasem, Bali",
+        "avatar_placeholder": true,
+        "avatar_alt": "Sacha, founder Treelogy",
+        "cta_label": "",
+        "cta_url": "#io-pricing",
+        "cta_style": "primary",
+        "cta_note": ""
+      }
+    },
+    "io_ritual": {
+      "type": "io-steps",
+      "blocks": {
+        "r_morning": {
+          "type": "step",
+          "settings": {
+            "icon": "sun",
+            "kicker": "Pagi",
+            "title": "3 Kapsul Bersama Sarapan",
+            "text": "Baru pertama mencoba kelor? Mulai dengan 2 kapsul di beberapa hari pertama."
+          }
+        },
+        "r_night": {
+          "type": "step",
+          "settings": {
+            "icon": "moon",
+            "kicker": "Malam",
+            "title": "3-4 Tetes Minyaknya",
+            "text": "Di wajah, leher, dan tangan. Bisa juga dipijatkan sampai ke ujung rambut."
+          }
+        },
+        "r_daily": {
+          "type": "step",
+          "settings": {
+            "icon": "sparkles",
+            "kicker": "Setiap Hari",
+            "title": "Dua Menit Saja",
+            "text": "Tidak perlu mengubah kebiasaan lain. Cukup diselipkan ke rutinitas yang sudah ada."
+          }
+        }
+      },
+      "block_order": ["r_morning", "r_night", "r_daily"],
+      "settings": {
+        "color_scheme": "cream",
+        "eyebrow": "Cara Pakai",
+        "heading": "Ritual Inside Out",
+        "subheading": "Dua menit sehari. Itu saja.",
+        "columns": 3,
+        "cta_label": "",
+        "cta_url": "#io-pricing",
+        "cta_style": "primary"
+      }
+    },
+    "io_timeline": {
+      "type": "io-timeline",
+      "blocks": {
+        "tl_w1": {
+          "type": "step",
+          "settings": {
+            "icon": "bolt",
+            "period": "Minggu 1-2",
+            "title": "Tubuh menyesuaikan diri.",
+            "text": "Sebagian orang belum merasakan apa-apa di tahap ini, dan itu wajar. Sebagian lain mulai merasa lebih nyaman."
+          }
+        },
+        "tl_m1": {
+          "type": "step",
+          "settings": {
+            "icon": "moon",
+            "period": "Bulan 1",
+            "title": "Kebiasaan mulai terbentuk.",
+            "text": "Di titik ini kebanyakan orang sudah terbiasa dengan ritualnya. Kulit biasanya yang paling dulu terasa berbeda karena minyaknya bekerja di permukaan."
+          }
+        },
+        "tl_m2": {
+          "type": "step",
+          "settings": {
+            "icon": "sparkles",
+            "period": "Bulan 2-3",
+            "title": "Konsistensi mulai terbayar.",
+            "text": "Nutrisi dari pangan bekerja perlahan, bukan seketika. Ini periode saat pelanggan kami paling sering melakukan pembelian ulang."
+          }
+        },
+        "tl_honest": {
+          "type": "step",
+          "settings": {
+            "icon": "scale",
+            "period": "Yang Perlu Diketahui",
+            "title": "Ini bukan obat, dan hasilnya tidak dijamin.",
+            "text": "Kelor adalah bahan pangan, bukan solusi instan. Kalau kamu mencari perubahan dalam hitungan hari, produk ini kemungkinan besar akan mengecewakan."
+          }
+        }
+      },
+      "block_order": ["tl_w1", "tl_m1", "tl_m2", "tl_honest"],
+      "settings": {
+        "color_scheme": "white",
+        "eyebrow": "Ekspektasi yang Realistis",
+        "heading": "Apa yang Wajar Diharapkan",
+        "subheading": "Kami lebih suka kamu tahu ini di depan daripada kecewa di minggu kedua.",
+        "cta_label": "",
+        "cta_url": "#io-pricing",
+        "cta_style": "primary",
+        "cta_note": "",
+        "footnote": "Gambaran umum berdasarkan pengalaman pelanggan. Hasil tiap orang berbeda dan tidak dijamin."
+      }
+    },
+    "io_audience": {
+      "type": "io-audience",
+      "blocks": {
+        "a_joints": {
+          "type": "card",
+          "settings": {
+            "icon": "bone",
+            "title": "Kamu mencari dukungan nutrisi harian",
+            "text": "Bukan obat, tapi asupan bergizi yang bisa diandalkan setiap hari."
+          }
+        },
+        "a_natural": {
+          "type": "card",
+          "settings": {
+            "icon": "leaf",
+            "title": "Kamu lebih nyaman dengan pangan utuh",
+            "text": "Satu bahan yang bisa kamu sebutkan namanya, bukan daftar ekstrak yang tidak kamu kenal."
+          }
+        },
+        "a_transparent": {
+          "type": "card",
+          "settings": {
+            "icon": "sprout",
+            "title": "Kamu ingin tahu asal produknya",
+            "text": "Siapa yang menanam, di mana, dan bagaimana diolah."
+          }
+        },
+        "a_patient": {
+          "type": "card",
+          "settings": {
+            "icon": "heart",
+            "title": "Kamu siap konsisten 1-2 bulan",
+            "text": "Nutrisi dari pangan bekerja perlahan. Konsistensi lebih menentukan daripada dosis."
+          }
+        },
+        "a_both": {
+          "type": "card",
+          "settings": {
+            "icon": "sparkles",
+            "title": "Kamu juga memperhatikan kulit dan rambut",
+            "text": "Protokol ini merawat dua sisi sekaligus, bukan hanya dari dalam."
+          }
+        },
+        "a_local": {
+          "type": "card",
+          "settings": {
+            "icon": "shield",
+            "title": "Kamu ingin produk yang izinnya bisa dicek",
+            "text": "Nomor izin edar BPOM kami tercantum di halaman ini dan bisa kamu verifikasi sendiri."
+          }
+        }
+      },
+      "block_order": ["a_joints", "a_natural", "a_transparent", "a_patient", "a_both", "a_local"],
+      "settings": {
+        "color_scheme": "bloom",
+        "eyebrow": "",
+        "heading": "Protokol Ini Cocok Kalau",
+        "subheading": "",
+        "columns": 3,
+        "exclude_heading": "Sebaiknya Tidak Dulu Kalau",
+        "exclude_items": "Kamu mencari hasil dalam hitungan hari\nKamu memiliki alergi terhadap Moringa oleifera\nKamu sedang hamil atau menyusui, tanpa persetujuan dokter\nKamu sedang mengonsumsi pengencer darah, obat tiroid, atau obat tekanan darah, tanpa konsultasi dokter\nKamu mengharapkan produk ini menggantikan pengobatan dari dokter",
+        "cta_label": "",
+        "cta_url": "#io-pricing",
+        "cta_style": "primary"
+      }
+    },
+    "io_heritage": {
+      "type": "io-story",
+      "blocks": {
+        "h_stat": {
+          "type": "big_stat",
+          "settings": { "number": "5.000", "label": "Tahun penggunaan tradisional" }
+        },
+        "h_text": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Jauh sebelum ada industri wellness, <strong>perempuan di seluruh Asia sudah mengandalkan pohon kelor</strong>. Di Jawa ia dikenal sebagai daun kelor dan dikonsumsi di setiap fase kehidupan. Di NTT ia menjadi asupan utama para ibu.</p><p>Kami tidak menciptakan sesuatu yang baru. <strong>Kami merawat sesuatu yang sudah lama ada</strong>, dalam bentuk yang paling murni.</p>"
+          }
+        }
+      },
+      "block_order": ["h_stat", "h_text"],
+      "settings": {
+        "color_scheme": "forest",
+        "alignment": "center",
+        "eyebrow": "Kearifan yang Sudah Lama Ada",
+        "heading": "Tahun Perempuan Nusantara Mengandalkan Kelor",
+        "subheading": "",
+        "avatar_placeholder": false,
+        "cta_label": "",
+        "cta_url": "#io-pricing",
+        "cta_style": "gold",
+        "cta_note": ""
+      }
+    },
+    "io_certs": {
+      "type": "io-certifications",
+      "blocks": {
+        "cert_bpom": { "type": "cert", "settings": { "alt": "Logo BPOM", "label": "BPOM", "detail": "Obat Tradisional & Kosmetika" } },
+        "cert_halal": { "type": "cert", "settings": { "alt": "Logo Halal Indonesia", "label": "Halal", "detail": "Sertifikat berlaku" } },
+        "cert_organic": { "type": "cert", "settings": { "alt": "Logo sertifikasi organik", "label": "Organik", "detail": "" } },
+        "cert_stemfree": { "type": "cert", "settings": { "alt": "Ikon daun bebas batang", "label": "Bebas Batang", "detail": "Dipisahkan dengan tangan" } },
+        "cert_farm": { "type": "cert", "settings": { "alt": "Ikon kebun sendiri", "label": "Kebun Sendiri", "detail": "Karangasem, Bali" } }
+      },
+      "block_order": ["cert_bpom", "cert_halal", "cert_organic", "cert_stemfree", "cert_farm"],
+      "settings": {
+        "color_scheme": "white",
+        "eyebrow": "Kualitas Terverifikasi",
+        "heading": "Terdaftar, Tersertifikasi, dan Bisa Dicek Sendiri",
+        "subheading": "",
+        "footnote": "Nomor izin edar lengkap tercantum di bagian bawah halaman ini."
+      }
+    },
+    "io_faq": {
+      "type": "io-faq",
+      "blocks": {
+        "q_how": {
+          "type": "question",
+          "settings": {
+            "question": "Apa sebenarnya yang dilakukan kelor untuk perempuan di masa henti haid?",
+            "answer": "<p>Kelor adalah bahan pangan yang padat gizi. Kapsul kami terdaftar di BPOM sebagai obat tradisional dan secara tradisional digunakan untuk membantu meringankan gejala henti haid pada lanjut usia. Kandungan kalsium, zat besi, dan vitamin B di dalamnya berperan dalam kebutuhan gizi harian.</p>"
+          }
+        },
+        "q_hrt": {
+          "type": "question",
+          "settings": {
+            "question": "Apakah ini bisa menggantikan terapi hormon atau obat dari dokter?",
+            "answer": "<p>Tidak. Ini obat tradisional dan suplemen, bukan obat, dan tidak menggantikan terapi apa pun yang diresepkan dokter. Jangan menghentikan atau mengubah pengobatan tanpa berkonsultasi dengan dokter Anda.</p>"
+          }
+        },
+        "q_safety": {
+          "type": "question",
+          "settings": {
+            "question": "Apakah aman kalau saya sedang minum obat rutin?",
+            "answer": "<p>Kalau Anda sedang mengonsumsi pengencer darah, obat tiroid, atau obat tekanan darah, konsultasikan dulu dengan dokter sebelum menggunakan produk ini. Tidak dianjurkan untuk ibu hamil dan menyusui tanpa persetujuan dokter. Baca aturan pakai dan peringatan perhatian pada kemasan.</p>"
+          }
+        },
+        "q_speed": {
+          "type": "question",
+          "settings": {
+            "question": "Berapa lama sampai terasa?",
+            "answer": "<p>Berbeda-beda, dan kami tidak bisa menjanjikan apa pun. Nutrisi dari pangan bekerja perlahan. Kebanyakan pelanggan kami menilai setelah 1-2 bulan pemakaian. Kalau Anda mencari perubahan dalam hitungan hari, produk ini kemungkinan tidak cocok.</p>"
+          }
+        },
+        "q_dose": {
+          "type": "question",
+          "settings": {
+            "question": "Berapa kapsul per hari dan berapa lama satu kemasan?",
+            "answer": "<p>3 kapsul bersama sarapan. Perut sensitif? Mulai dengan 2 di beberapa hari pertama. 90 kapsul cukup untuk sekitar 30 hari, 180 kapsul untuk sekitar 60 hari. Minyaknya 3-4 tetes setiap malam.</p>"
+          }
+        },
+        "q_both": {
+          "type": "question",
+          "settings": {
+            "question": "Harus beli dua-duanya atau boleh salah satu?",
+            "answer": "<p>Boleh salah satu. Kapsul untuk kebutuhan gizi dari dalam, minyak untuk perawatan kulit dan rambut dari luar. Banyak yang mulai dari kapsul dulu, lalu menambahkan minyaknya kemudian.</p>"
+          }
+        },
+        "q_diff": {
+          "type": "question",
+          "settings": {
+            "question": "Kenapa lebih mahal dari kelor di marketplace?",
+            "answer": "<p>Karena apa yang tidak ada di dalamnya. Kelor murah digiling utuh satu ranting, batang dan semuanya. Daun kami dipisahkan helai demi helai dengan tangan, dan satu jam kerja hanya menghasilkan sekitar 12 gram bubuk daun murni. Kami juga mengeringkannya di tempat teduh, bukan dijemur langsung.</p>"
+          }
+        },
+        "q_shipping": {
+          "type": "question",
+          "settings": {
+            "question": "Bagaimana pengiriman dan kalau ternyata tidak cocok?",
+            "answer": "<p>Gratis ongkir ke seluruh Indonesia. Pesanan sebelum jam 15.00 WIB dikirim di hari yang sama. Kalau produk tidak cocok, hubungi kami dalam 30 hari sejak diterima untuk proses pengembalian sesuai kebijakan retur kami.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "q_how",
+        "q_hrt",
+        "q_safety",
+        "q_speed",
+        "q_dose",
+        "q_both",
+        "q_diff",
+        "q_shipping"
+      ],
+      "settings": {
+        "color_scheme": "cream",
+        "eyebrow": "Sebelum Memutuskan",
+        "heading": "Pertanyaan yang Sering Diajukan",
+        "subheading": "",
+        "open_first": false,
+        "enable_schema": true,
+        "cta_label": "",
+        "cta_url": "#io-pricing",
+        "cta_style": "primary"
+      }
+    },
+    "io_pricing": {
+      "type": "io-pricing",
+      "blocks": {
+        "plan_60": {
+          "type": "plan",
+          "settings": {
+            "featured": true,
+            "tag": "Paling Sering Dipilih",
+            "title": "Protokol Inside Out 60 Hari",
+            "description": "Kapsul dan minyak untuk dua bulan. Durasi yang kami sarankan untuk menilai kecocokan.",
+            "value_stack": "180 Kapsul|60 hari\nSeed Oil 60ml|60 hari\nOngkos Kirim|Gratis",
+            "compare_label": "Harga normal",
+            "price_label": "Harga",
+            "days": 60,
+            "per_day_label": "Setara per hari:",
+            "action": "cart",
+            "button_label": "Ambil Protokol 60 Hari",
+            "sold_out_label": "Stok habis",
+            "button_style": "gold",
+            "variant_label": "Pilih ukuran",
+            "guarantee": "Kebijakan pengembalian 30 hari",
+            "footnote": "Pesan sebelum 15.00 WIB, dikirim hari ini"
+          }
+        },
+        "plan_30": {
+          "type": "plan",
+          "settings": {
+            "featured": false,
+            "tag": "Untuk Mencoba",
+            "title": "Protokol Inside Out 30 Hari",
+            "description": "Kapsul dan minyak untuk satu bulan.",
+            "value_stack": "90 Kapsul|30 hari\nSeed Oil 30ml|30 hari\nOngkos Kirim|Gratis",
+            "compare_label": "Harga normal",
+            "price_label": "Harga",
+            "days": 30,
+            "per_day_label": "Setara per hari:",
+            "action": "cart",
+            "button_label": "Ambil Protokol 30 Hari",
+            "sold_out_label": "Stok habis",
+            "button_style": "primary",
+            "variant_label": "Pilih ukuran",
+            "guarantee": "Kebijakan pengembalian 30 hari",
+            "footnote": "Pesan sebelum 15.00 WIB, dikirim hari ini"
+          }
+        },
+        "plan_caps": {
+          "type": "plan",
+          "settings": {
+            "product": "organic-moringa-capsules",
+            "featured": false,
+            "tag": "Kapsul Saja",
+            "title": "Organic Moringa Capsules",
+            "description": "Mulai dari kapsulnya dulu. Minyaknya bisa ditambahkan kapan saja.",
+            "value_stack": "Ongkos Kirim|Gratis",
+            "compare_label": "Harga normal",
+            "price_label": "Harga",
+            "days": 30,
+            "per_day_label": "Setara per hari:",
+            "action": "cart",
+            "button_label": "Tambah ke Keranjang",
+            "sold_out_label": "Stok habis",
+            "button_style": "ghost",
+            "variant_label": "Pilih ukuran",
+            "guarantee": "Kebijakan pengembalian 30 hari",
+            "footnote": "Pesan sebelum 15.00 WIB, dikirim hari ini"
+          }
+        }
+      },
+      "block_order": ["plan_60", "plan_30", "plan_caps"],
+      "settings": {
+        "color_scheme": "bloom",
+        "anchor": "io-pricing",
+        "eyebrow": "",
+        "heading": "Pilih Paketnya",
+        "subheading": "Harga sudah termasuk ongkos kirim ke seluruh Indonesia. Tidak ada biaya tambahan di checkout.",
+        "quote": "",
+        "quote_author": "",
+        "pledge_title": "Kebijakan Pengembalian 30 Hari",
+        "pledge_text": "Kalau produk ternyata tidak cocok, hubungi kami dalam 30 hari sejak barang diterima. Kami proses pengembalian sesuai kebijakan retur yang berlaku."
+      }
+    },
+    "io_compliance": {
+      "type": "io-compliance",
+      "blocks": {
+        "reg_caps": {
+          "type": "product_registration",
+          "settings": {
+            "product_name": "Organic Moringa Capsules",
+            "category": "Obat Tradisional",
+            "registration": "POM XX000000000"
+          }
+        },
+        "reg_oil": {
+          "type": "product_registration",
+          "settings": {
+            "product_name": "Moringa Cold-Pressed Seed Oil",
+            "category": "Kosmetika",
+            "registration": "POM XX000000000"
+          }
+        }
+      },
+      "block_order": ["reg_caps", "reg_oil"],
+      "settings": {
+        "color_scheme": "white",
+        "heading": "Informasi Produk & Izin Edar",
+        "warning_usage": "Baca aturan pakai",
+        "warning_caution": "Baca peringatan perhatian",
+        "consult": "Konsultasikan dengan dokter secara berkala. Tidak dianjurkan untuk ibu hamil dan menyusui, serta bagi Anda yang sedang mengonsumsi obat rutin, tanpa persetujuan dokter.",
+        "disclaimer": "Produk ini adalah obat tradisional dan kosmetika, bukan obat, dan tidak dimaksudkan untuk mendiagnosis, mengobati, menyembuhkan, atau mencegah penyakit. Hasil tiap orang bisa berbeda.",
+        "verify_text": "Cek nomor izin edar di aplikasi BPOM Mobile atau cekbpom.pom.go.id",
+        "verify_url": "https://cekbpom.pom.go.id"
+      }
+    },
+    "io_final": {
+      "type": "io-final-cta",
+      "blocks": {
+        "f_return": { "type": "proof", "settings": { "icon": "shield", "text": "Kebijakan pengembalian 30 hari" } },
+        "f_shipping": { "type": "proof", "settings": { "icon": "truck", "text": "Gratis ongkir seluruh Indonesia" } },
+        "f_cert": { "type": "proof", "settings": { "icon": "award", "text": "Terdaftar BPOM & Halal" } }
+      },
+      "block_order": ["f_return", "f_shipping", "f_cert"],
+      "settings": {
+        "color_scheme": "forest",
+        "eyebrow": "Dari Kebun Kami di Bali",
+        "heading": "Rawat dari Dalam. Lindungi dari Luar.",
+        "text": "<p>Satu pohon, dua cara merawat diri. Dipanen dan diolah sendiri oleh komunitas kami di Karangasem.</p>",
+        "cta_label": "Lihat Paket Protokol",
+        "cta_url": "#io-pricing",
+        "cta_style": "gold",
+        "disclaimer": "Produk ini bukan obat dan tidak dimaksudkan untuk mendiagnosis, mengobati, menyembuhkan, atau mencegah penyakit. Hasil tiap orang bisa berbeda. Konsultasikan dengan tenaga kesehatan sebelum digunakan, terutama jika Anda sedang hamil, menyusui, atau dalam pengobatan rutin."
+      }
+    },
+    "io_sticky": {
+      "type": "io-sticky-cta",
+      "settings": {
+        "title": "Inside Out Protocol",
+        "subtitle": "Gratis ongkir · Pengembalian 30 hari",
+        "cta_label": "Lihat Paket",
+        "cta_url": "#io-pricing",
+        "cta_style": "primary",
+        "show_after": 700,
+        "show_whatsapp": true,
+        "whatsapp_number": "6281139603993",
+        "whatsapp_message": "Halo Treelogy, saya ingin bertanya tentang Inside Out Protocol",
+        "whatsapp_label": "Chat dengan Treelogy di WhatsApp"
+      }
+    }
+  },
+  "order": [
+    "io_settings",
+    "io_hero",
+    "io_trust",
+    "io_problem",
+    "io_reviews",
+    "io_protocol",
+    "io_nutrients_inside",
+    "io_nutrients_outside",
+    "io_founder",
+    "io_ritual",
+    "io_timeline",
+    "io_audience",
+    "io_heritage",
+    "io_certs",
+    "io_faq",
+    "io_pricing",
+    "io_compliance",
+    "io_final",
+    "io_sticky"
+  ]
+}

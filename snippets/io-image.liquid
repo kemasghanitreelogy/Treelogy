@@ -1,0 +1,49 @@
+{% doc %}
+  Renders a responsive image for the Inside Out landing page, falling back to a
+  Shopify placeholder illustration when the merchant has not uploaded one yet.
+
+  @param {image} [image] - Image from an image_picker setting
+  @param {string} [alt] - Alt text. Falls back to the image's own alt text
+  @param {string} [placeholder] - Placeholder illustration name, e.g. product-1, lifestyle-1, collection-1
+  @param {string} [css_class] - Extra class names for the image element
+  @param {string} [sizes] - The sizes attribute. Defaults to 100vw
+  @param {string} [loading] - lazy or eager. Defaults to lazy
+  @param {string} [fetchpriority] - high, low or auto
+  @param {boolean} [preload] - Send a preload resource hint. Use only for the LCP image, and at most twice per template
+  @param {string} [ratio] - CSS aspect-ratio for the frame, e.g. "1 / 1"
+
+  @example
+  {% render 'io-image', image: section.settings.image, alt: 'Kapsul moringa', placeholder: 'product-1' %}
+{% enddoc %}
+
+{% liquid
+  assign io_placeholder = placeholder | default: 'product-1'
+  assign io_sizes = sizes | default: '100vw'
+  assign io_loading = loading | default: 'lazy'
+  assign io_alt = alt | default: image.alt | escape
+  assign io_class = 'io-media ' | append: css_class | strip
+%}
+
+<div
+  class="io-media-frame"
+  {% if ratio != blank %}
+    style="aspect-ratio: {{ ratio }};"
+  {% endif %}
+>
+  {%- if image != blank -%}
+    {{
+      image
+      | image_url: width: 1600
+      | image_tag:
+        widths: '320, 480, 640, 800, 1000, 1200, 1600',
+        sizes: io_sizes,
+        loading: io_loading,
+        fetchpriority: fetchpriority,
+        preload: preload,
+        alt: io_alt,
+        class: io_class
+    }}
+  {%- else -%}
+    {{ io_placeholder | placeholder_svg_tag: 'placeholder-svg' }}
+  {%- endif -%}
+</div>

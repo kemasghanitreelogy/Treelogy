@@ -1,0 +1,304 @@
+{% render 'io-base' %}
+
+<div
+  class="io-section io-section--flush io-urgency io-urgency--{{ section.settings.color_scheme }}"
+  data-io-urgency
+  data-end="{{ section.settings.end_date | escape }}"
+  data-hide-expired="{{ section.settings.hide_when_expired }}"
+  hidden
+>
+  <div class="io-container io-urgency__inner">
+    {%- if section.settings.label != blank -%}
+      <p class="io-urgency__label">
+        {% render 'io-icon', name: 'clock', size: 18 %}
+        <span>{{ section.settings.label | escape }}</span>
+      </p>
+    {%- endif -%}
+
+    <div class="io-urgency__timer" role="timer" aria-live="off">
+      <span class="io-urgency__unit">
+        <span class="io-urgency__num" data-io-days>0</span>
+        <span class="io-urgency__cap">{{ section.settings.label_days | escape }}</span>
+      </span>
+      <span class="io-urgency__unit">
+        <span class="io-urgency__num" data-io-hours>0</span>
+        <span class="io-urgency__cap">{{ section.settings.label_hours | escape }}</span>
+      </span>
+      <span class="io-urgency__unit">
+        <span class="io-urgency__num" data-io-minutes>0</span>
+        <span class="io-urgency__cap">{{ section.settings.label_minutes | escape }}</span>
+      </span>
+      <span class="io-urgency__unit">
+        <span class="io-urgency__num" data-io-seconds>0</span>
+        <span class="io-urgency__cap">{{ section.settings.label_seconds | escape }}</span>
+      </span>
+    </div>
+
+    {%- if section.settings.cta_label != blank and section.settings.cta_url != blank -%}
+      <a class="io-urgency__cta" href="{{ section.settings.cta_url }}">
+        {{- section.settings.cta_label | escape -}}
+      </a>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .io-urgency {
+    background: var(--io-forest);
+    color: var(--io-cream);
+    padding-block: 0.75rem;
+    font-family: var(--io-font-body);
+  }
+
+  .io-urgency--gold {
+    background: var(--io-gold);
+    color: var(--io-forest-deep);
+  }
+
+  .io-urgency--clay {
+    background: var(--io-clay);
+    color: #fff;
+  }
+
+  .io-urgency[hidden] {
+    display: none;
+  }
+
+  .io-urgency__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem 1.25rem;
+    text-align: center;
+  }
+
+  .io-urgency__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .io-urgency__timer {
+    display: inline-flex;
+    gap: 0.5rem;
+  }
+
+  .io-urgency__unit {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 46px;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.14);
+  }
+
+  .io-urgency--gold .io-urgency__unit {
+    background: rgba(26, 43, 36, 0.12);
+  }
+
+  .io-urgency__num {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+  }
+
+  .io-urgency__cap {
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+
+  .io-urgency__cta {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0.375rem 1.125rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.16);
+    color: inherit;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: background-color 200ms ease;
+  }
+
+  .io-urgency__cta:hover {
+    background: rgba(255, 255, 255, 0.28);
+  }
+
+  .io-urgency--gold .io-urgency__cta {
+    background: rgba(26, 43, 36, 0.12);
+  }
+
+  .io-urgency--gold .io-urgency__cta:hover {
+    background: rgba(26, 43, 36, 0.2);
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  (function () {
+    function pad(n) {
+      return n < 10 ? '0' + n : String(n);
+    }
+
+    function setup(root) {
+      if (root.__ioTimer) clearInterval(root.__ioTimer);
+
+      var raw = (root.getAttribute('data-end') || '').trim();
+      if (!raw) return;
+
+      var normalised = raw.replace(' ', 'T');
+      if (!/[zZ]|[+-]\d{2}:?\d{2}$/.test(normalised)) normalised += '+07:00';
+
+      var deadline = new Date(normalised).getTime();
+      if (isNaN(deadline)) return;
+
+      var hideExpired = root.getAttribute('data-hide-expired') === 'true';
+      var out = {
+        days: root.querySelector('[data-io-days]'),
+        hours: root.querySelector('[data-io-hours]'),
+        minutes: root.querySelector('[data-io-minutes]'),
+        seconds: root.querySelector('[data-io-seconds]')
+      };
+
+      function tick() {
+        var diff = deadline - Date.now();
+
+        if (diff <= 0) {
+          clearInterval(root.__ioTimer);
+          if (hideExpired) {
+            root.hidden = true;
+            return;
+          }
+          diff = 0;
+        }
+
+        root.hidden = false;
+        if (out.days) out.days.textContent = Math.floor(diff / 86400000);
+        if (out.hours) out.hours.textContent = pad(Math.floor((diff % 86400000) / 3600000));
+        if (out.minutes) out.minutes.textContent = pad(Math.floor((diff % 3600000) / 60000));
+        if (out.seconds) out.seconds.textContent = pad(Math.floor((diff % 60000) / 1000));
+      }
+
+      tick();
+      root.__ioTimer = setInterval(tick, 1000);
+    }
+
+    function init(scope) {
+      (scope || document).querySelectorAll('[data-io-urgency]').forEach(setup);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function () {
+        init();
+      });
+    } else {
+      init();
+    }
+
+    document.addEventListener('shopify:section:load', function (event) {
+      init(event.target);
+    });
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "IO urgency bar",
+  "tag": "section",
+  "class": "io-section-wrapper io-urgency-wrapper",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Set a real end date. The bar stays hidden until a valid date is entered and can hide itself once the offer is over, so shoppers never see a countdown that resets forever."
+    },
+    {
+      "type": "text",
+      "id": "end_date",
+      "label": "Offer ends",
+      "info": "Format: YYYY-MM-DD HH:MM (24 hour, Jakarta time). Example: 2026-08-31 23:59",
+      "default": "2026-08-31 23:59"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_when_expired",
+      "label": "Hide the bar once the offer ends",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Label",
+      "default": "Penawaran berakhir dalam"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Colour",
+      "options": [
+        { "value": "forest", "label": "Deep green" },
+        { "value": "gold", "label": "Gold" },
+        { "value": "clay", "label": "Clay" }
+      ],
+      "default": "forest"
+    },
+    {
+      "type": "header",
+      "content": "Unit labels"
+    },
+    {
+      "type": "text",
+      "id": "label_days",
+      "label": "Days",
+      "default": "Hari"
+    },
+    {
+      "type": "text",
+      "id": "label_hours",
+      "label": "Hours",
+      "default": "Jam"
+    },
+    {
+      "type": "text",
+      "id": "label_minutes",
+      "label": "Minutes",
+      "default": "Menit"
+    },
+    {
+      "type": "text",
+      "id": "label_seconds",
+      "label": "Seconds",
+      "default": "Detik"
+    },
+    {
+      "type": "header",
+      "content": "Call to action"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "IO urgency bar"
+    }
+  ]
+}
+{% endschema %}

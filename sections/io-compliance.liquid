@@ -1,0 +1,271 @@
+{% render 'io-base' %}
+
+<div class="io-section io-compliance io-section--{{ section.settings.color_scheme }}">
+  <div class="io-container io-container--narrow">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="io-h3 io-compliance__heading">{{ section.settings.heading | escape }}</h2>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <ul class="io-compliance__list">
+        {%- for block in section.blocks -%}
+          <li class="io-compliance__item" {{ block.shopify_attributes }}>
+            <span class="io-compliance__product">{{ block.settings.product_name | escape }}</span>
+            {%- if block.settings.category != blank -%}
+              <span class="io-compliance__category">{{ block.settings.category | escape }}</span>
+            {%- endif -%}
+            {%- if block.settings.registration != blank -%}
+              <span class="io-compliance__nie">{{ block.settings.registration | escape }}</span>
+            {%- endif -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+    {%- if section.settings.warning_usage != blank or section.settings.warning_caution != blank -%}
+      <div class="io-compliance__warnings">
+        {%- if section.settings.warning_usage != blank -%}
+          <p class="io-compliance__warning">{{ section.settings.warning_usage | escape | upcase }}</p>
+        {%- endif -%}
+        {%- if section.settings.warning_caution != blank -%}
+          <p class="io-compliance__warning">{{ section.settings.warning_caution | escape | upcase }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.consult != blank -%}
+      <p class="io-compliance__consult">
+        {% render 'io-icon', name: 'alert', size: 20 %}
+        <span>{{ section.settings.consult | escape }}</span>
+      </p>
+    {%- endif -%}
+
+    {%- if section.settings.disclaimer != blank -%}
+      <p class="io-note io-compliance__disclaimer">{{ section.settings.disclaimer | escape }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.verify_text != blank -%}
+      <p class="io-note io-compliance__verify">
+        {%- if section.settings.verify_url != blank -%}
+          <a href="{{ section.settings.verify_url }}" target="_blank" rel="noopener">
+            {{- section.settings.verify_text | escape -}}
+          </a>
+        {%- else -%}
+          {{ section.settings.verify_text | escape }}
+        {%- endif -%}
+      </p>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .io-compliance {
+    padding-block: clamp(2rem, 4vw, 3rem);
+  }
+
+  .io-compliance__heading {
+    margin-bottom: 1.25rem;
+    text-align: center;
+  }
+
+  .io-compliance__list {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .io-compliance__item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.375rem 0.75rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--io-border);
+    border-radius: var(--io-radius);
+    background: var(--io-white);
+  }
+
+  .io-compliance__product {
+    font-weight: 600;
+    color: var(--io-forest);
+  }
+
+  .io-compliance__category {
+    font-size: 0.875rem;
+    color: var(--io-text-mid);
+  }
+
+  .io-compliance__nie {
+    margin-left: auto;
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--io-text);
+  }
+
+  .io-compliance__warnings {
+    display: grid;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+  }
+
+  .io-compliance__warning {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--io-forest);
+    border-radius: var(--io-radius);
+    background: var(--io-white);
+    color: var(--io-forest-deep);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-align: center;
+  }
+
+  .io-compliance__consult {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.625rem;
+    margin: 1.25rem 0 0;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--io-text);
+  }
+
+  .io-compliance__consult .io-icon {
+    flex: none;
+    margin-top: 0.125rem;
+    color: var(--io-clay);
+  }
+
+  .io-compliance__disclaimer {
+    margin-top: 1.25rem;
+    text-wrap: pretty;
+  }
+
+  .io-compliance__verify {
+    margin-top: 0.75rem;
+  }
+
+  .io-compliance__verify a {
+    color: var(--io-forest);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "IO regulatory notice",
+  "tag": "section",
+  "class": "io-section-wrapper",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Indonesian rules on advertising herbal medicine and supplements (PerBPOM 34/2022, Annex I part II.1) require the registration number and the two warning spots to appear in visual advertising. Fill in your own approved wording and numbers, and have the page cleared by BPOM before it goes live."
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Background",
+      "options": [
+        { "value": "cream", "label": "Cream" },
+        { "value": "white", "label": "White" },
+        { "value": "bloom", "label": "Alternate" }
+      ],
+      "default": "bloom"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Informasi Produk & Izin Edar"
+    },
+    {
+      "type": "header",
+      "content": "Mandatory warning spots"
+    },
+    {
+      "type": "text",
+      "id": "warning_usage",
+      "label": "Usage warning",
+      "default": "Baca aturan pakai"
+    },
+    {
+      "type": "text",
+      "id": "warning_caution",
+      "label": "Caution warning",
+      "default": "Baca peringatan perhatian"
+    },
+    {
+      "type": "textarea",
+      "id": "consult",
+      "label": "Consultation note",
+      "default": "Konsultasikan dengan dokter secara berkala. Tidak dianjurkan untuk ibu hamil dan menyusui, serta bagi Anda yang sedang mengonsumsi obat rutin, tanpa persetujuan dokter."
+    },
+    {
+      "type": "textarea",
+      "id": "disclaimer",
+      "label": "Disclaimer",
+      "default": "Produk ini adalah obat tradisional dan suplemen kesehatan, bukan obat, dan tidak dimaksudkan untuk mendiagnosis, mengobati, menyembuhkan, atau mencegah penyakit. Hasil tiap orang bisa berbeda."
+    },
+    {
+      "type": "text",
+      "id": "verify_text",
+      "label": "Verification link text",
+      "default": "Cek nomor izin edar di aplikasi BPOM Mobile atau cekbpom.pom.go.id"
+    },
+    {
+      "type": "url",
+      "id": "verify_url",
+      "label": "Verification link"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product_registration",
+      "name": "Registered product",
+      "settings": [
+        {
+          "type": "text",
+          "id": "product_name",
+          "label": "Product name",
+          "default": "Organic Moringa Capsules"
+        },
+        {
+          "type": "text",
+          "id": "category",
+          "label": "Category",
+          "default": "Obat Tradisional"
+        },
+        {
+          "type": "text",
+          "id": "registration",
+          "label": "Registration number",
+          "info": "Format: POM followed by two letters and nine digits.",
+          "default": "POM XX000000000"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "IO regulatory notice",
+      "blocks": [
+        { "type": "product_registration" },
+        {
+          "type": "product_registration",
+          "settings": {
+            "product_name": "Moringa Cold-Pressed Seed Oil",
+            "category": "Kosmetika",
+            "registration": "POM XX000000000"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

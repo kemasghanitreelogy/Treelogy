@@ -1,0 +1,413 @@
+{% render 'io-base' %}
+
+<div class="io-section io-hero io-section--{{ section.settings.color_scheme }}">
+  <div class="io-container io-hero__inner io-hero__inner--{{ section.settings.media_position }}">
+    <div class="io-hero__copy">
+      {%- if section.settings.badge != blank -%}
+        <p class="io-hero__badge">{{ section.settings.badge | escape }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.pre_heading != blank -%}
+        <p class="io-hero__pre">{{ section.settings.pre_heading | escape }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.heading != blank -%}
+        <h1 class="io-h1 io-hero__heading">{{ section.settings.heading | escape }}</h1>
+      {%- endif -%}
+
+      {%- if section.settings.subheading != blank -%}
+        <div class="io-lede io-hero__sub">{{ section.settings.subheading }}</div>
+      {%- endif -%}
+
+      {%- if section.settings.cta_label != blank -%}
+        <div class="io-hero__actions">
+          <a
+            class="io-btn io-btn--{{ section.settings.cta_style }} io-hero__cta"
+            href="{{ section.settings.cta_url | default: '#io-pricing' }}"
+          >
+            {{- section.settings.cta_label | escape -}}
+          </a>
+          {%- if section.settings.cta_note != blank -%}
+            <p class="io-note io-hero__cta-note">{{ section.settings.cta_note | escape }}</p>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- if section.blocks.size > 0 -%}
+        <ul class="io-hero__proof">
+          {%- for block in section.blocks -%}
+            <li class="io-hero__proof-item" {{ block.shopify_attributes }}>
+              {%- if block.type == 'rating' -%}
+                <span class="io-stars" role="img" aria-label="{{ block.settings.rating_label | escape }}">
+                  {%- for i in (1..5) -%}
+                    {% render 'io-icon', name: 'star', size: 16 %}
+                  {%- endfor -%}
+                </span>
+              {%- else -%}
+                {% render 'io-icon', name: block.settings.icon, size: 18 %}
+              {%- endif -%}
+              <span>
+                {%- if block.settings.highlight != blank -%}
+                  <strong>{{ block.settings.highlight | escape }}</strong>
+                {%- endif -%}
+                {{ block.settings.text | escape }}
+              </span>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+
+    <div class="io-hero__visual">
+      {%- if section.settings.save_value != blank -%}
+        <p class="io-hero__save">
+          {%- if section.settings.save_label != blank -%}
+            <span class="io-hero__save-label">{{ section.settings.save_label | escape }}</span>
+          {%- endif -%}
+          <strong>{{ section.settings.save_value | escape }}</strong>
+        </p>
+      {%- endif -%}
+
+      {% render 'io-image',
+        image: section.settings.image,
+        alt: section.settings.image_alt,
+        placeholder: 'product-1',
+        sizes: '(min-width: 900px) 46vw, 92vw',
+        loading: 'eager',
+        fetchpriority: 'high',
+        preload: section.settings.preload_image,
+        ratio: '1 / 1'
+      %}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .io-hero {
+    overflow: hidden;
+  }
+
+  .io-hero__inner {
+    display: grid;
+    gap: clamp(2rem, 5vw, 3.5rem);
+    align-items: center;
+  }
+
+  @media (min-width: 900px) {
+    .io-hero__inner {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .io-hero__inner--left .io-hero__copy {
+      order: 2;
+    }
+  }
+
+  .io-hero__badge {
+    display: inline-block;
+    margin: 0 0 1.25rem;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    background: var(--io-bloom);
+    color: var(--io-forest);
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .io-section--forest .io-hero__badge {
+    background: rgba(245, 208, 83, 0.16);
+    color: var(--io-gold);
+  }
+
+  .io-hero__pre {
+    margin: 0 0 0.375rem;
+    font-size: clamp(1.0625rem, 2.2vw, 1.25rem);
+    font-weight: 600;
+    color: var(--io-text-mid);
+  }
+
+  .io-hero__sub {
+    margin-top: 1.25rem;
+  }
+
+  .io-hero__sub p {
+    margin: 0 0 0.75rem;
+  }
+
+  .io-hero__actions {
+    margin-top: 1.75rem;
+  }
+
+  .io-hero__cta-note {
+    margin-top: 0.625rem;
+  }
+
+  .io-hero__proof {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    margin: 1.75rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .io-hero__proof-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9375rem;
+    line-height: 1.4;
+    color: var(--io-text-mid);
+  }
+
+  .io-hero__proof-item strong {
+    color: var(--io-forest);
+    margin-right: 0.25rem;
+  }
+
+  .io-section--forest .io-hero__proof-item,
+  .io-section--forest .io-hero__proof-item strong {
+    color: rgba(248, 248, 242, 0.88);
+  }
+
+  .io-hero__visual {
+    position: relative;
+  }
+
+  .io-hero__save {
+    position: absolute;
+    z-index: 2;
+    top: clamp(0.5rem, 2vw, 1rem);
+    right: clamp(0.5rem, 2vw, 1rem);
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border-radius: var(--io-radius);
+    background: var(--io-gold);
+    color: var(--io-forest-deep);
+    text-align: center;
+    box-shadow: var(--io-shadow-sm);
+  }
+
+  .io-hero__save-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .io-hero__save strong {
+    font-size: 1.125rem;
+    line-height: 1.2;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "IO hero",
+  "tag": "section",
+  "class": "io-section-wrapper",
+  "settings": [
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Background",
+      "options": [
+        { "value": "cream", "label": "Cream" },
+        { "value": "white", "label": "White" },
+        { "value": "bloom", "label": "Alternate" },
+        { "value": "forest", "label": "Deep green" }
+      ],
+      "default": "cream"
+    },
+    {
+      "type": "header",
+      "content": "Text"
+    },
+    {
+      "type": "text",
+      "id": "badge",
+      "label": "Badge",
+      "default": "Dukungan Menopause"
+    },
+    {
+      "type": "text",
+      "id": "pre_heading",
+      "label": "Text above heading",
+      "default": "Jangan Lagi Pasrah Pada"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Nyeri Sendi, Mudah Lelah, dan Rasa Kehilangan Diri Saat Menopause"
+    },
+    {
+      "type": "richtext",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "<p>Inside Out Moringa Protocol. Cara perempuan Indonesia mendapatkan kembali sendi yang nyaman, energi, tidur nyenyak, dan rasa percaya diri. Tanpa hormon. Tanpa resep dokter.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Call to action"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button label",
+      "default": "Mulai Protokol"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button link"
+    },
+    {
+      "type": "select",
+      "id": "cta_style",
+      "label": "Button style",
+      "options": [
+        { "value": "primary", "label": "Solid green" },
+        { "value": "gold", "label": "Gold" },
+        { "value": "ghost", "label": "Outline" }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "text",
+      "id": "cta_note",
+      "label": "Text below button",
+      "default": "Garansi Uang Kembali 30 Hari · Gratis Ongkir"
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Hero image",
+      "info": "A placeholder is shown until you upload one. Use a square image of about 1200 x 1200 px."
+    },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Image description",
+      "info": "Describe the image for screen readers and for when the image cannot load.",
+      "default": "Kapsul dan minyak biji moringa Treelogy Inside Out Protocol"
+    },
+    {
+      "type": "checkbox",
+      "id": "preload_image",
+      "label": "Preload the hero image",
+      "info": "Keep this on when the hero is the largest thing on the first screen. Do not switch it on for more than two images across the whole page.",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "save_label",
+      "label": "Savings label",
+      "info": "Indonesian regulation on herbal medicine and supplement advertising (PerBPOM 34/2022, Annex I III.1) does not allow discounts or price cuts in advertising. Leave the savings fields empty for those products.",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "save_value",
+      "label": "Savings amount"
+    },
+    {
+      "type": "select",
+      "id": "media_position",
+      "label": "Image position on desktop",
+      "options": [
+        { "value": "right", "label": "Right" },
+        { "value": "left", "label": "Left" }
+      ],
+      "default": "right"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "proof",
+      "name": "Proof point",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "check", "label": "Check" },
+            { "value": "shield", "label": "Shield" },
+            { "value": "truck", "label": "Delivery" },
+            { "value": "leaf", "label": "Leaf" },
+            { "value": "award", "label": "Award" },
+            { "value": "heart", "label": "Heart" },
+            { "value": "lock", "label": "Lock" }
+          ],
+          "default": "check"
+        },
+        {
+          "type": "text",
+          "id": "highlight",
+          "label": "Bold text"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Pelanggan puas"
+        }
+      ]
+    },
+    {
+      "type": "rating",
+      "name": "Star rating",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "highlight",
+          "label": "Bold text",
+          "default": "4,8"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "/5 dari 10.000+ ulasan"
+        },
+        {
+          "type": "text",
+          "id": "rating_label",
+          "label": "Screen reader label",
+          "default": "Dinilai 4,8 dari 5 bintang"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "IO hero",
+      "blocks": [
+        {
+          "type": "proof",
+          "settings": { "icon": "heart", "highlight": "10.000+", "text": "Pelanggan Puas" }
+        },
+        { "type": "rating" },
+        {
+          "type": "proof",
+          "settings": { "icon": "shield", "highlight": "", "text": "Garansi 30 Hari" }
+        },
+        {
+          "type": "proof",
+          "settings": { "icon": "truck", "highlight": "", "text": "Gratis Ongkir" }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

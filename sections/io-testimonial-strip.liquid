@@ -1,0 +1,255 @@
+{% render 'io-base' %}
+
+<div class="io-section io-testimonial-strip io-section--{{ section.settings.color_scheme }}">
+  {%- if section.settings.heading != blank -%}
+    <div class="io-container io-head io-head--center io-testimonial-strip__head">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="io-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      <h2 class="io-h2">{{ section.settings.heading | escape }}</h2>
+    </div>
+  {%- endif -%}
+
+  <div class="io-testimonial-strip__viewport">
+    <div class="io-testimonial-strip__track" style="--io-marquee-duration: {{ section.settings.speed }}s;">
+      {%- for pass in (1..2) -%}
+        <ul class="io-testimonial-strip__list" {% if pass == 2 %}aria-hidden="true"{% endif %}>
+          {%- for block in section.blocks -%}
+            <li class="io-testimonial-strip__item" {{ block.shopify_attributes }}>
+              <figure class="io-card io-tcard">
+                {%- if block.settings.show_stars -%}
+                  <span
+                    class="io-stars"
+                    role="img"
+                    aria-label="{{ block.settings.rating | default: 5 }} dari 5 bintang"
+                  >
+                    {%- for i in (1..5) -%}
+                      {% render 'io-icon', name: 'star', size: 16 %}
+                    {%- endfor -%}
+                  </span>
+                {%- endif -%}
+
+                <blockquote class="io-tcard__quote">{{ block.settings.quote }}</blockquote>
+
+                <figcaption class="io-tcard__meta">
+                  <span class="io-tcard__name">{{ block.settings.author | escape }}</span>
+                  {%- if block.settings.detail != blank -%}
+                    <span class="io-tcard__detail">{{ block.settings.detail | escape }}</span>
+                  {%- endif -%}
+                </figcaption>
+              </figure>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .io-testimonial-strip {
+    overflow: hidden;
+  }
+
+  .io-testimonial-strip__head {
+    margin-bottom: 2rem;
+  }
+
+  .io-testimonial-strip__viewport {
+    overflow: hidden;
+  }
+
+  .io-testimonial-strip__track {
+    display: flex;
+    width: max-content;
+    animation: io-marquee var(--io-marquee-duration, 60s) linear infinite;
+  }
+
+  .io-testimonial-strip__viewport:hover .io-testimonial-strip__track,
+  .io-testimonial-strip__viewport:focus-within .io-testimonial-strip__track {
+    animation-play-state: paused;
+  }
+
+  .io-testimonial-strip__list {
+    display: flex;
+    gap: 1.25rem;
+    margin: 0;
+    padding: 0 0.625rem;
+    list-style: none;
+  }
+
+  .io-testimonial-strip__item {
+    display: flex;
+    width: min(21rem, 80vw);
+    flex: none;
+  }
+
+  .io-tcard {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 0;
+    width: 100%;
+    box-shadow: var(--io-shadow-sm);
+  }
+
+  .io-tcard__quote {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--io-text);
+  }
+
+  .io-tcard__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    margin-top: auto;
+  }
+
+  .io-tcard__name {
+    font-weight: 600;
+    color: var(--io-forest);
+  }
+
+  .io-tcard__detail {
+    font-size: 0.8125rem;
+    color: var(--io-text-soft);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .io-testimonial-strip__viewport {
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .io-testimonial-strip__track {
+      animation: none;
+    }
+
+    .io-testimonial-strip__track > ul[aria-hidden='true'] {
+      display: none;
+    }
+
+    .io-testimonial-strip__item {
+      scroll-snap-align: start;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "IO testimonial strip",
+  "tag": "section",
+  "class": "io-section-wrapper",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Background",
+      "options": [
+        { "value": "cream", "label": "Cream" },
+        { "value": "white", "label": "White" },
+        { "value": "bloom", "label": "Alternate" },
+        { "value": "forest", "label": "Deep green" }
+      ],
+      "default": "bloom"
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "label": "Scroll speed",
+      "info": "Higher is slower.",
+      "min": 30,
+      "max": 140,
+      "step": 10,
+      "unit": "s",
+      "default": 80
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_stars",
+          "label": "Show 5 stars",
+          "default": true
+        },
+        {
+          "type": "richtext",
+          "id": "quote",
+          "label": "Quote",
+          "default": "<p>Tidur lebih nyenyak, nyeri lutut saat naik tangga berkurang. Langsung repurchase.</p>"
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Name",
+          "default": "Ibu Ratna"
+        },
+        {
+          "type": "text",
+          "id": "detail",
+          "label": "Detail",
+          "info": "Age, city and whether the review is from a verified buyer.",
+          "default": "55 Tahun · Surabaya · Pembeli Terverifikasi"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "IO testimonial strip",
+      "blocks": [
+        { "type": "testimonial" },
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "<p>Dulu sering terbangun dengan jantung berdebar dan dada terasa panas. Setelah beberapa hari, keluhan itu berhenti.</p>",
+            "author": "Nia S.",
+            "detail": "47 Tahun · Bandung · Pembeli Terverifikasi"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "<p>Kulit halus, tidur nyenyak, stamina olahraga naik. Sudah tidak terhitung berapa kali saya reorder.</p>",
+            "author": "Dian P.",
+            "detail": "49 Tahun · Jakarta · Pembeli Terverifikasi"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "<p>Nyeri sendi dan kesemutan hilang. Bangun tidur badan segar, tanpa rasa lemas.</p>",
+            "author": "Yuni K.",
+            "detail": "52 Tahun · Semarang · Pembeli Terverifikasi"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "<p>Setelah rutin satu minggu, nyeri tumit dan sendi saya berkurang. Badan terasa lebih enak.</p>",
+            "author": "Dewi H.",
+            "detail": "50 Tahun · Medan · Pembeli Terverifikasi"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

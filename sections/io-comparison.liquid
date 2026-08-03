@@ -1,0 +1,348 @@
+{% render 'io-base' %}
+
+<div class="io-section io-compare io-section--{{ section.settings.color_scheme }}">
+  <div class="io-container">
+    <div class="io-head io-head--center">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="io-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="io-h2">{{ section.settings.heading | escape }}</h2>
+      {%- endif -%}
+      {%- if section.settings.subheading != blank -%}
+        <p class="io-lede">{{ section.settings.subheading | escape }}</p>
+      {%- endif -%}
+    </div>
+
+    <div class="io-compare__scroll">
+      <table class="io-compare__table">
+        {%- if section.settings.table_caption != blank -%}
+          <caption class="io-visually-hidden">{{ section.settings.table_caption | escape }}</caption>
+        {%- endif -%}
+        <thead>
+          <tr>
+            <th scope="col" class="io-compare__th io-compare__th--ours">
+              {{- section.settings.column_a | escape -}}
+            </th>
+            <th scope="col" class="io-compare__th io-compare__th--theirs">
+              {{- section.settings.column_b | escape -}}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {%- for block in section.blocks -%}
+            <tr class="io-compare__row" {{ block.shopify_attributes }}>
+              <td class="io-compare__cell io-compare__cell--good" data-io-label="{{ section.settings.column_a | escape }}">
+                {% render 'io-icon', name: 'check', size: 20 %}
+                <span>{{ block.settings.ours | escape }}</span>
+              </td>
+              <td class="io-compare__cell io-compare__cell--bad" data-io-label="{{ section.settings.column_b | escape }}">
+                {% render 'io-icon', name: 'cross', size: 20 %}
+                <span>{{ block.settings.theirs | escape }}</span>
+              </td>
+            </tr>
+          {%- endfor -%}
+        </tbody>
+      </table>
+    </div>
+
+    {%- if section.settings.cta_label != blank -%}
+      <div class="io-cta">
+        <a class="io-btn io-btn--{{ section.settings.cta_style }}" href="{{ section.settings.cta_url | default: '#io-pricing' }}">
+          {{- section.settings.cta_label | escape -}}
+        </a>
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.footnote != blank -%}
+      <p class="io-note io-compare__footnote">{{ section.settings.footnote | escape }}</p>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .io-compare__scroll {
+    margin-top: clamp(2.25rem, 4vw, 3rem);
+    overflow-x: auto;
+  }
+
+  .io-compare__table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    text-align: left;
+  }
+
+  .io-compare__th {
+    padding: 1rem 1.25rem;
+    font-family: var(--io-font-body);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    line-height: 1.35;
+    vertical-align: bottom;
+  }
+
+  .io-compare__th--ours {
+    border-radius: var(--io-radius) 0 0 0;
+    background: var(--io-forest);
+    color: var(--io-cream);
+  }
+
+  .io-compare__th--theirs {
+    border-radius: 0 var(--io-radius) 0 0;
+    background: var(--io-bloom);
+    color: var(--io-text-mid);
+  }
+
+  .io-compare__cell {
+    display: table-cell;
+    padding: 0.875rem 1.25rem;
+    border-bottom: 1px solid var(--io-border);
+    font-size: 1rem;
+    line-height: 1.5;
+    vertical-align: top;
+  }
+
+  .io-compare__cell .io-icon {
+    float: left;
+    margin: 0.125rem 0.625rem 0 0;
+  }
+
+  .io-compare__cell--good {
+    background: var(--io-white);
+    color: var(--io-text);
+  }
+
+  .io-compare__cell--good .io-icon {
+    color: var(--io-forest);
+  }
+
+  .io-compare__cell--bad {
+    background: transparent;
+    color: var(--io-text-soft);
+  }
+
+  .io-compare__cell--bad .io-icon {
+    color: var(--io-clay);
+  }
+
+  .io-section--forest .io-compare__cell--good {
+    background: rgba(248, 248, 242, 0.08);
+    color: var(--io-cream);
+  }
+
+  .io-section--forest .io-compare__cell--good .io-icon {
+    color: var(--io-gold);
+  }
+
+  .io-section--forest .io-compare__cell {
+    border-color: rgba(248, 248, 242, 0.16);
+  }
+
+  .io-section--forest .io-compare__cell--bad {
+    color: rgba(248, 248, 242, 0.7);
+  }
+
+  .io-section--forest .io-compare__th--theirs {
+    background: rgba(248, 248, 242, 0.12);
+    color: rgba(248, 248, 242, 0.82);
+  }
+
+  .io-compare__footnote {
+    margin-top: 1.5rem;
+    text-align: center;
+  }
+
+  @media (max-width: 699px) {
+    .io-compare__table,
+    .io-compare__table tbody,
+    .io-compare__row,
+    .io-compare__cell {
+      display: block;
+      width: 100%;
+    }
+
+    .io-compare__table thead {
+      display: none;
+    }
+
+    .io-compare__row {
+      margin-bottom: 0.875rem;
+      border: 1px solid var(--io-border);
+      border-radius: var(--io-radius);
+      overflow: hidden;
+    }
+
+    .io-compare__cell {
+      border-bottom: 0;
+    }
+
+    .io-compare__cell--bad {
+      border-top: 1px solid var(--io-border);
+      background: var(--io-bloom);
+    }
+
+    .io-compare__cell::before {
+      content: attr(data-io-label);
+      display: block;
+      margin-bottom: 0.25rem;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0.75;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "IO comparison",
+  "tag": "section",
+  "class": "io-section-wrapper",
+  "settings": [
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Background",
+      "options": [
+        { "value": "cream", "label": "Cream" },
+        { "value": "white", "label": "White" },
+        { "value": "bloom", "label": "Alternate" },
+        { "value": "forest", "label": "Deep green" }
+      ],
+      "default": "cream"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Pilihan yang Lebih Aman"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Satu Daun vs. Semua yang Pernah Kamu Coba"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "text",
+      "id": "table_caption",
+      "label": "Table description for screen readers",
+      "default": "Perbandingan Inside Out Protocol dengan suplemen dan terapi hormon"
+    },
+    {
+      "type": "text",
+      "id": "column_a",
+      "label": "Your column heading",
+      "default": "Inside Out Protocol"
+    },
+    {
+      "type": "text",
+      "id": "column_b",
+      "label": "Other column heading",
+      "default": "Suplemen · Hormon · Bertahan Tanpa Solusi"
+    },
+    {
+      "type": "header",
+      "content": "Call to action"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button label",
+      "default": "Pilih Jalan Alami"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button link"
+    },
+    {
+      "type": "select",
+      "id": "cta_style",
+      "label": "Button style",
+      "options": [
+        { "value": "primary", "label": "Solid green" },
+        { "value": "gold", "label": "Gold" },
+        { "value": "ghost", "label": "Outline" }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "textarea",
+      "id": "footnote",
+      "label": "Footnote",
+      "default": "Perbandingan bersifat umum dan bukan saran medis. Diskusikan pilihan terapi dengan dokter Anda."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "row",
+      "name": "Row",
+      "settings": [
+        {
+          "type": "text",
+          "id": "ours",
+          "label": "Your column",
+          "default": "100% alami, pangan utuh"
+        },
+        {
+          "type": "text",
+          "id": "theirs",
+          "label": "Other column",
+          "default": "Hormon sintetis atau senyawa lab"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "IO comparison",
+      "blocks": [
+        { "type": "row" },
+        {
+          "type": "row",
+          "settings": {
+            "ours": "92 nutrisi dalam satu sumber",
+            "theirs": "Masing-masing hanya menyasar 1-2 keluhan"
+          }
+        },
+        {
+          "type": "row",
+          "settings": {
+            "ours": "Perawatan dalam dan luar sekaligus",
+            "theirs": "Hanya dari dalam. Kulit dan rambut terabaikan"
+          }
+        },
+        {
+          "type": "row",
+          "settings": {
+            "ours": "Tanpa perlu resep",
+            "theirs": "Perlu kunjungan dokter dan pemantauan"
+          }
+        },
+        {
+          "type": "row",
+          "settings": {
+            "ours": "Membangun kebiasaan jangka panjang",
+            "theirs": "Keluhan kembali saat berhenti"
+          }
+        },
+        {
+          "type": "row",
+          "settings": {
+            "ours": "5.000 tahun penggunaan tradisional",
+            "theirs": "Data keamanan yang masih terus berubah"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

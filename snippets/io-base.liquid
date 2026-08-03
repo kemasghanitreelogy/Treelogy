@@ -1,0 +1,389 @@
+{% doc %}
+  Loads the shared Inside Out landing page design system: colour tokens,
+  typography scale, container widths, buttons, cards and reveal animation.
+
+  Render it once at the top of every `io-*` section. Rendering it from several
+  sections is safe: Shopify bundles the stylesheet a single time.
+
+  Token values here are fallback defaults. The "Inside Out settings" section
+  overrides them with merchant-chosen values at `:root`.
+
+  @example
+  {% render 'io-base' %}
+{% enddoc %}
+
+{% stylesheet %}
+  :root {
+    --io-forest: #2a3b34;
+    --io-forest-deep: #1a2b24;
+    --io-cream: #f8f8f2;
+    --io-bloom: #eae9dc;
+    --io-white: #ffffff;
+    --io-gold: #f5d053;
+    --io-gold-light: #f8dc6d;
+    --io-clay: #b5503c;
+    --io-text: #22302a;
+    --io-text-mid: #46544a;
+    --io-text-soft: #495750;
+    --io-border: #d6d4c8;
+    --io-font-heading: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+    --io-font-body: var(--font-base, "Inter", system-ui, -apple-system, sans-serif);
+    --io-max: 1120px;
+    --io-max-narrow: 720px;
+    --io-radius: 8px;
+    --io-radius-lg: 16px;
+    --io-pad-block: clamp(3.5rem, 7vw, 6rem);
+    --io-shadow-sm: 0 1px 2px rgba(26, 43, 36, 0.06), 0 2px 8px rgba(26, 43, 36, 0.05);
+    --io-shadow-md: 0 4px 12px rgba(26, 43, 36, 0.08), 0 12px 32px rgba(26, 43, 36, 0.07);
+  }
+
+  .io-section {
+    padding-block: var(--io-pad-block);
+    font-family: var(--io-font-body);
+    color: var(--io-text);
+    font-size: 1.125rem;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .io-section *,
+  .io-section *::before,
+  .io-section *::after {
+    box-sizing: border-box;
+  }
+
+  .io-section--flush {
+    padding-block: 0;
+  }
+
+  .io-section--cream {
+    background: var(--io-cream);
+  }
+
+  .io-section--bloom {
+    background: var(--io-bloom);
+  }
+
+  .io-section--white {
+    background: var(--io-white);
+  }
+
+  .io-section--forest {
+    background: var(--io-forest);
+    color: var(--io-cream);
+  }
+
+  .io-section--forest .io-h2,
+  .io-section--forest .io-h3 {
+    color: var(--io-cream);
+  }
+
+  .io-section--forest .io-lede,
+  .io-section--forest .io-note {
+    color: rgba(248, 248, 242, 0.82);
+  }
+
+  .io-container {
+    width: 100%;
+    max-width: var(--io-max);
+    margin-inline: auto;
+    padding-inline: clamp(1.125rem, 4vw, 1.5rem);
+  }
+
+  .io-container--narrow {
+    max-width: var(--io-max-narrow);
+  }
+
+  .io-h1,
+  .io-h2,
+  .io-h3 {
+    font-family: var(--io-font-heading);
+    color: var(--io-forest);
+    text-wrap: balance;
+    margin: 0;
+  }
+
+  .io-h1 {
+    font-size: clamp(2.1rem, 5.2vw, 3.15rem);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    font-weight: 600;
+  }
+
+  .io-h2 {
+    font-size: clamp(1.7rem, 3.9vw, 2.4rem);
+    line-height: 1.18;
+    letter-spacing: -0.015em;
+    font-weight: 600;
+  }
+
+  .io-h3 {
+    font-size: clamp(1.15rem, 2.2vw, 1.35rem);
+    line-height: 1.3;
+    font-weight: 600;
+  }
+
+  .io-eyebrow {
+    font-family: var(--io-font-body);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--io-text-mid);
+    margin: 0 0 0.75rem;
+  }
+
+  .io-section--forest .io-eyebrow {
+    color: var(--io-gold);
+  }
+
+  .io-lede {
+    font-size: clamp(1.0625rem, 1.8vw, 1.1875rem);
+    line-height: 1.65;
+    color: var(--io-text-mid);
+    max-width: 62ch;
+    margin: 1rem 0 0;
+  }
+
+  .io-note {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--io-text-soft);
+    margin: 0;
+  }
+
+  .io-head {
+    max-width: 44rem;
+  }
+
+  .io-head--center {
+    text-align: center;
+    margin-inline: auto;
+  }
+
+  .io-head--center .io-lede {
+    margin-inline: auto;
+  }
+
+  .io-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 52px;
+    padding: 0.875rem 2rem;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    background: var(--io-forest);
+    color: #fff;
+    font-family: var(--io-font-body);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease, box-shadow 200ms ease;
+  }
+
+  .io-btn:hover {
+    background: var(--io-forest-deep);
+  }
+
+  .io-btn--gold {
+    background: var(--io-gold);
+    color: var(--io-forest-deep);
+  }
+
+  .io-btn--gold:hover {
+    background: var(--io-gold-light);
+  }
+
+  .io-btn--ghost {
+    background: transparent;
+    border-color: currentcolor;
+    color: var(--io-forest);
+  }
+
+  .io-btn--ghost:hover {
+    background: rgba(42, 59, 52, 0.07);
+  }
+
+  .io-btn--block {
+    display: flex;
+    width: 100%;
+  }
+
+  .io-btn .io-icon {
+    flex: none;
+  }
+
+  .io-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: clamp(2rem, 4vw, 3rem);
+    text-align: center;
+  }
+
+  .io-card {
+    background: var(--io-white);
+    border: 1px solid var(--io-border);
+    border-radius: var(--io-radius-lg);
+    padding: clamp(1.25rem, 2.5vw, 1.75rem);
+  }
+
+  .io-icon {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .io-icon-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    flex: none;
+    border-radius: 50%;
+    background: var(--io-bloom);
+    color: var(--io-forest);
+  }
+
+  .io-section a:focus-visible,
+  .io-section button:focus-visible,
+  .io-section summary:focus-visible,
+  .io-section [tabindex]:focus-visible {
+    outline: 3px solid var(--io-forest);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  .io-section--forest a:focus-visible,
+  .io-section--forest button:focus-visible {
+    outline-color: var(--io-gold);
+  }
+
+  .io-visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .io-media {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--io-radius-lg);
+    object-fit: cover;
+  }
+
+  .io-media-frame {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--io-radius-lg);
+    background: var(--io-bloom);
+  }
+
+  .io-media-frame svg.placeholder-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: var(--io-bloom);
+    fill: rgba(42, 59, 52, 0.25);
+  }
+
+  .io-stars {
+    display: inline-flex;
+    gap: 0.125rem;
+    color: var(--io-gold);
+  }
+
+  .io-section--cream .io-stars,
+  .io-section--white .io-stars,
+  .io-section--bloom .io-stars {
+    color: #c99a12;
+  }
+
+  .io-reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 600ms ease, transform 600ms ease;
+    will-change: opacity, transform;
+  }
+
+  .io-reveal.io-reveal--in {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .io-section *,
+    .io-section *::before,
+    .io-section *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+
+    .io-reveal {
+      opacity: 1;
+      transform: none;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  (function () {
+    if (window.__ioRevealReady) return;
+    window.__ioRevealReady = true;
+
+    function show(el) {
+      el.classList.add('io-reveal--in');
+    }
+
+    function init() {
+      var targets = document.querySelectorAll('.io-reveal:not(.io-reveal--in)');
+      if (!targets.length) return;
+
+      if (
+        !('IntersectionObserver' in window) ||
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      ) {
+        targets.forEach(show);
+        return;
+      }
+
+      var observer = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              show(entry.target);
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { rootMargin: '0px 0px -10% 0px', threshold: 0.08 }
+      );
+
+      targets.forEach(function (el) {
+        observer.observe(el);
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+
+    document.addEventListener('shopify:section:load', init);
+  })();
+{% endjavascript %}

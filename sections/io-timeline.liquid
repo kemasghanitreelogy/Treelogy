@@ -1,0 +1,315 @@
+{% render 'io-base' %}
+
+<div class="io-section io-timeline io-section--{{ section.settings.color_scheme }}">
+  <div class="io-container io-container--narrow">
+    <div class="io-head io-head--center">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="io-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="io-h2">{{ section.settings.heading | escape }}</h2>
+      {%- endif -%}
+      {%- if section.settings.subheading != blank -%}
+        <p class="io-lede">{{ section.settings.subheading | escape }}</p>
+      {%- endif -%}
+    </div>
+
+    <ol class="io-timeline__list">
+      {%- for block in section.blocks -%}
+        <li class="io-timeline__item io-reveal" {{ block.shopify_attributes }}>
+          <div class="io-timeline__marker" aria-hidden="true">
+            <span class="io-icon-badge">
+              {% render 'io-icon', name: block.settings.icon, size: 20 %}
+            </span>
+          </div>
+          <div class="io-timeline__body">
+            {%- if block.settings.period != blank -%}
+              <p class="io-timeline__period">{{ block.settings.period | escape }}</p>
+            {%- endif -%}
+            <p class="io-timeline__text">
+              {%- if block.settings.title != blank -%}
+                <strong>{{ block.settings.title | escape }}</strong>
+              {%- endif -%}
+              {{ block.settings.text | escape }}
+            </p>
+          </div>
+        </li>
+      {%- endfor -%}
+    </ol>
+
+    {%- if section.settings.cta_label != blank -%}
+      <div class="io-cta">
+        <a class="io-btn io-btn--{{ section.settings.cta_style }}" href="{{ section.settings.cta_url | default: '#io-pricing' }}">
+          {{- section.settings.cta_label | escape -}}
+        </a>
+        {%- if section.settings.cta_note != blank -%}
+          <p class="io-note">{{ section.settings.cta_note | escape }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.footnote != blank -%}
+      <p class="io-note io-timeline__footnote">{{ section.settings.footnote | escape }}</p>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .io-timeline__list {
+    position: relative;
+    display: grid;
+    gap: 1.75rem;
+    margin: clamp(2.25rem, 4vw, 3rem) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .io-timeline__list::before {
+    content: '';
+    position: absolute;
+    top: 22px;
+    bottom: 22px;
+    left: 21px;
+    width: 2px;
+    background: var(--io-border);
+  }
+
+  .io-section--forest .io-timeline__list::before {
+    background: rgba(248, 248, 242, 0.2);
+  }
+
+  .io-timeline__item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 1.125rem;
+    align-items: start;
+  }
+
+  .io-timeline__marker {
+    position: relative;
+    z-index: 1;
+  }
+
+  .io-timeline__marker .io-icon-badge {
+    border: 2px solid var(--io-border);
+    background: var(--io-white);
+  }
+
+  .io-section--forest .io-timeline__marker .io-icon-badge {
+    background: var(--io-forest);
+    border-color: rgba(248, 248, 242, 0.28);
+    color: var(--io-gold);
+  }
+
+  .io-timeline__period {
+    margin: 0 0 0.25rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--io-text-soft);
+  }
+
+  .io-section--forest .io-timeline__period {
+    color: var(--io-gold);
+  }
+
+  .io-timeline__text {
+    margin: 0;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    color: var(--io-text-mid);
+  }
+
+  .io-timeline__text strong {
+    display: block;
+    color: var(--io-forest);
+  }
+
+  .io-section--forest .io-timeline__text {
+    color: rgba(248, 248, 242, 0.86);
+  }
+
+  .io-section--forest .io-timeline__text strong {
+    color: var(--io-cream);
+  }
+
+  .io-timeline__footnote {
+    margin-top: 1.5rem;
+    text-align: center;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "IO timeline",
+  "tag": "section",
+  "class": "io-section-wrapper",
+  "settings": [
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Background",
+      "options": [
+        { "value": "cream", "label": "Cream" },
+        { "value": "white", "label": "White" },
+        { "value": "bloom", "label": "Alternate" },
+        { "value": "forest", "label": "Deep green" }
+      ],
+      "default": "white"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Perjalanan Menopause"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Apa yang Akan Dirasakan Selama Protokol"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Kebanyakan suplemen gagal di hari ke-14. Karena di situ orang berhenti. Ini yang terjadi kalau kamu lanjut."
+    },
+    {
+      "type": "header",
+      "content": "Call to action"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button label",
+      "default": "Mulai Protokol"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button link"
+    },
+    {
+      "type": "select",
+      "id": "cta_style",
+      "label": "Button style",
+      "options": [
+        { "value": "primary", "label": "Solid green" },
+        { "value": "gold", "label": "Gold" },
+        { "value": "ghost", "label": "Outline" }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "text",
+      "id": "cta_note",
+      "label": "Text below button",
+      "default": "Garansi Uang Kembali 30 Hari · Gratis Ongkir"
+    },
+    {
+      "type": "textarea",
+      "id": "footnote",
+      "label": "Footnote",
+      "default": "*Hasil tiap orang berbeda dan tidak dijamin."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Milestone",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "bolt", "label": "Energy" },
+            { "value": "snowflake", "label": "Cooling" },
+            { "value": "bone", "label": "Joints" },
+            { "value": "brain", "label": "Focus" },
+            { "value": "sparkles", "label": "Skin" },
+            { "value": "moon", "label": "Sleep" },
+            { "value": "scale", "label": "Balance" },
+            { "value": "heart", "label": "Wellbeing" }
+          ],
+          "default": "bolt"
+        },
+        {
+          "type": "text",
+          "id": "period",
+          "label": "Period",
+          "default": "Minggu 1"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Bold line",
+          "default": "Energi mulai terangkat."
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Zat besi dan vitamin B mengisi kembali cadangan yang terkuras. Sore hari tidak lagi terasa habis tenaga.*"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "IO timeline",
+      "blocks": [
+        { "type": "step" },
+        {
+          "type": "step",
+          "settings": {
+            "icon": "snowflake",
+            "period": "Minggu 2-3",
+            "title": "Sendi dan lutut mulai terasa lebih luwes.",
+            "text": "Banyak yang merasakannya pertama kali saat naik tangga. Keringat malam mulai mereda.*"
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "icon": "bone",
+            "period": "Bulan 1",
+            "title": "Sendi membaik, mood lebih stabil.",
+            "text": "Kaku di lutut dan jari berkurang. Kulit tampak lebih terhidrasi. Brain fog mulai hilang.*"
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "icon": "sparkles",
+            "period": "Bulan 2",
+            "title": "Rambut merespons, kulit tampak bercahaya.",
+            "text": "Kuku lebih kuat. Pantulan di cermin mulai terasa familiar lagi.*"
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "icon": "scale",
+            "period": "Bulan 3",
+            "title": "Keseimbangan seluruh tubuh.",
+            "text": "92 nutrisi bekerja bersama. Energi stabil, tidur nyenyak, pikiran jernih.*"
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "icon": "heart",
+            "period": "Bulan 6",
+            "title": "Kamu merasa jadi diri sendiri lagi.",
+            "text": "Berenergi. Percaya diri. Memegang kendali atas tubuh.*"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

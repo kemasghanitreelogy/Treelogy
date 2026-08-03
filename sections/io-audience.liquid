@@ -1,0 +1,321 @@
+{% render 'io-base' %}
+
+<div class="io-section io-audience io-section--{{ section.settings.color_scheme }}">
+  <div class="io-container">
+    <div class="io-head io-head--center">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="io-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="io-h2">{{ section.settings.heading | escape }}</h2>
+      {%- endif -%}
+      {%- if section.settings.subheading != blank -%}
+        <p class="io-lede">{{ section.settings.subheading | escape }}</p>
+      {%- endif -%}
+    </div>
+
+    <ul class="io-audience__grid" style="--io-cols: {{ section.settings.columns }};">
+      {%- for block in section.blocks -%}
+        <li class="io-card io-audience__card io-reveal" {{ block.shopify_attributes }}>
+          <span class="io-icon-badge">
+            {% render 'io-icon', name: block.settings.icon, size: 22 %}
+          </span>
+          {%- if block.settings.title != blank -%}
+            <h3 class="io-h3">{{ block.settings.title | escape }}</h3>
+          {%- endif -%}
+          {%- if block.settings.text != blank -%}
+            <p class="io-audience__text">{{ block.settings.text | escape }}</p>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+
+    {%- if section.settings.exclude_items != blank -%}
+      {%- assign io_exclude = section.settings.exclude_items | strip | newline_to_br | split: '<br />' -%}
+      <div class="io-audience__not">
+        {%- if section.settings.exclude_heading != blank -%}
+          <h3 class="io-h3">{{ section.settings.exclude_heading | escape }}</h3>
+        {%- endif -%}
+        <ul class="io-audience__not-list">
+          {%- for item in io_exclude -%}
+            {%- assign io_item = item | strip -%}
+            {%- if io_item != blank -%}
+              <li>
+                {% render 'io-icon', name: 'cross', size: 18 %}
+                <span>{{ io_item }}</span>
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.cta_label != blank -%}
+      <div class="io-cta">
+        <a class="io-btn io-btn--{{ section.settings.cta_style }}" href="{{ section.settings.cta_url | default: '#io-pricing' }}">
+          {{- section.settings.cta_label | escape -}}
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .io-audience__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.125rem;
+    margin: clamp(2.25rem, 4vw, 3rem) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 700px) {
+    .io-audience__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1000px) {
+    .io-audience__grid {
+      grid-template-columns: repeat(var(--io-cols, 3), minmax(0, 1fr));
+    }
+  }
+
+  .io-audience__card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+
+  .io-section--forest .io-audience__card {
+    background: rgba(248, 248, 242, 0.06);
+    border-color: rgba(248, 248, 242, 0.16);
+  }
+
+  .io-section--forest .io-audience__card .io-icon-badge {
+    background: rgba(245, 208, 83, 0.16);
+    color: var(--io-gold);
+  }
+
+  .io-audience__text {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--io-text-mid);
+  }
+
+  .io-section--forest .io-audience__text {
+    color: rgba(248, 248, 242, 0.86);
+  }
+
+  .io-audience__not {
+    max-width: 640px;
+    margin: clamp(2rem, 4vw, 2.75rem) auto 0;
+    padding: 1.5rem;
+    border: 1px dashed var(--io-border);
+    border-radius: var(--io-radius-lg);
+    text-align: center;
+  }
+
+  .io-audience__not-list {
+    display: inline-grid;
+    gap: 0.5rem;
+    margin: 1rem 0 0;
+    padding: 0;
+    list-style: none;
+    text-align: left;
+  }
+
+  .io-audience__not-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.625rem;
+    font-size: 1rem;
+    line-height: 1.55;
+    color: var(--io-text-mid);
+  }
+
+  .io-audience__not-list .io-icon {
+    flex: none;
+    margin-top: 0.25rem;
+    color: var(--io-clay);
+  }
+
+  .io-section--forest .io-audience__not-list li {
+    color: rgba(248, 248, 242, 0.86);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "IO audience",
+  "tag": "section",
+  "class": "io-section-wrapper",
+  "settings": [
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Background",
+      "options": [
+        { "value": "cream", "label": "Cream" },
+        { "value": "white", "label": "White" },
+        { "value": "bloom", "label": "Alternate" },
+        { "value": "forest", "label": "Deep green" }
+      ],
+      "default": "white"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Untuk Siapa Inside Out Protocol Ini?"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "Columns on desktop",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "Who it is not for"
+    },
+    {
+      "type": "text",
+      "id": "exclude_heading",
+      "label": "Heading",
+      "default": "Untuk Siapa Produk Ini TIDAK Cocok?"
+    },
+    {
+      "type": "textarea",
+      "id": "exclude_items",
+      "label": "Items",
+      "info": "One per line. Leave empty to hide this panel.",
+      "default": "Yang mencari keajaiban semalam. Konsistensi itu kunci\nYang alergi terhadap Moringa oleifera\nIbu hamil, menyusui, atau sedang minum obat rutin tanpa konsultasi dokter"
+    },
+    {
+      "type": "header",
+      "content": "Call to action"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button link"
+    },
+    {
+      "type": "select",
+      "id": "cta_style",
+      "label": "Button style",
+      "options": [
+        { "value": "primary", "label": "Solid green" },
+        { "value": "gold", "label": "Gold" },
+        { "value": "ghost", "label": "Outline" }
+      ],
+      "default": "primary"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Card",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "bone", "label": "Joints" },
+            { "value": "moon", "label": "Sleep" },
+            { "value": "bolt", "label": "Energy" },
+            { "value": "hair", "label": "Hair" },
+            { "value": "brain", "label": "Focus" },
+            { "value": "flame", "label": "Hot flashes" },
+            { "value": "sparkles", "label": "Skin" },
+            { "value": "heart", "label": "Wellbeing" }
+          ],
+          "default": "bone"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Perempuan dengan Nyeri Sendi & Lutut"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Jari kaku di pagi hari. Lutut nyeri saat naik tangga."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "IO audience",
+      "blocks": [
+        { "type": "card" },
+        {
+          "type": "card",
+          "settings": {
+            "icon": "bolt",
+            "title": "Perempuan yang Lelah Terus-menerus",
+            "text": "Tenaga drop jam 3 sore. Energi stabil dari tanaman, tanpa lonjakan kafein."
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "icon": "hair",
+            "title": "Perempuan dengan Rambut Menipis & Kulit Kusam",
+            "text": "Rambut menipis. Kulit kering. Kuku rapuh. Dirawat dari dalam dan permukaan."
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "icon": "brain",
+            "title": "Perempuan dengan Brain Fog",
+            "text": "Lupa kata-kata. Sulit fokus. Asam amino yang mendukung kejernihan berpikir."
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "icon": "flame",
+            "title": "Perempuan yang Berjuang dengan Hot Flashes",
+            "text": "Panas yang datang tiba-tiba. Keringat malam."
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "icon": "moon",
+            "title": "Perempuan yang Sulit Tidur Nyenyak",
+            "text": "Sering terbangun tengah malam. Bangun pagi tetap terasa lelah."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

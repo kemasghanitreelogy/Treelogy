@@ -1,0 +1,153 @@
+{% render 'io-base' %}
+
+{% liquid
+  case section.settings.heading_font
+    when 'serif'
+      assign io_heading_stack = '"Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif'
+    when 'body'
+      assign io_heading_stack = 'var(--font-base, "Inter", system-ui, sans-serif)'
+    else
+      assign io_heading_stack = '"Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif'
+  endcase
+%}
+
+{% style %}
+  :root {
+    --io-forest: {{ section.settings.color_forest }};
+    --io-forest-deep: {{ section.settings.color_forest_deep }};
+    --io-cream: {{ section.settings.color_cream }};
+    --io-bloom: {{ section.settings.color_bloom }};
+    --io-gold: {{ section.settings.color_gold }};
+    --io-gold-light: {{ section.settings.color_gold | color_lighten: 6 }};
+    --io-clay: {{ section.settings.color_clay }};
+    --io-text: {{ section.settings.color_text }};
+    --io-text-mid: {{ section.settings.color_text | color_lighten: 6 }};
+    --io-text-soft: {{ section.settings.color_text | color_lighten: 9 }};
+    --io-border: {{ section.settings.color_border }};
+    --io-font-heading: {{ io_heading_stack }};
+    --io-max: {{ section.settings.container_width }}px;
+    --io-radius: {{ section.settings.corner_radius | divided_by: 2 }}px;
+    --io-radius-lg: {{ section.settings.corner_radius }}px;
+    --io-pad-block: clamp(2.5rem, {{ section.settings.section_spacing }}vw, {{ section.settings.section_spacing | times: 0.9 }}rem);
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "Inside Out settings",
+  "tag": "div",
+  "class": "io-settings",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Place this at the very top of the template. It sets the colours, fonts and spacing used by every Inside Out section below it."
+    },
+    {
+      "type": "header",
+      "content": "Colours"
+    },
+    {
+      "type": "color",
+      "id": "color_forest",
+      "label": "Primary (deep green)",
+      "default": "#2a3b34"
+    },
+    {
+      "type": "color",
+      "id": "color_forest_deep",
+      "label": "Primary hover",
+      "default": "#1a2b24"
+    },
+    {
+      "type": "color",
+      "id": "color_gold",
+      "label": "Accent (gold)",
+      "default": "#f5d053"
+    },
+    {
+      "type": "color",
+      "id": "color_clay",
+      "label": "Warning / negative",
+      "default": "#b5503c"
+    },
+    {
+      "type": "color",
+      "id": "color_cream",
+      "label": "Page background",
+      "default": "#f8f8f2"
+    },
+    {
+      "type": "color",
+      "id": "color_bloom",
+      "label": "Alternate background",
+      "default": "#eae9dc"
+    },
+    {
+      "type": "color",
+      "id": "color_text",
+      "label": "Body text",
+      "info": "Secondary text is derived from this colour. The default keeps every text style above a 7:1 contrast ratio, which is the WCAG AAA level recommended for readers over 45.",
+      "default": "#22302a"
+    },
+    {
+      "type": "color",
+      "id": "color_border",
+      "label": "Borders",
+      "default": "#d6d4c8"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "select",
+      "id": "heading_font",
+      "label": "Heading font",
+      "info": "Both options use fonts already on the device, so no extra download slows the page down.",
+      "options": [
+        { "value": "serif", "label": "Editorial serif" },
+        { "value": "body", "label": "Same as theme body font" }
+      ],
+      "default": "serif"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "label": "Content width",
+      "min": 960,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "default": 1120
+    },
+    {
+      "type": "range",
+      "id": "corner_radius",
+      "label": "Corner radius",
+      "min": 0,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "section_spacing",
+      "label": "Space between sections",
+      "min": 4,
+      "max": 9,
+      "step": 1,
+      "default": 7
+    }
+  ],
+  "presets": [
+    {
+      "name": "Inside Out settings"
+    }
+  ]
+}
+{% endschema %}

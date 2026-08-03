@@ -1,0 +1,716 @@
+{% render 'io-base' %}
+
+<div class="io-section io-reviews io-section--{{ section.settings.color_scheme }}" data-io-reviews>
+  <div class="io-container">
+    <div class="io-head io-head--center">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="io-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="io-h2">{{ section.settings.heading | escape }}</h2>
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.show_summary -%}
+      <div class="io-reviews__summary">
+        <div class="io-reviews__score">
+          <span
+            class="io-stars io-reviews__score-stars"
+            role="img"
+            aria-label="{{ section.settings.average | escape }} dari 5 bintang"
+          >
+            {%- for i in (1..5) -%}
+              {% render 'io-icon', name: 'star', size: 22 %}
+            {%- endfor -%}
+          </span>
+          <p class="io-reviews__score-text">
+            <strong>{{ section.settings.average | escape }}</strong>
+            <span>{{ section.settings.count_label | escape }}</span>
+          </p>
+        </div>
+
+        <ul class="io-reviews__bars">
+          {%- assign io_pcts = section.settings.distribution | strip | split: ',' -%}
+          {%- for pct in io_pcts limit: 5 -%}
+            {%- assign io_stars = 5 | minus: forloop.index0 -%}
+            {%- assign io_pct = pct | strip | times: 1 -%}
+            <li class="io-reviews__bar-row">
+              <span class="io-reviews__bar-label">{{ io_stars }} ★</span>
+              <span class="io-reviews__bar" aria-hidden="true">
+                <span class="io-reviews__bar-fill" style="width: {{ io_pct }}%;"></span>
+              </span>
+              <span class="io-reviews__bar-pct">{{ io_pct }}%</span>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endif -%}
+
+    {%- assign io_topics = section.blocks | where: 'type', 'topic' -%}
+    {%- if io_topics.size > 0 -%}
+      <div class="io-reviews__topics">
+        {%- if section.settings.topics_label != blank -%}
+          <p class="io-reviews__topics-label" id="io-topics-{{ section.id }}">
+            {{- section.settings.topics_label | escape -}}
+          </p>
+        {%- endif -%}
+        <div class="io-reviews__chips" role="group" aria-labelledby="io-topics-{{ section.id }}">
+          {%- for block in io_topics -%}
+            <button
+              class="io-reviews__chip"
+              type="button"
+              data-io-topic="{{ block.settings.key | handle }}"
+              aria-pressed="false"
+              {{ block.shopify_attributes }}
+            >
+              {% render 'io-icon', name: block.settings.icon, size: 16 %}
+              <span>{{ block.settings.label | escape }}</span>
+            </button>
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+    <ul class="io-reviews__grid" data-io-review-grid>
+      {%- for block in section.blocks -%}
+        {%- if block.type != 'review' -%}
+          {%- continue -%}
+        {%- endif -%}
+        {%- assign io_rating = block.settings.rating | times: 1 -%}
+        <li
+          class="io-card io-rcard io-reveal"
+          data-io-topics="{{ block.settings.topics | handle }}"
+          {{ block.shopify_attributes }}
+        >
+          <div class="io-rcard__head">
+            {%- if block.settings.avatar != blank -%}
+              <span class="io-rcard__avatar io-rcard__avatar--image">
+                {% render 'io-image',
+                  image: block.settings.avatar,
+                  alt: block.settings.author,
+                  placeholder: 'lifestyle-1',
+                  sizes: '48px',
+                  ratio: '1 / 1'
+                %}
+              </span>
+            {%- else -%}
+              <span class="io-rcard__avatar" aria-hidden="true">
+                {{- block.settings.author | slice: 0, 1 | upcase -}}
+              </span>
+            {%- endif -%}
+            <span class="io-rcard__who">
+              <span class="io-rcard__name">{{ block.settings.author | escape }}</span>
+              {%- if block.settings.detail != blank -%}
+                <span class="io-rcard__detail">{{ block.settings.detail | escape }}</span>
+              {%- endif -%}
+            </span>
+          </div>
+
+          <span class="io-stars" role="img" aria-label="{{ io_rating }} dari 5 bintang">
+            {%- for i in (1..5) -%}
+              <span class="io-star{% if i > io_rating %} io-star--off{% endif %}">
+                {% render 'io-icon', name: 'star', size: 16 %}
+              </span>
+            {%- endfor -%}
+          </span>
+
+          <blockquote class="io-rcard__text">{{ block.settings.quote }}</blockquote>
+
+          {%- if block.settings.tag != blank -%}
+            <span class="io-rcard__tag">{{ block.settings.tag | escape }}</span>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+
+    <p class="io-visually-hidden" role="status" data-io-review-status></p>
+
+    {%- if section.settings.cta_label != blank -%}
+      <div class="io-cta">
+        <a class="io-btn io-btn--{{ section.settings.cta_style }}" href="{{ section.settings.cta_url | default: '#io-pricing' }}">
+          {{- section.settings.cta_label | escape -}}
+        </a>
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.footnote != blank -%}
+      <p class="io-note io-reviews__footnote">{{ section.settings.footnote | escape }}</p>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .io-reviews__summary {
+    display: grid;
+    gap: 1.5rem;
+    align-items: center;
+    max-width: 46rem;
+    margin: clamp(1.75rem, 3vw, 2.5rem) auto 0;
+    padding: 1.5rem;
+    border: 1px solid var(--io-border);
+    border-radius: var(--io-radius-lg);
+    background: var(--io-white);
+  }
+
+  @media (min-width: 700px) {
+    .io-reviews__summary {
+      grid-template-columns: auto 1fr;
+      gap: 2.5rem;
+    }
+  }
+
+  .io-section--forest .io-reviews__summary {
+    background: rgba(248, 248, 242, 0.06);
+    border-color: rgba(248, 248, 242, 0.18);
+  }
+
+  .io-reviews__score {
+    text-align: center;
+  }
+
+  .io-reviews__score-text {
+    margin: 0.5rem 0 0;
+    line-height: 1.3;
+  }
+
+  .io-reviews__score-text strong {
+    display: block;
+    font-family: var(--io-font-heading);
+    font-size: 2.25rem;
+    color: var(--io-forest);
+  }
+
+  .io-section--forest .io-reviews__score-text strong {
+    color: var(--io-gold);
+  }
+
+  .io-reviews__score-text span {
+    font-size: 0.875rem;
+    color: var(--io-text-soft);
+  }
+
+  .io-reviews__bars {
+    display: grid;
+    gap: 0.375rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .io-reviews__bar-row {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr 2.75rem;
+    align-items: center;
+    gap: 0.625rem;
+    font-size: 0.8125rem;
+    color: var(--io-text-soft);
+  }
+
+  .io-reviews__bar {
+    display: block;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--io-bloom);
+    overflow: hidden;
+  }
+
+  .io-reviews__bar-fill {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--io-forest);
+  }
+
+  .io-section--forest .io-reviews__bar {
+    background: rgba(248, 248, 242, 0.16);
+  }
+
+  .io-section--forest .io-reviews__bar-fill {
+    background: var(--io-gold);
+  }
+
+  .io-reviews__topics {
+    margin-top: 1.75rem;
+    text-align: center;
+  }
+
+  .io-reviews__topics-label {
+    margin: 0 0 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--io-text-soft);
+  }
+
+  .io-reviews__chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .io-reviews__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 48px;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--io-border);
+    border-radius: 999px;
+    background: var(--io-white);
+    color: var(--io-text-mid);
+    font-family: var(--io-font-body);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease;
+  }
+
+  .io-reviews__chip:hover {
+    border-color: var(--io-forest);
+  }
+
+  .io-reviews__chip[aria-pressed='true'] {
+    background: var(--io-forest);
+    border-color: var(--io-forest);
+    color: var(--io-cream);
+  }
+
+  .io-reviews__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.125rem;
+    margin: clamp(1.75rem, 3vw, 2.25rem) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 700px) {
+    .io-reviews__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1000px) {
+    .io-reviews__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .io-rcard {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .io-rcard[hidden] {
+    display: none;
+  }
+
+  .io-section--forest .io-rcard {
+    background: rgba(248, 248, 242, 0.06);
+    border-color: rgba(248, 248, 242, 0.18);
+  }
+
+  .io-rcard__head {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .io-rcard__avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    flex: none;
+    border-radius: 50%;
+    background: var(--io-bloom);
+    color: var(--io-forest);
+    font-weight: 700;
+    overflow: hidden;
+  }
+
+  .io-rcard__avatar--image {
+    background: none;
+  }
+
+  .io-rcard__avatar .io-media-frame,
+  .io-rcard__avatar .io-media {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+  }
+
+  .io-rcard__who {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .io-rcard__name {
+    font-weight: 600;
+    color: var(--io-forest);
+  }
+
+  .io-section--forest .io-rcard__name {
+    color: var(--io-cream);
+  }
+
+  .io-rcard__detail {
+    font-size: 0.8125rem;
+    color: var(--io-text-soft);
+  }
+
+  .io-star--off {
+    opacity: 0.28;
+  }
+
+  .io-rcard__text {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--io-text-mid);
+  }
+
+  .io-rcard__text p {
+    margin: 0 0 0.5rem;
+  }
+
+  .io-rcard__text p:last-child {
+    margin-bottom: 0;
+  }
+
+  .io-section--forest .io-rcard__text {
+    color: rgba(248, 248, 242, 0.86);
+  }
+
+  .io-rcard__tag {
+    margin-top: auto;
+    padding-top: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--io-text-soft);
+  }
+
+  .io-reviews__footnote {
+    margin-top: 1.5rem;
+    text-align: center;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  (function () {
+    function setup(root) {
+      var chips = root.querySelectorAll('[data-io-topic]');
+      var grid = root.querySelector('[data-io-review-grid]');
+      var status = root.querySelector('[data-io-review-status]');
+      if (!chips.length || !grid) return;
+
+      var cards = Array.prototype.slice.call(grid.querySelectorAll('[data-io-topics]'));
+
+      function apply(topic) {
+        var shown = 0;
+
+        cards.forEach(function (card) {
+          var topics = card.getAttribute('data-io-topics') || '';
+          var match = !topic || topics.split(/[\s,]+/).indexOf(topic) !== -1;
+          card.hidden = !match;
+          if (match) shown++;
+        });
+
+        if (status) {
+          status.textContent = topic
+            ? shown + ' ulasan ditampilkan'
+            : cards.length + ' ulasan ditampilkan';
+        }
+      }
+
+      chips.forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          var wasActive = chip.getAttribute('aria-pressed') === 'true';
+
+          chips.forEach(function (other) {
+            other.setAttribute('aria-pressed', 'false');
+          });
+
+          if (wasActive) {
+            apply(null);
+            return;
+          }
+
+          chip.setAttribute('aria-pressed', 'true');
+          apply(chip.getAttribute('data-io-topic'));
+        });
+      });
+    }
+
+    function init(scope) {
+      (scope || document).querySelectorAll('[data-io-reviews]').forEach(setup);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function () {
+        init();
+      });
+    } else {
+      init();
+    }
+
+    document.addEventListener('shopify:section:load', function (event) {
+      init(event.target);
+    });
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "IO reviews",
+  "tag": "section",
+  "class": "io-section-wrapper",
+  "settings": [
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Background",
+      "options": [
+        { "value": "cream", "label": "Cream" },
+        { "value": "white", "label": "White" },
+        { "value": "bloom", "label": "Alternate" },
+        { "value": "forest", "label": "Deep green" }
+      ],
+      "default": "cream"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Hasil Nyata dari Perempuan Nyata"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Cerita Menopause"
+    },
+    {
+      "type": "header",
+      "content": "Rating summary"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_summary",
+      "label": "Show the rating summary",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "average",
+      "label": "Average rating",
+      "default": "4,8"
+    },
+    {
+      "type": "text",
+      "id": "count_label",
+      "label": "Rating caption",
+      "default": "dari 5 · 10.000+ ulasan"
+    },
+    {
+      "type": "text",
+      "id": "distribution",
+      "label": "Star distribution",
+      "info": "Five percentages separated by commas, from 5 stars down to 1 star.",
+      "default": "86, 10, 2, 1, 1"
+    },
+    {
+      "type": "text",
+      "id": "topics_label",
+      "label": "Filter label",
+      "default": "Paling sering disebut di ulasan"
+    },
+    {
+      "type": "header",
+      "content": "Call to action"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button link"
+    },
+    {
+      "type": "select",
+      "id": "cta_style",
+      "label": "Button style",
+      "options": [
+        { "value": "primary", "label": "Solid green" },
+        { "value": "gold", "label": "Gold" },
+        { "value": "ghost", "label": "Outline" }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "textarea",
+      "id": "footnote",
+      "label": "Footnote",
+      "default": "Ulasan dari pembeli terverifikasi. Hasil tiap orang bisa berbeda."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "topic",
+      "name": "Filter chip",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "bone", "label": "Joints" },
+            { "value": "moon", "label": "Sleep" },
+            { "value": "bolt", "label": "Energy" },
+            { "value": "flame", "label": "Hot flashes" },
+            { "value": "sparkles", "label": "Skin" },
+            { "value": "hair", "label": "Hair" }
+          ],
+          "default": "bone"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Nyeri Sendi & Lutut"
+        },
+        {
+          "type": "text",
+          "id": "key",
+          "label": "Topic key",
+          "info": "Must match one of the words in the Topics field of the reviews you want to show.",
+          "default": "sendi"
+        }
+      ]
+    },
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "avatar",
+          "label": "Photo",
+          "info": "Optional. Without a photo the first letter of the name is shown."
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Name",
+          "default": "Ibu Ratna"
+        },
+        {
+          "type": "text",
+          "id": "detail",
+          "label": "Detail",
+          "default": "55 Tahun · Surabaya · Pembeli Terverifikasi"
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "richtext",
+          "id": "quote",
+          "label": "Review",
+          "default": "<p>Baru habis 30 kapsul dan manfaatnya sudah terasa. Kualitas tidur membaik, nyeri lutut saat naik tangga berkurang.</p>"
+        },
+        {
+          "type": "text",
+          "id": "topics",
+          "label": "Topics",
+          "info": "Words separated by spaces. They connect this review to the filter chips.",
+          "default": "tidur sendi"
+        },
+        {
+          "type": "text",
+          "id": "tag",
+          "label": "Tag",
+          "default": "Tidur · Sendi"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "IO reviews",
+      "blocks": [
+        { "type": "topic" },
+        { "type": "topic", "settings": { "icon": "moon", "label": "Tidur Lebih Nyenyak", "key": "tidur" } },
+        { "type": "topic", "settings": { "icon": "bolt", "label": "Lebih Berenergi", "key": "energi" } },
+        { "type": "topic", "settings": { "icon": "flame", "label": "Hot Flashes Berkurang", "key": "hotflash" } },
+        { "type": "review" },
+        {
+          "type": "review",
+          "settings": {
+            "author": "Nia S.",
+            "detail": "47 Tahun · Bandung · Pembeli Terverifikasi",
+            "quote": "<p>Dulu sering terbangun dengan jantung berdebar dan dada terasa panas. Setelah minum Treelogy, keluhan itu berhenti.</p>",
+            "topics": "hotflash tidur",
+            "tag": "Hot Flashes · Tidur"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "author": "Dewi H.",
+            "detail": "50 Tahun · Medan · Pembeli Terverifikasi",
+            "quote": "<p>Setelah rutin minum satu minggu, nyeri tumit dan sendi saya berkurang. Badan terasa lebih enak.</p>",
+            "topics": "sendi",
+            "tag": "Nyeri Sendi"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "author": "Dian P.",
+            "detail": "49 Tahun · Jakarta · Pembeli Terverifikasi",
+            "quote": "<p>Kulit terasa sangat halus. Tidur nyenyak, bangun segar, stamina olahraga naik drastis.</p>",
+            "topics": "energi tidur",
+            "tag": "Kulit · Tidur · Energi"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "author": "Linda M.",
+            "detail": "48 Tahun · Yogyakarta · Pembeli Terverifikasi",
+            "quote": "<p>Yang paling terasa, tidur jadi jauh lebih nyenyak. Kram jari berkurang. Badan segar dan fit.</p>",
+            "topics": "tidur energi",
+            "tag": "Tidur · Energi"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "author": "Sari W.",
+            "detail": "53 Tahun · Jakarta · Pembeli Terverifikasi",
+            "quote": "<p>Berkat Treelogy, keluhan menopause saya jauh berkurang. Setiap hari terasa lebih bahagia.</p>",
+            "topics": "energi",
+            "tag": "Menopause"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

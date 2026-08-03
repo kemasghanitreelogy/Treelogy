@@ -1,0 +1,445 @@
+{% render 'io-base' %}
+
+<div class="io-section io-stats io-section--{{ section.settings.color_scheme }}">
+  <div class="io-container">
+    <div class="io-head {% if section.settings.align_center %}io-head--center{% endif %}">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="io-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="io-h2">{{ section.settings.heading | escape }}</h2>
+      {%- endif -%}
+      {%- if section.settings.subheading != blank -%}
+        <p class="io-lede">{{ section.settings.subheading | escape }}</p>
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.show_comparison -%}
+      <figure class="io-stats__compare io-reveal">
+        <div class="io-stats__compare-grid">
+          <div class="io-stats__compare-cell">
+            {% render 'io-image',
+              image: section.settings.compare_before,
+              alt: section.settings.compare_before_alt,
+              placeholder: 'lifestyle-1',
+              sizes: '(min-width: 760px) 340px, 45vw',
+              ratio: '3 / 4'
+            %}
+            <figcaption class="io-stats__compare-label">
+              {{- section.settings.compare_before_label | escape -}}
+            </figcaption>
+          </div>
+          <div class="io-stats__compare-cell">
+            {% render 'io-image',
+              image: section.settings.compare_after,
+              alt: section.settings.compare_after_alt,
+              placeholder: 'lifestyle-2',
+              sizes: '(min-width: 760px) 340px, 45vw',
+              ratio: '3 / 4'
+            %}
+            <figcaption class="io-stats__compare-label io-stats__compare-label--after">
+              {{- section.settings.compare_after_label | escape -}}
+            </figcaption>
+          </div>
+        </div>
+        {%- if section.settings.compare_caption != blank -%}
+          <figcaption class="io-note io-stats__compare-caption">
+            {{- section.settings.compare_caption | escape -}}
+          </figcaption>
+        {%- endif -%}
+      </figure>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <ul
+        class="io-stats__grid"
+        style="--io-cols: {{ section.settings.columns }}; --io-cols-mobile: {{ section.settings.columns_mobile }};"
+      >
+        {%- for block in section.blocks -%}
+          <li class="io-card io-stats__card io-reveal" {{ block.shopify_attributes }}>
+            <span class="io-stats__number">{{ block.settings.number | escape }}</span>
+            {%- if block.settings.label != blank -%}
+              <span class="io-stats__label">{{ block.settings.label | escape }}</span>
+            {%- endif -%}
+            {%- if block.settings.compared_to != blank -%}
+              <span class="io-stats__vs">{{ block.settings.compared_to | escape }}</span>
+            {%- endif -%}
+            {%- if block.settings.note != blank -%}
+              <span class="io-stats__note">{{ block.settings.note | escape }}</span>
+            {%- endif -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+    {%- if section.settings.cta_label != blank -%}
+      <div class="io-cta">
+        <a class="io-btn io-btn--{{ section.settings.cta_style }}" href="{{ section.settings.cta_url | default: '#io-pricing' }}">
+          {{- section.settings.cta_label | escape -}}
+        </a>
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.footnote != blank -%}
+      <p class="io-note io-stats__footnote">{{ section.settings.footnote | escape }}</p>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .io-stats__grid {
+    display: grid;
+    grid-template-columns: repeat(var(--io-cols-mobile, 1), minmax(0, 1fr));
+    gap: 1rem;
+    margin: clamp(2rem, 4vw, 2.75rem) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 700px) {
+    .io-stats__grid {
+      grid-template-columns: repeat(var(--io-cols, 3), minmax(0, 1fr));
+    }
+  }
+
+  .io-stats__card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .io-section--forest .io-stats__card {
+    background: rgba(248, 248, 242, 0.06);
+    border-color: rgba(248, 248, 242, 0.16);
+  }
+
+  .io-stats__number {
+    font-family: var(--io-font-heading);
+    font-size: clamp(2.25rem, 5vw, 3rem);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--io-forest);
+  }
+
+  .io-section--forest .io-stats__number {
+    color: var(--io-gold);
+  }
+
+  .io-stats__label {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--io-text);
+  }
+
+  .io-section--forest .io-stats__label {
+    color: var(--io-cream);
+  }
+
+  .io-stats__vs {
+    font-size: 0.875rem;
+    color: var(--io-text-soft);
+  }
+
+  .io-stats__note {
+    margin-top: 0.5rem;
+    padding-top: 0.625rem;
+    border-top: 1px solid var(--io-border);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--io-text-mid);
+  }
+
+  .io-section--forest .io-stats__note {
+    border-color: rgba(248, 248, 242, 0.16);
+    color: rgba(248, 248, 242, 0.8);
+  }
+
+  .io-stats__compare {
+    margin: clamp(2rem, 4vw, 2.75rem) 0 0;
+  }
+
+  .io-stats__compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    max-width: 700px;
+    margin-inline: auto;
+  }
+
+  .io-stats__compare-cell {
+    position: relative;
+  }
+
+  .io-stats__compare-label {
+    position: absolute;
+    left: 0.75rem;
+    bottom: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    background: rgba(26, 43, 36, 0.82);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .io-stats__compare-label--after {
+    background: var(--io-gold);
+    color: var(--io-forest-deep);
+  }
+
+  .io-stats__compare-caption {
+    margin-top: 0.75rem;
+    text-align: center;
+  }
+
+  .io-stats__footnote {
+    margin-top: 1.75rem;
+    font-size: 0.8125rem;
+    text-align: center;
+    text-wrap: pretty;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "IO stat grid",
+  "tag": "section",
+  "class": "io-section-wrapper",
+  "settings": [
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Background",
+      "options": [
+        { "value": "cream", "label": "Cream" },
+        { "value": "white", "label": "White" },
+        { "value": "bloom", "label": "Alternate" },
+        { "value": "forest", "label": "Deep green" }
+      ],
+      "default": "cream"
+    },
+    {
+      "type": "checkbox",
+      "id": "align_center",
+      "label": "Centre the heading",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Kenapa Daun Ini untuk Menopause"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Nutrisi yang Hilang dari Tubuh. Dipenuhi dari Dalam."
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Menopause menguras nutrisi tubuh lebih cepat dari sebelumnya. 92 nutrisi. Satu daun."
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "Columns on desktop",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns on mobile",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "header",
+      "content": "Before and after"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_comparison",
+      "label": "Show a before and after pair",
+      "info": "Only use real, unretouched photos of your own product being used, and keep the caption factual.",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "compare_before",
+      "label": "Before image"
+    },
+    {
+      "type": "text",
+      "id": "compare_before_alt",
+      "label": "Before image description",
+      "default": "Kulit tangan kering dan bersisik sebelum pemakaian"
+    },
+    {
+      "type": "text",
+      "id": "compare_before_label",
+      "label": "Before label",
+      "default": "Sebelum"
+    },
+    {
+      "type": "image_picker",
+      "id": "compare_after",
+      "label": "After image"
+    },
+    {
+      "type": "text",
+      "id": "compare_after_alt",
+      "label": "After image description",
+      "default": "Kulit tangan yang sama tampak lembap dan halus"
+    },
+    {
+      "type": "text",
+      "id": "compare_after_label",
+      "label": "After label",
+      "default": "Sesudah"
+    },
+    {
+      "type": "text",
+      "id": "compare_caption",
+      "label": "Caption",
+      "default": "Hasil tiap orang bisa berbeda."
+    },
+    {
+      "type": "header",
+      "content": "Call to action"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button link"
+    },
+    {
+      "type": "select",
+      "id": "cta_style",
+      "label": "Button style",
+      "options": [
+        { "value": "primary", "label": "Solid green" },
+        { "value": "gold", "label": "Gold" },
+        { "value": "ghost", "label": "Outline" }
+      ],
+      "default": "gold"
+    },
+    {
+      "type": "header",
+      "content": "Footnote"
+    },
+    {
+      "type": "textarea",
+      "id": "footnote",
+      "label": "Footnote",
+      "default": "*Perbandingan gram per gram antara bubuk daun moringa kering dan bahan segar. Hasil tiap orang bisa berbeda. Produk ini bukan obat dan tidak dimaksudkan untuk mendiagnosis, mengobati, menyembuhkan, atau mencegah penyakit."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "stat",
+      "name": "Stat",
+      "settings": [
+        {
+          "type": "text",
+          "id": "number",
+          "label": "Number",
+          "default": "17x"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Kalsium Lebih Banyak"
+        },
+        {
+          "type": "text",
+          "id": "compared_to",
+          "label": "Compared to",
+          "default": "daripada susu"
+        },
+        {
+          "type": "text",
+          "id": "note",
+          "label": "Why it matters",
+          "default": "Mendukung kepadatan tulang saat estrogen menurun"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "IO stat grid",
+      "blocks": [
+        { "type": "stat" },
+        {
+          "type": "stat",
+          "settings": {
+            "number": "25x",
+            "label": "Zat Besi Lebih Banyak",
+            "compared_to": "daripada bayam",
+            "note": "Melawan lelah akibat turunnya estrogen"
+          }
+        },
+        {
+          "type": "stat",
+          "settings": {
+            "number": "10x",
+            "label": "Vitamin A Lebih Banyak",
+            "compared_to": "daripada wortel",
+            "note": "Membantu memperbaiki kulit menipis saat menopause"
+          }
+        },
+        {
+          "type": "stat",
+          "settings": {
+            "number": "15x",
+            "label": "Kalium Lebih Banyak",
+            "compared_to": "daripada pisang",
+            "note": "Membantu mengurangi kembung dan retensi air"
+          }
+        },
+        {
+          "type": "stat",
+          "settings": {
+            "number": "46",
+            "label": "Antioksidan",
+            "compared_to": "+ 9 asam amino esensial lengkap",
+            "note": "Melawan stres oksidatif dan inflamasi"
+          }
+        },
+        {
+          "type": "stat",
+          "settings": {
+            "number": "92",
+            "label": "Total Nutrisi",
+            "compared_to": "dari satu bahan tunggal",
+            "note": "Menggantikan selemari suplemen"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

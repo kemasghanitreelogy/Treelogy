@@ -1,0 +1,288 @@
+{% render 'io-base' %}
+
+<div class="io-sticky-root" data-io-sticky data-show-after="{{ section.settings.show_after }}">
+  {%- if section.settings.show_whatsapp and section.settings.whatsapp_number != blank -%}
+    {%- assign io_wa_number = section.settings.whatsapp_number | remove: ' ' | remove: '+' | remove: '-' -%}
+    <a
+      class="io-wa"
+      href="https://wa.me/{{ io_wa_number }}?text={{ section.settings.whatsapp_message | url_encode }}"
+      target="_blank"
+      rel="noopener"
+      aria-label="{{ section.settings.whatsapp_label | escape }}"
+    >
+      {% render 'io-icon', name: 'whatsapp', size: 28 %}
+    </a>
+  {%- endif -%}
+
+  {%- if section.settings.cta_label != blank -%}
+    <div class="io-sticky" data-io-sticky-bar hidden>
+      <div class="io-sticky__inner">
+        <p class="io-sticky__text">
+          {%- if section.settings.title != blank -%}
+            <strong>{{ section.settings.title | escape }}</strong>
+          {%- endif -%}
+          {%- if section.settings.subtitle != blank -%}
+            <span>{{ section.settings.subtitle | escape }}</span>
+          {%- endif -%}
+        </p>
+        <a
+          class="io-btn io-btn--{{ section.settings.cta_style }} io-sticky__cta"
+          href="{{ section.settings.cta_url | default: '#io-pricing' }}"
+        >
+          {{- section.settings.cta_label | escape -}}
+        </a>
+      </div>
+    </div>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .io-sticky {
+    position: fixed;
+    z-index: 40;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 0.625rem clamp(0.75rem, 3vw, 1.25rem);
+    padding-bottom: calc(0.625rem + env(safe-area-inset-bottom, 0px));
+    background: var(--io-white);
+    border-top: 1px solid var(--io-border);
+    box-shadow: 0 -6px 20px rgba(26, 43, 36, 0.1);
+    transform: translateY(110%);
+    transition: transform 260ms ease;
+  }
+
+  .io-sticky[hidden] {
+    display: none;
+  }
+
+  .io-sticky--visible {
+    transform: none;
+  }
+
+  .io-sticky__inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem 1.25rem;
+    max-width: var(--io-max);
+    margin-inline: auto;
+  }
+
+  .io-sticky__text {
+    display: none;
+    margin: 0;
+    font-family: var(--io-font-body);
+    font-size: 0.9375rem;
+    line-height: 1.35;
+    color: var(--io-text-mid);
+  }
+
+  .io-sticky__text strong {
+    display: block;
+    color: var(--io-forest);
+  }
+
+  @media (min-width: 600px) {
+    .io-sticky__inner {
+      justify-content: space-between;
+    }
+
+    .io-sticky__text {
+      display: block;
+    }
+  }
+
+  .io-sticky__cta {
+    flex: 1;
+    min-height: 50px;
+  }
+
+  @media (min-width: 600px) {
+    .io-sticky__cta {
+      flex: none;
+    }
+  }
+
+  .io-wa {
+    position: fixed;
+    z-index: 41;
+    right: clamp(0.75rem, 3vw, 1.5rem);
+    bottom: clamp(0.75rem, 3vw, 1.5rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #25d366;
+    color: #fff;
+    box-shadow: var(--io-shadow-md);
+    transition: transform 200ms ease, bottom 260ms ease;
+  }
+
+  .io-wa:hover {
+    transform: scale(1.05);
+  }
+
+  body.io-has-sticky .io-wa {
+    bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+  }
+
+  body.io-has-sticky {
+    padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .io-sticky {
+      transition: none;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  (function () {
+    function setup(root) {
+      var bar = root.querySelector('[data-io-sticky-bar]');
+      if (!bar) return;
+
+      var threshold = parseInt(root.getAttribute('data-show-after'), 10);
+      if (isNaN(threshold)) threshold = 600;
+
+      var shown = false;
+
+      function update() {
+        var past = window.scrollY > threshold;
+        var atBottom =
+          window.innerHeight + window.scrollY >= document.body.scrollHeight - 120;
+        var next = past && !atBottom;
+
+        if (next === shown) return;
+        shown = next;
+
+        if (next) {
+          bar.hidden = false;
+          requestAnimationFrame(function () {
+            bar.classList.add('io-sticky--visible');
+          });
+          document.body.classList.add('io-has-sticky');
+        } else {
+          bar.classList.remove('io-sticky--visible');
+          document.body.classList.remove('io-has-sticky');
+        }
+      }
+
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update, { passive: true });
+      update();
+    }
+
+    function init(scope) {
+      (scope || document).querySelectorAll('[data-io-sticky]').forEach(setup);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function () {
+        init();
+      });
+    } else {
+      init();
+    }
+
+    document.addEventListener('shopify:section:load', function (event) {
+      init(event.target);
+    });
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "IO sticky CTA",
+  "tag": "div",
+  "class": "io-sticky-wrapper",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "A bar that slides up once the shopper scrolls past the hero, plus an optional WhatsApp button. Place it last in the template."
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Inside Out Protocol"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Garansi 30 hari · Gratis ongkir"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button label",
+      "default": "Pilih Protokol"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button link"
+    },
+    {
+      "type": "select",
+      "id": "cta_style",
+      "label": "Button style",
+      "options": [
+        { "value": "primary", "label": "Solid green" },
+        { "value": "gold", "label": "Gold" },
+        { "value": "ghost", "label": "Outline" }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "range",
+      "id": "show_after",
+      "label": "Show after scrolling",
+      "min": 200,
+      "max": 1600,
+      "step": 100,
+      "unit": "px",
+      "default": 600
+    },
+    {
+      "type": "header",
+      "content": "WhatsApp"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_whatsapp",
+      "label": "Show a WhatsApp button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_number",
+      "label": "WhatsApp number",
+      "info": "International format without the plus sign, for example 6281139603993.",
+      "default": "6281139603993"
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_message",
+      "label": "Pre-filled message",
+      "default": "Halo Treelogy, saya ingin bertanya tentang Inside Out Protocol"
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_label",
+      "label": "Screen reader label",
+      "default": "Chat dengan Treelogy di WhatsApp"
+    }
+  ],
+  "presets": [
+    {
+      "name": "IO sticky CTA"
+    }
+  ]
+}
+{% endschema %}

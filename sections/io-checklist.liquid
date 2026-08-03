@@ -1,0 +1,242 @@
+{% render 'io-base' %}
+
+<div class="io-section io-checklist io-section--{{ section.settings.color_scheme }}">
+  <div class="io-container io-container--narrow">
+    <div class="io-head io-head--center">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="io-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="io-h2">{{ section.settings.heading | escape }}</h2>
+      {%- endif -%}
+      {%- if section.settings.subheading != blank -%}
+        <p class="io-lede">{{ section.settings.subheading | escape }}</p>
+      {%- endif -%}
+    </div>
+
+    {%- if section.blocks.size > 0 -%}
+      <ul class="io-checklist__list io-checklist__list--{{ section.settings.tone }}">
+        {%- for block in section.blocks -%}
+          <li class="io-checklist__item io-reveal" {{ block.shopify_attributes }}>
+            <span class="io-checklist__icon">
+              {% render 'io-icon', name: block.settings.icon, size: 20 %}
+            </span>
+            <span class="io-checklist__text">
+              {%- if block.settings.title != blank -%}
+                <strong>{{ block.settings.title | escape }}</strong>
+              {%- endif -%}
+              {{ block.settings.text | escape }}
+            </span>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+    {%- if section.settings.punchline != blank -%}
+      <p class="io-checklist__punch">{{ section.settings.punchline | escape }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.cta_label != blank -%}
+      <div class="io-cta">
+        <a class="io-btn io-btn--{{ section.settings.cta_style }}" href="{{ section.settings.cta_url | default: '#io-pricing' }}">
+          {{- section.settings.cta_label | escape -}}
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .io-checklist__list {
+    display: grid;
+    gap: 0.75rem;
+    margin: 2.25rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .io-checklist__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.875rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--io-border);
+    border-radius: var(--io-radius);
+    background: var(--io-white);
+  }
+
+  .io-section--white .io-checklist__item {
+    background: var(--io-cream);
+  }
+
+  .io-section--forest .io-checklist__item {
+    background: rgba(248, 248, 242, 0.06);
+    border-color: rgba(248, 248, 242, 0.16);
+  }
+
+  .io-checklist__icon {
+    display: inline-flex;
+    flex: none;
+    margin-top: 0.125rem;
+  }
+
+  .io-checklist__list--negative .io-checklist__icon {
+    color: var(--io-clay);
+  }
+
+  .io-checklist__list--positive .io-checklist__icon {
+    color: var(--io-forest);
+  }
+
+  .io-section--forest .io-checklist__list--positive .io-checklist__icon {
+    color: var(--io-gold);
+  }
+
+  .io-checklist__text {
+    font-size: 1.0625rem;
+    line-height: 1.55;
+  }
+
+  .io-checklist__text strong {
+    display: block;
+    color: var(--io-forest);
+  }
+
+  .io-section--forest .io-checklist__text strong {
+    color: var(--io-cream);
+  }
+
+  .io-checklist__punch {
+    margin: 2rem 0 0;
+    font-family: var(--io-font-heading);
+    font-size: clamp(1.25rem, 3vw, 1.6rem);
+    line-height: 1.35;
+    text-align: center;
+    text-wrap: balance;
+    color: var(--io-forest);
+  }
+
+  .io-section--forest .io-checklist__punch {
+    color: var(--io-gold);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "IO checklist",
+  "tag": "section",
+  "class": "io-section-wrapper",
+  "settings": [
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Background",
+      "options": [
+        { "value": "cream", "label": "Cream" },
+        { "value": "white", "label": "White" },
+        { "value": "bloom", "label": "Alternate" },
+        { "value": "forest", "label": "Deep green" }
+      ],
+      "default": "bloom"
+    },
+    {
+      "type": "select",
+      "id": "tone",
+      "label": "Icon colour",
+      "options": [
+        { "value": "negative", "label": "Clay (things that did not work)" },
+        { "value": "positive", "label": "Green (things that do work)" }
+      ],
+      "default": "negative"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Terasa Familiar?"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "text",
+      "id": "punchline",
+      "label": "Closing line",
+      "default": "Masalahnya bukan di kamu. Tapi di produk yang selama ini kamu coba."
+    },
+    {
+      "type": "header",
+      "content": "Call to action"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button link"
+    },
+    {
+      "type": "select",
+      "id": "cta_style",
+      "label": "Button style",
+      "options": [
+        { "value": "primary", "label": "Solid green" },
+        { "value": "gold", "label": "Gold" },
+        { "value": "ghost", "label": "Outline" }
+      ],
+      "default": "primary"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Item",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "cross", "label": "Cross" },
+            { "value": "check", "label": "Check" },
+            { "value": "alert", "label": "Warning" }
+          ],
+          "default": "cross"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Bold line"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Terapi hormon. Khawatir dengan risikonya."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "IO checklist",
+      "blocks": [
+        { "type": "item", "settings": { "text": "Terapi hormon. Khawatir dengan risikonya." } },
+        { "type": "item", "settings": { "text": "Black cohosh. Bikin sakit kepala, tanpa perubahan." } },
+        { "type": "item", "settings": { "text": "Isoflavon kedelai. Tidak terasa apa-apa." } },
+        { "type": "item", "settings": { "text": "Racikan menopause mahal. Penuh filler dan harapan palsu." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

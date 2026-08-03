@@ -1,0 +1,285 @@
+{% render 'io-base' %}
+
+{%- assign io_faqs = section.blocks | where: 'type', 'question' -%}
+
+<div class="io-section io-faq io-section--{{ section.settings.color_scheme }}">
+  <div class="io-container io-container--narrow">
+    <div class="io-head io-head--center">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="io-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="io-h2">{{ section.settings.heading | escape }}</h2>
+      {%- endif -%}
+      {%- if section.settings.subheading != blank -%}
+        <p class="io-lede">{{ section.settings.subheading | escape }}</p>
+      {%- endif -%}
+    </div>
+
+    <div class="io-faq__list">
+      {%- for block in io_faqs -%}
+        <details
+          class="io-faq__item"
+          name="io-faq-{{ section.id }}"
+          {% if forloop.first and section.settings.open_first %}
+            open
+          {% endif %}
+          {{ block.shopify_attributes }}
+        >
+          <summary class="io-faq__q">
+            <span>{{ block.settings.question | escape }}</span>
+            <span class="io-faq__icon" aria-hidden="true">
+              {% render 'io-icon', name: 'chevron', size: 20 %}
+            </span>
+          </summary>
+          <div class="io-faq__a">{{ block.settings.answer }}</div>
+        </details>
+      {%- endfor -%}
+    </div>
+
+    {%- if section.settings.cta_label != blank -%}
+      <div class="io-cta">
+        <a class="io-btn io-btn--{{ section.settings.cta_style }}" href="{{ section.settings.cta_url | default: '#io-pricing' }}">
+          {{- section.settings.cta_label | escape -}}
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{%- if section.settings.enable_schema and io_faqs.size > 0 -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {%- for block in io_faqs -%}
+          {
+            "@type": "Question",
+            "name": {{ block.settings.question | strip_html | json }},
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": {{ block.settings.answer | strip_html | json }}
+            }
+          }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+{%- endif -%}
+
+{% stylesheet %}
+  .io-faq__list {
+    margin-top: clamp(2rem, 4vw, 2.75rem);
+    border-top: 1px solid var(--io-border);
+  }
+
+  .io-section--forest .io-faq__list,
+  .io-section--forest .io-faq__item {
+    border-color: rgba(248, 248, 242, 0.18);
+  }
+
+  .io-faq__item {
+    border-bottom: 1px solid var(--io-border);
+  }
+
+  .io-faq__q {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 56px;
+    padding: 1rem 0;
+    font-family: var(--io-font-body);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.45;
+    color: var(--io-forest);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .io-faq__q::-webkit-details-marker {
+    display: none;
+  }
+
+  .io-section--forest .io-faq__q {
+    color: var(--io-cream);
+  }
+
+  .io-faq__icon {
+    display: inline-flex;
+    flex: none;
+    transition: transform 200ms ease;
+  }
+
+  .io-faq__item[open] .io-faq__icon {
+    transform: rotate(180deg);
+  }
+
+  .io-faq__a {
+    padding: 0 0 1.25rem;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--io-text-mid);
+  }
+
+  .io-faq__a p {
+    margin: 0 0 0.75rem;
+  }
+
+  .io-faq__a p:last-child {
+    margin-bottom: 0;
+  }
+
+  .io-section--forest .io-faq__a {
+    color: rgba(248, 248, 242, 0.86);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "IO FAQ",
+  "tag": "section",
+  "class": "io-section-wrapper",
+  "settings": [
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Background",
+      "options": [
+        { "value": "cream", "label": "Cream" },
+        { "value": "white", "label": "White" },
+        { "value": "bloom", "label": "Alternate" },
+        { "value": "forest", "label": "Deep green" }
+      ],
+      "default": "white"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Ada Pertanyaan?"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Pertanyaan yang Sering Diajukan"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_first",
+      "label": "Open the first question by default",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_schema",
+      "label": "Add FAQ structured data for search engines",
+      "info": "Turn this off if another section on the same page already outputs FAQ structured data.",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Call to action"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button link"
+    },
+    {
+      "type": "select",
+      "id": "cta_style",
+      "label": "Button style",
+      "options": [
+        { "value": "primary", "label": "Solid green" },
+        { "value": "gold", "label": "Gold" },
+        { "value": "ghost", "label": "Outline" }
+      ],
+      "default": "primary"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "question",
+      "name": "Question",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "Bagaimana moringa membantu di masa menopause?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>Kalsium mendukung tulang saat estrogen menurun. Zat besi dan vitamin B membantu melawan lelah. Minyaknya merawat sisi luar: kulit kering, rambut menipis, kuku rapuh.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "IO FAQ",
+      "blocks": [
+        { "type": "question" },
+        {
+          "type": "question",
+          "settings": {
+            "question": "Apakah ini pengganti terapi hormon (HRT)?",
+            "answer": "<p>Bukan. Moringa adalah suplemen, bukan obat, dan tidak menggantikan terapi yang diresepkan dokter. Diskusikan dengan dokter Anda sebelum mengubah pengobatan.</p>"
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "question": "Kenapa saya perlu kapsul DAN minyak sekaligus?",
+            "answer": "<p>Kapsul mengurus sisi dalam: energi, tulang, tidur. Minyak mengurus yang terlihat: kulit kering, rambut menipis, kuku rapuh. Boleh mulai dengan kapsul saja.</p>"
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "question": "Berapa kapsul yang saya minum per hari?",
+            "answer": "<p>3 kapsul bersama sarapan. Perut sensitif? Mulai dengan 2 di beberapa hari pertama. 90 kapsul cukup untuk 30 hari. Minyaknya: 3-4 tetes setiap malam.</p>"
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "question": "Seberapa cepat saya merasakan bedanya?",
+            "answer": "<p>Tubuh tiap orang berbeda dan hasil tidak dijamin. Karena itu ada garansi uang kembali 30 hari.</p>"
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "question": "Apa yang membedakan Treelogy dari brand moringa lain?",
+            "answer": "<p>Bebas batang, dipisahkan helai demi helai dengan tangan, dan didehidrasi di tempat teduh untuk menjaga vitamin yang sensitif panas. Terdaftar BPOM, Halal, dan teruji lab independen.</p>"
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "question": "Apakah aman jika saya sedang minum obat rutin?",
+            "answer": "<p>Sedang minum pengencer darah, obat tiroid, atau obat tekanan darah? Konsultasikan dulu dengan dokter sebelum menggunakan produk ini.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

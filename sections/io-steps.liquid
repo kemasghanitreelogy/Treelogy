@@ -1,0 +1,250 @@
+{% render 'io-base' %}
+
+<div class="io-section io-steps io-section--{{ section.settings.color_scheme }}">
+  <div class="io-container">
+    <div class="io-head io-head--center">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="io-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="io-h2">{{ section.settings.heading | escape }}</h2>
+      {%- endif -%}
+      {%- if section.settings.subheading != blank -%}
+        <p class="io-lede">{{ section.settings.subheading | escape }}</p>
+      {%- endif -%}
+    </div>
+
+    <ol class="io-steps__grid" style="--io-cols: {{ section.settings.columns }};">
+      {%- for block in section.blocks -%}
+        <li class="io-card io-steps__card io-reveal" {{ block.shopify_attributes }}>
+          <span class="io-icon-badge io-steps__icon">
+            {% render 'io-icon', name: block.settings.icon, size: 22 %}
+          </span>
+          {%- if block.settings.kicker != blank -%}
+            <p class="io-steps__kicker">{{ block.settings.kicker | escape }}</p>
+          {%- endif -%}
+          {%- if block.settings.title != blank -%}
+            <h3 class="io-h3">{{ block.settings.title | escape }}</h3>
+          {%- endif -%}
+          {%- if block.settings.text != blank -%}
+            <p class="io-steps__text">{{ block.settings.text | escape }}</p>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ol>
+
+    {%- if section.settings.cta_label != blank -%}
+      <div class="io-cta">
+        <a class="io-btn io-btn--{{ section.settings.cta_style }}" href="{{ section.settings.cta_url | default: '#io-pricing' }}">
+          {{- section.settings.cta_label | escape -}}
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .io-steps__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    margin: clamp(2.25rem, 4vw, 3rem) 0 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: io-step;
+  }
+
+  @media (min-width: 760px) {
+    .io-steps__grid {
+      grid-template-columns: repeat(var(--io-cols, 3), minmax(0, 1fr));
+    }
+  }
+
+  .io-steps__card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    text-align: center;
+    align-items: center;
+  }
+
+  .io-section--forest .io-steps__card {
+    background: rgba(248, 248, 242, 0.06);
+    border-color: rgba(248, 248, 242, 0.16);
+  }
+
+  .io-steps__icon {
+    width: 52px;
+    height: 52px;
+    margin-bottom: 0.25rem;
+  }
+
+  .io-section--forest .io-steps__icon {
+    background: rgba(245, 208, 83, 0.16);
+    color: var(--io-gold);
+  }
+
+  .io-steps__kicker {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--io-text-soft);
+  }
+
+  .io-section--forest .io-steps__kicker {
+    color: var(--io-gold);
+  }
+
+  .io-steps__text {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--io-text-mid);
+  }
+
+  .io-section--forest .io-steps__text {
+    color: rgba(248, 248, 242, 0.86);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "IO steps",
+  "tag": "section",
+  "class": "io-section-wrapper",
+  "settings": [
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Background",
+      "options": [
+        { "value": "cream", "label": "Cream" },
+        { "value": "white", "label": "White" },
+        { "value": "bloom", "label": "Alternate" },
+        { "value": "forest", "label": "Deep green" }
+      ],
+      "default": "bloom"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Kebiasaan Harian Tanpa Ribet"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Ritual Inside Out"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Dua menit sehari. Itu saja rutinitasnya."
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "Columns on desktop",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "Call to action"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button link"
+    },
+    {
+      "type": "select",
+      "id": "cta_style",
+      "label": "Button style",
+      "options": [
+        { "value": "primary", "label": "Solid green" },
+        { "value": "gold", "label": "Gold" },
+        { "value": "ghost", "label": "Outline" }
+      ],
+      "default": "primary"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "sun", "label": "Morning" },
+            { "value": "moon", "label": "Evening" },
+            { "value": "sparkles", "label": "Sparkles" },
+            { "value": "pill", "label": "Capsule" },
+            { "value": "droplet", "label": "Oil" },
+            { "value": "heart", "label": "Heart" }
+          ],
+          "default": "sun"
+        },
+        {
+          "type": "text",
+          "id": "kicker",
+          "label": "Small label",
+          "default": "Pagi"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Minum 3 Kapsul"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Bersama sarapan. Baru pertama coba moringa? Mulai dengan 2."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "IO steps",
+      "blocks": [
+        { "type": "step" },
+        {
+          "type": "step",
+          "settings": {
+            "icon": "moon",
+            "kicker": "Malam",
+            "title": "Aplikasikan Minyaknya",
+            "text": "3-4 tetes di wajah, leher, tangan. Pijat ke ujung rambut."
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "icon": "sparkles",
+            "kicker": "Setiap Hari",
+            "title": "Rasakan Perubahannya",
+            "text": "Dalam ternutrisi. Luar terlindungi. Minggu demi minggu."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

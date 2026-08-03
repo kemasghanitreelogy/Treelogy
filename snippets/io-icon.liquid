@@ -1,0 +1,129 @@
+{% doc %}
+  Renders an inline SVG icon from the Inside Out landing page icon set.
+
+  Icons are stroke-based (currentColor) at a 24x24 viewBox so they inherit
+  text colour and can be sized with the `size` parameter or CSS.
+
+  @param {string} name - Icon key. One of: check, cross, star, shield, leaf, sun, moon, sparkles, bolt, snowflake, bone, brain, flame, clock, truck, gift, pill, droplet, hair, plus, minus, chevron, arrow, award, scale, alert, lock, flask, sprout, heart, whatsapp
+  @param {number} [size] - Pixel size for width and height. Defaults to 24.
+  @param {string} [css_class] - Extra class names for the svg element
+
+  @example
+  {% render 'io-icon', name: 'check' %}
+  {% render 'io-icon', name: 'shield', size: 32, css_class: 'io-cert__icon' %}
+{% enddoc %}
+
+{% liquid
+  assign icon_size = size | default: 24
+  assign is_solid = false
+  if name == 'whatsapp' or name == 'star'
+    assign is_solid = true
+  endif
+%}
+
+<svg
+  class="io-icon {{ css_class }}"
+  width="{{ icon_size }}"
+  height="{{ icon_size }}"
+  viewBox="0 0 24 24"
+  {% if is_solid %}
+    fill="currentColor"
+  {% else %}
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.75"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  {% endif %}
+  aria-hidden="true"
+  focusable="false"
+  role="presentation"
+>
+  {%- case name -%}
+    {%- when 'check' -%}
+      <path d="M20 6 9 17l-5-5"/>
+    {%- when 'cross' -%}
+      <path d="M18 6 6 18M6 6l12 12"/>
+    {%- when 'star' -%}
+      <path d="M12 2.5l2.9 5.88 6.5.95-4.7 4.58 1.11 6.47L12 17.33l-5.81 3.05 1.11-6.47-4.7-4.58 6.5-.95z"/>
+    {%- when 'shield' -%}
+      <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
+      <path d="m9 12 2 2 4-4"/>
+    {%- when 'leaf' -%}
+      <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/>
+      <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+    {%- when 'sun' -%}
+      <circle cx="12" cy="12" r="4"/>
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+    {%- when 'moon' -%}
+      <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/>
+    {%- when 'sparkles' -%}
+      <path d="M9.94 4.06a1 1 0 0 1 1.88 0l1.2 3.24a1 1 0 0 0 .6.59l3.23 1.2a1 1 0 0 1 0 1.87l-3.23 1.2a1 1 0 0 0-.6.6l-1.2 3.23a1 1 0 0 1-1.88 0l-1.2-3.23a1 1 0 0 0-.59-.6l-3.23-1.2a1 1 0 0 1 0-1.87l3.23-1.2a1 1 0 0 0 .6-.6z"/>
+      <path d="M18 15.5 18.7 17.3 20.5 18 18.7 18.7 18 20.5 17.3 18.7 15.5 18 17.3 17.3z"/>
+    {%- when 'bolt' -%}
+      <path d="M13 2 4.5 13.5a.5.5 0 0 0 .4.8H11l-1 7.7 8.5-11.5a.5.5 0 0 0-.4-.8H12z"/>
+    {%- when 'snowflake' -%}
+      <path d="M12 2v20M4.2 7 19.8 17M19.8 7 4.2 17"/>
+      <path d="M9 4.5 12 6l3-1.5M9 19.5 12 18l3 1.5"/>
+    {%- when 'bone' -%}
+      <path d="M17 10c.7-.7 1.7-1 2.5-.6a2.6 2.6 0 0 1 .8 4.1c-.5.6-1.3.8-2 .7-.2.8-.8 1.5-1.6 1.7a2.6 2.6 0 0 1-3-3.4L9.3 8.3a2.6 2.6 0 0 1-3.4-3c.2-.8.9-1.4 1.7-1.6-.1-.7.1-1.5.7-2a2.6 2.6 0 0 1 4.1.8c.4.8.1 1.8-.6 2.5z"/>
+      <path d="m10 14-4 4"/>
+    {%- when 'brain' -%}
+      <path d="M12 5a3 3 0 0 0-5.9-.7A3 3 0 0 0 3.5 8a3 3 0 0 0 .3 4.2A3 3 0 0 0 6 17.5a3 3 0 0 0 6 .5z"/>
+      <path d="M12 5a3 3 0 0 1 5.9-.7A3 3 0 0 1 20.5 8a3 3 0 0 1-.3 4.2A3 3 0 0 1 18 17.5a3 3 0 0 1-6 .5z"/>
+      <path d="M12 5v13"/>
+    {%- when 'flame' -%}
+      <path d="M12 2c1.5 3.5-1 5-2.5 7C8 11 8 13 9 14.5c-1.5-.5-2.5-2-2.5-3.5C5 12.5 4.5 14.5 5 16.5A7 7 0 0 0 19 15c0-4-2.5-6.5-3.5-8-1 1.5-2 2-2.5 1.5C12.5 7.5 13 4.5 12 2z"/>
+    {%- when 'clock' -%}
+      <circle cx="12" cy="12" r="9"/>
+      <path d="M12 7v5l3 2"/>
+    {%- when 'truck' -%}
+      <path d="M2 6.5A1.5 1.5 0 0 1 3.5 5h9A1.5 1.5 0 0 1 14 6.5V16H2z"/>
+      <path d="M14 9h3.6a1.5 1.5 0 0 1 1.3.75L21 13.5V16h-7z"/>
+      <circle cx="6" cy="17.5" r="2"/>
+      <circle cx="17" cy="17.5" r="2"/>
+    {%- when 'gift' -%}
+      <path d="M20 11v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-9"/>
+      <path d="M3 8h18v3H3zM12 8v13"/>
+      <path d="M12 8H7.5a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8zM12 8h4.5a2.5 2.5 0 0 0 0-5C13 3 12 8 12 8z"/>
+    {%- when 'pill' -%}
+      <path d="M10.5 20.5a5 5 0 0 1-7-7l6-6a5 5 0 0 1 7 7z"/>
+      <path d="m8.5 8.5 7 7"/>
+    {%- when 'droplet' -%}
+      <path d="M12 2.7 6.7 8a7.5 7.5 0 1 0 10.6 0z"/>
+    {%- when 'hair' -%}
+      <path d="M4 21c0-6 1-13 8-13s8 7 8 13"/>
+      <path d="M8 21c0-4 .5-8 4-8s4 4 4 8"/>
+    {%- when 'plus' -%}
+      <path d="M12 5v14M5 12h14"/>
+    {%- when 'minus' -%}
+      <path d="M5 12h14"/>
+    {%- when 'chevron' -%}
+      <path d="m6 9 6 6 6-6"/>
+    {%- when 'arrow' -%}
+      <path d="M5 12h14M13 6l6 6-6 6"/>
+    {%- when 'award' -%}
+      <circle cx="12" cy="9" r="6"/>
+      <path d="m8.2 14.3-1.4 7 5.2-2.6 5.2 2.6-1.4-7"/>
+    {%- when 'scale' -%}
+      <path d="M12 3v18M7 21h10M3 8l4-4 4 4M3 8a4 4 0 0 0 8 0M13 8l4-4 4 4M13 8a4 4 0 0 0 8 0"/>
+    {%- when 'alert' -%}
+      <path d="M10.3 3.9 1.9 18a2 2 0 0 0 1.7 3h16.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/>
+      <path d="M12 9v4M12 17h.01"/>
+    {%- when 'lock' -%}
+      <rect x="4" y="10" width="16" height="11" rx="2"/>
+      <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+    {%- when 'flask' -%}
+      <path d="M9 2v6.4L4.3 17A2 2 0 0 0 6 20h12a2 2 0 0 0 1.7-3L15 8.4V2"/>
+      <path d="M8 2h8M6.5 14h11"/>
+    {%- when 'sprout' -%}
+      <path d="M12 21v-8"/>
+      <path d="M12 13C12 9 9 7 5 7c0 4 3 6 7 6zM12 13c0-3.5 2.5-5.5 6-5.5 0 3.5-2.5 5.5-6 5.5z"/>
+    {%- when 'heart' -%}
+      <path d="M12 20.3 4.6 13a4.6 4.6 0 0 1 6.5-6.5l.9.9.9-.9A4.6 4.6 0 0 1 19.4 13z"/>
+    {%- when 'whatsapp' -%}
+      <path d="M12 2.4A9.6 9.6 0 0 0 3.9 17.1L2.4 21.6l4.6-1.5A9.6 9.6 0 1 0 12 2.4zm0 17.5a7.9 7.9 0 0 1-4-1.1l-.3-.2-2.9.9.9-2.8-.2-.3a7.9 7.9 0 1 1 6.5 3.5zm4.4-5.9c-.2-.1-1.4-.7-1.6-.8s-.4-.1-.5.1-.6.8-.7.9-.3.2-.5 0-1-.4-1.9-1.2c-.7-.6-1.2-1.4-1.3-1.6s0-.4.1-.5l.4-.4.2-.4v-.4c0-.1-.5-1.3-.7-1.7s-.4-.4-.5-.4h-.5c-.2 0-.4.1-.6.3s-.8.8-.8 2 .9 2.3 1 2.5 1.7 2.6 4.1 3.6c1.6.7 2.2.7 3 .6.5 0 1.4-.6 1.6-1.1s.2-1 .1-1.1z"/>
+    {%- else -%}
+      <circle cx="12" cy="12" r="9"/>
+  {%- endcase -%}
+</svg>

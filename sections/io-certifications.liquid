@@ -1,0 +1,189 @@
+{% render 'io-base' %}
+
+<div class="io-section io-certs io-section--{{ section.settings.color_scheme }}">
+  <div class="io-container">
+    <div class="io-head io-head--center">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="io-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="io-h2">{{ section.settings.heading | escape }}</h2>
+      {%- endif -%}
+      {%- if section.settings.subheading != blank -%}
+        <p class="io-lede">{{ section.settings.subheading | escape }}</p>
+      {%- endif -%}
+    </div>
+
+    <ul class="io-certs__grid">
+      {%- for block in section.blocks -%}
+        <li class="io-certs__item io-reveal" {{ block.shopify_attributes }}>
+          <div class="io-certs__logo">
+            {% render 'io-image',
+              image: block.settings.image,
+              alt: block.settings.alt,
+              placeholder: 'collection-1',
+              sizes: '120px',
+              ratio: '1 / 1'
+            %}
+          </div>
+          {%- if block.settings.label != blank -%}
+            <p class="io-certs__label">{{ block.settings.label | escape }}</p>
+          {%- endif -%}
+          {%- if block.settings.detail != blank -%}
+            <p class="io-certs__detail">{{ block.settings.detail | escape }}</p>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+
+    {%- if section.settings.footnote != blank -%}
+      <p class="io-note io-certs__footnote">{{ section.settings.footnote | escape }}</p>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .io-certs__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem 1rem;
+    margin: clamp(2.25rem, 4vw, 3rem) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 700px) {
+    .io-certs__grid {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+  }
+
+  .io-certs__item {
+    text-align: center;
+  }
+
+  .io-certs__logo {
+    width: 88px;
+    margin: 0 auto 0.75rem;
+  }
+
+  .io-certs__logo .io-media-frame {
+    background: transparent;
+  }
+
+  .io-certs__logo .io-media {
+    object-fit: contain;
+  }
+
+  .io-certs__label {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--io-forest);
+  }
+
+  .io-section--forest .io-certs__label {
+    color: var(--io-cream);
+  }
+
+  .io-certs__detail {
+    margin: 0.25rem 0 0;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    color: var(--io-text-soft);
+  }
+
+  .io-certs__footnote {
+    margin-top: 1.75rem;
+    text-align: center;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "IO certifications",
+  "tag": "section",
+  "class": "io-section-wrapper",
+  "settings": [
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Background",
+      "options": [
+        { "value": "cream", "label": "Cream" },
+        { "value": "white", "label": "White" },
+        { "value": "bloom", "label": "Alternate" },
+        { "value": "forest", "label": "Deep green" }
+      ],
+      "default": "white"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Kualitas Terverifikasi"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Kapsul: Obat Tradisional BPOM. Minyak: Kosmetik Terdaftar BPOM."
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "textarea",
+      "id": "footnote",
+      "label": "Footnote",
+      "info": "A good place for the actual BPOM registration numbers.",
+      "default": "Cantumkan nomor izin edar BPOM produk Anda di sini."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "cert",
+      "name": "Certification",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Logo"
+        },
+        {
+          "type": "text",
+          "id": "alt",
+          "label": "Logo description",
+          "default": "Logo sertifikasi"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "BPOM"
+        },
+        {
+          "type": "text",
+          "id": "detail",
+          "label": "Detail"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "IO certifications",
+      "blocks": [
+        { "type": "cert", "settings": { "label": "BPOM", "alt": "Logo BPOM" } },
+        { "type": "cert", "settings": { "label": "Halal", "alt": "Logo Halal" } },
+        { "type": "cert", "settings": { "label": "Organik", "alt": "Logo sertifikasi organik" } },
+        { "type": "cert", "settings": { "label": "Bebas Batang", "alt": "Ikon bebas batang" } },
+        { "type": "cert", "settings": { "label": "Teruji Lab", "alt": "Ikon teruji laboratorium" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

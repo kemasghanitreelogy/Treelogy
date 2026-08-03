@@ -1,0 +1,712 @@
+{% render 'io-base' %}
+
+<div class="io-section io-pricing io-section--{{ section.settings.color_scheme }}">
+  <div class="io-container">
+    <div id="{{ section.settings.anchor | default: 'io-pricing' | handle }}" class="io-pricing__anchor"></div>
+
+    <div class="io-head io-head--center">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="io-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="io-h2">{{ section.settings.heading | escape }}</h2>
+      {%- endif -%}
+      {%- if section.settings.subheading != blank -%}
+        <p class="io-lede">{{ section.settings.subheading | escape }}</p>
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.quote != blank -%}
+      <figure class="io-pricing__quote">
+        <blockquote>{{ section.settings.quote | escape }}</blockquote>
+        {%- if section.settings.quote_author != blank -%}
+          <figcaption>{{ section.settings.quote_author | escape }}</figcaption>
+        {%- endif -%}
+      </figure>
+    {%- endif -%}
+
+    <div class="io-pricing__grid" style="--io-cols: {{ section.blocks.size }};">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign io_product = block.settings.product
+          assign io_variant = io_product.selected_or_first_available_variant
+          assign io_has_product = false
+          if io_product != blank
+            assign io_has_product = true
+          endif
+          assign io_title = block.settings.title
+          if io_title == blank
+            assign io_title = io_product.title
+          endif
+        -%}
+
+        {%- unless io_has_product or request.design_mode -%}
+          {%- continue -%}
+        {%- endunless -%}
+
+        <div
+          class="io-card io-plan{% if block.settings.featured %} io-plan--featured{% endif %}"
+          {{ block.shopify_attributes }}
+        >
+          {%- if block.settings.tag != blank -%}
+            <p class="io-plan__tag{% if block.settings.featured %} io-plan__tag--gold{% endif %}">
+              {{- block.settings.tag | escape -}}
+            </p>
+          {%- endif -%}
+
+          <div class="io-plan__body">
+            <h3 class="io-h3 io-plan__title">{{ io_title | escape }}</h3>
+
+            {%- if block.settings.description != blank -%}
+              <p class="io-plan__desc">{{ block.settings.description | escape }}</p>
+            {%- endif -%}
+
+            {%- assign io_rows = block.settings.value_stack | strip | newline_to_br | split: '<br />' -%}
+            {%- if io_rows.size > 0 -%}
+              <ul class="io-plan__stack">
+                {%- for row in io_rows -%}
+                  {%- assign io_row = row | strip -%}
+                  {%- if io_row != blank -%}
+                    {%- assign io_parts = io_row | split: '|' -%}
+                    <li class="io-plan__srow">
+                      <span class="io-plan__slabel">{{ io_parts[0] | strip }}</span>
+                      <span class="io-plan__svalue">
+                        {%- if io_parts.size > 2 -%}
+                          <s>{{ io_parts[1] | strip }}</s>
+                          <strong class="io-plan__sfree">{{ io_parts[2] | strip }}</strong>
+                        {%- else -%}
+                          {{ io_parts[1] | strip }}
+                        {%- endif -%}
+                      </span>
+                    </li>
+                  {%- endif -%}
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
+
+            {%- if io_has_product -%}
+              <div class="io-plan__pricing">
+                {%- if io_variant.compare_at_price > io_variant.price -%}
+                  <p class="io-plan__was">
+                    <span>{{ block.settings.compare_label | escape }}</span>
+                    <s>{{ io_variant.compare_at_price | money }}</s>
+                  </p>
+                {%- endif -%}
+                <p class="io-plan__now">
+                  {%- if block.settings.price_label != blank -%}
+                    <span class="io-plan__now-label">{{ block.settings.price_label | escape }}</span>
+                  {%- endif -%}
+                  <span class="io-plan__price">{{ io_variant.price | money }}</span>
+                </p>
+                {%- if block.settings.days > 0 -%}
+                  {%- assign io_per_day = io_variant.price | divided_by: block.settings.days -%}
+                  <p class="io-plan__perday">
+                    {{ block.settings.per_day_label | escape }} {{ io_per_day | money }}
+                  </p>
+                {%- endif -%}
+              </div>
+            {%- else -%}
+              <p class="io-plan__empty">
+                {% render 'io-icon', name: 'alert', size: 18 %}
+                <span>
+                  Pilih produk di panel kanan untuk menampilkan harga dan tombol beli. Selama produk
+                  belum dipilih, kartu ini hanya terlihat di theme editor dan disembunyikan dari pembeli.
+                </span>
+              </p>
+            {%- endif -%}
+
+            {%- if block.settings.guarantee != blank -%}
+              <p class="io-plan__guarantee">
+                {% render 'io-icon', name: 'shield', size: 18 %}
+                <span>{{ block.settings.guarantee | escape }}</span>
+              </p>
+            {%- endif -%}
+
+            <div class="io-plan__footer">
+              {%- if io_has_product -%}
+                {%- if block.settings.action == 'link' -%}
+                  <a
+                    class="io-btn io-btn--{{ block.settings.button_style }} io-btn--block"
+                    href="{{ io_product.url }}"
+                  >
+                    {{- block.settings.button_label | default: 'Lihat produk' | escape -}}
+                  </a>
+                {%- else -%}
+                  {%- form 'product', io_product, id: null, class: 'io-plan__form' -%}
+                    {%- if io_product.has_only_default_variant or io_product.variants.size == 1 -%}
+                      <input type="hidden" name="id" value="{{ io_variant.id }}">
+                    {%- else -%}
+                      <div class="io-plan__variants">
+                        <label
+                          class="io-plan__variant-label"
+                          for="io-variant-{{ section.id }}-{{ block.id }}"
+                        >
+                          {{ block.settings.variant_label | escape }}
+                        </label>
+                        <select
+                          class="io-plan__variant-select"
+                          id="io-variant-{{ section.id }}-{{ block.id }}"
+                          name="id"
+                        >
+                          {%- for variant in io_product.variants -%}
+                            <option
+                              value="{{ variant.id }}"
+                              {% if variant == io_variant %}
+                                selected
+                              {% endif %}
+                              {% unless variant.available %}
+                                disabled
+                              {% endunless %}
+                            >
+                              {{ variant.title }} — {{ variant.price | money }}
+                              {%- unless variant.available -%}
+                                {{ ' (' }}{{ block.settings.sold_out_label | default: 'Stok habis' }})
+                              {%- endunless -%}
+                            </option>
+                          {%- endfor -%}
+                        </select>
+                      </div>
+                    {%- endif -%}
+
+                    <input type="hidden" name="quantity" value="1">
+
+                    <button
+                      class="io-btn io-btn--{{ block.settings.button_style }} io-btn--block"
+                      type="submit"
+                      name="add"
+                      {% unless io_product.available %}
+                        disabled
+                      {% endunless %}
+                    >
+                      {%- if io_product.available -%}
+                        {{ block.settings.button_label | default: 'Tambah ke keranjang' | escape }}
+                      {%- else -%}
+                        {{ block.settings.sold_out_label | default: 'Stok habis' | escape }}
+                      {%- endif -%}
+                    </button>
+                  {%- endform -%}
+                {%- endif -%}
+              {%- endif -%}
+
+              {%- if block.settings.footnote != blank -%}
+                <p class="io-note io-plan__footnote">{{ block.settings.footnote | escape }}</p>
+              {%- endif -%}
+            </div>
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+
+    {%- if section.settings.pledge_text != blank -%}
+      <div class="io-pricing__pledge">
+        <span class="io-icon-badge">
+          {% render 'io-icon', name: 'shield', size: 22 %}
+        </span>
+        <div>
+          {%- if section.settings.pledge_title != blank -%}
+            <strong>{{ section.settings.pledge_title | escape }}</strong>
+          {%- endif -%}
+          <span>{{ section.settings.pledge_text | escape }}</span>
+        </div>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .io-pricing__anchor {
+    position: relative;
+    top: calc(var(--heder-height, 80px) * -1);
+  }
+
+  .io-pricing__quote {
+    max-width: 34rem;
+    margin: 1.75rem auto 0;
+    text-align: center;
+  }
+
+  .io-pricing__quote blockquote {
+    margin: 0;
+    font-size: 1.0625rem;
+    font-style: italic;
+    line-height: 1.6;
+    color: var(--io-text-mid);
+  }
+
+  .io-pricing__quote figcaption {
+    margin-top: 0.375rem;
+    font-size: 0.875rem;
+    color: var(--io-text-soft);
+  }
+
+  .io-pricing__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    margin-top: clamp(2.25rem, 4vw, 3rem);
+    align-items: start;
+  }
+
+  @media (min-width: 900px) {
+    .io-pricing__grid {
+      grid-template-columns: repeat(var(--io-cols, 3), minmax(0, 1fr));
+    }
+  }
+
+  .io-plan {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow: hidden;
+    background: var(--io-white);
+  }
+
+  .io-plan--featured {
+    border-color: var(--io-forest);
+    box-shadow: var(--io-shadow-md);
+  }
+
+  .io-plan__tag {
+    margin: 0;
+    padding: 0.625rem 1rem;
+    background: var(--io-bloom);
+    color: var(--io-forest);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-align: center;
+  }
+
+  .io-plan__tag--gold {
+    background: var(--io-gold);
+    color: var(--io-forest-deep);
+  }
+
+  .io-plan__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    flex: 1;
+    padding: clamp(1.25rem, 2.5vw, 1.75rem);
+  }
+
+  .io-plan__desc {
+    margin: 0;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--io-text-mid);
+  }
+
+  .io-plan__stack {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0.875rem 0;
+    border-block: 1px solid var(--io-border);
+    list-style: none;
+  }
+
+  .io-plan__srow {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: 0.9375rem;
+    line-height: 1.4;
+    color: var(--io-text-mid);
+  }
+
+  .io-plan__svalue s {
+    opacity: 0.6;
+    margin-right: 0.375rem;
+  }
+
+  .io-plan__sfree {
+    color: var(--io-forest);
+    font-weight: 700;
+  }
+
+  .io-plan__pricing {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .io-plan__was {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin: 0;
+    font-size: 0.9375rem;
+    color: var(--io-text-soft);
+  }
+
+  .io-plan__now {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin: 0;
+  }
+
+  .io-plan__now-label {
+    font-size: 0.9375rem;
+    color: var(--io-text-mid);
+  }
+
+  .io-plan__price {
+    font-family: var(--io-font-heading);
+    font-size: clamp(1.6rem, 3.5vw, 2rem);
+    font-weight: 600;
+    line-height: 1.1;
+    color: var(--io-forest);
+  }
+
+  .io-plan__perday {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--io-text-soft);
+  }
+
+  .io-plan__empty {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0.75rem;
+    border-radius: var(--io-radius);
+    background: var(--io-bloom);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--io-text-mid);
+  }
+
+  .io-plan__guarantee {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin: 0;
+    font-size: 0.9375rem;
+    line-height: 1.45;
+    color: var(--io-text-mid);
+  }
+
+  .io-plan__guarantee .io-icon {
+    flex: none;
+    margin-top: 0.125rem;
+    color: var(--io-forest);
+  }
+
+  .io-plan__footer {
+    margin-top: auto;
+    padding-top: 0.5rem;
+  }
+
+  .io-plan__variants {
+    margin-bottom: 0.75rem;
+  }
+
+  .io-plan__variant-label {
+    display: block;
+    margin-bottom: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--io-text-mid);
+  }
+
+  .io-plan__variant-select {
+    width: 100%;
+    min-height: 48px;
+    padding: 0.625rem 0.875rem;
+    border: 1px solid var(--io-border);
+    border-radius: var(--io-radius);
+    background: var(--io-white);
+    color: var(--io-text);
+    font-family: var(--io-font-body);
+    font-size: 1rem;
+  }
+
+  .io-plan__footer .io-btn[disabled] {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  .io-plan__footnote {
+    margin-top: 0.625rem;
+    text-align: center;
+  }
+
+  .io-pricing__pledge {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    max-width: 44rem;
+    margin: clamp(2rem, 4vw, 2.75rem) auto 0;
+    padding: 1.25rem 1.5rem;
+    border: 1px solid var(--io-border);
+    border-radius: var(--io-radius-lg);
+    background: var(--io-white);
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--io-text-mid);
+  }
+
+  .io-pricing__pledge strong {
+    display: block;
+    color: var(--io-forest);
+  }
+
+  .io-section--forest .io-plan,
+  .io-section--forest .io-pricing__pledge {
+    background: rgba(248, 248, 242, 0.06);
+    border-color: rgba(248, 248, 242, 0.18);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "IO pricing",
+  "tag": "section",
+  "class": "io-section-wrapper",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Each plan is linked to a real product, so price, currency and stock always match your catalogue and the button adds straight to the cart."
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Background",
+      "options": [
+        { "value": "cream", "label": "Cream" },
+        { "value": "white", "label": "White" },
+        { "value": "bloom", "label": "Alternate" },
+        { "value": "forest", "label": "Deep green" }
+      ],
+      "default": "bloom"
+    },
+    {
+      "type": "text",
+      "id": "anchor",
+      "label": "Anchor id",
+      "info": "Used by the buttons elsewhere on the page. Link to it with #io-pricing.",
+      "default": "io-pricing"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Pilih Paketmu"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Pilih Protokol"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "header",
+      "content": "Quote above the plans"
+    },
+    {
+      "type": "textarea",
+      "id": "quote",
+      "label": "Quote",
+      "default": "Nyeri lutut saat naik tangga berkurang. Langsung repurchase."
+    },
+    {
+      "type": "text",
+      "id": "quote_author",
+      "label": "Attribution",
+      "default": "Ibu Ratna, 55, Surabaya · Pembeli Terverifikasi"
+    },
+    {
+      "type": "header",
+      "content": "Guarantee panel"
+    },
+    {
+      "type": "text",
+      "id": "pledge_title",
+      "label": "Title",
+      "default": "Nggak Terasa? Uang Kembali."
+    },
+    {
+      "type": "textarea",
+      "id": "pledge_text",
+      "label": "Text",
+      "default": "Jalani protokol setiap hari selama 30 hari. Kalau tidak terasa bedanya, kami kembalikan uang sepenuhnya."
+    }
+  ],
+  "max_blocks": 4,
+  "blocks": [
+    {
+      "type": "plan",
+      "name": "Plan",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "checkbox",
+          "id": "featured",
+          "label": "Highlight this plan",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "tag",
+          "label": "Ribbon",
+          "default": "Terpopuler"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "info": "Leave empty to use the product title.",
+          "default": "Protokol Inside Out 30 Hari"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "Satu bulan untuk merasakan bedanya."
+        },
+        {
+          "type": "header",
+          "content": "What is included"
+        },
+        {
+          "type": "textarea",
+          "id": "value_stack",
+          "label": "Value stack",
+          "info": "One line per row. Use Label | Value, or Label | Old value | New value to show a saving.",
+          "default": "90 Kapsul|Rp 455.000\nSeed Oil 30ml|Rp 545.000\nOngkos Kirim|Rp 35.000|GRATIS"
+        },
+        {
+          "type": "header",
+          "content": "Price"
+        },
+        {
+          "type": "text",
+          "id": "compare_label",
+          "label": "Label for the crossed out price",
+          "default": "Harga normal"
+        },
+        {
+          "type": "text",
+          "id": "price_label",
+          "label": "Label for the current price",
+          "default": "Hari ini"
+        },
+        {
+          "type": "range",
+          "id": "days",
+          "label": "Days the pack lasts",
+          "info": "Used for the price per day line. Set to 0 to hide it.",
+          "min": 0,
+          "max": 120,
+          "step": 5,
+          "default": 30
+        },
+        {
+          "type": "text",
+          "id": "per_day_label",
+          "label": "Price per day label",
+          "default": "Setara per hari:"
+        },
+        {
+          "type": "header",
+          "content": "Button"
+        },
+        {
+          "type": "select",
+          "id": "action",
+          "label": "Button action",
+          "options": [
+            { "value": "cart", "label": "Add to cart" },
+            { "value": "link", "label": "Go to the product page" }
+          ],
+          "default": "cart"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label",
+          "default": "Ambil Protokol 30 Hari"
+        },
+        {
+          "type": "text",
+          "id": "sold_out_label",
+          "label": "Sold out label",
+          "default": "Stok habis"
+        },
+        {
+          "type": "select",
+          "id": "button_style",
+          "label": "Button style",
+          "options": [
+            { "value": "primary", "label": "Solid green" },
+            { "value": "gold", "label": "Gold" },
+            { "value": "ghost", "label": "Outline" }
+          ],
+          "default": "primary"
+        },
+        {
+          "type": "text",
+          "id": "variant_label",
+          "label": "Variant picker label",
+          "default": "Pilih ukuran"
+        },
+        {
+          "type": "text",
+          "id": "guarantee",
+          "label": "Reassurance line",
+          "default": "Garansi uang kembali 30 hari"
+        },
+        {
+          "type": "text",
+          "id": "footnote",
+          "label": "Text below the button",
+          "default": "Pesan hari ini, dikirim besok"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "IO pricing",
+      "blocks": [
+        {
+          "type": "plan",
+          "settings": {
+            "featured": true,
+            "tag": "Best Value",
+            "title": "Protokol Inside Out 60 Hari",
+            "description": "Dua bulan. Durasi saat transformasi terasa utuh.",
+            "days": 60,
+            "button_label": "Ambil Protokol 60 Hari",
+            "button_style": "gold"
+          }
+        },
+        { "type": "plan" },
+        {
+          "type": "plan",
+          "settings": {
+            "tag": "Mulai dari Sini",
+            "title": "Moringa Capsules Saja",
+            "description": "Mulai dengan kapsul. Tambahkan minyaknya saat sudah siap.",
+            "value_stack": "Ongkos Kirim|Rp 35.000|GRATIS",
+            "button_label": "Belanja Capsules"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

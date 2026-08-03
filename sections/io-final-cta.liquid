@@ -1,0 +1,229 @@
+{% render 'io-base' %}
+
+<div class="io-section io-final io-section--{{ section.settings.color_scheme }}">
+  {%- if section.settings.background_image != blank -%}
+    <div class="io-final__bg" aria-hidden="true">
+      {{
+        section.settings.background_image
+        | image_url: width: 2400
+        | image_tag: widths: '600, 1000, 1600, 2000, 2400', sizes: '100vw', loading: 'lazy', alt: ''
+      }}
+    </div>
+  {%- endif -%}
+
+  <div class="io-container io-container--narrow io-final__inner">
+    {%- if section.settings.eyebrow != blank -%}
+      <p class="io-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.heading != blank -%}
+      <h2 class="io-h2 io-final__heading">{{ section.settings.heading | escape }}</h2>
+    {%- endif -%}
+
+    {%- if section.settings.text != blank -%}
+      <div class="io-lede io-final__text">{{ section.settings.text }}</div>
+    {%- endif -%}
+
+    {%- if section.settings.cta_label != blank -%}
+      <a
+        class="io-btn io-btn--{{ section.settings.cta_style }} io-final__cta"
+        href="{{ section.settings.cta_url | default: '#io-pricing' }}"
+      >
+        {{- section.settings.cta_label | escape -}}
+      </a>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <ul class="io-final__proof">
+        {%- for block in section.blocks -%}
+          <li {{ block.shopify_attributes }}>
+            {% render 'io-icon', name: block.settings.icon, size: 18 %}
+            <span>{{ block.settings.text | escape }}</span>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+    {%- if section.settings.disclaimer != blank -%}
+      <p class="io-note io-final__disclaimer">{{ section.settings.disclaimer | escape }}</p>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .io-final {
+    position: relative;
+    isolation: isolate;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .io-final__bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+
+  .io-final__bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.28;
+  }
+
+  .io-final__heading {
+    text-wrap: balance;
+  }
+
+  .io-final__text {
+    margin-inline: auto;
+  }
+
+  .io-final__text p {
+    margin: 0 0 0.75rem;
+  }
+
+  .io-final__cta {
+    margin-top: 1.75rem;
+  }
+
+  .io-final__proof {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.625rem 1.5rem;
+    margin: 1.5rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .io-final__proof li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9375rem;
+    color: var(--io-text-mid);
+  }
+
+  .io-section--forest .io-final__proof li {
+    color: rgba(248, 248, 242, 0.86);
+  }
+
+  .io-final__disclaimer {
+    max-width: 44rem;
+    margin: 1.75rem auto 0;
+    font-size: 0.8125rem;
+    text-wrap: pretty;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "IO final CTA",
+  "tag": "section",
+  "class": "io-section-wrapper",
+  "settings": [
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Background",
+      "options": [
+        { "value": "forest", "label": "Deep green" },
+        { "value": "cream", "label": "Cream" },
+        { "value": "white", "label": "White" },
+        { "value": "bloom", "label": "Alternate" }
+      ],
+      "default": "forest"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background image",
+      "info": "Optional. It is dimmed so the text stays readable."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Menopause Itu Alami. Menderita Karenanya Tidak."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Nutrisi dari Dalam. Lindungi dari Luar."
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Bergabung dengan 10.000+ perempuan Indonesia yang memilih jalan alami.</p>"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button label",
+      "default": "Mulai Inside Out Protocol"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button link"
+    },
+    {
+      "type": "select",
+      "id": "cta_style",
+      "label": "Button style",
+      "options": [
+        { "value": "gold", "label": "Gold" },
+        { "value": "primary", "label": "Solid green" },
+        { "value": "ghost", "label": "Outline" }
+      ],
+      "default": "gold"
+    },
+    {
+      "type": "textarea",
+      "id": "disclaimer",
+      "label": "Disclaimer",
+      "default": "Produk ini bukan obat dan tidak dimaksudkan untuk mendiagnosis, mengobati, menyembuhkan, atau mencegah penyakit. Konsultasikan dengan tenaga kesehatan sebelum digunakan."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "proof",
+      "name": "Proof point",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "shield", "label": "Shield" },
+            { "value": "truck", "label": "Delivery" },
+            { "value": "award", "label": "Award" },
+            { "value": "check", "label": "Check" },
+            { "value": "leaf", "label": "Leaf" }
+          ],
+          "default": "shield"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Garansi Uang Kembali 30 Hari"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "IO final CTA",
+      "blocks": [
+        { "type": "proof" },
+        { "type": "proof", "settings": { "icon": "truck", "text": "Gratis Ongkir" } },
+        { "type": "proof", "settings": { "icon": "award", "text": "Sertifikasi BPOM & Halal" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
