@@ -1246,7 +1246,8 @@
         "show_whatsapp": true,
         "whatsapp_number": "6281139603993",
         "whatsapp_message": "Halo Treelogy, saya ingin bertanya tentang Inside Out Protocol",
-        "whatsapp_label": "Chat dengan Treelogy di WhatsApp"
+        "whatsapp_label": "Chat dengan Treelogy di WhatsApp",
+        "fab_gutter": 16
       }
     }
   },

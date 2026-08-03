@@ -2,6 +2,7 @@
   {%- assign wa_number = section.settings.whatsapp_number | remove: '+' | remove: ' ' | remove: '-' -%}
   <a
     class="lp-wa"
+    style="--lp-fab-gutter: {{ section.settings.fab_gutter }}px"
     href="https://wa.me/{{ wa_number }}?text={{ section.settings.whatsapp_message | url_encode }}"
     target="_blank"
     rel="noopener"
@@ -28,9 +29,11 @@
 {% stylesheet %}
   .lp-wa {
     position: fixed;
-    right: 1rem;
-    bottom: 7.5rem;
+    right: var(--lp-fab-gutter, 16px);
+    bottom: var(--lp-fab-gutter, 16px);
     z-index: 95;
+    transform: translateY(calc(-1 * var(--lp-sticky-height, 0px))) scale(var(--lp-fab-scale, 1));
+    transition: transform 0.35s ease;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -39,11 +42,10 @@
     border-radius: 50%;
     background: #25d366;
     box-shadow: 0 4px 16px rgb(0 0 0 / 22%);
-    transition: transform 0.2s ease;
   }
 
   .lp-wa:hover {
-    transform: scale(1.08);
+    --lp-fab-scale: 1.08;
   }
 
   .lp-wa svg {
@@ -92,8 +94,6 @@
 
   @media screen and (max-width: 520px) {
     .lp-wa {
-      right: 0.85rem;
-      bottom: 8.5rem;
       width: 50px;
       height: 50px;
     }
@@ -134,14 +134,27 @@
         return;
       }
 
+      function syncHeight() {
+        var visible = bar.classList.contains('is-visible');
+        var height = visible ? bar.getBoundingClientRect().height : 0;
+        document.documentElement.style.setProperty('--lp-sticky-height', height + 'px');
+      }
+
       new IntersectionObserver(
         function (entries) {
           entries.forEach(function (entry) {
             bar.classList.toggle('is-visible', !entry.isIntersecting);
+            syncHeight();
           });
         },
         { threshold: 0 }
       ).observe(trigger);
+
+      if (window.ResizeObserver) {
+        new ResizeObserver(syncHeight).observe(bar);
+      }
+      window.addEventListener('resize', syncHeight);
+      syncHeight();
     }
 
     if (document.readyState === 'loading') {
@@ -194,6 +207,17 @@
     {
       "type": "header",
       "content": "Tombol WhatsApp"
+    },
+    {
+      "type": "range",
+      "id": "fab_gutter",
+      "label": "Jarak dari tepi",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16,
+      "info": "Dipakai untuk sisi kanan dan bawah sekaligus. Jarak ke bilah CTA dihitung otomatis."
     },
     {
       "type": "checkbox",
