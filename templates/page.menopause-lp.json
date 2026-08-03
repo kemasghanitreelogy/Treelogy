@@ -1143,7 +1143,8 @@
         "percent_4": 10,
         "percent_3": 2,
         "percent_2": 1,
-        "percent_1": 1
+        "percent_1": 1,
+        "empty_text": "Belum ada ulasan untuk topik ini."
       }
     },
     "faq": {

@@ -61,6 +61,8 @@
       {% endif %}
     </div>
 
+    <p class="lp-reviews__empty" data-lp-reviews-empty hidden>{{ section.settings.empty_text }}</p>
+
     <div class="lp-reviews__grid" data-lp-reviews-grid>
       {% for block in reviews %}
         <article
@@ -232,11 +234,22 @@
     border: 1px solid var(--lp-border);
     border-radius: var(--lp-radius-lg);
     background: var(--lp-surface);
-    transition: opacity 0.25s ease;
   }
 
-  .lp-review.is-dimmed {
-    opacity: 0.45;
+  .lp-review[hidden] {
+    display: none !important;
+  }
+
+  .lp-reviews__empty {
+    margin: 0 0 1.25rem;
+    color: var(--lp-text-light);
+    font-family: var(--lp-font-body);
+    font-size: 0.9375rem;
+    text-align: center;
+  }
+
+  .lp-reviews__chip[hidden] {
+    display: none !important;
   }
 
   .lp-review__head {
@@ -318,55 +331,123 @@
 
 {% javascript %}
   (function () {
+    var EASE = 'cubic-bezier(0.2, 0, 0, 1)';
+    var DURATION = 560;
+    var STAGGER = 60;
+    var EXIT = 220;
+
+    function reducedMotion() {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    }
+
+    function settle(animation) {
+      if (!animation) return Promise.resolve();
+      return animation.finished.then(function () {
+        animation.cancel();
+      }).catch(function () {});
+    }
+
     function init(scope) {
       var grid = scope.querySelector('[data-lp-reviews-grid]');
       if (!grid || grid.dataset.lpReviewsBound === 'true') return;
       grid.dataset.lpReviewsBound = 'true';
 
-      var chips = scope.querySelectorAll('[data-lp-topic]');
-      if (!chips.length) return;
+      var chips = Array.prototype.slice.call(scope.querySelectorAll('[data-lp-topic]'));
+      var cards = Array.prototype.slice.call(grid.querySelectorAll('.lp-review'));
+      var empty = scope.querySelector('[data-lp-reviews-empty]');
+      if (!chips.length || !cards.length) return;
 
-      var original = Array.prototype.slice.call(grid.children);
+      function matches(card, topic) {
+        if (!topic) return true;
+        return (card.dataset.lpReviewTopics || '').split(/[\s-]+/).indexOf(topic) !== -1;
+      }
 
-      function reset() {
-        original.forEach(function (card) {
-          grid.appendChild(card);
-          card.classList.remove('is-dimmed');
+      chips.forEach(function (chip) {
+        var hits = cards.filter(function (card) {
+          return matches(card, chip.dataset.lpTopic);
+        });
+        if (!hits.length) chip.hidden = true;
+      });
+
+      var busy = false;
+
+      function apply(topic) {
+        if (busy) return;
+
+        var before = new Map();
+        cards.forEach(function (card) {
+          if (!card.hidden) before.set(card, card.getBoundingClientRect());
+        });
+
+        var keep = cards.filter(function (card) { return matches(card, topic); });
+        var leaving = cards.filter(function (card) {
+          return !card.hidden && keep.indexOf(card) === -1;
+        });
+        var entering = keep.filter(function (card) { return card.hidden; });
+
+        if (empty) empty.hidden = keep.length > 0;
+
+        if (reducedMotion()) {
+          cards.forEach(function (card) { card.hidden = keep.indexOf(card) === -1; });
+          return;
+        }
+
+        busy = true;
+
+        var exits = leaving.map(function (card, i) {
+          return settle(card.animate(
+            [
+              { opacity: 1, transform: 'none' },
+              { opacity: 0, transform: 'translateY(8px) scale(0.97)' }
+            ],
+            { duration: EXIT, delay: i * 30, easing: EASE, fill: 'both' }
+          ));
+        });
+
+        Promise.all(exits).then(function () {
+          leaving.forEach(function (card) { card.hidden = true; });
+          entering.forEach(function (card) { card.hidden = false; });
+
+          keep.forEach(function (card) {
+            var from = before.get(card);
+            if (!from) return;
+            var to = card.getBoundingClientRect();
+            var dx = from.left - to.left;
+            var dy = from.top - to.top;
+            if (!dx && !dy) return;
+            settle(card.animate(
+              [
+                { transform: 'translate(' + dx + 'px, ' + dy + 'px)' },
+                { transform: 'none' }
+              ],
+              { duration: DURATION, easing: EASE, fill: 'both' }
+            ));
+          });
+
+          entering.forEach(function (card, i) {
+            settle(card.animate(
+              [
+                { opacity: 0, transform: 'translateY(14px) scale(0.97)' },
+                { opacity: 1, transform: 'none' }
+              ],
+              { duration: DURATION, delay: 80 + i * STAGGER, easing: EASE, fill: 'both' }
+            ));
+          });
+
+          busy = false;
         });
       }
 
       chips.forEach(function (chip) {
         chip.addEventListener('click', function () {
           var wasActive = chip.getAttribute('aria-pressed') === 'true';
-
-          chips.forEach(function (other) {
-            other.setAttribute('aria-pressed', 'false');
-          });
-
+          chips.forEach(function (other) { other.setAttribute('aria-pressed', 'false'); });
           if (wasActive) {
-            reset();
+            apply(null);
             return;
           }
-
           chip.setAttribute('aria-pressed', 'true');
-
-          var topic = chip.dataset.lpTopic;
-          var matched = [];
-          var rest = [];
-
-          original.forEach(function (card) {
-            var topics = card.dataset.lpReviewTopics || '';
-            if (topics.split('-').indexOf(topic) !== -1 || topics.indexOf(topic) !== -1) {
-              matched.push(card);
-            } else {
-              rest.push(card);
-            }
-          });
-
-          matched.concat(rest).forEach(function (card) {
-            grid.appendChild(card);
-            card.classList.toggle('is-dimmed', matched.indexOf(card) === -1);
-          });
+          apply(chip.dataset.lpTopic);
         });
       });
     }
@@ -408,6 +489,12 @@
       "id": "score_text",
       "label": "Teks skor",
       "default": "4,8 dari 5 · 10.000+ ulasan"
+    },
+    {
+      "type": "text",
+      "id": "empty_text",
+      "label": "Teks saat tidak ada hasil",
+      "default": "Belum ada ulasan untuk topik ini."
     },
     {
       "type": "text",
