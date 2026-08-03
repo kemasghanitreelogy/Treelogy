@@ -1,30 +1,34 @@
 <div class="lp-tmarquee" style="--lp-tmarquee-duration: {{ section.settings.duration }}s">
-  <div class="lp-tmarquee__track">
-    {% for block in section.blocks %}
-      <figure class="lp-tcard" {{ block.shopify_attributes }}>
-        <div class="lp-tcard__stars" aria-label="{{ block.settings.rating }} dari 5">
-          {%- for i in (1..block.settings.rating) -%}★{%- endfor -%}
-        </div>
-        <blockquote class="lp-tcard__text">{{ block.settings.quote }}</blockquote>
-        <figcaption>
-          <div class="lp-tcard__author">{{ block.settings.author }}</div>
-          <div class="lp-tcard__detail">{{ block.settings.detail }}</div>
-        </figcaption>
-      </figure>
-    {% endfor %}
+  <div class="lp-tmarquee__track" data-lp-marquee-track>
+    <div class="lp-tmarquee__set" data-lp-marquee-set>
+      {% for block in section.blocks %}
+        <figure class="lp-tcard" {{ block.shopify_attributes }}>
+          <div class="lp-tcard__stars" aria-label="{{ block.settings.rating }} dari 5">
+            {%- for i in (1..block.settings.rating) -%}★{%- endfor -%}
+          </div>
+          <blockquote class="lp-tcard__text">{{ block.settings.quote }}</blockquote>
+          <figcaption>
+            <div class="lp-tcard__author">{{ block.settings.author }}</div>
+            <div class="lp-tcard__detail">{{ block.settings.detail }}</div>
+          </figcaption>
+        </figure>
+      {% endfor %}
+    </div>
 
-    {% for block in section.blocks %}
-      <figure class="lp-tcard" aria-hidden="true">
-        <div class="lp-tcard__stars">
-          {%- for i in (1..block.settings.rating) -%}★{%- endfor -%}
-        </div>
-        <blockquote class="lp-tcard__text">{{ block.settings.quote }}</blockquote>
-        <figcaption>
-          <div class="lp-tcard__author">{{ block.settings.author }}</div>
-          <div class="lp-tcard__detail">{{ block.settings.detail }}</div>
-        </figcaption>
-      </figure>
-    {% endfor %}
+    <div class="lp-tmarquee__set" aria-hidden="true">
+      {% for block in section.blocks %}
+        <figure class="lp-tcard">
+          <div class="lp-tcard__stars">
+            {%- for i in (1..block.settings.rating) -%}★{%- endfor -%}
+          </div>
+          <blockquote class="lp-tcard__text">{{ block.settings.quote }}</blockquote>
+          <figcaption>
+            <div class="lp-tcard__author">{{ block.settings.author }}</div>
+            <div class="lp-tcard__detail">{{ block.settings.detail }}</div>
+          </figcaption>
+        </figure>
+      {% endfor %}
+    </div>
   </div>
 </div>
 
@@ -33,13 +37,6 @@
     overflow: hidden;
     padding-block: 2.5rem;
     background: var(--lp-bloom);
-  }
-
-  .lp-tmarquee__track {
-    display: flex;
-    gap: 1.25rem;
-    width: max-content;
-    animation: lp-tmarquee-scroll var(--lp-tmarquee-duration, 45s) linear infinite;
   }
 
   .lp-tmarquee.is-interactive {
@@ -54,6 +51,19 @@
 
   .lp-tmarquee.is-dragging .lp-tcard {
     pointer-events: none;
+  }
+
+  .lp-tmarquee__track {
+    display: flex;
+    gap: 1.25rem;
+    width: max-content;
+    animation: lp-tmarquee-scroll var(--lp-tmarquee-duration, 45s) linear infinite;
+  }
+
+  .lp-tmarquee__set {
+    display: flex;
+    flex: 0 0 auto;
+    gap: 1.25rem;
   }
 
   .lp-tcard {
@@ -102,7 +112,7 @@
     }
 
     to {
-      transform: translateX(-50%);
+      transform: translateX(calc(-1 * var(--lp-loop-distance, 50%)));
     }
   }
 
@@ -128,31 +138,44 @@
     }
 
     function init(root) {
-      var track = root.querySelector('.lp-tmarquee__track');
+      var track = root.querySelector('[data-lp-marquee-track]');
       if (!track || root.dataset.lpMarqueeBound === 'true') return;
-      root.dataset.lpMarqueeBound = 'true';
 
-      var anim = track.getAnimations().filter(function (a) {
-        return a.animationName === 'lp-tmarquee-scroll' || !a.animationName;
-      })[0];
+      var original = track.querySelector('[data-lp-marquee-set]');
+      if (!original) return;
+
+      var gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+      var loopDistance = original.getBoundingClientRect().width + gap;
+      if (loopDistance <= gap) return;
+
+      root.dataset.lpMarqueeBound = 'true';
+      track.style.setProperty('--lp-loop-distance', loopDistance + 'px');
+
+      function ensureCoverage() {
+        var needed = loopDistance + root.getBoundingClientRect().width * 2;
+        var guard = 0;
+        while (track.getBoundingClientRect().width < needed && guard < 10) {
+          var clone = original.cloneNode(true);
+          clone.removeAttribute('data-lp-marquee-set');
+          clone.setAttribute('aria-hidden', 'true');
+          track.appendChild(clone);
+          guard += 1;
+        }
+      }
+      ensureCoverage();
+
+      var anim = track.getAnimations()[0];
       if (!anim) return;
 
-      var timing = anim.effect.getComputedTiming();
-      var duration = timing.duration;
+      var duration = anim.effect.getComputedTiming().duration;
       if (!duration || !isFinite(duration)) return;
 
       root.classList.add('is-interactive');
-
       if (reducedMotion()) anim.pause();
 
       var dragging = false;
       var startX = 0;
       var startTime = 0;
-
-      function pxPerMs() {
-        var span = track.scrollWidth / 2;
-        return span > 0 ? span / duration : 1;
-      }
 
       track.addEventListener('pointerdown', function (event) {
         if (event.button && event.button !== 0) return;
@@ -167,7 +190,8 @@
       track.addEventListener('pointermove', function (event) {
         if (!dragging) return;
         event.preventDefault();
-        var next = startTime - (event.clientX - startX) / pxPerMs();
+        var pxPerMs = loopDistance / duration;
+        var next = startTime - (event.clientX - startX) / pxPerMs;
         anim.currentTime = ((next % duration) + duration) % duration;
       });
 
@@ -195,7 +219,7 @@
         anim.play();
       }
 
-      var observer = new IntersectionObserver(
+      new IntersectionObserver(
         function (entries) {
           entries.forEach(function (entry) {
             if (entry.isIntersecting) {
@@ -209,8 +233,7 @@
           });
         },
         { rootMargin: '300px 0px' }
-      );
-      observer.observe(root);
+      ).observe(root);
 
       document.addEventListener('visibilitychange', function () {
         if (document.hidden) return;
@@ -222,13 +245,26 @@
         resume();
         repaint();
       });
+
+      var remeasure;
+      window.addEventListener('resize', function () {
+        window.clearTimeout(remeasure);
+        remeasure = window.setTimeout(function () {
+          var width = original.getBoundingClientRect().width;
+          if (!width) return;
+          var nextGap = parseFloat(getComputedStyle(track).columnGap) || 0;
+          loopDistance = width + nextGap;
+          track.style.setProperty('--lp-loop-distance', loopDistance + 'px');
+          ensureCoverage();
+        }, 200);
+      });
     }
 
     function start() {
       document.querySelectorAll('.lp-tmarquee').forEach(function (root) {
         var tries = 0;
         (function attempt() {
-          var track = root.querySelector('.lp-tmarquee__track');
+          var track = root.querySelector('[data-lp-marquee-track]');
           if (track && track.getAnimations().length) {
             init(root);
             return;
@@ -263,7 +299,7 @@
       "step": 5,
       "unit": "d",
       "default": 45,
-      "info": "Makin besar makin lambat."
+      "info": "Waktu untuk melewati satu set testimoni. Makin besar makin lambat."
     }
   ],
   "blocks": [
