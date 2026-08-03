@@ -70,6 +70,10 @@
     gap: 1.25rem;
   }
 
+  .lp-tmarquee.is-interactive .lp-tmarquee__track {
+    will-change: transform;
+  }
+
   .lp-tcard {
     flex: 0 0 330px;
     margin: 0;
@@ -154,71 +158,103 @@
 
     function init(root) {
       var track = root.querySelector('[data-lp-marquee-track]');
-      var original = track && track.querySelector('[data-lp-marquee-set]');
-      if (!track || !original || root.dataset.lpMarqueeBound === 'true') return;
+      if (!track || root.dataset.lpMarqueeBound === 'true') return;
+      if (reducedMotion()) return;
+
+      var sets = Array.prototype.slice.call(track.querySelectorAll('[data-lp-marquee-set], .lp-tmarquee__set'));
+      var cards = [];
+      sets.forEach(function (set) {
+        Array.prototype.slice.call(set.children).forEach(function (card) {
+          cards.push(card);
+        });
+      });
+      if (cards.length < 2) return;
+
+      var gap = parseFloat(getComputedStyle(track).columnGap) || 0;
 
       var seconds = parseFloat(getComputedStyle(root).getPropertyValue('--lp-tmarquee-duration'));
-      var duration = (seconds > 0 ? seconds : 45) * 1000;
+      seconds = seconds > 0 ? seconds : 45;
 
-      function measure() {
-        var cards = original.children;
-        if (!cards.length) return 0;
-        var first = cards[0];
-        var last = cards[cards.length - 1];
-        var gap = parseFloat(getComputedStyle(original).columnGap) || 0;
-        return last.offsetLeft + last.offsetWidth - first.offsetLeft + gap;
-      }
+      var perSet = 0;
+      var setCount = sets.length || 1;
+      cards.forEach(function (card) {
+        perSet += card.offsetWidth + gap;
+      });
+      perSet = perSet / setCount;
+      if (perSet < 40) return;
 
-      var loopDistance = measure();
-      var viewport = root.getBoundingClientRect().width;
-      if (loopDistance < 40 || loopDistance < viewport / 4) return;
+      var pxPerMs = perSet / (seconds * 1000);
 
       root.dataset.lpMarqueeBound = 'true';
       root.classList.add('is-interactive');
 
-      function ensureCoverage() {
-        var needed = loopDistance + root.getBoundingClientRect().width * 2;
+      sets.forEach(function (set) {
+        set.remove();
+      });
+      cards.forEach(function (card) {
+        card.removeAttribute('aria-hidden');
+        track.appendChild(card);
+      });
+
+      var offset = 0;
+      var last = 0;
+      var running = false;
+      var frameId = 0;
+      var dragging = false;
+      var startX = 0;
+      var startOffset = 0;
+
+      function recycle() {
         var guard = 0;
-        while (track.getBoundingClientRect().width < needed && guard < 10) {
-          var clone = original.cloneNode(true);
-          clone.removeAttribute('data-lp-marquee-set');
-          clone.setAttribute('aria-hidden', 'true');
-          track.appendChild(clone);
+        var head = track.firstElementChild;
+        while (head && guard < 50) {
+          var width = head.offsetWidth + gap;
+          if (-offset < width) break;
+          offset += width;
+          track.appendChild(head);
+          head = track.firstElementChild;
           guard += 1;
         }
       }
 
-      var anim = null;
-      var dragging = false;
-
-      function build(keepProgress) {
-        var progress = 0;
-        if (anim && keepProgress) {
-          progress = (Number(anim.currentTime) || 0) / duration;
-          progress = progress - Math.floor(progress);
-        }
-        if (anim) anim.cancel();
-
-        ensureCoverage();
-
-        anim = track.animate(
-          [
-            { transform: 'translateX(0px)' },
-            { transform: 'translateX(' + -loopDistance + 'px)' }
-          ],
-          { duration: duration, iterations: Infinity, easing: 'linear' }
-        );
-        anim.currentTime = progress * duration;
-        if (reducedMotion()) anim.pause();
+      function draw() {
+        recycle();
+        track.style.transform = 'translate3d(' + offset + 'px, 0, 0)';
       }
-      build(false);
+
+      function frame(now) {
+        if (!running) return;
+        if (!last) last = now;
+        var delta = now - last;
+        last = now;
+        if (delta > 0 && delta < 200 && !dragging) {
+          offset -= pxPerMs * delta;
+        }
+        draw();
+        frameId = requestAnimationFrame(frame);
+      }
+
+      function play() {
+        if (running || dragging) return;
+        running = true;
+        last = 0;
+        frameId = requestAnimationFrame(frame);
+      }
+
+      function pause() {
+        running = false;
+        if (frameId) cancelAnimationFrame(frameId);
+        frameId = 0;
+      }
+
+      draw();
+      play();
 
       track.addEventListener('pointerdown', function (event) {
         if (event.button && event.button !== 0) return;
         dragging = true;
-        this._startX = event.clientX;
-        this._startTime = Number(anim.currentTime) || 0;
-        anim.pause();
+        startX = event.clientX;
+        startOffset = offset;
         root.classList.add('is-dragging');
         try { track.setPointerCapture(event.pointerId); } catch (e) {}
       });
@@ -226,9 +262,19 @@
       track.addEventListener('pointermove', function (event) {
         if (!dragging) return;
         event.preventDefault();
-        var pxPerMs = loopDistance / duration;
-        var next = this._startTime - (event.clientX - this._startX) / pxPerMs;
-        anim.currentTime = ((next % duration) + duration) % duration;
+        offset = startOffset + (event.clientX - startX);
+        if (offset > 0) {
+          var tail = track.lastElementChild;
+          var guard = 0;
+          while (offset > 0 && tail && guard < 50) {
+            track.insertBefore(tail, track.firstElementChild);
+            offset -= tail.offsetWidth + gap;
+            startOffset -= tail.offsetWidth + gap;
+            tail = track.lastElementChild;
+            guard += 1;
+          }
+        }
+        draw();
       });
 
       function release(event) {
@@ -236,35 +282,20 @@
         dragging = false;
         root.classList.remove('is-dragging');
         try { track.releasePointerCapture(event.pointerId); } catch (e) {}
-        if (!reducedMotion()) anim.play();
+        last = 0;
       }
 
       track.addEventListener('pointerup', release);
       track.addEventListener('pointercancel', release);
       track.addEventListener('lostpointercapture', release);
 
-      function repaint() {
-        track.style.opacity = '0.999';
-        requestAnimationFrame(function () {
-          track.style.opacity = '';
-        });
-      }
-
-      function resume() {
-        if (dragging || reducedMotion() || !anim) return;
-        anim.play();
-      }
-
       new IntersectionObserver(
         function (entries) {
           entries.forEach(function (entry) {
             if (entry.isIntersecting) {
-              track.style.willChange = 'transform';
-              resume();
-              repaint();
-            } else if (anim) {
-              anim.pause();
-              track.style.willChange = 'auto';
+              play();
+            } else {
+              pause();
             }
           });
         },
@@ -272,29 +303,26 @@
       ).observe(root);
 
       document.addEventListener('visibilitychange', function () {
-        if (document.hidden) return;
-        resume();
-        repaint();
+        if (document.hidden) pause();
+        else play();
       });
 
-      window.addEventListener('pageshow', function () {
-        resume();
-        repaint();
-      });
+      window.addEventListener('pageshow', play);
 
       var remeasure;
-      function onResize() {
+      window.addEventListener('resize', function () {
         window.clearTimeout(remeasure);
         remeasure = window.setTimeout(function () {
-          var next = measure();
-          if (next < 40 || Math.abs(next - loopDistance) < 1) return;
-          loopDistance = next;
-          build(true);
-          resume();
+          gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+          var total = 0;
+          Array.prototype.slice.call(track.children).forEach(function (card) {
+            total += card.offsetWidth + gap;
+          });
+          var next = total / setCount;
+          if (next > 40) pxPerMs = next / (seconds * 1000);
+          draw();
         }, 200);
-      }
-      window.addEventListener('resize', onResize);
-      window.addEventListener('orientationchange', onResize);
+      });
     }
 
     function start() {
