@@ -93,8 +93,7 @@
                       <span>{{ parts[0] | strip }}</span>
                       {% if parts.size > 2 %}
                         <span class="lp-plan__free">
-                          <s>{{ parts[1] | strip }}</s>
-                          {{ parts[2] | strip }}
+                          <s>{{- parts[1] | strip -}}</s>{{ parts[2] | strip }}
                         </span>
                       {% else %}
                         <span class="lp-plan__value">{{ parts[1] | strip }}</span>
