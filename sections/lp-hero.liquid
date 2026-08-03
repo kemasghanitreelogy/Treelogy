@@ -55,6 +55,7 @@
       {% endif %}
     </div>
 
+    {%- assign gallery = section.blocks | where: 'type', 'media' -%}
     <div class="lp-hero__visual">
       <div class="lp-hero__frame">
         {% if section.settings.show_save_badge %}
@@ -65,7 +66,32 @@
           </div>
         {% endif %}
 
-        {% if section.settings.image %}
+        {% if gallery.size > 0 %}
+          <div class="lp-hero__stack" data-lp-gallery>
+            {% for block in gallery %}
+              <div
+                class="lp-hero__slide{% if forloop.first %} is-active{% endif %}"
+                data-lp-slide="{{ forloop.index0 }}"
+                {{ block.shopify_attributes }}
+              >
+                {% if block.settings.image %}
+                  {{
+                    block.settings.image
+                    | image_url: width: 900
+                    | image_tag:
+                      class: 'lp-hero__img',
+                      widths: '380, 560, 760, 900',
+                      sizes: '(max-width: 768px) 280px, 380px',
+                      loading: 'eager',
+                      alt: block.settings.alt | default: block.settings.image.alt
+                  }}
+                {% else %}
+                  {{ 'product-1' | placeholder_svg_tag: 'lp-hero__img lp-placeholder' }}
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        {% elsif section.settings.image %}
           {{
             section.settings.image
             | image_url: width: 900
@@ -79,6 +105,31 @@
           {{ 'product-1' | placeholder_svg_tag: 'lp-hero__img lp-placeholder' }}
         {% endif %}
       </div>
+
+      {% if gallery.size > 1 %}
+        <div class="lp-hero__thumbs" role="tablist" aria-label="{{ section.settings.gallery_label }}">
+          {% for block in gallery %}
+            <button
+              type="button"
+              role="tab"
+              class="lp-hero__thumb{% if forloop.first %} is-active{% endif %}"
+              data-lp-thumb="{{ forloop.index0 }}"
+              aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+              aria-label="{{ block.settings.alt | default: forloop.index }}"
+            >
+              {% if block.settings.image %}
+                {{
+                  block.settings.image
+                  | image_url: width: 180
+                  | image_tag: widths: '90, 180', sizes: '64px', loading: 'lazy', alt: ''
+                }}
+              {% else %}
+                {{ 'product-1' | placeholder_svg_tag: 'lp-placeholder' }}
+              {% endif %}
+            </button>
+          {% endfor %}
+        </div>
+      {% endif %}
     </div>
   </div>
 </div>
@@ -196,8 +247,79 @@
 
   .lp-hero__visual {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 0.85rem;
+  }
+
+  .lp-hero__stack {
+    display: grid;
+    width: 100%;
+    height: 100%;
+  }
+
+  .lp-hero__slide {
+    grid-area: 1 / 1;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .lp-hero__slide.is-active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .lp-hero__thumbs {
+    display: flex;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 380px;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+  }
+
+  .lp-hero__thumbs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .lp-hero__thumb {
+    flex: 0 0 64px;
+    overflow: hidden;
+    width: 64px;
+    height: 64px;
+    padding: 0;
+    border: 1.5px solid var(--lp-border);
+    border-radius: var(--lp-radius);
+    background: var(--lp-surface);
+    cursor: pointer;
+    scroll-snap-align: start;
+    transition: border-color 0.2s ease, opacity 0.2s ease;
+    opacity: 0.65;
+  }
+
+  .lp-hero__thumb img,
+  .lp-hero__thumb svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .lp-hero__thumb:hover {
+    opacity: 1;
+  }
+
+  .lp-hero__thumb.is-active {
+    border-color: var(--lp-gold);
+    opacity: 1;
+  }
+
+  .lp-hero__thumb:focus-visible {
+    outline: 2px solid var(--lp-forest);
+    outline-offset: 2px;
   }
 
   .lp-hero__frame {
@@ -389,8 +511,76 @@
       observer.observe(el);
     }
 
+    function initGallery(root) {
+      var stack = root.querySelector('[data-lp-gallery]');
+      if (!stack || stack.dataset.lpGalleryBound === 'true') return;
+      stack.dataset.lpGalleryBound = 'true';
+
+      var slides = Array.prototype.slice.call(stack.querySelectorAll('[data-lp-slide]'));
+      var thumbs = Array.prototype.slice.call(root.querySelectorAll('[data-lp-thumb]'));
+      if (slides.length < 2 || !thumbs.length) return;
+
+      var current = 0;
+
+      function show(index) {
+        if (index === current || index < 0 || index >= slides.length) return;
+
+        var from = slides[current];
+        var to = slides[index];
+        current = index;
+
+        thumbs.forEach(function (thumb, i) {
+          thumb.classList.toggle('is-active', i === index);
+          thumb.setAttribute('aria-selected', i === index ? 'true' : 'false');
+        });
+
+        if (reducedMotion()) {
+          from.classList.remove('is-active');
+          to.classList.add('is-active');
+          return;
+        }
+
+        to.classList.add('is-active');
+        to.animate(
+          [
+            { opacity: 0, transform: 'scale(1.03)' },
+            { opacity: 1, transform: 'none' }
+          ],
+          { duration: 380, easing: EASE, fill: 'both' }
+        ).finished.then(function () {
+          to.getAnimations().forEach(function (a) { a.cancel(); });
+        }).catch(function () {});
+
+        var out = from.animate(
+          [{ opacity: 1 }, { opacity: 0 }],
+          { duration: 260, easing: EASE, fill: 'both' }
+        );
+        out.finished.then(function () {
+          from.classList.remove('is-active');
+          out.cancel();
+        }).catch(function () {});
+      }
+
+      thumbs.forEach(function (thumb, index) {
+        thumb.addEventListener('click', function () {
+          show(index);
+        });
+        thumb.addEventListener('keydown', function (event) {
+          var next = null;
+          if (event.key === 'ArrowRight') next = index + 1;
+          if (event.key === 'ArrowLeft') next = index - 1;
+          if (next === null) return;
+          event.preventDefault();
+          next = (next + thumbs.length) % thumbs.length;
+          thumbs[next].focus();
+          show(next);
+        });
+      });
+    }
+
     function start() {
       document.querySelectorAll('[data-lp-count]').forEach(init);
+      document.querySelectorAll('.lp-hero__visual').forEach(initGallery);
     }
 
     if (document.readyState === 'loading') {
@@ -455,7 +645,14 @@
     {
       "type": "image_picker",
       "id": "image",
-      "label": "Gambar produk"
+      "label": "Gambar produk",
+      "info": "Dipakai bila belum ada blok Gambar galeri."
+    },
+    {
+      "type": "text",
+      "id": "gallery_label",
+      "label": "Label galeri",
+      "default": "Galeri produk"
     },
     {
       "type": "header",
@@ -487,6 +684,24 @@
     }
   ],
   "blocks": [
+    {
+      "type": "media",
+      "name": "Gambar galeri",
+      "limit": 10,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Gambar"
+        },
+        {
+          "type": "text",
+          "id": "alt",
+          "label": "Deskripsi gambar",
+          "info": "Untuk pembaca layar."
+        }
+      ]
+    },
     {
       "type": "proof",
       "name": "Bukti sosial",
