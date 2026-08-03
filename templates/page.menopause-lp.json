@@ -69,7 +69,9 @@
           "settings": {
             "prefix": "★★★★★",
             "highlight": "4,8",
-            "text": "/5"
+            "text": "/5",
+            "link_url": "#ulasan",
+            "link_label": "Lihat ulasan pelanggan"
           }
         },
         "proof_3": {
@@ -1144,7 +1146,8 @@
         "percent_3": 2,
         "percent_2": 1,
         "percent_1": 1,
-        "empty_text": "Belum ada ulasan untuk topik ini."
+        "empty_text": "Belum ada ulasan untuk topik ini.",
+        "anchor_id": "ulasan"
       }
     },
     "faq": {
