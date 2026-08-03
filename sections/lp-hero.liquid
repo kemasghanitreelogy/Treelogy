@@ -31,11 +31,7 @@
                 <span>{{ block.settings.prefix }}</span>
               {% endif %}
               {% if block.settings.highlight != blank %}
-                <strong
-                  {% if block.settings.count_up %}
-                    class="lp-hero__count" data-lp-count="{{ block.settings.highlight | escape }}"
-                  {% endif %}
-                >
+                <strong class="lp-hero__count" data-lp-count="{{ block.settings.highlight | escape }}">
                   {{- block.settings.highlight -}}
                 </strong>
               {% endif %}
@@ -271,9 +267,10 @@
       var parsed = raw.trim().match(/^(\D*?)([\d][\d.,\s\u00a0]*)(.*)$/);
       if (!parsed) return null;
 
+      if (raw.indexOf(',') !== -1) return null;
       var digits = parsed[2].replace(/\D/g, '');
       var target = parseInt(digits, 10);
-      if (!isFinite(target) || target <= 0) return null;
+      if (!isFinite(target) || target < 1000) return null;
 
       el.textContent = '';
       if (parsed[1]) el.appendChild(document.createTextNode(parsed[1]));
@@ -470,16 +467,10 @@
           "label": "Teks awal"
         },
         {
-          "type": "checkbox",
-          "id": "count_up",
-          "label": "Animasikan hitung naik",
-          "default": false,
-          "info": "Angka pada teks tebal dihitung dari 0 saat pertama terlihat."
-        },
-        {
           "type": "text",
           "id": "highlight",
-          "label": "Teks tebal"
+          "label": "Teks tebal",
+          "info": "Angka bulat 1.000 ke atas otomatis dianimasikan hitung naik dari 0."
         },
         {
           "type": "text",
