@@ -17,11 +17,37 @@
         <p class="lp-hero__sub">{{ section.settings.subheading }}</p>
       {% endif %}
 
-      {% if section.settings.cta_label != blank %}
-        <a class="lp-btn lp-hero__cta" href="{{ section.settings.cta_url | default: '#' }}">
-          {{- section.settings.cta_label -}}
-        </a>
-      {% endif %}
+      <div class="lp-hero__offer" data-lp-offer>
+        {% if section.settings.offer_includes != blank %}
+          <p class="lp-hero__includes">{{ section.settings.offer_includes }}</p>
+        {% endif %}
+
+        {% if section.settings.offer_plan != blank %}
+          <p class="lp-hero__plan">{{ section.settings.offer_plan }}</p>
+        {% endif %}
+
+        {% if section.settings.offer_price != blank %}
+          <p class="lp-hero__price">{{ section.settings.offer_price }}</p>
+        {% endif %}
+
+        {% if section.settings.offer_perday != blank %}
+          <p class="lp-hero__perday">{{ section.settings.offer_perday }}</p>
+        {% endif %}
+
+        {% if section.settings.show_savings and section.settings.savings_text != blank %}
+          <p class="lp-hero__savings">{{ section.settings.savings_text }}</p>
+        {% endif %}
+
+        {% if section.settings.cta_label != blank %}
+          <a class="lp-btn lp-hero__cta" href="{{ section.settings.cta_url | default: '#' }}">
+            {{- section.settings.cta_label -}}
+          </a>
+        {% endif %}
+
+        {% if section.settings.offer_note != blank %}
+          <p class="lp-hero__offer-note">{{ section.settings.offer_note }}</p>
+        {% endif %}
+      </div>
 
       {% if section.blocks.size > 0 %}
         <div class="lp-hero__proof">
@@ -58,16 +84,6 @@
     {%- assign gallery = section.blocks | where: 'type', 'media' -%}
     <div class="lp-hero__visual">
       <div class="lp-hero__frame">
-        {% if section.settings.show_save_badge %}
-          <div
-            class="lp-hero__save lp-hero__save--{{ section.settings.save_position }}"
-            style="--lp-save-offset: {{ section.settings.save_offset }}px"
-          >
-            {{ section.settings.save_prefix }}
-            <strong>{{ section.settings.save_amount }}</strong>
-            {{ section.settings.save_suffix }}
-          </div>
-        {% endif %}
 
         {% if gallery.size > 0 %}
           <div class="lp-hero__stack" data-lp-gallery>
@@ -192,6 +208,61 @@
     font-family: var(--lp-font-body);
     font-size: 1.0625rem;
     line-height: 1.7;
+  }
+
+  .lp-hero__offer {
+    margin-bottom: 2rem;
+    font-family: var(--lp-font-body);
+  }
+
+  .lp-hero__includes {
+    margin: 0 0 0.75rem;
+    color: var(--lp-text-mid);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+
+  .lp-hero__plan {
+    margin: 0 0 0.35rem;
+    color: var(--lp-text-mid);
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .lp-hero__price {
+    margin: 0;
+    color: var(--lp-gold);
+    font-family: var(--lp-font-display);
+    font-size: clamp(1.75rem, 4vw, 2rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    transform-origin: left center;
+  }
+
+  .lp-hero__perday {
+    margin: 0.35rem 0 0;
+    color: var(--lp-text-mid);
+    font-size: 1rem;
+  }
+
+  .lp-hero__savings {
+    margin: 0.5rem 0 0;
+    color: var(--lp-text-mid);
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+
+  .lp-hero__offer .lp-hero__cta {
+    margin-top: 1.25rem;
+  }
+
+  .lp-hero__offer-note {
+    margin: 0.75rem 0 0;
+    color: var(--lp-text-light);
+    font-size: 0.875rem;
   }
 
   .lp-hero__proof {
@@ -352,60 +423,13 @@
     object-fit: cover;
   }
 
-  .lp-hero__save {
-    --lp-save-used: var(--lp-save-offset, 40px);
 
-    position: absolute;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 96px;
-    height: 96px;
-    border-radius: 50%;
-    background: var(--lp-gold);
-    box-shadow: 0 4px 14px rgb(0 0 0 / 18%);
-    color: var(--lp-forest-deep);
-    font-family: var(--lp-font-body);
-    font-size: 0.6875rem;
-    font-weight: 600;
-    line-height: 1.25;
-    text-align: center;
-    transform: rotate(8deg);
-  }
 
-  .lp-hero__save--top-right {
-    top: calc(-1 * var(--lp-save-used));
-    right: calc(-1 * var(--lp-save-used));
-  }
 
-  .lp-hero__save--top-left {
-    top: calc(-1 * var(--lp-save-used));
-    left: calc(-1 * var(--lp-save-used));
-    transform: rotate(-8deg);
-  }
 
-  .lp-hero__save--bottom-right {
-    right: calc(-1 * var(--lp-save-used));
-    bottom: calc(-1 * var(--lp-save-used));
-    transform: rotate(-8deg);
-  }
 
-  .lp-hero__save--bottom-left {
-    bottom: calc(-1 * var(--lp-save-used));
-    left: calc(-1 * var(--lp-save-used));
-  }
-
-  .lp-hero__save strong {
-    font-size: 0.8125rem;
-    font-weight: 800;
-  }
 
   @media screen and (max-width: 768px) {
-    .lp-hero__save {
-      --lp-save-used: 8px;
-    }
 
     .lp-hero__inner {
       grid-template-columns: 1fr;
@@ -609,8 +633,45 @@
       });
     }
 
+    function initOffer(group) {
+      if (group.dataset.lpOfferBound === 'true') return;
+      group.dataset.lpOfferBound = 'true';
+      if (reducedMotion()) return;
+
+      var price = group.querySelector('.lp-hero__price');
+
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          observer.disconnect();
+
+          group.animate(
+            [
+              { opacity: 0, transform: 'translateY(12px)' },
+              { opacity: 1, transform: 'none' }
+            ],
+            { duration: 520, easing: EASE, fill: 'both' }
+          ).finished.then(function () {
+            group.getAnimations().forEach(function (a) { a.cancel(); });
+          }).catch(function () {});
+
+          if (price) {
+            price.animate(
+              [{ transform: 'scale(0.94)' }, { transform: 'none' }],
+              { duration: 520, easing: EASE, fill: 'both' }
+            ).finished.then(function () {
+              price.getAnimations().forEach(function (a) { a.cancel(); });
+            }).catch(function () {});
+          }
+        });
+      }, { threshold: 0.35 });
+
+      observer.observe(group);
+    }
+
     function start() {
       document.querySelectorAll('[data-lp-count]').forEach(init);
+      document.querySelectorAll('[data-lp-offer]').forEach(initOffer);
       document.querySelectorAll('.lp-hero__visual').forEach(initGallery);
     }
 
@@ -656,6 +717,55 @@
     },
     {
       "type": "header",
+      "content": "Penawaran"
+    },
+    {
+      "type": "textarea",
+      "id": "offer_includes",
+      "label": "Baris \"Termasuk\"",
+      "default": "Termasuk: 90 kapsul (30 hari) · Seed Oil 30ml · Pengiriman ke seluruh Indonesia",
+      "info": "Sebutkan isinya tanpa harga per item dan tanpa label gratis."
+    },
+    {
+      "type": "text",
+      "id": "offer_plan",
+      "label": "Nama paket",
+      "default": "PROTOKOL INSIDE OUT 30 HARI"
+    },
+    {
+      "type": "text",
+      "id": "offer_price",
+      "label": "Harga",
+      "default": "Rp 795.000"
+    },
+    {
+      "type": "text",
+      "id": "offer_perday",
+      "label": "Setara per hari",
+      "default": "Setara Rp 26.500 per hari"
+    },
+    {
+      "type": "text",
+      "id": "offer_note",
+      "label": "Catatan di bawah tombol",
+      "default": "Garansi 30 hari · Pengiriman ke seluruh Indonesia"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_savings",
+      "label": "Tampilkan baris hemat",
+      "default": false,
+      "info": "Hanya nyalakan bila harga pembanding pernah benar-benar ditawarkan. Untuk Obat Tradisional/Suplemen, klaim potongan harga di iklan dilarang PerBPOM 34/2022 Lampiran I III.1."
+    },
+    {
+      "type": "text",
+      "id": "savings_text",
+      "label": "Teks hemat",
+      "default": "Hemat Rp 464.500",
+      "visible_if": "{{ section.settings.show_savings }}"
+    },
+    {
+      "type": "header",
       "content": "Tombol"
     },
     {
@@ -684,57 +794,6 @@
       "id": "gallery_label",
       "label": "Label galeri",
       "default": "Galeri produk"
-    },
-    {
-      "type": "header",
-      "content": "Badge hemat"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_save_badge",
-      "label": "Tampilkan badge hemat",
-      "default": true
-    },
-    {
-      "type": "select",
-      "id": "save_position",
-      "label": "Posisi badge",
-      "options": [
-        { "value": "top-right", "label": "Kanan atas" },
-        { "value": "top-left", "label": "Kiri atas" },
-        { "value": "bottom-right", "label": "Kanan bawah" },
-        { "value": "bottom-left", "label": "Kiri bawah" }
-      ],
-      "default": "top-right"
-    },
-    {
-      "type": "range",
-      "id": "save_offset",
-      "label": "Jarak badge ke luar",
-      "min": 0,
-      "max": 72,
-      "step": 4,
-      "unit": "px",
-      "default": 40,
-      "info": "Makin besar makin menepi ke luar gambar."
-    },
-    {
-      "type": "text",
-      "id": "save_prefix",
-      "label": "Baris atas",
-      "default": "Hemat hingga"
-    },
-    {
-      "type": "text",
-      "id": "save_amount",
-      "label": "Nominal",
-      "default": "Rp 464.500"
-    },
-    {
-      "type": "text",
-      "id": "save_suffix",
-      "label": "Baris bawah",
-      "default": "Hari Ini"
     }
   ],
   "blocks": [
