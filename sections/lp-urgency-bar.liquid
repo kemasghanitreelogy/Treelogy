@@ -170,10 +170,26 @@
       window.setInterval(tick, 1000);
     }
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', start);
-    } else {
+    function publishHeight() {
+      var bar = document.querySelector('.lp-urgency-section');
+      if (!bar) return;
+      var sticky = getComputedStyle(bar).position === 'sticky';
+      var height = sticky ? bar.getBoundingClientRect().height : 0;
+      document.documentElement.style.setProperty('--lp-urgency-height', height + 'px');
+    }
+
+    function boot() {
       start();
+      publishHeight();
+      var bar = document.querySelector('.lp-urgency-section');
+      if (bar && window.ResizeObserver) new ResizeObserver(publishHeight).observe(bar);
+      window.addEventListener('resize', publishHeight);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', boot);
+    } else {
+      boot();
     }
   })();
 {% endjavascript %}

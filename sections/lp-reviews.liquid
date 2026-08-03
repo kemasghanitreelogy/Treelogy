@@ -3,7 +3,7 @@
   assign reviews = section.blocks | where: 'type', 'review'
 %}
 
-<div class="lp-reviews lp-pad">
+<div class="lp-reviews lp-pad" id="{{ section.settings.anchor_id | default: 'ulasan' }}">
   <div class="lp-container lp-reveal">
     {% if section.settings.eyebrow != blank %}
       <div class="lp-eyebrow lp-reviews__eyebrow">{{ section.settings.eyebrow }}</div>
@@ -110,6 +110,7 @@
 {% stylesheet %}
   .lp-reviews {
     background: var(--lp-bloom);
+    scroll-margin-top: calc(var(--lp-urgency-height, 0px) + 1.5rem);
   }
 
   .lp-reviews .lp-reviews__eyebrow,
@@ -510,6 +511,13 @@
   "tag": "section",
   "class": "lp-reviews-section",
   "settings": [
+    {
+      "type": "text",
+      "id": "anchor_id",
+      "label": "ID anchor",
+      "default": "ulasan",
+      "info": "Dipakai tombol lain untuk melompat ke sini, mis. #ulasan."
+    },
     {
       "type": "text",
       "id": "eyebrow",

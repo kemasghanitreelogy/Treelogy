@@ -26,7 +26,20 @@
       {% if section.blocks.size > 0 %}
         <div class="lp-hero__proof">
           {% for block in section.blocks %}
-            <div class="lp-hero__proof-item" {{ block.shopify_attributes }}>
+            {%- liquid
+              assign proof_tag = 'div'
+              if block.settings.link_url != blank
+                assign proof_tag = 'a'
+              endif
+            -%}
+            <{{ proof_tag }}
+              class="lp-hero__proof-item{% if block.settings.link_url != blank %} lp-hero__proof-item--link{% endif %}"
+              {% if block.settings.link_url != blank %}
+                href="{{ block.settings.link_url }}"
+                {% if block.settings.link_label != blank %}aria-label="{{ block.settings.link_label }}"{% endif %}
+              {% endif %}
+              {{ block.shopify_attributes }}
+            >
               {% if block.settings.prefix != blank %}
                 <span>{{ block.settings.prefix }}</span>
               {% endif %}
@@ -36,7 +49,7 @@
                 </strong>
               {% endif %}
               {{ block.settings.text }}
-            </div>
+            </{{ proof_tag }}>
           {% endfor %}
         </div>
       {% endif %}
@@ -156,6 +169,24 @@
 
   .lp-hero__count-suffix {
     display: inline-block;
+  }
+
+  .lp-hero__proof-item--link {
+    border-bottom: 1px solid transparent;
+    color: inherit;
+    cursor: pointer;
+    text-decoration: none;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+
+  .lp-hero__proof-item--link:hover {
+    border-bottom-color: currentcolor;
+    color: var(--lp-forest);
+  }
+
+  .lp-hero__proof-item--link:focus-visible {
+    outline: 2px solid var(--lp-forest);
+    outline-offset: 4px;
   }
 
   .lp-hero__proof-item strong {
@@ -477,6 +508,17 @@
           "id": "text",
           "label": "Teks",
           "default": "Pelanggan Puas"
+        },
+        {
+          "type": "url",
+          "id": "link_url",
+          "label": "Tautan",
+          "info": "Kosongkan bila tidak perlu. Mis. #ulasan untuk melompat ke bagian ulasan."
+        },
+        {
+          "type": "text",
+          "id": "link_label",
+          "label": "Label aksesibilitas tautan"
         }
       ]
     }
