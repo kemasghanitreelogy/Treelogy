@@ -896,10 +896,11 @@
             "price_label": "Hari ini saja:",
             "price": "Rp 1.365.000",
             "per_day": "Setara Rp 22.750 per hari",
-            "guarantee": "✓ Garansi uang kembali 30 hari",
+            "guarantee": "Garansi uang kembali 30 hari",
             "cta_label": "Ambil Protokol 60 Hari",
             "cta_url": "/products/organic-moringa-capsules",
-            "footer_note": "Pesan hari ini, dikirim besok"
+            "footer_note": "Pesan hari ini, dikirim besok",
+            "guarantee_marker": "✓"
           }
         },
         "p30": {
@@ -917,10 +918,11 @@
             "price_label": "Hari ini saja:",
             "price": "Rp 795.000",
             "per_day": "Setara Rp 26.500 per hari",
-            "guarantee": "✓ Garansi uang kembali 30 hari",
+            "guarantee": "Garansi uang kembali 30 hari",
             "cta_label": "Ambil Protokol 30 Hari",
             "cta_url": "/products/organic-moringa-capsules",
-            "footer_note": "Pesan hari ini, dikirim besok"
+            "footer_note": "Pesan hari ini, dikirim besok",
+            "guarantee_marker": "✓"
           }
         },
         "pcaps": {
@@ -938,10 +940,11 @@
             "price_label": "",
             "price": "",
             "per_day": "",
-            "guarantee": "✓ Garansi uang kembali 30 hari",
+            "guarantee": "Garansi uang kembali 30 hari",
             "cta_label": "Belanja Capsules",
             "cta_url": "/products/organic-moringa-capsules",
-            "footer_note": "Pesan hari ini, dikirim besok"
+            "footer_note": "Pesan hari ini, dikirim besok",
+            "guarantee_marker": "✓"
           }
         }
       },

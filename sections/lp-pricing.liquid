@@ -123,8 +123,13 @@
               <p class="lp-plan__perday">{{ block.settings.per_day }}</p>
             {% endif %}
 
-            {% if block.settings.guarantee != blank %}
-              <p class="lp-plan__guarantee-line">{{ block.settings.guarantee }}</p>
+            {% if block.settings.guarantee != blank or block.settings.guarantee_marker != blank %}
+              <p class="lp-plan__guarantee-line">
+                {%- if block.settings.guarantee_marker != blank -%}
+                  <strong>{{ block.settings.guarantee_marker }}</strong>
+                {%- endif -%}
+                {{ block.settings.guarantee }}
+              </p>
             {% endif %}
 
             <div class="lp-plan__footer">
@@ -694,9 +699,15 @@
         },
         {
           "type": "text",
+          "id": "guarantee_marker",
+          "label": "Penanda garansi (tebal)",
+          "default": "✓"
+        },
+        {
+          "type": "text",
           "id": "guarantee",
           "label": "Baris garansi",
-          "default": "✓ Garansi uang kembali 30 hari"
+          "default": "Garansi uang kembali 30 hari"
         },
         {
           "type": "text",
