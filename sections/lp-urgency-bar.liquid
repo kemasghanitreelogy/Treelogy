@@ -1,0 +1,275 @@
+{% style %}
+  #shopify-section-{{ section.id }} {
+    position: {% if section.settings.sticky %}sticky{% else %}relative{% endif %};
+    top: 0;
+    z-index: 100;
+  }
+{% endstyle %}
+
+<div
+  class="lp-urgency"
+  data-lp-countdown
+  data-mode="{{ section.settings.countdown_mode }}"
+  data-deadline="{{ section.settings.end_date }}"
+  data-hours="{{ section.settings.evergreen_hours }}"
+  data-storage-key="{{ section.settings.storage_key }}"
+>
+  {% if section.settings.label != blank %}
+    <span class="lp-urgency__label">{{ section.settings.label }}</span>
+  {% endif %}
+
+  <div class="lp-urgency__timer">
+    <div class="lp-urgency__unit">
+      <span data-lp-countdown-part="days">--</span>
+      <small>{{ section.settings.unit_days }}</small>
+    </div>
+    <div class="lp-urgency__unit">
+      <span data-lp-countdown-part="hours">--</span>
+      <small>{{ section.settings.unit_hours }}</small>
+    </div>
+    <div class="lp-urgency__unit">
+      <span data-lp-countdown-part="minutes">--</span>
+      <small>{{ section.settings.unit_minutes }}</small>
+    </div>
+    <div class="lp-urgency__unit">
+      <span data-lp-countdown-part="seconds">--</span>
+      <small>{{ section.settings.unit_seconds }}</small>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .lp-urgency {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.65rem 1rem;
+    background: var(--lp-forest-deep);
+    color: var(--lp-on-dark);
+    font-family: var(--lp-font-body);
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  .lp-urgency__label {
+    opacity: 0.85;
+  }
+
+  .lp-urgency__timer {
+    display: flex;
+    gap: 0.4rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .lp-urgency__unit {
+    min-width: 2.2rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+    background: var(--lp-gold);
+    color: var(--lp-forest-deep);
+    font-size: 0.8125rem;
+    font-weight: 800;
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  .lp-urgency__unit small {
+    display: block;
+    font-size: 0.5rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    opacity: 0.8;
+  }
+
+  @media screen and (max-width: 520px) {
+    .lp-urgency {
+      gap: 0.6rem;
+      padding-inline: 0.75rem;
+      font-size: 0.75rem;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  (function () {
+    if (window.lpCountdownReady) return;
+    window.lpCountdownReady = true;
+
+    function resolveDeadline(root) {
+      var mode = root.dataset.mode;
+
+      if (mode === 'fixed') {
+        var parsed = Date.parse(root.dataset.deadline);
+        if (!isNaN(parsed)) return parsed;
+      }
+
+      var hours = parseFloat(root.dataset.hours) || 48;
+      var key = root.dataset.storageKey || 'lp-countdown';
+      var stored = null;
+
+      try {
+        stored = window.localStorage.getItem(key);
+      } catch (e) {
+        stored = null;
+      }
+
+      var deadline = stored ? parseInt(stored, 10) : NaN;
+
+      if (isNaN(deadline) || deadline <= Date.now()) {
+        deadline = Date.now() + hours * 3600000;
+        try {
+          window.localStorage.setItem(key, String(deadline));
+        } catch (e) {
+          /* storage unavailable */
+        }
+      }
+
+      return deadline;
+    }
+
+    function pad(value) {
+      return value < 10 ? '0' + value : String(value);
+    }
+
+    function start() {
+      var roots = document.querySelectorAll('[data-lp-countdown]');
+      if (!roots.length) return;
+
+      var timers = [];
+
+      roots.forEach(function (root) {
+        timers.push({
+          deadline: resolveDeadline(root),
+          days: root.querySelector('[data-lp-countdown-part="days"]'),
+          hours: root.querySelector('[data-lp-countdown-part="hours"]'),
+          minutes: root.querySelector('[data-lp-countdown-part="minutes"]'),
+          seconds: root.querySelector('[data-lp-countdown-part="seconds"]')
+        });
+      });
+
+      function tick() {
+        timers.forEach(function (timer) {
+          var diff = Math.max(0, timer.deadline - Date.now());
+          var values = {
+            days: Math.floor(diff / 86400000),
+            hours: Math.floor((diff % 86400000) / 3600000),
+            minutes: Math.floor((diff % 3600000) / 60000),
+            seconds: Math.floor((diff % 60000) / 1000)
+          };
+
+          Object.keys(values).forEach(function (unit) {
+            if (timer[unit]) timer[unit].textContent = pad(values[unit]);
+          });
+        });
+      }
+
+      tick();
+      window.setInterval(tick, 1000);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', start);
+    } else {
+      start();
+    }
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "LP · Urgency bar",
+  "tag": "div",
+  "class": "lp-urgency-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Label",
+      "default": "Offer Terbatas Berakhir Dalam:"
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky",
+      "label": "Tempel di atas saat digulir",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Hitung mundur"
+    },
+    {
+      "type": "select",
+      "id": "countdown_mode",
+      "label": "Mode",
+      "options": [
+        { "value": "evergreen", "label": "Evergreen (per pengunjung)" },
+        { "value": "fixed", "label": "Tanggal tetap" }
+      ],
+      "default": "evergreen",
+      "info": "Evergreen memberi setiap pengunjung tenggat sendiri yang tersimpan di browser mereka."
+    },
+    {
+      "type": "range",
+      "id": "evergreen_hours",
+      "label": "Durasi evergreen",
+      "min": 6,
+      "max": 168,
+      "step": 6,
+      "unit": "jam",
+      "default": 72,
+      "visible_if": "{{ section.settings.countdown_mode == 'evergreen' }}"
+    },
+    {
+      "type": "text",
+      "id": "end_date",
+      "label": "Tanggal berakhir",
+      "default": "2026-12-31 23:59",
+      "info": "Format: YYYY-MM-DD HH:MM (waktu perangkat pengunjung).",
+      "visible_if": "{{ section.settings.countdown_mode == 'fixed' }}"
+    },
+    {
+      "type": "text",
+      "id": "storage_key",
+      "label": "Kunci penyimpanan",
+      "default": "lp-offer",
+      "info": "Samakan dengan seksi Pricing agar hitung mundurnya sinkron."
+    },
+    {
+      "type": "header",
+      "content": "Label satuan"
+    },
+    {
+      "type": "text",
+      "id": "unit_days",
+      "label": "Hari",
+      "default": "HARI"
+    },
+    {
+      "type": "text",
+      "id": "unit_hours",
+      "label": "Jam",
+      "default": "JAM"
+    },
+    {
+      "type": "text",
+      "id": "unit_minutes",
+      "label": "Menit",
+      "default": "MNT"
+    },
+    {
+      "type": "text",
+      "id": "unit_seconds",
+      "label": "Detik",
+      "default": "DTK"
+    }
+  ],
+  "presets": [
+    {
+      "name": "LP · Urgency bar"
+    }
+  ]
+}
+{% endschema %}

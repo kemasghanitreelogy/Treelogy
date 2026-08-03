@@ -1,0 +1,959 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "tokens": {
+      "type": "lp-tokens",
+      "settings": {
+        "chromeless": true,
+        "heading_font": "assistant_n4",
+        "body_font": "assistant_n4",
+        "color_forest": "#2a3b34",
+        "color_forest_deep": "#1a2b24",
+        "color_gold": "#f5d053",
+        "color_gold_light": "#f8dc6d",
+        "color_alert": "#c45b4a",
+        "color_cream": "#f8f8f2",
+        "color_bloom": "#eae9dc",
+        "color_surface": "#ffffff",
+        "color_border": "#d6d4c8",
+        "color_text": "#2a3b34",
+        "color_text_mid": "#6c7257",
+        "color_text_light": "#8f9561",
+        "color_on_dark": "#ffffff",
+        "container_width": 1120,
+        "container_width_narrow": 720,
+        "radius": 6,
+        "radius_large": 12,
+        "section_padding": 80,
+        "section_padding_mobile": 56
+      }
+    },
+    "urgency": {
+      "type": "lp-urgency-bar",
+      "settings": {
+        "label": "Offer Terbatas Berakhir Dalam:",
+        "sticky": true,
+        "countdown_mode": "evergreen",
+        "evergreen_hours": 72,
+        "end_date": "2026-12-31 23:59",
+        "storage_key": "lp-offer",
+        "unit_days": "HARI",
+        "unit_hours": "JAM",
+        "unit_minutes": "MNT",
+        "unit_seconds": "DTK"
+      }
+    },
+    "hero": {
+      "type": "lp-hero",
+      "blocks": {
+        "proof_1": {
+          "type": "proof",
+          "settings": { "highlight": "10.000+", "text": "Pelanggan Puas" }
+        },
+        "proof_2": {
+          "type": "proof",
+          "settings": { "highlight": "★★★★★ 4,8", "text": "/5" }
+        },
+        "proof_3": {
+          "type": "proof",
+          "settings": { "highlight": "✓", "text": "Garansi 30 Hari" }
+        },
+        "proof_4": {
+          "type": "proof",
+          "settings": { "highlight": "✓", "text": "Gratis Ongkir" }
+        }
+      },
+      "block_order": ["proof_1", "proof_2", "proof_3", "proof_4"],
+      "settings": {
+        "badge": "Dukungan Menopause · Offer Terbatas",
+        "pre_heading": "Jangan Lagi Pasrah Pada",
+        "heading": "Nyeri Sendi, Mudah Lelah, dan Rasa Kehilangan Diri Saat Menopause",
+        "subheading": "Inside Out Moringa Protocol. Cara perempuan Indonesia mendapatkan kembali sendi yang nyaman, energi, tidur nyenyak, dan rasa percaya diri. Tanpa hormon. Tanpa resep dokter.",
+        "cta_label": "Mulai Protokol",
+        "cta_url": "#pricing",
+        "show_save_badge": true,
+        "save_prefix": "Hemat hingga",
+        "save_amount": "Rp 464.500",
+        "save_suffix": "Hari Ini"
+      }
+    },
+    "trust": {
+      "type": "lp-badge-row",
+      "blocks": {
+        "b1": { "type": "badge", "settings": { "emoji": "✅", "label": "Terdaftar BPOM" } },
+        "b2": { "type": "badge", "settings": { "emoji": "☪️", "label": "Halal" } },
+        "b3": { "type": "badge", "settings": { "emoji": "🌱", "label": "Organik" } },
+        "b4": { "type": "badge", "settings": { "emoji": "🌿", "label": "Bebas Batang" } },
+        "b5": { "type": "badge", "settings": { "emoji": "🔬", "label": "Teruji Lab" } },
+        "b6": { "type": "badge", "settings": { "emoji": "❌", "label": "Tanpa Hormon" } }
+      },
+      "block_order": ["b1", "b2", "b3", "b4", "b5", "b6"],
+      "settings": {
+        "eyebrow": "",
+        "heading": "",
+        "layout": "strip",
+        "icon_type": "emoji",
+        "background": "surface"
+      }
+    },
+    "testimonials": {
+      "type": "lp-testimonial-marquee",
+      "blocks": {
+        "t1": {
+          "type": "testimonial",
+          "settings": {
+            "rating": 5,
+            "quote": "Habis 30 kapsul dan manfaatnya terasa nyata. Tidur lebih nyenyak, kesemutan di tangan berkurang, nyeri lutut saat naik tangga juga berkurang. Langsung repurchase.",
+            "author": "Ibu Ratna",
+            "detail": "55 Tahun · Surabaya · Pembeli Terverifikasi"
+          }
+        },
+        "t2": {
+          "type": "testimonial",
+          "settings": {
+            "rating": 5,
+            "quote": "Dulu sering terbangun dengan jantung berdebar dan dada terasa panas. Setelah beberapa hari minum Treelogy, keluhan itu berhenti. Tidur saya jauh lebih nyenyak sekarang.",
+            "author": "Nia S.",
+            "detail": "47 Tahun · Bandung · Pembeli Terverifikasi"
+          }
+        },
+        "t3": {
+          "type": "testimonial",
+          "settings": {
+            "rating": 5,
+            "quote": "Sudah tidak terhitung berapa kali saya reorder. Kulit halus seperti kulit bayi, tidur nyenyak, stamina olahraga naik drastis. Moringa ini memang sebagus itu.",
+            "author": "Dian P.",
+            "detail": "49 Tahun · Jakarta · Pembeli Terverifikasi"
+          }
+        },
+        "t4": {
+          "type": "testimonial",
+          "settings": {
+            "rating": 5,
+            "quote": "Nyeri sendi dan kesemutan hilang. Kista ganglion di pergelangan tangan saya mengempis. Bangun tidur badan segar, tanpa rasa lemas. Hasilnya yang bicara.",
+            "author": "Yuni K.",
+            "detail": "52 Tahun · Semarang · Pembeli Terverifikasi"
+          }
+        },
+        "t5": {
+          "type": "testimonial",
+          "settings": {
+            "rating": 5,
+            "quote": "Berkat Treelogy, keluhan menopause saya jauh berkurang. Setiap hari terasa lebih bahagia.",
+            "author": "Sari W.",
+            "detail": "53 Tahun · Jakarta · Pembeli Terverifikasi"
+          }
+        },
+        "t6": {
+          "type": "testimonial",
+          "settings": {
+            "rating": 5,
+            "quote": "Usia saya 50 dan badan banyak berubah karena hormon tidak seimbang. Setelah satu minggu minum Treelogy, nyeri tumit dan sendi mulai berkurang. Badan terasa lebih enak. Terima kasih Treelogy.",
+            "author": "Dewi H.",
+            "detail": "50 Tahun · Medan · Pembeli Terverifikasi"
+          }
+        }
+      },
+      "block_order": ["t1", "t2", "t3", "t4", "t5", "t6"],
+      "settings": { "duration": 45 }
+    },
+    "ticker_top": {
+      "type": "lp-ticker",
+      "blocks": {
+        "i1": { "type": "item", "settings": { "text": "Offer Terbatas: 20% Off + Hadiah Gratis" } },
+        "i2": { "type": "item", "settings": { "text": "Gratis Ongkir" } },
+        "i3": { "type": "item", "settings": { "text": "Sertifikasi BPOM & Halal" } },
+        "i4": { "type": "item", "settings": { "text": "Tanpa Hormon · 100% Alami" } },
+        "i5": { "type": "item", "settings": { "text": "Garansi Uang Kembali 30 Hari" } }
+      },
+      "block_order": ["i1", "i2", "i3", "i4", "i5"],
+      "settings": { "duration": 25 }
+    },
+    "familiar": {
+      "type": "lp-checklist",
+      "blocks": {
+        "f1": { "type": "item", "settings": { "text": "Terapi hormon. Khawatir dengan risikonya." } },
+        "f2": { "type": "item", "settings": { "text": "Black cohosh. Bikin sakit kepala, tanpa perubahan." } },
+        "f3": { "type": "item", "settings": { "text": "Isoflavon kedelai. Tidak terasa apa-apa." } },
+        "f4": {
+          "type": "item",
+          "settings": { "text": "\"Racikan menopause\" mahal. Penuh filler dan harapan palsu." }
+        }
+      },
+      "block_order": ["f1", "f2", "f3", "f4"],
+      "settings": {
+        "eyebrow": "",
+        "heading": "Terasa Familiar?",
+        "marker": "cross",
+        "punchline": "Masalahnya bukan di kamu. Tapi di produk yang selama ini kamu coba.",
+        "background": "cream"
+      }
+    },
+    "founder": {
+      "type": "lp-founder",
+      "blocks": {
+        "l1": { "type": "item", "settings": { "text": "Perempuan yang berjuang dengan PMS" } },
+        "l2": { "type": "item", "settings": { "text": "Ibu baru yang memulihkan nutrisi tubuh" } },
+        "l3": { "type": "item", "settings": { "text": "Ibu yang kesulitan dengan kelancaran ASI" } },
+        "l4": { "type": "item", "settings": { "text": "Eksim, nyeri sendi, gula darah, tekanan darah" } }
+      },
+      "block_order": ["l1", "l2", "l3", "l4"],
+      "settings": {
+        "eyebrow": "Dari Founder",
+        "heading": "Halo, saya Sacha.",
+        "role": "Founder Treelogy",
+        "content_top": "<p>Saya pertama kali tiba di Bali umur 13 tahun. Itu 17 tahun lalu. Sejak itu saya jatuh cinta pada moringa. Daunnya membantu saya melawan kelelahan kronis. Minyaknya membereskan masalah kulit yang saya bawa bertahun-tahun. <strong>Bukan tanpa alasan ia dijuluki Miracle Tree.</strong></p><p>Tapi saya tidak menemukan brand yang bisa saya percaya. Tidak ada yang menunjukkan bagaimana moringa mereka dibuat. Atau oleh siapa.</p><p>Maka saya mendirikan Treelogy. Sepenuhnya berbasis di Bali. <strong>Kami menanam, mengolah, dan mengantar moringa dari tanah kami sampai ke tanganmu.</strong> Kamu bisa melihat bagaimana ia dibuat. Dan siapa yang membuatnya.</p><p>Kebanyakan brand menggiling seluruh ranting, termasuk batangnya. Tubuh kita tidak bisa mencerna batang. Itu sebabnya moringa mereka cokelat, pahit, dan menimbulkan rasa begah. <strong>Moringa kami dipisahkan helai demi helai. Dengan tangan.</strong></p>",
+        "show_compare": true,
+        "compare_label_left": "Lainnya",
+        "compare_label_right": "Treelogy",
+        "compare_caption": "Daun yang sama. Standar yang berbeda.",
+        "content_middle": "<p>Seiring waktu, kami menemukan bahwa daun ini mendukung jauh lebih banyak dari sekadar keluhan saya dulu. <strong>Ia mendukung kesehatan lintas generasi:</strong></p>",
+        "highlight": "Dan untuk perempuan yang sedang menopause: moringa mendukung sendi yang nyeri, energi yang drop di siang hari, tidur lebih nyenyak, hot flashes berkurang, rambut rontok berkurang, dan kulit lebih sehat."
+      }
+    },
+    "protocol": {
+      "type": "lp-duo",
+      "blocks": {
+        "inside": {
+          "type": "side",
+          "settings": {
+            "image_position": "center",
+            "title": "Inside",
+            "product_name": "Organic Moringa Capsules",
+            "benefits": "<ul><li>Membantu meredakan nyeri sendi dengan senyawa antiinflamasi</li><li>Melawan lelah dengan zat besi dan vitamin B</li><li>Mendukung tidur lebih dalam tanpa sering terbangun</li><li>Membantu mengurangi frekuensi dan intensitas hot flashes</li><li>Mendukung mood stabil dan meredakan ketegangan</li><li>Mendukung kekuatan tulang dengan kalsium 17× lebih banyak dari susu</li><li>Mendukung keseimbangan hormon secara alami</li></ul>"
+          }
+        },
+        "outside": {
+          "type": "side",
+          "settings": {
+            "image_position": "top",
+            "title": "Outside",
+            "product_name": "Moringa Cold-Pressed Seed Oil",
+            "benefits": "<ul><li>Hidrasi mendalam untuk kulit kering saat menopause</li><li>Membantu menyamarkan garis halus dengan vitamin E dan antioksidan</li><li>Menguatkan rambut menipis dari akar sampai ujung</li><li>Non-comedogenic, tidak menyumbat pori</li><li>Menenangkan kemerahan dan iritasi</li><li>Merawat kuku rapuh dan mudah mengelupas</li><li>Ringan, cepat meresap, tanpa rasa lengket</li></ul>"
+          }
+        }
+      },
+      "block_order": ["inside", "outside"],
+      "settings": {
+        "eyebrow": "Pendekatan Menyeluruh",
+        "heading": "The Inside Out Moringa Protocol",
+        "subheading": "Dua produk. Satu ritual harian. Dukungan menopause yang menyeluruh.",
+        "connector": "+",
+        "cta_label": "Mulai Protokol",
+        "cta_url": "#pricing",
+        "cta_note": "Garansi Uang Kembali 30 Hari · Gratis Ongkir"
+      }
+    },
+    "nutrients_inside": {
+      "type": "lp-stats",
+      "blocks": {
+        "s1": {
+          "type": "stat",
+          "settings": {
+            "value": "17×",
+            "label": "Kalsium Lebih Banyak",
+            "comparison": "daripada susu",
+            "note": "Mendukung kepadatan tulang saat estrogen menurun"
+          }
+        },
+        "s2": {
+          "type": "stat",
+          "settings": {
+            "value": "25×",
+            "label": "Zat Besi Lebih Banyak",
+            "comparison": "daripada bayam",
+            "note": "Melawan lelah akibat turunnya estrogen"
+          }
+        },
+        "s3": {
+          "type": "stat",
+          "settings": {
+            "value": "10×",
+            "label": "Vitamin A Lebih Banyak",
+            "comparison": "daripada wortel",
+            "note": "Membantu memperbaiki kulit menipis saat menopause"
+          }
+        },
+        "s4": {
+          "type": "stat",
+          "settings": {
+            "value": "15×",
+            "label": "Kalium Lebih Banyak",
+            "comparison": "daripada pisang",
+            "note": "Membantu mengurangi kembung dan retensi air"
+          }
+        },
+        "s5": {
+          "type": "stat",
+          "settings": {
+            "value": "46",
+            "label": "Antioksidan",
+            "comparison": "+ 9 asam amino esensial lengkap",
+            "note": "Melawan stres oksidatif dan inflamasi"
+          }
+        },
+        "s6": {
+          "type": "stat",
+          "settings": {
+            "value": "92",
+            "label": "Total Nutrisi",
+            "comparison": "dari satu bahan tunggal",
+            "note": "Menggantikan selemari suplemen"
+          }
+        }
+      },
+      "block_order": ["s1", "s2", "s3", "s4", "s5", "s6"],
+      "settings": {
+        "eyebrow": "Kenapa Daun Ini untuk Menopause",
+        "heading": "Nutrisi yang Hilang dari Tubuh. Dipenuhi dari Dalam.",
+        "subheading": "Menopause menguras nutrisi tubuh lebih cepat dari sebelumnya. Moringa membantu mengembalikan ritme energi, pencernaan, dan hormon. 92 nutrisi. Satu daun.",
+        "columns": 3,
+        "show_before_after": false,
+        "before_label": "Sebelum",
+        "after_label": "Sesudah",
+        "before_after_caption": "",
+        "cta_label": "Mulai Protokol",
+        "cta_url": "#pricing",
+        "footnote": "*Perbandingan gram per gram antara bubuk daun moringa kering dan bahan segar. Hasil tiap orang bisa berbeda. Tidak dimaksudkan untuk mendiagnosis, mengobati, menyembuhkan, atau mencegah penyakit apa pun."
+      }
+    },
+    "nutrients_outside": {
+      "type": "lp-stats",
+      "blocks": {
+        "o1": {
+          "type": "stat",
+          "settings": {
+            "value": "70%",
+            "label": "Asam Oleat",
+            "comparison": "omega-9",
+            "note": "Meresap dalam untuk mengembalikan kelembapan yang hilang saat menopause"
+          }
+        },
+        "o2": {
+          "type": "stat",
+          "settings": {
+            "value": "E",
+            "label": "Vitamin E Spektrum Penuh",
+            "comparison": "tokoferol α, γ & δ",
+            "note": "Perisai antioksidan untuk kulit menipis dan menua"
+          }
+        },
+        "o3": {
+          "type": "stat",
+          "settings": {
+            "value": "6%",
+            "label": "Asam Behenat",
+            "comparison": "asal nama \"ben oil\"",
+            "note": "Hasil akhir lembut yang mengunci kelembapan semalaman"
+          }
+        },
+        "o4": {
+          "type": "stat",
+          "settings": {
+            "value": "78%",
+            "label": "Asam Lemak Tak Jenuh",
+            "comparison": "ringan & cepat meresap",
+            "note": "Non-comedogenic. Tidak menyumbat pori"
+          }
+        }
+      },
+      "block_order": ["o1", "o2", "o3", "o4"],
+      "settings": {
+        "eyebrow": "Kenapa Minyaknya untuk Kulit Menopause",
+        "heading": "Nutrisi yang Hilang dari Tubuh. Dipenuhi dari Luar.",
+        "subheading": "Dulu estrogen membuat kulit memproduksi minyak alaminya sendiri. Menopause memperlambatnya. Cold-pressed seed oil mengembalikan apa yang berhenti diproduksi kulit.",
+        "columns": 4,
+        "show_before_after": true,
+        "before_label": "Sebelum",
+        "after_label": "Sesudah",
+        "before_after_caption": "Hasil nyata. Ritual minyak di malam hari.",
+        "cta_label": "",
+        "footnote": "Profil nutrisi yang sama sekali berbeda dari daunnya. Kapsul menutrisi tubuh. Minyak menutrisi kulit."
+      }
+    },
+    "timeline": {
+      "type": "lp-timeline",
+      "blocks": {
+        "m1": {
+          "type": "milestone",
+          "settings": {
+            "period": "Minggu 1",
+            "emoji": "⚡",
+            "title": "Energi mulai terangkat.",
+            "text": "Zat besi dan vitamin B mengisi kembali cadangan yang terkuras. Sore hari tidak lagi terasa \"habis tenaga\".*"
+          }
+        },
+        "m2": {
+          "type": "milestone",
+          "settings": {
+            "period": "Minggu 2-3",
+            "emoji": "❄️",
+            "title": "Sendi dan lutut mulai terasa lebih luwes.",
+            "text": "Banyak yang merasakannya pertama kali saat naik tangga. Keringat malam mulai mereda.*"
+          }
+        },
+        "m3": {
+          "type": "milestone",
+          "settings": {
+            "period": "Bulan 1",
+            "emoji": "🦵",
+            "title": "Sendi membaik, mood lebih stabil.",
+            "text": "Kaku di lutut dan jari berkurang. Kulit tampak lebih terhidrasi. Brain fog mulai hilang.*"
+          }
+        },
+        "m4": {
+          "type": "milestone",
+          "settings": {
+            "period": "Bulan 2",
+            "emoji": "🌸",
+            "title": "Rambut merespons, kulit tampak bercahaya.",
+            "text": "Kuku lebih kuat. Pantulan di cermin mulai terasa familiar lagi.*"
+          }
+        },
+        "m5": {
+          "type": "milestone",
+          "settings": {
+            "period": "Bulan 3",
+            "emoji": "⚖️",
+            "title": "Keseimbangan seluruh tubuh.",
+            "text": "92 nutrisi bekerja bersama. Energi stabil, tidur nyenyak, pikiran jernih.*"
+          }
+        },
+        "m6": {
+          "type": "milestone",
+          "settings": {
+            "period": "Bulan 6",
+            "emoji": "🦋",
+            "title": "Kamu merasa jadi diri sendiri lagi.",
+            "text": "Berenergi. Percaya diri. Memegang kendali atas tubuh.*"
+          }
+        }
+      },
+      "block_order": ["m1", "m2", "m3", "m4", "m5", "m6"],
+      "settings": {
+        "eyebrow": "Perjalanan Menopause",
+        "heading": "Apa yang Akan Dirasakan Selama Protokol",
+        "subheading": "Kebanyakan suplemen gagal di hari ke-14. Karena di situ orang berhenti. Ini yang terjadi kalau kamu lanjut.",
+        "cta_label": "Mulai Transformasi",
+        "cta_url": "#pricing",
+        "cta_note": "Garansi Uang Kembali 30 Hari · Gratis Ongkir"
+      }
+    },
+    "comparison": {
+      "type": "lp-compare",
+      "blocks": {
+        "r1": {
+          "type": "row",
+          "settings": {
+            "left": "100% alami, pangan utuh (whole food)",
+            "right": "Hormon sintetis atau senyawa lab"
+          }
+        },
+        "r2": {
+          "type": "row",
+          "settings": {
+            "left": "Tanpa efek samping yang dilaporkan",
+            "right": "Risiko penggumpalan darah, kekhawatiran kanker"
+          }
+        },
+        "r3": {
+          "type": "row",
+          "settings": {
+            "left": "92 nutrisi dalam satu sumber",
+            "right": "Masing-masing hanya menyasar 1-2 keluhan"
+          }
+        },
+        "r4": {
+          "type": "row",
+          "settings": {
+            "left": "Perawatan dalam + luar sekaligus",
+            "right": "Hanya dari dalam. Kulit dan rambut terabaikan"
+          }
+        },
+        "r5": {
+          "type": "row",
+          "settings": {
+            "left": "Tanpa perlu resep",
+            "right": "Perlu kunjungan dokter dan pemantauan"
+          }
+        },
+        "r6": {
+          "type": "row",
+          "settings": {
+            "left": "Membangun kesehatan jangka panjang",
+            "right": "Keluhan kembali saat berhenti"
+          }
+        },
+        "r7": {
+          "type": "row",
+          "settings": {
+            "left": "Rp 26.500/hari (protokol)",
+            "right": "Rp 50.000-150.000/hari untuk setumpuk pil"
+          }
+        },
+        "r8": {
+          "type": "row",
+          "settings": {
+            "left": "5.000 tahun penggunaan tradisional",
+            "right": "Data keamanan yang masih terus berubah"
+          }
+        }
+      },
+      "block_order": ["r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8"],
+      "settings": {
+        "eyebrow": "Pilihan yang Lebih Aman",
+        "heading": "Satu Daun vs. Semua yang Pernah Kamu Coba",
+        "column_left": "Inside Out Protocol",
+        "divider_label": "VS",
+        "column_right": "Suplemen · Hormon · Bertahan Tanpa Solusi",
+        "cta_label": "Pilih Jalan Alami",
+        "cta_url": "#pricing"
+      }
+    },
+    "ritual": {
+      "type": "lp-steps",
+      "blocks": {
+        "st1": {
+          "type": "step",
+          "settings": {
+            "emoji": "☀️",
+            "label": "PAGI",
+            "title": "Minum 3 Kapsul",
+            "text": "Bersama sarapan. Baru pertama coba moringa? Mulai dengan 2. Itu 92 nutrisi. Selesai."
+          }
+        },
+        "st2": {
+          "type": "step",
+          "settings": {
+            "emoji": "🌙",
+            "label": "MALAM",
+            "title": "Aplikasikan Minyaknya",
+            "text": "3-4 tetes di wajah, leher, tangan. Pijat ke ujung rambut. Bangun dengan kulit lebih lembut."
+          }
+        },
+        "st3": {
+          "type": "step",
+          "settings": {
+            "emoji": "✨",
+            "label": "SETIAP HARI",
+            "title": "Rasakan Perubahannya",
+            "text": "Dalam ternutrisi. Luar terlindungi. Minggu demi minggu, kamu kembali jadi dirimu."
+          }
+        }
+      },
+      "block_order": ["st1", "st2", "st3"],
+      "settings": {
+        "eyebrow": "Kebiasaan Harian Tanpa Ribet",
+        "heading": "Ritual Inside Out",
+        "subheading": "Dua menit sehari. Itu saja rutinitasnya.",
+        "columns": 3,
+        "background": "cream"
+      }
+    },
+    "audience": {
+      "type": "lp-audience",
+      "blocks": {
+        "a1": {
+          "type": "card",
+          "settings": {
+            "emoji": "🦵",
+            "title": "Perempuan dengan Nyeri Sendi & Lutut",
+            "text": "Jari kaku di pagi hari. Lutut nyeri saat naik tangga. Senyawa antiinflamasi yang menyasar nyeri sendi menopause."
+          }
+        },
+        "a2": {
+          "type": "card",
+          "settings": {
+            "emoji": "💤",
+            "title": "Perempuan yang Lelah Terus-menerus",
+            "text": "Tenaga drop jam 3 sore. Badan lemas seharian. Energi stabil dari tanaman, tanpa lonjakan kafein."
+          }
+        },
+        "a3": {
+          "type": "card",
+          "settings": {
+            "emoji": "💇",
+            "title": "Perempuan dengan Rambut Menipis & Kulit Kusam",
+            "text": "Rambut menipis. Kulit kering. Kuku rapuh. Dirawat dari akar DAN dari permukaan."
+          }
+        },
+        "a4": {
+          "type": "card",
+          "settings": {
+            "emoji": "🧠",
+            "title": "Perempuan dengan Brain Fog",
+            "text": "Lupa kata-kata. Sulit fokus. Asam amino yang mendukung kejernihan berpikir."
+          }
+        },
+        "a5": {
+          "type": "card",
+          "settings": {
+            "emoji": "🔥",
+            "title": "Perempuan yang Berjuang dengan Hot Flashes",
+            "text": "Panas yang datang tiba-tiba. Keringat malam. Kelegaan alami yang benar-benar terasa."
+          }
+        },
+        "x1": {
+          "type": "exclusion",
+          "settings": { "text": "Yang mencari keajaiban semalam (konsistensi itu kunci)" }
+        },
+        "x2": {
+          "type": "exclusion",
+          "settings": { "text": "Yang alergi terhadap Moringa oleifera" }
+        }
+      },
+      "block_order": ["a1", "a2", "a3", "a4", "a5", "x1", "x2"],
+      "settings": {
+        "eyebrow": "",
+        "heading": "Untuk Siapa Inside Out Protocol Ini?",
+        "exclusion_heading": "Untuk Siapa Produk Ini TIDAK Cocok?"
+      }
+    },
+    "heritage": {
+      "type": "lp-rich-text",
+      "settings": {
+        "eyebrow": "Kearifan Kuno, Sains Modern",
+        "stat": "5.000",
+        "heading": "Tahun Perempuan Indonesia Mengandalkan Moringa",
+        "content": "<p>Jauh sebelum terapi hormon dan \"brand wellness\", <strong>perempuan di seluruh Asia mengandalkan pohon moringa</strong>. Di Jawa, ia dikenal sebagai daun kelor, dikonsumsi di setiap fase kehidupan. Di NTT, jadi asupan utama para ibu dan perempuan menopause.</p><p>Sains modern membuktikan apa yang nenek kita sudah tahu: <strong>salah satu profil nutrisi terlengkap dari semua tanaman yang pernah diteliti</strong>. 92 nutrisi. 46 antioksidan. 9 asam amino esensial lengkap.</p><p>Hari ini, para perempuan dari komunitas kami di Karangasem, Bali memilah setiap batch dengan tangan. Kami membayar 36,9% di atas upah minimum regional. <strong>Vitalitas tidak bisa dipanen dari komunitas yang sekadar bertahan hidup.</strong></p><p>Kami tidak menciptakan sesuatu yang baru. <strong>Kami menjaga sesuatu yang sakral</strong>, dalam bentuk paling murni dan paling potennya.</p>",
+        "background": "cream"
+      }
+    },
+    "certs": {
+      "type": "lp-badge-row",
+      "blocks": {
+        "c1": { "type": "badge", "settings": { "label": "BPOM" } },
+        "c2": { "type": "badge", "settings": { "label": "Halal" } },
+        "c3": { "type": "badge", "settings": { "label": "Organik" } },
+        "c4": { "type": "badge", "settings": { "label": "Bebas Batang" } },
+        "c5": { "type": "badge", "settings": { "label": "Teruji Lab" } }
+      },
+      "block_order": ["c1", "c2", "c3", "c4", "c5"],
+      "settings": {
+        "eyebrow": "Kualitas Terverifikasi",
+        "heading": "Kapsul: Obat Tradisional BPOM. Minyak: Kosmetik Terdaftar BPOM.",
+        "layout": "grid",
+        "icon_type": "image",
+        "background": "bloom"
+      }
+    },
+    "pricing": {
+      "type": "lp-pricing",
+      "blocks": {
+        "p60": {
+          "type": "plan",
+          "settings": {
+            "featured": true,
+            "tag": "Best Value · Hemat Rp 464.500",
+            "tag_style": "gold",
+            "title": "Protokol Inside Out 60 Hari",
+            "description": "Dua bulan. Durasi saat transformasi terasa utuh.",
+            "variants": "",
+            "stack": "💊 180 Kapsul | Rp 795.000\n🧴 Seed Oil 60ml | Rp 915.000\n🎁 Travel Pouch | Rp 30.000 | FREE\n🎁 Mystery Gift | Rp 54.500 | FREE\n🚚 Ongkos Kirim | Rp 35.000 | FREE",
+            "total_label": "Total nilai:",
+            "total_value": "Rp 1.829.500",
+            "price_label": "Hari ini saja:",
+            "price": "Rp 1.365.000",
+            "per_day": "Setara Rp 22.750 per hari",
+            "guarantee": "✓ Garansi uang kembali 30 hari",
+            "cta_label": "Ambil Protokol 60 Hari",
+            "cta_url": "/products/organic-moringa-capsules",
+            "footer_note": "Pesan hari ini, dikirim besok"
+          }
+        },
+        "p30": {
+          "type": "plan",
+          "settings": {
+            "featured": false,
+            "tag": "Terpopuler · Hemat Rp 294.500",
+            "tag_style": "dark",
+            "title": "Protokol Inside Out 30 Hari",
+            "description": "Satu bulan untuk merasakan bedanya. Tanpa risiko.",
+            "variants": "",
+            "stack": "💊 90 Kapsul | Rp 455.000\n🧴 Seed Oil 30ml | Rp 545.000\n🎁 Mystery Gift | Rp 54.500 | FREE\n🚚 Ongkos Kirim | Rp 35.000 | FREE",
+            "total_label": "Total nilai:",
+            "total_value": "Rp 1.089.500",
+            "price_label": "Hari ini saja:",
+            "price": "Rp 795.000",
+            "per_day": "Setara Rp 26.500 per hari",
+            "guarantee": "✓ Garansi uang kembali 30 hari",
+            "cta_label": "Ambil Protokol 30 Hari",
+            "cta_url": "/products/organic-moringa-capsules",
+            "footer_note": "Pesan hari ini, dikirim besok"
+          }
+        },
+        "pcaps": {
+          "type": "plan",
+          "settings": {
+            "featured": false,
+            "tag": "Mulai dari Sini",
+            "tag_style": "dark",
+            "title": "Moringa Capsules Saja",
+            "description": "Mulai dengan kapsul. Tambahkan minyaknya saat sudah siap.",
+            "variants": "90 kapsul · 30 hari | Rp 455.000\n180 kapsul · 60 hari | Rp 795.000",
+            "stack": "🚚 Ongkos Kirim | Rp 35.000 | FREE",
+            "total_label": "",
+            "total_value": "",
+            "price_label": "",
+            "price": "",
+            "per_day": "",
+            "guarantee": "✓ Garansi uang kembali 30 hari",
+            "cta_label": "Belanja Capsules",
+            "cta_url": "/products/organic-moringa-capsules",
+            "footer_note": "Pesan hari ini, dikirim besok"
+          }
+        }
+      },
+      "block_order": ["p60", "p30", "pcaps"],
+      "settings": {
+        "anchor_id": "pricing",
+        "eyebrow": "Offer Terbatas",
+        "heading": "Pilih Protokol",
+        "show_countdown": true,
+        "countdown_label": "Offer Berakhir Dalam:",
+        "countdown_mode": "evergreen",
+        "evergreen_hours": 72,
+        "end_date": "2026-12-31 23:59",
+        "storage_key": "lp-offer",
+        "scarcity": "⚠ Stok Agustus berisiko habis · 147 pesanan hari ini",
+        "quote": "\"Nyeri lutut saat naik tangga berkurang. Langsung repurchase.\"",
+        "quote_author": "Ibu Ratna, 55, Surabaya",
+        "pledge_icon": "🛡️",
+        "pledge_title": "Nggak Terasa? Uang Kembali.",
+        "pledge_text": "Jalani protokol setiap hari selama 30 hari. Kalau tidak terasa bedanya, kami kembalikan uang sepenuhnya. Tanpa banyak tanya."
+      }
+    },
+    "ticker_bottom": {
+      "type": "lp-ticker",
+      "blocks": {
+        "j1": { "type": "item", "settings": { "text": "Offer Terbatas: 20% Off + Hadiah Gratis" } },
+        "j2": { "type": "item", "settings": { "text": "Gratis Ongkir" } },
+        "j3": { "type": "item", "settings": { "text": "Garansi 30 Hari" } },
+        "j4": { "type": "item", "settings": { "text": "Sertifikasi BPOM & Halal" } },
+        "j5": { "type": "item", "settings": { "text": "Dukungan Menopause Alami" } }
+      },
+      "block_order": ["j1", "j2", "j3", "j4", "j5"],
+      "settings": { "duration": 25 }
+    },
+    "reviews": {
+      "type": "lp-reviews",
+      "blocks": {
+        "tp1": { "type": "topic", "settings": { "label": "🦵 Nyeri Sendi & Lutut", "key": "sendi" } },
+        "tp2": { "type": "topic", "settings": { "label": "😴 Tidur Lebih Nyenyak", "key": "tidur" } },
+        "tp3": { "type": "topic", "settings": { "label": "⚡ Lebih Berenergi", "key": "energi" } },
+        "tp4": { "type": "topic", "settings": { "label": "❄️ Hot Flashes Berkurang", "key": "hotflashes" } },
+        "rv1": {
+          "type": "review",
+          "settings": {
+            "initials": "SW",
+            "name": "Sari W.",
+            "meta": "53 Tahun · Jakarta · Pembeli Terverifikasi",
+            "rating": 5,
+            "text": "Berkat Treelogy, keluhan menopause saya jauh berkurang. Setiap hari terasa lebih bahagia. Rasanya seperti jadi orang baru.",
+            "tag": "Menopause · Keseharian",
+            "topics": "menopause"
+          }
+        },
+        "rv2": {
+          "type": "review",
+          "settings": {
+            "initials": "IR",
+            "name": "Ibu Ratna",
+            "meta": "55 Tahun · Surabaya · Pembeli Terverifikasi",
+            "rating": 5,
+            "text": "Bulan depan saya 56 tahun. Baru habis 30 kapsul dan manfaatnya sudah terasa. Kualitas tidur membaik, kesemutan di tangan saat bangun berkurang, nyeri lutut saat naik tangga berkurang. Langsung repurchase.",
+            "tag": "Tidur · Sendi · 55 Tahun",
+            "topics": "tidur sendi"
+          }
+        },
+        "rv3": {
+          "type": "review",
+          "settings": {
+            "initials": "NS",
+            "name": "Nia S.",
+            "meta": "47 Tahun · Bandung · Pembeli Terverifikasi",
+            "rating": 5,
+            "text": "Beli karena faktor usia. Baru beberapa hari, bedanya langsung terasa. Dulu sering terbangun dengan jantung berdebar dan dada terasa panas. Setelah minum Treelogy, keluhan itu berhenti. Tidur saya jauh lebih nyenyak sekarang.",
+            "tag": "Hot Flashes · Tidur",
+            "topics": "hotflashes tidur"
+          }
+        },
+        "rv4": {
+          "type": "review",
+          "settings": {
+            "initials": "DH",
+            "name": "Dewi H.",
+            "meta": "50 Tahun · Medan · Pembeli Terverifikasi",
+            "rating": 5,
+            "text": "Usia saya 50 tahun dan banyak perubahan di tubuh karena hormon tidak seimbang. Setelah rutin minum Treelogy satu minggu, nyeri tumit dan sendi saya berkurang. Badan terasa lebih enak dan nyaman. Terima kasih Treelogy.",
+            "tag": "Hormon · Nyeri Sendi · 50 Tahun",
+            "topics": "sendi"
+          }
+        },
+        "rv5": {
+          "type": "review",
+          "settings": {
+            "initials": "DP",
+            "name": "Dian P.",
+            "meta": "49 Tahun · Jakarta · Pembeli Terverifikasi",
+            "rating": 5,
+            "text": "Sudah tidak terhitung berapa kali saya reorder. Hasilnya: kulit terasa sangat halus, seperti kulit bayi. Tidur nyenyak, bangun segar, stamina olahraga naik drastis. Moringa ini memang sebagus itu.",
+            "tag": "Kulit · Tidur · Energi",
+            "topics": "kulit tidur energi"
+          }
+        },
+        "rv6": {
+          "type": "review",
+          "settings": {
+            "initials": "LM",
+            "name": "Linda M.",
+            "meta": "48 Tahun · Yogyakarta · Pembeli Terverifikasi",
+            "rating": 5,
+            "text": "Yang paling terasa, tidur jadi jauh lebih nyenyak. Kram jari berkurang. Kulit lebih lembap. Badan segar dan fit. Empat manfaat dari satu produk.",
+            "tag": "Tidur · Kram · Kulit · Energi",
+            "topics": "tidur energi"
+          }
+        }
+      },
+      "block_order": ["tp1", "tp2", "tp3", "tp4", "rv1", "rv2", "rv3", "rv4", "rv5", "rv6"],
+      "settings": {
+        "eyebrow": "Hasil Nyata dari Perempuan Nyata",
+        "heading": "Cerita Menopause",
+        "score_text": "4,8 dari 5 · 10.000+ ulasan",
+        "topics_label": "Paling sering disebut di ulasan",
+        "show_breakdown": true,
+        "percent_5": 86,
+        "percent_4": 10,
+        "percent_3": 2,
+        "percent_2": 1,
+        "percent_1": 1
+      }
+    },
+    "faq": {
+      "type": "lp-faq",
+      "blocks": {
+        "q1": {
+          "type": "item",
+          "settings": {
+            "question": "Bagaimana moringa membantu di masa menopause?",
+            "answer": "<p>Kalsium (17x lebih banyak dari susu) mendukung tulang saat estrogen menurun. Zat besi dan vitamin B melawan lelah. Senyawa antiinflamasi membantu meredakan hot flashes dan menjaga kenyamanan sendi. Magnesium mendukung tidur dan mood. Minyaknya merawat sisi luar: kulit kering, rambut menipis, kuku rapuh.</p>"
+          }
+        },
+        "q2": {
+          "type": "item",
+          "settings": {
+            "question": "Apakah ini pengganti terapi hormon (HRT)?",
+            "answer": "<p>Moringa adalah suplemen, bukan obat. Banyak yang mengonsumsinya berdampingan dengan atau sebagai alternatif HRT. Putuskan bersama dokter. Moringa mendukung banyak keluhan yang sama (hot flashes, pengeroposan tulang, lelah, mood) lewat nutrisi pangan utuh, bukan hormon sintetis.</p>"
+          }
+        },
+        "q3": {
+          "type": "item",
+          "settings": {
+            "question": "Kenapa saya perlu kapsul DAN minyak sekaligus?",
+            "answer": "<p>Kapsul mengurus sisi dalam: energi, tulang, tidur, keseimbangan. Minyak mengurus yang terlihat: kulit kering, rambut menipis, kuku rapuh. Boleh mulai dengan kapsul saja. Tapi yang memakai keduanya melaporkan hasil lebih cepat dan lebih terlihat.</p>"
+          }
+        },
+        "q4": {
+          "type": "item",
+          "settings": {
+            "question": "Berapa kapsul yang saya minum per hari?",
+            "answer": "<p>3 kapsul bersama sarapan. Perut sensitif? Mulai dengan 2 di beberapa hari pertama. 90 kapsul = 30 hari. 180 = 60 hari. Minyaknya: 3-4 tetes setiap malam.</p>"
+          }
+        },
+        "q5": {
+          "type": "item",
+          "settings": {
+            "question": "Seberapa cepat saya merasakan bedanya?",
+            "answer": "<p>Energi: 7-10 hari. Hot flashes: minggu 2-3. Kulit dan rambut: minggu 3-4. Manfaat lebih dalam: 2 bulan lebih pemakaian rutin. Tubuh tiap orang berbeda. Karena itu ada garansi uang kembali 30 hari. Tidak ada yang hilang kecuali keluhannya.</p>"
+          }
+        },
+        "q6": {
+          "type": "item",
+          "settings": {
+            "question": "Apa yang membedakan Treelogy dari brand moringa lain?",
+            "answer": "<p>Tiga hal. Pertama: 100% bebas batang. Tubuh tidak bisa mencerna batang, itu sebabnya kebanyakan moringa cokelat, pahit, dan menimbulkan rasa begah. Moringa kami dipisahkan helai demi helai, dengan tangan. Itu sebabnya bubuk kami hijau cerah. Kedua: didehidrasi di tempat teduh untuk menjaga vitamin yang sensitif panas. Ketiga: terdaftar BPOM, Halal, organik, dan teruji lab independen. Dan tidak ada brand lain yang memasangkan kapsul dengan cold-pressed seed oil dalam satu protokol.</p>"
+          }
+        },
+        "q7": {
+          "type": "item",
+          "settings": {
+            "question": "Kenapa lebih mahal dari moringa di marketplace?",
+            "answer": "<p>Karena apa yang TIDAK ada di dalamnya. Moringa murah digiling utuh satu ranting: batang dan semuanya. Moringa kami dipisahkan helai demi helai dengan tangan. Satu jam kerja hanya menghasilkan 12 gram bubuk. Kamu membayar bagian tanaman yang benar-benar bisa diserap tubuh. Itulah beda antara \"tidak terasa apa-apa\" dan hasil nyata.</p>"
+          }
+        },
+        "q8": {
+          "type": "item",
+          "settings": {
+            "question": "Apakah aman? Bagaimana dengan interaksi obat yang saya minum?",
+            "answer": "<p>Moringa sudah dikonsumsi dengan aman selama ribuan tahun. Produk kami terdaftar BPOM dan teruji lab pihak ketiga untuk kemurnian dan logam berat. Sedang minum pengencer darah, obat tiroid, atau obat tekanan darah? Konsultasikan dulu dengan dokter. Moringa bisa memperkuat efek obat-obatan itu.</p>"
+          }
+        }
+      },
+      "block_order": ["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8"],
+      "settings": {
+        "eyebrow": "Ada Pertanyaan?",
+        "heading": "Pertanyaan yang Sering Diajukan",
+        "exclusive": true
+      }
+    },
+    "final": {
+      "type": "lp-final-cta",
+      "settings": {
+        "eyebrow": "Menopause Itu Alami. Menderita Karenanya Tidak.",
+        "heading": "Nutrisi dari Dalam. Lindungi dari Luar.",
+        "text": "Bergabung dengan 10.000+ perempuan Indonesia yang memilih jalan alami. Dan kembali jadi diri mereka sendiri.",
+        "cta_label": "Mulai Inside Out Protocol",
+        "cta_url": "#pricing",
+        "proof": "Garansi Uang Kembali 30 Hari · Gratis Ongkir · Sertifikasi BPOM & Halal",
+        "disclaimer": "<p>© 2026 Treelogy Premium Organic Moringa · treelogy.com</p><p>*Pernyataan ini belum dievaluasi oleh BPOM. Produk ini tidak dimaksudkan untuk mendiagnosis, mengobati, menyembuhkan, atau mencegah penyakit apa pun. Konsultasikan dengan tenaga kesehatan sebelum digunakan.</p>"
+      }
+    },
+    "floating": {
+      "type": "lp-floating-cta",
+      "settings": {
+        "show_sticky_bar": true,
+        "sticky_highlight": "Inside Out Protocol",
+        "sticky_text": "· Offer Terbatas",
+        "cta_label": "Belanja Sekarang",
+        "cta_url": "#pricing",
+        "show_whatsapp": true,
+        "whatsapp_number": "6281139603993",
+        "whatsapp_message": "Halo Treelogy, saya ingin bertanya tentang Inside Out Protocol",
+        "whatsapp_label": "Chat dengan Treelogy di WhatsApp"
+      }
+    }
+  },
+  "order": [
+    "tokens",
+    "urgency",
+    "hero",
+    "trust",
+    "testimonials",
+    "ticker_top",
+    "familiar",
+    "founder",
+    "protocol",
+    "nutrients_inside",
+    "nutrients_outside",
+    "timeline",
+    "comparison",
+    "ritual",
+    "audience",
+    "heritage",
+    "certs",
+    "pricing",
+    "ticker_bottom",
+    "reviews",
+    "faq",
+    "final",
+    "floating"
+  ]
+}
