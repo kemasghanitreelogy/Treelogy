@@ -59,31 +59,36 @@
         "media_1": {
           "type": "media",
           "settings": {
-            "alt": "Kapsul & minyak Inside Out Protocol"
+            "alt": "Kapsul dari dalam, minyak dari luar",
+            "image": "shopify://shop_images/hand_drops_a_green_Treelogy_Organic_Moringa_Capsule_ID.webp"
           }
         },
         "media_2": {
           "type": "media",
           "settings": {
-            "alt": "Kapsul moringa bebas batang"
+            "alt": "Mengaplikasikan minyak moringa di wajah",
+            "image": "shopify://shop_images/close-up_composite_image_of_a_smiling_woman.webp"
           }
         },
         "media_3": {
           "type": "media",
           "settings": {
-            "alt": "Minyak biji moringa cold-pressed"
+            "alt": "Kaleng Organic Moringa Capsules di tangan",
+            "image": "shopify://shop_images/woman_s_hand_holds_an_open_can_of_Treelogy_Organic_Moringa_Capsules.webp"
           }
         },
         "media_4": {
           "type": "media",
           "settings": {
-            "alt": "Ritual harian Inside Out"
+            "alt": "Linimasa manfaat harian Treelogy",
+            "image": "shopify://shop_images/ertical_timeline_infographic_in_Indonesian_detailing_the_benefits_of_Treelogy_Moringa.webp"
           }
         },
         "media_5": {
           "type": "media",
           "settings": {
-            "alt": "Sertifikasi & kemurnian"
+            "alt": "Kapsul bebas batang, konsentrasi 5:1",
+            "image": "shopify://shop_images/close-up_of_two_open_Treelogy_Organic_Moringa_Capsule.webp"
           }
         },
         "proof_1": {
@@ -119,6 +124,13 @@
             "highlight": "",
             "text": "Gratis Ongkir"
           }
+        },
+        "media_6": {
+          "type": "media",
+          "settings": {
+            "image": "shopify://shop_images/woman_holds_a_bottle_of_Treelogy_Organic_Moringa_Oil.webp",
+            "alt": "Organic Moringa Oil cold-pressed"
+          }
         }
       },
       "block_order": [
@@ -127,6 +139,7 @@
         "media_3",
         "media_4",
         "media_5",
+        "media_6",
         "proof_1",
         "proof_2",
         "proof_3",
