@@ -201,18 +201,27 @@
       var running = false;
       var frameId = 0;
       var dragging = false;
-      var startX = 0;
-      var startOffset = 0;
+      var lastX = 0;
 
       function recycle() {
         var guard = 0;
         var head = track.firstElementChild;
-        while (head && guard < 50) {
+        while (head && guard < 60) {
           var width = head.offsetWidth + gap;
           if (-offset < width) break;
           offset += width;
           track.appendChild(head);
           head = track.firstElementChild;
+          guard += 1;
+        }
+
+        guard = 0;
+        var tail = track.lastElementChild;
+        while (tail && offset > 0 && guard < 60) {
+          var tailWidth = tail.offsetWidth + gap;
+          track.insertBefore(tail, track.firstElementChild);
+          offset -= tailWidth;
+          tail = track.lastElementChild;
           guard += 1;
         }
       }
@@ -253,8 +262,7 @@
       track.addEventListener('pointerdown', function (event) {
         if (event.button && event.button !== 0) return;
         dragging = true;
-        startX = event.clientX;
-        startOffset = offset;
+        lastX = event.clientX;
         root.classList.add('is-dragging');
         try { track.setPointerCapture(event.pointerId); } catch (e) {}
       });
@@ -262,18 +270,8 @@
       track.addEventListener('pointermove', function (event) {
         if (!dragging) return;
         event.preventDefault();
-        offset = startOffset + (event.clientX - startX);
-        if (offset > 0) {
-          var tail = track.lastElementChild;
-          var guard = 0;
-          while (offset > 0 && tail && guard < 50) {
-            track.insertBefore(tail, track.firstElementChild);
-            offset -= tail.offsetWidth + gap;
-            startOffset -= tail.offsetWidth + gap;
-            tail = track.lastElementChild;
-            guard += 1;
-          }
-        }
+        offset += event.clientX - lastX;
+        lastX = event.clientX;
         draw();
       });
 
