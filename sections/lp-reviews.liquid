@@ -222,6 +222,8 @@
   }
 
   .lp-reviews__grid {
+    position: relative;
+    align-content: start;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1.25rem;
@@ -332,19 +334,11 @@
 {% javascript %}
   (function () {
     var EASE = 'cubic-bezier(0.2, 0, 0, 1)';
-    var DURATION = 560;
-    var STAGGER = 60;
-    var EXIT = 220;
+    var DURATION = 520;
+    var STAGGER = 55;
 
     function reducedMotion() {
       return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    }
-
-    function settle(animation) {
-      if (!animation) return Promise.resolve();
-      return animation.finished.then(function () {
-        animation.cancel();
-      }).catch(function () {});
     }
 
     function init(scope) {
@@ -357,34 +351,45 @@
       var empty = scope.querySelector('[data-lp-reviews-empty]');
       if (!chips.length || !cards.length) return;
 
+      var running = [];
+
       function matches(card, topic) {
         if (!topic) return true;
         return (card.dataset.lpReviewTopics || '').split(/[\s-]+/).indexOf(topic) !== -1;
       }
 
       chips.forEach(function (chip) {
-        var hits = cards.filter(function (card) {
-          return matches(card, chip.dataset.lpTopic);
-        });
+        var hits = cards.filter(function (card) { return matches(card, chip.dataset.lpTopic); });
         if (!hits.length) chip.hidden = true;
       });
 
-      var busy = false;
+      function unfloat(card) {
+        card.style.position = '';
+        card.style.top = '';
+        card.style.left = '';
+        card.style.width = '';
+        card.style.height = '';
+        card.style.margin = '';
+        card.style.pointerEvents = '';
+        card.style.zIndex = '';
+      }
+
+      function track(animation, done) {
+        if (!animation) return;
+        running.push(animation);
+        animation.finished.then(function () {
+          animation.cancel();
+          if (done) done();
+        }).catch(function () {});
+      }
 
       function apply(topic) {
-        if (busy) return;
-
-        var before = new Map();
-        cards.forEach(function (card) {
-          if (!card.hidden) before.set(card, card.getBoundingClientRect());
-        });
+        running.forEach(function (a) { a.cancel(); });
+        running = [];
+        cards.forEach(unfloat);
+        grid.style.height = '';
 
         var keep = cards.filter(function (card) { return matches(card, topic); });
-        var leaving = cards.filter(function (card) {
-          return !card.hidden && keep.indexOf(card) === -1;
-        });
-        var entering = keep.filter(function (card) { return card.hidden; });
-
         if (empty) empty.hidden = keep.length > 0;
 
         if (reducedMotion()) {
@@ -392,50 +397,83 @@
           return;
         }
 
-        busy = true;
+        var gridBox = grid.getBoundingClientRect();
+        var startHeight = gridBox.height;
+        var first = new Map();
+        cards.forEach(function (card) {
+          if (!card.hidden) first.set(card, card.getBoundingClientRect());
+        });
 
-        var exits = leaving.map(function (card, i) {
-          return settle(card.animate(
+        var leaving = cards.filter(function (card) {
+          return !card.hidden && keep.indexOf(card) === -1;
+        });
+        var entering = keep.filter(function (card) { return card.hidden; });
+
+        leaving.forEach(function (card) {
+          var box = first.get(card);
+          card.style.position = 'absolute';
+          card.style.top = (box.top - gridBox.top) + 'px';
+          card.style.left = (box.left - gridBox.left) + 'px';
+          card.style.width = box.width + 'px';
+          card.style.height = box.height + 'px';
+          card.style.margin = '0';
+          card.style.pointerEvents = 'none';
+          card.style.zIndex = '0';
+        });
+
+        entering.forEach(function (card) { card.hidden = false; });
+
+        var endHeight = grid.getBoundingClientRect().height;
+        var gridBoxAfter = grid.getBoundingClientRect();
+
+        keep.forEach(function (card) {
+          var from = first.get(card);
+          if (!from) return;
+          var to = card.getBoundingClientRect();
+          var dx = from.left - to.left;
+          var dy = from.top - to.top;
+          if (!dx && !dy) return;
+          track(card.animate(
             [
-              { opacity: 1, transform: 'none' },
-              { opacity: 0, transform: 'translateY(8px) scale(0.97)' }
+              { transform: 'translate(' + dx + 'px, ' + dy + 'px)' },
+              { transform: 'none' }
             ],
-            { duration: EXIT, delay: i * 30, easing: EASE, fill: 'both' }
+            { duration: DURATION, easing: EASE, fill: 'both' }
           ));
         });
 
-        Promise.all(exits).then(function () {
-          leaving.forEach(function (card) { card.hidden = true; });
-          entering.forEach(function (card) { card.hidden = false; });
-
-          keep.forEach(function (card) {
-            var from = before.get(card);
-            if (!from) return;
-            var to = card.getBoundingClientRect();
-            var dx = from.left - to.left;
-            var dy = from.top - to.top;
-            if (!dx && !dy) return;
-            settle(card.animate(
-              [
-                { transform: 'translate(' + dx + 'px, ' + dy + 'px)' },
-                { transform: 'none' }
-              ],
-              { duration: DURATION, easing: EASE, fill: 'both' }
-            ));
-          });
-
-          entering.forEach(function (card, i) {
-            settle(card.animate(
-              [
-                { opacity: 0, transform: 'translateY(14px) scale(0.97)' },
-                { opacity: 1, transform: 'none' }
-              ],
-              { duration: DURATION, delay: 80 + i * STAGGER, easing: EASE, fill: 'both' }
-            ));
-          });
-
-          busy = false;
+        entering.forEach(function (card, i) {
+          track(card.animate(
+            [
+              { opacity: 0, transform: 'translateY(12px) scale(0.98)' },
+              { opacity: 1, transform: 'none' }
+            ],
+            { duration: DURATION, delay: 60 + i * STAGGER, easing: EASE, fill: 'both' }
+          ));
         });
+
+        leaving.forEach(function (card, i) {
+          track(card.animate(
+            [
+              { opacity: 1, transform: 'none' },
+              { opacity: 0, transform: 'translateY(6px) scale(0.98)' }
+            ],
+            { duration: 260, delay: i * 25, easing: EASE, fill: 'both' }
+          ), function () {
+            card.hidden = true;
+            unfloat(card);
+          });
+        });
+
+        if (Math.round(startHeight) !== Math.round(endHeight)) {
+          grid.style.height = startHeight + 'px';
+          track(grid.animate(
+            [{ height: startHeight + 'px' }, { height: endHeight + 'px' }],
+            { duration: DURATION, easing: EASE, fill: 'both' }
+          ), function () {
+            grid.style.height = '';
+          });
+        }
       }
 
       chips.forEach(function (chip) {
