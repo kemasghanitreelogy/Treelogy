@@ -56,6 +56,36 @@
     "hero": {
       "type": "lp-hero",
       "blocks": {
+        "media_1": {
+          "type": "media",
+          "settings": {
+            "alt": "Kapsul & minyak Inside Out Protocol"
+          }
+        },
+        "media_2": {
+          "type": "media",
+          "settings": {
+            "alt": "Kapsul moringa bebas batang"
+          }
+        },
+        "media_3": {
+          "type": "media",
+          "settings": {
+            "alt": "Minyak biji moringa cold-pressed"
+          }
+        },
+        "media_4": {
+          "type": "media",
+          "settings": {
+            "alt": "Ritual harian Inside Out"
+          }
+        },
+        "media_5": {
+          "type": "media",
+          "settings": {
+            "alt": "Sertifikasi & kemurnian"
+          }
+        },
         "proof_1": {
           "type": "proof",
           "settings": {
@@ -92,6 +122,11 @@
         }
       },
       "block_order": [
+        "media_1",
+        "media_2",
+        "media_3",
+        "media_4",
+        "media_5",
         "proof_1",
         "proof_2",
         "proof_3",
@@ -107,7 +142,8 @@
         "show_save_badge": true,
         "save_prefix": "Hemat hingga",
         "save_amount": "Rp 464.500",
-        "save_suffix": "Hari Ini"
+        "save_suffix": "Hari Ini",
+        "gallery_label": "Galeri produk"
       }
     },
     "trust": {
