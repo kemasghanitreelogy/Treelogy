@@ -133,9 +133,19 @@
 
             <div class="lp-plan__footer">
               {% if block.settings.cta_label != blank %}
+                {%- liquid
+                  assign plan_href = block.settings.cta_url | default: '#'
+                  if block.settings.variant_id != blank
+                    assign qty = block.settings.quantity | default: 1
+                    assign plan_href = '/cart/' | append: block.settings.variant_id | append: ':' | append: qty
+                    if block.settings.discount_code != blank
+                      assign plan_href = plan_href | append: '?discount=' | append: block.settings.discount_code
+                    endif
+                  endif
+                -%}
                 <a
                   class="lp-btn{% if block.settings.featured %} lp-btn--gold{% endif %} lp-plan__cta"
-                  href="{{ block.settings.cta_url | default: '#' }}"
+                  href="{{ plan_href }}"
                 >
                   {{- block.settings.cta_label -}}
                 </a>
@@ -714,6 +724,27 @@
           "id": "cta_label",
           "label": "Label tombol",
           "default": "Ambil Protokol"
+        },
+        {
+          "type": "text",
+          "id": "variant_id",
+          "label": "ID varian (langsung ke checkout)",
+          "info": "Isi untuk melewati halaman produk. Kosongkan untuk memakai Tautan tombol di bawah."
+        },
+        {
+          "type": "range",
+          "id": "quantity",
+          "label": "Jumlah",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 1
+        },
+        {
+          "type": "text",
+          "id": "discount_code",
+          "label": "Kode diskon otomatis",
+          "info": "Kosongkan bila harga varian sudah sama dengan harga di kartu ini. Mengisinya membuat pelanggan membayar LEBIH MURAH dari yang tertulis."
         },
         {
           "type": "url",
