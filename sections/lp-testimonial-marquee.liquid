@@ -39,6 +39,10 @@
     background: var(--lp-bloom);
   }
 
+  .lp-tmarquee.is-interactive .lp-tmarquee__track {
+    animation: none;
+  }
+
   .lp-tmarquee.is-interactive {
     cursor: grab;
     touch-action: pan-y;
@@ -137,19 +141,40 @@
       return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     }
 
+    function settled() {
+      var fonts = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+      return fonts.then(function () {
+        return new Promise(function (resolve) {
+          requestAnimationFrame(function () {
+            requestAnimationFrame(resolve);
+          });
+        });
+      });
+    }
+
     function init(root) {
       var track = root.querySelector('[data-lp-marquee-track]');
-      if (!track || root.dataset.lpMarqueeBound === 'true') return;
+      var original = track && track.querySelector('[data-lp-marquee-set]');
+      if (!track || !original || root.dataset.lpMarqueeBound === 'true') return;
 
-      var original = track.querySelector('[data-lp-marquee-set]');
-      if (!original) return;
+      var seconds = parseFloat(getComputedStyle(root).getPropertyValue('--lp-tmarquee-duration'));
+      var duration = (seconds > 0 ? seconds : 45) * 1000;
 
-      var gap = parseFloat(getComputedStyle(track).columnGap) || 0;
-      var loopDistance = original.getBoundingClientRect().width + gap;
-      if (loopDistance <= gap) return;
+      function measure() {
+        var cards = original.children;
+        if (!cards.length) return 0;
+        var first = cards[0];
+        var last = cards[cards.length - 1];
+        var gap = parseFloat(getComputedStyle(original).columnGap) || 0;
+        return last.offsetLeft + last.offsetWidth - first.offsetLeft + gap;
+      }
+
+      var loopDistance = measure();
+      var viewport = root.getBoundingClientRect().width;
+      if (loopDistance < 40 || loopDistance < viewport / 4) return;
 
       root.dataset.lpMarqueeBound = 'true';
-      track.style.setProperty('--lp-loop-distance', loopDistance + 'px');
+      root.classList.add('is-interactive');
 
       function ensureCoverage() {
         var needed = loopDistance + root.getBoundingClientRect().width * 2;
@@ -162,26 +187,37 @@
           guard += 1;
         }
       }
-      ensureCoverage();
 
-      var anim = track.getAnimations()[0];
-      if (!anim) return;
-
-      var duration = anim.effect.getComputedTiming().duration;
-      if (!duration || !isFinite(duration)) return;
-
-      root.classList.add('is-interactive');
-      if (reducedMotion()) anim.pause();
-
+      var anim = null;
       var dragging = false;
-      var startX = 0;
-      var startTime = 0;
+
+      function build(keepProgress) {
+        var progress = 0;
+        if (anim && keepProgress) {
+          progress = (Number(anim.currentTime) || 0) / duration;
+          progress = progress - Math.floor(progress);
+        }
+        if (anim) anim.cancel();
+
+        ensureCoverage();
+
+        anim = track.animate(
+          [
+            { transform: 'translateX(0px)' },
+            { transform: 'translateX(' + -loopDistance + 'px)' }
+          ],
+          { duration: duration, iterations: Infinity, easing: 'linear' }
+        );
+        anim.currentTime = progress * duration;
+        if (reducedMotion()) anim.pause();
+      }
+      build(false);
 
       track.addEventListener('pointerdown', function (event) {
         if (event.button && event.button !== 0) return;
         dragging = true;
-        startX = event.clientX;
-        startTime = Number(anim.currentTime) || 0;
+        this._startX = event.clientX;
+        this._startTime = Number(anim.currentTime) || 0;
         anim.pause();
         root.classList.add('is-dragging');
         try { track.setPointerCapture(event.pointerId); } catch (e) {}
@@ -191,7 +227,7 @@
         if (!dragging) return;
         event.preventDefault();
         var pxPerMs = loopDistance / duration;
-        var next = startTime - (event.clientX - startX) / pxPerMs;
+        var next = this._startTime - (event.clientX - this._startX) / pxPerMs;
         anim.currentTime = ((next % duration) + duration) % duration;
       });
 
@@ -215,7 +251,7 @@
       }
 
       function resume() {
-        if (dragging || reducedMotion()) return;
+        if (dragging || reducedMotion() || !anim) return;
         anim.play();
       }
 
@@ -226,7 +262,7 @@
               track.style.willChange = 'transform';
               resume();
               repaint();
-            } else {
+            } else if (anim) {
               anim.pause();
               track.style.willChange = 'auto';
             }
@@ -247,30 +283,23 @@
       });
 
       var remeasure;
-      window.addEventListener('resize', function () {
+      function onResize() {
         window.clearTimeout(remeasure);
         remeasure = window.setTimeout(function () {
-          var width = original.getBoundingClientRect().width;
-          if (!width) return;
-          var nextGap = parseFloat(getComputedStyle(track).columnGap) || 0;
-          loopDistance = width + nextGap;
-          track.style.setProperty('--lp-loop-distance', loopDistance + 'px');
-          ensureCoverage();
+          var next = measure();
+          if (next < 40 || Math.abs(next - loopDistance) < 1) return;
+          loopDistance = next;
+          build(true);
+          resume();
         }, 200);
-      });
+      }
+      window.addEventListener('resize', onResize);
+      window.addEventListener('orientationchange', onResize);
     }
 
     function start() {
-      document.querySelectorAll('.lp-tmarquee').forEach(function (root) {
-        var tries = 0;
-        (function attempt() {
-          var track = root.querySelector('[data-lp-marquee-track]');
-          if (track && track.getAnimations().length) {
-            init(root);
-            return;
-          }
-          if (tries++ < 30) requestAnimationFrame(attempt);
-        })();
+      settled().then(function () {
+        document.querySelectorAll('.lp-tmarquee').forEach(init);
       });
     }
 
