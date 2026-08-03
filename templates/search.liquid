@@ -6,6 +6,9 @@
 
   {% if search.performed %}
     {% for item in search.results %}
+      {% if item.object_type == 'product' and item.tags contains 'lp-only' %}
+        {% continue %}
+      {% endif %}
       {% if item.featured_image %}
         <a href="{{ item.url | within: collection }}" title="{{ item.title | escape }}">
           {{ item.featured_image.src | img_url: 'medium' | img_tag: item.featured_image.alt }}
