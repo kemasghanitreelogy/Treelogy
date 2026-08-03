@@ -1,0 +1,206 @@
+<div class="lp-badges lp-badges--{{ section.settings.background }} {% if section.settings.layout == 'grid' %}lp-pad{% endif %}">
+  <div class="lp-container">
+    {% if section.settings.eyebrow != blank %}
+      <div class="lp-eyebrow lp-badges__eyebrow">{{ section.settings.eyebrow }}</div>
+    {% endif %}
+
+    {% if section.settings.heading != blank %}
+      <h2 class="lp-h2 lp-badges__heading">{{ section.settings.heading }}</h2>
+    {% endif %}
+
+    <div class="lp-badges__list lp-badges__list--{{ section.settings.layout }}">
+      {% for block in section.blocks %}
+        <div class="lp-badge" {{ block.shopify_attributes }}>
+          {% if section.settings.icon_type == 'image' %}
+            <div class="lp-badge__icon">
+              {% if block.settings.image %}
+                {{
+                  block.settings.image
+                  | image_url: width: 128
+                  | image_tag: widths: '64, 128', sizes: '64px', alt: block.settings.label
+                }}
+              {% else %}
+                {{ 'lifestyle-1' | placeholder_svg_tag: 'lp-placeholder' }}
+              {% endif %}
+            </div>
+          {% elsif block.settings.emoji != blank %}
+            <span class="lp-badge__emoji" aria-hidden="true">{{ block.settings.emoji }}</span>
+          {% endif %}
+
+          <span class="lp-badge__label">{{ block.settings.label }}</span>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .lp-badges--surface {
+    border-block: 1px solid var(--lp-border);
+    background: var(--lp-surface);
+  }
+
+  .lp-badges--bloom {
+    background: var(--lp-bloom);
+  }
+
+  .lp-badges--cream {
+    background: var(--lp-cream);
+  }
+
+  .lp-badges__eyebrow,
+  .lp-badges__heading {
+    text-align: center;
+  }
+
+  .lp-badges__heading {
+    margin-block: 0.75rem 2rem;
+  }
+
+  .lp-badges__list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .lp-badges__list--strip {
+    gap: 1.5rem 2.5rem;
+    padding-block: 1.25rem;
+  }
+
+  .lp-badges__list--grid {
+    gap: 2rem;
+    max-width: 700px;
+    margin-inline: auto;
+  }
+
+  .lp-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--lp-text-mid);
+    font-family: var(--lp-font-body);
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+
+  .lp-badges__list--grid .lp-badge {
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 100px;
+  }
+
+  .lp-badge__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+  }
+
+  .lp-badge__icon img,
+  .lp-badge__icon svg {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  .lp-badge__emoji {
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  .lp-badges__list--grid .lp-badge__label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "LP · Badge row",
+  "tag": "section",
+  "class": "lp-badges-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Judul"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Tata letak",
+      "options": [
+        { "value": "strip", "label": "Strip satu baris" },
+        { "value": "grid", "label": "Grid dengan ikon besar" }
+      ],
+      "default": "strip"
+    },
+    {
+      "type": "select",
+      "id": "icon_type",
+      "label": "Jenis ikon",
+      "options": [
+        { "value": "emoji", "label": "Emoji" },
+        { "value": "image", "label": "Gambar" }
+      ],
+      "default": "emoji"
+    },
+    {
+      "type": "select",
+      "id": "background",
+      "label": "Latar",
+      "options": [
+        { "value": "surface", "label": "Putih bergaris" },
+        { "value": "bloom", "label": "Krem alternatif" },
+        { "value": "cream", "label": "Krem terang" }
+      ],
+      "default": "surface"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "badge",
+      "name": "Badge",
+      "limit": 12,
+      "settings": [
+        {
+          "type": "text",
+          "id": "emoji",
+          "label": "Emoji"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Gambar ikon"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Terdaftar BPOM"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "LP · Badge row",
+      "blocks": [
+        { "type": "badge" },
+        { "type": "badge" },
+        { "type": "badge" },
+        { "type": "badge" }
+      ]
+    }
+  ]
+}
+{% endschema %}

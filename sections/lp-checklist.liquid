@@ -1,0 +1,167 @@
+<div class="lp-checklist lp-checklist--{{ section.settings.background }} lp-pad lp-reveal">
+  <div class="lp-container lp-container--narrow">
+    {% if section.settings.eyebrow != blank %}
+      <div class="lp-eyebrow lp-checklist__eyebrow">{{ section.settings.eyebrow }}</div>
+    {% endif %}
+
+    {% if section.settings.heading != blank %}
+      <h2 class="lp-h2 lp-checklist__heading">{{ section.settings.heading }}</h2>
+    {% endif %}
+
+    {% if section.blocks.size > 0 %}
+      <ul class="lp-checklist__list lp-checklist__list--{{ section.settings.marker }}">
+        {% for block in section.blocks %}
+          <li class="lp-checklist__item" {{ block.shopify_attributes }}>
+            <span class="lp-checklist__marker" aria-hidden="true">
+              {%- if section.settings.marker == 'check' -%}✓{%- else -%}✗{%- endif -%}
+            </span>
+            <span>{{ block.settings.text }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    {% if section.settings.punchline != blank %}
+      <p class="lp-checklist__punch">{{ section.settings.punchline }}</p>
+    {% endif %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .lp-checklist--cream {
+    background: var(--lp-cream);
+  }
+
+  .lp-checklist--bloom {
+    background: var(--lp-bloom);
+  }
+
+  .lp-checklist--surface {
+    background: var(--lp-surface);
+  }
+
+  .lp-checklist__eyebrow,
+  .lp-checklist__heading {
+    text-align: center;
+  }
+
+  .lp-checklist__eyebrow {
+    margin-bottom: 0.75rem;
+  }
+
+  .lp-checklist__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    max-width: 440px;
+    margin: 1.75rem auto 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .lp-checklist__item {
+    display: flex;
+    align-items: baseline;
+    gap: 0.65rem;
+    color: var(--lp-text-mid);
+    font-family: var(--lp-font-body);
+    font-size: 0.9375rem;
+  }
+
+  .lp-checklist__marker {
+    flex: 0 0 auto;
+    font-weight: 700;
+  }
+
+  .lp-checklist__list--cross .lp-checklist__marker {
+    color: var(--lp-alert);
+  }
+
+  .lp-checklist__list--check .lp-checklist__marker {
+    color: var(--lp-forest);
+  }
+
+  .lp-checklist__punch {
+    margin: 1.5rem 0 0;
+    color: var(--lp-text);
+    font-family: var(--lp-font-display);
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-align: center;
+    text-wrap: balance;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "LP · Checklist",
+  "tag": "section",
+  "class": "lp-checklist-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Judul",
+      "default": "Terasa Familiar?"
+    },
+    {
+      "type": "select",
+      "id": "marker",
+      "label": "Penanda",
+      "options": [
+        { "value": "cross", "label": "Silang (masalah)" },
+        { "value": "check", "label": "Centang (manfaat)" }
+      ],
+      "default": "cross"
+    },
+    {
+      "type": "textarea",
+      "id": "punchline",
+      "label": "Kalimat penutup",
+      "default": "Masalahnya bukan di kamu. Tapi di produk yang selama ini kamu coba."
+    },
+    {
+      "type": "select",
+      "id": "background",
+      "label": "Latar",
+      "options": [
+        { "value": "cream", "label": "Krem terang" },
+        { "value": "bloom", "label": "Krem alternatif" },
+        { "value": "surface", "label": "Putih" }
+      ],
+      "default": "cream"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Item",
+      "limit": 10,
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Teks",
+          "default": "Terapi hormon. Khawatir dengan risikonya."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "LP · Checklist",
+      "blocks": [
+        { "type": "item" },
+        { "type": "item" },
+        { "type": "item" },
+        { "type": "item" }
+      ]
+    }
+  ]
+}
+{% endschema %}

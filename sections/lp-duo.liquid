@@ -1,0 +1,308 @@
+<div class="lp-duo lp-pad lp-reveal">
+  <div class="lp-container">
+    {% if section.settings.eyebrow != blank %}
+      <div class="lp-eyebrow lp-duo__eyebrow">{{ section.settings.eyebrow }}</div>
+    {% endif %}
+
+    {% if section.settings.heading != blank %}
+      <h2 class="lp-h2 lp-duo__heading">{{ section.settings.heading }}</h2>
+    {% endif %}
+
+    {% if section.settings.subheading != blank %}
+      <p class="lp-duo__sub">{{ section.settings.subheading }}</p>
+    {% endif %}
+
+    <div class="lp-duo__grid">
+      {% for block in section.blocks %}
+        {% unless forloop.first %}
+          <div class="lp-duo__connector" aria-hidden="true">
+            <span class="lp-duo__plus">{{ section.settings.connector }}</span>
+          </div>
+        {% endunless %}
+
+        <div class="lp-duo__side" {{ block.shopify_attributes }}>
+          <div class="lp-duo__media lp-duo__media--{{ block.settings.image_position }}">
+            {% if block.settings.image %}
+              {{
+                block.settings.image
+                | image_url: width: 800
+                | image_tag:
+                  widths: '400, 600, 800',
+                  sizes: '(max-width: 768px) 100vw, 400px',
+                  loading: 'lazy',
+                  alt: block.settings.product_name
+              }}
+            {% else %}
+              {{ 'product-3' | placeholder_svg_tag: 'lp-placeholder' }}
+            {% endif %}
+          </div>
+
+          {% if block.settings.title != blank %}
+            <h3 class="lp-h3">{{ block.settings.title }}</h3>
+          {% endif %}
+
+          {% if block.settings.product_name != blank %}
+            <div class="lp-duo__product">{{ block.settings.product_name }}</div>
+          {% endif %}
+
+          {% if block.settings.benefits != blank %}
+            <div class="lp-duo__benefits">{{ block.settings.benefits }}</div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if section.settings.cta_label != blank %}
+      <div class="lp-duo__cta">
+        <a class="lp-btn" href="{{ section.settings.cta_url | default: '#' }}">
+          {{- section.settings.cta_label -}}
+        </a>
+        {% if section.settings.cta_note != blank %}
+          <p class="lp-note">{{ section.settings.cta_note }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .lp-duo {
+    background: var(--lp-bloom);
+  }
+
+  .lp-duo__eyebrow,
+  .lp-duo__heading,
+  .lp-duo__sub {
+    text-align: center;
+  }
+
+  .lp-duo__eyebrow {
+    margin-bottom: 0.75rem;
+  }
+
+  .lp-duo__heading {
+    margin-bottom: 0.5rem;
+  }
+
+  .lp-duo__sub {
+    max-width: 600px;
+    margin: 0 auto 3rem;
+    color: var(--lp-text-mid);
+    font-family: var(--lp-font-body);
+  }
+
+  .lp-duo__grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    max-width: 900px;
+    margin-inline: auto;
+  }
+
+  .lp-duo__side {
+    padding: 2.5rem 2rem;
+    border: 1px solid var(--lp-border);
+    border-radius: var(--lp-radius-lg);
+    background: var(--lp-surface);
+    text-align: center;
+  }
+
+  .lp-duo__media {
+    margin-bottom: 1.25rem;
+  }
+
+  .lp-duo__media img,
+  .lp-duo__media svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--lp-radius);
+    object-fit: cover;
+  }
+
+  .lp-duo__media--top img {
+    object-position: top;
+  }
+
+  .lp-duo__product {
+    margin-block: 0.5rem 1.25rem;
+    color: var(--lp-gold);
+    font-family: var(--lp-font-body);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .lp-duo__benefits ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    text-align: left;
+  }
+
+  .lp-duo__benefits li {
+    position: relative;
+    padding: 0.22rem 0 0.22rem 1.5rem;
+    color: var(--lp-text-mid);
+    font-family: var(--lp-font-body);
+    font-size: 0.875rem;
+    line-height: 1.45;
+  }
+
+  .lp-duo__benefits li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--lp-forest);
+    font-weight: 700;
+  }
+
+  .lp-duo__connector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-inline: 1.5rem;
+  }
+
+  .lp-duo__plus {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--lp-gold);
+    color: var(--lp-forest-deep);
+    font-size: 1.5rem;
+    font-weight: 800;
+  }
+
+  .lp-duo__cta {
+    margin-top: 2.5rem;
+    text-align: center;
+  }
+
+  @media screen and (max-width: 768px) {
+    .lp-duo__grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .lp-duo__connector {
+      padding: 0.5rem 0;
+    }
+
+    .lp-duo__plus {
+      width: 36px;
+      height: 36px;
+      font-size: 1.25rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "LP · Product duo",
+  "tag": "section",
+  "class": "lp-duo-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Pendekatan Menyeluruh"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Judul",
+      "default": "The Inside Out Moringa Protocol"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Deskripsi",
+      "default": "Dua produk. Satu ritual harian. Dukungan menopause yang menyeluruh."
+    },
+    {
+      "type": "text",
+      "id": "connector",
+      "label": "Simbol penghubung",
+      "default": "+"
+    },
+    {
+      "type": "header",
+      "content": "Tombol"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Label tombol",
+      "default": "Mulai Protokol"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Tautan tombol"
+    },
+    {
+      "type": "text",
+      "id": "cta_note",
+      "label": "Catatan di bawah tombol",
+      "default": "Garansi Uang Kembali 30 Hari · Gratis Ongkir"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "side",
+      "name": "Sisi",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Gambar"
+        },
+        {
+          "type": "select",
+          "id": "image_position",
+          "label": "Fokus gambar",
+          "options": [
+            { "value": "center", "label": "Tengah" },
+            { "value": "top", "label": "Atas" }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Judul",
+          "default": "Inside"
+        },
+        {
+          "type": "text",
+          "id": "product_name",
+          "label": "Nama produk",
+          "default": "Organic Moringa Capsules"
+        },
+        {
+          "type": "richtext",
+          "id": "benefits",
+          "label": "Manfaat",
+          "info": "Pakai daftar berpoin agar tampil dengan centang."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "LP · Product duo",
+      "blocks": [
+        { "type": "side" },
+        { "type": "side" }
+      ]
+    }
+  ]
+}
+{% endschema %}

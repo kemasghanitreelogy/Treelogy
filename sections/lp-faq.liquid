@@ -1,0 +1,179 @@
+<div class="lp-faq lp-pad lp-reveal">
+  <div class="lp-container">
+    {% if section.settings.eyebrow != blank %}
+      <div class="lp-eyebrow lp-faq__eyebrow">{{ section.settings.eyebrow }}</div>
+    {% endif %}
+
+    {% if section.settings.heading != blank %}
+      <h2 class="lp-h2 lp-faq__heading">{{ section.settings.heading }}</h2>
+    {% endif %}
+
+    <div class="lp-faq__list">
+      {% for block in section.blocks %}
+        <details
+          class="lp-faq__item"
+          {% if section.settings.exclusive %}
+            name="lp-faq-{{ section.id }}"
+          {% endif %}
+          {{ block.shopify_attributes }}
+        >
+          <summary class="lp-faq__q">
+            <span>{{ block.settings.question }}</span>
+            <span class="lp-faq__icon" aria-hidden="true">+</span>
+          </summary>
+          <div class="lp-faq__a">{{ block.settings.answer }}</div>
+        </details>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .lp-faq {
+    background: var(--lp-cream);
+  }
+
+  .lp-faq__eyebrow,
+  .lp-faq__heading {
+    text-align: center;
+  }
+
+  .lp-faq__eyebrow {
+    margin-bottom: 0.75rem;
+  }
+
+  .lp-faq__heading {
+    margin-bottom: 2.5rem;
+  }
+
+  .lp-faq__list {
+    max-width: 700px;
+    margin-inline: auto;
+  }
+
+  .lp-faq__item {
+    border-bottom: 1px solid var(--lp-border);
+  }
+
+  .lp-faq__q {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 1.25rem;
+    color: var(--lp-forest);
+    cursor: pointer;
+    font-family: var(--lp-font-display);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    list-style: none;
+    text-align: left;
+  }
+
+  .lp-faq__q::-webkit-details-marker {
+    display: none;
+  }
+
+  .lp-faq__q:focus-visible {
+    outline: 2px solid var(--lp-forest);
+    outline-offset: 2px;
+  }
+
+  .lp-faq__icon {
+    flex-shrink: 0;
+    color: var(--lp-text-light);
+    font-size: 1.25rem;
+    transition: transform 0.3s ease;
+  }
+
+  .lp-faq__item[open] .lp-faq__icon {
+    transform: rotate(45deg);
+  }
+
+  .lp-faq__a {
+    padding-bottom: 1.25rem;
+    color: var(--lp-text-mid);
+    font-family: var(--lp-font-body);
+    font-size: 0.9375rem;
+    line-height: 1.7;
+  }
+
+  .lp-faq__a p {
+    margin: 0 0 0.75rem;
+  }
+
+  .lp-faq__a p:last-child {
+    margin-bottom: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .lp-faq__item::details-content {
+      overflow: hidden;
+      block-size: 0;
+      transition: block-size 0.35s ease, content-visibility 0.35s allow-discrete;
+    }
+
+    .lp-faq__item[open]::details-content {
+      block-size: auto;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "LP · FAQ",
+  "tag": "section",
+  "class": "lp-faq-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Ada Pertanyaan?"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Judul",
+      "default": "Pertanyaan yang Sering Diajukan"
+    },
+    {
+      "type": "checkbox",
+      "id": "exclusive",
+      "label": "Hanya satu jawaban terbuka",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Pertanyaan",
+      "limit": 20,
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Pertanyaan",
+          "default": "Bagaimana moringa membantu di masa menopause?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Jawaban",
+          "default": "<p>Tulis jawaban di sini.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "LP · FAQ",
+      "blocks": [
+        { "type": "item" },
+        { "type": "item" },
+        { "type": "item" }
+      ]
+    }
+  ]
+}
+{% endschema %}

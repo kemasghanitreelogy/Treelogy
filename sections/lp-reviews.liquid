@@ -1,0 +1,571 @@
+{% liquid
+  assign topics = section.blocks | where: 'type', 'topic'
+  assign reviews = section.blocks | where: 'type', 'review'
+%}
+
+<div class="lp-reviews lp-pad lp-reveal">
+  <div class="lp-container">
+    {% if section.settings.eyebrow != blank %}
+      <div class="lp-eyebrow lp-reviews__eyebrow">{{ section.settings.eyebrow }}</div>
+    {% endif %}
+
+    {% if section.settings.heading != blank %}
+      <h2 class="lp-h2 lp-reviews__heading">{{ section.settings.heading }}</h2>
+    {% endif %}
+
+    <div class="lp-reviews__summary">
+      <div class="lp-reviews__stars" aria-hidden="true">★★★★★</div>
+
+      {% if section.settings.score_text != blank %}
+        <div class="lp-reviews__score">{{ section.settings.score_text }}</div>
+      {% endif %}
+
+      {% if section.settings.show_breakdown %}
+        <div class="lp-reviews__breakdown">
+          {% for i in (1..5) %}
+            {%- assign star = 6 | minus: i -%}
+            {%- case star -%}
+              {%- when 5 -%}{%- assign percent = section.settings.percent_5 -%}
+              {%- when 4 -%}{%- assign percent = section.settings.percent_4 -%}
+              {%- when 3 -%}{%- assign percent = section.settings.percent_3 -%}
+              {%- when 2 -%}{%- assign percent = section.settings.percent_2 -%}
+              {%- else -%}{%- assign percent = section.settings.percent_1 -%}
+            {%- endcase -%}
+            <div class="lp-reviews__brow">
+              <span>{{ star }} ★</span>
+              <span class="lp-reviews__bar"><i style="width: {{ percent }}%"></i></span>
+              <span>{{ percent }}%</span>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% if topics.size > 0 %}
+        <div class="lp-reviews__topics">
+          {% if section.settings.topics_label != blank %}
+            <div class="lp-reviews__topics-label">{{ section.settings.topics_label }}</div>
+          {% endif %}
+
+          {% for block in topics %}
+            <button
+              type="button"
+              class="lp-reviews__chip"
+              data-lp-topic="{{ block.settings.key | handleize }}"
+              aria-pressed="false"
+              {{ block.shopify_attributes }}
+            >
+              {{ block.settings.label }}
+            </button>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="lp-reviews__grid" data-lp-reviews-grid>
+      {% for block in reviews %}
+        <article
+          class="lp-review"
+          data-lp-review-topics="{{ block.settings.topics | handleize }}"
+          {{ block.shopify_attributes }}
+        >
+          <header class="lp-review__head">
+            {% if block.settings.avatar %}
+              {{
+                block.settings.avatar
+                | image_url: width: 96
+                | image_tag:
+                  class: 'lp-review__avatar lp-review__avatar--image',
+                  widths: '44, 88',
+                  sizes: '44px',
+                  loading: 'lazy',
+                  alt: block.settings.name
+              }}
+            {% else %}
+              <div class="lp-review__avatar" aria-hidden="true">{{ block.settings.initials }}</div>
+            {% endif %}
+
+            <div>
+              <div class="lp-review__name">{{ block.settings.name }}</div>
+              <div class="lp-review__meta">{{ block.settings.meta }}</div>
+            </div>
+          </header>
+
+          <div class="lp-review__stars" aria-label="{{ block.settings.rating }} dari 5">
+            {%- for i in (1..block.settings.rating) -%}★{%- endfor -%}
+          </div>
+
+          <p class="lp-review__text">{{ block.settings.text }}</p>
+
+          {% if block.settings.tag != blank %}
+            <span class="lp-review__tag">{{ block.settings.tag }}</span>
+          {% endif %}
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .lp-reviews {
+    background: var(--lp-bloom);
+  }
+
+  .lp-reviews__eyebrow,
+  .lp-reviews__heading,
+  .lp-reviews__summary {
+    text-align: center;
+  }
+
+  .lp-reviews__eyebrow {
+    margin-bottom: 0.75rem;
+  }
+
+  .lp-reviews__heading {
+    margin-bottom: 0.5rem;
+  }
+
+  .lp-reviews__summary {
+    margin-bottom: 2.5rem;
+  }
+
+  .lp-reviews__stars {
+    color: var(--lp-gold);
+    font-size: 1.25rem;
+    letter-spacing: 0.08em;
+  }
+
+  .lp-reviews__score {
+    margin-top: 0.25rem;
+    color: var(--lp-text-light);
+    font-family: var(--lp-font-body);
+    font-size: 0.875rem;
+  }
+
+  .lp-reviews__breakdown {
+    max-width: 320px;
+    margin: 1.25rem auto 0;
+  }
+
+  .lp-reviews__brow {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.15rem 0;
+    color: var(--lp-text-mid);
+    font-family: var(--lp-font-body);
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .lp-reviews__brow > span:first-child {
+    flex: 0 0 24px;
+  }
+
+  .lp-reviews__brow > span:last-child {
+    flex: 0 0 34px;
+    color: var(--lp-text-light);
+    text-align: right;
+  }
+
+  .lp-reviews__bar {
+    overflow: hidden;
+    flex: 1;
+    height: 7px;
+    border-radius: 4px;
+    background: var(--lp-border);
+  }
+
+  .lp-reviews__bar i {
+    display: block;
+    height: 100%;
+    border-radius: 4px;
+    background: var(--lp-gold);
+  }
+
+  .lp-reviews__topics {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+  }
+
+  .lp-reviews__topics-label {
+    width: 100%;
+    margin-bottom: 0.1rem;
+    color: var(--lp-text-light);
+    font-family: var(--lp-font-body);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .lp-reviews__chip {
+    padding: 0.35rem 0.85rem;
+    border: 1px solid var(--lp-border);
+    border-radius: 999px;
+    background: var(--lp-surface);
+    color: var(--lp-text);
+    cursor: pointer;
+    font-family: var(--lp-font-body);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .lp-reviews__chip[aria-pressed='true'] {
+    border-color: var(--lp-forest);
+    background: var(--lp-forest);
+    color: var(--lp-on-dark);
+  }
+
+  .lp-reviews__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+    max-width: 900px;
+    margin-inline: auto;
+  }
+
+  .lp-review {
+    padding: 1.5rem;
+    border: 1px solid var(--lp-border);
+    border-radius: var(--lp-radius-lg);
+    background: var(--lp-surface);
+    transition: opacity 0.25s ease;
+  }
+
+  .lp-review.is-dimmed {
+    opacity: 0.45;
+  }
+
+  .lp-review__head {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .lp-review__avatar {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--lp-forest);
+    color: var(--lp-gold-light);
+    font-family: var(--lp-font-body);
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .lp-review__avatar--image {
+    width: 44px;
+    height: 44px;
+    object-fit: cover;
+  }
+
+  .lp-review__name {
+    color: var(--lp-forest);
+    font-family: var(--lp-font-body);
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+
+  .lp-review__meta {
+    color: var(--lp-text-light);
+    font-family: var(--lp-font-body);
+    font-size: 0.75rem;
+  }
+
+  .lp-review__stars {
+    margin-bottom: 0.5rem;
+    color: var(--lp-gold);
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+
+  .lp-review__text {
+    margin: 0;
+    color: var(--lp-text-mid);
+    font-family: var(--lp-font-body);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+
+  .lp-review__tag {
+    display: inline-block;
+    margin-top: 0.75rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 100px;
+    background: var(--lp-bloom);
+    color: var(--lp-text-mid);
+    font-family: var(--lp-font-body);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  @media screen and (max-width: 640px) {
+    .lp-reviews__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  (function () {
+    function init(scope) {
+      var grid = scope.querySelector('[data-lp-reviews-grid]');
+      if (!grid || grid.dataset.lpReviewsBound === 'true') return;
+      grid.dataset.lpReviewsBound = 'true';
+
+      var chips = scope.querySelectorAll('[data-lp-topic]');
+      if (!chips.length) return;
+
+      var original = Array.prototype.slice.call(grid.children);
+
+      function reset() {
+        original.forEach(function (card) {
+          grid.appendChild(card);
+          card.classList.remove('is-dimmed');
+        });
+      }
+
+      chips.forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          var wasActive = chip.getAttribute('aria-pressed') === 'true';
+
+          chips.forEach(function (other) {
+            other.setAttribute('aria-pressed', 'false');
+          });
+
+          if (wasActive) {
+            reset();
+            return;
+          }
+
+          chip.setAttribute('aria-pressed', 'true');
+
+          var topic = chip.dataset.lpTopic;
+          var matched = [];
+          var rest = [];
+
+          original.forEach(function (card) {
+            var topics = card.dataset.lpReviewTopics || '';
+            if (topics.split('-').indexOf(topic) !== -1 || topics.indexOf(topic) !== -1) {
+              matched.push(card);
+            } else {
+              rest.push(card);
+            }
+          });
+
+          matched.concat(rest).forEach(function (card) {
+            grid.appendChild(card);
+            card.classList.toggle('is-dimmed', matched.indexOf(card) === -1);
+          });
+        });
+      });
+    }
+
+    function start() {
+      document.querySelectorAll('.lp-reviews').forEach(init);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', start);
+    } else {
+      start();
+    }
+
+    document.addEventListener('shopify:section:load', start);
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "LP · Reviews",
+  "tag": "section",
+  "class": "lp-reviews-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Hasil Nyata dari Perempuan Nyata"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Judul",
+      "default": "Cerita Menopause"
+    },
+    {
+      "type": "text",
+      "id": "score_text",
+      "label": "Teks skor",
+      "default": "4,8 dari 5 · 10.000+ ulasan"
+    },
+    {
+      "type": "text",
+      "id": "topics_label",
+      "label": "Label filter",
+      "default": "Paling sering disebut di ulasan"
+    },
+    {
+      "type": "header",
+      "content": "Rincian bintang"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_breakdown",
+      "label": "Tampilkan rincian",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "percent_5",
+      "label": "5 bintang",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 86
+    },
+    {
+      "type": "range",
+      "id": "percent_4",
+      "label": "4 bintang",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "percent_3",
+      "label": "3 bintang",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "percent_2",
+      "label": "2 bintang",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "percent_1",
+      "label": "1 bintang",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 1
+    }
+  ],
+  "blocks": [
+    {
+      "type": "topic",
+      "name": "Filter topik",
+      "limit": 8,
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label tombol",
+          "default": "Tidur Lebih Nyenyak"
+        },
+        {
+          "type": "text",
+          "id": "key",
+          "label": "Kata kunci",
+          "default": "tidur",
+          "info": "Harus cocok dengan salah satu kata kunci di ulasan."
+        }
+      ]
+    },
+    {
+      "type": "review",
+      "name": "Ulasan",
+      "limit": 20,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "avatar",
+          "label": "Foto"
+        },
+        {
+          "type": "text",
+          "id": "initials",
+          "label": "Inisial",
+          "default": "SW",
+          "info": "Dipakai bila tidak ada foto."
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Nama",
+          "default": "Sari W."
+        },
+        {
+          "type": "text",
+          "id": "meta",
+          "label": "Keterangan",
+          "default": "53 Tahun · Jakarta · Pembeli Terverifikasi"
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Bintang",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Isi ulasan"
+        },
+        {
+          "type": "text",
+          "id": "tag",
+          "label": "Label kecil"
+        },
+        {
+          "type": "text",
+          "id": "topics",
+          "label": "Kata kunci",
+          "info": "Pisahkan dengan spasi, mis. tidur sendi energi."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "LP · Reviews",
+      "blocks": [
+        { "type": "topic" },
+        { "type": "topic" },
+        { "type": "review" },
+        { "type": "review" },
+        { "type": "review" },
+        { "type": "review" }
+      ]
+    }
+  ]
+}
+{% endschema %}

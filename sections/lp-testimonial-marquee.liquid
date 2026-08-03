@@ -1,0 +1,174 @@
+<div class="lp-tmarquee" style="--lp-tmarquee-duration: {{ section.settings.duration }}s">
+  <div class="lp-tmarquee__track">
+    {% for block in section.blocks %}
+      <figure class="lp-tcard" {{ block.shopify_attributes }}>
+        <div class="lp-tcard__stars" aria-label="{{ block.settings.rating }} dari 5">
+          {%- for i in (1..block.settings.rating) -%}★{%- endfor -%}
+        </div>
+        <blockquote class="lp-tcard__text">{{ block.settings.quote }}</blockquote>
+        <figcaption>
+          <div class="lp-tcard__author">{{ block.settings.author }}</div>
+          <div class="lp-tcard__detail">{{ block.settings.detail }}</div>
+        </figcaption>
+      </figure>
+    {% endfor %}
+
+    {% for block in section.blocks %}
+      <figure class="lp-tcard" aria-hidden="true">
+        <div class="lp-tcard__stars">
+          {%- for i in (1..block.settings.rating) -%}★{%- endfor -%}
+        </div>
+        <blockquote class="lp-tcard__text">{{ block.settings.quote }}</blockquote>
+        <figcaption>
+          <div class="lp-tcard__author">{{ block.settings.author }}</div>
+          <div class="lp-tcard__detail">{{ block.settings.detail }}</div>
+        </figcaption>
+      </figure>
+    {% endfor %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .lp-tmarquee {
+    overflow: hidden;
+    padding-block: 2.5rem;
+    background: var(--lp-bloom);
+  }
+
+  .lp-tmarquee__track {
+    display: flex;
+    gap: 1.25rem;
+    width: max-content;
+    animation: lp-tmarquee-scroll var(--lp-tmarquee-duration, 45s) linear infinite;
+  }
+
+  .lp-tmarquee:hover .lp-tmarquee__track,
+  .lp-tmarquee:focus-within .lp-tmarquee__track {
+    animation-play-state: paused;
+  }
+
+  .lp-tcard {
+    flex: 0 0 330px;
+    margin: 0;
+    padding: 1.5rem;
+    border: 1px solid var(--lp-border);
+    border-radius: var(--lp-radius-lg);
+    background: var(--lp-surface);
+  }
+
+  .lp-tcard__stars {
+    margin-bottom: 0.75rem;
+    color: var(--lp-gold);
+    font-size: 0.875rem;
+    letter-spacing: 0.1em;
+  }
+
+  .lp-tcard__text {
+    margin: 0 0 1rem;
+    color: var(--lp-text);
+    font-family: var(--lp-font-body);
+    font-size: 0.9375rem;
+    font-style: italic;
+    line-height: 1.6;
+    white-space: normal;
+  }
+
+  .lp-tcard__author {
+    color: var(--lp-forest);
+    font-family: var(--lp-font-body);
+    font-size: 0.8125rem;
+    font-weight: 700;
+  }
+
+  .lp-tcard__detail {
+    margin-top: 0.15rem;
+    color: var(--lp-text-light);
+    font-family: var(--lp-font-body);
+    font-size: 0.75rem;
+  }
+
+  @keyframes lp-tmarquee-scroll {
+    from {
+      transform: translateX(0);
+    }
+
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lp-tmarquee__track {
+      overflow-x: auto;
+      animation: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "LP · Testimonial marquee",
+  "tag": "section",
+  "class": "lp-tmarquee-section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "duration",
+      "label": "Durasi satu putaran",
+      "min": 20,
+      "max": 120,
+      "step": 5,
+      "unit": "d",
+      "default": 45,
+      "info": "Makin besar makin lambat."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimoni",
+      "limit": 12,
+      "settings": [
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Bintang",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Kutipan",
+          "default": "Tulis testimoni pelanggan di sini."
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Nama",
+          "default": "Ibu Ratna"
+        },
+        {
+          "type": "text",
+          "id": "detail",
+          "label": "Keterangan",
+          "default": "55 Tahun · Surabaya · Pembeli Terverifikasi"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "LP · Testimonial marquee",
+      "blocks": [
+        { "type": "testimonial" },
+        { "type": "testimonial" },
+        { "type": "testimonial" },
+        { "type": "testimonial" }
+      ]
+    }
+  ]
+}
+{% endschema %}

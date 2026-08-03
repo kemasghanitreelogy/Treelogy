@@ -1,0 +1,290 @@
+<div class="lp-timeline lp-pad lp-reveal">
+  <div class="lp-container">
+    {% if section.settings.eyebrow != blank %}
+      <div class="lp-eyebrow lp-timeline__eyebrow">{{ section.settings.eyebrow }}</div>
+    {% endif %}
+
+    {% if section.settings.heading != blank %}
+      <h2 class="lp-h2 lp-timeline__heading">{{ section.settings.heading }}</h2>
+    {% endif %}
+
+    {% if section.settings.subheading != blank %}
+      <p class="lp-timeline__sub">{{ section.settings.subheading }}</p>
+    {% endif %}
+
+    <div class="lp-timeline__list">
+      {% for block in section.blocks %}
+        <div class="lp-timeline__item lp-reveal" {{ block.shopify_attributes }}>
+          <div class="lp-timeline__period">{{ block.settings.period }}</div>
+          <div class="lp-timeline__content">
+            {% if block.settings.emoji != blank %}
+              <div class="lp-timeline__icon" aria-hidden="true">{{ block.settings.emoji }}</div>
+            {% endif %}
+            <p>
+              {% if block.settings.title != blank %}
+                <strong>{{ block.settings.title }}</strong>
+              {% endif %}
+              {{ block.settings.text }}
+            </p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if section.settings.cta_label != blank %}
+      <div class="lp-timeline__cta">
+        <a class="lp-btn" href="{{ section.settings.cta_url | default: '#' }}">
+          {{- section.settings.cta_label -}}
+        </a>
+        {% if section.settings.cta_note != blank %}
+          <p class="lp-note">{{ section.settings.cta_note }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .lp-timeline {
+    background: var(--lp-cream);
+  }
+
+  .lp-timeline__eyebrow,
+  .lp-timeline__heading,
+  .lp-timeline__sub {
+    text-align: center;
+  }
+
+  .lp-timeline__eyebrow {
+    margin-bottom: 0.75rem;
+  }
+
+  .lp-timeline__sub {
+    max-width: 520px;
+    margin: 0.75rem auto 0;
+    color: var(--lp-text-mid);
+    font-family: var(--lp-font-body);
+    font-size: 0.9375rem;
+  }
+
+  .lp-timeline__list {
+    position: relative;
+    max-width: 680px;
+    margin: 3rem auto 0;
+  }
+
+  .lp-timeline__list::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 54px;
+    width: 2px;
+    background: var(--lp-border);
+  }
+
+  .lp-timeline__item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .lp-timeline__item:last-child {
+    margin-bottom: 0;
+  }
+
+  .lp-timeline__period {
+    position: relative;
+    padding-top: 0.15rem;
+    color: var(--lp-forest);
+    font-family: var(--lp-font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    text-align: right;
+  }
+
+  .lp-timeline__period::after {
+    content: '';
+    position: absolute;
+    top: 0.5rem;
+    right: -1.5rem;
+    width: 10px;
+    height: 10px;
+    border: 2px solid var(--lp-cream);
+    border-radius: 50%;
+    background: var(--lp-gold);
+    transform: translateX(50%);
+  }
+
+  .lp-timeline__content {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.9rem;
+  }
+
+  .lp-timeline__content p {
+    margin: 0;
+    color: var(--lp-text-mid);
+    font-family: var(--lp-font-body);
+    font-size: 0.9375rem;
+    line-height: 1.65;
+  }
+
+  .lp-timeline__content strong {
+    color: var(--lp-forest);
+  }
+
+  .lp-timeline__icon {
+    display: flex;
+    flex: 0 0 44px;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 1.5px solid var(--lp-gold);
+    border-radius: 50%;
+    background: var(--lp-bloom);
+    font-size: 1.3rem;
+    opacity: 0;
+    transform: scale(0.4);
+    transition: transform 0.55s 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s 0.15s ease;
+  }
+
+  .lp-timeline__item.is-visible .lp-timeline__icon {
+    opacity: 1;
+    transform: none;
+  }
+
+  .lp-timeline__cta {
+    margin-top: 2rem;
+    text-align: center;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lp-timeline__icon {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+
+  @media screen and (max-width: 520px) {
+    .lp-timeline__list::before {
+      left: 10px;
+    }
+
+    .lp-timeline__item {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+      padding-left: 2rem;
+    }
+
+    .lp-timeline__period {
+      text-align: left;
+    }
+
+    .lp-timeline__period::after {
+      right: auto;
+      left: -2rem;
+      transform: translateX(-50%);
+    }
+
+    .lp-timeline__icon {
+      flex-basis: 38px;
+      width: 38px;
+      height: 38px;
+      font-size: 1.15rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "LP · Timeline",
+  "tag": "section",
+  "class": "lp-timeline-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Perjalanan Menopause"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Judul",
+      "default": "Apa yang Akan Dirasakan Selama Protokol"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Deskripsi"
+    },
+    {
+      "type": "header",
+      "content": "Tombol"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Label tombol",
+      "default": "Mulai Transformasi"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Tautan tombol"
+    },
+    {
+      "type": "text",
+      "id": "cta_note",
+      "label": "Catatan di bawah tombol",
+      "default": "Garansi Uang Kembali 30 Hari · Gratis Ongkir"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "milestone",
+      "name": "Tahap",
+      "limit": 12,
+      "settings": [
+        {
+          "type": "text",
+          "id": "period",
+          "label": "Periode",
+          "default": "Minggu 1"
+        },
+        {
+          "type": "text",
+          "id": "emoji",
+          "label": "Emoji"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Judul tebal",
+          "default": "Energi mulai terangkat."
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Deskripsi"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "LP · Timeline",
+      "blocks": [
+        { "type": "milestone" },
+        { "type": "milestone" },
+        { "type": "milestone" }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,104 @@
+<div class="lp-ticker" style="--lp-ticker-duration: {{ section.settings.duration }}s">
+  <div class="lp-ticker__track">
+    {% for block in section.blocks %}
+      <span class="lp-ticker__item" {{ block.shopify_attributes }}>{{ block.settings.text }}</span>
+    {% endfor %}
+    {% for block in section.blocks %}
+      <span class="lp-ticker__item" aria-hidden="true">{{ block.settings.text }}</span>
+    {% endfor %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .lp-ticker {
+    overflow: hidden;
+    padding-block: 0.75rem;
+    background: var(--lp-forest);
+    white-space: nowrap;
+  }
+
+  .lp-ticker__track {
+    display: inline-flex;
+    animation: lp-ticker-scroll var(--lp-ticker-duration, 25s) linear infinite;
+  }
+
+  .lp-ticker__item {
+    padding-inline: 2rem;
+    color: var(--lp-gold-light);
+    font-family: var(--lp-font-body);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .lp-ticker__item::after {
+    content: '•';
+    margin-left: 2rem;
+    opacity: 0.4;
+  }
+
+  @keyframes lp-ticker-scroll {
+    from {
+      transform: translateX(0);
+    }
+
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lp-ticker__track {
+      animation: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "LP · Ticker",
+  "tag": "div",
+  "class": "lp-ticker-section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "duration",
+      "label": "Durasi satu putaran",
+      "min": 10,
+      "max": 90,
+      "step": 5,
+      "unit": "d",
+      "default": 25,
+      "info": "Makin besar makin lambat."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Frasa",
+      "limit": 12,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Teks",
+          "default": "Gratis Ongkir"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "LP · Ticker",
+      "blocks": [
+        { "type": "item" },
+        { "type": "item" },
+        { "type": "item" },
+        { "type": "item" },
+        { "type": "item" }
+      ]
+    }
+  ]
+}
+{% endschema %}

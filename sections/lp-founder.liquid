@@ -1,0 +1,320 @@
+<div class="lp-founder lp-pad lp-reveal">
+  <div class="lp-container lp-container--narrow">
+    <div class="lp-founder__avatar">
+      {% if section.settings.avatar %}
+        {{
+          section.settings.avatar
+          | image_url: width: 192
+          | image_tag: widths: '96, 192', sizes: '96px', alt: section.settings.heading
+        }}
+      {% else %}
+        {{ 'lifestyle-1' | placeholder_svg_tag: 'lp-placeholder' }}
+      {% endif %}
+    </div>
+
+    {% if section.settings.eyebrow != blank %}
+      <div class="lp-eyebrow">{{ section.settings.eyebrow }}</div>
+    {% endif %}
+
+    {% if section.settings.heading != blank %}
+      <h2 class="lp-h2 lp-founder__heading">{{ section.settings.heading }}</h2>
+    {% endif %}
+
+    {% if section.settings.role != blank %}
+      <p class="lp-founder__role">{{ section.settings.role }}</p>
+    {% endif %}
+
+    {% if section.settings.content_top != blank %}
+      <div class="lp-founder__text">{{ section.settings.content_top }}</div>
+    {% endif %}
+
+    {% if section.settings.show_compare %}
+      <div class="lp-founder__compare">
+        <div class="lp-founder__compare-labels">
+          <span class="lp-founder__compare-label">{{ section.settings.compare_label_left }}</span>
+          <span class="lp-founder__compare-label lp-founder__compare-label--ours">
+            {{- section.settings.compare_label_right -}}
+          </span>
+        </div>
+
+        {% if section.settings.compare_image %}
+          {{
+            section.settings.compare_image
+            | image_url: width: 760
+            | image_tag:
+              widths: '380, 560, 760',
+              sizes: '(max-width: 480px) 100vw, 380px',
+              loading: 'lazy',
+              alt: section.settings.compare_caption
+          }}
+        {% else %}
+          {{ 'product-2' | placeholder_svg_tag: 'lp-placeholder' }}
+        {% endif %}
+
+        {% if section.settings.compare_caption != blank %}
+          <div class="lp-founder__compare-caption">{{ section.settings.compare_caption }}</div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if section.settings.content_middle != blank %}
+      <div class="lp-founder__text">{{ section.settings.content_middle }}</div>
+    {% endif %}
+
+    {% if section.blocks.size > 0 %}
+      <ul class="lp-founder__list">
+        {% for block in section.blocks %}
+          <li {{ block.shopify_attributes }}>{{ block.settings.text }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    {% if section.settings.highlight != blank %}
+      <div class="lp-founder__highlight">{{ section.settings.highlight }}</div>
+    {% endif %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .lp-founder {
+    background: var(--lp-cream);
+  }
+
+  .lp-founder__avatar {
+    width: 96px;
+    height: 96px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    border: 2px solid var(--lp-gold);
+    border-radius: 50%;
+  }
+
+  .lp-founder__avatar img,
+  .lp-founder__avatar svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .lp-founder__heading {
+    margin-bottom: 0.25rem;
+  }
+
+  .lp-founder__role {
+    margin: 0 0 2rem;
+    color: var(--lp-text-light);
+    font-family: var(--lp-font-body);
+    font-size: 0.875rem;
+  }
+
+  .lp-founder__text {
+    color: var(--lp-text);
+    font-family: var(--lp-font-body);
+    font-size: 1.0625rem;
+    line-height: 1.75;
+  }
+
+  .lp-founder__text p {
+    margin: 0 0 1.25rem;
+  }
+
+  .lp-founder__text strong {
+    color: var(--lp-forest);
+  }
+
+  .lp-founder__compare {
+    margin: 1.75rem auto;
+    text-align: center;
+  }
+
+  .lp-founder__compare-labels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    max-width: 380px;
+    margin-inline: auto;
+  }
+
+  .lp-founder__compare-label {
+    color: var(--lp-text-light);
+    font-family: var(--lp-font-display);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  .lp-founder__compare-label--ours {
+    color: var(--lp-text);
+  }
+
+  .lp-founder__compare img,
+  .lp-founder__compare svg {
+    display: block;
+    width: 100%;
+    max-width: 380px;
+    height: auto;
+    margin-inline: auto;
+  }
+
+  .lp-founder__compare-caption {
+    margin-top: 0.25rem;
+    color: var(--lp-text-light);
+    font-family: var(--lp-font-body);
+    font-size: 0.8125rem;
+  }
+
+  .lp-founder__list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+    margin: 1.25rem 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .lp-founder__list li {
+    position: relative;
+    padding-left: 1.4rem;
+    color: var(--lp-text-mid);
+    font-family: var(--lp-font-body);
+    font-size: 0.9375rem;
+  }
+
+  .lp-founder__list li::before {
+    content: '✗';
+    position: absolute;
+    left: 0;
+    color: var(--lp-alert);
+    font-weight: 700;
+  }
+
+  .lp-founder__highlight {
+    margin: 2rem 0 0;
+    padding: 1.25rem 1.5rem;
+    border-left: 3px solid var(--lp-gold);
+    border-radius: 0 var(--lp-radius) var(--lp-radius) 0;
+    background: var(--lp-bloom);
+    color: var(--lp-text);
+    font-family: var(--lp-font-body);
+    font-style: italic;
+    line-height: 1.7;
+  }
+
+  @media screen and (max-width: 520px) {
+    .lp-founder__list {
+      grid-template-columns: 1fr;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "LP · Founder story",
+  "tag": "section",
+  "class": "lp-founder-section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "avatar",
+      "label": "Foto founder"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Dari Founder"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Judul",
+      "default": "Halo, saya Sacha."
+    },
+    {
+      "type": "text",
+      "id": "role",
+      "label": "Jabatan",
+      "default": "Founder Treelogy"
+    },
+    {
+      "type": "richtext",
+      "id": "content_top",
+      "label": "Cerita bagian atas",
+      "default": "<p>Tulis cerita founder di sini.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Perbandingan visual"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_compare",
+      "label": "Tampilkan perbandingan",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "compare_image",
+      "label": "Gambar perbandingan"
+    },
+    {
+      "type": "text",
+      "id": "compare_label_left",
+      "label": "Label kiri",
+      "default": "Lainnya"
+    },
+    {
+      "type": "text",
+      "id": "compare_label_right",
+      "label": "Label kanan",
+      "default": "Treelogy"
+    },
+    {
+      "type": "text",
+      "id": "compare_caption",
+      "label": "Keterangan",
+      "default": "Daun yang sama. Standar yang berbeda."
+    },
+    {
+      "type": "header",
+      "content": "Bagian bawah"
+    },
+    {
+      "type": "richtext",
+      "id": "content_middle",
+      "label": "Cerita bagian bawah"
+    },
+    {
+      "type": "textarea",
+      "id": "highlight",
+      "label": "Kotak sorotan"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Item daftar",
+      "limit": 8,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Teks",
+          "default": "Perempuan yang berjuang dengan PMS"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "LP · Founder story",
+      "blocks": [
+        { "type": "item" },
+        { "type": "item" },
+        { "type": "item" },
+        { "type": "item" }
+      ]
+    }
+  ]
+}
+{% endschema %}

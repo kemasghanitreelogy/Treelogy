@@ -1,0 +1,219 @@
+<div class="lp-compare lp-pad lp-reveal">
+  <div class="lp-container">
+    {% if section.settings.eyebrow != blank %}
+      <div class="lp-eyebrow lp-compare__eyebrow">{{ section.settings.eyebrow }}</div>
+    {% endif %}
+
+    {% if section.settings.heading != blank %}
+      <h2 class="lp-h2 lp-compare__heading">{{ section.settings.heading }}</h2>
+    {% endif %}
+
+    <div class="lp-compare__table">
+      <div class="lp-compare__head">
+        <div>{{ section.settings.column_left }}</div>
+        <div class="lp-compare__vs">{{ section.settings.divider_label }}</div>
+        <div>{{ section.settings.column_right }}</div>
+      </div>
+
+      {% for block in section.blocks %}
+        <div class="lp-compare__row" {{ block.shopify_attributes }}>
+          <div class="lp-compare__good">{{ block.settings.left }}</div>
+          <div class="lp-compare__dot" aria-hidden="true">•</div>
+          <div class="lp-compare__bad">{{ block.settings.right }}</div>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if section.settings.cta_label != blank %}
+      <div class="lp-compare__cta">
+        <a class="lp-btn" href="{{ section.settings.cta_url | default: '#' }}">
+          {{- section.settings.cta_label -}}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .lp-compare {
+    background: var(--lp-bloom);
+  }
+
+  .lp-compare__eyebrow,
+  .lp-compare__heading {
+    text-align: center;
+  }
+
+  .lp-compare__eyebrow {
+    margin-bottom: 0.75rem;
+  }
+
+  .lp-compare__heading {
+    margin-bottom: 2.5rem;
+  }
+
+  .lp-compare__table {
+    overflow: hidden;
+    max-width: 800px;
+    margin-inline: auto;
+    border: 1px solid var(--lp-border);
+    border-radius: var(--lp-radius-lg);
+  }
+
+  .lp-compare__head {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    background: var(--lp-forest);
+    color: var(--lp-on-dark);
+    font-family: var(--lp-font-body);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .lp-compare__head > div {
+    padding: 1rem;
+  }
+
+  .lp-compare__vs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-inline: 0.5rem;
+    font-size: 0.75rem;
+    opacity: 0.5;
+  }
+
+  .lp-compare__row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    border-bottom: 1px solid var(--lp-border);
+    background: var(--lp-surface);
+    font-family: var(--lp-font-body);
+    font-size: 0.9375rem;
+    text-align: center;
+  }
+
+  .lp-compare__row:last-child {
+    border-bottom: none;
+  }
+
+  .lp-compare__row > div {
+    padding: 0.85rem 1rem;
+  }
+
+  .lp-compare__good {
+    color: var(--lp-forest);
+    font-weight: 600;
+  }
+
+  .lp-compare__bad {
+    color: var(--lp-text-light);
+  }
+
+  .lp-compare__dot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--lp-text-light);
+    font-size: 0.75rem;
+  }
+
+  .lp-compare__cta {
+    margin-top: 2.5rem;
+    text-align: center;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "LP · Comparison table",
+  "tag": "section",
+  "class": "lp-compare-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Pilihan yang Lebih Aman"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Judul",
+      "default": "Satu Daun vs. Semua yang Pernah Kamu Coba"
+    },
+    {
+      "type": "header",
+      "content": "Kolom"
+    },
+    {
+      "type": "text",
+      "id": "column_left",
+      "label": "Judul kolom kiri",
+      "default": "Inside Out Protocol"
+    },
+    {
+      "type": "text",
+      "id": "divider_label",
+      "label": "Pemisah",
+      "default": "VS"
+    },
+    {
+      "type": "text",
+      "id": "column_right",
+      "label": "Judul kolom kanan",
+      "default": "Suplemen · Hormon · Bertahan Tanpa Solusi"
+    },
+    {
+      "type": "header",
+      "content": "Tombol"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Label tombol",
+      "default": "Pilih Jalan Alami"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Tautan tombol"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "row",
+      "name": "Baris",
+      "limit": 20,
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "left",
+          "label": "Kolom kiri",
+          "default": "100% alami, pangan utuh (whole food)"
+        },
+        {
+          "type": "textarea",
+          "id": "right",
+          "label": "Kolom kanan",
+          "default": "Hormon sintetis atau senyawa lab"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "LP · Comparison table",
+      "blocks": [
+        { "type": "row" },
+        { "type": "row" },
+        { "type": "row" },
+        { "type": "row" }
+      ]
+    }
+  ]
+}
+{% endschema %}

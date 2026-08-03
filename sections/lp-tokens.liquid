@@ -1,0 +1,437 @@
+{% liquid
+  assign body_font = section.settings.body_font
+  assign body_font_bold = body_font | font_modify: 'weight', 'bold'
+  assign body_font_italic = body_font | font_modify: 'style', 'italic'
+  assign heading_font = section.settings.heading_font
+  assign heading_font_bold = heading_font | font_modify: 'weight', 'bold'
+  assign heading_font_italic = heading_font | font_modify: 'style', 'italic'
+%}
+
+{% style %}
+  {{ body_font | font_face: font_display: 'swap' }}
+  {{ body_font_bold | font_face: font_display: 'swap' }}
+  {{ body_font_italic | font_face: font_display: 'swap' }}
+  {{ heading_font | font_face: font_display: 'swap' }}
+  {{ heading_font_bold | font_face: font_display: 'swap' }}
+  {{ heading_font_italic | font_face: font_display: 'swap' }}
+
+  :root {
+    --lp-forest: {{ section.settings.color_forest }};
+    --lp-forest-deep: {{ section.settings.color_forest_deep }};
+    --lp-leaf-hover: {{ section.settings.color_forest_deep }};
+    --lp-gold: {{ section.settings.color_gold }};
+    --lp-gold-light: {{ section.settings.color_gold_light }};
+    --lp-cream: {{ section.settings.color_cream }};
+    --lp-bloom: {{ section.settings.color_bloom }};
+    --lp-surface: {{ section.settings.color_surface }};
+    --lp-text: {{ section.settings.color_text }};
+    --lp-text-mid: {{ section.settings.color_text_mid }};
+    --lp-text-light: {{ section.settings.color_text_light }};
+    --lp-border: {{ section.settings.color_border }};
+    --lp-alert: {{ section.settings.color_alert }};
+    --lp-on-dark: {{ section.settings.color_on_dark }};
+    --lp-font-display: {{ heading_font.family }}, {{ heading_font.fallback_families }};
+    --lp-font-body: {{ body_font.family }}, {{ body_font.fallback_families }};
+    --lp-max-w: {{ section.settings.container_width }}px;
+    --lp-max-w-narrow: {{ section.settings.container_width_narrow }}px;
+    --lp-radius: {{ section.settings.radius }}px;
+    --lp-radius-lg: {{ section.settings.radius_large }}px;
+    --lp-pad-block: {{ section.settings.section_padding }}px;
+    --lp-pad-block-mobile: {{ section.settings.section_padding_mobile }}px;
+  }
+{% endstyle %}
+
+{% if section.settings.chromeless %}
+  <div class="lp-chromeless" hidden></div>
+{% endif %}
+
+{% stylesheet %}
+  body:has(.lp-chromeless) [id^='shopify-section-header' i],
+  body:has(.lp-chromeless) [id^='shopify-section-footer' i],
+  body:has(.lp-chromeless) [id^='shopify-section-announcement' i] {
+    display: none !important;
+  }
+
+  body:has(.lp-chromeless) {
+    overflow-x: hidden;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: var(--lp-cream);
+  }
+
+  body:has(.lp-chromeless) #landing-page,
+  body:has(.lp-chromeless) main#landing-page {
+    display: block;
+    min-height: 100dvh;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .lp-container {
+    width: 100%;
+    max-width: var(--lp-max-w);
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+
+  .lp-container--narrow {
+    max-width: var(--lp-max-w-narrow);
+  }
+
+  .lp-pad {
+    padding-block: var(--lp-pad-block);
+  }
+
+  .lp-eyebrow {
+    font-family: var(--lp-font-body);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--lp-gold);
+  }
+
+  .lp-h1,
+  .lp-h2,
+  .lp-h3 {
+    font-family: var(--lp-font-display);
+    line-height: 1.15;
+    text-wrap: balance;
+    color: var(--lp-forest);
+    margin: 0;
+  }
+
+  .lp-h1 {
+    font-size: clamp(2.1rem, 5.5vw, 3.25rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+
+  .lp-h2 {
+    font-size: clamp(1.6rem, 4vw, 2.35rem);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
+
+  .lp-h3 {
+    font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .lp-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem 2.5rem;
+    background: var(--lp-forest);
+    color: #fff;
+    font-family: var(--lp-font-body);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-radius: var(--lp-radius);
+    text-decoration: none;
+    transition: background 0.2s ease, transform 0.15s ease;
+  }
+
+  .lp-btn:hover {
+    background: var(--lp-leaf-hover);
+    transform: translateY(-1px);
+  }
+
+  .lp-btn:active {
+    transform: translateY(0);
+  }
+
+  .lp-btn:focus-visible {
+    outline: 2px solid var(--lp-forest);
+    outline-offset: 3px;
+  }
+
+  .lp-btn--gold {
+    background: var(--lp-gold);
+    color: var(--lp-forest-deep);
+  }
+
+  .lp-btn--gold:hover {
+    background: var(--lp-gold-light);
+  }
+
+  .lp-note {
+    font-size: 0.8125rem;
+    color: var(--lp-text-light);
+    margin: 0.75rem 0 0;
+  }
+
+  .lp-placeholder {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: var(--lp-bloom);
+    fill: color-mix(in srgb, var(--lp-forest) 22%, transparent);
+  }
+
+  .lp-reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .lp-reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lp-reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .lp-pad {
+      padding-block: var(--lp-pad-block-mobile);
+    }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  (function () {
+    function reveal() {
+      var nodes = document.querySelectorAll('.lp-reveal:not(.is-visible)');
+      if (!nodes.length) return;
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        nodes.forEach(function (el) {
+          el.classList.add('is-visible');
+        });
+        return;
+      }
+
+      var observer = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          });
+        },
+        { threshold: 0.1 }
+      );
+
+      nodes.forEach(function (el) {
+        observer.observe(el);
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', reveal);
+    } else {
+      reveal();
+    }
+
+    document.addEventListener('shopify:section:load', reveal);
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "LP · Design tokens",
+  "tag": "div",
+  "class": "lp-tokens",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Atur warna dan font untuk seluruh seksi LP di halaman ini. Letakkan seksi ini paling atas."
+    },
+    {
+      "type": "checkbox",
+      "id": "chromeless",
+      "label": "Sembunyikan header dan footer toko",
+      "default": true,
+      "info": "Halaman tampil penuh tanpa navigasi, seperti landing page berdiri sendiri."
+    },
+    {
+      "type": "header",
+      "content": "Font"
+    },
+    {
+      "type": "font_picker",
+      "id": "heading_font",
+      "label": "Font judul",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "font_picker",
+      "id": "body_font",
+      "label": "Font teks",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "header",
+      "content": "Warna utama"
+    },
+    {
+      "type": "color",
+      "id": "color_forest",
+      "label": "Hijau utama",
+      "default": "#2a3b34"
+    },
+    {
+      "type": "color",
+      "id": "color_forest_deep",
+      "label": "Hijau gelap",
+      "default": "#1a2b24"
+    },
+    {
+      "type": "color",
+      "id": "color_gold",
+      "label": "Aksen emas",
+      "default": "#f5d053"
+    },
+    {
+      "type": "color",
+      "id": "color_gold_light",
+      "label": "Aksen emas terang",
+      "default": "#f8dc6d"
+    },
+    {
+      "type": "color",
+      "id": "color_alert",
+      "label": "Warna peringatan",
+      "default": "#c45b4a"
+    },
+    {
+      "type": "header",
+      "content": "Latar dan permukaan"
+    },
+    {
+      "type": "color",
+      "id": "color_cream",
+      "label": "Latar terang",
+      "default": "#f8f8f2"
+    },
+    {
+      "type": "color",
+      "id": "color_bloom",
+      "label": "Latar alternatif",
+      "default": "#eae9dc"
+    },
+    {
+      "type": "color",
+      "id": "color_surface",
+      "label": "Permukaan kartu",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "color_border",
+      "label": "Garis tepi",
+      "default": "#d6d4c8"
+    },
+    {
+      "type": "header",
+      "content": "Teks"
+    },
+    {
+      "type": "color",
+      "id": "color_text",
+      "label": "Teks utama",
+      "default": "#2a3b34"
+    },
+    {
+      "type": "color",
+      "id": "color_text_mid",
+      "label": "Teks sekunder",
+      "default": "#6c7257"
+    },
+    {
+      "type": "color",
+      "id": "color_text_light",
+      "label": "Teks samar",
+      "default": "#8f9561"
+    },
+    {
+      "type": "color",
+      "id": "color_on_dark",
+      "label": "Teks di atas latar gelap",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Tata letak"
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "label": "Lebar kontainer",
+      "min": 900,
+      "max": 1440,
+      "step": 20,
+      "unit": "px",
+      "default": 1120
+    },
+    {
+      "type": "range",
+      "id": "container_width_narrow",
+      "label": "Lebar kontainer sempit",
+      "min": 560,
+      "max": 900,
+      "step": 20,
+      "unit": "px",
+      "default": 720
+    },
+    {
+      "type": "range",
+      "id": "radius",
+      "label": "Sudut membulat",
+      "min": 0,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "radius_large",
+      "label": "Sudut membulat besar",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Jarak vertikal seksi (desktop)",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "section_padding_mobile",
+      "label": "Jarak vertikal seksi (mobile)",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    }
+  ],
+  "presets": [
+    {
+      "name": "LP · Design tokens"
+    }
+  ]
+}
+{% endschema %}

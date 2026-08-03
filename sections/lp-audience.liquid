@@ -1,0 +1,223 @@
+{% liquid
+  assign cards = section.blocks | where: 'type', 'card'
+  assign exclusions = section.blocks | where: 'type', 'exclusion'
+%}
+
+<div class="lp-audience lp-pad lp-reveal">
+  <div class="lp-container">
+    {% if section.settings.eyebrow != blank %}
+      <div class="lp-eyebrow lp-audience__eyebrow">{{ section.settings.eyebrow }}</div>
+    {% endif %}
+
+    {% if section.settings.heading != blank %}
+      <h2 class="lp-h2 lp-audience__heading">{{ section.settings.heading }}</h2>
+    {% endif %}
+
+    {% if cards.size > 0 %}
+      <div class="lp-audience__grid">
+        {% for block in cards %}
+          <div class="lp-audience__card" {{ block.shopify_attributes }}>
+            {% if block.settings.emoji != blank %}
+              <div class="lp-audience__icon" aria-hidden="true">{{ block.settings.emoji }}</div>
+            {% endif %}
+
+            {% if block.settings.title != blank %}
+              <h3 class="lp-h3 lp-audience__card-title">{{ block.settings.title }}</h3>
+            {% endif %}
+
+            {% if block.settings.text != blank %}
+              <p class="lp-audience__card-text">{{ block.settings.text }}</p>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if exclusions.size > 0 %}
+      <div class="lp-audience__not">
+        {% if section.settings.exclusion_heading != blank %}
+          <h3 class="lp-h3 lp-audience__not-title">{{ section.settings.exclusion_heading }}</h3>
+        {% endif %}
+
+        <ul class="lp-audience__not-list">
+          {% for block in exclusions %}
+            <li {{ block.shopify_attributes }}>
+              <span aria-hidden="true">✗</span>
+              {{ block.settings.text }}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .lp-audience {
+    background: var(--lp-forest);
+    color: var(--lp-on-dark);
+  }
+
+  .lp-audience__eyebrow,
+  .lp-audience__heading {
+    text-align: center;
+  }
+
+  .lp-audience__eyebrow {
+    color: var(--lp-gold-light);
+    margin-bottom: 0.75rem;
+  }
+
+  .lp-audience__heading {
+    margin-bottom: 2.5rem;
+    color: var(--lp-on-dark);
+  }
+
+  .lp-audience__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+    max-width: 800px;
+    margin: 0 auto 3rem;
+  }
+
+  .lp-audience__card {
+    padding: 1.5rem;
+    border: 1px solid rgb(255 255 255 / 10%);
+    border-radius: var(--lp-radius-lg);
+    background: rgb(255 255 255 / 5%);
+  }
+
+  .lp-audience__icon {
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+  }
+
+  .lp-audience__card-title {
+    margin-bottom: 0.35rem;
+    color: var(--lp-on-dark);
+    font-size: 1rem;
+  }
+
+  .lp-audience__card-text {
+    margin: 0;
+    color: rgb(255 255 255 / 60%);
+    font-family: var(--lp-font-body);
+    font-size: 0.875rem;
+  }
+
+  .lp-audience__not {
+    max-width: 600px;
+    margin-inline: auto;
+    padding-top: 2rem;
+    border-top: 1px solid rgb(255 255 255 / 10%);
+    text-align: center;
+  }
+
+  .lp-audience__not-title {
+    margin-bottom: 1rem;
+    color: var(--lp-gold-light);
+  }
+
+  .lp-audience__not-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: rgb(255 255 255 / 50%);
+    font-family: var(--lp-font-body);
+    font-size: 0.9375rem;
+  }
+
+  @media screen and (max-width: 520px) {
+    .lp-audience__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .lp-audience__not-list {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "LP · Audience",
+  "tag": "section",
+  "class": "lp-audience-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Judul",
+      "default": "Untuk Siapa Inside Out Protocol Ini?"
+    },
+    {
+      "type": "text",
+      "id": "exclusion_heading",
+      "label": "Judul blok pengecualian",
+      "default": "Untuk Siapa Produk Ini TIDAK Cocok?"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Kartu audiens",
+      "limit": 10,
+      "settings": [
+        {
+          "type": "text",
+          "id": "emoji",
+          "label": "Emoji"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Judul",
+          "default": "Perempuan dengan Nyeri Sendi & Lutut"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Deskripsi"
+        }
+      ]
+    },
+    {
+      "type": "exclusion",
+      "name": "Pengecualian",
+      "limit": 6,
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Teks",
+          "default": "Yang alergi terhadap Moringa oleifera"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "LP · Audience",
+      "blocks": [
+        { "type": "card" },
+        { "type": "card" },
+        { "type": "card" },
+        { "type": "card" },
+        { "type": "exclusion" },
+        { "type": "exclusion" }
+      ]
+    }
+  ]
+}
+{% endschema %}
