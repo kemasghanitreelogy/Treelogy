@@ -8,15 +8,9 @@
       <h2 class="lp-h2 lp-faq__heading">{{ section.settings.heading }}</h2>
     {% endif %}
 
-    <div class="lp-faq__list">
+    <div class="lp-faq__list" data-lp-faq{% if section.settings.exclusive %} data-lp-faq-exclusive{% endif %}>
       {% for block in section.blocks %}
-        <details
-          class="lp-faq__item"
-          {% if section.settings.exclusive %}
-            name="lp-faq-{{ section.id }}"
-          {% endif %}
-          {{ block.shopify_attributes }}
-        >
+        <details class="lp-faq__item" {{ block.shopify_attributes }}>
           <summary class="lp-faq__q">
             <span>{{ block.settings.question }}</span>
             <span class="lp-faq__icon" aria-hidden="true">+</span>
@@ -81,6 +75,7 @@
 
   .lp-faq__icon {
     flex-shrink: 0;
+    transform-origin: center;
     color: var(--lp-text-light);
     font-size: 1.25rem;
     transition: transform 0.3s ease;
@@ -106,18 +101,109 @@
     margin-bottom: 0;
   }
 
-  @media (prefers-reduced-motion: no-preference) {
-    .lp-faq__item::details-content {
-      overflow: hidden;
-      block-size: 0;
-      transition: block-size 0.35s ease, content-visibility 0.35s allow-discrete;
-    }
-
-    .lp-faq__item[open]::details-content {
-      block-size: auto;
-    }
+  .lp-faq .lp-faq__a {
+    overflow: hidden;
   }
 {% endstylesheet %}
+
+{% javascript %}
+  (function () {
+    var EASE = 'cubic-bezier(0.2, 0, 0, 1)';
+    var OPEN_MS = 420;
+    var CLOSE_MS = 300;
+
+    function reducedMotion() {
+      return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    }
+
+    function init(list) {
+      if (list.dataset.lpFaqBound === 'true') return;
+      list.dataset.lpFaqBound = 'true';
+
+      var exclusive = list.hasAttribute('data-lp-faq-exclusive');
+      var items = Array.prototype.slice.call(list.querySelectorAll('.lp-faq__item'));
+
+      function panel(item) {
+        return item.querySelector('.lp-faq__a');
+      }
+
+      function stop(item) {
+        var body = panel(item);
+        if (!body) return;
+        body.getAnimations().forEach(function (a) { a.cancel(); });
+      }
+
+      function expand(item) {
+        var body = panel(item);
+        item.open = true;
+        if (!body || reducedMotion()) return;
+        stop(item);
+        var height = body.scrollHeight;
+        body.animate(
+          [
+            { height: '0px', opacity: 0, transform: 'translateY(-6px)' },
+            { height: height + 'px', opacity: 1, transform: 'none' }
+          ],
+          { duration: OPEN_MS, easing: EASE }
+        );
+      }
+
+      function collapse(item) {
+        var body = panel(item);
+        if (!body || reducedMotion()) {
+          item.open = false;
+          return;
+        }
+        stop(item);
+        var height = body.scrollHeight;
+        var anim = body.animate(
+          [
+            { height: height + 'px', opacity: 1, transform: 'none' },
+            { height: '0px', opacity: 0, transform: 'translateY(-6px)' }
+          ],
+          { duration: CLOSE_MS, easing: EASE }
+        );
+        anim.finished.then(function () {
+          item.open = false;
+        }).catch(function () {});
+      }
+
+      items.forEach(function (item) {
+        var summary = item.querySelector('summary');
+        if (!summary) return;
+
+        summary.addEventListener('click', function (event) {
+          event.preventDefault();
+
+          if (item.open) {
+            collapse(item);
+            return;
+          }
+
+          if (exclusive) {
+            items.forEach(function (other) {
+              if (other !== item && other.open) collapse(other);
+            });
+          }
+
+          expand(item);
+        });
+      });
+    }
+
+    function start() {
+      document.querySelectorAll('[data-lp-faq]').forEach(init);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', start);
+    } else {
+      start();
+    }
+
+    document.addEventListener('shopify:section:load', start);
+  })();
+{% endjavascript %}
 
 {% schema %}
 {
