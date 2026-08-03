@@ -16,6 +16,10 @@
             {%- endif -%}
             {%- if block.settings.registration != blank -%}
               <span class="io-compliance__nie">{{ block.settings.registration | escape }}</span>
+            {%- elsif request.design_mode -%}
+              <span class="io-compliance__nie io-compliance__nie--missing">
+                Nomor izin edar belum diisi
+              </span>
             {%- endif -%}
           </li>
         {%- endfor -%}
@@ -104,6 +108,11 @@
     font-weight: 600;
     letter-spacing: 0.02em;
     color: var(--io-text);
+  }
+
+  .io-compliance__nie--missing {
+    color: var(--io-clay);
+    font-weight: 500;
   }
 
   .io-compliance__warnings {
@@ -245,8 +254,8 @@
           "type": "text",
           "id": "registration",
           "label": "Registration number",
-          "info": "Format: POM followed by two letters and nine digits.",
-          "default": "POM XX000000000"
+          "info": "Format: POM followed by two letters and nine digits. Leave empty until you have the real number: showing a made-up one is worse than showing none.",
+          "default": ""
         }
       ]
     }

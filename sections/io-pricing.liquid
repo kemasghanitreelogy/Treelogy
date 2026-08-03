@@ -34,6 +34,23 @@
           if io_product != blank
             assign io_has_product = true
           endif
+
+          assign io_position = block.settings.variant_position
+          assign io_pick_variant = false
+          if io_position > 0
+            assign io_index = io_position | minus: 1
+            if io_product.variants[io_index] != blank
+              assign io_variant = io_product.variants[io_index]
+              assign io_pick_variant = true
+            endif
+          endif
+
+          assign io_show_variant_select = false
+          if io_has_product and io_pick_variant == false
+            unless io_product.has_only_default_variant or io_product.variants.size == 1
+              assign io_show_variant_select = true
+            endunless
+          endif
           assign io_title = block.settings.title
           if io_title == blank
             assign io_title = io_product.title
@@ -133,7 +150,7 @@
                   </a>
                 {%- else -%}
                   {%- form 'product', io_product, id: null, class: 'io-plan__form' -%}
-                    {%- if io_product.has_only_default_variant or io_product.variants.size == 1 -%}
+                    {%- unless io_show_variant_select -%}
                       <input type="hidden" name="id" value="{{ io_variant.id }}">
                     {%- else -%}
                       <div class="io-plan__variants">
@@ -166,7 +183,7 @@
                           {%- endfor -%}
                         </select>
                       </div>
-                    {%- endif -%}
+                    {%- endunless -%}
 
                     <input type="hidden" name="quantity" value="1">
 
@@ -551,6 +568,16 @@
           "type": "product",
           "id": "product",
           "label": "Product"
+        },
+        {
+          "type": "range",
+          "id": "variant_position",
+          "label": "Which variant this plan sells",
+          "info": "0 lets the shopper choose from a dropdown. Use 1, 2, 3 to lock the card to the first, second or third variant, which is what you want when one product holds several pack sizes.",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "default": 0
         },
         {
           "type": "checkbox",

@@ -716,6 +716,8 @@
         "plan_60": {
           "type": "plan",
           "settings": {
+            "product": "moringa-inside-out-protocol",
+            "variant_position": 2,
             "featured": true,
             "tag": "Paling Sering Dipilih",
             "title": "Protokol Inside Out 60 Hari",
@@ -737,6 +739,8 @@
         "plan_30": {
           "type": "plan",
           "settings": {
+            "product": "moringa-inside-out-protocol",
+            "variant_position": 1,
             "featured": false,
             "tag": "Untuk Mencoba",
             "title": "Protokol Inside Out 30 Hari",
@@ -759,14 +763,15 @@
           "type": "plan",
           "settings": {
             "product": "organic-moringa-capsules",
+            "variant_position": 0,
             "featured": false,
             "tag": "Kapsul Saja",
             "title": "Organic Moringa Capsules",
             "description": "Mulai dari kapsulnya dulu. Minyaknya bisa ditambahkan kapan saja.",
-            "value_stack": "Ongkos Kirim|Gratis",
+            "value_stack": "Pilihan|90 atau 180 kapsul\nOngkos Kirim|Gratis",
             "compare_label": "Harga normal",
             "price_label": "Harga",
-            "days": 30,
+            "days": 0,
             "per_day_label": "Setara per hari:",
             "action": "cart",
             "button_label": "Tambah ke Keranjang",
@@ -799,7 +804,7 @@
           "settings": {
             "product_name": "Organic Moringa Capsules",
             "category": "Obat Tradisional",
-            "registration": "POM XX000000000"
+            "registration": ""
           }
         },
         "reg_oil": {
@@ -807,7 +812,7 @@
           "settings": {
             "product_name": "Moringa Cold-Pressed Seed Oil",
             "category": "Kosmetika",
-            "registration": "POM XX000000000"
+            "registration": ""
           }
         }
       },
