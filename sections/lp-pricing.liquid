@@ -137,7 +137,11 @@
                   assign plan_href = block.settings.cta_url | default: '#'
                   if block.settings.variant_id != blank
                     assign qty = block.settings.quantity | default: 1
-                    assign plan_href = '/cart/' | append: block.settings.variant_id | append: ':' | append: qty
+                    if block.settings.variant_id contains ':'
+                      assign plan_href = '/cart/' | append: block.settings.variant_id
+                    else
+                      assign plan_href = '/cart/' | append: block.settings.variant_id | append: ':' | append: qty
+                    endif
                     if block.settings.discount_code != blank
                       assign plan_href = plan_href | append: '?discount=' | append: block.settings.discount_code
                     endif
@@ -729,7 +733,7 @@
           "type": "text",
           "id": "variant_id",
           "label": "ID varian (langsung ke checkout)",
-          "info": "Isi untuk melewati halaman produk. Kosongkan untuk memakai Tautan tombol di bawah."
+          "info": "Isi untuk melewati halaman produk. Bisa beberapa item sekaligus, mis. 123:1,456:1 (hadiah otomatis jadi Rp 0). Kosongkan untuk memakai Tautan tombol."
         },
         {
           "type": "range",
