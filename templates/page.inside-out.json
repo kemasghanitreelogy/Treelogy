@@ -22,7 +22,11 @@
       "blocks": {
         "proof_customers": {
           "type": "proof",
-          "settings": { "icon": "heart", "highlight": "10.000+", "text": "pelanggan Treelogy" }
+          "settings": {
+            "icon": "heart",
+            "highlight": "10.000+",
+            "text": "pelanggan Treelogy"
+          }
         },
         "proof_rating": {
           "type": "rating",
@@ -34,14 +38,27 @@
         },
         "proof_origin": {
           "type": "proof",
-          "settings": { "icon": "sprout", "highlight": "", "text": "Ditanam & diolah di Bali" }
+          "settings": {
+            "icon": "sprout",
+            "highlight": "",
+            "text": "Ditanam & diolah di Bali"
+          }
         },
         "proof_bpom": {
           "type": "proof",
-          "settings": { "icon": "shield", "highlight": "", "text": "Terdaftar BPOM & Halal" }
+          "settings": {
+            "icon": "shield",
+            "highlight": "",
+            "text": "Terdaftar BPOM & Halal"
+          }
         }
       },
-      "block_order": ["proof_customers", "proof_rating", "proof_origin", "proof_bpom"],
+      "block_order": [
+        "proof_customers",
+        "proof_rating",
+        "proof_origin",
+        "proof_bpom"
+      ],
       "settings": {
         "color_scheme": "cream",
         "badge": "Untuk Perempuan di Masa Henti Haid",
@@ -62,41 +79,114 @@
     "io_trust": {
       "type": "io-badge-strip",
       "blocks": {
-        "b_bpom": { "type": "badge", "settings": { "icon": "shield", "text": "Terdaftar BPOM" } },
-        "b_halal": { "type": "badge", "settings": { "icon": "award", "text": "Bersertifikat Halal" } },
-        "b_organic": { "type": "badge", "settings": { "icon": "sprout", "text": "Organik" } },
-        "b_stemfree": { "type": "badge", "settings": { "icon": "leaf", "text": "Bebas Batang" } },
-        "b_bali": { "type": "badge", "settings": { "icon": "heart", "text": "Kebun Sendiri di Bali" } },
-        "b_return": { "type": "badge", "settings": { "icon": "truck", "text": "Gratis Ongkir" } }
+        "b_bpom": {
+          "type": "badge",
+          "settings": {
+            "icon": "shield",
+            "text": "Terdaftar BPOM"
+          }
+        },
+        "b_halal": {
+          "type": "badge",
+          "settings": {
+            "icon": "award",
+            "text": "Bersertifikat Halal"
+          }
+        },
+        "b_organic": {
+          "type": "badge",
+          "settings": {
+            "icon": "sprout",
+            "text": "Organik"
+          }
+        },
+        "b_stemfree": {
+          "type": "badge",
+          "settings": {
+            "icon": "leaf",
+            "text": "Bebas Batang"
+          }
+        },
+        "b_bali": {
+          "type": "badge",
+          "settings": {
+            "icon": "heart",
+            "text": "Kebun Sendiri di Bali"
+          }
+        },
+        "b_return": {
+          "type": "badge",
+          "settings": {
+            "icon": "truck",
+            "text": "Gratis Ongkir"
+          }
+        }
       },
-      "block_order": ["b_bpom", "b_halal", "b_organic", "b_stemfree", "b_bali", "b_return"],
-      "settings": { "layout": "grid", "color_scheme": "white", "speed": 40 }
+      "block_order": [
+        "b_bpom",
+        "b_halal",
+        "b_organic",
+        "b_stemfree",
+        "b_bali",
+        "b_return"
+      ],
+      "settings": {
+        "layout": "grid",
+        "color_scheme": "white",
+        "speed": 40
+      }
     },
     "io_problem": {
       "type": "io-checklist",
       "blocks": {
         "p_joints": {
           "type": "item",
-          "settings": { "icon": "check", "title": "", "text": "Lutut terasa nyeri saat naik tangga, jari kaku di pagi hari." }
+          "settings": {
+            "icon": "check",
+            "title": "",
+            "text": "Lutut terasa nyeri saat naik tangga, jari kaku di pagi hari."
+          }
         },
         "p_energy": {
           "type": "item",
-          "settings": { "icon": "check", "title": "", "text": "Tenaga habis sebelum sore, padahal aktivitas biasa saja." }
+          "settings": {
+            "icon": "check",
+            "title": "",
+            "text": "Tenaga habis sebelum sore, padahal aktivitas biasa saja."
+          }
         },
         "p_sleep": {
           "type": "item",
-          "settings": { "icon": "check", "title": "", "text": "Sering terbangun tengah malam, bangun pagi tetap terasa lelah." }
+          "settings": {
+            "icon": "check",
+            "title": "",
+            "text": "Sering terbangun tengah malam, bangun pagi tetap terasa lelah."
+          }
         },
         "p_skin": {
           "type": "item",
-          "settings": { "icon": "check", "title": "", "text": "Kulit terasa lebih kering, rambut menipis, kuku mudah patah." }
+          "settings": {
+            "icon": "check",
+            "title": "",
+            "text": "Kulit terasa lebih kering, rambut menipis, kuku mudah patah."
+          }
         },
         "p_tried": {
           "type": "item",
-          "settings": { "icon": "check", "title": "", "text": "Sudah mencoba beberapa suplemen, tapi belum menemukan yang cocok." }
+          "settings": {
+            "icon": "check",
+            "title": "",
+            "text": "Sudah mencoba beberapa suplemen, tapi belum menemukan yang cocok."
+          }
         }
       },
-      "block_order": ["p_joints", "p_energy", "p_sleep", "p_skin", "p_tried"],
+      "block_order": [
+        "p_joints",
+        "p_energy",
+        "p_sleep",
+        "p_skin",
+        "p_tried"
+      ],
       "settings": {
         "color_scheme": "cream",
         "tone": "positive",
@@ -112,10 +202,38 @@
     "io_reviews": {
       "type": "io-reviews",
       "blocks": {
-        "chip_joints": { "type": "topic", "settings": { "icon": "bone", "label": "Sendi & Lutut", "key": "sendi" } },
-        "chip_sleep": { "type": "topic", "settings": { "icon": "moon", "label": "Tidur", "key": "tidur" } },
-        "chip_energy": { "type": "topic", "settings": { "icon": "bolt", "label": "Energi", "key": "energi" } },
-        "chip_skin": { "type": "topic", "settings": { "icon": "sparkles", "label": "Kulit & Rambut", "key": "kulit" } },
+        "chip_joints": {
+          "type": "topic",
+          "settings": {
+            "icon": "bone",
+            "label": "Sendi & Lutut",
+            "key": "sendi"
+          }
+        },
+        "chip_sleep": {
+          "type": "topic",
+          "settings": {
+            "icon": "moon",
+            "label": "Tidur",
+            "key": "tidur"
+          }
+        },
+        "chip_energy": {
+          "type": "topic",
+          "settings": {
+            "icon": "bolt",
+            "label": "Energi",
+            "key": "energi"
+          }
+        },
+        "chip_skin": {
+          "type": "topic",
+          "settings": {
+            "icon": "sparkles",
+            "label": "Kulit & Rambut",
+            "key": "kulit"
+          }
+        },
         "rev_ratna": {
           "type": "review",
           "settings": {
@@ -232,7 +350,10 @@
           }
         }
       },
-      "block_order": ["d_inside", "d_outside"],
+      "block_order": [
+        "d_inside",
+        "d_outside"
+      ],
       "settings": {
         "color_scheme": "white",
         "eyebrow": "Apa Isi Protokolnya",
@@ -303,7 +424,14 @@
           }
         }
       },
-      "block_order": ["n_calcium", "n_iron", "n_vita", "n_potassium", "n_amino", "n_total"],
+      "block_order": [
+        "n_calcium",
+        "n_iron",
+        "n_vita",
+        "n_potassium",
+        "n_amino",
+        "n_total"
+      ],
       "settings": {
         "color_scheme": "cream",
         "align_center": true,
@@ -359,7 +487,12 @@
           }
         }
       },
-      "block_order": ["o_oleic", "o_vite", "o_behenic", "o_unsat"],
+      "block_order": [
+        "o_oleic",
+        "o_vite",
+        "o_behenic",
+        "o_unsat"
+      ],
       "settings": {
         "color_scheme": "white",
         "align_center": true,
@@ -405,7 +538,11 @@
           }
         }
       },
-      "block_order": ["s_intro", "s_compare", "s_community"],
+      "block_order": [
+        "s_intro",
+        "s_compare",
+        "s_community"
+      ],
       "settings": {
         "color_scheme": "bloom",
         "alignment": "left",
@@ -451,7 +588,11 @@
           }
         }
       },
-      "block_order": ["r_morning", "r_night", "r_daily"],
+      "block_order": [
+        "r_morning",
+        "r_night",
+        "r_daily"
+      ],
       "settings": {
         "color_scheme": "cream",
         "eyebrow": "Cara Pakai",
@@ -503,7 +644,12 @@
           }
         }
       },
-      "block_order": ["tl_w1", "tl_m1", "tl_m2", "tl_honest"],
+      "block_order": [
+        "tl_w1",
+        "tl_m1",
+        "tl_m2",
+        "tl_honest"
+      ],
       "settings": {
         "color_scheme": "white",
         "eyebrow": "Ekspektasi yang Realistis",
@@ -568,7 +714,14 @@
           }
         }
       },
-      "block_order": ["a_joints", "a_natural", "a_transparent", "a_patient", "a_both", "a_local"],
+      "block_order": [
+        "a_joints",
+        "a_natural",
+        "a_transparent",
+        "a_patient",
+        "a_both",
+        "a_local"
+      ],
       "settings": {
         "color_scheme": "bloom",
         "eyebrow": "",
@@ -587,7 +740,10 @@
       "blocks": {
         "h_stat": {
           "type": "big_stat",
-          "settings": { "number": "5.000", "label": "Tahun penggunaan tradisional" }
+          "settings": {
+            "number": "5.000",
+            "label": "Tahun penggunaan tradisional"
+          }
         },
         "h_text": {
           "type": "text",
@@ -596,7 +752,10 @@
           }
         }
       },
-      "block_order": ["h_stat", "h_text"],
+      "block_order": [
+        "h_stat",
+        "h_text"
+      ],
       "settings": {
         "color_scheme": "forest",
         "alignment": "center",
@@ -613,13 +772,54 @@
     "io_certs": {
       "type": "io-certifications",
       "blocks": {
-        "cert_bpom": { "type": "cert", "settings": { "alt": "Logo BPOM", "label": "BPOM", "detail": "Obat Tradisional & Kosmetika" } },
-        "cert_halal": { "type": "cert", "settings": { "alt": "Logo Halal Indonesia", "label": "Halal", "detail": "Sertifikat berlaku" } },
-        "cert_organic": { "type": "cert", "settings": { "alt": "Logo sertifikasi organik", "label": "Organik", "detail": "" } },
-        "cert_stemfree": { "type": "cert", "settings": { "alt": "Ikon daun bebas batang", "label": "Bebas Batang", "detail": "Dipisahkan dengan tangan" } },
-        "cert_farm": { "type": "cert", "settings": { "alt": "Ikon kebun sendiri", "label": "Kebun Sendiri", "detail": "Karangasem, Bali" } }
+        "cert_bpom": {
+          "type": "cert",
+          "settings": {
+            "alt": "Logo BPOM",
+            "label": "BPOM",
+            "detail": "Obat Tradisional & Kosmetika"
+          }
+        },
+        "cert_halal": {
+          "type": "cert",
+          "settings": {
+            "alt": "Logo Halal Indonesia",
+            "label": "Halal",
+            "detail": "Sertifikat berlaku"
+          }
+        },
+        "cert_organic": {
+          "type": "cert",
+          "settings": {
+            "alt": "Logo sertifikasi organik",
+            "label": "Organik",
+            "detail": ""
+          }
+        },
+        "cert_stemfree": {
+          "type": "cert",
+          "settings": {
+            "alt": "Ikon daun bebas batang",
+            "label": "Bebas Batang",
+            "detail": "Dipisahkan dengan tangan"
+          }
+        },
+        "cert_farm": {
+          "type": "cert",
+          "settings": {
+            "alt": "Ikon kebun sendiri",
+            "label": "Kebun Sendiri",
+            "detail": "Karangasem, Bali"
+          }
+        }
       },
-      "block_order": ["cert_bpom", "cert_halal", "cert_organic", "cert_stemfree", "cert_farm"],
+      "block_order": [
+        "cert_bpom",
+        "cert_halal",
+        "cert_organic",
+        "cert_stemfree",
+        "cert_farm"
+      ],
       "settings": {
         "color_scheme": "white",
         "eyebrow": "Kualitas Terverifikasi",
@@ -783,7 +983,11 @@
           }
         }
       },
-      "block_order": ["plan_60", "plan_30", "plan_caps"],
+      "block_order": [
+        "plan_60",
+        "plan_30",
+        "plan_caps"
+      ],
       "settings": {
         "color_scheme": "bloom",
         "anchor": "io-pricing",
@@ -816,7 +1020,10 @@
           }
         }
       },
-      "block_order": ["reg_caps", "reg_oil"],
+      "block_order": [
+        "reg_caps",
+        "reg_oil"
+      ],
       "settings": {
         "color_scheme": "white",
         "heading": "Informasi Produk & Izin Edar",
@@ -831,11 +1038,33 @@
     "io_final": {
       "type": "io-final-cta",
       "blocks": {
-        "f_return": { "type": "proof", "settings": { "icon": "shield", "text": "Kebijakan pengembalian 30 hari" } },
-        "f_shipping": { "type": "proof", "settings": { "icon": "truck", "text": "Gratis ongkir seluruh Indonesia" } },
-        "f_cert": { "type": "proof", "settings": { "icon": "award", "text": "Terdaftar BPOM & Halal" } }
+        "f_return": {
+          "type": "proof",
+          "settings": {
+            "icon": "shield",
+            "text": "Kebijakan pengembalian 30 hari"
+          }
+        },
+        "f_shipping": {
+          "type": "proof",
+          "settings": {
+            "icon": "truck",
+            "text": "Gratis ongkir seluruh Indonesia"
+          }
+        },
+        "f_cert": {
+          "type": "proof",
+          "settings": {
+            "icon": "award",
+            "text": "Terdaftar BPOM & Halal"
+          }
+        }
       },
-      "block_order": ["f_return", "f_shipping", "f_cert"],
+      "block_order": [
+        "f_return",
+        "f_shipping",
+        "f_cert"
+      ],
       "settings": {
         "color_scheme": "forest",
         "eyebrow": "Dari Kebun Kami di Bali",
