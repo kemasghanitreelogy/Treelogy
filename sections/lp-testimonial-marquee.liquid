@@ -182,6 +182,46 @@
       track.addEventListener('pointerup', release);
       track.addEventListener('pointercancel', release);
       track.addEventListener('lostpointercapture', release);
+
+      function repaint() {
+        track.style.opacity = '0.999';
+        requestAnimationFrame(function () {
+          track.style.opacity = '';
+        });
+      }
+
+      function resume() {
+        if (dragging || reducedMotion()) return;
+        anim.play();
+      }
+
+      var observer = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              track.style.willChange = 'transform';
+              resume();
+              repaint();
+            } else {
+              anim.pause();
+              track.style.willChange = 'auto';
+            }
+          });
+        },
+        { rootMargin: '300px 0px' }
+      );
+      observer.observe(root);
+
+      document.addEventListener('visibilitychange', function () {
+        if (document.hidden) return;
+        resume();
+        repaint();
+      });
+
+      window.addEventListener('pageshow', function () {
+        resume();
+        repaint();
+      });
     }
 
     function start() {
