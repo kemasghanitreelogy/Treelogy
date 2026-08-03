@@ -42,10 +42,6 @@
     animation: lp-tmarquee-scroll var(--lp-tmarquee-duration, 45s) linear infinite;
   }
 
-  .lp-tmarquee.is-interactive .lp-tmarquee__track {
-    animation: none;
-  }
-
   .lp-tmarquee.is-interactive {
     cursor: grab;
     touch-action: pan-y;
@@ -110,6 +106,13 @@
     }
   }
 
+  @media screen and (max-width: 520px) {
+    .lp-tcard {
+      flex-basis: 270px;
+      padding: 1.25rem;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .lp-tmarquee__track {
       overflow-x: auto;
@@ -129,15 +132,16 @@
       if (!track || root.dataset.lpMarqueeBound === 'true') return;
       root.dataset.lpMarqueeBound = 'true';
 
-      var seconds = parseFloat(getComputedStyle(root).getPropertyValue('--lp-tmarquee-duration'));
-      var duration = (seconds > 0 ? seconds : 45) * 1000;
+      var anim = track.getAnimations().filter(function (a) {
+        return a.animationName === 'lp-tmarquee-scroll' || !a.animationName;
+      })[0];
+      if (!anim) return;
+
+      var timing = anim.effect.getComputedTiming();
+      var duration = timing.duration;
+      if (!duration || !isFinite(duration)) return;
 
       root.classList.add('is-interactive');
-
-      var anim = track.animate(
-        [{ transform: 'translateX(0)' }, { transform: 'translateX(-50%)' }],
-        { duration: duration, iterations: Infinity, easing: 'linear' }
-      );
 
       if (reducedMotion()) anim.pause();
 
@@ -181,7 +185,17 @@
     }
 
     function start() {
-      document.querySelectorAll('.lp-tmarquee').forEach(init);
+      document.querySelectorAll('.lp-tmarquee').forEach(function (root) {
+        var tries = 0;
+        (function attempt() {
+          var track = root.querySelector('.lp-tmarquee__track');
+          if (track && track.getAnimations().length) {
+            init(root);
+            return;
+          }
+          if (tries++ < 30) requestAnimationFrame(attempt);
+        })();
+      });
     }
 
     if (document.readyState === 'loading') {
