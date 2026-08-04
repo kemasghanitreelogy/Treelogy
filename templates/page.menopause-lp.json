@@ -166,7 +166,11 @@
         "cta_label": "Mulai Protokol",
         "cta_url": "#pricing",
         "gallery_label": "Galeri produk",
-        "show_offer": false
+        "show_offer": false,
+        "show_save": true,
+        "save_prefix": "Hemat hingga",
+        "save_amount": "Rp 464.500",
+        "save_suffix": "Hari Ini"
       }
     },
     "trust": {
