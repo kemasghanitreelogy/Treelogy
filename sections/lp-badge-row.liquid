@@ -13,7 +13,7 @@
         <div class="lp-badge" {{ block.shopify_attributes }}>
           {% if section.settings.icon_type == 'preset' %}
             {% if block.settings.icon_preset != blank and block.settings.icon_preset != 'none' %}
-              <div class="lp-badge__icon lp-badge__icon--plate">
+              <div class="lp-badge__icon lp-badge__icon--cert">
                 <img
                   src="{{ block.settings.icon_preset | append: '.svg' | asset_url }}"
                   alt="{{ block.settings.label }}"
@@ -80,10 +80,28 @@
     padding-block: 1.25rem;
   }
 
+  /* Enam kolom dengan tiap item selebar dua kolom: baris pertama dapat 3 item,
+     dua item terakhir digeser ke kolom 2-3 dan 4-5 supaya rata tengah. Penanda
+     :nth-last-child memastikan ini hanya berlaku saat jumlahnya tepat 5. */
   .lp-badges__list--grid {
-    gap: 2rem;
-    max-width: 700px;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1.75rem 0.5rem;
+    max-width: 560px;
     margin-inline: auto;
+  }
+
+  .lp-badges__list--grid > .lp-badge {
+    grid-column: span 2;
+    min-width: 0;
+  }
+
+  .lp-badges__list--grid > .lp-badge:nth-child(4):nth-last-child(2) {
+    grid-column: 2 / span 2;
+  }
+
+  .lp-badges__list--grid > .lp-badge:nth-child(5):nth-last-child(1) {
+    grid-column: 4 / span 2;
   }
 
   .lp-badge {
@@ -99,7 +117,8 @@
   .lp-badges__list--grid .lp-badge {
     flex-direction: column;
     gap: 0.5rem;
-    min-width: 100px;
+    /* grid yang menentukan lebar; min-width tetap akan meluap di layar sempit */
+    min-width: 0;
   }
 
   .lp-badge__icon {
@@ -117,18 +136,16 @@
     object-fit: contain;
   }
 
-  /* Tanda sertifikasi resmi tidak boleh diwarnai ulang, jadi diberi alas terang
-     supaya artwork aslinya tetap terbaca di mode gelap maupun terang. */
-  .lp-badges .lp-badge__icon--plate {
-    box-sizing: content-box;
-    width: 60px;
-    height: 60px;
-    padding: 12px;
-    border-radius: var(--lp-radius-lg, 16px);
-    background: #fff;
+  /* Tanpa alas — ikon duduk langsung di latar seksi. Di mode gelap artwork
+     aslinya (tinta hijau tua) dibalik lewat filter di lp-tokens, bukan diganti
+     warnanya, supaya struktur dalam segel USDA dan logo BPOM tetap utuh. */
+  .lp-badges .lp-badge__icon--cert {
+    width: 72px;
+    height: 72px;
+    background: transparent;
   }
 
-  .lp-badges .lp-badge__icon--plate img {
+  .lp-badges .lp-badge__icon--cert img {
     width: 100%;
     height: 100%;
   }
