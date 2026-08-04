@@ -49,9 +49,10 @@
         {% endif %}
       </div>
 
-      {% if section.blocks.size > 0 %}
+      {%- assign proofs = section.blocks | where: 'type', 'proof' -%}
+      {% if proofs.size > 0 %}
         <div class="lp-hero__proof">
-          {% for block in section.blocks %}
+          {% for block in proofs %}
             {%- liquid
               assign proof_tag = 'div'
               if block.settings.link_url != blank
