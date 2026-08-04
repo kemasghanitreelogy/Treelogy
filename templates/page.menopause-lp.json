@@ -877,7 +877,8 @@
       "settings": {
         "eyebrow": "",
         "heading": "Untuk Siapa Inside Out Protocol Ini?",
-        "exclusion_heading": "Untuk Siapa Produk Ini TIDAK Cocok?"
+        "exclusion_heading": "Untuk Siapa Produk Ini TIDAK Cocok?",
+        "bg_color": "#6c7256"
       }
     },
     "heritage": {

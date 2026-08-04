@@ -3,7 +3,7 @@
   assign exclusions = section.blocks | where: 'type', 'exclusion'
 %}
 
-<div class="lp-audience lp-pad">
+<div class="lp-audience lp-pad" style="--lp-audience-bg: {{ section.settings.bg_color }}">
   <div class="lp-container lp-reveal">
     {% if section.settings.eyebrow != blank %}
       <div class="lp-eyebrow lp-audience__eyebrow">{{ section.settings.eyebrow }}</div>
@@ -54,7 +54,7 @@
 
 {% stylesheet %}
   .lp-audience {
-    background: var(--lp-surface-dark);
+    background: var(--lp-audience-bg, var(--lp-surface-dark));
     color: var(--lp-on-dark);
   }
 
@@ -166,6 +166,12 @@
       "id": "exclusion_heading",
       "label": "Judul blok pengecualian",
       "default": "Untuk Siapa Produk Ini TIDAK Cocok?"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Warna latar",
+      "default": "#6c7256"
     }
   ],
   "blocks": [
