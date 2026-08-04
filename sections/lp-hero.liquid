@@ -160,6 +160,12 @@
     overflow: clip;
   }
 
+  .lp-hero__copy,
+  .lp-hero__visual {
+    min-width: 0;
+    max-width: 100%;
+  }
+
   .lp-hero__inner {
     display: grid;
     grid-template-columns: 1.1fr 0.9fr;
@@ -173,6 +179,7 @@
 
   .lp-hero__badge {
     display: inline-block;
+    max-width: 100%;
     margin-bottom: 1.25rem;
     padding: 0.4rem 1rem;
     border-radius: 2px;
@@ -348,7 +355,8 @@
     display: flex;
     gap: 0.5rem;
     width: 100%;
-    max-width: 380px;
+    min-width: 0;
+    max-width: min(380px, 100%);
     overflow-x: auto;
     padding-bottom: 0.25rem;
     scrollbar-width: none;

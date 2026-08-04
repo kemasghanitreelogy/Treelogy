@@ -120,13 +120,14 @@
 
   .lp-container {
     width: 100%;
-    max-width: var(--lp-max-w);
+    min-width: 0;
+    max-width: min(var(--lp-max-w), 100%);
     margin-inline: auto;
     padding-inline: 1.5rem;
   }
 
   .lp-container--narrow {
-    max-width: var(--lp-max-w-narrow);
+    max-width: min(var(--lp-max-w-narrow), 100%);
   }
 
   .lp-pad {
