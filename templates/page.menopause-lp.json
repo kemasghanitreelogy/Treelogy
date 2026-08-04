@@ -156,16 +156,16 @@
         "pre_heading": "Jangan Lagi Pasrah Pada",
         "heading": "Nyeri Sendi, Mudah Lelah, dan Rasa Kehilangan Diri Saat Menopause",
         "subheading": "Inside Out Moringa Protocol. Cara perempuan Indonesia mendapatkan kembali sendi yang nyaman, energi, tidur nyenyak, dan rasa percaya diri. Tanpa hormon. Tanpa resep dokter.",
-        "cta_label": "Mulai Protokol",
-        "cta_url": "#pricing",
-        "gallery_label": "Galeri produk",
         "offer_includes": "Termasuk: 90 kapsul (30 hari) · Seed Oil 30ml · Pengiriman ke seluruh Indonesia",
         "offer_plan": "PROTOKOL INSIDE OUT 30 HARI",
         "offer_price": "Rp 795.000",
         "offer_perday": "Setara Rp 26.500 per hari",
         "offer_note": "Garansi 30 hari · Pengiriman ke seluruh Indonesia",
         "show_savings": false,
-        "savings_text": "Hemat Rp 464.500"
+        "savings_text": "Hemat Rp 464.500",
+        "cta_label": "Mulai Protokol",
+        "cta_url": "#pricing",
+        "gallery_label": "Galeri produk"
       }
     },
     "trust": {
@@ -898,40 +898,40 @@
           "type": "badge",
           "settings": {
             "emoji": "",
-            "label": "BPOM",
-            "icon_preset": "lp-cert-bpom"
+            "icon_preset": "lp-cert-bpom",
+            "label": "BPOM"
           }
         },
         "c2": {
           "type": "badge",
           "settings": {
             "emoji": "",
-            "label": "Halal",
-            "icon_preset": "lp-cert-halal"
+            "icon_preset": "lp-cert-halal",
+            "label": "Halal"
           }
         },
         "c3": {
           "type": "badge",
           "settings": {
             "emoji": "",
-            "label": "Organik",
-            "icon_preset": "lp-cert-organik"
+            "icon_preset": "lp-cert-organik",
+            "label": "Organik"
           }
         },
         "c4": {
           "type": "badge",
           "settings": {
             "emoji": "",
-            "label": "Bebas Batang",
-            "icon_preset": "lp-cert-bebas-batang"
+            "icon_preset": "lp-cert-bebas-batang",
+            "label": "Bebas Batang"
           }
         },
         "c5": {
           "type": "badge",
           "settings": {
             "emoji": "",
-            "label": "Teruji Lab",
-            "icon_preset": "lp-cert-teruji-lab"
+            "icon_preset": "lp-cert-teruji-lab",
+            "label": "Teruji Lab"
           }
         }
       },
@@ -971,11 +971,11 @@
             "guarantee_marker": "✓",
             "guarantee": "Garansi uang kembali 30 hari",
             "cta_label": "Ambil Protokol 60 Hari",
-            "cta_url": "/products/inside-out-moringa-protocol?variant=47228045492412",
-            "footer_note": "Pesan hari ini, dikirim besok",
             "variant_id": "47228045492412:1,47228068561084:1,47228130001084:1",
             "quantity": 1,
-            "discount_code": ""
+            "discount_code": "",
+            "cta_url": "/products/inside-out-moringa-protocol?variant=47228045492412",
+            "footer_note": "Pesan hari ini, dikirim besok"
           }
         },
         "p30": {
@@ -996,11 +996,11 @@
             "guarantee_marker": "✓",
             "guarantee": "Garansi uang kembali 30 hari",
             "cta_label": "Ambil Protokol 30 Hari",
-            "cta_url": "/products/inside-out-moringa-protocol?variant=47228045459644",
-            "footer_note": "Pesan hari ini, dikirim besok",
             "variant_id": "47228045459644:1,47228130001084:1,47228068561084:1",
             "quantity": 1,
-            "discount_code": ""
+            "discount_code": "",
+            "cta_url": "/products/inside-out-moringa-protocol?variant=47228045459644",
+            "footer_note": "Pesan hari ini, dikirim besok"
           }
         },
         "pcaps": {
@@ -1012,6 +1012,9 @@
             "title": "Moringa Capsules Saja",
             "description": "Mulai dengan kapsul. Tambahkan minyaknya saat sudah siap.",
             "variants": "90 kapsul · 30 hari | Rp 455.000 | 47228067283132\n180 kapsul · 60 hari | Rp 795.000 | 47228067315900",
+            "variants_as_radio": true,
+            "variant_default": 2,
+            "variants_label": "Pilih ukuran",
             "stack": "🚚 Ongkos Kirim | Rp 35.000 | FREE",
             "total_label": "",
             "total_value": "",
@@ -1021,13 +1024,10 @@
             "guarantee_marker": "✓",
             "guarantee": "Garansi uang kembali 30 hari",
             "cta_label": "Belanja Capsules",
-            "cta_url": "/products/organic-moringa-capsules-1",
-            "footer_note": "Pesan hari ini, dikirim besok",
             "variant_id": "47228067283132:1",
             "discount_code": "",
-            "variants_as_radio": true,
-            "variant_default": 2,
-            "variants_label": "Pilih ukuran"
+            "cta_url": "/products/organic-moringa-capsules-1",
+            "footer_note": "Pesan hari ini, dikirim besok"
           }
         }
       },

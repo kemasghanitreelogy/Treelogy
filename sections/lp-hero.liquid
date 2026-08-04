@@ -18,24 +18,26 @@
       {% endif %}
 
       <div class="lp-hero__offer" data-lp-offer>
-        {% if section.settings.offer_includes != blank %}
-          <p class="lp-hero__includes">{{ section.settings.offer_includes }}</p>
-        {% endif %}
+        {% if section.settings.show_offer %}
+          {% if section.settings.offer_includes != blank %}
+            <p class="lp-hero__includes">{{ section.settings.offer_includes }}</p>
+          {% endif %}
 
-        {% if section.settings.offer_plan != blank %}
-          <p class="lp-hero__plan">{{ section.settings.offer_plan }}</p>
-        {% endif %}
+          {% if section.settings.offer_plan != blank %}
+            <p class="lp-hero__plan">{{ section.settings.offer_plan }}</p>
+          {% endif %}
 
-        {% if section.settings.offer_price != blank %}
-          <p class="lp-hero__price">{{ section.settings.offer_price }}</p>
-        {% endif %}
+          {% if section.settings.offer_price != blank %}
+            <p class="lp-hero__price">{{ section.settings.offer_price }}</p>
+          {% endif %}
 
-        {% if section.settings.offer_perday != blank %}
-          <p class="lp-hero__perday">{{ section.settings.offer_perday }}</p>
-        {% endif %}
+          {% if section.settings.offer_perday != blank %}
+            <p class="lp-hero__perday">{{ section.settings.offer_perday }}</p>
+          {% endif %}
 
-        {% if section.settings.show_savings and section.settings.savings_text != blank %}
-          <p class="lp-hero__savings">{{ section.settings.savings_text }}</p>
+          {% if section.settings.show_savings and section.settings.savings_text != blank %}
+            <p class="lp-hero__savings">{{ section.settings.savings_text }}</p>
+          {% endif %}
         {% endif %}
 
         {% if section.settings.cta_label != blank %}
@@ -44,7 +46,7 @@
           </a>
         {% endif %}
 
-        {% if section.settings.offer_note != blank %}
+        {% if section.settings.show_offer and section.settings.offer_note != blank %}
           <p class="lp-hero__offer-note">{{ section.settings.offer_note }}</p>
         {% endif %}
       </div>
@@ -746,6 +748,13 @@
     {
       "type": "header",
       "content": "Penawaran"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_offer",
+      "label": "Tampilkan blok harga di hero",
+      "default": true,
+      "info": "Matikan untuk hero versi ringkas: hanya judul, deskripsi, tombol, dan baris bukti."
     },
     {
       "type": "textarea",
