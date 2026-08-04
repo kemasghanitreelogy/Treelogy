@@ -897,35 +897,40 @@
           "type": "badge",
           "settings": {
             "emoji": "",
-            "label": "BPOM"
+            "label": "BPOM",
+            "icon_preset": "lp-cert-bpom"
           }
         },
         "c2": {
           "type": "badge",
           "settings": {
             "emoji": "",
-            "label": "Halal"
+            "label": "Halal",
+            "icon_preset": "lp-cert-halal"
           }
         },
         "c3": {
           "type": "badge",
           "settings": {
             "emoji": "",
-            "label": "Organik"
+            "label": "Organik",
+            "icon_preset": "lp-cert-organik"
           }
         },
         "c4": {
           "type": "badge",
           "settings": {
             "emoji": "",
-            "label": "Bebas Batang"
+            "label": "Bebas Batang",
+            "icon_preset": "lp-cert-bebas-batang"
           }
         },
         "c5": {
           "type": "badge",
           "settings": {
             "emoji": "",
-            "label": "Teruji Lab"
+            "label": "Teruji Lab",
+            "icon_preset": "lp-cert-teruji-lab"
           }
         }
       },
@@ -940,7 +945,7 @@
         "eyebrow": "Kualitas Terverifikasi",
         "heading": "Kapsul: Obat Tradisional BPOM.\nMinyak: Kosmetik Terdaftar BPOM.",
         "layout": "grid",
-        "icon_type": "image",
+        "icon_type": "preset",
         "background": "bloom"
       }
     },
