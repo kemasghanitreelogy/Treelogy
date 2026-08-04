@@ -118,14 +118,26 @@
             {% endif %}
 
             <span class="lp-hero__save-beat lp-hero__save-beat--final">
-              {% if section.settings.save_prefix != blank %}
-                <span class="lp-hero__save-label">{{ section.settings.save_prefix }}</span>
-              {% endif %}
+              <span class="lp-hero__save-head">
+                {% if section.settings.save_prefix != blank %}
+                  <span class="lp-hero__save-label">{{ section.settings.save_prefix }}</span>
+                {% endif %}
 
-              <strong class="lp-hero__save-amount">{{ section.settings.save_amount }}</strong>
+                {% if section.settings.save_suffix != blank %}
+                  <em class="lp-hero__save-when">{{ section.settings.save_suffix }}</em>
+                {% endif %}
+              </span>
 
-              {% if section.settings.save_suffix != blank %}
-                <em class="lp-hero__save-when">{{ section.settings.save_suffix }}</em>
+              <strong class="lp-hero__save-amount lp-hero__save-amount--hero">
+                {{- section.settings.save_amount -}}
+              </strong>
+
+              {% if reveal %}
+                <span class="lp-hero__save-track">
+                  <s>{{ section.settings.save_was }}</s>
+                  <span class="lp-hero__save-arrow" aria-hidden="true">→</span>
+                  <span class="lp-hero__save-now">{{ section.settings.save_now }}</span>
+                </span>
               {% endif %}
             </span>
           </span>
@@ -241,11 +253,11 @@
   .lp-hero__save {
     display: inline-flex;
     align-items: center;
-    gap: 0.55rem;
+    gap: 0.6rem;
     position: relative;
     flex: 0 0 auto;
     max-width: 100%;
-    padding: 0.5rem 0.85rem 0.55rem 0.7rem;
+    padding: 0.8rem 1.15rem 0.85rem 1rem;
     border: 1px solid color-mix(in srgb, var(--lp-gold) 42%, transparent);
     /* radius asimetris — bahasa bentuk organik, bukan pil generik */
     border-radius: 16px 4px 16px 4px;
@@ -310,8 +322,62 @@
     letter-spacing: -0.01em;
   }
 
+  .lp-hero__save-beat--final {
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .lp-hero__save-head {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+  }
+
+  /* Nominal hemat adalah satu-satunya angka terbesar di kotak ini. Ukuran
+     adalah sinyal kepentingan yang paling cepat dibaca — jauh lebih kuat
+     daripada menambah gerak. */
+  .lp-hero__save-amount--hero {
+    font-size: clamp(1.75rem, 7vw, 2.125rem);
+    line-height: 1.1;
+  }
+
+  /* Jejak harga yang menetap. Tanpa ini pembaca melihat "Rp 464.500" tanpa
+     pembanding, sehingga besarnya potongan tidak punya acuan sama sekali. */
+  .lp-hero__save-track {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    color: color-mix(in srgb, var(--lp-on-dark) 68%, transparent);
+    font-family: var(--lp-font-body);
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+  }
+
+  .lp-hero__save-track s {
+    text-decoration-thickness: 1.5px;
+  }
+
+  .lp-hero__save-arrow {
+    color: color-mix(in srgb, var(--lp-gold) 70%, transparent);
+  }
+
+  .lp-hero__save-now {
+    color: color-mix(in srgb, var(--lp-on-dark) 92%, transparent);
+    font-weight: 800;
+  }
+
   .lp-hero__save-amount--muted {
     color: color-mix(in srgb, var(--lp-on-dark) 72%, transparent);
+  }
+
+  .lp-hero__save-beat--was .lp-hero__save-amount,
+  .lp-hero__save-beat--now .lp-hero__save-amount {
+    font-size: clamp(1.375rem, 5.6vw, 1.625rem);
   }
 
   .lp-hero__save-strike {
@@ -370,22 +436,28 @@
 
     .lp-hero__save--reveal .lp-hero__save-beat--was {
       animation:
-        lp-save-rise 530ms cubic-bezier(0.2, 0, 0, 1) 250ms both,
-        lp-save-fall 320ms cubic-bezier(0.55, 0.085, 0.68, 0.53) 1900ms forwards;
+        lp-save-rise 500ms cubic-bezier(0.2, 0, 0, 1) 250ms both,
+        lp-save-fall 300ms cubic-bezier(0.55, 0.085, 0.68, 0.53) 1720ms forwards;
     }
 
     .lp-hero__save--reveal .lp-hero__save-strike {
-      animation: lp-save-strike 360ms cubic-bezier(0.2, 0, 0, 1) 1300ms both;
+      animation: lp-save-strike 340ms cubic-bezier(0.2, 0, 0, 1) 1150ms both;
     }
 
     .lp-hero__save--reveal .lp-hero__save-beat--now {
       animation:
-        lp-save-rise 560ms cubic-bezier(0.2, 0, 0, 1) 2080ms both,
-        lp-save-fall 320ms cubic-bezier(0.55, 0.085, 0.68, 0.53) 3040ms forwards;
+        lp-save-rise 520ms cubic-bezier(0.2, 0, 0, 1) 1880ms both,
+        lp-save-fall 300ms cubic-bezier(0.55, 0.085, 0.68, 0.53) 2720ms forwards;
     }
 
     .lp-hero__save--reveal .lp-hero__save-beat--final {
-      animation: lp-save-rise 620ms cubic-bezier(0.2, 0, 0, 1) 3220ms both;
+      animation: lp-save-rise 580ms cubic-bezier(0.2, 0, 0, 1) 2880ms both;
+    }
+
+    /* Jejak harga mendarat setelah kotaknya diam — kalau bersamaan, ia bersaing
+       dengan nominal hemat dan keduanya jadi lemah. */
+    .lp-hero__save--reveal .lp-hero__save-track {
+      animation: lp-save-settle 380ms cubic-bezier(0.2, 0, 0, 1) 3620ms both;
     }
   }
 
@@ -433,6 +505,18 @@
     to {
       opacity: 0;
       transform: translateY(-9px) scale(0.98);
+    }
+  }
+
+  @keyframes lp-save-settle {
+    from {
+      opacity: 0;
+      transform: translateY(5px);
+    }
+
+    to {
+      opacity: 1;
+      transform: none;
     }
   }
 
