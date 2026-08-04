@@ -170,7 +170,8 @@
         "show_save": true,
         "save_prefix": "Hemat hingga",
         "save_amount": "Rp 464.500",
-        "save_suffix": "Hari Ini"
+        "save_suffix": "Hari Ini",
+        "save_position": "tr"
       }
     },
     "trust": {
