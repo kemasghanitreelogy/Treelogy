@@ -66,7 +66,7 @@
               {% endif %}
               {{ block.shopify_attributes }}
             >
-              {% if block.settings.prefix != blank %}
+              {% if block.settings.prefix != blank and block.settings.highlight != blank %}
                 <span>{{ block.settings.prefix }}</span>
               {% endif %}
               {% if block.settings.highlight != blank %}
@@ -74,7 +74,11 @@
                   {{- block.settings.highlight -}}
                 </strong>
               {% endif %}
-              {{ block.settings.text }}
+              {%- if block.settings.prefix != blank and block.settings.highlight == blank -%}
+                {{ block.settings.prefix }} {{ block.settings.text }}
+              {%- else -%}
+                {{ block.settings.text }}
+              {%- endif -%}
             </{{ proof_tag }}>
           {% endfor %}
         </div>
