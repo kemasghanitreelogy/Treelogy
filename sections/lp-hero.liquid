@@ -40,27 +40,6 @@
           {% endif %}
         {% endif %}
 
-        {% if section.settings.show_save and section.settings.save_amount != blank %}
-          <div class="lp-hero__save">
-            <span class="lp-hero__save-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false">
-                <path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.83 0l-7.2-7.2A2 2 0 0 1 2.8 12V4.8a2 2 0 0 1 2-2H12a2 2 0 0 1 1.41.59l7.2 7.2a2 2 0 0 1 0 2.81Z"/>
-                <circle cx="7.6" cy="7.6" r="1.35"/>
-              </svg>
-            </span>
-
-            {% if section.settings.save_prefix != blank %}
-              <span class="lp-hero__save-label">{{ section.settings.save_prefix }}</span>
-            {% endif %}
-
-            <strong class="lp-hero__save-amount">{{ section.settings.save_amount }}</strong>
-
-            {% if section.settings.save_suffix != blank %}
-              <em class="lp-hero__save-when">{{ section.settings.save_suffix }}</em>
-            {% endif %}
-          </div>
-        {% endif %}
-
         {% if section.settings.cta_label != blank %}
           <a class="lp-btn lp-hero__cta" href="{{ section.settings.cta_url | default: '#' }}">
             {{- section.settings.cta_label -}}
@@ -111,6 +90,27 @@
 
     {%- assign gallery = section.blocks | where: 'type', 'media' -%}
     <div class="lp-hero__visual">
+      {% if section.settings.show_save and section.settings.save_amount != blank %}
+        <div class="lp-hero__save">
+          <span class="lp-hero__save-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+              <path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.83 0l-7.2-7.2A2 2 0 0 1 2.8 12V4.8a2 2 0 0 1 2-2H12a2 2 0 0 1 1.41.59l7.2 7.2a2 2 0 0 1 0 2.81Z"/>
+              <circle cx="7.6" cy="7.6" r="1.35"/>
+            </svg>
+          </span>
+
+          {% if section.settings.save_prefix != blank %}
+            <span class="lp-hero__save-label">{{ section.settings.save_prefix }}</span>
+          {% endif %}
+
+          <strong class="lp-hero__save-amount">{{ section.settings.save_amount }}</strong>
+
+          {% if section.settings.save_suffix != blank %}
+            <em class="lp-hero__save-when">{{ section.settings.save_suffix }}</em>
+          {% endif %}
+        </div>
+      {% endif %}
+
       <div class="lp-hero__frame">
 
         {% if gallery.size > 0 %}
@@ -205,7 +205,9 @@
     padding-inline: 1.5rem;
   }
 
-  /* Badge hemat — satu baris rapat tepat di atas tombol, bukan menimpa gambar
+  /* Badge hemat — satu baris rapat di atas gambar produk. Di mobile kolom gambar
+     naik ke urutan pertama, jadi badge ikut terlihat tanpa menggulir. Tidak
+     ditaruh menimpa gambar
      (isi galeri berganti-ganti sehingga sudut mana pun bisa tertutup) dan bukan
      stiker lingkaran (bentuk itu terbaca sebagai iklan lalu dilewati mata).
      Permukaan gelap dipakai di mode terang maupun gelap supaya angka emas
@@ -218,8 +220,8 @@
     gap: 0.3rem 0.55rem;
     position: relative;
     overflow: hidden;
+    flex: 0 0 auto;
     max-width: 100%;
-    margin-top: 1.5rem;
     padding: 0.5rem 0.85rem 0.55rem 0.7rem;
     border: 1px solid color-mix(in srgb, var(--lp-gold) 42%, transparent);
     /* radius asimetris — bahasa bentuk organik, bukan pil generik */
