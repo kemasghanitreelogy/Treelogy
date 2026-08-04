@@ -170,7 +170,10 @@
         "savings_text": "Hemat Rp 464.500",
         "cta_label": "Mulai Protokol",
         "cta_url": "#pricing",
-        "gallery_label": "Galeri produk"
+        "gallery_label": "Galeri produk",
+        "save_reveal": true,
+        "save_was": "Rp 1.829.500",
+        "save_now": "Rp 1.365.000"
       }
     },
     "trust": {

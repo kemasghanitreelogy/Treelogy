@@ -91,7 +91,13 @@
     {%- assign gallery = section.blocks | where: 'type', 'media' -%}
     <div class="lp-hero__visual">
       {% if section.settings.show_save and section.settings.save_amount != blank %}
-        <div class="lp-hero__save">
+        {%- liquid
+          assign reveal = false
+          if section.settings.save_reveal and section.settings.save_was != blank and section.settings.save_now != blank
+            assign reveal = true
+          endif
+        -%}
+        <div class="lp-hero__save{% if reveal %} lp-hero__save--reveal{% endif %}">
           <span class="lp-hero__save-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false">
               <path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.83 0l-7.2-7.2A2 2 0 0 1 2.8 12V4.8a2 2 0 0 1 2-2H12a2 2 0 0 1 1.41.59l7.2 7.2a2 2 0 0 1 0 2.81Z"/>
@@ -99,14 +105,35 @@
             </svg>
           </span>
 
-          {% if section.settings.save_prefix != blank %}
-            <span class="lp-hero__save-label">{{ section.settings.save_prefix }}</span>
-          {% endif %}
+          <span class="lp-hero__save-stage"{% if reveal %} aria-hidden="true"{% endif %}>
+            {% if reveal %}
+              <span class="lp-hero__save-beat lp-hero__save-beat--was">
+                <span class="lp-hero__save-amount lp-hero__save-amount--muted">{{ section.settings.save_was }}</span>
+                <i class="lp-hero__save-strike"></i>
+              </span>
 
-          <strong class="lp-hero__save-amount">{{ section.settings.save_amount }}</strong>
+              <span class="lp-hero__save-beat lp-hero__save-beat--now">
+                <span class="lp-hero__save-amount">{{ section.settings.save_now }}</span>
+              </span>
+            {% endif %}
 
-          {% if section.settings.save_suffix != blank %}
-            <em class="lp-hero__save-when">{{ section.settings.save_suffix }}</em>
+            <span class="lp-hero__save-beat lp-hero__save-beat--final">
+              {% if section.settings.save_prefix != blank %}
+                <span class="lp-hero__save-label">{{ section.settings.save_prefix }}</span>
+              {% endif %}
+
+              <strong class="lp-hero__save-amount">{{ section.settings.save_amount }}</strong>
+
+              {% if section.settings.save_suffix != blank %}
+                <em class="lp-hero__save-when">{{ section.settings.save_suffix }}</em>
+              {% endif %}
+            </span>
+          </span>
+
+          {% if reveal %}
+            <span class="lp-hero__save-a11y">
+              {{ section.settings.save_prefix }} {{ section.settings.save_amount }} {{ section.settings.save_suffix }}
+            </span>
           {% endif %}
         </div>
       {% endif %}
@@ -205,21 +232,17 @@
     padding-inline: 1.5rem;
   }
 
-  /* Badge hemat — satu baris rapat di atas gambar produk. Di mobile kolom gambar
-     naik ke urutan pertama, jadi badge ikut terlihat tanpa menggulir. Tidak
-     ditaruh menimpa gambar
-     (isi galeri berganti-ganti sehingga sudut mana pun bisa tertutup) dan bukan
-     stiker lingkaran (bentuk itu terbaca sebagai iklan lalu dilewati mata).
-     Permukaan gelap dipakai di mode terang maupun gelap supaya angka emas
-     selalu lolos kontras. */
+  /* Badge hemat — tiga ketukan sekali jalan: harga acuan, dicoret, lalu larut
+     jadi nominal hemat. Kalibrasi premium: tanpa pantulan, tanpa kilau, dan
+     skala nyaris tak terasa (0.98) — gerak berlebihan menurunkan kelancaran
+     pemrosesan dan terbaca sebagai promo murah, bukan merek premium.
+     Panggung memakai grid bertumpuk supaya kotaknya tidak pernah berubah
+     ukuran di antara ketukan (nol pergeseran tata letak). */
   .lp-hero__save {
     display: inline-flex;
-    flex-wrap: wrap;
     align-items: center;
-    justify-content: center;
-    gap: 0.3rem 0.55rem;
+    gap: 0.55rem;
     position: relative;
-    overflow: hidden;
     flex: 0 0 auto;
     max-width: 100%;
     padding: 0.5rem 0.85rem 0.55rem 0.7rem;
@@ -238,20 +261,6 @@
     vertical-align: middle;
   }
 
-  .lp-hero__save::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      100deg,
-      transparent 38%,
-      color-mix(in srgb, var(--lp-gold) 28%, transparent) 50%,
-      transparent 62%
-    );
-    pointer-events: none;
-    transform: translateX(-130%);
-  }
-
   .lp-hero__save-icon {
     display: flex;
     flex: 0 0 auto;
@@ -263,6 +272,24 @@
   .lp-hero__save-icon svg {
     width: 15px;
     height: 15px;
+  }
+
+  .lp-hero__save-stage {
+    display: grid;
+    min-width: 0;
+  }
+
+  .lp-hero__save-beat {
+    display: inline-flex;
+    flex-wrap: wrap;
+    grid-area: 1 / 1;
+    align-items: center;
+    justify-content: center;
+    justify-self: center;
+    align-self: center;
+    gap: 0.3rem 0.5rem;
+    position: relative;
+    transform-origin: 50% 50%;
   }
 
   .lp-hero__save-label {
@@ -283,6 +310,22 @@
     letter-spacing: -0.01em;
   }
 
+  .lp-hero__save-amount--muted {
+    color: color-mix(in srgb, var(--lp-on-dark) 72%, transparent);
+  }
+
+  .lp-hero__save-strike {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    left: 0;
+    height: 1.5px;
+    border-radius: 2px;
+    background: color-mix(in srgb, var(--lp-on-dark) 72%, transparent);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+  }
+
   .lp-hero__save-when {
     padding: 0.1rem 0.5rem;
     border-radius: 999px;
@@ -295,36 +338,84 @@
     letter-spacing: 0.04em;
   }
 
+  .lp-hero__save-a11y {
+    position: absolute;
+    overflow: hidden;
+    clip-path: inset(50%);
+    width: 1px;
+    height: 1px;
+    white-space: nowrap;
+  }
+
+  /* Urutan tumpuk: yang masuk selalu di atas yang keluar, supaya ekor pudarnya
+     tidak menembus dan membuat bayangan ganda. */
+  .lp-hero__save--reveal .lp-hero__save-beat--was {
+    z-index: 1;
+  }
+
+  .lp-hero__save--reveal .lp-hero__save-beat--now {
+    z-index: 2;
+    opacity: 0;
+  }
+
+  .lp-hero__save--reveal .lp-hero__save-beat--final {
+    z-index: 3;
+    opacity: 0;
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     .lp-hero__save {
-      animation: lp-save-in 560ms cubic-bezier(0.2, 0, 0, 1) both;
+      animation: lp-save-in 460ms cubic-bezier(0.2, 0, 0, 1) both;
     }
 
-    .lp-hero__save-amount {
-      animation: lp-save-pop 560ms cubic-bezier(0.2, 0, 0, 1) both;
+    .lp-hero__save--reveal .lp-hero__save-beat--was {
+      animation:
+        lp-save-rise 530ms cubic-bezier(0.2, 0, 0, 1) 250ms both,
+        lp-save-fall 320ms cubic-bezier(0.55, 0.085, 0.68, 0.53) 1900ms forwards;
     }
 
-    .lp-hero__save::after {
-      animation: lp-save-sheen 1300ms cubic-bezier(0.2, 0, 0, 1) 640ms both;
+    .lp-hero__save--reveal .lp-hero__save-strike {
+      animation: lp-save-strike 360ms cubic-bezier(0.2, 0, 0, 1) 1300ms both;
+    }
+
+    .lp-hero__save--reveal .lp-hero__save-beat--now {
+      animation:
+        lp-save-rise 560ms cubic-bezier(0.2, 0, 0, 1) 2080ms both,
+        lp-save-fall 320ms cubic-bezier(0.55, 0.085, 0.68, 0.53) 3040ms forwards;
+    }
+
+    .lp-hero__save--reveal .lp-hero__save-beat--final {
+      animation: lp-save-rise 620ms cubic-bezier(0.2, 0, 0, 1) 3220ms both;
+    }
+  }
+
+  /* Tanpa gerak: langsung mendarat di keadaan akhir, dua ketukan awal disimpan
+     tetap menempati ruang supaya ukuran kotaknya identik. */
+  @media (prefers-reduced-motion: reduce) {
+    .lp-hero__save--reveal .lp-hero__save-beat--was,
+    .lp-hero__save--reveal .lp-hero__save-beat--now {
+      opacity: 0;
+    }
+
+    .lp-hero__save--reveal .lp-hero__save-beat--final {
+      opacity: 1;
     }
   }
 
   @keyframes lp-save-in {
     from {
       opacity: 0;
-      transform: translateY(10px);
     }
 
     to {
       opacity: 1;
-      transform: none;
     }
   }
 
-  @keyframes lp-save-pop {
+  @keyframes lp-save-rise {
     from {
       opacity: 0;
-      transform: scale(0.94);
+      transform: translateY(9px) scale(0.98);
     }
 
     to {
@@ -333,9 +424,25 @@
     }
   }
 
-  @keyframes lp-save-sheen {
+  @keyframes lp-save-fall {
+    from {
+      opacity: 1;
+      transform: none;
+    }
+
     to {
-      transform: translateX(130%);
+      opacity: 0;
+      transform: translateY(-9px) scale(0.98);
+    }
+  }
+
+  @keyframes lp-save-strike {
+    from {
+      transform: scaleX(0);
+    }
+
+    to {
+      transform: scaleX(1);
     }
   }
 
@@ -905,6 +1012,28 @@
       "label": "Label",
       "default": "Hemat hingga",
       "visible_if": "{{ section.settings.show_save }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "save_reveal",
+      "label": "Mainkan urutan harga",
+      "default": true,
+      "info": "Harga acuan muncul, dicoret, lalu larut jadi nominal hemat. Berjalan sekali saja.",
+      "visible_if": "{{ section.settings.show_save }}"
+    },
+    {
+      "type": "text",
+      "id": "save_was",
+      "label": "Harga acuan",
+      "default": "Rp 1.829.500",
+      "visible_if": "{{ section.settings.show_save and section.settings.save_reveal }}"
+    },
+    {
+      "type": "text",
+      "id": "save_now",
+      "label": "Harga setelah dicoret",
+      "default": "Rp 1.365.000",
+      "visible_if": "{{ section.settings.show_save and section.settings.save_reveal }}"
     },
     {
       "type": "text",
