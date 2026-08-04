@@ -41,9 +41,25 @@
         {% endif %}
 
         {% if section.settings.cta_label != blank %}
-          <a class="lp-btn lp-hero__cta" href="{{ section.settings.cta_url | default: '#' }}">
-            {{- section.settings.cta_label -}}
-          </a>
+          <div class="lp-hero__cta-wrap{% if section.settings.show_save and section.settings.save_amount != blank %} lp-hero__cta-wrap--badged{% endif %}">
+            <a class="lp-btn lp-hero__cta" href="{{ section.settings.cta_url | default: '#' }}">
+              {{- section.settings.cta_label -}}
+            </a>
+
+            {% if section.settings.show_save and section.settings.save_amount != blank %}
+              <span class="lp-hero__save">
+                {% if section.settings.save_prefix != blank %}
+                  <span class="lp-hero__save-label">{{ section.settings.save_prefix }}</span>
+                {% endif %}
+
+                <strong class="lp-hero__save-amount">{{ section.settings.save_amount }}</strong>
+
+                {% if section.settings.save_suffix != blank %}
+                  <span class="lp-hero__save-when">{{ section.settings.save_suffix }}</span>
+                {% endif %}
+              </span>
+            {% endif %}
+          </div>
         {% endif %}
 
         {% if section.settings.show_offer and section.settings.offer_note != blank %}
@@ -90,66 +106,6 @@
 
     {%- assign gallery = section.blocks | where: 'type', 'media' -%}
     <div class="lp-hero__visual">
-      {% if section.settings.show_save and section.settings.save_amount != blank %}
-        {%- liquid
-          assign reveal = false
-          if section.settings.save_reveal and section.settings.save_was != blank and section.settings.save_now != blank
-            assign reveal = true
-          endif
-        -%}
-        <div class="lp-hero__save{% if reveal %} lp-hero__save--reveal{% endif %}">
-          <span class="lp-hero__save-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false">
-              <path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.83 0l-7.2-7.2A2 2 0 0 1 2.8 12V4.8a2 2 0 0 1 2-2H12a2 2 0 0 1 1.41.59l7.2 7.2a2 2 0 0 1 0 2.81Z"/>
-              <circle cx="7.6" cy="7.6" r="1.35"/>
-            </svg>
-          </span>
-
-          <span class="lp-hero__save-stage"{% if reveal %} aria-hidden="true"{% endif %}>
-            {% if reveal %}
-              <span class="lp-hero__save-beat lp-hero__save-beat--was">
-                <span class="lp-hero__save-amount lp-hero__save-amount--muted">{{ section.settings.save_was }}</span>
-                <i class="lp-hero__save-strike"></i>
-              </span>
-
-              <span class="lp-hero__save-beat lp-hero__save-beat--now">
-                <span class="lp-hero__save-amount">{{ section.settings.save_now }}</span>
-              </span>
-            {% endif %}
-
-            <span class="lp-hero__save-beat lp-hero__save-beat--final">
-              <span class="lp-hero__save-head">
-                {% if section.settings.save_prefix != blank %}
-                  <span class="lp-hero__save-label">{{ section.settings.save_prefix }}</span>
-                {% endif %}
-
-                {% if section.settings.save_suffix != blank %}
-                  <em class="lp-hero__save-when">{{ section.settings.save_suffix }}</em>
-                {% endif %}
-              </span>
-
-              <strong class="lp-hero__save-amount lp-hero__save-amount--hero">
-                {{- section.settings.save_amount -}}
-              </strong>
-
-              {% if reveal %}
-                <span class="lp-hero__save-track">
-                  <s>{{ section.settings.save_was }}</s>
-                  <span class="lp-hero__save-arrow" aria-hidden="true">→</span>
-                  <span class="lp-hero__save-now">{{ section.settings.save_now }}</span>
-                </span>
-              {% endif %}
-            </span>
-          </span>
-
-          {% if reveal %}
-            <span class="lp-hero__save-a11y">
-              {{ section.settings.save_prefix }} {{ section.settings.save_amount }} {{ section.settings.save_suffix }}
-            </span>
-          {% endif %}
-        </div>
-      {% endif %}
-
       <div class="lp-hero__frame">
 
         {% if gallery.size > 0 %}
@@ -244,289 +200,74 @@
     padding-inline: 1.5rem;
   }
 
-  /* Badge hemat — tiga ketukan sekali jalan: harga acuan, dicoret, lalu larut
-     jadi nominal hemat. Kalibrasi premium: tanpa pantulan, tanpa kilau, dan
-     skala nyaris tak terasa (0.98) — gerak berlebihan menurunkan kelancaran
-     pemrosesan dan terbaca sebagai promo murah, bukan merek premium.
-     Panggung memakai grid bertumpuk supaya kotaknya tidak pernah berubah
-     ukuran di antara ketukan (nol pergeseran tata letak). */
-  .lp-hero__save {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
+  /* Badge hemat menempel di sudut kanan atas tombol. Permukaan emas dipakai
+     karena tombolnya hijau gelap — badge gelap akan hilang di atasnya. Teks
+     hijau tua di atas emas memberi kontras 10:1. Tanpa rotasi: teks miring
+     lebih sulit dibaca untuk usia 45-60, dan sudah terbaca "stiker" dari
+     penempatannya saja. */
+  .lp-hero__cta-wrap {
+    display: inline-block;
     position: relative;
-    flex: 0 0 auto;
     max-width: 100%;
-    padding: 0.8rem 1.15rem 0.85rem 1rem;
-    border: 1px solid color-mix(in srgb, var(--lp-gold) 42%, transparent);
-    /* radius asimetris — bahasa bentuk organik, bukan pil generik */
-    border-radius: 16px 4px 16px 4px;
-    background:
-      radial-gradient(
-        120% 180% at 0% 50%,
-        color-mix(in srgb, var(--lp-gold) 20%, transparent),
-        transparent 65%
-      ),
-      color-mix(in srgb, var(--lp-gold) 10%, var(--lp-forest-deep));
-    color: var(--lp-on-dark);
-    line-height: 1.2;
-    vertical-align: middle;
   }
 
-  .lp-hero__save-icon {
-    display: flex;
-    flex: 0 0 auto;
-    align-items: center;
-    justify-content: center;
-    color: var(--lp-gold);
-  }
-
-  .lp-hero__save-icon svg {
-    width: 15px;
-    height: 15px;
-  }
-
-  .lp-hero__save-stage {
+  .lp-hero__save {
     display: grid;
-    min-width: 0;
-  }
-
-  .lp-hero__save-beat {
-    display: inline-flex;
-    flex-wrap: wrap;
-    grid-area: 1 / 1;
-    align-items: center;
-    justify-content: center;
-    justify-self: center;
-    align-self: center;
-    gap: 0.3rem 0.5rem;
-    position: relative;
-    transform-origin: 50% 50%;
+    justify-items: center;
+    position: absolute;
+    top: -2.25rem;
+    right: -0.4rem;
+    z-index: 2;
+    gap: 0.02rem;
+    padding: 0.35rem 0.65rem 0.4rem;
+    border-radius: 14px 4px 14px 4px;
+    background: var(--lp-gold);
+    box-shadow: 0 4px 14px rgb(0 0 0 / 28%);
+    color: var(--lp-forest-deep);
+    line-height: 1.15;
+    text-align: center;
+    pointer-events: none;
   }
 
   .lp-hero__save-label {
-    color: color-mix(in srgb, var(--lp-on-dark) 80%, transparent);
     font-family: var(--lp-font-body);
-    font-size: 0.8125rem;
+    font-size: 0.6875rem;
     font-weight: 700;
-    letter-spacing: 0.09em;
-    text-transform: uppercase;
+    letter-spacing: 0.04em;
   }
 
   .lp-hero__save-amount {
-    color: var(--lp-gold);
     font-family: var(--lp-font-heading);
-    font-size: 1.1875rem;
+    font-size: 1.0625rem;
     font-variant-numeric: tabular-nums;
     font-weight: 800;
     letter-spacing: -0.01em;
   }
 
-  .lp-hero__save-beat--final {
-    flex-direction: column;
-    gap: 0.2rem;
-  }
-
-  .lp-hero__save-head {
-    display: inline-flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-  }
-
-  /* Nominal hemat adalah satu-satunya angka terbesar di kotak ini. Ukuran
-     adalah sinyal kepentingan yang paling cepat dibaca — jauh lebih kuat
-     daripada menambah gerak. */
-  .lp-hero__save-amount--hero {
-    font-size: clamp(1.75rem, 7vw, 2.125rem);
-    line-height: 1.1;
-  }
-
-  /* Jejak harga yang menetap. Tanpa ini pembaca melihat "Rp 464.500" tanpa
-     pembanding, sehingga besarnya potongan tidak punya acuan sama sekali. */
-  .lp-hero__save-track {
-    display: inline-flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 0.35rem;
-    color: color-mix(in srgb, var(--lp-on-dark) 68%, transparent);
-    font-family: var(--lp-font-body);
-    font-size: 0.8125rem;
-    font-variant-numeric: tabular-nums;
-    font-weight: 600;
-  }
-
-  .lp-hero__save-track s {
-    text-decoration-thickness: 1.5px;
-  }
-
-  .lp-hero__save-arrow {
-    color: color-mix(in srgb, var(--lp-gold) 70%, transparent);
-  }
-
-  .lp-hero__save-now {
-    color: color-mix(in srgb, var(--lp-on-dark) 92%, transparent);
-    font-weight: 800;
-  }
-
-  .lp-hero__save-amount--muted {
-    color: color-mix(in srgb, var(--lp-on-dark) 72%, transparent);
-  }
-
-  .lp-hero__save-beat--was .lp-hero__save-amount,
-  .lp-hero__save-beat--now .lp-hero__save-amount {
-    font-size: clamp(1.375rem, 5.6vw, 1.625rem);
-  }
-
-  .lp-hero__save-strike {
-    position: absolute;
-    top: 50%;
-    right: 0;
-    left: 0;
-    height: 1.5px;
-    border-radius: 2px;
-    background: color-mix(in srgb, var(--lp-on-dark) 72%, transparent);
-    transform: scaleX(0);
-    transform-origin: 0 50%;
-  }
-
   .lp-hero__save-when {
-    padding: 0.1rem 0.5rem;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--lp-gold) 20%, transparent);
-    color: color-mix(in srgb, var(--lp-on-dark) 88%, transparent);
     font-family: var(--lp-font-body);
-    font-size: 0.8125rem;
-    font-style: normal;
+    font-size: 0.625rem;
     font-weight: 700;
-    letter-spacing: 0.04em;
-  }
-
-  .lp-hero__save-a11y {
-    position: absolute;
-    overflow: hidden;
-    clip-path: inset(50%);
-    width: 1px;
-    height: 1px;
-    white-space: nowrap;
-  }
-
-  /* Urutan tumpuk: yang masuk selalu di atas yang keluar, supaya ekor pudarnya
-     tidak menembus dan membuat bayangan ganda. */
-  .lp-hero__save--reveal .lp-hero__save-beat--was {
-    z-index: 1;
-  }
-
-  .lp-hero__save--reveal .lp-hero__save-beat--now {
-    z-index: 2;
-    opacity: 0;
-  }
-
-  .lp-hero__save--reveal .lp-hero__save-beat--final {
-    z-index: 3;
-    opacity: 0;
+    letter-spacing: 0.08em;
+    opacity: 0.75;
+    text-transform: uppercase;
   }
 
   @media (prefers-reduced-motion: no-preference) {
     .lp-hero__save {
-      animation: lp-save-in 460ms cubic-bezier(0.2, 0, 0, 1) both;
-    }
-
-    .lp-hero__save--reveal .lp-hero__save-beat--was {
-      animation:
-        lp-save-rise 500ms cubic-bezier(0.2, 0, 0, 1) 250ms both,
-        lp-save-fall 300ms cubic-bezier(0.55, 0.085, 0.68, 0.53) 1720ms forwards;
-    }
-
-    .lp-hero__save--reveal .lp-hero__save-strike {
-      animation: lp-save-strike 340ms cubic-bezier(0.2, 0, 0, 1) 1150ms both;
-    }
-
-    .lp-hero__save--reveal .lp-hero__save-beat--now {
-      animation:
-        lp-save-rise 520ms cubic-bezier(0.2, 0, 0, 1) 1880ms both,
-        lp-save-fall 300ms cubic-bezier(0.55, 0.085, 0.68, 0.53) 2720ms forwards;
-    }
-
-    .lp-hero__save--reveal .lp-hero__save-beat--final {
-      animation: lp-save-rise 580ms cubic-bezier(0.2, 0, 0, 1) 2880ms both;
-    }
-
-    /* Jejak harga mendarat setelah kotaknya diam — kalau bersamaan, ia bersaing
-       dengan nominal hemat dan keduanya jadi lemah. */
-    .lp-hero__save--reveal .lp-hero__save-track {
-      animation: lp-save-settle 380ms cubic-bezier(0.2, 0, 0, 1) 3620ms both;
-    }
-  }
-
-  /* Tanpa gerak: langsung mendarat di keadaan akhir, dua ketukan awal disimpan
-     tetap menempati ruang supaya ukuran kotaknya identik. */
-  @media (prefers-reduced-motion: reduce) {
-    .lp-hero__save--reveal .lp-hero__save-beat--was,
-    .lp-hero__save--reveal .lp-hero__save-beat--now {
-      opacity: 0;
-    }
-
-    .lp-hero__save--reveal .lp-hero__save-beat--final {
-      opacity: 1;
+      animation: lp-save-in 500ms cubic-bezier(0.2, 0, 0, 1) 420ms both;
     }
   }
 
   @keyframes lp-save-in {
     from {
       opacity: 0;
-    }
-
-    to {
-      opacity: 1;
-    }
-  }
-
-  @keyframes lp-save-rise {
-    from {
-      opacity: 0;
-      transform: translateY(9px) scale(0.98);
+      transform: translateY(6px) scale(0.94);
     }
 
     to {
       opacity: 1;
       transform: none;
-    }
-  }
-
-  @keyframes lp-save-fall {
-    from {
-      opacity: 1;
-      transform: none;
-    }
-
-    to {
-      opacity: 0;
-      transform: translateY(-9px) scale(0.98);
-    }
-  }
-
-  @keyframes lp-save-settle {
-    from {
-      opacity: 0;
-      transform: translateY(5px);
-    }
-
-    to {
-      opacity: 1;
-      transform: none;
-    }
-  }
-
-  @keyframes lp-save-strike {
-    from {
-      transform: scaleX(0);
-    }
-
-    to {
-      transform: scaleX(1);
     }
   }
 
@@ -613,8 +354,14 @@
     font-weight: 600;
   }
 
-  .lp-hero__offer .lp-hero__cta {
+  .lp-hero__offer .lp-hero__cta-wrap {
     margin-top: 1.25rem;
+  }
+
+  /* Badge menonjol 36px ke atas tombol, jadi ruangnya disiapkan hanya ketika
+     badge memang ditampilkan. */
+  .lp-hero__offer .lp-hero__cta-wrap--badged {
+    margin-top: 3.25rem;
   }
 
   .lp-hero__offer-note {
@@ -843,6 +590,10 @@
 
     .lp-hero .lp-hero__cta {
       width: 100%;
+    }
+
+    .lp-hero__cta-wrap {
+      display: block;
     }
   }
 {% endstylesheet %}
@@ -1096,28 +847,6 @@
       "label": "Label",
       "default": "Hemat hingga",
       "visible_if": "{{ section.settings.show_save }}"
-    },
-    {
-      "type": "checkbox",
-      "id": "save_reveal",
-      "label": "Mainkan urutan harga",
-      "default": true,
-      "info": "Harga acuan muncul, dicoret, lalu larut jadi nominal hemat. Berjalan sekali saja.",
-      "visible_if": "{{ section.settings.show_save }}"
-    },
-    {
-      "type": "text",
-      "id": "save_was",
-      "label": "Harga acuan",
-      "default": "Rp 1.829.500",
-      "visible_if": "{{ section.settings.show_save and section.settings.save_reveal }}"
-    },
-    {
-      "type": "text",
-      "id": "save_now",
-      "label": "Harga setelah dicoret",
-      "default": "Rp 1.365.000",
-      "visible_if": "{{ section.settings.show_save and section.settings.save_reveal }}"
     },
     {
       "type": "text",
