@@ -11,7 +11,19 @@
     <div class="lp-badges__list lp-badges__list--{{ section.settings.layout }}">
       {% for block in section.blocks %}
         <div class="lp-badge" {{ block.shopify_attributes }}>
-          {% if section.settings.icon_type == 'image' %}
+          {% if section.settings.icon_type == 'preset' %}
+            {% if block.settings.icon_preset != blank and block.settings.icon_preset != 'none' %}
+              <div class="lp-badge__icon lp-badge__icon--plate">
+                <img
+                  src="{{ block.settings.icon_preset | append: '.svg' | asset_url }}"
+                  alt="{{ block.settings.label }}"
+                  width="64"
+                  height="64"
+                  loading="lazy"
+                >
+              </div>
+            {% endif %}
+          {% elsif section.settings.icon_type == 'image' %}
             <div class="lp-badge__icon">
               {% if block.settings.image %}
                 {{
@@ -105,6 +117,22 @@
     object-fit: contain;
   }
 
+  /* Tanda sertifikasi resmi tidak boleh diwarnai ulang, jadi diberi alas terang
+     supaya artwork aslinya tetap terbaca di mode gelap maupun terang. */
+  .lp-badges .lp-badge__icon--plate {
+    box-sizing: content-box;
+    width: 60px;
+    height: 60px;
+    padding: 12px;
+    border-radius: var(--lp-radius-lg, 16px);
+    background: #fff;
+  }
+
+  .lp-badges .lp-badge__icon--plate img {
+    width: 100%;
+    height: 100%;
+  }
+
   .lp-badge__emoji {
     font-size: 1rem;
     line-height: 1;
@@ -151,7 +179,8 @@
       "label": "Jenis ikon",
       "options": [
         { "value": "emoji", "label": "Emoji" },
-        { "value": "image", "label": "Gambar" }
+        { "value": "image", "label": "Gambar" },
+        { "value": "preset", "label": "Ikon sertifikasi bawaan" }
       ],
       "default": "emoji"
     },
@@ -182,6 +211,21 @@
           "type": "image_picker",
           "id": "image",
           "label": "Gambar ikon"
+        },
+        {
+          "type": "select",
+          "id": "icon_preset",
+          "label": "Ikon sertifikasi bawaan",
+          "info": "Dipakai bila Jenis ikon diatur ke Ikon sertifikasi bawaan.",
+          "options": [
+            { "value": "none", "label": "Tidak ada" },
+            { "value": "lp-cert-bpom", "label": "BPOM" },
+            { "value": "lp-cert-halal", "label": "Halal" },
+            { "value": "lp-cert-organik", "label": "Organik (USDA)" },
+            { "value": "lp-cert-bebas-batang", "label": "Bebas Batang" },
+            { "value": "lp-cert-teruji-lab", "label": "Teruji Lab" }
+          ],
+          "default": "none"
         },
         {
           "type": "text",
