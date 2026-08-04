@@ -187,11 +187,17 @@
                     assign plan_href = choice_href
                   elsif block.settings.variant_id != blank
                     assign qty = block.settings.quantity | default: 1
-                    if block.settings.variant_id contains ':'
-                      assign plan_href = '/cart/' | append: block.settings.variant_id
-                    else
-                      assign plan_href = '/cart/' | append: block.settings.variant_id | append: ':' | append: qty
+                    assign cart_path = block.settings.variant_id
+                    unless cart_path contains ':'
+                      assign cart_path = cart_path | append: ':' | append: qty
+                    endunless
+                    # Permalink keranjang membangun baris dari belakang ke depan,
+                    # jadi daftarnya dibalik supaya produk utama tetap paling atas
+                    # di halaman checkout — merchant menulisnya dalam urutan wajar.
+                    if cart_path contains ','
+                      assign cart_path = cart_path | split: ',' | reverse | join: ','
                     endif
+                    assign plan_href = '/cart/' | append: cart_path
                     if block.settings.discount_code != blank
                       assign plan_href = plan_href | append: '?discount=' | append: block.settings.discount_code
                     endif
