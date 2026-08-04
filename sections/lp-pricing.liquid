@@ -1,3 +1,20 @@
+{%- liquid
+  # Bahasa halaman checkout mengikuti awalan lokal di URL keranjang. Tanpa
+  # awalan, pembeli mendarat di checkout bahasa utama toko (Inggris) meskipun
+  # halaman ini berbahasa Indonesia.
+  assign lp_locale = section.settings.checkout_locale
+  if lp_locale == 'auto'
+    assign lp_root = routes.root_url
+    if lp_root == '/'
+      assign cart_root = '/cart/'
+    else
+      assign cart_root = lp_root | append: '/cart/'
+    endif
+  else
+    assign cart_root = '/' | append: lp_locale | append: '/cart/'
+  endif
+-%}
+
 <div class="lp-pricing lp-pad" id="{{ section.settings.anchor_id | default: 'pricing' }}">
   <div class="lp-container">
     {% if section.settings.eyebrow != blank %}
@@ -90,7 +107,7 @@
                         assign row_variant = parts[2] | strip
                         if row_variant != blank
                           assign row_tag = 'a'
-                          assign row_href = '/cart/' | append: row_variant
+                          assign row_href = cart_root | append: row_variant
                           unless row_variant contains ':'
                             assign row_href = row_href | append: ':1'
                           endunless
@@ -197,7 +214,7 @@
                     if cart_path contains ','
                       assign cart_path = cart_path | split: ',' | reverse | join: ','
                     endif
-                    assign plan_href = '/cart/' | append: cart_path
+                    assign plan_href = cart_root | append: cart_path
                     if block.settings.discount_code != blank
                       assign plan_href = plan_href | append: '?discount=' | append: block.settings.discount_code
                     endif
@@ -696,6 +713,18 @@
       "label": "ID anchor",
       "default": "pricing",
       "info": "Dipakai tombol lain untuk melompat ke sini, mis. #pricing."
+    },
+    {
+      "type": "select",
+      "id": "checkout_locale",
+      "label": "Bahasa halaman checkout",
+      "options": [
+        { "value": "id", "label": "Indonesia" },
+        { "value": "en", "label": "English" },
+        { "value": "auto", "label": "Ikuti bahasa halaman" }
+      ],
+      "default": "id",
+      "info": "Bahasa utama toko adalah English, jadi tanpa ini pembeli mendarat di checkout berbahasa Inggris."
     },
     {
       "type": "text",
