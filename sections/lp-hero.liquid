@@ -463,7 +463,19 @@
     }
 
     .lp-hero__frame {
-      max-width: 280px;
+      max-width: min(520px, 100%);
+    }
+
+    /* Strip thumbnail dibuat penuh dari tepi ke tepi: margin negatif membatalkan
+       padding kontainer, padding yang sama dikembalikan supaya thumbnail pertama
+       tetap sejajar dengan teks dan gambar utama. */
+    .lp-hero__thumbs {
+      width: auto;
+      max-width: none;
+      align-self: stretch;
+      margin-inline: calc(-1 * var(--lp-hero-gutter, 1.5rem));
+      padding-inline: var(--lp-hero-gutter, 1.5rem);
+      scroll-padding-inline: var(--lp-hero-gutter, 1.5rem);
     }
 
     .lp-hero__sub {
