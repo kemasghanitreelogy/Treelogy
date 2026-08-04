@@ -1024,7 +1024,10 @@
             "cta_url": "/products/organic-moringa-capsules-1",
             "footer_note": "Pesan hari ini, dikirim besok",
             "variant_id": "47228067283132:1",
-            "discount_code": ""
+            "discount_code": "",
+            "variants_as_radio": true,
+            "variant_default": 2,
+            "variants_label": "Pilih ukuran"
           }
         }
       },

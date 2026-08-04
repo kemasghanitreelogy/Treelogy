@@ -68,9 +68,18 @@
               <p class="lp-plan__desc">{{ block.settings.description }}</p>
             {% endif %}
 
+            {%- assign choice_href = '' -%}
             {% if block.settings.variants != blank %}
-              <div class="lp-plan__variants">
+              <div
+                class="lp-plan__variants{% if block.settings.variants_as_radio %} lp-plan__variants--choice{% endif %}"
+                {% if block.settings.variants_as_radio %}
+                  data-lp-plan-choice
+                  role="radiogroup"
+                  aria-label="{{ block.settings.variants_label | default: block.settings.title }}"
+                {% endif %}
+              >
                 {%- assign variant_lines = block.settings.variants | strip | newline_to_br | split: '<br />' -%}
+                {%- assign default_row = block.settings.variant_default | default: 1 -%}
                 {% for line in variant_lines %}
                   {%- assign parts = line | split: '|' -%}
                   {% if parts.size > 1 %}
@@ -85,16 +94,38 @@
                           unless row_variant contains ':'
                             assign row_href = row_href | append: ':1'
                           endunless
+                          if block.settings.discount_code != blank
+                            assign row_href = row_href | append: '?discount=' | append: block.settings.discount_code
+                          endif
                         endif
                       endif
                     -%}
-                    <{{ row_tag }}
-                      class="lp-plan__variant{% if row_tag == 'a' %} lp-plan__variant--link{% endif %}"
-                      {% if row_tag == 'a' %}href="{{ row_href }}"{% endif %}
-                    >
-                      <span>{{ parts[0] | strip }}</span>
-                      <span class="lp-plan__price">{{ parts[1] | strip }}</span>
-                    </{{ row_tag }}>
+
+                    {% if block.settings.variants_as_radio and row_href != blank %}
+                      {%- if forloop.index == default_row -%}
+                        {%- assign choice_href = row_href -%}
+                      {%- endif -%}
+                      <label class="lp-plan__variant lp-plan__variant--choice">
+                        <input
+                          class="lp-plan__radio"
+                          type="radio"
+                          name="lp-plan-choice-{{ block.id }}"
+                          value="{{ row_href }}"
+                          {% if forloop.index == default_row %}checked{% endif %}
+                        >
+                        <span class="lp-plan__mark" aria-hidden="true"></span>
+                        <span class="lp-plan__variant-name">{{ parts[0] | strip }}</span>
+                        <span class="lp-plan__price">{{ parts[1] | strip }}</span>
+                      </label>
+                    {% else %}
+                      <{{ row_tag }}
+                        class="lp-plan__variant{% if row_tag == 'a' %} lp-plan__variant--link{% endif %}"
+                        {% if row_tag == 'a' %}href="{{ row_href }}"{% endif %}
+                      >
+                        <span>{{ parts[0] | strip }}</span>
+                        <span class="lp-plan__price">{{ parts[1] | strip }}</span>
+                      </{{ row_tag }}>
+                    {% endif %}
                   {% endif %}
                 {% endfor %}
               </div>
@@ -152,7 +183,9 @@
               {% if block.settings.cta_label != blank %}
                 {%- liquid
                   assign plan_href = block.settings.cta_url | default: '#'
-                  if block.settings.variant_id != blank
+                  if block.settings.variants_as_radio and choice_href != blank
+                    assign plan_href = choice_href
+                  elsif block.settings.variant_id != blank
                     assign qty = block.settings.quantity | default: 1
                     if block.settings.variant_id contains ':'
                       assign plan_href = '/cart/' | append: block.settings.variant_id
@@ -167,6 +200,7 @@
                 <a
                   class="lp-btn{% if block.settings.featured %} lp-btn--gold{% endif %} lp-plan__cta"
                   href="{{ plan_href }}"
+                  {% if block.settings.variants_as_radio %}data-lp-plan-cta{% endif %}
                 >
                   {{- block.settings.cta_label -}}
                 </a>
@@ -376,6 +410,69 @@
     outline-offset: 2px;
   }
 
+  .lp-plan__variants--choice {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .lp-pricing .lp-plan__variant--choice {
+    gap: 0.65rem;
+    padding: 0.7rem 0.85rem;
+    border: 1px solid var(--lp-border);
+    border-bottom: 1px solid var(--lp-border);
+    border-radius: var(--lp-radius-md, 10px);
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .lp-plan__variant-name {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .lp-plan__radio {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .lp-plan__mark {
+    flex: 0 0 auto;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--lp-border);
+    border-radius: 50%;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .lp-pricing .lp-plan__variant--choice:hover {
+    border-color: var(--lp-gold);
+  }
+
+  .lp-pricing .lp-plan__variant--choice:has(.lp-plan__radio:checked) {
+    border-color: var(--lp-gold);
+    background: color-mix(in srgb, var(--lp-gold) 12%, transparent);
+  }
+
+  .lp-plan__variant--choice:has(.lp-plan__radio:checked) .lp-plan__mark {
+    border-color: var(--lp-gold);
+    box-shadow: inset 0 0 0 4px var(--lp-gold);
+  }
+
+  .lp-plan__variant--choice:has(.lp-plan__radio:focus-visible) {
+    outline: 2px solid var(--lp-forest);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lp-pricing .lp-plan__variant--choice,
+    .lp-plan__mark {
+      transition: none;
+    }
+  }
+
   .lp-plan__stack {
     margin-bottom: 1rem;
     padding: 0.4rem 0.9rem;
@@ -546,6 +643,41 @@
   }
 {% endstylesheet %}
 
+{% javascript %}
+  (function () {
+    function bind(group) {
+      if (group.dataset.lpChoiceBound === 'true') return;
+      var plan = group.closest('.lp-plan');
+      if (!plan) return;
+      var cta = plan.querySelector('[data-lp-plan-cta]');
+      if (!cta) return;
+
+      group.dataset.lpChoiceBound = 'true';
+
+      group.addEventListener('change', function (event) {
+        var radio = event.target;
+        if (!radio || radio.type !== 'radio' || !radio.value) return;
+        cta.setAttribute('href', radio.value);
+      });
+
+      var checked = group.querySelector('.lp-plan__radio:checked');
+      if (checked && checked.value) cta.setAttribute('href', checked.value);
+    }
+
+    function start() {
+      document.querySelectorAll('[data-lp-plan-choice]').forEach(bind);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', start);
+    } else {
+      start();
+    }
+
+    document.addEventListener('shopify:section:load', start);
+  })();
+{% endjavascript %}
+
 {% schema %}
 {
   "name": "LP · Pricing",
@@ -711,6 +843,31 @@
           "id": "variants",
           "label": "Baris varian",
           "info": "Satu baris per item. Format: Nama | Harga — tambahkan | IDvarian agar baris itu langsung ke checkout."
+        },
+        {
+          "type": "checkbox",
+          "id": "variants_as_radio",
+          "label": "Jadikan baris varian sebagai pilihan radio",
+          "default": false,
+          "info": "Pembeli memilih satu baris, lalu tombol kartu ini langsung ke checkout varian itu."
+        },
+        {
+          "type": "range",
+          "id": "variant_default",
+          "label": "Baris yang terpilih secara bawaan",
+          "min": 1,
+          "max": 6,
+          "step": 1,
+          "default": 1,
+          "info": "Nomor urut baris varian yang sudah tercentang saat halaman dibuka.",
+          "visible_if": "{{ block.settings.variants_as_radio }}"
+        },
+        {
+          "type": "text",
+          "id": "variants_label",
+          "label": "Label aksesibilitas grup pilihan",
+          "default": "Pilih ukuran",
+          "visible_if": "{{ block.settings.variants_as_radio }}"
         },
         {
           "type": "textarea",
