@@ -215,8 +215,11 @@
     display: grid;
     justify-items: center;
     position: absolute;
-    top: -2.25rem;
+    /* Diikat dari sisi bawah, bukan atas: posisinya lalu tidak bergantung pada
+       tinggi badge, sehingga label tombol tetap aman meski teksnya berubah
+       panjang atau font-nya berbeda. Hanya menindih 6px di tepi atas tombol. */
     right: -0.4rem;
+    bottom: calc(100% - 6px);
     z-index: 2;
     gap: 0.02rem;
     padding: 0.35rem 0.65rem 0.4rem;
@@ -361,7 +364,7 @@
   /* Badge menonjol 36px ke atas tombol, jadi ruangnya disiapkan hanya ketika
      badge memang ditampilkan. */
   .lp-hero__offer .lp-hero__cta-wrap--badged {
-    margin-top: 3.25rem;
+    margin-top: 4rem;
   }
 
   .lp-hero__offer-note {
