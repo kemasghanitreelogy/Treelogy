@@ -340,7 +340,12 @@
               </div>
             {% endif %}
 
-            {% if lp_live %}
+            {% if lp_live and block.settings.variants_from_product %}
+              {%- comment -%}
+                Harga sudah tertera pada tiap pilihan varian, jadi baris harga
+                tunggal di sini hanya akan bertentangan dengan pilihan aktif.
+              {%- endcomment -%}
+            {% elsif lp_live %}
               <div class="lp-plan__now">
                 <span>{{ block.settings.price_label }}</span>
                 <span class="lp-plan__price">{{ lp_variant.price | money }}</span>
