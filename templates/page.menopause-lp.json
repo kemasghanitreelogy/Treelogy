@@ -1017,7 +1017,9 @@
             "quantity": 1,
             "discount_code": "INSIDEOUTGRATISONGKIR",
             "cta_url": "/products/inside-out-moringa-protocol?variant=47228045492412",
-            "footer_note": "Pesan hari ini, dikirim besok"
+            "footer_note": "Pesan hari ini, dikirim besok",
+            "promo_discount": 345000,
+            "shipping_compare": "Rp 35.000"
           }
         },
         "p30": {
@@ -1067,7 +1069,9 @@
             "quantity": 1,
             "discount_code": "INSIDEOUTGRATISONGKIR",
             "cta_url": "/products/inside-out-moringa-protocol?variant=47228045459644",
-            "footer_note": "Pesan hari ini, dikirim besok"
+            "footer_note": "Pesan hari ini, dikirim besok",
+            "promo_discount": 205000,
+            "shipping_compare": "Rp 35.000"
           }
         },
         "pcaps": {
@@ -1117,7 +1121,9 @@
             "quantity": 1,
             "discount_code": "INSIDEOUTGRATISONGKIR",
             "cta_url": "/products/organic-moringa-capsules-1",
-            "footer_note": "Pesan hari ini, dikirim besok"
+            "footer_note": "Pesan hari ini, dikirim besok",
+            "promo_discount": 0,
+            "shipping_compare": "Rp 35.000"
           }
         }
       },
