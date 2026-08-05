@@ -74,9 +74,27 @@
     });
 
     {%- if request.page_type == 'product' and product %}
-      {%- assign dl_variant = product.selected_or_first_available_variant %}
+      {%- comment -%}
+        The variant reported here MUST be the one the PDP renders as selected,
+        otherwise view_item and the funnel that follows it disagree on the pack.
+        snippets/VariantsButton.liquid pre-selects the variant flagged with
+        metafield custom.set_default (falling back to the first variant), and
+        only an explicit ?variant= in the URL overrides it — mirror that order.
+      {%- endcomment -%}
+      {%- liquid
+        assign dl_variant = product.selected_or_first_available_variant
+        unless product.selected_variant
+          for dl_v in product.variants
+            if dl_v.metafields.custom.set_default == true
+              assign dl_variant = dl_v
+            endif
+          endfor
+        endunless
+      -%}
       dataLayer.push({
         event: 'view_item',
+        item_handle: {{ product.handle | json }},
+        variant_id: {{ dl_variant.id | append: '' | json }},
         ecommerce: {
           currency: {{ dl_currency | json }},
           value: {{ dl_variant.price | divided_by: 100.0 | json }},
@@ -87,6 +105,7 @@
               item_brand: {{ product.vendor | json }},
               item_category: {{ product.type | json }},
               item_variant: {{ dl_variant.title | json }},
+              item_variant_id: {{ dl_variant.id | append: '' | json }},
               price: {{ dl_variant.price | divided_by: 100.0 | json }},
               quantity: 1
             }
@@ -149,7 +168,7 @@
        later non-ecommerce event on the page (section_view, select_item, …).
        Queue order matters: the event pushes above are processed first, so
        their tags still see the payload; this only cleans the model after. */
-    dataLayer.push({ ecommerce: null });
+    dataLayer.push({ ecommerce: null, item_handle: null, variant_id: null });
 
     (function (w, d, s, l, i) {
       w[l] = w[l] || [];

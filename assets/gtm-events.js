@@ -1,4 +1,4 @@
-/* GTM interaction events for Treelogy. (r6 — item_id konsisten variant-first)
+/* GTM interaction events for Treelogy. (r7 — PDP detail + atc_source site-wide)
    Loaded (deferred) by snippets/gtm-head.liquid — only when a GTM container ID
    is configured, so window.dataLayer always exists here.
 
@@ -15,6 +15,14 @@
    - whatsapp_click   : click on wa.me / api.whatsapp.com / whatsapp: links
    - section_view     : a .shopify-section became >=40% visible (once per section)
    - section_click    : click on a link/button inside a section (section attribution)
+   - select_variant   : product-page pack/variant card chosen (real clicks only —
+                        the theme fires synthetic ones to bind its own handlers)
+   - pdp_gallery_view : a gallery slide past the first was actually looked at
+   - pdp_detail_expand: an accordion/detail block on a product page was opened
+
+   NOTE: every event name here must also exist in the GTM trigger regex
+   ("CE - all tracked events"), otherwise it stays in the dataLayer and never
+   reaches GA4. See claudedocs/gtm/TRACKING-MASTER.md §3.
 */
 (function () {
   'use strict';
@@ -476,6 +484,156 @@
             page_path: location.pathname
           });
         }
+      },
+      { capture: true, passive: true }
+    );
+  })();
+
+  /* ---------- add-to-cart surface attribution (site-wide) ---------- */
+  /* Before r7 only the collection hero stamped atc_source, so every add from a
+     product page, the variant popup or a direct-add card arrived unlabelled and
+     the cart could not be split by the surface that produced it. The stamp is
+     consumed by the next successful /cart/add within 15s (see consumeAtcSource).
+     Window-capture for the same reason as the hero listener: the seamless-ATC
+     interceptor calls stopImmediatePropagation on the click. */
+
+  window.addEventListener(
+    'click',
+    function (e) {
+      var t = e.target;
+      if (!t || !t.closest || !e.isTrusted) return;
+      var btn = t.closest('#AddToCart, #popup-variants-button-bag, .button-direct-add');
+      if (!btn) return;
+      /* the hero module already stamped a more specific source for its own CTAs
+         (it runs first: same window-capture phase, registered earlier) */
+      if (btn.closest('[data-hero-version]') && btn.matches('.protocol-cta, .button-quick-add-cart')) return;
+      var source =
+        btn.id === 'AddToCart'
+          ? 'pdp:main'
+          : btn.id === 'popup-variants-button-bag'
+            ? 'pdp:popup'
+            : 'card:direct';
+      stampAtcSource(source);
+    },
+    { capture: true, passive: true }
+  );
+
+  /* ---------- product detail page: pack choice, gallery, expandable copy ---------- */
+  /* The three decisions a PDP visitor makes before add_to_cart — which pack,
+     how much of the gallery they consumed, which detail they opened — were all
+     invisible: variant cards are <div>s (so not even section_click saw them),
+     gallery paging is a scroll container, accordions are <div class="button">. */
+
+  (function () {
+    var pdp = document.querySelector('.product-detail-wrapper');
+    if (!pdp) return;
+
+    var handle = (location.pathname.split('/products/')[1] || '')
+      .split('?')[0]
+      .split('/')[0];
+
+    function label(el) {
+      return (el && el.textContent ? el.textContent : '').replace(/\s+/g, ' ').trim().slice(0, 100);
+    }
+
+    /* --- select_variant --- */
+    /* section-product-single.js "kickstarts" the variant binding 500ms after
+       load by calling .click() on the other card and then back on the active one
+       (and app.bundle re-clicks too). Those are synthetic, so isTrusted is the
+       only thing separating a real pack choice from two phantom ones per view. */
+    var lastVariant = null;
+    var variantPushes = 0;
+
+    window.addEventListener(
+      'click',
+      function (e) {
+        var t = e.target;
+        if (!t || !t.closest || !e.isTrusted) return;
+        var card = t.closest('.checkbox-button[data-value], .protocol-variant-card[data-value]');
+        if (!card) return;
+        var vid = card.getAttribute('data-value') || '';
+        if (!vid || vid === lastVariant || variantPushes >= 20) return;
+        lastVariant = vid;
+        variantPushes++;
+
+        var group = card.parentElement
+          ? card.parentElement.querySelectorAll('.checkbox-button[data-value]')
+          : [card];
+        /* the page also renders variant cards for OTHER products (bundle and
+           cross-sell blocks); only cards inside the main product block describe
+           the product this URL is about — the rest carry from_section instead */
+        pushEvent({
+          event: 'select_variant',
+          item_handle: pdp.contains(card) ? handle : undefined,
+          variant_id: vid,
+          cta_label: label(card.querySelector('.pv-time')) || label(card.querySelector('.pv-desc')),
+          cta_position: Array.prototype.indexOf.call(group, card) + 1,
+          from_section: sectionIdOf(card),
+          page_path: location.pathname
+        });
+      },
+      { capture: true, passive: true }
+    );
+
+    /* --- pdp_gallery_view --- */
+    /* Observed against the scroll container itself, so a mobile swipe and a
+       desktop thumbnail click (which scrolls the same container) both resolve
+       to one event per slide, once each. */
+    var scroller = pdp.querySelector('.native-gallery__main-scroll');
+    if (scroller && 'IntersectionObserver' in window) {
+      var slidesSeen = {};
+      var gio = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            var idx = parseInt(entry.target.getAttribute('data-index'), 10);
+            if (isNaN(idx) || idx > 11 || slidesSeen[idx]) return;
+            slidesSeen[idx] = true;
+            /* slide 0 is on screen at load — that is view_item, not engagement */
+            if (idx === 0) return;
+            pushEvent({
+              event: 'pdp_gallery_view',
+              item_handle: handle,
+              cta_position: idx + 1,
+              section_id: sectionIdOf(scroller),
+              page_path: location.pathname
+            });
+          });
+        },
+        { root: scroller, threshold: 0.6 }
+      );
+      scroller.querySelectorAll('.native-gallery__slide').forEach(function (s) {
+        gio.observe(s);
+      });
+    }
+
+    /* --- pdp_detail_expand --- */
+    var expandsSeen = {};
+    window.addEventListener(
+      'click',
+      function (e) {
+        var t = e.target;
+        if (!t || !t.closest || !e.isTrusted) return;
+        /* two accordion flavours ship on PDPs: the description list
+           (.__accordion, app.bundle) and the duplicate blocks
+           (.ac-dup-*, accordion-duplicate.js) */
+        var head = t.closest('.__accordion-button, .ac-dup-header');
+        if (!head) return;
+        var wrapper = head.closest('.__accordion-wrapper, .ac-dup-item');
+        /* fires on open only; both scripts toggle .active on the wrapper in the
+           bubble phase, i.e. AFTER this capture-phase listener — so "not active
+           yet" is exactly the click that opens it */
+        if (wrapper && wrapper.classList.contains('active')) return;
+        var name = label(head);
+        if (!name || expandsSeen[name]) return;
+        expandsSeen[name] = true;
+        pushEvent({
+          event: 'pdp_detail_expand',
+          item_handle: handle,
+          link_label: name,
+          section_id: sectionIdOf(head),
+          page_path: location.pathname
+        });
       },
       { capture: true, passive: true }
     );
