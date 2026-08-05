@@ -15,6 +15,12 @@
 {% endif %}
 
 {% if section.settings.show_sticky_bar %}
+  {%- comment -%}
+    Spacer nyata di alur dokumen, bukan padding pada #landing-page: layout
+    chromeless di theme.liquid mengunci `padding: 0 !important` pada
+    #landing-page, jadi padding apa pun di sana tidak akan pernah berlaku.
+  {%- endcomment -%}
+  <div class="lp-sticky__spacer" aria-hidden="true"></div>
   <div class="lp-sticky" data-lp-sticky-cta hidden>
     <div class="lp-sticky__text">
       <span>{{ section.settings.sticky_highlight }}</span>
@@ -78,12 +84,12 @@
 
   /* Bar ini position:fixed, jadi ia tidak menyisakan ruang untuk dirinya
      sendiri dan menutupi baris terakhir halaman saat scroll mentok bawah.
-     Ruangnya dipesan dari --lp-sticky-reserve (tinggi bar apa adanya, TIDAK
+     Tingginya dipesan lewat --lp-sticky-reserve (tinggi bar apa adanya, TIDAK
      ikut nol saat bar tersembunyi) supaya tidak ada lompatan layout ketika
      bar muncul di tengah scroll. --lp-sticky-height tetap dipakai FAB WA
      karena FAB memang harus turun lagi saat bar tidak tampil. */
-  #landing-page {
-    padding-bottom: var(--lp-sticky-reserve, 0px);
+  .lp-sticky__spacer {
+    height: var(--lp-sticky-reserve, 0px);
   }
 
   .lp-sticky__text {
