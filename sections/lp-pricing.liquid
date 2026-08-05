@@ -317,7 +317,12 @@
                 {% if block.settings.show_free_shipping %}
                   <div class="lp-plan__row">
                     <span>{{ block.settings.shipping_label }}</span>
-                    <span class="lp-plan__free">{{ block.settings.free_word }}</span>
+                    <span class="lp-plan__free">
+                      {%- if block.settings.shipping_compare != blank -%}
+                        <s>{{ block.settings.shipping_compare }}</s>
+                      {%- endif -%}
+                      {{ block.settings.free_word }}
+                    </span>
                   </div>
                 {% endif %}
               </div>
@@ -1257,6 +1262,12 @@
           "id": "shipping_label",
           "label": "Nama baris ongkir",
           "default": "Ongkos Kirim"
+        },
+        {
+          "type": "text",
+          "id": "shipping_compare",
+          "label": "Harga coret ongkir",
+          "info": "Muncul dicoret sebelum kata gratis. Isi hanya jika tarif itu benar-benar berlaku di checkout, supaya kartu dan checkout tidak berbeda."
         },
         {
           "type": "header",
