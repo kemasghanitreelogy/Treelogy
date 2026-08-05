@@ -89,7 +89,11 @@
                 <span>{{ block.settings.prefix }}</span>
               {% endif %}
               {% if block.settings.highlight != blank %}
-                <strong class="lp-hero__count" data-lp-count="{{ block.settings.highlight | escape }}">
+                <strong
+                  class="lp-hero__count"
+                  data-lp-count="{{ block.settings.highlight | escape }}"
+                  data-lp-count-duration="{{ section.settings.count_duration | default: 3400 }}"
+                >
                   {{- block.settings.highlight -}}
                 </strong>
               {% endif %}
@@ -605,7 +609,7 @@
   (function () {
     var EASE = 'cubic-bezier(0.2, 0, 0, 1)';
     var BACK = 'cubic-bezier(0.34, 1.56, 0.64, 1)';
-    var COUNT_DURATION = 1700;
+    var COUNT_DURATION = 3400;
     var SUFFIX_DURATION = 420;
     var START_SCALE = 0.72;
 
@@ -639,7 +643,10 @@
         el.appendChild(suffix);
       }
 
-      return { value: value, suffix: suffix, target: target };
+      var duration = parseInt(el.dataset.lpCountDuration, 10);
+      if (!isFinite(duration) || duration < 200) duration = COUNT_DURATION;
+
+      return { value: value, suffix: suffix, target: target, duration: duration };
     }
 
     function run(parts) {
@@ -659,7 +666,7 @@
 
       var growth = value.animate(
         [{ transform: 'scale(' + START_SCALE + ')' }, { transform: 'scale(1)' }],
-        { duration: COUNT_DURATION, easing: EASE, fill: 'both' }
+        { duration: parts.duration, easing: EASE, fill: 'both' }
       );
 
       function tick() {
@@ -682,7 +689,7 @@
             { opacity: 0, transform: 'translateY(14px)' },
             { opacity: 1, transform: 'none' }
           ],
-          { duration: SUFFIX_DURATION, delay: COUNT_DURATION, easing: BACK, fill: 'both' }
+          { duration: SUFFIX_DURATION, delay: parts.duration, easing: BACK, fill: 'both' }
         );
         reveal.finished.then(function () {
           reveal.cancel();
@@ -834,6 +841,17 @@
   "tag": "section",
   "class": "lp-hero-section",
   "settings": [
+    {
+      "type": "range",
+      "id": "count_duration",
+      "label": "Kecepatan animasi angka",
+      "info": "Berapa lama angka menghitung naik. Makin besar makin pelan.",
+      "min": 800,
+      "max": 6000,
+      "step": 200,
+      "unit": "ms",
+      "default": 3400
+    },
     {
       "type": "header",
       "content": "Tiket hemat"
