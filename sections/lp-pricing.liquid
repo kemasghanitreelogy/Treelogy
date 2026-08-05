@@ -462,6 +462,40 @@
   </div>
 </div>
 
+{%- comment -%}
+  Dikirim inline karena bundle compiled_assets tema ini sempat berhenti
+  diperbarui, sehingga aturan baru tidak pernah sampai ke pengunjung.
+{%- endcomment -%}
+
+{% style %}
+  .lp-pricing .lp-pricing__cards {
+    grid-template-columns: repeat(var(--lp-plan-count, 3), minmax(0, 1fr));
+    max-width: min(1140px, calc(var(--lp-plan-count, 3) * 380px));
+  }
+
+  .lp-pricing .lp-plan__variant .lp-plan__price {
+    flex: 0 0 auto;
+    margin-left: 0.75rem;
+    white-space: nowrap;
+  }
+
+  .lp-pricing .lp-plan__giftvalue {
+    margin: -0.5rem 0 1rem;
+    color: var(--lp-forest);
+    font-family: var(--lp-font-body);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-align: right;
+  }
+
+  @media screen and (max-width: 900px) {
+    .lp-pricing .lp-pricing__cards {
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+      max-width: 560px;
+    }
+  }
+{% endstyle %}
+
 {% stylesheet %}
   .lp-pricing {
     background: var(--lp-cream);

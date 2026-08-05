@@ -48,6 +48,139 @@
   </div>
 </div>
 
+{%- comment -%}
+  Aturan tata letak timeline sengaja dikirim inline, bukan lewat {% stylesheet %}.
+  Bundle compiled_assets tema ini sempat berhenti diperbarui, sehingga markup
+  baru terlanjur tayang sementara CSS-nya masih versi lama. Blok ini juga
+  menetralkan aturan lama (garis di .lp-timeline__list, titik di
+  .lp-timeline__period, grid 110px) yang masih ada di bundle tersebut.
+  Semua selector diberi awalan .lp-timeline agar bobotnya melebihi aturan lama
+  tanpa bergantung pada urutan pemuatan.
+{%- endcomment -%}
+
+{% style %}
+  .lp-timeline .lp-timeline__list {
+    position: relative;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+  }
+
+  .lp-timeline .lp-timeline__list::before,
+  .lp-timeline .lp-timeline__period::after {
+    display: none;
+    content: none;
+  }
+
+  .lp-timeline .lp-timeline__item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 1.25rem;
+    margin-bottom: 0;
+    padding: 0 0 2.25rem;
+  }
+
+  .lp-timeline .lp-timeline__item:last-child {
+    padding-bottom: 0;
+  }
+
+  .lp-timeline .lp-timeline__marker {
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+
+  .lp-timeline .lp-timeline__marker::before {
+    content: '';
+    position: absolute;
+    top: 48px;
+    bottom: -2.25rem;
+    left: 50%;
+    width: 1px;
+    background: var(--lp-border);
+    transform: translateX(-50%);
+  }
+
+  .lp-timeline .lp-timeline__item:last-child .lp-timeline__marker::before {
+    display: none;
+  }
+
+  .lp-timeline .lp-timeline__icon {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border: 1px solid var(--lp-border);
+    border-radius: 50%;
+    background: var(--lp-cream);
+    font-size: 1.15rem;
+    line-height: 1;
+  }
+
+  .lp-timeline .lp-timeline__content {
+    display: block;
+    padding-top: 0.35rem;
+  }
+
+  .lp-timeline .lp-timeline__content p {
+    margin: 0;
+  }
+
+  .lp-timeline .lp-timeline__period {
+    position: static;
+    margin-bottom: 0.4rem;
+    padding-top: 0;
+    color: var(--lp-text-light);
+    font-family: var(--lp-font-body);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-align: left;
+    text-transform: uppercase;
+  }
+
+  .lp-timeline .lp-timeline__title {
+    margin-bottom: 0.3rem;
+    color: var(--lp-forest);
+    font-family: var(--lp-font-body);
+    font-size: 1.0625rem;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  .lp-timeline .lp-timeline__text {
+    color: var(--lp-text-mid);
+    font-family: var(--lp-font-body);
+    font-size: 0.9375rem;
+    line-height: 1.7;
+  }
+
+  @media screen and (max-width: 600px) {
+    .lp-timeline .lp-timeline__item {
+      grid-template-columns: 40px 1fr;
+      gap: 1rem;
+      padding-left: 0;
+    }
+
+    .lp-timeline .lp-timeline__icon {
+      width: 40px;
+      height: 40px;
+      flex-basis: 40px;
+      font-size: 1rem;
+    }
+
+    .lp-timeline .lp-timeline__marker::before {
+      top: 40px;
+    }
+  }
+{% endstyle %}
+
 {% stylesheet %}
   .lp-timeline {
     background: var(--lp-cream);
