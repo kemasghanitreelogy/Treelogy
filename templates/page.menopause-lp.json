@@ -442,7 +442,9 @@
         "compare_label_right": "Treelogy",
         "compare_caption": "Daun yang sama. Standar yang berbeda.",
         "content_middle": "<p>Seiring waktu, kami menemukan bahwa daun ini mendukung jauh lebih banyak dari sekadar keluhan saya dulu. <strong>Ia mendukung kesehatan lintas generasi:</strong></p>",
-        "highlight": "Dan untuk perempuan yang sedang menopause: moringa mendukung sendi yang nyeri, energi yang drop di siang hari, tidur lebih nyenyak, hot flashes berkurang, rambut rontok berkurang, dan kulit lebih sehat."
+        "highlight": "Dan untuk perempuan yang sedang menopause: moringa mendukung sendi yang nyeri, energi yang drop di siang hari, tidur lebih nyenyak, hot flashes berkurang, rambut rontok berkurang, dan kulit lebih sehat.",
+        "avatar": "shopify://shop_images/treelogy-moringa-brand-cap-founder-portrait-bali.jpg",
+        "compare_image": "shopify://shop_images/moringa-powder-quality-comparison-dull-vs-vibrant-green.png"
       }
     },
     "protocol": {
@@ -454,16 +456,18 @@
             "image_position": "center",
             "title": "Inside",
             "product_name": "Organic Moringa Capsules",
-            "benefits": "<ul><li>Membantu meredakan nyeri sendi dengan senyawa antiinflamasi</li><li>Melawan lelah dengan zat besi dan vitamin B</li><li>Mendukung tidur lebih dalam tanpa sering terbangun</li><li>Membantu mengurangi frekuensi dan intensitas hot flashes</li><li>Mendukung mood stabil dan meredakan ketegangan</li><li>Mendukung kekuatan tulang dengan kalsium 17× lebih banyak dari susu</li><li>Mendukung keseimbangan hormon secara alami</li></ul>"
+            "benefits": "<ul><li>Membantu meredakan nyeri sendi dengan senyawa antiinflamasi</li><li>Melawan lelah dengan zat besi dan vitamin B</li><li>Mendukung tidur lebih dalam tanpa sering terbangun</li><li>Membantu mengurangi frekuensi dan intensitas hot flashes</li><li>Mendukung mood stabil dan meredakan ketegangan</li><li>Mendukung kekuatan tulang dengan kalsium 17× lebih banyak dari susu</li><li>Mendukung keseimbangan hormon secara alami</li></ul>",
+            "image": "shopify://shop_images/treelogy-organic-moringa-capsules-tin-luxury-flatlay-bali.jpg"
           }
         },
         "outside": {
           "type": "side",
           "settings": {
-            "image_position": "top",
+            "image_position": "center",
             "title": "Outside",
             "product_name": "Moringa Cold-Pressed Seed Oil",
-            "benefits": "<ul><li>Hidrasi mendalam untuk kulit kering saat menopause</li><li>Membantu menyamarkan garis halus dengan vitamin E dan antioksidan</li><li>Menguatkan rambut menipis dari akar sampai ujung</li><li>Non-comedogenic, tidak menyumbat pori</li><li>Menenangkan kemerahan dan iritasi</li><li>Merawat kuku rapuh dan mudah mengelupas</li><li>Ringan, cepat meresap, tanpa rasa lengket</li></ul>"
+            "benefits": "<ul><li>Hidrasi mendalam untuk kulit kering saat menopause</li><li>Membantu menyamarkan garis halus dengan vitamin E dan antioksidan</li><li>Menguatkan rambut menipis dari akar sampai ujung</li><li>Non-comedogenic, tidak menyumbat pori</li><li>Menenangkan kemerahan dan iritasi</li><li>Merawat kuku rapuh dan mudah mengelupas</li><li>Ringan, cepat meresap, tanpa rasa lengket</li></ul>",
+            "image": "shopify://shop_images/treelogy-organic-moringa-oil-30ml-cold-pressed-poolside-bali.png"
           }
         }
       },
@@ -618,7 +622,9 @@
         "before_after_caption": "Hasil nyata. Ritual minyak di malam hari.",
         "cta_label": "",
         "cta_url": "",
-        "footnote": "Profil nutrisi yang sama sekali berbeda dari daunnya. Kapsul menutrisi tubuh. Minyak menutrisi kulit."
+        "footnote": "Profil nutrisi yang sama sekali berbeda dari daunnya. Kapsul menutrisi tubuh. Minyak menutrisi kulit.",
+        "before_image": "shopify://shop_images/moringa-oil-before-eczema-dry-skin-hand-treelogy.jpg",
+        "after_image": "shopify://shop_images/moringa-oil-after-clear-skin-hand-results-treelogy.jpg"
       }
     },
     "timeline": {
@@ -1237,7 +1243,8 @@
             "rating": 5,
             "text": "Bulan depan saya 56 tahun. Baru habis 30 kapsul dan manfaatnya sudah terasa. Kualitas tidur membaik, kesemutan di tangan saat bangun berkurang, nyeri lutut saat naik tangga berkurang. Langsung repurchase.",
             "tag": "Tidur · Sendi · 55 Tahun",
-            "topics": "tidur sendi"
+            "topics": "tidur sendi",
+            "avatar": "shopify://shop_images/treelogy-moringa-capsules-testimonial-senior-woman-wellness.jpg"
           }
         },
         "rv3": {
@@ -1261,7 +1268,8 @@
             "rating": 5,
             "text": "Usia saya 50 tahun dan banyak perubahan di tubuh karena hormon tidak seimbang. Setelah rutin minum Treelogy satu minggu, nyeri tumit dan sendi saya berkurang. Badan terasa lebih enak dan nyaman. Terima kasih Treelogy.",
             "tag": "Hormon · Nyeri Sendi · 50 Tahun",
-            "topics": "sendi"
+            "topics": "sendi",
+            "avatar": "shopify://shop_images/treelogy-organic-moringa-capsules-customer-review-indonesia.jpg"
           }
         },
         "rv5": {
@@ -1285,7 +1293,8 @@
             "rating": 5,
             "text": "Yang paling terasa, tidur jadi jauh lebih nyenyak. Kram jari berkurang. Kulit lebih lembap. Badan segar dan fit. Empat manfaat dari satu produk.",
             "tag": "Tidur · Kram · Kulit · Energi",
-            "topics": "tidur energi"
+            "topics": "tidur energi",
+            "avatar": "shopify://shop_images/treelogy-moringa-capsules-testimonial-woman-bali-home.jpg"
           }
         }
       },
