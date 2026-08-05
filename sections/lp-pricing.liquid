@@ -139,8 +139,25 @@
               assign lp_gift_total = lp_gift_total | plus: lp_g2v.price
             endif
 
-            assign lp_savings = 0
-            if lp_separate > lp_variant.price
+            # Harga jual varian sudah disamakan dengan penjumlahan komponen, lalu
+            # dipotong diskon otomatis di checkout. Liquid tidak bisa membaca
+            # diskon otomatis, jadi besarnya dititipkan lewat setting agar kartu
+            # menampilkan angka yang sama dengan yang ditagih checkout.
+            assign lp_promo = block.settings.promo_discount | default: 0 | times: 100
+            assign lp_final = lp_variant.price
+            if lp_promo > 0 and lp_promo < lp_variant.price
+              assign lp_final = lp_variant.price | minus: lp_promo
+            else
+              assign lp_promo = 0
+            endif
+
+            assign lp_anchor = lp_separate
+            if lp_promo > 0
+              assign lp_anchor = lp_variant.price
+            endif
+
+            assign lp_savings = lp_promo
+            if lp_promo == 0 and lp_separate > lp_variant.price
               assign lp_savings = lp_separate | minus: lp_variant.price
             endif
 
@@ -347,10 +364,10 @@
               </div>
             {% endif %}
 
-            {% if lp_live and lp_separate > 0 %}
+            {% if lp_live and lp_anchor > lp_final %}
               <div class="lp-plan__total">
                 <span>{{ block.settings.total_label }}</span>
-                <span><s>{{ lp_separate | money }}</s></span>
+                <span><s>{{ lp_anchor | money }}</s></span>
               </div>
             {% elsif block.settings.total_value != blank %}
               <div class="lp-plan__total">
@@ -367,7 +384,7 @@
             {% elsif lp_live %}
               <div class="lp-plan__now">
                 <span>{{ block.settings.price_label }}</span>
-                <span class="lp-plan__price">{{ lp_variant.price | money }}</span>
+                <span class="lp-plan__price">{{ lp_final | money }}</span>
               </div>
             {% elsif block.settings.price != blank %}
               <div class="lp-plan__now">
@@ -379,7 +396,7 @@
             {% if lp_live and block.settings.days > 0 %}
               <p class="lp-plan__perday">
                 {{- block.settings.per_day_label }}
-                {{ lp_variant.price | divided_by: block.settings.days | money -}}
+                {{ lp_final | divided_by: block.settings.days | money -}}
               </p>
             {% elsif block.settings.per_day != blank %}
               <p class="lp-plan__perday">{{ block.settings.per_day }}</p>
@@ -1272,6 +1289,12 @@
         {
           "type": "header",
           "content": "Angka turunan"
+        },
+        {
+          "type": "number",
+          "id": "promo_discount",
+          "label": "Potongan diskon otomatis (Rp)",
+          "info": "Harus sama persis dengan diskon otomatis di Shopify admin. Kartu memakai angka ini untuk menghitung harga akhir, karena Liquid tidak bisa membaca diskon otomatis."
         },
         {
           "type": "range",
