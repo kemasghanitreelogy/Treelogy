@@ -127,16 +127,28 @@
               assign lp_separate = lp_separate | plus: lp_c2v.price
             endif
 
+            # Hadiah dijual seharga nol agar selalu gratis tanpa bergantung pada
+            # diskon otomatis: paket toko ini hanya menerapkan satu diskon produk
+            # otomatis per pesanan, sehingga diskon hadiah akan kalah oleh
+            # potongan bundel. Nilai aslinya disimpan sebagai harga coret.
             assign lp_gift_total = 0
             assign lp_gift1 = block.settings.gift_1
             if lp_gift1 != blank
               assign lp_g1v = lp_gift1.selected_or_first_available_variant
-              assign lp_gift_total = lp_gift_total | plus: lp_g1v.price
+              assign lp_g1_value = lp_g1v.price
+              if lp_g1v.price == 0 and lp_g1v.compare_at_price > 0
+                assign lp_g1_value = lp_g1v.compare_at_price
+              endif
+              assign lp_gift_total = lp_gift_total | plus: lp_g1_value
             endif
             assign lp_gift2 = block.settings.gift_2
             if lp_gift2 != blank
               assign lp_g2v = lp_gift2.selected_or_first_available_variant
-              assign lp_gift_total = lp_gift_total | plus: lp_g2v.price
+              assign lp_g2_value = lp_g2v.price
+              if lp_g2v.price == 0 and lp_g2v.compare_at_price > 0
+                assign lp_g2_value = lp_g2v.compare_at_price
+              endif
+              assign lp_gift_total = lp_gift_total | plus: lp_g2_value
             endif
 
             # Harga jual varian sudah disamakan dengan penjumlahan komponen, lalu
@@ -319,7 +331,7 @@
                   <div class="lp-plan__row">
                     <span>{{ block.settings.gift_1_label | default: lp_gift1.title }}</span>
                     <span class="lp-plan__free">
-                      <s>{{- lp_g1v.price | money -}}</s>{{ block.settings.free_word }}
+                      <s>{{- lp_g1_value | money -}}</s>{{ block.settings.free_word }}
                     </span>
                   </div>
                 {% endif %}
@@ -327,7 +339,7 @@
                   <div class="lp-plan__row">
                     <span>{{ block.settings.gift_2_label | default: lp_gift2.title }}</span>
                     <span class="lp-plan__free">
-                      <s>{{- lp_g2v.price | money -}}</s>{{ block.settings.free_word }}
+                      <s>{{- lp_g2_value | money -}}</s>{{ block.settings.free_word }}
                     </span>
                   </div>
                 {% endif %}
