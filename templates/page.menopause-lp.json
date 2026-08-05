@@ -1015,10 +1015,10 @@
             "cta_label": "Ambil Protokol 60 Hari",
             "variant_id": "47228045492412:1,47228068561084:1,47228130001084:1",
             "quantity": 1,
-            "discount_code": "LPBUNDLE60",
+            "discount_code": "INSIDEOUTGRATISONGKIR",
             "cta_url": "/products/inside-out-moringa-protocol?variant=47228045492412",
             "footer_note": "Pesan hari ini, dikirim besok",
-            "promo_discount": 345000,
+            "promo_discount": 0,
             "shipping_compare": "Rp 35.000"
           }
         },
@@ -1067,10 +1067,10 @@
             "cta_label": "Ambil Protokol 30 Hari",
             "variant_id": "47228045459644:1,47228130001084:1,47228068561084:1",
             "quantity": 1,
-            "discount_code": "LPBUNDLE30",
+            "discount_code": "INSIDEOUTGRATISONGKIR",
             "cta_url": "/products/inside-out-moringa-protocol?variant=47228045459644",
             "footer_note": "Pesan hari ini, dikirim besok",
-            "promo_discount": 205000,
+            "promo_discount": 0,
             "shipping_compare": "Rp 35.000"
           }
         },
