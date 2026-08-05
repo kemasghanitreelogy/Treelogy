@@ -1078,7 +1078,7 @@
           "type": "plan",
           "settings": {
             "featured": false,
-            "hidden": true,
+            "hidden": false,
             "product": "organic-moringa-capsules-1",
             "variant_position": 0,
             "variants_from_product": true,
