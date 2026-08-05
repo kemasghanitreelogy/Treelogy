@@ -1,22 +1,24 @@
 {% doc %}
-  Menjaga agar produk eksklusif landing page tidak ikut terbeli dari luar
-  funnel-nya.
+  Menjaga agar produk eksklusif landing page tidak terbawa ke luar funnel-nya.
 
-  Produk yang diberi tag `lp-only` di admin hanya boleh berada di keranjang bila
-  keranjang itu memang berasal dari landing page. Asal-usul dicatat sebagai
-  atribut keranjang `lp_source`, bukan dibaca dari URL halaman yang sedang
-  dibuka: setelah menekan tombol beli, pembeli berada di /cart lalu /checkouts,
-  dan URL itu tidak lagi mengandung alamat landing page. Memakai URL sebagai
-  pemicu akan mengosongkan keranjang tepat saat pembeli hendak membayar.
+  Produk bertag `lp-only` hanya boleh berada di keranjang selama pembeli masih
+  berada di dalam alur landing page. Begitu ia kembali menjelajah toko biasa,
+  item itu dikeluarkan dari keranjang — bukan hanya disembunyikan di tampilan,
+  tetapi benar-benar dihapus lewat /cart/update.js sehingga keranjang di server
+  ikut bersih.
 
-  Alurnya:
-  1. Tombol paket di landing page menitipkan penanda pada sessionStorage.
-  2. Snippet ini menukar penanda tersebut menjadi atribut keranjang `lp_source`
-     yang ikut terbawa sampai ke pesanan.
-  3. Bila ada item `lp-only` tanpa atribut dan tanpa penanda, item itu dibuang.
+  Halaman yang dianggap masih di dalam funnel:
+  - halaman landing page itu sendiri (daftar handle di `lp_guard_pages`)
+  - halaman keranjang (/cart, termasuk berawalan lokal seperti /id/cart)
 
-  Ini lapisan antarmuka. Penegakan yang tidak bisa dilewati ada pada Shopify
-  Function `cart_checkout_validation`.
+  Halaman keranjang WAJIB dikecualikan. Tombol paket di landing page menuju
+  permalink keranjang, jadi pembeli selalu melewati /cart sebelum membayar.
+  Tanpa pengecualian ini, keranjang akan dikosongkan tepat saat pembeli hendak
+  checkout dan tidak akan pernah ada pesanan yang masuk.
+
+  Atribut keranjang `lp_source` tetap dipasang saat pembeli datang dari landing
+  page. Atribut itu tidak lagi menentukan penghapusan, tetapi ikut sampai ke
+  pesanan sehingga bisa dipakai untuk pelaporan atau otomasi Flow.
 
   @example
   {% render 'lp-only-guard' %}
@@ -26,22 +28,27 @@
   assign lp_guard_tag = 'lp-only'
   assign lp_guard_pages = 'dukungan-menopause-offer-terbatas,menopause-lp,inside-out-protocol'
   assign lp_guard_keys = ''
-  assign lp_guard_count = 0
-  assign lp_on_landing = false
+  assign lp_in_funnel = false
 
-  assign lp_guard_handles = lp_guard_pages | split: ','
-  for lp_handle in lp_guard_handles
-    assign lp_needle = lp_handle | strip
-    if lp_needle != blank and request.path contains lp_needle
-      assign lp_on_landing = true
-      break
-    endif
-  endfor
+  assign lp_last_segment = request.path | split: '/' | last
+  if lp_last_segment == 'cart'
+    assign lp_in_funnel = true
+  endif
+
+  unless lp_in_funnel
+    assign lp_guard_handles = lp_guard_pages | split: ','
+    for lp_handle in lp_guard_handles
+      assign lp_needle = lp_handle | strip
+      if lp_needle != blank and request.path contains lp_needle
+        assign lp_in_funnel = true
+        break
+      endif
+    endfor
+  endunless
 
   for lp_item in cart.items
     if lp_item.product.tags contains lp_guard_tag
       assign lp_guard_keys = lp_guard_keys | append: lp_item.key | append: '~~'
-      assign lp_guard_count = lp_guard_count | plus: lp_item.quantity
     endif
   endfor
 %}
@@ -51,9 +58,9 @@
     class="lp-guard"
     data-lp-guard
     data-keys="{{ lp_guard_keys | split: '~~' | join: '||' | escape }}"
+    data-in-funnel="{{ lp_in_funnel }}"
     data-source="{{ cart.attributes.lp_source | escape }}"
-    data-on-landing="{{ lp_on_landing }}"
-    data-landing-handle="{{ lp_guard_handles | first | strip | escape }}"
+    data-landing-handle="{{ lp_guard_pages | split: ',' | first | strip | escape }}"
     hidden
   >
     <p class="lp-guard__toast" data-lp-guard-toast role="status" hidden>
@@ -105,22 +112,29 @@
       });
     }
 
-    function refresh(root) {
+    function announce(root) {
       var toast = root.querySelector('[data-lp-guard-toast]');
-      if (toast) {
-        root.hidden = false;
-        toast.hidden = false;
-        setTimeout(function () {
-          toast.hidden = true;
-          root.hidden = true;
-        }, 6000);
-      }
+      if (!toast) return;
+      root.hidden = false;
+      toast.hidden = false;
+      setTimeout(function () {
+        toast.hidden = true;
+        root.hidden = true;
+      }, 6000);
+    }
 
-      document.dispatchEvent(new CustomEvent('cart:refresh', { bubbles: true }));
-
-      if (window.location.pathname.indexOf('/cart') !== -1) {
-        window.location.reload();
+    function repaint(cart) {
+      // Tema menyediakan pembaruan mini-cart-nya sendiri; pakai itu supaya
+      // jumlah item dan total ikut berubah tanpa memuat ulang halaman.
+      if (typeof window.refreshCartUI === 'function') {
+        try {
+          window.refreshCartUI(cart);
+          return true;
+        } catch (e) {
+          /* jatuh ke muat ulang di bawah */
+        }
       }
+      return false;
     }
 
     function run(root) {
@@ -130,37 +144,36 @@
       var keys = (root.getAttribute('data-keys') || '').split('||').filter(Boolean);
       if (!keys.length) return;
 
-      var already = (root.getAttribute('data-source') || '').trim();
-      var onLanding = root.getAttribute('data-on-landing') === 'true';
-      var marker = '';
+      var inFunnel = root.getAttribute('data-in-funnel') === 'true';
 
-      try {
-        marker = sessionStorage.getItem(STORAGE_KEY) || '';
-      } catch (e) {
-        marker = '';
-      }
+      if (inFunnel) {
+        // Masih di dalam alur landing page. Pastikan asal-usulnya tercatat pada
+        // keranjang supaya ikut terbawa ke pesanan.
+        if ((root.getAttribute('data-source') || '').trim()) return;
 
-      // Keranjang sudah bercap: tidak ada yang perlu dilakukan.
-      if (already) return;
+        var marker = '';
+        try {
+          marker = sessionStorage.getItem(STORAGE_KEY) || '';
+        } catch (e) {
+          marker = '';
+        }
 
-      // Pembeli baru saja datang dari landing page, atau sedang berada di
-      // sana. Catat asal-usulnya supaya ikut sampai ke pesanan.
-      if (marker || onLanding) {
         post('/cart/update.js', {
           attributes: { lp_source: marker || root.getAttribute('data-landing-handle') }
         }).catch(function () {});
         return;
       }
 
-      // Tanpa jejak apa pun: keluarkan produknya.
+      // Di luar alur: keluarkan dari keranjang, termasuk di sisi server.
       var updates = {};
       keys.forEach(function (key) {
         updates[key] = 0;
       });
 
       post('/cart/update.js', { updates: updates })
-        .then(function () {
-          refresh(root);
+        .then(function (cart) {
+          announce(root);
+          if (!repaint(cart)) window.location.reload();
         })
         .catch(function () {});
     }
