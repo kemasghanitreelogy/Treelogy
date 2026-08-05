@@ -12,24 +12,28 @@
       <p class="lp-timeline__sub">{{ section.settings.subheading }}</p>
     {% endif %}
 
-    <div class="lp-timeline__list">
+    <ol class="lp-timeline__list">
       {% for block in section.blocks %}
-        <div class="lp-timeline__item lp-reveal" {{ block.shopify_attributes }}>
-          <div class="lp-timeline__period">{{ block.settings.period }}</div>
-          <div class="lp-timeline__content">
+        <li class="lp-timeline__item lp-reveal" {{ block.shopify_attributes }}>
+          <div class="lp-timeline__marker" aria-hidden="true">
             {% if block.settings.emoji != blank %}
-              <div class="lp-timeline__icon" aria-hidden="true">{{ block.settings.emoji }}</div>
+              <span class="lp-timeline__icon">{{ block.settings.emoji }}</span>
             {% endif %}
-            <p>
-              {% if block.settings.title != blank %}
-                <strong>{{ block.settings.title }}</strong>
-              {% endif %}
-              {{ block.settings.text }}
-            </p>
           </div>
-        </div>
+          <div class="lp-timeline__content">
+            {% if block.settings.period != blank %}
+              <p class="lp-timeline__period">{{ block.settings.period }}</p>
+            {% endif %}
+            {% if block.settings.title != blank %}
+              <p class="lp-timeline__title">{{ block.settings.title }}</p>
+            {% endif %}
+            {% if block.settings.text != blank %}
+              <p class="lp-timeline__text">{{ block.settings.text }}</p>
+            {% endif %}
+          </div>
+        </li>
       {% endfor %}
-    </div>
+    </ol>
 
     {% if section.settings.cta_label != blank %}
       <div class="lp-timeline__cta">
@@ -74,91 +78,117 @@
   .lp-timeline__list {
     position: relative;
     max-width: 680px;
-    margin-inline: auto;
-  }
-
-  .lp-timeline__list::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 54px;
-    width: 2px;
-    background: var(--lp-border);
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
   }
 
   .lp-timeline__item {
     position: relative;
     display: grid;
-    grid-template-columns: 110px 1fr;
-    gap: 1.5rem;
-    margin-bottom: 2.5rem;
+    grid-template-columns: 48px 1fr;
+    gap: 1.25rem;
+    padding-bottom: 2.25rem;
   }
 
   .lp-timeline__item:last-child {
-    margin-bottom: 0;
+    padding-bottom: 0;
   }
 
-  .lp-timeline__period {
+  .lp-timeline__marker {
     position: relative;
-    padding-top: 0.15rem;
-    color: var(--lp-forest);
-    font-family: var(--lp-font-display);
-    font-size: 1rem;
-    font-weight: 700;
-    text-align: right;
+    display: flex;
+    justify-content: center;
   }
 
-  .lp-timeline__period::after {
+  .lp-timeline__marker::before {
     content: '';
     position: absolute;
-    top: 0.5rem;
-    right: -1.5rem;
-    width: 10px;
-    height: 10px;
-    border: 2px solid var(--lp-cream);
-    border-radius: 50%;
-    background: var(--lp-gold);
-    transform: translateX(50%);
+    top: 48px;
+    bottom: -2.25rem;
+    left: 50%;
+    width: 1px;
+    background: var(--lp-border);
+    transform: translateX(-50%);
   }
 
-  .lp-timeline__content {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.9rem;
-  }
-
-  .lp-timeline__content p {
-    margin: 0;
-    color: var(--lp-text-mid);
-    font-family: var(--lp-font-body);
-    font-size: 0.9375rem;
-    line-height: 1.65;
-  }
-
-  .lp-timeline__content strong {
-    color: var(--lp-forest);
+  .lp-timeline__item:last-child .lp-timeline__marker::before {
+    display: none;
   }
 
   .lp-timeline__icon {
+    position: relative;
+    z-index: 1;
     display: flex;
-    flex: 0 0 44px;
     align-items: center;
     justify-content: center;
-    width: 44px;
-    height: 44px;
-    border: 1.5px solid var(--lp-gold);
+    width: 48px;
+    height: 48px;
+    flex: none;
+    border: 1px solid var(--lp-border);
     border-radius: 50%;
-    background: var(--lp-bloom);
-    font-size: 1.3rem;
+    background: var(--lp-cream);
+    font-size: 1.15rem;
+    line-height: 1;
     opacity: 0;
-    transform: scale(0.4);
-    transition: transform 0.55s 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s 0.15s ease;
+    transform: scale(0.6);
+    transition: transform 0.5s 0.1s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s 0.1s ease;
   }
 
   .lp-timeline__item.is-visible .lp-timeline__icon {
     opacity: 1;
     transform: none;
+  }
+
+  .lp-timeline__content {
+    padding-top: 0.35rem;
+  }
+
+  .lp-timeline__content p {
+    margin: 0;
+  }
+
+  .lp-timeline__period {
+    margin-bottom: 0.4rem !important;
+    color: var(--lp-text-light);
+    font-family: var(--lp-font-body);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .lp-timeline__title {
+    margin-bottom: 0.3rem !important;
+    color: var(--lp-forest);
+    font-family: var(--lp-font-body);
+    font-size: 1.0625rem;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  .lp-timeline__text {
+    color: var(--lp-text-mid);
+    font-family: var(--lp-font-body);
+    font-size: 0.9375rem;
+    line-height: 1.7;
+  }
+
+  @media (max-width: 600px) {
+    .lp-timeline__item {
+      grid-template-columns: 40px 1fr;
+      gap: 1rem;
+    }
+
+    .lp-timeline__icon {
+      width: 40px;
+      height: 40px;
+      font-size: 1rem;
+    }
+
+    .lp-timeline__marker::before {
+      top: 40px;
+    }
   }
 
   .lp-timeline__cta {
