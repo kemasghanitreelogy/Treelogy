@@ -68,12 +68,91 @@
 
     <div class="lp-pricing__cards">
       {% for block in section.blocks %}
+        {%- liquid
+          # Semua angka rupiah pada kartu ini diturunkan dari produk asli ketika
+          # "Produk utama" diisi, supaya isi kartu tidak pernah bisa berbeda dari
+          # yang dilihat pembeli di keranjang dan checkout.
+          assign lp_product = block.settings.product
+          assign lp_live = false
+
+          if lp_product != blank
+            assign lp_live = true
+            assign lp_variant = lp_product.selected_or_first_available_variant
+            assign lp_pos = block.settings.variant_position | default: 0
+            if lp_pos > 0
+              assign lp_idx = lp_pos | minus: 1
+              if lp_product.variants[lp_idx] != blank
+                assign lp_variant = lp_product.variants[lp_idx]
+              endif
+            endif
+
+            assign lp_separate = 0
+            assign lp_comp1 = block.settings.component_1
+            if lp_comp1 != blank
+              assign lp_c1v = lp_comp1.selected_or_first_available_variant
+              assign lp_c1pos = block.settings.component_1_variant | default: 0
+              if lp_c1pos > 0
+                assign lp_c1i = lp_c1pos | minus: 1
+                if lp_comp1.variants[lp_c1i] != blank
+                  assign lp_c1v = lp_comp1.variants[lp_c1i]
+                endif
+              endif
+              assign lp_separate = lp_separate | plus: lp_c1v.price
+            endif
+
+            assign lp_comp2 = block.settings.component_2
+            if lp_comp2 != blank
+              assign lp_c2v = lp_comp2.selected_or_first_available_variant
+              assign lp_c2pos = block.settings.component_2_variant | default: 0
+              if lp_c2pos > 0
+                assign lp_c2i = lp_c2pos | minus: 1
+                if lp_comp2.variants[lp_c2i] != blank
+                  assign lp_c2v = lp_comp2.variants[lp_c2i]
+                endif
+              endif
+              assign lp_separate = lp_separate | plus: lp_c2v.price
+            endif
+
+            assign lp_gift_total = 0
+            assign lp_gift1 = block.settings.gift_1
+            if lp_gift1 != blank
+              assign lp_g1v = lp_gift1.selected_or_first_available_variant
+              assign lp_gift_total = lp_gift_total | plus: lp_g1v.price
+            endif
+            assign lp_gift2 = block.settings.gift_2
+            if lp_gift2 != blank
+              assign lp_g2v = lp_gift2.selected_or_first_available_variant
+              assign lp_gift_total = lp_gift_total | plus: lp_g2v.price
+            endif
+
+            assign lp_savings = 0
+            if lp_separate > lp_variant.price
+              assign lp_savings = lp_separate | minus: lp_variant.price
+            endif
+
+            # Permalink keranjang: produk utama lebih dulu, lalu hadiah. Urutan
+            # dibalik di bawah karena permalink membangun baris dari belakang.
+            assign lp_cart_line = lp_variant.id | append: ':1'
+            if lp_gift1 != blank
+              assign lp_cart_line = lp_cart_line | append: ',' | append: lp_g1v.id | append: ':1'
+            endif
+            if lp_gift2 != blank
+              assign lp_cart_line = lp_cart_line | append: ',' | append: lp_g2v.id | append: ':1'
+            endif
+          endif
+        -%}
+
         <div
           class="lp-plan{% if block.settings.featured %} lp-plan--featured{% endif %}"
           {{ block.shopify_attributes }}
         >
           {% if block.settings.tag != blank %}
-            <div class="lp-plan__tag lp-plan__tag--{{ block.settings.tag_style }}">{{ block.settings.tag }}</div>
+            <div class="lp-plan__tag lp-plan__tag--{{ block.settings.tag_style }}">
+              {{- block.settings.tag -}}
+              {%- if lp_live and block.settings.tag_show_savings and lp_savings > 0 -%}
+                {{ ' · ' }}{{ block.settings.savings_word }} {{ lp_savings | money }}
+              {%- endif -%}
+            </div>
           {% endif %}
 
           <div class="lp-plan__body">
@@ -86,7 +165,50 @@
             {% endif %}
 
             {%- assign choice_href = '' -%}
-            {% if block.settings.variants != blank %}
+            {% if lp_live and block.settings.variants_from_product and lp_product.variants.size > 1 %}
+              {%- assign default_row = block.settings.variant_default | default: 1 -%}
+              <div
+                class="lp-plan__variants lp-plan__variants--choice"
+                data-lp-plan-choice
+                role="radiogroup"
+                aria-label="{{ block.settings.variants_label | default: block.settings.title }}"
+              >
+                {% for lp_v in lp_product.variants %}
+                  {%- liquid
+                    assign lp_v_line = lp_v.id | append: ':1'
+                    if lp_gift1 != blank
+                      assign lp_v_line = lp_v_line | append: ',' | append: lp_g1v.id | append: ':1'
+                    endif
+                    if lp_gift2 != blank
+                      assign lp_v_line = lp_v_line | append: ',' | append: lp_g2v.id | append: ':1'
+                    endif
+                    if lp_v_line contains ','
+                      assign lp_v_line = lp_v_line | split: ',' | reverse | join: ','
+                    endif
+                    assign lp_v_href = cart_root | append: lp_v_line
+                    if block.settings.discount_code != blank
+                      assign lp_v_href = lp_v_href | append: '?discount=' | append: block.settings.discount_code
+                    endif
+                    if forloop.index == default_row
+                      assign choice_href = lp_v_href
+                    endif
+                  -%}
+                  <label class="lp-plan__variant lp-plan__variant--choice">
+                    <input
+                      class="lp-plan__radio"
+                      type="radio"
+                      name="lp-plan-choice-{{ block.id }}"
+                      value="{{ lp_v_href }}"
+                      {% if forloop.index == default_row %}checked{% endif %}
+                      {% unless lp_v.available %}disabled{% endunless %}
+                    >
+                    <span class="lp-plan__mark" aria-hidden="true"></span>
+                    <span class="lp-plan__variant-name">{{ lp_v.title }}</span>
+                    <span class="lp-plan__price">{{ lp_v.price | money }}</span>
+                  </label>
+                {% endfor %}
+              </div>
+            {% elsif block.settings.variants != blank %}
               <div
                 class="lp-plan__variants{% if block.settings.variants_as_radio %} lp-plan__variants--choice{% endif %}"
                 {% if block.settings.variants_as_radio %}
@@ -148,7 +270,44 @@
               </div>
             {% endif %}
 
-            {% if block.settings.stack != blank %}
+            {% if lp_live %}
+              <div class="lp-plan__stack">
+                {% if lp_comp1 != blank %}
+                  <div class="lp-plan__row">
+                    <span>{{ block.settings.component_1_label | default: lp_comp1.title }}</span>
+                    <span class="lp-plan__value">{{ lp_c1v.price | money }}</span>
+                  </div>
+                {% endif %}
+                {% if lp_comp2 != blank %}
+                  <div class="lp-plan__row">
+                    <span>{{ block.settings.component_2_label | default: lp_comp2.title }}</span>
+                    <span class="lp-plan__value">{{ lp_c2v.price | money }}</span>
+                  </div>
+                {% endif %}
+                {% if lp_gift1 != blank %}
+                  <div class="lp-plan__row">
+                    <span>{{ block.settings.gift_1_label | default: lp_gift1.title }}</span>
+                    <span class="lp-plan__free">
+                      <s>{{- lp_g1v.price | money -}}</s>{{ block.settings.free_word }}
+                    </span>
+                  </div>
+                {% endif %}
+                {% if lp_gift2 != blank %}
+                  <div class="lp-plan__row">
+                    <span>{{ block.settings.gift_2_label | default: lp_gift2.title }}</span>
+                    <span class="lp-plan__free">
+                      <s>{{- lp_g2v.price | money -}}</s>{{ block.settings.free_word }}
+                    </span>
+                  </div>
+                {% endif %}
+                {% if block.settings.show_free_shipping %}
+                  <div class="lp-plan__row">
+                    <span>{{ block.settings.shipping_label }}</span>
+                    <span class="lp-plan__free">{{ block.settings.free_word }}</span>
+                  </div>
+                {% endif %}
+              </div>
+            {% elsif block.settings.stack != blank %}
               <div class="lp-plan__stack">
                 {%- assign stack_lines = block.settings.stack | strip | newline_to_br | split: '<br />' -%}
                 {% for line in stack_lines %}
@@ -169,22 +328,43 @@
               </div>
             {% endif %}
 
-            {% if block.settings.total_value != blank %}
+            {% if lp_live and lp_separate > 0 %}
+              <div class="lp-plan__total">
+                <span>{{ block.settings.total_label }}</span>
+                <span><s>{{ lp_separate | money }}</s></span>
+              </div>
+            {% elsif block.settings.total_value != blank %}
               <div class="lp-plan__total">
                 <span>{{ block.settings.total_label }}</span>
                 <span><s>{{ block.settings.total_value }}</s></span>
               </div>
             {% endif %}
 
-            {% if block.settings.price != blank %}
+            {% if lp_live %}
+              <div class="lp-plan__now">
+                <span>{{ block.settings.price_label }}</span>
+                <span class="lp-plan__price">{{ lp_variant.price | money }}</span>
+              </div>
+            {% elsif block.settings.price != blank %}
               <div class="lp-plan__now">
                 <span>{{ block.settings.price_label }}</span>
                 <span class="lp-plan__price">{{ block.settings.price }}</span>
               </div>
             {% endif %}
 
-            {% if block.settings.per_day != blank %}
+            {% if lp_live and block.settings.days > 0 %}
+              <p class="lp-plan__perday">
+                {{- block.settings.per_day_label }}
+                {{ lp_variant.price | divided_by: block.settings.days | money -}}
+              </p>
+            {% elsif block.settings.per_day != blank %}
               <p class="lp-plan__perday">{{ block.settings.per_day }}</p>
+            {% endif %}
+
+            {% if lp_live and lp_gift_total > 0 %}
+              <p class="lp-plan__giftvalue">
+                {{- block.settings.gift_value_label }} {{ lp_gift_total | money -}}
+              </p>
             {% endif %}
 
             {% if block.settings.guarantee != blank or block.settings.guarantee_marker != blank %}
@@ -200,8 +380,17 @@
               {% if block.settings.cta_label != blank %}
                 {%- liquid
                   assign plan_href = block.settings.cta_url | default: '#'
-                  if block.settings.variants_as_radio and choice_href != blank
+                  if choice_href != blank
                     assign plan_href = choice_href
+                  elsif lp_live
+                    assign lp_line = lp_cart_line
+                    if lp_line contains ','
+                      assign lp_line = lp_line | split: ',' | reverse | join: ','
+                    endif
+                    assign plan_href = cart_root | append: lp_line
+                    if block.settings.discount_code != blank
+                      assign plan_href = plan_href | append: '?discount=' | append: block.settings.discount_code
+                    endif
                   elsif block.settings.variant_id != blank
                     assign qty = block.settings.quantity | default: 1
                     assign cart_path = block.settings.variant_id
@@ -223,7 +412,7 @@
                 <a
                   class="lp-btn{% if block.settings.featured %} lp-btn--gold{% endif %} lp-plan__cta"
                   href="{{ plan_href }}"
-                  {% if block.settings.variants_as_radio %}data-lp-plan-cta{% endif %}
+                  {% if choice_href != blank %}data-lp-plan-cta{% endif %}
                 >
                   {{- block.settings.cta_label -}}
                 </a>
@@ -584,6 +773,15 @@
     text-align: right;
   }
 
+  .lp-plan__giftvalue {
+    margin: -0.5rem 0 1rem;
+    color: var(--lp-forest);
+    font-family: var(--lp-font-body);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-align: right;
+  }
+
   .lp-plan__guarantee-line {
     margin: 0 0 1rem;
     color: var(--lp-text-mid);
@@ -845,6 +1043,164 @@
           "id": "featured",
           "label": "Sorot paket ini",
           "default": false
+        },
+        {
+          "type": "header",
+          "content": "Sumber harga"
+        },
+        {
+          "type": "paragraph",
+          "content": "Isi Produk utama agar seluruh angka rupiah pada kartu ini diambil langsung dari katalog. Selama ini terisi, isi kartu tidak akan pernah berbeda dari keranjang dan checkout."
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Produk utama"
+        },
+        {
+          "type": "range",
+          "id": "variant_position",
+          "label": "Varian yang dijual kartu ini",
+          "info": "0 memakai varian pertama yang tersedia. Isi 1, 2, 3 untuk mengunci ke varian tertentu.",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "default": 0
+        },
+        {
+          "type": "checkbox",
+          "id": "variants_from_product",
+          "label": "Tampilkan semua varian sebagai pilihan",
+          "info": "Untuk kartu yang membiarkan pembeli memilih ukuran sendiri.",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "Rincian isi paket"
+        },
+        {
+          "type": "product",
+          "id": "component_1",
+          "label": "Isi 1"
+        },
+        {
+          "type": "range",
+          "id": "component_1_variant",
+          "label": "Varian isi 1",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "default": 0
+        },
+        {
+          "type": "text",
+          "id": "component_1_label",
+          "label": "Nama isi 1 di kartu"
+        },
+        {
+          "type": "product",
+          "id": "component_2",
+          "label": "Isi 2"
+        },
+        {
+          "type": "range",
+          "id": "component_2_variant",
+          "label": "Varian isi 2",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "default": 0
+        },
+        {
+          "type": "text",
+          "id": "component_2_label",
+          "label": "Nama isi 2 di kartu"
+        },
+        {
+          "type": "header",
+          "content": "Hadiah"
+        },
+        {
+          "type": "paragraph",
+          "content": "Hadiah ikut ditambahkan ke keranjang lewat tombol, jadi harga coretnya sama persis dengan yang tampil di checkout."
+        },
+        {
+          "type": "product",
+          "id": "gift_1",
+          "label": "Hadiah 1"
+        },
+        {
+          "type": "text",
+          "id": "gift_1_label",
+          "label": "Nama hadiah 1 di kartu"
+        },
+        {
+          "type": "product",
+          "id": "gift_2",
+          "label": "Hadiah 2"
+        },
+        {
+          "type": "text",
+          "id": "gift_2_label",
+          "label": "Nama hadiah 2 di kartu"
+        },
+        {
+          "type": "text",
+          "id": "free_word",
+          "label": "Kata untuk gratis",
+          "default": "GRATIS"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_free_shipping",
+          "label": "Tampilkan baris ongkir gratis",
+          "info": "Tanpa harga coret, karena checkout juga tidak menampilkan harga coret untuk ongkir.",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "shipping_label",
+          "label": "Nama baris ongkir",
+          "default": "Ongkos Kirim"
+        },
+        {
+          "type": "header",
+          "content": "Angka turunan"
+        },
+        {
+          "type": "range",
+          "id": "days",
+          "label": "Paket ini untuk berapa hari",
+          "info": "Dipakai menghitung harga per hari. Isi 0 untuk menyembunyikannya.",
+          "min": 0,
+          "max": 120,
+          "step": 5,
+          "default": 0
+        },
+        {
+          "type": "text",
+          "id": "per_day_label",
+          "label": "Awalan harga per hari",
+          "default": "Setara per hari:"
+        },
+        {
+          "type": "text",
+          "id": "gift_value_label",
+          "label": "Awalan nilai hadiah",
+          "info": "Angka ini sama persis dengan TOTAL PENGHEMATAN di checkout.",
+          "default": "Hadiah gratis senilai"
+        },
+        {
+          "type": "checkbox",
+          "id": "tag_show_savings",
+          "label": "Tambahkan angka hemat ke label atas",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "savings_word",
+          "label": "Kata untuk hemat",
+          "default": "Hemat"
         },
         {
           "type": "text",
