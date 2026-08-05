@@ -66,8 +66,22 @@
       </p>
     {% endif %}
 
-    <div class="lp-pricing__cards">
+    {%- liquid
+      assign lp_visible_plans = 0
+      for lp_block in section.blocks
+        unless lp_block.settings.hidden
+          assign lp_visible_plans = lp_visible_plans | plus: 1
+        endunless
+      endfor
+    -%}
+    <div
+      class="lp-pricing__cards"
+      style="--lp-plan-count: {{ lp_visible_plans | at_least: 1 }};"
+    >
       {% for block in section.blocks %}
+        {%- if block.settings.hidden -%}
+          {%- continue -%}
+        {%- endif -%}
         {%- liquid
           # Semua angka rupiah pada kartu ini diturunkan dari produk asli ketika
           # "Produk utama" diisi, supaya isi kartu tidak pernah bisa berbeda dari
@@ -532,10 +546,17 @@
 
   .lp-pricing__cards {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(var(--lp-plan-count, 3), minmax(0, 1fr));
     gap: 1.25rem;
-    max-width: 1140px;
+    max-width: min(1140px, calc(var(--lp-plan-count, 3) * 380px));
     margin-inline: auto;
+  }
+
+  @media screen and (max-width: 900px) {
+    .lp-pricing__cards {
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+      max-width: 560px;
+    }
   }
 
   .lp-plan {
@@ -1069,6 +1090,13 @@
           "type": "checkbox",
           "id": "featured",
           "label": "Sorot paket ini",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "hidden",
+          "label": "Sembunyikan paket ini",
+          "info": "Kartu disembunyikan dari pengunjung dan sisa kartu otomatis melebar mengisi barisnya.",
           "default": false
         },
         {
