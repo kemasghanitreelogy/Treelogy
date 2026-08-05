@@ -76,6 +76,16 @@
     transform: none;
   }
 
+  /* Bar ini position:fixed, jadi ia tidak menyisakan ruang untuk dirinya
+     sendiri dan menutupi baris terakhir halaman saat scroll mentok bawah.
+     Ruangnya dipesan dari --lp-sticky-reserve (tinggi bar apa adanya, TIDAK
+     ikut nol saat bar tersembunyi) supaya tidak ada lompatan layout ketika
+     bar muncul di tengah scroll. --lp-sticky-height tetap dipakai FAB WA
+     karena FAB memang harus turun lagi saat bar tidak tampil. */
+  #landing-page {
+    padding-bottom: var(--lp-sticky-reserve, 0px);
+  }
+
   .lp-sticky__text {
     color: var(--lp-text);
     font-family: var(--lp-font-body);
@@ -136,8 +146,12 @@
 
       function syncHeight() {
         var visible = bar.classList.contains('is-visible');
-        var height = visible ? bar.getBoundingClientRect().height : 0;
-        document.documentElement.style.setProperty('--lp-sticky-height', height + 'px');
+        /* Bar disembunyikan dengan translateY, bukan display:none, jadi
+           tingginya tetap terukur walau sedang tidak tampil. */
+        var height = bar.getBoundingClientRect().height;
+        var root = document.documentElement.style;
+        root.setProperty('--lp-sticky-height', (visible ? height : 0) + 'px');
+        root.setProperty('--lp-sticky-reserve', height + 'px');
       }
 
       new IntersectionObserver(
