@@ -152,10 +152,15 @@
         "proof_4"
       ],
       "settings": {
+        "show_save": true,
+        "save_prefix": "Hemat hingga",
+        "save_amount": "Rp 464.500",
+        "save_suffix": "Hari Ini",
         "badge": "Dukungan Menopause · Offer Terbatas",
         "pre_heading": "Jangan Lagi Pasrah Pada",
         "heading": "Nyeri Sendi, Mudah Lelah, dan Rasa Kehilangan Diri Saat Menopause",
         "subheading": "Inside Out Moringa Protocol. Cara perempuan Indonesia mendapatkan kembali sendi yang nyaman, energi, tidur nyenyak, dan rasa percaya diri. Tanpa hormon. Tanpa resep dokter.",
+        "show_offer": false,
         "offer_includes": "Termasuk: 90 kapsul (30 hari) · Seed Oil 30ml · Pengiriman ke seluruh Indonesia",
         "offer_plan": "PROTOKOL INSIDE OUT 30 HARI",
         "offer_price": "Rp 795.000",
@@ -165,12 +170,7 @@
         "savings_text": "Hemat Rp 464.500",
         "cta_label": "Mulai Protokol",
         "cta_url": "#pricing",
-        "gallery_label": "Galeri produk",
-        "show_offer": false,
-        "show_save": true,
-        "save_prefix": "Hemat hingga",
-        "save_amount": "Rp 464.500",
-        "save_suffix": "Hari Ini"
+        "gallery_label": "Galeri produk"
       }
     },
     "trust": {
@@ -180,6 +180,7 @@
           "type": "badge",
           "settings": {
             "emoji": "✅",
+            "icon_preset": "none",
             "label": "Terdaftar BPOM"
           }
         },
@@ -187,6 +188,7 @@
           "type": "badge",
           "settings": {
             "emoji": "☮️",
+            "icon_preset": "none",
             "label": "Halal"
           }
         },
@@ -194,6 +196,7 @@
           "type": "badge",
           "settings": {
             "emoji": "🌱",
+            "icon_preset": "none",
             "label": "Organik"
           }
         },
@@ -201,6 +204,7 @@
           "type": "badge",
           "settings": {
             "emoji": "🌿",
+            "icon_preset": "none",
             "label": "Bebas Batang"
           }
         },
@@ -208,6 +212,7 @@
           "type": "badge",
           "settings": {
             "emoji": "🔬",
+            "icon_preset": "none",
             "label": "Teruji Lab"
           }
         },
@@ -215,6 +220,7 @@
           "type": "badge",
           "settings": {
             "emoji": "❌",
+            "icon_preset": "none",
             "label": "Tanpa Hormon"
           }
         }
@@ -962,11 +968,36 @@
           "type": "plan",
           "settings": {
             "featured": true,
+            "hidden": false,
+            "product": "inside-out-moringa-protocol",
+            "variant_position": 2,
+            "variants_from_product": false,
+            "component_1": "organic-moringa-capsules-1",
+            "component_1_variant": 2,
+            "component_1_label": "180 Kapsul",
+            "component_2": "organic-moringa-cold-pressed-seed-oil",
+            "component_2_variant": 2,
+            "component_2_label": "Seed Oil 60ml",
+            "gift_1": "travel-pouch",
+            "gift_1_label": "Travel Pouch",
+            "gift_2": "mystery-gift",
+            "gift_2_label": "Mystery Gift",
+            "free_word": "GRATIS",
+            "show_free_shipping": true,
+            "shipping_label": "Ongkos Kirim",
+            "days": 60,
+            "per_day_label": "Setara per hari:",
+            "gift_value_label": "Hadiah gratis senilai",
+            "tag_show_savings": true,
+            "savings_word": "Hemat",
             "tag": "Best Value",
             "tag_style": "gold",
             "title": "Protokol Inside Out 60 Hari",
             "description": "Dua bulan. Durasi saat transformasi terasa utuh.",
             "variants": "",
+            "variants_as_radio": false,
+            "variant_default": 1,
+            "variants_label": "Pilih ukuran",
             "stack": "",
             "total_label": "Beli terpisah:",
             "total_value": "",
@@ -980,39 +1011,43 @@
             "quantity": 1,
             "discount_code": "",
             "cta_url": "/products/inside-out-moringa-protocol?variant=47228045492412",
-            "footer_note": "Pesan hari ini, dikirim besok",
-            "free_word": "GRATIS",
-            "show_free_shipping": true,
-            "shipping_label": "Ongkos Kirim",
-            "per_day_label": "Setara per hari:",
-            "gift_value_label": "Hadiah gratis senilai",
-            "savings_word": "Hemat",
-            "product": "inside-out-moringa-protocol",
-            "variant_position": 2,
-            "component_1": "organic-moringa-capsules-1",
-            "component_1_variant": 2,
-            "component_1_label": "180 Kapsul",
-            "component_2": "organic-moringa-cold-pressed-seed-oil",
-            "component_2_variant": 2,
-            "component_2_label": "Seed Oil 60ml",
-            "gift_1": "travel-pouch",
-            "gift_1_label": "Travel Pouch",
-            "gift_2": "mystery-gift",
-            "gift_2_label": "Mystery Gift",
-            "days": 60,
-            "tag_show_savings": true,
-            "variants_from_product": false
+            "footer_note": "Pesan hari ini, dikirim besok"
           }
         },
         "p30": {
           "type": "plan",
           "settings": {
             "featured": false,
+            "hidden": false,
+            "product": "inside-out-moringa-protocol",
+            "variant_position": 1,
+            "variants_from_product": false,
+            "component_1": "organic-moringa-capsules-1",
+            "component_1_variant": 1,
+            "component_1_label": "90 Kapsul",
+            "component_2": "organic-moringa-cold-pressed-seed-oil",
+            "component_2_variant": 1,
+            "component_2_label": "Seed Oil 30ml",
+            "gift_1": "travel-pouch",
+            "gift_1_label": "Travel Pouch",
+            "gift_2": "mystery-gift",
+            "gift_2_label": "Mystery Gift",
+            "free_word": "GRATIS",
+            "show_free_shipping": true,
+            "shipping_label": "Ongkos Kirim",
+            "days": 30,
+            "per_day_label": "Setara per hari:",
+            "gift_value_label": "Hadiah gratis senilai",
+            "tag_show_savings": true,
+            "savings_word": "Hemat",
             "tag": "Terpopuler",
             "tag_style": "dark",
             "title": "Protokol Inside Out 30 Hari",
             "description": "Satu bulan untuk merasakan bedanya. Tanpa risiko.",
             "variants": "",
+            "variants_as_radio": false,
+            "variant_default": 1,
+            "variants_label": "Pilih ukuran",
             "stack": "",
             "total_label": "Beli terpisah:",
             "total_value": "",
@@ -1026,34 +1061,35 @@
             "quantity": 1,
             "discount_code": "",
             "cta_url": "/products/inside-out-moringa-protocol?variant=47228045459644",
-            "footer_note": "Pesan hari ini, dikirim besok",
-            "free_word": "GRATIS",
-            "show_free_shipping": true,
-            "shipping_label": "Ongkos Kirim",
-            "per_day_label": "Setara per hari:",
-            "gift_value_label": "Hadiah gratis senilai",
-            "savings_word": "Hemat",
-            "product": "inside-out-moringa-protocol",
-            "variant_position": 1,
-            "component_1": "organic-moringa-capsules-1",
-            "component_1_variant": 1,
-            "component_1_label": "90 Kapsul",
-            "component_2": "organic-moringa-cold-pressed-seed-oil",
-            "component_2_variant": 1,
-            "component_2_label": "Seed Oil 30ml",
-            "gift_1": "travel-pouch",
-            "gift_1_label": "Travel Pouch",
-            "gift_2": "mystery-gift",
-            "gift_2_label": "Mystery Gift",
-            "days": 30,
-            "tag_show_savings": true,
-            "variants_from_product": false
+            "footer_note": "Pesan hari ini, dikirim besok"
           }
         },
         "pcaps": {
           "type": "plan",
           "settings": {
             "featured": false,
+            "hidden": true,
+            "product": "organic-moringa-capsules-1",
+            "variant_position": 0,
+            "variants_from_product": true,
+            "component_1": "",
+            "component_1_variant": 0,
+            "component_1_label": "",
+            "component_2": "",
+            "component_2_variant": 0,
+            "component_2_label": "",
+            "gift_1": "",
+            "gift_1_label": "",
+            "gift_2": "",
+            "gift_2_label": "",
+            "free_word": "GRATIS",
+            "show_free_shipping": true,
+            "shipping_label": "Ongkos Kirim",
+            "days": 0,
+            "per_day_label": "Setara per hari:",
+            "gift_value_label": "Hadiah gratis senilai",
+            "tag_show_savings": false,
+            "savings_word": "Hemat",
             "tag": "Mulai dari Sini",
             "tag_style": "dark",
             "title": "Moringa Capsules Saja",
@@ -1072,20 +1108,10 @@
             "guarantee": "Garansi uang kembali 30 hari",
             "cta_label": "Belanja Capsules",
             "variant_id": "47228067283132:1",
+            "quantity": 1,
             "discount_code": "",
             "cta_url": "/products/organic-moringa-capsules-1",
-            "footer_note": "Pesan hari ini, dikirim besok",
-            "free_word": "GRATIS",
-            "show_free_shipping": true,
-            "shipping_label": "Ongkos Kirim",
-            "per_day_label": "Setara per hari:",
-            "gift_value_label": "Hadiah gratis senilai",
-            "savings_word": "Hemat",
-            "product": "organic-moringa-capsules-1",
-            "variant_position": 0,
-            "variants_from_product": true,
-            "days": 0,
-            "tag_show_savings": false
+            "footer_note": "Pesan hari ini, dikirim besok"
           }
         }
       },
@@ -1096,6 +1122,7 @@
       ],
       "settings": {
         "anchor_id": "pricing",
+        "checkout_locale": "id",
         "eyebrow": "Offer Terbatas",
         "heading": "Pilih Protokol",
         "show_countdown": true,
