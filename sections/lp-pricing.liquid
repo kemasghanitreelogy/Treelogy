@@ -344,7 +344,7 @@
                   </div>
                 {% endif %}
                 {% if block.settings.show_free_shipping %}
-                  <div class="lp-plan__row">
+                  <div class="lp-plan__row" data-sc="{{ block.settings.shipping_compare }}" data-sc-len="{{ block.settings.shipping_compare | size }}">
                     <span>{{ block.settings.shipping_label }}</span>
                     <span class="lp-plan__free">
                       {%- if block.settings.shipping_compare != blank -%}
