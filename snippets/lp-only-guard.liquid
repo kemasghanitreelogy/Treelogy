@@ -1,0 +1,184 @@
+{% doc %}
+  Menjaga agar produk eksklusif landing page tidak ikut terbeli dari luar
+  funnel-nya.
+
+  Produk yang diberi tag `lp-only` di admin hanya boleh berada di keranjang bila
+  keranjang itu memang berasal dari landing page. Asal-usul dicatat sebagai
+  atribut keranjang `lp_source`, bukan dibaca dari URL halaman yang sedang
+  dibuka: setelah menekan tombol beli, pembeli berada di /cart lalu /checkouts,
+  dan URL itu tidak lagi mengandung alamat landing page. Memakai URL sebagai
+  pemicu akan mengosongkan keranjang tepat saat pembeli hendak membayar.
+
+  Alurnya:
+  1. Tombol paket di landing page menitipkan penanda pada sessionStorage.
+  2. Snippet ini menukar penanda tersebut menjadi atribut keranjang `lp_source`
+     yang ikut terbawa sampai ke pesanan.
+  3. Bila ada item `lp-only` tanpa atribut dan tanpa penanda, item itu dibuang.
+
+  Ini lapisan antarmuka. Penegakan yang tidak bisa dilewati ada pada Shopify
+  Function `cart_checkout_validation`.
+
+  @example
+  {% render 'lp-only-guard' %}
+{% enddoc %}
+
+{% liquid
+  assign lp_guard_tag = 'lp-only'
+  assign lp_guard_pages = 'dukungan-menopause-offer-terbatas,menopause-lp,inside-out-protocol'
+  assign lp_guard_keys = ''
+  assign lp_guard_count = 0
+  assign lp_on_landing = false
+
+  assign lp_guard_handles = lp_guard_pages | split: ','
+  for lp_handle in lp_guard_handles
+    assign lp_needle = lp_handle | strip
+    if lp_needle != blank and request.path contains lp_needle
+      assign lp_on_landing = true
+      break
+    endif
+  endfor
+
+  for lp_item in cart.items
+    if lp_item.product.tags contains lp_guard_tag
+      assign lp_guard_keys = lp_guard_keys | append: lp_item.key | append: '~~'
+      assign lp_guard_count = lp_guard_count | plus: lp_item.quantity
+    endif
+  endfor
+%}
+
+{%- if lp_guard_keys != blank and request.design_mode != true -%}
+  <div
+    class="lp-guard"
+    data-lp-guard
+    data-keys="{{ lp_guard_keys | split: '~~' | join: '||' | escape }}"
+    data-source="{{ cart.attributes.lp_source | escape }}"
+    data-on-landing="{{ lp_on_landing }}"
+    data-landing-handle="{{ lp_guard_handles | first | strip | escape }}"
+    hidden
+  >
+    <p class="lp-guard__toast" data-lp-guard-toast role="status" hidden>
+      Penawaran itu hanya berlaku lewat halaman promonya, jadi produknya kami keluarkan dari keranjang.
+    </p>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .lp-guard[hidden] {
+    display: none;
+  }
+
+  .lp-guard__toast {
+    position: fixed;
+    z-index: 120;
+    left: 50%;
+    bottom: 1.5rem;
+    transform: translateX(-50%);
+    max-width: min(30rem, calc(100vw - 2rem));
+    margin: 0;
+    padding: 0.875rem 1.25rem;
+    border-radius: 10px;
+    background: #22302a;
+    color: #f8f8f2;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    text-align: center;
+    box-shadow: 0 8px 28px rgb(0 0 0 / 24%);
+  }
+
+  .lp-guard__toast[hidden] {
+    display: none;
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  (function () {
+    var STORAGE_KEY = 'lp_source';
+
+    function post(url, payload) {
+      return fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(payload)
+      }).then(function (res) {
+        if (!res.ok) throw new Error('cart request failed: ' + res.status);
+        return res.json();
+      });
+    }
+
+    function refresh(root) {
+      var toast = root.querySelector('[data-lp-guard-toast]');
+      if (toast) {
+        root.hidden = false;
+        toast.hidden = false;
+        setTimeout(function () {
+          toast.hidden = true;
+          root.hidden = true;
+        }, 6000);
+      }
+
+      document.dispatchEvent(new CustomEvent('cart:refresh', { bubbles: true }));
+
+      if (window.location.pathname.indexOf('/cart') !== -1) {
+        window.location.reload();
+      }
+    }
+
+    function run(root) {
+      if (root.dataset.lpGuardDone === '1') return;
+      root.dataset.lpGuardDone = '1';
+
+      var keys = (root.getAttribute('data-keys') || '').split('||').filter(Boolean);
+      if (!keys.length) return;
+
+      var already = (root.getAttribute('data-source') || '').trim();
+      var onLanding = root.getAttribute('data-on-landing') === 'true';
+      var marker = '';
+
+      try {
+        marker = sessionStorage.getItem(STORAGE_KEY) || '';
+      } catch (e) {
+        marker = '';
+      }
+
+      // Keranjang sudah bercap: tidak ada yang perlu dilakukan.
+      if (already) return;
+
+      // Pembeli baru saja datang dari landing page, atau sedang berada di
+      // sana. Catat asal-usulnya supaya ikut sampai ke pesanan.
+      if (marker || onLanding) {
+        post('/cart/update.js', {
+          attributes: { lp_source: marker || root.getAttribute('data-landing-handle') }
+        }).catch(function () {});
+        return;
+      }
+
+      // Tanpa jejak apa pun: keluarkan produknya.
+      var updates = {};
+      keys.forEach(function (key) {
+        updates[key] = 0;
+      });
+
+      post('/cart/update.js', { updates: updates })
+        .then(function () {
+          refresh(root);
+        })
+        .catch(function () {});
+    }
+
+    function init(scope) {
+      (scope || document).querySelectorAll('[data-lp-guard]').forEach(run);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function () {
+        init();
+      });
+    } else {
+      init();
+    }
+
+    document.addEventListener('shopify:section:load', function (event) {
+      init(event.target);
+    });
+  })();
+{% endjavascript %}

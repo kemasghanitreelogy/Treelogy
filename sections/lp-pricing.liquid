@@ -890,8 +890,30 @@
       if (checked && checked.value) cta.setAttribute('href', checked.value);
     }
 
+    // Permalink keranjang membuat keranjang baru, jadi atribut apa pun yang
+    // dipasang sebelum pindah halaman akan ikut terhapus. Penanda dititipkan di
+    // sessionStorage lebih dulu, lalu snippet lp-only-guard menukarnya menjadi
+    // atribut keranjang setelah pembeli mendarat di /cart.
+    function stampSource() {
+      var handle = (window.location.pathname.split('/pages/')[1] || '').split(/[/?#]/)[0];
+      if (!handle) return;
+
+      document.querySelectorAll('.lp-plan__cta').forEach(function (cta) {
+        if (cta.dataset.lpStamped === 'true') return;
+        cta.dataset.lpStamped = 'true';
+        cta.addEventListener('click', function () {
+          try {
+            sessionStorage.setItem('lp_source', handle);
+          } catch (e) {
+            /* mode privat: penegakan sisi server tetap menjaga */
+          }
+        });
+      });
+    }
+
     function start() {
       document.querySelectorAll('[data-lp-plan-choice]').forEach(bind);
+      stampSource();
     }
 
     if (document.readyState === 'loading') {

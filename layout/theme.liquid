@@ -1290,5 +1290,11 @@
       });
     </script>
 
+    {%- comment -%}
+      Menjaga produk eksklusif landing page agar tidak terbeli dari luar
+      funnel-nya. Lihat snippets/lp-only-guard.liquid.
+    {%- endcomment -%}
+    {% render 'lp-only-guard' %}
+
   </body> 
 </html>
