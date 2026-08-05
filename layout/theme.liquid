@@ -828,7 +828,16 @@
     {%- endif -%}
   </head>
 
-  <body class="{% if is_chromeless %}t-chromeless{% endif %}">
+  {%- comment -%}
+    Contentsquare page masking is ON for the whole project (CS_CONF rule
+    "contain .*" with maskText + maskMedia), so heatmaps and replays render
+    every word as "AAAA". data-cs-capture is the documented per-page override
+    that unmasks the whole document; customer pages keep the masking because
+    names, addresses and order data have no business being in a replay.
+    Removing this line is safe once the masking rule is dropped in the
+    Contentsquare console — see claudedocs/gtm/TRACKING-MASTER.md.
+  {%- endcomment -%}
+  <body class="{% if is_chromeless %}t-chromeless{% endif %}"{% unless request.page_type contains 'customers/' %} data-cs-capture{% endunless %}>
     {% render 'gtm-body' %}
     {%- if settings.show_utm_free_shipping_toast and is_chromeless == false -%}
       <!-- UTM Reward Toast -->
