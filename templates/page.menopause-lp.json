@@ -98,6 +98,22 @@
             "alt": "Organic Moringa Oil cold-pressed"
           }
         },
+        "bonus_1": {
+          "type": "bonus",
+          "settings": {
+            "icon": "gift",
+            "text": "Mystery Gift",
+            "free_word": "gratis"
+          }
+        },
+        "bonus_2": {
+          "type": "bonus",
+          "settings": {
+            "icon": "pouch",
+            "text": "Travel Pouch",
+            "free_word": "gratis"
+          }
+        },
         "proof_1": {
           "type": "proof",
           "settings": {
@@ -146,6 +162,8 @@
         "media_4",
         "media_5",
         "media_6",
+        "bonus_1",
+        "bonus_2",
         "proof_1",
         "proof_2",
         "proof_3",
