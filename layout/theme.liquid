@@ -270,6 +270,12 @@
     {{ 'theme.css' | asset_url | stylesheet_tag: preload: true }}
     <style>{{ 'lugus-custom.css' | inline_asset_content }}</style>
 
+    {%- comment -%}
+      Penyelarasan tampilan form Klaviyo. Keduanya CSS murni yang menimpa markup
+      pihak ketiga, jadi baca dulu catatan di kepala tiap snippet sebelum
+      mengubahnya — ada properti yang tidak boleh disentuh di popup karena
+      dipakai Klaviyo untuk memicu penutupan.
+    {%- endcomment -%}
     {% render 'klaviyo-teaser' %}
     {% render 'klaviyo-popup-motion' %}
 
