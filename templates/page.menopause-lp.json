@@ -982,8 +982,8 @@
             "component_1_variant": 2,
             "component_1_label": "180 Kapsul",
             "component_2": "organic-moringa-cold-pressed-seed-oil",
-            "component_2_variant": 2,
-            "component_2_label": "Seed Oil 60ml",
+            "component_2_variant": 1,
+            "component_2_label": "Seed Oil 30ml",
             "gift_1": "travel-pouch",
             "gift_1_label": "Travel Pouch",
             "gift_2": "mystery-gift",
@@ -1018,7 +1018,7 @@
             "discount_code": "MENOPAUSE60",
             "cta_url": "/products/inside-out-moringa-protocol?variant=47228045492412",
             "footer_note": "Pesan hari ini, dikirim besok",
-            "promo_discount": 345000,
+            "promo_discount": 170000,
             "shipping_compare": "Rp 35.000"
           }
         },
@@ -1070,7 +1070,7 @@
             "discount_code": "MENOPAUSE30",
             "cta_url": "/products/inside-out-moringa-protocol?variant=47228045459644",
             "footer_note": "Pesan hari ini, dikirim besok",
-            "promo_discount": 205000,
+            "promo_discount": 125000,
             "shipping_compare": "Rp 35.000"
           }
         },
@@ -1093,7 +1093,7 @@
             "gift_2": "",
             "gift_2_label": "",
             "free_word": "GRATIS",
-            "show_free_shipping": true,
+            "show_free_shipping": false,
             "shipping_label": "Ongkos Kirim",
             "days": 0,
             "per_day_label": "Setara per hari:",
@@ -1119,7 +1119,7 @@
             "cta_label": "Belanja Capsules",
             "variant_id": "47228067283132:1",
             "quantity": 1,
-            "discount_code": "MENOPAUSEONGKIR",
+            "discount_code": "",
             "cta_url": "/products/organic-moringa-capsules-1",
             "footer_note": "Pesan hari ini, dikirim besok",
             "promo_discount": 0,
