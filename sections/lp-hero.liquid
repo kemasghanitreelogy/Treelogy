@@ -62,6 +62,40 @@
           </div>
         {% endif %}
 
+        {%- comment -%}
+          Baris bonus duduk DI BAWAH tombol. Badge "Hemat" ditambatkan ke sisi
+          atas tombol, jadi keduanya tidak pernah berebut ruang yang sama.
+        {%- endcomment -%}
+        {%- assign bonuses = section.blocks | where: 'type', 'bonus' -%}
+        {% if bonuses.size > 0 %}
+          <ul class="lp-hero__bonus">
+            {% for block in bonuses %}
+              <li class="lp-hero__bonus-item" {{ block.shopify_attributes }}>
+                <span class="lp-hero__bonus-icon" aria-hidden="true">
+                  {%- case block.settings.icon -%}
+                    {%- when 'pouch' -%}
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h16l-1.2 11.2a1.6 1.6 0 0 1-1.6 1.4H6.8a1.6 1.6 0 0 1-1.6-1.4Z"/><path d="M8.6 8V6.2a3.4 3.4 0 0 1 6.8 0V8"/></svg>
+                    {%- when 'leaf' -%}
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20c0-8 5.5-14 16-14 0 10-5.5 14-12 14H4Z"/><path d="M4 20c3.5-4.5 7-7 11-8.6"/></svg>
+                    {%- when 'shield' -%}
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5.5c0 4.4-2.9 8.1-7 9.5-4.1-1.4-7-5.1-7-9.5V6Z"/><path d="m9 12 2 2 4-4"/></svg>
+                    {%- when 'truck' -%}
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h10v9H3Z"/><path d="M13 10h4l3 3v3h-7Z"/><circle cx="7" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/></svg>
+                    {%- else -%}
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 9.5h17V13h-17Z"/><path d="M5 13h14v7.5H5Z"/><path d="M12 9.5v11"/><path d="M12 9.5S10.6 4 8.2 4a2.2 2.2 0 0 0 0 5.5Z"/><path d="M12 9.5S13.4 4 15.8 4a2.2 2.2 0 0 1 0 5.5Z"/></svg>
+                  {%- endcase -%}
+                </span>
+                <span class="lp-hero__bonus-text">
+                  {{- block.settings.text -}}
+                  {%- if block.settings.free_word != blank -%}
+                    <strong class="lp-hero__bonus-free"> {{ block.settings.free_word }}</strong>
+                  {%- endif -%}
+                </span>
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+
         {% if section.settings.show_offer and section.settings.offer_note != blank %}
           <p class="lp-hero__offer-note">{{ section.settings.offer_note }}</p>
         {% endif %}
@@ -377,6 +411,45 @@
     font-size: 0.875rem;
   }
 
+  /* Sengaja tanpa kotak/pil: hero sudah padat (badge hemat + tombol + baris
+     bukti), jadi bonus cukup ikon garis + teks agar terbaca sebagai catatan,
+     bukan elemen ketiga yang bersaing perhatian. flex-wrap membuatnya turun
+     baris dengan rapi di layar sempit alih-alih terpotong. */
+  .lp-hero__bonus {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.25rem;
+    margin: 0.85rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .lp-hero__bonus-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--lp-text-mid);
+    font-family: var(--lp-font-body);
+    font-size: 0.8125rem;
+    line-height: 1.35;
+  }
+
+  .lp-hero__bonus-icon {
+    display: inline-flex;
+    flex: 0 0 auto;
+    color: var(--lp-gold);
+  }
+
+  .lp-hero__bonus-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .lp-hero__bonus-free {
+    color: var(--lp-gold);
+    font-weight: 600;
+  }
+
   .lp-hero__proof {
     display: grid;
     grid-template-columns: repeat(2, auto);
@@ -577,6 +650,10 @@
     }
 
     .lp-hero__proof-item {
+      justify-content: center;
+    }
+
+    .lp-hero__bonus {
       justify-content: center;
     }
 
@@ -990,6 +1067,39 @@
     }
   ],
   "blocks": [
+    {
+      "type": "bonus",
+      "name": "Bonus (di bawah tombol)",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Ikon",
+          "options": [
+            { "value": "gift", "label": "Kado" },
+            { "value": "pouch", "label": "Pouch" },
+            { "value": "leaf", "label": "Daun" },
+            { "value": "shield", "label": "Perisai" },
+            { "value": "truck", "label": "Pengiriman" }
+          ],
+          "default": "gift"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Teks",
+          "default": "Mystery Gift"
+        },
+        {
+          "type": "text",
+          "id": "free_word",
+          "label": "Kata penegas",
+          "info": "Ditebalkan dan diberi warna emas di akhir teks. Kosongkan bila tidak perlu.",
+          "default": "gratis"
+        }
+      ]
+    },
     {
       "type": "media",
       "name": "Gambar galeri",
