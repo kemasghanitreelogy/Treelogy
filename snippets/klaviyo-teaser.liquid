@@ -77,7 +77,12 @@
     transform: translateY(-1px) !important;
   }
 
+  [data-testid='animated-teaser'] > span[role='button']:focus,
   [data-testid='animated-teaser'] > span[role='button']:focus-visible {
+    outline: none !important;
+  }
+
+  [data-testid='animated-teaser'] > button.klaviyo-close-form:focus-visible {
     outline: 2px solid currentcolor !important;
     outline-offset: 2px !important;
   }
