@@ -55,8 +55,17 @@
   endif
 -%}
 
+{%- comment -%}
+  `active` is rendered here, not left to JS. The class is what lifts the block
+  out of `display: none`, and it used to be applied only by onCartRender, which
+  fires on a MutationObserver watching #cart for DIRECT child changes. The
+  add-to-cart flow swaps the innerHTML of .cart-items and .cart-footer —
+  descendants, not direct children — so the observer never fired and the whole
+  free-shipping block stayed hidden until the drawer was closed and reopened
+  (which triggers app.bundle's full #cart re-render).
+{%- endcomment -%}
 <div
-  class="free-shipping-progress"
+  class="free-shipping-progress active"
   data-fsp-state="{% if fsp_free %}earned{% else %}progress{% endif %}"
   data-free-shipping="{{ settings.min_shipping }}"
 >

@@ -131,8 +131,23 @@
 
   /* ===== Rp formatter (dots, no decimals) ===== */
   window.formatRp = function(amount) {
-    var n = Math.round(Math.abs(amount));
+    var n = Math.round(Math.abs(Number(amount)));
+    /* Last line of defence: a customer must never be shown "Rp NaN". Callers
+       are guarded too, but this is the single place every price passes through. */
+    if (!isFinite(n)) return '';
     return 'Rp ' + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  };
+
+  /* ===== Is this actually a cart? =====
+     The Ajax cart endpoints answer 200 with a cart on success but return
+     { status, message, description } on failure — no total_price, no items.
+     Verified live: POST /cart/change.js with a line key that no longer exists
+     (item removed in another tab, cart expired) answers exactly that shape.
+     Feeding it to refreshCartUI printed "Rp NaN" on the checkout button and the
+     progress line, and because item_count was undefined the
+     `if (cart.item_count === 0) reload()` safety never fired either. */
+  window.isCartPayload = function (c) {
+    return !!c && typeof c.total_price === 'number' && Array.isArray(c.items);
   };
 
   /* ===== Loading overlay for cart ===== */
@@ -211,6 +226,7 @@
   }
 
   window.syncFBTVisibility = function(cart) {
+    if (!window.isCartPayload(cart)) return;
     var inCartProducts = {};
     var inCartVariants = {};
     (cart.items || []).forEach(function(item) {
@@ -427,6 +443,23 @@
   window.refreshCartUI = function(cart) {
     var c = document.getElementById('cart');
     if (!c) return;
+
+    /* One choke point for every caller. An error payload must never reach the
+       renderers — it produces NaN prices and makes syncVoucherUI think a live
+       voucher expired. Re-read the real cart instead of guessing. */
+    if (!window.isCartPayload(cart)) {
+      console.error('[cart] non-cart payload rejected', cart);
+      if (window.refreshCartUI._healing) return;
+      window.refreshCartUI._healing = true;
+      fetch('/cart.js')
+        .then(function (r) { return r.json(); })
+        .then(function (fresh) {
+          window.refreshCartUI._healing = false;
+          if (window.isCartPayload(fresh)) window.refreshCartUI(fresh);
+        })
+        .catch(function () { window.refreshCartUI._healing = false; });
+      return;
+    }
 
     var i18n = window._cartI18n || {};
     var totalCents = cart.total_price;
@@ -1831,6 +1864,9 @@
     window.syncVoucherUI = function (cart) {
       var el = root();
       if (!el) return;
+      /* Without this an error payload reads as "no applicable codes" and the
+         row wrongly announces that a perfectly good voucher expired. */
+      if (!window.isCartPayload(cart)) return;
 
       var state = appliedFromCart(cart);
       if (state.applied.length) {
