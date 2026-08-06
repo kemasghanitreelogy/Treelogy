@@ -270,6 +270,8 @@
     {{ 'theme.css' | asset_url | stylesheet_tag: preload: true }}
     <style>{{ 'lugus-custom.css' | inline_asset_content }}</style>
 
+    {% render 'klaviyo-teaser' %}
+
     {%- liquid
       assign is_policy_page = false
       if request.page_type == 'policy' or request.path contains '/policies/'
