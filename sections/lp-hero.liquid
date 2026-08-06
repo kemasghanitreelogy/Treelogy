@@ -450,6 +450,17 @@
     font-weight: 600;
   }
 
+  /* Di desktop tombol hero mengambang terlalu kecil terhadap kolom teks yang
+     lebar, karena .lp-btn hanya sebesar isinya. Lebar minimum (bukan 100%)
+     membuatnya proporsional tanpa menjadi bentangan penuh yang justru murah.
+     min() menjaga tablet sempit di 769-820px tetap aman. */
+  @media screen and (min-width: 769px) {
+    .lp-hero__cta {
+      min-width: min(24rem, 100%);
+      padding-inline: 3rem;
+    }
+  }
+
   .lp-hero__proof {
     display: grid;
     grid-template-columns: repeat(2, auto);
