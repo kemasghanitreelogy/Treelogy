@@ -450,14 +450,24 @@
     font-weight: 600;
   }
 
-  /* Di desktop tombol hero mengambang terlalu kecil terhadap kolom teks yang
-     lebar, karena .lp-btn hanya sebesar isinya. Lebar minimum (bukan 100%)
-     membuatnya proporsional tanpa menjadi bentangan penuh yang justru murah.
-     min() menjaga tablet sempit di 769-820px tetap aman. */
+  /* Di desktop tombol hero terlalu kecil terhadap kolom teks karena .lp-btn
+     hanya sebesar isinya, dan berhenti sebelum baris bonus di bawahnya (lebar
+     298px) sehingga terlihat menggantung. Lebar minimum dipakai — bukan 100% —
+     supaya tombol melewati baris bonus tapi tidak membentang penuh.
+     JANGAN pakai min(..., 100%) di sini: pembungkusnya inline-block
+     (shrink-to-fit), jadi persen mengacu ke lebar yang belum tentu ada dan
+     aturannya runtuh jadi selebar teks saja. Nilainya bertingkat agar tetap
+     muat di kolom sempit 769-1023px (±370-398px). */
   @media screen and (min-width: 769px) {
     .lp-hero__cta {
-      min-width: min(24rem, 100%);
+      min-width: 20rem;
       padding-inline: 3rem;
+    }
+  }
+
+  @media screen and (min-width: 1024px) {
+    .lp-hero__cta {
+      min-width: 22rem;
     }
   }
 
