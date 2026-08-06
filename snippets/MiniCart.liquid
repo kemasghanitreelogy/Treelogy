@@ -29,17 +29,18 @@
                   <span class="opt-shimmer opt-shimmer--light fbt-skel-line" style="width: 82%"></span>
                   <span class="opt-shimmer opt-shimmer--light fbt-skel-line" style="width: 48%; margin-top: 7px"></span>
                 </div>
-                <div class="fbt-card-price">
-                  <span class="opt-shimmer opt-shimmer--light fbt-skel-line" style="width: 74px; height: 13px; margin-top: 9px"></span>
+                <div class="fbt-card-bottom">
+                  <span class="opt-shimmer opt-shimmer--light fbt-skel-line" style="width: 74px; height: 13px"></span>
+                  <span class="opt-shimmer opt-shimmer--light fbt-skel-action"></span>
                 </div>
               </div>
-              <span class="opt-shimmer opt-shimmer--light fbt-skel-action"></span>
             </div>
           {% endfor %}
           {% for product in up_selling %}
             <div
               class="fbt-card upsel-product-cart"
               id="upsel-product-{{ product.id }}"
+              data-product="{{ product.id }}"
               data-handle="{{ product.handle }}"
               style="display: none;"
             >
@@ -58,17 +59,20 @@
                   <span class="fbt-rating-text"></span>
                 </div>
                 <div class="fbt-card-title">{{ product.title }}</div>
-                <div class="fbt-card-variant">
-                  {%- unless product.has_only_default_variant -%}
-                    {{- product.variants.first.title -}}
-                  {%- endunless -%}
-                </div>
-                <div class="fbt-card-price">{{ product.price | money }}</div>
-              </div>
-              <div
-                class="fbt-card-action button-quick-add-cart button-cart-icon"
-                data-variant="{{ product.variants.first.id }}"
-              >
+                {%- comment -%}
+                  Rendered only when there is one. An empty div still adds a
+                  gap, which is part of why a title-and-price-only product
+                  looked stretched next to a fully-populated card.
+                {%- endcomment -%}
+                {%- unless product.has_only_default_variant -%}
+                  <div class="fbt-card-variant">{{ product.variants.first.title }}</div>
+                {%- endunless -%}
+                <div class="fbt-card-bottom">
+                  <div class="fbt-card-price">{{ product.price | money }}</div>
+                  <div
+                    class="fbt-card-action button-quick-add-cart button-cart-icon"
+                    data-variant="{{ product.variants.first.id }}"
+                  >
                 <span class="fbt-btn-state fbt-btn-idle">{{ 'cart.fbt_add' | t }}</span>
                 <span class="fbt-btn-state fbt-btn-loading">
                   <svg class="fbt-spinner" width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -76,11 +80,13 @@
                     <path d="M12 3a9 9 0 0 1 9 9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
                   </svg>
                 </span>
-                <span class="fbt-btn-state fbt-btn-success">
-                  <svg width="14" height="11" viewBox="0 0 14 11" fill="none">
-                    <path d="M1 5.5L5 9.5L13 1.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </span>
+                    <span class="fbt-btn-state fbt-btn-success">
+                      <svg width="14" height="11" viewBox="0 0 14 11" fill="none">
+                        <path d="M1 5.5L5 9.5L13 1.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           {% endfor %}
@@ -92,16 +98,34 @@
 </div>
 
 <script>
+  /* Shopify's `t` filter HTML-escapes its output, so a translation containing
+     an apostrophe reaches JS as the literal characters "Couldn&#39;t" and
+     renders exactly that way through textContent. Decode once, at the boundary
+     where Liquid strings become JS strings. */
+  window.cartDecode = function (s) {
+    if (typeof s !== 'string' || s.indexOf('&') === -1) return s;
+    var el = document.createElement('textarea');
+    el.innerHTML = s;
+    return el.value;
+  };
+  window.cartDecodeMap = function (o) {
+    for (var k in o) {
+      if (typeof o[k] === 'string') o[k] = window.cartDecode(o[k]);
+    }
+    return o;
+  };
+
   /* ===== Cart i18n strings (Liquid → JS) ===== */
-  window._cartI18n = {
+  window._cartI18n = window.cartDecodeMap({
     allSet:            {{ 'cart.progress.all_set' | t | json }},
+    unlocked:          {{ 'cart.progress.unlocked' | t | json }},
     progressAdd:       {{ 'cart.progress_add' | t | json }},
     progressMore:      {{ 'cart.progress_more' | t | json }},
     freeShippingBadge: {{ 'cart.free_shipping_badge' | t | json }},
     progressAway:      {{ 'cart.progress_away' | t | json }},
     shippingFree:      {{ 'cart.shipping_free' | t | json }},
     shippingCalc:      {{ 'cart.shipping_calculated' | t | json }}
-  };
+  });
 
   const minShipping = {{ settings.min_shipping | default: 1000000 }};
 
@@ -127,79 +151,275 @@
     if (ov) ov.style.display = 'none';
   };
 
-  /* ===== Sync FBT card visibility with current cart ===== */
-  /* Shows FBT cards whose variant is NOT in the cart,     */
-  /* hides FBT cards whose variant IS in the cart.         */
+  /* ===== Shared error toast =====
+     One implementation for every cart surface. The premium-ATC block used to
+     carry its own private copy, which is how two toasts with different
+     lifetimes end up on the same page. */
+  window.cartToast = function(msg) {
+    if (!msg) return;
+    var t = document.getElementById('atc-error-toast');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'atc-error-toast';
+      t.setAttribute('role', 'alert');
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._hideTimer);
+    t._hideTimer = setTimeout(function() { t.classList.remove('show'); }, 4200);
+  };
+
+  /* ===== Sync FBT card visibility with current cart =======================
+     Matching is by PRODUCT, not variant, for two reasons.
+
+     One: correctness. An FBT card advertises a product but its ADD button
+     carries product.variants.first.id. A customer who bought "Powder — 60
+     servings" from the PDP holds a different variant than the card's first
+     one, so a variant match would keep upselling something already in the bag.
+
+     Two: app.bundle.js getCartItems() independently shows/hides these same
+     cards and matches on item.product_id. Matching on variant here meant the
+     two writers disagreed — the bundle hid the card, this function showed it,
+     and because the bundle sets style.display directly it never left the
+     restore marker behind, so removing the item brought the card back with no
+     animation at all. That was the "back to FBT doesn't work" symptom. */
+  function fbtReduced() {
+    return !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }
+
+  /* Plays the restore choreography on one card. Mirrors .fbt-card-exit — the
+     card left leftwards and shrinking, so it comes back from the same place,
+     which is what makes it read as "restored" rather than "some new card". */
+  function fbtPlayReturn(card, delay) {
+    card.classList.remove('fbt-card-enter', 'fbt-card-enter-active', 'fbt-card-returned');
+    card.style.removeProperty('--fbt-d');
+    if (fbtReduced()) return;
+
+    card.style.setProperty('--fbt-d', delay + 'ms');
+    card.classList.add('fbt-card-enter');
+    void card.offsetWidth; /* commit the from-state before transitioning */
+    card.classList.add('fbt-card-enter-active', 'fbt-card-returned');
+
+    /* Timed cleanup rather than transitionend. The previous version listened
+       for an opacity transition that could never fire — .fbt-card-enter had no
+       CSS at all — so every restored card leaked a listener that never ran. */
+    setTimeout(function () {
+      card.classList.remove('fbt-card-enter', 'fbt-card-enter-active', 'fbt-card-returned');
+      card.style.removeProperty('--fbt-d');
+    }, delay + 1000);
+  }
+
   window.syncFBTVisibility = function(cart) {
-    /* Build a set of variant IDs currently in the cart */
-    var inCart = {};
+    var inCartProducts = {};
+    var inCartVariants = {};
     (cart.items || []).forEach(function(item) {
-      inCart[String(item.variant_id)] = true;
+      inCartProducts[String(item.product_id)] = true;
+      inCartVariants[String(item.variant_id)] = true;
     });
 
     /* Check each FBT card */
     var fbtCards = document.querySelectorAll('.fbt-card.upsel-product-cart');
     var anyVisible = false;
-    var anyReturned = false;
+    var returned = [];
+
     fbtCards.forEach(function(card) {
       var btn = card.querySelector('.fbt-card-action');
-      var variantId = btn ? btn.getAttribute('data-variant') : null;
-      if (!variantId) return;
+      if (!btn) return;
+      var variantId = btn.getAttribute('data-variant');
+      /* id="upsel-product-<productId>" is the fallback for any card rendered
+         before data-product existed (e.g. a cached drawer still in the DOM). */
+      var productId = card.dataset.product || String(card.id || '').replace('upsel-product-', '');
 
-      if (inCart[variantId]) {
-        /* Variant is in cart — keep hidden */
-        card.style.display = 'none';
-        card.classList.remove('fbt-card-enter', 'fbt-card-enter-active');
-      } else {
-        var wasHidden = card.style.display === 'none';
-        /* Variant NOT in cart — restore to FBT */
-        card.style.display = 'flex';
-        card.classList.remove('fbt-card-exit');
-        btn.classList.remove('is-success', 'is-loading');
-        anyVisible = true;
+      var isInCart =
+        (productId && inCartProducts[productId]) ||
+        (variantId && inCartVariants[variantId]);
 
-        /* Animate entrance if card was previously hidden (removed from cart) */
-        if (wasHidden) {
-          anyReturned = true;
-          card.classList.add('fbt-card-enter');
-          card.classList.remove('fbt-card-enter-active');
-          /* Force reflow so the initial state is applied before transitioning */
-          void card.offsetWidth;
-          card.classList.add('fbt-card-enter-active');
-          /* Clean up classes after animation completes */
-          card.addEventListener('transitionend', function handler(ev) {
-            if (ev.propertyName !== 'opacity') return;
-            card.removeEventListener('transitionend', handler);
-            card.classList.remove('fbt-card-enter', 'fbt-card-enter-active');
-          });
-        }
+      if (isInCart) {
+        /* In the cart — keep hidden, and record WHY it is hidden */
+        card.dataset.fbtInCart = '1';
+        /* A card already animating itself out owns its own hide; snapping
+           display:none here would cut the exit short mid-fade. */
+        if (!card.classList.contains('fbt-card-exit')) card.style.display = 'none';
+        card.classList.remove('fbt-card-enter', 'fbt-card-enter-active', 'fbt-card-returned');
+        return;
       }
+
+      /* "Returned" means precisely: this card was hidden because its product
+         sat in the cart, and now it doesn't. The old check read
+         card.style.display === 'none', which is true for EVERY card on first
+         render (Liquid ships them hidden) — so the restore animation fired for
+         cards that had never been in the cart at all.
+         The reason lives on the element rather than in a module-level snapshot
+         of the last cart, because the FBT add flow hides its own card without
+         routing through this function; a snapshot would miss it and the card
+         would come back with no animation. */
+      var didReturn = card.dataset.fbtInCart === '1';
+      delete card.dataset.fbtInCart;
+
+      /* Not in the cart — restore to FBT */
+      card.style.display = 'flex';
+      card.classList.remove('fbt-card-exit');
+      btn.classList.remove('is-success', 'is-loading');
+      anyVisible = true;
+
+      if (didReturn) returned.push(card);
     });
 
     /* Show/hide the entire FBT section based on whether any cards are visible */
     var fbtSection = document.querySelector('.fbt-section');
     if (fbtSection) {
+      var wasShown = fbtSection.style.display !== 'none';
       fbtSection.style.display = anyVisible ? '' : 'none';
+      /* Section coming back from empty is a bigger jump than any single card,
+         so it gets its own settle. Flagged for the fbt-reveal wrapper below so
+         the two entrance animations can't both claim the same cards. */
+      if (anyVisible && !wasShown && returned.length && !fbtReduced()) {
+        fbtSection.dataset.fbtReturning = '1';
+        fbtSection.classList.remove('fbt-section-in');
+        void fbtSection.offsetWidth;
+        fbtSection.classList.add('fbt-section-in');
+        setTimeout(function () {
+          fbtSection.classList.remove('fbt-section-in');
+          delete fbtSection.dataset.fbtReturning;
+        }, 700);
+      }
     }
 
-    /* If any card returned, smooth-scroll the FBT track back to true zero */
-    if (anyReturned) {
-      var track = document.querySelector('.fbt-track');
-      if (track) {
-        /* Disable scroll-snap so it doesn't fight the scroll position */
-        track.style.scrollSnapType = 'none';
-        track.scrollTo({ left: 0, behavior: 'smooth' });
+    if (!returned.length) return;
 
-        /* Re-enable scroll-snap after the smooth scroll finishes */
-        var onDone = function() {
-          track.removeEventListener('scrollend', onDone);
-          clearTimeout(fallback);
-          track.style.scrollSnapType = '';
-        };
-        track.addEventListener('scrollend', onDone, { once: true });
-        /* Fallback for browsers without scrollend */
-        var fallback = setTimeout(onDone, 450);
+    /* Measure before animating: the enter transform would otherwise skew the
+       rect, and .fbt-track isn't positioned so offsetLeft can't be trusted. */
+    var track = returned[0].closest('.fbt-track');
+    var scrollTo = null;
+    if (track) {
+      scrollTo = track.scrollLeft
+        + (returned[0].getBoundingClientRect().left - track.getBoundingClientRect().left);
+      scrollTo = Math.max(0, scrollTo);
+    }
+
+    returned.forEach(function (card, i) {
+      fbtPlayReturn(card, i * 70);
+    });
+
+    /* Scroll to the card that came back, not to zero — with one card visible at
+       a time, scrolling to zero can land on a completely different product. */
+    if (track && scrollTo !== null) {
+      track.style.scrollSnapType = 'none';
+      track.scrollTo({ left: scrollTo, behavior: fbtReduced() ? 'auto' : 'smooth' });
+      var onDone = function() {
+        track.removeEventListener('scrollend', onDone);
+        clearTimeout(fallback);
+        track.style.scrollSnapType = '';
+      };
+      track.addEventListener('scrollend', onDone, { once: true });
+      var fallback = setTimeout(onDone, 600);
+    }
+  };
+
+  /* ===== Free-shipping progress: the ONLY writer for the bar ==============
+     refreshCartUI and the UTM override both route through here so they can't
+     drift apart (they previously kept their own copies of the fill/label/badge
+     logic, and the badge said the same thing as the label). */
+  function fspSetAmount(el, text) {
+    if (!el || el.textContent === text) return;
+    var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) { el.textContent = text; return; }
+    /* NB: opacity-only, so this is not "motion animation" under WCAG 2.3.3 and
+       stays on for reduced-motion users — they still get the state change. */
+    /* 100ms crossfade rather than a rolling count. Counting delays reading the
+       one number the customer needs, re-fires on every quantity tick, and has
+       no evidence behind it; a pure opacity change is also excluded from WCAG
+       2.3.3's definition of motion animation. */
+    el.classList.add('fsp-swap');
+    setTimeout(function () {
+      el.textContent = text;
+      el.classList.remove('fsp-swap');
+    }, 100);
+  }
+
+  /* The celebration is once per session. A customer who nudges quantity across
+     the line repeatedly is fiddling, not achieving something new, and a reward
+     that replays is not a reward. */
+  function fspAlreadyCelebrated() {
+    try { return sessionStorage.getItem('fsp_celebrated') === '1'; }
+    catch (e) { return false; }
+  }
+  function fspMarkCelebrated() {
+    try { sessionStorage.setItem('fsp_celebrated', '1'); } catch (e) {}
+  }
+
+  window.setShippingProgress = function (pct, remaining, isFree) {
+    var c = document.getElementById('cart');
+    if (!c) return;
+    var i18n = window._cartI18n || {};
+
+    /* scaleX, not width — compositor-only. Floored at 3% so an untouched cart
+       reads as started; the sentence still states the true remainder. */
+    var fill = c.querySelector('.progress-fill');
+    if (fill) fill.style.transform = 'scaleX(' + (Math.max(pct, 3) / 100) + ')';
+
+    var prefix = c.querySelector('[data-fsp-prefix]');
+    var amountEl = c.querySelector('[data-fsp-amount]');
+    var suffix = c.querySelector('[data-fsp-suffix]');
+    if (prefix && amountEl && suffix) {
+      if (isFree) {
+        /* Possession, not a system state. "Active"/"unlocked" describes a
+           feature toggle; "your shipping is free" describes something the
+           customer now has. And the value is stated as SCOPE, never as rupiah:
+           real shipping here runs Rp 15.000-85.000, so naming the floor would
+           understate the gift to everyone outside Java. */
+        prefix.textContent = i18n.unlocked || 'Your shipping is free.';
+        fspSetAmount(amountEl, '');
+        suffix.textContent = '';
+      } else {
+        prefix.textContent = (i18n.progressAdd || 'Spend') + ' ';
+        suffix.textContent = ' ' + (i18n.progressMore || 'more for free shipping');
+        fspSetAmount(amountEl, window.formatRp(remaining));
       }
+    }
+
+    /* Single writer for the Shipping row too — it is where the earned state
+       actually lives once the header retracts. */
+    /* The row states the arithmetic; the header chip states the benefit. Only
+       the value changes here — giving the row its own emphasis too was the same
+       fact twice. */
+    var sv = c.querySelector('#cart-shipping-value');
+    if (sv) {
+      fspSetAmount(sv, isFree ? (i18n.shippingFree || 'FREE') : (i18n.shippingCalc || 'Calculated at checkout'));
+      sv.classList.toggle('is-free', !!isFree);
+    }
+
+    var wrap = c.querySelector('.free-shipping-progress');
+    if (!wrap) return;
+    var was = wrap.getAttribute('data-fsp-state') === 'earned';
+    /* Both states live in one fixed-height slot, so this swap moves nothing */
+    wrap.setAttribute('data-fsp-state', isFree ? 'earned' : 'progress');
+
+    /* Only on the crossing itself. A server-rendered qualifying cart never
+       gets .just-unlocked, so it opens already collapsed and plays nothing. */
+    if (isFree && !was) {
+      var announce = wrap.querySelector('[data-fsp-announce]');
+      if (announce) announce.textContent = i18n.unlocked || 'Your shipping is free.';
+
+      if (!fspAlreadyCelebrated()) {
+        fspMarkCelebrated();
+        wrap.classList.remove('just-unlocked');
+        void wrap.offsetWidth;
+        wrap.classList.add('just-unlocked');
+        setTimeout(function () { wrap.classList.remove('just-unlocked'); }, 1800);
+        /* One light tap. No sound: Indonesian mobile shoppers are frequently
+           browsing somewhere a chime would be unwelcome. */
+        try {
+          if (navigator.vibrate && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+            navigator.vibrate(10);
+          }
+        } catch (e) {}
+      }
+    } else if (!isFree && was) {
+      wrap.classList.remove('just-unlocked');
+      var undo = wrap.querySelector('[data-fsp-announce]');
+      if (undo) undo.textContent = '';
     }
   };
 
@@ -208,61 +428,38 @@
     var c = document.getElementById('cart');
     if (!c) return;
 
+    var i18n = window._cartI18n || {};
     var totalCents = cart.total_price;
     var total = totalCents / 100;
+    /* Progress is measured on MERCHANDISE value (items_subtotal_price), not on
+       the post-voucher total. Two reasons.
+
+       The goal is "how much more product do I need to add" — a figure the
+       customer controls. Measuring it on the post-voucher total makes the goal
+       move backwards the moment they use a voucher, which reads as a bug: a
+       cart holding Rp 470.000 of product with a 100% code shows Rp 0 and asks
+       for the full Rp 650.000 again.
+
+       And it now matches the store rule: the automatic "Free Shipping"
+       discount (Indonesia) was moved to a Rp 650.000 minimum and set to
+       combine with order and product discounts, so a voucher should no longer
+       cost an earned free-shipping. Note that /cart/shipping_rates.json cannot
+       confirm this — that endpoint returns raw profile rates and is blind to
+       shipping discounts — so the checkout line item is the outstanding check. */
+    var progressCents = cart.items_subtotal_price;
+    if (progressCents === null || progressCents === undefined) progressCents = totalCents;
+    var progressBase = progressCents / 100;
     var threshold = minShipping;
-    var remaining = threshold - total;
+    var remaining = threshold - progressBase;
     var isFree = remaining <= 0;
 
     // UTM override
     var utmFree = (typeof window.isUtmFreeShipping === 'function' && window.isUtmFreeShipping());
     if (utmFree) { isFree = true; remaining = 0; }
 
-    /* -- Progress fill + indicator position -- */
-    var pf = c.querySelector('.progress-fill');
-    var pct = Math.min((total / threshold) * 100, 100);
-    if (pf) {
-      pf.style.width = pct + '%';
-    }
-
-    /* -- Slide the icon+badge indicator along the track -- */
-    var indicator = c.querySelector('.progress-indicator');
-    if (indicator) {
-      /* Clamp between 12% and 88% to keep icon + badge on-screen */
-      var pos = Math.max(12, Math.min(pct, 88));
-      indicator.style.left = pos + '%';
-    }
-
-    /* -- Progress text -- */
-    var label = c.querySelector('#shipping-progress-label');
-    var i18n = window._cartI18n || {};
-    if (label) {
-      if (isFree) {
-        label.textContent = i18n.allSet || 'All set!';
-      } else {
-        label.textContent = (i18n.progressAdd || 'Add') + ' ' + window.formatRp(remaining) + ' ' + (i18n.progressMore || 'more for Free Shipping');
-      }
-    }
-
-    /* -- Badge -- */
-    var bt = c.querySelector('#badge-text');
-    if (bt) {
-      bt.textContent = isFree ? (i18n.freeShippingBadge || 'Free Shipping') : window.formatRp(remaining) + ' ' + (i18n.progressAway || 'away');
-    }
-
-    /* -- Fulfilled class -- */
-    var pw = c.querySelector('.free-shipping-progress');
-    if (pw) {
-      var wasFulfilled = pw.classList.contains('fulfilled');
-      pw.classList.toggle('fulfilled', isFree);
-      /* Re-trigger animations only on state change (not → fulfilled) */
-      if (isFree && !wasFulfilled) {
-        var icon = pw.querySelector('.progress-icon');
-        var badge = pw.querySelector('.free-shipping-badge');
-        if (icon) { icon.style.animation = 'none'; icon.offsetHeight; icon.style.animation = ''; }
-        if (badge) { badge.style.animation = 'none'; badge.offsetHeight; badge.style.animation = ''; }
-      }
-    }
+    /* -- Progress bar: single writer, see setShippingProgress -- */
+    var pct = Math.min((progressBase / threshold) * 100, 100);
+    window.setShippingProgress(pct, remaining, isFree);
 
     /* -- Checkout total -- */
     var te = c.querySelector('#sub-total-mini');
@@ -271,14 +468,26 @@
       te.textContent = window.formatRp(total);
     }
 
-    /* -- Shipping row: always visible -- */
+    /* -- Shipping row stays visible; its value is written by
+          setShippingProgress, which owns every free-shipping surface -- */
     var shippingRow = c.querySelector('#cart-shipping-row');
-    var sv = c.querySelector('#cart-shipping-value');
-    if (sv) sv.textContent = isFree ? (i18n.shippingFree || 'FREE') : (i18n.shippingCalc || 'Calculated at checkout');
     if (shippingRow) shippingRow.classList.add('visible');
 
     /* -- Savings row: recalculate from DOM data attributes -- */
     window.recalcSavings();
+
+    /* -- Voucher row: reconcile with whatever the cart actually holds -- */
+    if (window.syncVoucherUI) window.syncVoucherUI(cart);
+
+    /* -- FBT: every cart mutation reconciles the carousel ------------------
+       Previously only two call sites did this by hand, so any path that
+       forgot (or that threw earlier in its own .then) left a removed product
+       missing from the carousel until the drawer was closed and reopened.
+       Routing it through here makes the restore a property of "the cart
+       changed" rather than of one particular handler remembering.
+       Idempotent: the restore marker is cleared on the first pass, so a
+       second call in the same tick finds nothing to animate. */
+    if (window.syncFBTVisibility) window.syncFBTVisibility(cart);
   };
 
   /* ===== Qty change handler ===== */
@@ -537,57 +746,106 @@
     });
   };
 
-  /* ===== FBT Add-to-Cart: seamless in-place update ========================= */
-  /* Capture-phase intercept blocks app.bundle.js (which does full innerHTML    */
-  /* wipe → flash). Instead we surgically swap ONLY .cart-items & .cart-footer  */
-  /* so the drawer, header, progress bar and FBT never disappear.              */
-  /* After success the added card animates out and the next card slides in.     */
+  /* ===== FBT Add-to-Cart ==================================================
+     Capture-phase intercept blocks app.bundle.js, whose ajaxCart() does
+     innerHTML='' then innerHTML=html and flashes the whole drawer. We swap only
+     .cart-items and .cart-footer so the header, progress bar and FBT survive.
+
+     The card now leaves on the tap, before the network answers. The old order
+     was: await /cart/add.js, THEN await cart?view=mini (serialised), crossfade
+     120ms, show a checkmark, hold 500ms, and only then start the 250ms exit —
+     roughly 870ms of scripted waiting stacked on top of two round-trips. The
+     item appearing in the list above is the confirmation; the checkmark was
+     confirming something the customer could already see. */
   (function() {
+    /* Resolves once the card is actually hidden. transitionend alone isn't
+       enough — a drawer re-render mid-flight detaches the node and the event
+       never lands, which would strand the card half-faded. */
+    function fbtExit(card) {
+      if (!card) return;
+      card.dataset.fbtInCart = '1';
+      if (fbtReduced()) { card.style.display = 'none'; return; }
+
+      card.classList.add('fbt-card-exit');
+      var done = false;
+      var finish = function () {
+        if (done) return;
+        done = true;
+        card.style.display = 'none';
+        card.classList.remove('is-success', 'fbt-card-exit');
+        var track = card.closest('.fbt-track');
+        if (track) track.scrollLeft = 0;
+      };
+      card.addEventListener('transitionend', function h(ev) {
+        if (ev.propertyName !== 'opacity') return;
+        card.removeEventListener('transitionend', h);
+        finish();
+      });
+      setTimeout(finish, 420);
+    }
+
+    var FBT_FAILED = window.cartDecode({{ 'cart.atc_failed_generic' | t | json }});
+
     document.addEventListener('click', function(e) {
-      var btn = e.target.closest('.fbt-card-action');
-      if (!btn || btn.classList.contains('is-loading') || btn.classList.contains('is-success')) return;
+      var btn = e.target.closest && e.target.closest('.fbt-card-action');
+      if (!btn || btn.dataset.fbtBusy) return;
 
       var variant = btn.dataset.variant;
       if (!variant) return;
 
-      /* Block app.bundle.js — its ajaxCart() does innerHTML='' then innerHTML=html */
       e.stopImmediatePropagation();
       e.preventDefault();
+      btn.dataset.fbtBusy = '1';
 
       var card = btn.closest('.fbt-card');
+      var prefix = (typeof Shopify !== 'undefined' && Shopify.locale === 'id') ? '/id/' : '/';
 
-      /* — LOADING — */
-      btn.classList.add('is-loading');
+      /* Optimistic: the card goes now, the network catches up */
+      fbtExit(card);
 
-      /* 1. Add item to cart */
+      /* Only a failed ADD justifies putting the card back. A crash in the
+         post-add DOM work must not roll back a line the customer really did
+         add — that reports "couldn't add to cart" over an item sitting in the
+         cart, and restores an FBT card for a product that is now in it. */
+      var addFailed = false;
+
       fetch('/cart/add.js', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({ items: [{ id: parseInt(variant, 10), quantity: 1 }] })
       })
-      .then(function(r) { return r.json(); })
-      .then(function() {
-        /* 2. Fetch fresh cart HTML (respect locale prefix) */
-        var prefix = (typeof Shopify !== 'undefined' && Shopify.locale === 'id') ? '/id/' : '/';
-        return fetch(prefix + 'cart?view=mini').then(function(r) { return r.text(); });
+      .then(function(r) {
+        return r.json().then(function (j) { if (!r.ok) throw j; return j; });
       })
-      .then(function(html) {
+      .catch(function (err) {
+        addFailed = true;
+        throw err;
+      })
+      .then(function() {
+        /* Parallel. These two don't depend on each other, and chaining them
+           doubled the wait before the drawer showed the new line. */
+        return Promise.all([
+          fetch(prefix + 'cart?view=mini').then(function(r) { return r.text(); }),
+          fetch('/cart.js').then(function(r) { return r.json(); })
+        ]);
+      })
+      .then(function(res) {
+        delete btn.dataset.fbtBusy;
+        var html = res[0];
+        var cart = res[1];
+
         var cartEl = document.getElementById('cart');
         if (!cartEl) return;
 
-        /* Parse server response — extract only .cart-items and .cart-footer */
         var doc = new DOMParser().parseFromString(html, 'text/html');
         var newItems = doc.querySelector('.cart-items');
         var newFooter = doc.querySelector('.sub-total.cart-footer');
-
         var oldItems = cartEl.querySelector('.cart-items');
         var oldFooter = cartEl.querySelector('.sub-total.cart-footer');
 
-        /* 3. Crossfade cart-items only (drawer stays fully visible) */
         if (oldItems && newItems) {
           oldItems.style.transition = 'opacity 0.12s ease-out';
           oldItems.style.opacity = '0';
-
           setTimeout(function() {
             oldItems.innerHTML = newItems.innerHTML;
             oldItems.style.transition = 'opacity 0.18s ease-in';
@@ -596,48 +854,41 @@
           }, 120);
         }
 
-        /* 4. Swap footer (checkout btn, totals structure) */
         if (oldFooter && newFooter) {
           oldFooter.innerHTML = newFooter.innerHTML;
-          /* Re-init trust slider after footer DOM swap */
           window.initCartTrustSlider();
         }
 
-        /* 5. Fetch cart JSON → update progress bar, totals, shipping/savings rows */
-        fetch('/cart.js').then(function(r) { return r.json(); }).then(function(cart) {
-          window.refreshCartUI(cart);
-          if (cart.item_count > 0) window.loadCompareAtPrices();
-          var indicator = document.getElementById('cart-indicator');
-          if (indicator) {
-            if (cart.item_count > 0) indicator.classList.add('show');
-            else indicator.classList.remove('show');
-          }
-        });
-
-        /* 6. Button ✓ → card out → next card in (fast & snappy) */
-        btn.classList.remove('is-loading');
-        btn.classList.add('is-success');
-
-        if (card) {
-          setTimeout(function() {
-            card.classList.add('fbt-card-exit');
-            card.addEventListener('transitionend', function handler(ev) {
-              if (ev.propertyName !== 'opacity') return;
-              card.removeEventListener('transitionend', handler);
-              card.style.display = 'none';
-              card.classList.remove('is-success', 'fbt-card-exit');
-              btn.classList.remove('is-success');
-              /* Reset scroll so next visible card aligns to start */
-              var track = card.closest('.fbt-track');
-              if (track) track.scrollLeft = 0;
-            });
-          }, 500);
-        }
+        window.refreshCartUI(cart);
+        if (cart.item_count > 0) window.loadCompareAtPrices();
+        var indicator = document.getElementById('cart-indicator');
+        if (indicator) indicator.classList.toggle('show', cart.item_count > 0);
       })
-      .catch(function() {
-        btn.classList.remove('is-loading');
+      .catch(function(err) {
+        delete btn.dataset.fbtBusy;
+
+        if (!addFailed) {
+          /* The item IS in the cart; only the redraw broke. Say nothing to the
+             customer, log it for us, and reconcile from the server so the
+             drawer isn't left half-updated. */
+          console.error('[cart] FBT post-add refresh failed', err);
+          fetch('/cart.js')
+            .then(function (r) { return r.json(); })
+            .then(function (cart) { window.refreshCartUI(cart); })
+            .catch(function () {});
+          return;
+        }
+
+        /* The optimistic exit was a promise we could not keep — put it back */
+        if (card) {
+          delete card.dataset.fbtInCart;
+          card.classList.remove('fbt-card-exit');
+          card.style.display = 'flex';
+          fbtPlayReturn(card, 0);
+        }
+        if (window.cartToast) window.cartToast((err && err.description) || FBT_FAILED);
       });
-    }, true); /* ← capture phase: fires before app.bundle.js bubble-phase handler */
+    }, true); /* capture: runs before (and blocks) the app.bundle.js handler */
   })();
 </script>
 
@@ -825,9 +1076,7 @@
     border-radius: 4px;
   }
   .fbt-skel-action {
-    position: absolute;
-    bottom: 16px;
-    right: 14px;
+    flex: 0 0 auto;
     width: 52px;
     height: 15px;
     border-radius: 4px;
@@ -897,11 +1146,11 @@
   (function () {
     var SELECTOR = '#AddToCart, #popup-variants-button-bag, .button-direct-add';
     var MIN_STATE = 350;
-    var L = {
+    var L = window.cartDecodeMap({
       adding: {{ 'cart.atc_adding' | t | json }},
       added: '\u2713 ' + {{ 'cart.atc_added' | t | json }},
       failed: {{ 'cart.atc_failed_generic' | t | json }}
-    };
+    });
 
     function utmFlowOwnsButton() {
       try {
@@ -1050,6 +1299,10 @@
         var visAfter = !!sec.querySelector('.fbt-card[style*="flex"]');
         var wasLoading = sec.classList.contains('fbt-loading');
         sec.classList.remove('fbt-loading');
+        /* syncFBTVisibility already ran its per-card restore choreography on
+           this pass; stacking the fbt-reveal stagger on top would re-animate
+           the same cards from a second from-state mid-transition. */
+        if (sec.dataset.fbtReturning) return;
         if (visAfter && (wasLoading || !visBefore)) {
           sec.classList.add('fbt-reveal');
           setTimeout(function () { sec.classList.remove('fbt-reveal'); }, 700);
@@ -1059,17 +1312,7 @@
     }
 
     function showErrorToast(msg) {
-      var t = document.getElementById('atc-error-toast');
-      if (!t) {
-        t = document.createElement('div');
-        t.id = 'atc-error-toast';
-        t.setAttribute('role', 'alert');
-        document.body.appendChild(t);
-      }
-      t.textContent = msg;
-      t.classList.add('show');
-      clearTimeout(t._hideTimer);
-      t._hideTimer = setTimeout(function () { t.classList.remove('show'); }, 4200);
+      window.cartToast(msg);
     }
 
     document.addEventListener('click', function (e) {
@@ -1475,6 +1718,410 @@
 </script>
 
 <script>
+  /* ===== Cart voucher (discount code) ====================================
+     Applies a code with POST /cart/update.js { discount: "CODE" }.
+
+     Two behaviours of that endpoint drive the whole design and are verified
+     against this store, not assumed:
+       1. It ALWAYS answers 200 — an unusable code comes back as
+          discount_codes: [{ code, applicable: false }], never as an HTTP error.
+          So success is decided by reading `applicable`, not by r.ok.
+       2. discount_codes[] carries no amount. The money value lives in
+          cart_level_discount_applications, which nests the application under
+          `.discount_application` in the Ajax JSON but NOT in Liquid — hence
+          the shape-tolerant read below.
+
+     All listeners are delegated off document because #cart gets its innerHTML
+     replaced by app.bundle.js and by the drawer's own re-render paths. */
+  (function () {
+    var I18N = window.cartDecodeMap({
+      invalid:   {{ 'cart.voucher.invalid' | t | json }},
+      failed:    {{ 'cart.voucher.error_generic' | t | json }},
+      empty:     {{ 'cart.voucher.empty' | t | json }},
+      success:   {{ 'cart.voucher.success' | t | json }},
+      expired:   {{ 'cart.voucher.no_longer_valid' | t | json }},
+      atCheckout:{{ 'cart.voucher.applied_at_checkout' | t | json }},
+      addMore:   {{ 'cart.voucher.add_more' | t | json }},
+      remove:    {{ 'cart.voucher.remove' | t | json }},
+      duplicate: {{ 'cart.voucher.duplicate' | t | json }},
+      conflict:  {{ 'cart.voucher.conflict' | t | json }}
+    });
+    var MIN_BUSY = 350; /* same state-hold the ATC choreography uses */
+    var lastApplied = [];
+
+    function root() { return document.querySelector('#cart [data-cart-voucher]'); }
+    function input() { var el = root(); return el && el.querySelector('[data-voucher-input]'); }
+
+    function setState(el, state) {
+      el.setAttribute('data-state', state);
+      var trigger = el.querySelector('[data-voucher-open]');
+      if (trigger) trigger.setAttribute('aria-expanded', state === 'open' ? 'true' : 'false');
+    }
+
+    function say(el, text, isError) {
+      var m = el.querySelector('[data-voucher-msg]');
+      if (!m) return;
+      if (!text) {
+        m.classList.remove('is-visible', 'is-error');
+        m.textContent = '';
+        return;
+      }
+      m.textContent = text;
+      m.classList.toggle('is-error', !!isError);
+      m.classList.add('is-visible');
+    }
+
+    function flashSummary() {
+      var s = document.querySelector('#cart .cart-footer-summary');
+      if (!s) return;
+      s.classList.remove('cart-voucher-flash');
+      void s.offsetWidth;
+      s.classList.add('cart-voucher-flash');
+      setTimeout(function () { s.classList.remove('cart-voucher-flash'); }, 950);
+    }
+
+    /* Reads every applicable code plus the money they account for. Tolerates
+       both the Ajax shape ({ amount, discount_application }) and the flat
+       Liquid shape so the same helper can serve either source. */
+    function appliedFromCart(cart) {
+      var codes = (cart && cart.discount_codes) || [];
+      var applied = [];
+      var rejected = [];
+      for (var i = 0; i < codes.length; i++) {
+        (codes[i].applicable ? applied : rejected).push(codes[i].code);
+      }
+
+      var amount = 0;
+      var apps = (cart && cart.cart_level_discount_applications) || [];
+      for (var j = 0; j < apps.length; j++) {
+        var wrap = apps[j];
+        var app = wrap.discount_application || wrap;
+        if (app.type !== 'discount_code') continue;
+        amount += wrap.amount != null ? wrap.amount : (app.total_allocated_amount || 0);
+      }
+      return { applied: applied, rejected: rejected, amount: amount };
+    }
+
+    function sameSet(a, b) {
+      if (a.length !== b.length) return false;
+      var x = a.slice().sort().join('|').toUpperCase();
+      var y = b.slice().sort().join('|').toUpperCase();
+      return x === y;
+    }
+
+    function chipHtml(code) {
+      var safe = String(code).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+      return '<span class="cart-voucher-chip" data-voucher-chip="' + safe + '">'
+        + '<svg width="11" height="9" viewBox="0 0 14 11" fill="none" aria-hidden="true">'
+        + '<path d="M1 5.5 5 9.5 13 1.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        + '<span class="cart-voucher-code">' + safe + '</span>'
+        + '<button type="button" class="cart-voucher-remove" data-voucher-remove="' + safe + '"'
+        + ' aria-label="' + I18N.remove + ' ' + safe + '">'
+        + '<svg width="9" height="9" viewBox="0 0 12 12" fill="none" aria-hidden="true">'
+        + '<path d="M1 1 11 11M11 1 1 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>'
+        + '</button></span>';
+    }
+
+    /* Single source of truth for the row — called after every cart mutation
+       (qty change, remove, FBT add) via refreshCartUI, not just after apply.
+       A code can silently stop qualifying when the cart shrinks below its
+       minimum, and the customer must be told rather than quietly overcharged. */
+    window.syncVoucherUI = function (cart) {
+      var el = root();
+      if (!el) return;
+
+      var state = appliedFromCart(cart);
+      if (state.applied.length) {
+        var chips = el.querySelector('[data-voucher-chips]');
+        if (chips) {
+          var addMore = '<button type="button" class="cart-voucher-addmore" data-voucher-open>+ '
+            + I18N.addMore + '</button>';
+          chips.innerHTML = state.applied.map(chipHtml).join('') + addMore;
+        }
+        var amtEl = el.querySelector('[data-voucher-amount]');
+        if (amtEl) {
+          amtEl.textContent = state.amount > 0
+            ? '−' + window.formatRp(state.amount / 100)
+            : I18N.atCheckout;
+        }
+        setState(el, 'applied');
+        lastApplied = state.applied.slice();
+        return;
+      }
+
+      var wasApplied = lastApplied.length || el.getAttribute('data-state') === 'applied';
+      lastApplied = [];
+      if (!wasApplied) {
+        if (el.getAttribute('data-state') === 'applied') setState(el, 'idle');
+        return;
+      }
+
+      /* Had codes, none qualify now — reopen with the first one prefilled */
+      setState(el, 'open');
+      var inp = el.querySelector('[data-voucher-input]');
+      if (inp && state.rejected.length) inp.value = state.rejected[0];
+      say(el, I18N.expired, true);
+    };
+
+    function hold(t0) {
+      return new Promise(function (res) {
+        setTimeout(res, Math.max(0, MIN_BUSY - (Date.now() - t0)));
+      });
+    }
+
+    function post(code) {
+      return fetch('/cart/update.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ discount: code })
+      }).then(function (r) { return r.json(); });
+    }
+
+    /* Shared by the cancel button and Escape so the two can't drift apart. */
+    function closePanel(el, refocusTrigger) {
+      if (!el) return;
+      var inp = el.querySelector('[data-voucher-input]');
+      if (inp) inp.value = '';
+      el.classList.remove('is-invalid');
+      say(el, '');
+      setState(el, lastApplied.length ? 'applied' : 'idle');
+      if (refocusTrigger) {
+        var trigger = el.querySelector('[data-voucher-open]');
+        if (trigger) trigger.focus();
+      }
+    }
+
+    function reject(el, message) {
+      el.classList.add('is-invalid');
+      say(el, message, true);
+      var inp = el.querySelector('[data-voucher-input]');
+      if (inp) { inp.focus(); inp.select(); }
+      setTimeout(function () { el.classList.remove('is-invalid'); }, 520);
+    }
+
+    function apply(code) {
+      var el = root();
+      if (!el || el.hasAttribute('data-busy')) return;
+      if (!code) { reject(el, I18N.empty); return; }
+
+      /* Posting `discount` REPLACES the whole set, so the existing codes have
+         to be resent alongside the new one or they are dropped. */
+      var prev = lastApplied.slice();
+      var already = prev.some(function (c) {
+        return c.toUpperCase() === code.toUpperCase();
+      });
+      if (already) { reject(el, I18N.duplicate); return; }
+      var next = prev.concat([code]);
+
+      var t0 = Date.now();
+      el.setAttribute('data-busy', '');
+      el.classList.remove('is-invalid');
+      say(el, '');
+
+      post(next.join(','))
+        .then(function (cart) { return hold(t0).then(function () { return cart; }); })
+        .then(function (cart) {
+          el.removeAttribute('data-busy');
+          var state = appliedFromCart(cart);
+          var accepted = state.applied.some(function (c) {
+            return c.toUpperCase() === code.toUpperCase();
+          });
+
+          /* Verified on this store: sending MOR10,HABIT10 returns MOR10 with
+             applicable:false — a non-combinable code silently evicts the one
+             already on the cart. Detect that by comparing sets, and say which
+             pairing failed instead of letting a discount vanish. */
+          var evicted = prev.filter(function (c) {
+            return !state.applied.some(function (a) {
+              return a.toUpperCase() === c.toUpperCase();
+            });
+          });
+
+          if (accepted && !evicted.length) {
+            window.refreshCartUI(cart);
+            flashSummary();
+            say(el, I18N.success, false);
+            setTimeout(function () {
+              var later = root();
+              if (later && later.getAttribute('data-state') === 'applied') say(later, '');
+            }, 2800);
+            return;
+          }
+
+          reject(el, evicted.length ? I18N.conflict.replace('__CODE__', evicted.join(', ')) : I18N.invalid);
+          /* Undo the attempt: the failed code is still on the cart and would
+             otherwise resurface as a phantom on the next quantity change. */
+          lastApplied = [];
+          post(prev.join(','))
+            .then(function (restored) { window.refreshCartUI(restored); })
+            .catch(function () {});
+        })
+        .catch(function () {
+          el.removeAttribute('data-busy');
+          reject(el, I18N.failed);
+        });
+    }
+
+    function remove(code) {
+      var el = root();
+      if (!el || el.hasAttribute('data-busy')) return;
+      el.setAttribute('data-busy', '');
+
+      /* Drop just this one and resend the rest — `discount` replaces the whole
+         set, so an empty string here would clear every code the cart holds. */
+      var keep = lastApplied.filter(function (c) {
+        return c.toUpperCase() !== String(code).toUpperCase();
+      });
+      lastApplied = [];
+
+      post(keep.join(','))
+        .then(function (cart) {
+          el.removeAttribute('data-busy');
+          var inp = el.querySelector('[data-voucher-input]');
+          if (inp) inp.value = '';
+          say(el, '');
+          setState(el, 'idle');
+          window.refreshCartUI(cart);
+          flashSummary();
+        })
+        .catch(function () {
+          el.removeAttribute('data-busy');
+        });
+    }
+
+    /* The drawer footer is pinned to the bottom of a fixed-height panel, so an
+       on-screen keyboard covers it outright — scrollIntoView cannot help. Match
+       the wrapper to the visual viewport instead; the flex layout compresses
+       .cart-items and the field stays above the keyboard. Height (not
+       transform) because the wrapper's transform drives the slide-in. */
+    function bindKeyboardFit() {
+      var vv = window.visualViewport;
+      if (!vv) return;
+      function fit() {
+        var wrap = document.querySelector('.mini-cart-wrapper');
+        var el = root();
+        if (!wrap) return;
+        var inp = el && el.querySelector('[data-voucher-input]');
+        var focused = inp && document.activeElement === inp;
+        var overlap = window.innerHeight - vv.height;
+        if (focused && overlap > 80) wrap.style.height = vv.height + 'px';
+        else wrap.style.height = '';
+      }
+      vv.addEventListener('resize', fit);
+      document.addEventListener('focusin', function () { setTimeout(fit, 120); });
+      document.addEventListener('focusout', function () { setTimeout(fit, 120); });
+    }
+    bindKeyboardFit();
+
+    document.addEventListener('click', function (e) {
+      var t = e.target;
+      if (!t || !t.closest) return;
+
+      if (t.closest('[data-voucher-open]')) {
+        e.preventDefault();
+        var el = root();
+        if (!el) return;
+        setState(el, 'open');
+        var trigger = el.querySelector('[data-voucher-open]');
+        if (trigger) trigger.setAttribute('aria-expanded', 'true');
+        var inp = el.querySelector('[data-voucher-input]');
+        if (inp) setTimeout(function () { inp.focus(); }, 220);
+        return;
+      }
+
+      if (t.closest('[data-voucher-submit]')) {
+        e.preventDefault();
+        var i = input();
+        apply(i ? i.value.trim() : '');
+        return;
+      }
+
+      if (t.closest('[data-voucher-cancel]')) {
+        e.preventDefault();
+        closePanel(root(), false);
+        return;
+      }
+
+      var rm = t.closest('[data-voucher-remove]');
+      if (rm) {
+        e.preventDefault();
+        remove(rm.getAttribute('data-voucher-remove'));
+      }
+    });
+
+    /* ===== Hand the voucher over to checkout ===============================
+       A code applied with /cart/update.js sits on the cart object and shows a
+       discounted total in the drawer, but it does NOT survive into checkout —
+       verified by reading the checkout document for a cart carrying MOR10:
+
+         "merchandiseDiscount":{"__typename":"FilledDiscountTerms","lines":[]}
+         "deliveryDiscount":  {"__typename":"FilledDiscountTerms","lines":[]}
+
+       Empty. Without this handoff the customer sees Rp 621.000 on the button
+       and Rp 690.000 on the next screen, and has to retype the code.
+
+       /discount/CODE?redirect=... is Shopify's own mechanism for exactly this
+       and is already the path the UTM flow uses in layout/theme.liquid.
+
+       Deliberately bound in the BUBBLE phase with no stopImmediatePropagation:
+       anything else listening on this button still runs first. begin_checkout
+       is emitted by the Shopify custom pixel inside checkout, not from here,
+       so the redirect leaves analytics untouched. */
+    function appliedVoucherCode() {
+      var els = document.querySelectorAll(
+        '#cart [data-cart-voucher][data-state="applied"] [data-voucher-chip]'
+      );
+      var codes = [];
+      for (var i = 0; i < els.length; i++) {
+        var c = (els[i].getAttribute('data-voucher-chip') || '').trim();
+        if (c) codes.push(c);
+      }
+      /* Shopify's discount URL takes a comma-separated list, the same shape
+         /cart/update.js accepts. */
+      return codes.join(',');
+    }
+
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest && e.target.closest('#cart-checkout-btn');
+      if (!btn || btn.dataset.voucherHandoff) return;
+
+      var code = appliedVoucherCode();
+      if (!code) return; /* no voucher — leave the native submit alone */
+
+      e.preventDefault();
+      btn.dataset.voucherHandoff = '1';
+      if (window.cartShowLoading) window.cartShowLoading();
+
+      var root = (window.Shopify && Shopify.routes && Shopify.routes.root) || '/';
+      window.location.href =
+        root + 'discount/' + encodeURIComponent(code) + '?redirect=' + root + 'checkout';
+
+      /* If the navigation is blocked or the customer comes back via bfcache,
+         don't leave the button permanently inert. */
+      setTimeout(function () { delete btn.dataset.voucherHandoff; }, 4000);
+    });
+
+    /* The field lives inside <form action="/cart" method="post">, so a bare
+       Enter would submit the cart form and navigate away from the drawer. */
+    document.addEventListener('keydown', function (e) {
+      var t = e.target;
+      if (!t || !t.matches || !t.matches('[data-voucher-input]')) return;
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        e.stopPropagation();
+        apply(t.value.trim());
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
+        closePanel(root(), true);
+      }
+    });
+  })();
+</script>
+
+<script>
   /* ===== After bundle renders: move FBT, sync UI, load prices ===== */
   (function() {
     function onCartRender() {
@@ -1536,22 +2183,18 @@
       var c = document.getElementById('cart');
       if (!c) return;
 
-      var label = c.querySelector('#shipping-progress-label');
-      var pf = c.querySelector('.progress-fill');
       var pw = c.querySelector('.free-shipping-progress');
-      var bt = c.querySelector('#badge-text');
       var sv = c.querySelector('#cart-shipping-value');
       var ch = c.querySelector('.min-cart-template .cart-header');
-      var indicator = c.querySelector('.progress-indicator');
 
       var i18n = window._cartI18n || {};
-      if (label) label.textContent = i18n.allSet || 'All set!';
-      if (pf) pf.style.width = '100%';
-      if (pw) { pw.classList.add('active'); pw.classList.add('fulfilled'); }
-      if (bt) bt.textContent = i18n.freeShippingBadge || 'Free Shipping';
+      if (pw) pw.classList.add('active');
       if (sv) sv.textContent = i18n.shippingFree || 'FREE';
       if (ch) ch.classList.add('with-progress');
-      if (indicator) indicator.style.left = '88%';
+
+      /* Same writer as refreshCartUI — this used to keep its own copy of the
+         fill/label/badge logic and pinned the marker to a hardcoded 88%. */
+      window.setShippingProgress(100, 0, true);
     }
 
     var cartContainer = document.getElementById('cart');

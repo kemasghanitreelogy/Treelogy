@@ -69,6 +69,8 @@
       "only_text": "Only",
       "left_text": "left for",
       "all_set": "All set!",
+      "unlocked": "Your shipping is free — anywhere in Indonesia.",
+      "earned_chip": "Free shipping anywhere in Indonesia",
       "free_delivery_text": "free delivery"
     },
     "general": {
@@ -91,12 +93,30 @@
     "remove_suffix": "from your cart?",
     "remove_cancel": "Cancel",
     "remove_confirm": "Remove",
-    "progress_add": "Add",
-    "progress_more": "more for Free Shipping",
+    "progress_add": "Spend",
+    "progress_more": "more for free shipping",
     "free_shipping_badge": "Free Shipping",
     "progress_away": "away",
     "shipping_free": "FREE",
-    "shipping_calculated": "Calculated at checkout"
+    "shipping_calculated": "Calculated at checkout",
+    "voucher": {
+      "trigger": "Have a voucher code?",
+      "trigger_cta": "Use it",
+      "label": "Voucher code",
+      "placeholder": "Enter your code",
+      "submit": "Apply",
+      "success": "Voucher applied",
+      "invalid": "That code doesn't apply to this cart",
+      "no_longer_valid": "Your voucher no longer applies to this cart",
+      "empty": "Enter a voucher code first",
+      "error_generic": "Couldn't apply the code — please try again",
+      "applied_at_checkout": "Applied at checkout",
+      "add_more": "another code",
+      "duplicate": "That code is already applied",
+      "conflict": "This code can't be combined with __CODE__",
+      "cancel": "Cancel",
+      "remove": "Remove voucher"
+    }
   },
   "checkout": {
     "login": {

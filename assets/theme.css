@@ -2258,7 +2258,7 @@ input.red {
   line-height: 20px;
   color: #2B3C35;
   position: relative;
-  padding-bottom: 16px;
+  padding-bottom: 10px;
   align-items: flex-end;
   justify-content: space-between;
 }
@@ -2267,128 +2267,171 @@ input.red {
 }
 .cart-page.min-cart-template .cart-header.main-header {
   display: block;
-  padding-top: 20px;
+  padding-top: 12px;
   align-items: flex-start;
   border-bottom: none;
 }
 .cart-page.min-cart-template .cart-header.main-header .title {
+  display: flex;
+  align-items: center;
+  min-height: 36px;
   font-weight: 600;
   font-size: 18px;
   line-height: 125%;
 }
-/* === Free Shipping Progress === */
+/* === Free Shipping Progress ==============================================
+   Budget: 96px from the drawer's top edge to the first product pixel.
+   Measured baseline before this pass was 186px — 22% of a 390x844 viewport
+   spent on a header, against the 60px Shopify's own Horizon drawer budgets
+   and the 67px Allbirds ships.
+
+   Two text elements total: the drawer title and ONE dynamic sentence. The
+   duplicate pill and the marker riding the rail are both gone — no benchmark
+   implementation floats a marker on the rail, and at 0% progress ours sat at
+   left:12% asserting movement that had not happened.
+
+   Stack: 12 pad / 36 title row / 6 / 18 message / 10 / 4 track / 10 pad. */
 .cart-page.min-cart-template .cart-header.main-header .free-shipping-progress {
   width: 100%;
-  margin-top: 4px;
+  margin-top: 6px;
   display: none;
 }
 .cart-page.min-cart-template .cart-header.main-header .free-shipping-progress.active {
   display: block;
 }
-/* Progress label text */
-.cart-page.min-cart-template .cart-header.main-header .free-shipping-progress-container-text {
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 150%;
-  color: #2B3C35;
-  margin-bottom: 14px;
+/* One 32px slot, two stacked states, fixed height.
+   Both children sit in the same grid cell, so the header measures 96px whether
+   the customer is 180k short or already qualifies — crossing the threshold
+   moves nothing below it. The previous version retracted the whole block to
+   58px, which meant the earned benefit had no persistent presence at all: the
+   arrival plays once, and anyone who reloaded or reopened the drawer saw only
+   a quiet row in the summary. */
+.fsp-slot {
+  display: grid;
+  height: 32px;
 }
-/* Progress bar container — holds track line + floating indicator */
+.fsp-slot > * {
+  grid-area: 1 / 1;
+  align-self: center;
+  min-width: 0;
+  transition: opacity 200ms ease;
+}
+.free-shipping-progress[data-fsp-state="earned"] .fsp-progress,
+.free-shipping-progress[data-fsp-state="progress"] .fsp-earned {
+  opacity: 0;
+  pointer-events: none;
+}
+.free-shipping-progress[data-fsp-state="earned"] .fsp-earned {
+  transition: opacity 260ms ease 560ms;
+}
+.free-shipping-progress[data-fsp-state="earned"] .fsp-progress {
+  transition: opacity 200ms ease 520ms;
+}
+
+.fsp-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* The single message. Fixed to one line — a wrap costs another 18px and the
+   sentence is short enough in both locales to never need one. */
+.cart-page.min-cart-template .cart-header.main-header .free-shipping-progress-container-text {
+  display: flex;
+  align-items: center;
+  margin: 0 0 10px;
+  height: 18px;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 18px;
+  color: rgba(43, 60, 53, 0.78);
+  transition: color 320ms ease;
+}
+.cart-page.min-cart-template .cart-header.main-header #shipping-progress-label {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+/* 100ms crossfade, not a rolling counter. A count-down delays comprehension of
+   the one number the customer needs, re-fires on every quantity tick, and on a
+   6-digit rupiah value is pure churn — and there is no evidence it converts. */
+.fsp-amount {
+  font-weight: 600;
+  color: #2B3C35;
+  font-variant-numeric: tabular-nums;
+  transition: opacity 100ms ease;
+}
+.fsp-amount.fsp-swap {
+  opacity: 0;
+}
+
+/* Track: 4px, full bleed, no marker. Collapses once earned — past the
+   threshold the rail has no job left, and the sentence carries the fact. */
 .cart-page.min-cart-template .cart-header.main-header .free-shipping-progress-container-bar {
   position: relative;
-  height: 82px;
+  height: 4px;
+  overflow: hidden;
 }
-/* Track: full-width dark green line */
 .cart-page.min-cart-template .cart-header.main-header .progress-track {
   position: absolute;
   left: 0;
   right: 0;
-  height: 2px;
-  background-color: #56734F;
-  top: 22px;
-}
-/* Fill: overlays track, animates width — same color for uniform line */
-.cart-page.min-cart-template .cart-header.main-header .progress-fill {
-  width: 0%;
-  height: 100%;
-  background-color: #56734F;
-  border-radius: 1px;
-  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-/* Indicator: icon + badge stacked vertically, slides along the track */
-.cart-page.min-cart-template .cart-header.main-header .progress-indicator {
-  position: absolute;
   top: 0;
-  left: 12%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  z-index: 2;
-  transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-  pointer-events: none;
+  height: 4px;
+  border-radius: 2px;
+  background-color: rgba(86, 115, 79, 0.16);
+  overflow: hidden;
 }
-/* Icon wrapper: white square sitting ON the track line */
-.cart-page.min-cart-template .cart-header.main-header .progress-icon {
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #F8F8F2;
-  border: 1.5px solid rgba(86, 115, 79, 0.25);
-  border-radius: 8px;
-  transition: border-color 0.4s ease;
+/* scaleX, not width — compositor-only, and the value change is worth
+   registering so it sits slightly above Horizon's 125ms micro-transitions
+   while staying well inside NN/g's 100-400ms band. */
+.cart-page.min-cart-template .cart-header.main-header .progress-fill {
+  width: 100%;
+  height: 100%;
+  border-radius: 2px;
+  background-color: #56734F;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 200ms cubic-bezier(0.2, 0, 0, 1);
 }
-.cart-page.min-cart-template .cart-header.main-header .progress-icon svg {
-  width: 18px;
-  height: 18px;
-  opacity: 0.45;
-  transition: opacity 0.4s ease;
+/* One sheen across the rail on the crossing itself */
+.cart-page.min-cart-template .cart-header.main-header .free-shipping-progress.just-unlocked .progress-track::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 28%, rgba(248, 248, 242, 0.85) 50%, transparent 72%);
+  transform: translateX(-100%);
+  animation: fspSheen 760ms cubic-bezier(0.4, 0, 0.2, 1) 160ms 1;
 }
-/* Fulfilled state: icon at full opacity + bounce */
-.cart-page.min-cart-template .cart-header.main-header .free-shipping-progress.fulfilled .progress-icon {
-  border-color: rgba(86, 115, 79, 0.4);
-  animation: shippingIconBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+@keyframes fspSheen {
+  to { transform: translateX(100%); }
 }
-.cart-page.min-cart-template .cart-header.main-header .free-shipping-progress.fulfilled .progress-icon svg {
-  opacity: 1;
+
+@media (prefers-reduced-motion: reduce) {
+  .cart-page.min-cart-template .cart-header.main-header .progress-fill,
+  .fsp-amount,
+  .fsp-slot > * {
+    transition: none;
+  }
+  /* The chip still arrives — opacity alone is not "motion animation" under
+     WCAG 2.2 SC 2.3.3, so reduced-motion users keep the state change and only
+     lose the travel. */
+  .free-shipping-progress[data-fsp-state="earned"] .fsp-chip {
+    transform: none;
+  }
+  .cart-page.min-cart-template .cart-header.main-header .free-shipping-progress.just-unlocked .progress-track::after {
+    animation: none;
+    display: none;
+  }
 }
-/* Badge pill — default: light beige background, green text */
-.cart-page.min-cart-template .cart-header.main-header .free-shipping-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 18px;
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 16px;
-  border-radius: 32px;
-  white-space: nowrap;
-  background-color: #E5E3D5;
-  color: #56734F;
-  transition: background-color 0.5s ease, color 0.5s ease, transform 0.4s ease;
-}
-/* Badge pill — fulfilled: olive green background, cream text */
-.cart-page.min-cart-template .cart-header.main-header .free-shipping-progress.fulfilled .free-shipping-badge {
-  background-color: #8B9B6B;
-  color: #F8F8F2;
-  animation: shippingBadgePop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
-}
-/* Bounce animation for icon on fulfillment */
-@keyframes shippingIconBounce {
-  0%  { transform: scale(1); }
-  40% { transform: scale(1.15); }
-  70% { transform: scale(0.96); }
-  100%{ transform: scale(1); }
-}
-/* Pop animation for badge on fulfillment */
-@keyframes shippingBadgePop {
-  0%  { transform: scale(0.85); }
-  60% { transform: scale(1.06); }
-  100%{ transform: scale(1); }
-}
+
 /* Loading overlay */
 .cart-loading-overlay {
   position: absolute;
@@ -2415,12 +2458,12 @@ input.red {
 }
 @media only screen and (max-width: 900px) {
   .cart-page.min-cart-template .cart-header {
-    padding-bottom: 16px;
+    padding-bottom: 10px;
   }
 }
 .cart-page.min-cart-template .cart-header .cart-header-actions {
   position: absolute;
-  top: 18px;
+  top: 12px;
   right: 0;
   display: flex;
   align-items: center;
@@ -2436,8 +2479,8 @@ input.red {
   margin-right: 24px;
 }
 .cart-page.min-cart-template .cart-header .close-button {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   display: flex;
   cursor: pointer;
   align-items: center;
@@ -3184,8 +3227,21 @@ input.red {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  align-self: stretch;
+  justify-content: center;
+  gap: 3px;
+  align-self: center;
+}
+/* Price and the add action share one real row now. They used to be aligned by
+   accident: the action was position:absolute at the card's bottom edge and the
+   price was pushed down to meet it with margin-top:auto. That reads fine on a
+   card carrying a rating and a variant line, and leaves a hole on one with just
+   a title — the column was stretched to the 80px image either way. */
+.fbt-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 5px;
 }
 .fbt-rating {
   display: flex;
@@ -3225,12 +3281,9 @@ input.red {
   font-size: 14px;
   font-weight: 700;
   line-height: 1.4;
-  margin-top: auto;
 }
 .fbt-card-action {
-  position: absolute;
-  bottom: 14px;
-  right: 14px;
+  flex: 0 0 auto;
   color: #FFFFFF;
   font-size: 12px;
   font-weight: 600;
@@ -8927,4 +8980,537 @@ html, body, .announcement-slider-section {
   margin: 0 auto;
   padding-top: clamp(72px, 10vw, 120px);
   padding-bottom: 140px;
+}
+
+/* ===== Cart Voucher (discount code) =====================================
+   One compact row inside .cart-footer-summary that morphs in place between
+   three states — idle trigger, open input, applied chip — so the drawer gains
+   ~44px instead of a whole new module. Height is animated with paired
+   min/max-height so the trigger collapsing and the panel expanding read as a
+   single continuous morph rather than two independent reveals.
+   Buttons need .cart-voucher in the selector to out-specify the footer's
+   blanket `.cart-footer button { height: 48px; background: #526547 }` rule. */
+.cart-page.min-cart-template .cart-footer .cart-voucher {
+  border-bottom: 1px solid rgba(43, 60, 53, 0.08);
+  margin-bottom: 3px;
+}
+.cart-page.min-cart-template .cart-footer .cart-voucher[data-state="idle"] {
+  margin-bottom: 0;
+}
+
+/* --- Idle: trigger row --- */
+.cart-page.min-cart-template .cart-footer .cart-voucher-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  min-height: 44px;
+  max-height: 44px;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  background-color: transparent;
+  color: #2B3C35;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-align: left;
+  overflow: hidden;
+  cursor: pointer;
+  transition:
+    min-height 240ms cubic-bezier(0.16, 1, 0.3, 1),
+    max-height 240ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 140ms ease;
+}
+.cart-page.min-cart-template .cart-footer .cart-voucher:not([data-state="idle"]) .cart-voucher-trigger {
+  min-height: 0;
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+.cart-voucher-trigger-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: rgba(43, 60, 53, 0.72);
+}
+.cart-voucher-icon {
+  flex: 0 0 auto;
+  color: rgba(43, 60, 53, 0.45);
+  transition: color 200ms ease;
+}
+.cart-page.min-cart-template .cart-footer .cart-voucher-trigger:hover .cart-voucher-icon {
+  color: #526547;
+}
+.cart-voucher-trigger-cta {
+  flex: 0 0 auto;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #526547;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  text-decoration-color: rgba(82, 101, 71, 0.35);
+  transition: text-decoration-color 200ms ease;
+}
+.cart-page.min-cart-template .cart-footer .cart-voucher-trigger:hover .cart-voucher-trigger-cta {
+  text-decoration-color: rgba(82, 101, 71, 0.9);
+}
+
+/* --- Open: input panel (0fr -> 1fr keeps the morph height-agnostic) --- */
+.cart-voucher-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 260ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 160ms ease;
+}
+.cart-voucher[data-state="open"] .cart-voucher-panel {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition:
+    grid-template-rows 260ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 200ms ease 80ms;
+}
+.cart-voucher-panel-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+.cart-voucher-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.cart-voucher-field {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+  padding: 6px 0 2px;
+}
+.cart-page.min-cart-template .cart-footer .cart-voucher-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid rgba(43, 60, 53, 0.22);
+  border-radius: 8px;
+  background: #FFFFFF;
+  color: #2B3C35;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  outline: none;
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+/* iOS Safari is the only engine that force-zooms a focused field under 16px,
+   and the zoom does not undo itself — it leaves the whole drawer magnified.
+   Targeting it specifically (-webkit-touch-callout is iOS-only) rather than all
+   touch pointers, because "coarse pointer" also matches Android Chrome, which
+   has no such behaviour, and every desktop browser running device emulation. */
+@supports (-webkit-touch-callout: none) {
+  @media (pointer: coarse) {
+    .cart-page.min-cart-template .cart-footer .cart-voucher-input {
+      font-size: 16px;
+    }
+  }
+}
+.cart-page.min-cart-template .cart-footer .cart-voucher-input::placeholder {
+  color: rgba(43, 60, 53, 0.38);
+  letter-spacing: 0;
+  text-transform: none;
+  font-weight: 400;
+}
+.cart-page.min-cart-template .cart-footer .cart-voucher-input:focus {
+  border-color: #526547;
+  box-shadow: 0 0 0 3px rgba(165, 187, 135, 0.28);
+}
+.cart-page.min-cart-template .cart-footer .cart-voucher-submit {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 76px;
+  height: 40px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 8px;
+  background-color: #526547;
+  color: #F8F8F2;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  position: relative;
+  transition: opacity 160ms ease, transform 80ms ease-out;
+}
+.cart-page.min-cart-template .cart-footer .cart-voucher-submit:active {
+  transform: scale(0.97);
+}
+.cart-voucher-submit-busy {
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.cart-voucher[data-busy] .cart-voucher-submit-label {
+  display: none;
+}
+.cart-voucher[data-busy] .cart-voucher-submit-busy {
+  display: inline-flex;
+}
+.cart-page.min-cart-template .cart-footer .cart-voucher[data-busy] .cart-voucher-submit,
+.cart-page.min-cart-template .cart-footer .cart-voucher[data-busy] .cart-voucher-input {
+  pointer-events: none;
+}
+.cart-page.min-cart-template .cart-footer .cart-voucher[data-busy] .cart-voucher-input {
+  opacity: 0.6;
+}
+.cart-voucher-spinner {
+  animation: cvSpin 620ms linear infinite;
+}
+@keyframes cvSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Inline message — reserves no height until it actually has something to say */
+.cart-voucher-msg {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: rgba(43, 60, 53, 0.7);
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 200ms ease, opacity 160ms ease, padding 200ms ease;
+}
+.cart-voucher-msg.is-visible {
+  max-height: 40px;
+  opacity: 1;
+  padding: 3px 2px 4px;
+}
+.cart-voucher-msg.is-error {
+  color: #8a3232;
+}
+/* Rejection is colour + text only. No shake: the message sits directly under
+   the field so the travel adds no information, and overshoot motion is the
+   fastest way to make a considered UI read as a toy. */
+.cart-page.min-cart-template .cart-footer .cart-voucher.is-invalid .cart-voucher-input {
+  border-color: #8a3232;
+  box-shadow: 0 0 0 3px rgba(138, 50, 50, 0.14);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+/* --- Applied: chip row --- */
+.cart-voucher-applied {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 0;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition:
+    min-height 260ms cubic-bezier(0.16, 1, 0.3, 1),
+    max-height 260ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 200ms ease;
+}
+.cart-voucher[data-state="applied"] .cart-voucher-applied {
+  min-height: 40px;
+  /* Room for chips to wrap onto a second row. The reveal animates max-height,
+     so this cap is also the clip — 48px cut the first chip in half the moment
+     a second code was added. */
+  max-height: 120px;
+  opacity: 1;
+  transition:
+    min-height 260ms cubic-bezier(0.16, 1, 0.3, 1),
+    max-height 260ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 220ms ease 70ms;
+}
+.cart-voucher-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  padding: 5px 5px 5px 9px;
+  border-radius: 999px;
+  background: #2B3C35;
+  color: #F2F2E8;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  line-height: 1.4;
+  transform: scale(0.94);
+  transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1) 60ms;
+}
+.cart-voucher[data-state="applied"] .cart-voucher-chip {
+  transform: scale(1);
+}
+.cart-voucher-code {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cart-page.min-cart-template .cart-footer .cart-voucher-remove {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0;
+  margin-left: 1px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(242, 242, 232, 0.16);
+  color: #F2F2E8;
+  cursor: pointer;
+  transition: background 180ms ease;
+}
+.cart-page.min-cart-template .cart-footer .cart-voucher-remove:hover {
+  background: rgba(242, 242, 232, 0.34);
+}
+.cart-voucher-amount {
+  flex: 0 0 auto;
+  font-size: 14px;
+  font-weight: 600;
+  color: #526547;
+  white-space: nowrap;
+}
+
+/* Total changed — one calm pulse on the summary box, not a confetti moment */
+.cart-page.min-cart-template .cart-footer .cart-footer-summary.cart-voucher-flash {
+  animation: cvFlash 900ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes cvFlash {
+  0% { border-color: rgba(43, 60, 53, 0.15); box-shadow: 0 0 0 0 rgba(165, 187, 135, 0); }
+  25% { border-color: #A5BB87; box-shadow: 0 0 0 4px rgba(165, 187, 135, 0.22); }
+  100% { border-color: rgba(43, 60, 53, 0.15); box-shadow: 0 0 0 0 rgba(165, 187, 135, 0); }
+}
+
+.cart-page.min-cart-template .cart-footer .cart-voucher-trigger:focus-visible,
+.cart-page.min-cart-template .cart-footer .cart-voucher-submit:focus-visible,
+.cart-page.min-cart-template .cart-footer .cart-voucher-remove:focus-visible {
+  outline: 2px solid #526547;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cart-page.min-cart-template .cart-footer .cart-voucher-trigger,
+  .cart-voucher-panel,
+  .cart-voucher[data-state="open"] .cart-voucher-panel,
+  .cart-voucher-applied,
+  .cart-voucher[data-state="applied"] .cart-voucher-applied,
+  .cart-voucher-chip,
+  .cart-voucher-msg {
+    transition: none;
+  }
+  .cart-voucher-chip { transform: none; }
+  .cart-voucher-spinner { animation: none; }
+  .cart-page.min-cart-template .cart-footer .cart-footer-summary.cart-voucher-flash { animation: none; }
+}
+
+/* ---- FBT card restore: removed from the cart → back into the carousel ----
+   Deliberately mirrors .fbt-card-exit above. The card left leftwards while
+   shrinking, so it returns along the same path — that is what makes it read as
+   the same object coming back rather than an unrelated card appearing.
+   --fbt-d carries the per-card stagger so transition and ring stay in step. */
+.fbt-card.fbt-card-enter {
+  opacity: 0;
+  transform: scale(0.92) translateX(-10px);
+}
+.fbt-card.fbt-card-enter-active {
+  opacity: 1;
+  transform: scale(1) translateX(0);
+  transition:
+    opacity 300ms ease var(--fbt-d, 0ms),
+    transform 460ms cubic-bezier(0.22, 1.15, 0.36, 1) var(--fbt-d, 0ms);
+}
+/* A single pass of light around the restored card so the eye finds where it
+   landed. Fires once, after the card has almost finished settling. */
+.fbt-card.fbt-card-returned::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  border: 1.5px solid rgba(248, 248, 242, 0.92);
+  opacity: 0;
+  pointer-events: none;
+  animation: fbtReturnRing 760ms cubic-bezier(0.4, 0, 0.2, 1) calc(var(--fbt-d, 0ms) + 140ms);
+}
+@keyframes fbtReturnRing {
+  0%   { opacity: 0; transform: scale(1.035); }
+  35%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1); }
+}
+
+/* The whole section returning from empty — a bigger jump than any single card */
+.fbt-section.fbt-section-in {
+  animation: fbtSectionIn 480ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes fbtSectionIn {
+  from { opacity: 0; transform: translateY(12px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fbt-card.fbt-card-enter,
+  .fbt-card.fbt-card-enter-active {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .fbt-card.fbt-card-returned::after { animation: none; display: none; }
+  .fbt-section.fbt-section-in { animation: none; }
+}
+
+/* ---- Multiple voucher codes -------------------------------------------
+   Several codes can be live at once (an order discount stacks with a shipping
+   discount), so the chips need to wrap and the "add another" affordance needs
+   its own rules — without them it inherits the footer's blanket
+   `button { width: 100%; height: 48px; background: #526547 }` and renders as a
+   full-width green slab on top of the chips. */
+.cart-voucher-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.cart-page.min-cart-template .cart-footer .cart-voucher-addmore {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  min-width: 0;
+  height: 26px;
+  padding: 0 11px;
+  border: 1px dashed rgba(43, 60, 53, 0.3);
+  border-radius: 999px;
+  background: transparent;
+  background-color: transparent;
+  color: rgba(43, 60, 53, 0.7);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 180ms ease, color 180ms ease;
+}
+.cart-page.min-cart-template .cart-footer .cart-voucher-addmore:hover {
+  border-color: rgba(82, 101, 71, 0.7);
+  color: #526547;
+}
+.cart-page.min-cart-template .cart-footer .cart-voucher-addmore:focus-visible {
+  outline: 2px solid #526547;
+  outline-offset: 2px;
+}
+.cart-voucher-amount {
+  padding-top: 4px;
+}
+
+/* ---- Cancel out of the voucher field ----------------------------------
+   Needs the .cart-voucher scope to beat the footer's blanket button rule. */
+.cart-page.min-cart-template .cart-footer .cart-voucher-cancel {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  min-width: 34px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  background-color: transparent;
+  color: rgba(43, 60, 53, 0.45);
+  cursor: pointer;
+  transition: color 180ms ease, background-color 180ms ease;
+}
+.cart-page.min-cart-template .cart-footer .cart-voucher-cancel:hover {
+  color: #2B3C35;
+  background-color: rgba(43, 60, 53, 0.06);
+}
+.cart-page.min-cart-template .cart-footer .cart-voucher-cancel:focus-visible {
+  outline: 2px solid #526547;
+  outline-offset: 2px;
+}
+
+/* ---- Shipping row: the earned state, resolved as money -----------------
+   It should read as a price that happens to be zero, not as a status label —
+   same weight as the values in the rows around it, in the brand accent.
+   Colour + opacity only, so it survives prefers-reduced-motion untouched:
+   WCAG 2.3.3 excludes those from "motion animation". */
+.cart-page.min-cart-template .cart-footer #cart-shipping-value {
+  transition: color 300ms cubic-bezier(0.2, 0, 0, 1), opacity 140ms ease;
+}
+.cart-page.min-cart-template .cart-footer #cart-shipping-value.is-free {
+  color: #526547;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.cart-page.min-cart-template .cart-footer #cart-shipping-value.fsp-swap {
+  opacity: 0;
+}
+
+/* ---- Earned shipping row: the arithmetic, not the emphasis -------------
+   The header chip states the benefit; this row states what it costs. Giving
+   both a tinted band and a scope line was the same fact twice — the exact
+   failure removed from the previous design. Value keeps the accent colour at
+   price weight, so it reads as a price that happens to be zero. */
+
+/* ---- Earned chip: persistent, unmissable, zero net pixels --------------
+   Solid brand green with cream text, the treatment the previous design used
+   for its "Gratis Ongkir" pill — that prominence was the one thing worth
+   keeping from it. Here it costs nothing extra: it occupies the same 32px slot
+   the rail vacates. Scope, never a rupiah figure.
+   The .cart-header scope is deliberate — the footer's blanket
+   `button { width:100%; height:48px; background:#526547 }` has already
+   ambushed one new control this session. */
+.cart-page.min-cart-template .cart-header.main-header .fsp-earned {
+  display: flex;
+  align-items: center;
+}
+.cart-page.min-cart-template .cart-header.main-header .fsp-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  max-width: 100%;
+  height: 28px;
+  padding: 0 13px 0 11px;
+  border-radius: 999px;
+  background-color: #56734F;
+  color: #F2F2E8;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  transform: scale(0.94);
+  transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1) 560ms;
+}
+.free-shipping-progress[data-fsp-state="earned"] .fsp-chip {
+  transform: scale(1);
+}
+.cart-page.min-cart-template .cart-header.main-header .fsp-chip svg {
+  flex: 0 0 auto;
+  opacity: 0.9;
+}
+/* Degrades on a 320px screen rather than pushing the drawer sideways */
+.fsp-chip-text {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }

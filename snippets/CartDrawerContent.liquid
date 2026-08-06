@@ -57,13 +57,38 @@
         <div class="sub-total cart-footer">
           {% if cart.item_count > 0 %}
             <div class="cart-footer-summary">
+              {% render 'CartVoucher' %}
               <div class="cart-footer-row{% if total_savings > 0 %} visible{% endif %}" id="cart-saving-row">
                 <span>{{ 'cart.saving_label' | t }}</span>
                 <span id="cart-saving-amount">{{ total_savings | money }}</span>
               </div>
+              {%- comment -%}
+                Once the threshold is met the header block retracts and THIS is
+                where the earned benefit lives — as money, in the row the
+                customer is already reading to work out what they will pay.
+                Rendered server-side so a qualifying cart opens resolved
+                instead of flashing "Calculated at checkout" first.
+              {%- endcomment -%}
+              {%- liquid
+                assign fsp_min = settings.min_shipping | default: 1000000
+                assign fsp_sub = cart.items_subtotal_price | divided_by: 100
+                assign fsp_earned = false
+                if fsp_sub >= fsp_min
+                  assign fsp_earned = true
+                endif
+              -%}
               <div class="cart-footer-row visible" id="cart-shipping-row">
                 <span>{{ 'cart.shipping_label' | t }}</span>
-                <span id="cart-shipping-value" class="cart-shipping-value">{{ 'cart.shipping_calculated' | t }}</span>
+                <span
+                  id="cart-shipping-value"
+                  class="cart-shipping-value{% if fsp_earned %} is-free{% endif %}"
+                >
+                  {%- if fsp_earned -%}
+                    {{ 'cart.shipping_free' | t }}
+                  {%- else -%}
+                    {{ 'cart.shipping_calculated' | t }}
+                  {%- endif -%}
+                </span>
               </div>
             </div>
             <button type="submit" name="checkout" id="cart-checkout-btn">

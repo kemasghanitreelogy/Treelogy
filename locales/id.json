@@ -70,6 +70,8 @@
       "only_text": "Hanya tambah",
       "left_text": "untuk mendapatkan",
       "all_set": "Sudah lengkap!",
+      "unlocked": "Ongkir kamu gratis — ke seluruh Indonesia.",
+      "earned_chip": "Gratis ongkir ke seluruh Indonesia",
       "free_delivery_text": "gratis pengiriman"
     },
     "general": {
@@ -92,12 +94,30 @@
     "remove_suffix": "dari keranjang kamu?",
     "remove_cancel": "Batal",
     "remove_confirm": "Hapus",
-    "progress_add": "Tambah",
-    "progress_more": "lagi untuk Gratis Ongkir",
+    "progress_add": "Belanja",
+    "progress_more": "lagi, gratis ongkir",
     "free_shipping_badge": "Gratis Ongkir",
     "progress_away": "lagi",
     "shipping_free": "GRATIS",
-    "shipping_calculated": "Dihitung saat checkout"
+    "shipping_calculated": "Dihitung saat checkout",
+    "voucher": {
+      "trigger": "Punya kode voucher?",
+      "trigger_cta": "Pakai",
+      "label": "Kode voucher",
+      "placeholder": "Masukkan kode kamu",
+      "submit": "Pakai",
+      "success": "Voucher berhasil dipakai",
+      "invalid": "Kode ini tidak berlaku untuk keranjang kamu",
+      "no_longer_valid": "Voucher kamu sudah tidak berlaku untuk keranjang ini",
+      "empty": "Masukkan kode voucher dulu",
+      "error_generic": "Gagal memakai kode — coba lagi",
+      "applied_at_checkout": "Berlaku saat checkout",
+      "add_more": "kode lain",
+      "duplicate": "Kode itu sudah dipakai",
+      "conflict": "Kode ini tidak bisa digabung dengan __CODE__",
+      "cancel": "Batal",
+      "remove": "Hapus voucher"
+    }
   },
   "checkout": {
     "login": {
