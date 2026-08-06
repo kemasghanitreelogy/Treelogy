@@ -154,7 +154,7 @@
       "settings": {
         "show_save": true,
         "save_prefix": "Hemat hingga",
-        "save_amount": "Rp 464.500",
+        "save_amount": "Rp 170.000",
         "save_suffix": "Hari Ini",
         "badge": "Dukungan Menopause · Offer Terbatas",
         "pre_heading": "Jangan Lagi Pasrah Pada",
@@ -167,7 +167,7 @@
         "offer_perday": "Setara Rp 26.500 per hari",
         "offer_note": "Garansi 30 hari · Pengiriman ke seluruh Indonesia",
         "show_savings": false,
-        "savings_text": "Hemat Rp 464.500",
+        "savings_text": "Hemat Rp 170.000",
         "cta_label": "Mulai Protokol",
         "cta_url": "#pricing",
         "gallery_label": "Galeri produk"
