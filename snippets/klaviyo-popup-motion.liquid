@@ -1,35 +1,41 @@
 {% doc %}
-  Animasi masuk untuk popup form Klaviyo: kartu naik dari bawah, lalu isinya
-  menyusul sebagai satu gelombang.
+  Animasi masuk untuk popup form Klaviyo: kartu naik-halus, lalu isinya menyusul
+  sebagai satu gelombang.
 
-  Klaviyo tidak menyediakan setting animasi entrance; satu-satunya animasi
-  bawaannya adalah `klaviyo-fadein` 0.35s pada lapisan overlay gelap. Properti
-  `animation` overlay itu SENGAJA tidak disentuh — menimpanya dengan
-  `!important` ikut mematikan animasi keluar Klaviyo dan popup berisiko tidak
-  mau tertutup. Semua gerakan di sini menempel pada turunan yang tidak
-  dianimasikan Klaviyo.
+  ATURAN KERAS — JANGAN pernah menyetel `animation`, `animation-name`,
+  `animation-direction`, atau `animation-fill-mode` pada `[data-testid='POPUP']`.
+  Klaviyo memakai elemen itu untuk animasi masuk DAN keluar: saat menutup ia
+  menulis inline `animation-name: klaviyo-fadeinup; animation-direction: reverse`
+  lalu menunggu `animationend` sebelum menyembunyikan overlay. Menimpanya bikin
+  `animationend` tak pernah terpicu, overlay tinggal di DOM dengan
+  `pointer-events: auto` menutupi seluruh halaman, dan teaser jadi tidak bisa
+  diklik. Yang boleh dititip di POPUP hanya `animation-duration` dan
+  `animation-timing-function` — nama animasinya tetap milik Klaviyo.
 
-  Keadaan awal (transparan) datang dari `animation-fill-mode: both`, bukan dari
+  Gerakan tambahan ditaruh di `[data-testid='modal-form-container']` dan elemen
+  isi form, yang terbukti tidak pernah dianimasikan Klaviyo.
+
+  Keadaan awal transparan datang dari `animation-fill-mode: both`, bukan
   `opacity: 0` statis, supaya isi form tetap terlihat kalau animasinya gagal
   jalan.
 
-  Hanya menyasar `[data-testid='POPUP']`, jadi form embed (12.12) dan teaser
-  tidak ikut terpengaruh. Lihat [[klaviyo-teaser]] untuk gaya teasernya.
+  Hanya menyasar popup, jadi form embed (12.12) dan teaser tidak terpengaruh.
+  Lihat [[klaviyo-teaser]] untuk gaya teasernya.
 
   @example
   {% render 'klaviyo-popup-motion' %}
 {% enddoc %}
 
 {% style %}
-  @keyframes tl-kl-pop-rise {
+  @keyframes tl-kl-card-settle {
     from {
       opacity: 0;
-      transform: translate3d(0, 24px, 0) scale(0.965);
+      transform: scale(0.97);
     }
 
     to {
       opacity: 1;
-      transform: translate3d(0, 0, 0) scale(1);
+      transform: scale(1);
     }
   }
 
@@ -45,106 +51,77 @@
     }
   }
 
-  @keyframes tl-kl-media-settle {
-    from {
-      opacity: 0;
-      transform: scale(1.04);
-    }
-
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-
   div[class*='kl-private-reset-css-']:has(> div > [data-testid='POPUP']) {
     backdrop-filter: blur(6px) saturate(105%) !important;
   }
 
   [data-testid='POPUP'] {
-    animation: tl-kl-pop-rise 560ms cubic-bezier(0.16, 1, 0.3, 1) 80ms both !important;
-    will-change: transform, opacity;
+    animation-duration: 460ms !important;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1) !important;
   }
 
-  [data-testid='POPUP'] form.klaviyo-form img {
-    animation: tl-kl-media-settle 520ms cubic-bezier(0.16, 1, 0.3, 1) 160ms both !important;
+  [data-testid='modal-form-container'] {
+    animation: tl-kl-card-settle 460ms cubic-bezier(0.16, 1, 0.3, 1) both !important;
+    will-change: transform, opacity;
   }
 
   [data-testid='POPUP'] form.klaviyo-form h1,
   [data-testid='POPUP'] form.klaviyo-form h2,
-  [data-testid='POPUP'] form.klaviyo-form h3 {
-    animation: tl-kl-content-rise 380ms cubic-bezier(0.16, 1, 0.3, 1) 220ms both !important;
-  }
-
+  [data-testid='POPUP'] form.klaviyo-form h3,
   [data-testid='POPUP'] form.klaviyo-form p {
-    animation: tl-kl-content-rise 380ms cubic-bezier(0.16, 1, 0.3, 1) 280ms both !important;
+    animation: tl-kl-content-rise 380ms cubic-bezier(0.16, 1, 0.3, 1) 180ms both !important;
   }
 
   [data-testid='POPUP'] form.klaviyo-form input,
   [data-testid='POPUP'] form.klaviyo-form select,
   [data-testid='POPUP'] form.klaviyo-form textarea {
-    animation: tl-kl-content-rise 380ms cubic-bezier(0.16, 1, 0.3, 1) 330ms both !important;
+    animation: tl-kl-content-rise 380ms cubic-bezier(0.16, 1, 0.3, 1) 240ms both !important;
   }
 
   [data-testid='POPUP'] form.klaviyo-form button {
-    animation: tl-kl-content-rise 380ms cubic-bezier(0.16, 1, 0.3, 1) 380ms both !important;
+    animation: tl-kl-content-rise 380ms cubic-bezier(0.16, 1, 0.3, 1) 300ms both !important;
   }
 
   @media screen and (max-width: 767px) {
-    @keyframes tl-kl-pop-rise {
-      from {
-        opacity: 0;
-        transform: translate3d(0, 40px, 0) scale(0.985);
-      }
-
-      to {
-        opacity: 1;
-        transform: translate3d(0, 0, 0) scale(1);
-      }
-    }
-
     div[class*='kl-private-reset-css-']:has(> div > [data-testid='POPUP']) {
       backdrop-filter: none !important;
     }
 
     [data-testid='POPUP'] {
-      animation-duration: 480ms !important;
-      animation-delay: 60ms !important;
+      animation-duration: 400ms !important;
     }
 
-    [data-testid='POPUP'] form.klaviyo-form img {
-      animation-duration: 440ms !important;
-      animation-delay: 140ms !important;
+    [data-testid='modal-form-container'] {
+      animation-duration: 400ms !important;
     }
 
     [data-testid='POPUP'] form.klaviyo-form h1,
     [data-testid='POPUP'] form.klaviyo-form h2,
-    [data-testid='POPUP'] form.klaviyo-form h3 {
-      animation-duration: 320ms !important;
-      animation-delay: 190ms !important;
-    }
-
+    [data-testid='POPUP'] form.klaviyo-form h3,
     [data-testid='POPUP'] form.klaviyo-form p {
       animation-duration: 320ms !important;
-      animation-delay: 240ms !important;
+      animation-delay: 150ms !important;
     }
 
     [data-testid='POPUP'] form.klaviyo-form input,
     [data-testid='POPUP'] form.klaviyo-form select,
     [data-testid='POPUP'] form.klaviyo-form textarea {
       animation-duration: 320ms !important;
-      animation-delay: 280ms !important;
+      animation-delay: 200ms !important;
     }
 
     [data-testid='POPUP'] form.klaviyo-form button {
       animation-duration: 320ms !important;
-      animation-delay: 320ms !important;
+      animation-delay: 250ms !important;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    [data-testid='POPUP'],
-    [data-testid='POPUP'] form.klaviyo-form img,
+    [data-testid='POPUP'] {
+      animation-duration: 1ms !important;
+    }
+
+    [data-testid='modal-form-container'],
     [data-testid='POPUP'] form.klaviyo-form h1,
     [data-testid='POPUP'] form.klaviyo-form h2,
     [data-testid='POPUP'] form.klaviyo-form h3,
