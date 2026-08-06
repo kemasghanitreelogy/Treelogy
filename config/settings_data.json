@@ -15,7 +15,7 @@
     "show_utm_free_shipping_toast": true,
     "active_free_shipping_progress": true,
     "free_shipping_info": "free shipping",
-    "min_shipping": 650000,
+    "min_shipping": 700000,
     "shipping_selected_country": "ID",
     "bonus_1_icon": "shopify://shop_images/free_shipping.png",
     "min_free_product_checkout": 2000000,
@@ -34,7 +34,7 @@
           "text_UY8Rx3": {
             "type": "text",
             "settings": {
-              "title": "Free Shipping Across Indonesia | from Rp 650.000",
+              "title": "Free Shipping Across Indonesia | from Rp 700.000",
               "url": "shopify://collections/all"
             }
           },
