@@ -546,6 +546,12 @@
     color: #f8f8f2;
     cursor: pointer;
     transition: background-color 180ms ease;
+    /* Tema mengunci tinggi tombol di 50px. Label Indonesia jauh lebih panjang
+       ("Tambah ke Keranjang" lawan "Add to Cart"), jadi isinya membungkus dua
+       baris dan meluber keluar tombol. Tingginya harus mengikuti isi; 50px
+       tetap jadi batas bawah lewat min-height di atas. */
+    height: auto !important;
+    row-gap: 2px;
   }
 
   .button-quick-add-cart.v2-atc:hover {
@@ -786,6 +792,8 @@
     color: #f8f8f2;
     cursor: pointer;
     transition: background-color 180ms ease;
+    height: auto;
+    row-gap: 2px;
   }
 
   .v2-sticky__btn:hover {
