@@ -133,8 +133,18 @@
         method="post"
         enctype="multipart/form-data"
         id="AddToCartForm">
+        {%- comment -%}
+          Varian bertanda custom.staged_hidden belum boleh dilihat pembeli, jadi
+          ia dilewati di sini juga — bukan cuma di kartu pemilih varian. Kalau
+          hanya kartunya yang disembunyikan, paket itu tetap ada sebagai option
+          di form dan masih bisa dikirim ke /cart/add. Saklarnya per-tema lewat
+          settings.show_staged_variants (mati di live, nyala di preview).
+        {%- endcomment -%}
         <select name="id" id="productSelect">
           {% for variant in product.variants %}
+            {% if variant.metafields.custom.staged_hidden == true and settings.show_staged_variants != true %}
+              {% continue %}
+            {% endif %}
             {% if variant.available %}
               <option value="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money }}</option>
             {% else %}
@@ -145,6 +155,9 @@
 
         {% assign default_variant = product.variants[0].id %}
         {% for variant in product.variants %}
+          {% if variant.metafields.custom.staged_hidden == true and settings.show_staged_variants != true %}
+            {% continue %}
+          {% endif %}
           {% if variant.metafields.custom.set_default %}
             {% assign default_variant = variant.id %}
           {% endif %}
@@ -1048,6 +1061,9 @@
   window.productSingleData = {};
   
   {% for variant in product.variants %}
+    {% if variant.metafields.custom.staged_hidden == true and settings.show_staged_variants != true %}
+      {% continue %}
+    {% endif %}
     {% assign linked_variant = variant.metafields.custom.product_integration.value %}
     window.productSingleData["{{ variant.id }}"] = {
       title: "{{ variant.title | escape }}",
@@ -1069,6 +1085,9 @@
      All prices are pre-formatted via Liquid `money` filter so JS only needs to swap text. */
   window.subscriptionPriceMatrix = {};
   {%- for variant in product.variants -%}
+    {%- if variant.metafields.custom.staged_hidden == true and settings.show_staged_variants != true -%}
+      {%- continue -%}
+    {%- endif -%}
     window.subscriptionPriceMatrix["{{ variant.id }}"] = {
       onetime: {{ variant.price | money | json }},
       plans: {

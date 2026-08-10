@@ -1,13 +1,30 @@
+{% comment %}
+  Varian bertanda custom.staged_hidden adalah paket yang datanya sudah ada di
+  Shopify tapi belum boleh dilihat pembeli. Yang ditahan hanya tampilannya, dan
+  saklarnya per-tema: tema live membiarkan show_staged_variants mati, tema
+  preview menyalakannya untuk QA. Karena itu SETIAP loop varian di file ini
+  harus melewati guard yang sama — kalau satu loop terlewat, paket yang belum
+  rilis bocor lewat jalur itu.
+{% endcomment %}
+{% assign show_staged = settings.show_staged_variants %}
+
 {% assign default_variant = product.variants[0].id %}
+{% assign default_found = false %}
+{% for variant in product.variants %}
+  {% if variant.metafields.custom.staged_hidden == true and show_staged != true %}
+    {% continue %}
+  {% endif %}
+  {% unless default_found %}
+    {% assign default_variant = variant.id %}
+    {% assign default_found = true %}
+  {% endunless %}
+  {% if variant.metafields.custom.set_default == true %}
+    {% assign default_variant = variant.id %}
+  {% endif %}
+{% endfor %}
 
 {% if current_variant %}
   {% assign default_variant = current_variant.id %}
-{% else %}
-  {% for variant in product.variants %}
-    {% if variant.metafields.custom.set_default == true %}
-      {% assign default_variant = variant.id %}
-    {% endif %}
-  {% endfor %}
 {% endif %}
 
 {% assign is_not_option = is_not_option | default: false %}
@@ -16,6 +33,9 @@
 
 {% comment %} Check for Gifts {% endcomment %}
 {% for variant in product.variants %}
+  {% if variant.metafields.custom.staged_hidden == true and show_staged != true %}
+    {% continue %}
+  {% endif %}
   {% if variant.metafields.custom.gift_product.value %}
     {% assign has_gift = true %}
   {% endif %}
@@ -139,7 +159,12 @@
   }
 </style>
 
+{% assign rendered_count = 0 %}
 {% for variant in product.variants %}
+  {% if variant.metafields.custom.staged_hidden == true and show_staged != true %}
+    {% continue %}
+  {% endif %}
+  {% assign rendered_count = rendered_count | plus: 1 %}
   {% assign v_time_protocol = variant.metafields.custom.time_protocol %}
   {% assign v_value_per_day = variant.metafields.custom.value_per_day %}
   {% assign v_compare_price = variant.compare_at_price %}
@@ -216,8 +241,13 @@
     </div>
   </div>
 
-  {% comment %} --- SEPARATOR LOGIC --- {% endcomment %}
-  {% if forloop.first %}
+  {% comment %}
+    --- SEPARATOR LOGIC ---
+    Pakai rendered_count, bukan forloop.first: kalau varian pertama kebetulan
+    ditahan, forloop.first jatuh pada iterasi yang dilewati dan separatornya
+    hilang diam-diam.
+  {% endcomment %}
+  {% if rendered_count == 1 %}
     {% assign separator_title = product.metafields.custom.separator_content_variant_title %}
     {% assign separator_desc = product.metafields.custom.separator_content_variant_description %}
 
@@ -244,6 +274,9 @@
 {% if has_gift %}
   <div class="gift-products">
     {% for variant in product.variants %}
+      {% if variant.metafields.custom.staged_hidden == true and show_staged != true %}
+        {% continue %}
+      {% endif %}
       {% assign gift_product = variant.metafields.custom.gift_product.value %}
       {% if gift_product %}
         <div class="product {% if default_variant == variant.id %} active {% endif %}" id="gift-{{ variant.id }}">

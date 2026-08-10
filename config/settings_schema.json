@@ -189,5 +189,17 @@
         "info": "Format: GTM-XXXXXXX. Kosongkan untuk menonaktifkan GTM & dataLayer di storefront."
       }
     ]
+  },
+  {
+    "name": "Staged Variants",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "show_staged_variants",
+        "label": "Tampilkan varian yang masih disiapkan",
+        "default": false,
+        "info": "Varian dengan metafield custom.staged_hidden = true hanya tampil kalau ini dicentang. Biarkan mati di tema live; nyalakan hanya di tema preview untuk QA."
+      }
+    ]
   }
 ]
