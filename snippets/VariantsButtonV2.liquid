@@ -409,12 +409,23 @@
       if (priceEl) priceEl.textContent = active.getAttribute('data-v2-price') || '';
     }
 
-    /* section-product-single.js memindahkan kelas .active setelah handler klik
-       miliknya, jadi baca ulang di tick berikutnya. */
-    group.addEventListener('click', function () {
-      setTimeout(syncAtc, 0);
+    /* Kelas .active dipindahkan oleh beberapa pihak — handler klik di
+       section-product-single.js, auto-klik "kickstart"-nya, dan popup varian.
+       Mengamati atribut kelas menangkap semuanya sekaligus, tanpa perlu ikut
+       menebak urutan eksekusi masing-masing. */
+    new MutationObserver(syncAtc).observe(group, {
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class'],
     });
 
-    syncAtc();
+    /* Tombol add-to-cart dirender setelah snippet ini, jadi pada saat script
+       berjalan ia belum ada di DOM. Isi pertama kali harus menunggu dokumen
+       selesai diurai, kalau tidak harganya tetap kosong sampai ada klik. */
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', syncAtc);
+    } else {
+      syncAtc();
+    }
   })();
 </script>
