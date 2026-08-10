@@ -360,12 +360,20 @@
      (justify-self: center pada baris selebar penuh), sementara judul mendapat
      seluruh sisa lebar. Menumpuk lebih baik daripada memaksa tiga hal berbagi
      satu baris sempit — judul pecah empat baris jauh lebih buruk dibaca. */
+  /* Label panjang: badge bergabung ke kolom harga, rata kanan tepat di bawah
+     harga akhir. Sebelumnya ia diberi baris sendiri dan dipusatkan, tapi di
+     kartu yang seluruh isinya rata kiri atau rata kanan, "di tengah" tidak
+     sejajar dengan apa pun dan terbaca sebagai pulau lepas. Di sini ia punya
+     dua alasan kuat untuk berada: tepi kanannya berbagi garis dengan harga dan
+     dengan nilai hadiah di daftar manfaat, dan isinya memang fakta tentang
+     harga — bukan tentang nama paket. Kolom judul membentang dua baris supaya
+     nama panjang tetap dapat lebar penuh. */
   .v2-plan__head--stacked {
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas:
       "main prices"
-      "badge badge";
-    row-gap: 8px;
+      "main badge";
+    row-gap: 5px;
   }
 
   .v2-plan__head--stacked .v2-plan__main {
@@ -378,7 +386,7 @@
 
   .v2-plan__head--stacked .v2-plan__badge {
     grid-area: badge;
-    justify-self: center;
+    justify-self: end;
   }
 
   /* Di bawah 375px kolom judul tinggal ~70px, sehingga label sependek
@@ -389,8 +397,8 @@
       grid-template-columns: minmax(0, 1fr) auto;
       grid-template-areas:
         "main prices"
-        "badge badge";
-      row-gap: 8px;
+        "main badge";
+      row-gap: 5px;
     }
 
     /* Diberi induk .v2-plan__head agar spesifisitasnya melebihi aturan dasar
@@ -406,7 +414,7 @@
 
     .v2-plan__head .v2-plan__badge {
       grid-area: badge;
-      justify-self: center;
+      justify-self: end;
     }
   }
 
