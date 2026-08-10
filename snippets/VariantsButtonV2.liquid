@@ -414,6 +414,23 @@
     }
   }
 
+  /* Di bawah 375px ("180 grams" + "save 290.000" pada layar Android lama)
+     ruangnya masih kurang belasan piksel, jadi tipografinya diturunkan satu
+     tingkat lagi hanya di sini. */
+  @media screen and (max-width: 374px) {
+    .v2-plan__title {
+      font-size: 0.9375rem;
+    }
+
+    .v2-plan__badge {
+      padding: 3px 6px;
+    }
+
+    .v2-plan__price {
+      font-size: 0.875rem;
+    }
+  }
+
   @media screen and (min-width: 768px) {
     .v2-plans {
       gap: 12px;
