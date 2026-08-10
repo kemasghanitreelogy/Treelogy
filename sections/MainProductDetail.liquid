@@ -123,8 +123,18 @@
 
     <div class="variant-button">
       {% if free_product != product.id %}
-        {% render 'VariantsButton'
-          , product: product %}
+        {%- comment -%}
+          Kartu varian v2 masih disiapkan, jadi hanya tema preview yang
+          menyalakan settings.variant_card_v2. Tema live tetap memakai kartu
+          lama supaya tampilannya tidak berubah sebelum dirilis.
+        {%- endcomment -%}
+        {% if settings.variant_card_v2 %}
+          {% render 'VariantsButtonV2'
+            , product: product %}
+        {% else %}
+          {% render 'VariantsButton'
+            , product: product %}
+        {% endif %}
       {% endif %}
     </div>
     {% if free_product != product.id %}
@@ -274,10 +284,19 @@
         <button
           data-variant="{{ default_variant }}"
           type="submit"
-          class="button button-quick-add-cart"
+          class="button button-quick-add-cart{% if settings.variant_card_v2 %} v2-atc{% endif %}"
           name="add"
           id="AddToCart">
-          {% if product.id == 9291531649212 %}
+          {% if settings.variant_card_v2 %}
+            {%- comment -%}
+              Harga di sini diisi VariantsButtonV2 dari kartu yang sedang aktif,
+              bukan dari Liquid, supaya ikut berubah saat pembeli ganti paket.
+            {%- endcomment -%}
+            <span class="v2-atc__label">{{ 'products.general.add_to_cart' | t }}</span>
+            <span class="v2-atc__sep" aria-hidden="true"></span>
+            <s class="v2-atc__compare" data-v2-atc-compare></s>
+            <span class="v2-atc__price" data-v2-atc-price></span>
+          {% elsif product.id == 9291531649212 %}
             {% if request.locale.iso_code == 'id' %}
               MULAI PROTOKOL SAYA
             {% else %}

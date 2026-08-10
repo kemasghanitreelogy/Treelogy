@@ -1,0 +1,411 @@
+{% doc %}
+  Kartu pemilih varian versi 2 — tata letak paket berdaftar-manfaat.
+
+  Menggantikan `VariantsButton` ketika setting tema `variant_card_v2` menyala.
+  Tema live membiarkannya mati, tema preview menyalakannya, jadi desain ini
+  tidak pernah terlihat pembeli sampai sengaja dirilis.
+
+  Kontrak DOM-nya sengaja dibuat sama persis dengan kartu lama: setiap kartu
+  memakai `.checkbox-button` + `data-value` + `data-variant-price` dan berada
+  dalam satu induk yang sama. assets/section-product-single.js dan
+  assets/gtm-events.js mengikat ke selektor itu, jadi pemilihan varian, sinkron
+  #productSelect, harga langganan, dan event select_variant tetap jalan tanpa
+  JavaScript tambahan.
+
+  Sumber datanya metafield varian, bukan field bawaan, karena field bawaan ikut
+  terbaca kartu lama di tema live:
+  - custom.staged_plan_label      → judul kartu ("3 months", "180 grams")
+  - custom.staged_compare_at_price → harga coret; compare_at_price bawaan tidak
+    dipakai sebab mengubahnya langsung memunculkan badge hemat di tema live
+  - custom.description            → daftar manfaat. Satu <li> per baris; teks
+    setelah tanda "|" ditempatkan rata kanan sebagai nilai yang dicoret,
+    misalnya "Free mystery gift|Rp 47.000"
+
+  @param {product} product - Produk yang varian-variannya dirender
+  @param {variant} [current_variant] - Varian terpilih dari ?variant= bila ada
+
+  @example
+  {% render 'VariantsButtonV2', product: product %}
+{% enddoc %}
+
+{% liquid
+  assign show_staged = settings.show_staged_variants
+  assign is_id_locale = false
+  if request.locale.iso_code == 'id'
+    assign is_id_locale = true
+  endif
+
+  comment
+    Mockup menyusun paket terbesar di atas, kebalikan dari urutan varian di
+    admin, jadi urutkan menurun berdasarkan harga.
+  endcomment
+  assign v2_variants = product.variants | sort: 'price' | reverse
+%}
+
+<div
+  class="v2-plans"
+  role="radiogroup"
+  aria-label="{% if is_id_locale %}Pilih paket{% else %}Choose your plan{% endif %}"
+>
+  {%- assign v2_rendered = 0 -%}
+  {%- for variant in v2_variants -%}
+    {%- if variant.metafields.custom.staged_hidden == true and show_staged != true -%}
+      {%- continue -%}
+    {%- endif -%}
+
+    {%- liquid
+      assign v2_rendered = v2_rendered | plus: 1
+
+      assign v2_label = variant.metafields.custom.staged_plan_label
+      if v2_label == blank
+        assign v2_label = variant.metafields.custom.time_protocol
+      endif
+      if v2_label == blank
+        assign v2_label = variant.title
+      endif
+
+      assign v2_compare = variant.metafields.custom.staged_compare_at_price.value | plus: 0
+      if v2_compare == 0 and variant.compare_at_price > variant.price
+        assign v2_compare = variant.compare_at_price
+      endif
+
+      assign v2_saving = 0
+      if v2_compare > variant.price
+        assign v2_saving = v2_compare | minus: variant.price
+      endif
+
+      comment
+        Badge di mockup berbunyi "save 180.000" tanpa simbol mata uang, jadi
+        buang penanda Rp dari hasil filter money.
+      endcomment
+      assign v2_saving_text = v2_saving | money_without_trailing_zeros | remove: 'Rp' | strip
+
+      assign v2_compare_text = ''
+      if v2_saving > 0
+        assign v2_compare_text = v2_compare | money_without_trailing_zeros
+      endif
+      assign v2_price_text = variant.price | money_without_trailing_zeros
+
+      assign v2_is_active = false
+      if current_variant
+        if current_variant.id == variant.id
+          assign v2_is_active = true
+        endif
+      elsif v2_rendered == 1
+        assign v2_is_active = true
+      endif
+    -%}
+
+    <div
+      class="checkbox-button protocol-variant-card v2-plan{% if v2_is_active %} active{% endif %}"
+      data-value="{{ variant.id }}"
+      data-variant-price="{{ variant.price | divided_by: 100 }}"
+      data-available="{{ variant.available }}"
+      data-v2-compare="{{ v2_compare_text | escape }}"
+      data-v2-price="{{ v2_price_text | escape }}"
+      role="radio"
+      aria-checked="{% if v2_is_active %}true{% else %}false{% endif %}"
+      tabindex="0"
+    >
+      <div class="v2-plan__head">
+        <span class="v2-plan__radio" aria-hidden="true"></span>
+        <span class="v2-plan__title">{{ v2_label }}</span>
+
+        {%- assign v2_badge = variant.metafields.custom.custom_badge_text -%}
+        {%- if v2_saving > 0 -%}
+          <span class="v2-plan__badge">
+            {%- if is_id_locale -%}hemat {{ v2_saving_text }}{%- else -%}save {{ v2_saving_text }}{%- endif -%}
+          </span>
+        {%- elsif v2_badge != blank -%}
+          <span class="v2-plan__badge">{{ v2_badge }}</span>
+        {%- endif -%}
+
+        <span class="v2-plan__prices">
+          {%- if v2_compare_text != blank -%}
+            <s class="v2-plan__compare">{{ v2_compare_text }}</s>
+          {%- endif -%}
+          <span class="v2-plan__price">{{ v2_price_text }}</span>
+          {%- unless variant.available -%}
+            <span class="v2-plan__soldout">
+              {%- if is_id_locale -%}stok habis{%- else -%}sold out{%- endif -%}
+            </span>
+          {%- endunless -%}
+        </span>
+      </div>
+
+      {%- capture v2_perks_html -%}{{ variant.metafields.custom.description | metafield_tag }}{%- endcapture -%}
+      {%- assign v2_perk_items = v2_perks_html | split: '<li>' -%}
+      {%- if v2_perk_items.size > 1 -%}
+        <ul class="v2-plan__perks">
+          {%- for v2_perk_raw in v2_perk_items offset: 1 -%}
+            {%- assign v2_perk_text = v2_perk_raw | split: '</li>' | first | strip_html | strip -%}
+            {%- if v2_perk_text == blank -%}
+              {%- continue -%}
+            {%- endif -%}
+            {%- assign v2_perk_parts = v2_perk_text | split: '|' -%}
+            <li class="v2-plan__perk">
+              <span class="v2-plan__dot" aria-hidden="true"></span>
+              <span class="v2-plan__perk-text">{{ v2_perk_parts[0] | strip }}</span>
+              {%- if v2_perk_parts.size > 1 -%}
+                <s class="v2-plan__perk-value">{{ v2_perk_parts[1] | strip }}</s>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+  {%- endfor -%}
+</div>
+
+<style>
+  .v2-plans {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 0 0 20px;
+  }
+
+  .v2-plan.protocol-variant-card.checkbox-button {
+    display: block !important;
+    position: relative;
+    padding: 18px 20px !important;
+    min-height: 44px;
+    border: 2px solid #6e7a62;
+    border-radius: 14px;
+    background-color: #fff !important;
+    cursor: pointer;
+    transition: border-color 180ms ease, background-color 180ms ease;
+  }
+
+  .v2-plan.protocol-variant-card.checkbox-button.active,
+  .v2-plan.protocol-variant-card.checkbox-button.static-active {
+    border-color: #3f4c39;
+    background-color: rgb(165 187 135 / 28%) !important;
+  }
+
+  .v2-plan:hover {
+    border-color: #3f4c39;
+  }
+
+  .v2-plan:focus-visible {
+    outline: 3px solid #2b3c35;
+    outline-offset: 2px;
+  }
+
+  .v2-plan__head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .v2-plan__radio {
+    width: 22px;
+    height: 22px;
+    flex: 0 0 22px;
+    display: block;
+    border: 2px solid #3f4c39;
+    border-radius: 50%;
+    box-sizing: border-box;
+    position: relative;
+  }
+
+  .v2-plan.active .v2-plan__radio::before {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    border-radius: 50%;
+    background-color: #5c6b4a;
+  }
+
+  .v2-plan__title {
+    font-size: clamp(1.125rem, 1rem + 0.8vw, 1.5rem);
+    font-weight: 500;
+    line-height: 1.2;
+    color: #1f2a22;
+  }
+
+  .v2-plan__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 14px;
+    border-radius: 8px;
+    background-color: #2b3c35;
+    color: #f8f8f2;
+    font-size: clamp(0.8125rem, 0.75rem + 0.3vw, 1rem);
+    font-weight: 700;
+    line-height: 1.25;
+    white-space: nowrap;
+  }
+
+  .v2-plan__prices {
+    margin-left: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .v2-plan__compare {
+    font-size: clamp(0.75rem, 0.7rem + 0.25vw, 0.9375rem);
+    font-weight: 400;
+    color: #6c7256;
+  }
+
+  .v2-plan__price {
+    font-size: clamp(0.9375rem, 0.85rem + 0.5vw, 1.25rem);
+    font-weight: 700;
+    color: #1f2a22;
+  }
+
+  .v2-plan__soldout {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #8a5b4a;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .v2-plan__perks {
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0 0 0 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .v2-plan__perk {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: clamp(0.8125rem, 0.78rem + 0.25vw, 1rem);
+    line-height: 1.4;
+    color: #1f2a22;
+  }
+
+  .v2-plan__dot {
+    width: 9px;
+    height: 9px;
+    flex: 0 0 9px;
+    border-radius: 50%;
+    background-color: #1f2a22;
+  }
+
+  .v2-plan__perk-value {
+    margin-left: auto;
+    color: #6c7256;
+    white-space: nowrap;
+  }
+
+  /* Tombol add-to-cart versi 2: label, pemisah, harga coret, harga akhir. */
+  .button-quick-add-cart.v2-atc {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    width: 100%;
+    min-height: 60px;
+    padding: 18px 20px;
+    border: 0;
+    border-radius: 12px;
+    background-color: #2b3c35;
+    color: #f8f8f2;
+    cursor: pointer;
+    transition: background-color 180ms ease;
+  }
+
+  .button-quick-add-cart.v2-atc:hover {
+    background-color: #1f2a22;
+  }
+
+  .button-quick-add-cart.v2-atc:focus-visible {
+    outline: 3px solid #2b3c35;
+    outline-offset: 3px;
+  }
+
+  .v2-atc__label {
+    font-size: clamp(0.9375rem, 0.85rem + 0.5vw, 1.25rem);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .v2-atc__sep {
+    width: 2px;
+    height: 24px;
+    background-color: rgb(248 248 242 / 65%);
+  }
+
+  .v2-atc__compare {
+    font-size: clamp(0.8125rem, 0.75rem + 0.3vw, 1rem);
+    color: rgb(248 248 242 / 80%);
+  }
+
+  .v2-atc__compare:empty {
+    display: none;
+  }
+
+  .v2-atc__compare:empty + .v2-atc__price {
+    margin-left: 0;
+  }
+
+  .v2-atc__price {
+    font-size: clamp(0.9375rem, 0.85rem + 0.5vw, 1.25rem);
+    font-weight: 700;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .v2-plan.protocol-variant-card.checkbox-button,
+    .button-quick-add-cart.v2-atc {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    var group = document.currentScript.previousElementSibling;
+    while (group && !group.classList.contains('v2-plans')) {
+      group = group.previousElementSibling;
+    }
+    if (!group) return;
+
+    var cards = group.querySelectorAll('.v2-plan');
+    if (!cards.length) return;
+
+    /* Kartu lama dipilih lewat klik saja. Kartu ini berperan sebagai radio,
+       jadi keyboard harus bisa melakukan hal yang sama. */
+    cards.forEach(function (card) {
+      card.addEventListener('keydown', function (event) {
+        if (event.key !== 'Enter' && event.key !== ' ' && event.key !== 'Spacebar') return;
+        event.preventDefault();
+        card.click();
+      });
+    });
+
+    function syncAtc() {
+      var active = group.querySelector('.v2-plan.active') || cards[0];
+      if (!active) return;
+
+      cards.forEach(function (card) {
+        card.setAttribute('aria-checked', card === active ? 'true' : 'false');
+      });
+
+      var compareEl = document.querySelector('[data-v2-atc-compare]');
+      var priceEl = document.querySelector('[data-v2-atc-price]');
+      if (compareEl) compareEl.textContent = active.getAttribute('data-v2-compare') || '';
+      if (priceEl) priceEl.textContent = active.getAttribute('data-v2-price') || '';
+    }
+
+    /* section-product-single.js memindahkan kelas .active setelah handler klik
+       miliknya, jadi baca ulang di tick berikutnya. */
+    group.addEventListener('click', function () {
+      setTimeout(syncAtc, 0);
+    });
+
+    syncAtc();
+  })();
+</script>

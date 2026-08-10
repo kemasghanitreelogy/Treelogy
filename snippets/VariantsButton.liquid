@@ -224,8 +224,20 @@
           {% unless variant.available %}
             - sold out{% endunless %}
         </div>
+        {% comment %}
+          Varian yang sudah disiapkan untuk kartu v2 memakai custom.description
+          sebagai daftar manfaat berformat "teks|nilai". Format itu hanya masuk
+          akal di kartu v2, jadi kartu ini melewatinya — kalau tidak, salinan
+          yang belum rilis ikut terbaca di tema live. Produk lain yang memakai
+          description sebagai deskripsi biasa tidak terpengaruh karena mereka
+          tidak punya staged_plan_label.
+        {% endcomment %}
         {% assign meta_desc = variant.metafields.custom.description %}
-        {% unless disabled_detail %}
+        {% assign is_staged_for_v2 = false %}
+        {% if variant.metafields.custom.staged_plan_label != blank %}
+          {% assign is_staged_for_v2 = true %}
+        {% endif %}
+        {% unless disabled_detail or is_staged_for_v2 %}
           {% if meta_desc %}
             <div class="pv-meta-desc">{{ meta_desc | metafield_tag }}</div>
           {% endif %}

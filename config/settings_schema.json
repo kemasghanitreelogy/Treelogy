@@ -199,6 +199,13 @@
         "label": "Tampilkan varian yang masih disiapkan",
         "default": false,
         "info": "Varian dengan metafield custom.staged_hidden = true hanya tampil kalau ini dicentang. Biarkan mati di tema live; nyalakan hanya di tema preview untuk QA."
+      },
+      {
+        "type": "checkbox",
+        "id": "variant_card_v2",
+        "label": "Pakai kartu varian versi 2",
+        "default": false,
+        "info": "Mengganti kartu pemilih varian dan tombol add-to-cart di halaman produk dengan desain paket berdaftar-manfaat. Isinya diambil dari metafield varian staged_plan_label, staged_compare_at_price, dan description. Biarkan mati di tema live."
       }
     ]
   }
