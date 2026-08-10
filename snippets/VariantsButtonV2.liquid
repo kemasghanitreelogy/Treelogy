@@ -117,17 +117,24 @@
       tabindex="0"
     >
       <div class="v2-plan__head">
-        <span class="v2-plan__radio" aria-hidden="true"></span>
-        <span class="v2-plan__title">{{ v2_label }}</span>
+        {%- comment -%}
+          Radio, judul, dan badge dikelompokkan supaya merekalah yang boleh
+          turun baris saat kartu menyempit. Tanpa pengelompokan ini blok harga
+          yang ikut membungkus, dan ia mendarat sendirian di baris bawah.
+        {%- endcomment -%}
+        <span class="v2-plan__main">
+          <span class="v2-plan__radio" aria-hidden="true"></span>
+          <span class="v2-plan__title">{{ v2_label }}</span>
 
-        {%- assign v2_badge = variant.metafields.custom.custom_badge_text -%}
-        {%- if v2_saving > 0 -%}
-          <span class="v2-plan__badge">
-            {%- if is_id_locale -%}hemat {{ v2_saving_text }}{%- else -%}save {{ v2_saving_text }}{%- endif -%}
-          </span>
-        {%- elsif v2_badge != blank -%}
-          <span class="v2-plan__badge">{{ v2_badge }}</span>
-        {%- endif -%}
+          {%- assign v2_badge = variant.metafields.custom.custom_badge_text -%}
+          {%- if v2_saving > 0 -%}
+            <span class="v2-plan__badge">
+              {%- if is_id_locale -%}hemat {{ v2_saving_text }}{%- else -%}save {{ v2_saving_text }}{%- endif -%}
+            </span>
+          {%- elsif v2_badge != blank -%}
+            <span class="v2-plan__badge">{{ v2_badge }}</span>
+          {%- endif -%}
+        </span>
 
         <span class="v2-plan__prices">
           {%- if v2_compare_text != blank -%}
@@ -167,20 +174,23 @@
 </div>
 
 <style>
+  /* Ukuran dasar mengikuti layar sempit; media query di bawah menaikkannya
+     sedikit untuk desktop. Skala tunggal lewat clamp() sebelumnya membuat
+     kartu terlalu besar di layar lebar. */
   .v2-plans {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    margin: 0 0 20px;
+    gap: 12px;
+    margin: 0 0 18px;
   }
 
   .v2-plan.protocol-variant-card.checkbox-button {
     display: block !important;
     position: relative;
-    padding: 18px 20px !important;
+    padding: 14px 16px !important;
     min-height: 44px;
-    border: 2px solid #6e7a62;
-    border-radius: 14px;
+    border: 1.5px solid #8a9479;
+    border-radius: 12px;
     background-color: #fff !important;
     cursor: pointer;
     transition: border-color 180ms ease, background-color 180ms ease;
@@ -201,17 +211,29 @@
     outline-offset: 2px;
   }
 
+  /* Baris judul tidak boleh membungkus: kalau ia membungkus, blok harga yang
+     turun dan mendarat sendirian di baris bawah. Yang boleh turun hanyalah
+     badge di dalam .v2-plan__main. */
   .v2-plan__head {
     display: flex;
     align-items: center;
-    gap: 12px;
+    flex-wrap: nowrap;
+    gap: 10px;
+  }
+
+  .v2-plan__main {
+    display: flex;
+    align-items: center;
     flex-wrap: wrap;
+    gap: 8px 10px;
+    flex: 1 1 auto;
+    min-width: 0;
   }
 
   .v2-plan__radio {
-    width: 22px;
-    height: 22px;
-    flex: 0 0 22px;
+    width: 20px;
+    height: 20px;
+    flex: 0 0 20px;
     display: block;
     border: 2px solid #3f4c39;
     border-radius: 50%;
@@ -228,48 +250,50 @@
   }
 
   .v2-plan__title {
-    font-size: clamp(1.125rem, 1rem + 0.8vw, 1.5rem);
-    font-weight: 500;
-    line-height: 1.2;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.25;
     color: #1f2a22;
   }
 
   .v2-plan__badge {
     display: inline-flex;
     align-items: center;
-    padding: 6px 14px;
-    border-radius: 8px;
+    padding: 4px 10px;
+    border-radius: 7px;
     background-color: #2b3c35;
     color: #f8f8f2;
-    font-size: clamp(0.8125rem, 0.75rem + 0.3vw, 1rem);
+    font-size: 0.8125rem;
     font-weight: 700;
-    line-height: 1.25;
+    line-height: 1.3;
     white-space: nowrap;
   }
 
   .v2-plan__prices {
+    flex: 0 0 auto;
     margin-left: auto;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     text-align: right;
     white-space: nowrap;
+    line-height: 1.25;
   }
 
   .v2-plan__compare {
-    font-size: clamp(0.75rem, 0.7rem + 0.25vw, 0.9375rem);
+    font-size: 0.75rem;
     font-weight: 400;
     color: #6c7256;
   }
 
   .v2-plan__price {
-    font-size: clamp(0.9375rem, 0.85rem + 0.5vw, 1.25rem);
+    font-size: 1rem;
     font-weight: 700;
     color: #1f2a22;
   }
 
   .v2-plan__soldout {
-    font-size: 0.75rem;
+    font-size: 0.6875rem;
     font-weight: 500;
     color: #8a5b4a;
     text-transform: uppercase;
@@ -278,32 +302,33 @@
 
   .v2-plan__perks {
     list-style: none;
-    margin: 12px 0 0;
-    padding: 0 0 0 6px;
+    margin: 10px 0 0;
+    padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 5px;
   }
 
   .v2-plan__perk {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: clamp(0.8125rem, 0.78rem + 0.25vw, 1rem);
+    gap: 9px;
+    font-size: 0.8125rem;
     line-height: 1.4;
     color: #1f2a22;
   }
 
   .v2-plan__dot {
-    width: 9px;
-    height: 9px;
-    flex: 0 0 9px;
+    width: 7px;
+    height: 7px;
+    flex: 0 0 7px;
     border-radius: 50%;
     background-color: #1f2a22;
   }
 
   .v2-plan__perk-value {
     margin-left: auto;
+    padding-left: 10px;
     color: #6c7256;
     white-space: nowrap;
   }
@@ -313,13 +338,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 14px;
+    gap: 10px;
     flex-wrap: wrap;
     width: 100%;
-    min-height: 60px;
-    padding: 18px 20px;
+    min-height: 52px;
+    padding: 14px 16px;
     border: 0;
-    border-radius: 12px;
+    border-radius: 10px;
     background-color: #2b3c35;
     color: #f8f8f2;
     cursor: pointer;
@@ -336,7 +361,7 @@
   }
 
   .v2-atc__label {
-    font-size: clamp(0.9375rem, 0.85rem + 0.5vw, 1.25rem);
+    font-size: 0.9375rem;
     font-weight: 700;
     letter-spacing: 0.02em;
     text-transform: uppercase;
@@ -344,12 +369,12 @@
 
   .v2-atc__sep {
     width: 2px;
-    height: 24px;
+    height: 18px;
     background-color: rgb(248 248 242 / 65%);
   }
 
   .v2-atc__compare {
-    font-size: clamp(0.8125rem, 0.75rem + 0.3vw, 1rem);
+    font-size: 0.8125rem;
     color: rgb(248 248 242 / 80%);
   }
 
@@ -357,13 +382,69 @@
     display: none;
   }
 
-  .v2-atc__compare:empty + .v2-atc__price {
-    margin-left: 0;
+  .v2-atc__price {
+    font-size: 0.9375rem;
+    font-weight: 700;
   }
 
-  .v2-atc__price {
-    font-size: clamp(0.9375rem, 0.85rem + 0.5vw, 1.25rem);
-    font-weight: 700;
+  @media screen and (min-width: 768px) {
+    .v2-plans {
+      gap: 14px;
+    }
+
+    .v2-plan.protocol-variant-card.checkbox-button {
+      padding: 16px 18px !important;
+      border-radius: 14px;
+    }
+
+    .v2-plan__head {
+      gap: 12px;
+    }
+
+    .v2-plan__radio {
+      width: 22px;
+      height: 22px;
+      flex: 0 0 22px;
+    }
+
+    .v2-plan__title {
+      font-size: 1.25rem;
+    }
+
+    .v2-plan__badge {
+      font-size: 0.875rem;
+      padding: 5px 12px;
+    }
+
+    .v2-plan__compare {
+      font-size: 0.8125rem;
+    }
+
+    .v2-plan__price {
+      font-size: 1.125rem;
+    }
+
+    .v2-plan__perk {
+      font-size: 0.9375rem;
+    }
+
+    .v2-plan__perks {
+      gap: 6px;
+    }
+
+    .button-quick-add-cart.v2-atc {
+      min-height: 58px;
+      gap: 12px;
+    }
+
+    .v2-atc__label,
+    .v2-atc__price {
+      font-size: 1.0625rem;
+    }
+
+    .v2-atc__compare {
+      font-size: 0.875rem;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
