@@ -654,6 +654,39 @@
          menimpa badge. */
       grid-template-columns: minmax(0, 1fr) auto auto;
     }
+
+    /* Badge berukuran Figma memakan 111px di 390px, menyisakan 85px untuk judul
+       padahal "The Complete" butuh 96px. Dikecilkan HANYA pada kartu berlabel
+       panjang, jadi empat produk utama tetap memakai ukuran Figma. */
+    .v2-plan__head--flow .v2-plan__badge {
+      font-size: 0.6875rem;
+      padding: 2px 7px;
+    }
+  }
+
+  /* Di 360-389px pengecilan badge pun tidak cukup — judul hanya dapat 84px.
+     Di lebar itu badge turun ke bawah harga sehingga judul memakai lebar penuh. */
+  @media screen and (max-width: 389px) {
+    .v2-plan__head--flow {
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas:
+        "main prices"
+        "main badge";
+      row-gap: 5px;
+    }
+
+    .v2-plan__head--flow .v2-plan__main {
+      grid-area: main;
+    }
+
+    .v2-plan__head--flow .v2-plan__prices {
+      grid-area: prices;
+    }
+
+    .v2-plan__head--flow .v2-plan__badge {
+      grid-area: badge;
+      justify-self: end;
+    }
   }
 
   @media screen and (max-width: 389px) {
