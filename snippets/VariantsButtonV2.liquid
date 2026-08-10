@@ -17,12 +17,14 @@
   - custom.staged_plan_label      → judul kartu ("3 months", "180 grams")
   - custom.staged_compare_at_price → harga coret; compare_at_price bawaan tidak
     dipakai sebab mengubahnya langsung memunculkan badge hemat di tema live
-  - custom.description            → daftar manfaat. Satu <li> per baris; teks
-    setelah tanda "|" ditempatkan rata kanan sebagai nilai yang dicoret dan
-    barisnya ditandai ikon kado, misalnya "Mystery gift|Rp 47.000".
-    Label baris bernilai cukup menyebut barangnya saja — jangan diawali
-    "Free/Gratis", karena ikon dan coretan sudah menyatakannya dan kata itu
-    membuat barisnya panjang tanpa menambah informasi.
+  - custom.description            → daftar manfaat, satu <li> per baris dengan
+    format `label|nilai|ikon`. Dua ruas terakhir opsional:
+      "60-day money-back guarantee"            → titik biasa, tanpa nilai
+      "Free Bamboo Spoon|Rp 120.000"           → ikon kado (bawaan)
+      "Free Shipping included|~ Rp 25.000|ship" → ikon truk
+    Nilainya dirender rata kanan dan dicoret. Ruas ikon ada supaya baris yang
+    bernilai tapi bukan barang fisik — ongkos kirim — tidak ikut memakai ikon
+    kado, karena itu akan salah arti.
 
   @param {product} product - Produk yang varian-variannya dirender
   @param {variant} [current_variant] - Varian terpilih dari ?variant= bila ada
@@ -178,8 +180,17 @@
                 tapi hanya untuk pembaca layar — ikon menyampaikan kategori,
                 bukan makna, jadi teksnya tidak boleh hilang sama sekali.
               {%- endcomment -%}
+              {%- assign v2_perk_icon = v2_perk_parts[2] | default: 'gift' | strip | downcase -%}
               <span class="v2-plan__marker" aria-hidden="true">
-                {%- if v2_perk_parts.size > 1 -%}
+                {%- if v2_perk_parts.size > 1 and v2_perk_icon == 'ship' -%}
+                  <svg class="v2-plan__gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                    <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2" />
+                    <path d="M15 18H9" />
+                    <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-3.48-4.35A1 1 0 0 0 17.52 8H14" />
+                    <circle cx="17" cy="18" r="2" />
+                    <circle cx="7" cy="18" r="2" />
+                  </svg>
+                {%- elsif v2_perk_parts.size > 1 -%}
                   <svg class="v2-plan__gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false">
                     <rect x="3" y="8" width="18" height="4" rx="1" />
                     <path d="M12 8v13" />
