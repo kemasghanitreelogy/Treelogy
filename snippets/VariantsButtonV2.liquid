@@ -376,15 +376,18 @@
       row-gap: 8px;
     }
 
-    .v2-plan__main {
+    /* Diberi induk .v2-plan__head agar spesifisitasnya melebihi aturan dasar
+       grid-column di bawah — kalau hanya mengandalkan urutan sumber, aturan
+       dasar yang menang dan badge tertinggal di kolom tengah baris pertama. */
+    .v2-plan__head .v2-plan__main {
       grid-area: main;
     }
 
-    .v2-plan__prices {
+    .v2-plan__head .v2-plan__prices {
       grid-area: prices;
     }
 
-    .v2-plan__badge {
+    .v2-plan__head .v2-plan__badge {
       grid-area: badge;
       justify-self: center;
     }
