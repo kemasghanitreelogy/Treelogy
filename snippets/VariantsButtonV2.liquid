@@ -113,6 +113,7 @@
 
       assign v2_badge = variant.metafields.custom.custom_badge_text
 
+
       assign v2_is_active = false
       if current_variant
         if current_variant.id == variant.id
@@ -358,59 +359,12 @@
      dengan nilai hadiah di daftar manfaat, dan isinya memang fakta tentang
      harga — bukan tentang nama paket. Kolom judul membentang dua baris supaya
      nama panjang tetap dapat lebar penuh. */
-  .v2-plan__head--stacked {
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas:
-      "main prices"
-      "main badge";
-    row-gap: 5px;
-  }
-
-  .v2-plan__head--stacked .v2-plan__main {
-    grid-area: main;
-  }
-
-  .v2-plan__head--stacked .v2-plan__prices {
-    grid-area: prices;
-  }
-
-  .v2-plan__head--stacked .v2-plan__badge {
-    grid-area: badge;
-    justify-self: end;
-  }
-
 /* Tiga kolom sejajar menuntut kolom kiri dan kanan sama lebar, jadi kolom
      judul selalu (isi - jarak - badge) / 2. Diukur langsung: di 480px kolom itu
      hanya 121px sementara "Paket Kesehatan" butuh 122px — meleset satu piksel
      dan judul pecah tiga baris. Baru dari 600px kolomnya >=174px, cukup untuk
      label Indonesia yang katanya lebih panjang. Di bawah itu badge turun ke
      kolom harga dan judul memakai lebar penuh. */
-  @media screen and (max-width: 599px) {
-    .v2-plan__head {
-      grid-template-columns: minmax(0, 1fr) auto;
-      grid-template-areas:
-        "main prices"
-        "main badge";
-      row-gap: 5px;
-    }
-
-    /* Diberi induk .v2-plan__head agar spesifisitasnya melebihi aturan dasar
-       grid-column di bawah — kalau hanya mengandalkan urutan sumber, aturan
-       dasar yang menang dan badge tertinggal di kolom tengah baris pertama. */
-    .v2-plan__head .v2-plan__main {
-      grid-area: main;
-    }
-
-    .v2-plan__head .v2-plan__prices {
-      grid-area: prices;
-    }
-
-    .v2-plan__head .v2-plan__badge {
-      grid-area: badge;
-      justify-self: end;
-    }
-  }
-
   .v2-plan__radio {
     width: 18px;
     height: 18px;
@@ -662,6 +616,18 @@
      Merapatkan jarak radio-judul dan antar-kolom mengembalikan ~4px ke kolom
      itu — cukup agar label Indonesia terpanjang ("Paket Kesehatan Harian")
      muat dua baris, bukan tiga. */
+  /* Kolom judul selalu (isi - jarak - badge) / 2 karena kolom kiri dan kanan
+     harus sama lebar. Di 360-375px badge berukuran Figma menyisakan 69px untuk
+     judul, sedangkan "180 grams" butuh 72px — pecah dua baris. Mengecilkan
+     badge satu tingkat di layar itu mengembalikan ~4px ke tiap kolom, cukup
+     untuk menahannya tetap satu baris. */
+  @media screen and (max-width: 389px) {
+    .v2-plan__badge {
+      font-size: 0.6875rem;
+      padding: 2px 7px;
+    }
+  }
+
   @media screen and (min-width: 600px) {
     .v2-plan__head {
       gap: 6px;
