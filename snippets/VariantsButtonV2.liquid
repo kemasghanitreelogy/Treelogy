@@ -391,6 +391,29 @@
     font-weight: 700;
   }
 
+  /* Layar 360-375px adalah kasus tersempit yang nyata. Label terpanjang
+     ("180 grams" + "save 290.000") butuh sekitar 14px tambahan agar badge tidak
+     terlempar ke baris kedua, jadi padding, jarak, dan badge dirampingkan di
+     sini saja — bukan diturunkan untuk semua ukuran layar. */
+  @media screen and (max-width: 419px) {
+    .v2-plan.protocol-variant-card.checkbox-button {
+      padding: 12px !important;
+    }
+
+    .v2-plan__head {
+      gap: 6px;
+    }
+
+    .v2-plan__main {
+      gap: 5px 6px;
+    }
+
+    .v2-plan__badge {
+      font-size: 0.6875rem;
+      padding: 3px 7px;
+    }
+  }
+
   @media screen and (min-width: 768px) {
     .v2-plans {
       gap: 12px;
