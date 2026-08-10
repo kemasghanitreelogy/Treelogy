@@ -379,12 +379,13 @@
     justify-self: end;
   }
 
-/* Di bawah 480px kolom judul tinggal 95-107px — diukur langsung, bukan
-     dikira-kira — sehingga "The Complete Ritual Bundle" pecah empat baris dan
-     "180 grams" pun sudah dua baris. Tiga kolom sejajar baru masuk akal dari
-     480px ke atas, di mana kolom judulnya >=136px dan nama panjang cukup dua
-     baris seperti di desain. Di bawah itu badge turun ke kolom harga. */
-  @media screen and (max-width: 479px) {
+/* Tiga kolom sejajar menuntut kolom kiri dan kanan sama lebar, jadi kolom
+     judul selalu (isi - jarak - badge) / 2. Diukur langsung: di 480px kolom itu
+     hanya 121px sementara "Paket Kesehatan" butuh 122px — meleset satu piksel
+     dan judul pecah tiga baris. Baru dari 600px kolomnya >=174px, cukup untuk
+     label Indonesia yang katanya lebih panjang. Di bawah itu badge turun ke
+     kolom harga dan judul memakai lebar penuh. */
+  @media screen and (max-width: 599px) {
     .v2-plan__head {
       grid-template-columns: minmax(0, 1fr) auto;
       grid-template-areas:
