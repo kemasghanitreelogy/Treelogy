@@ -167,13 +167,35 @@
               {%- continue -%}
             {%- endif -%}
             {%- assign v2_perk_parts = v2_perk_text | split: '|' -%}
-            <li class="v2-plan__perk">
-              <span class="v2-plan__dot" aria-hidden="true"></span>
+            <li class="v2-plan__perk{% if v2_perk_parts.size > 1 %} v2-plan__perk--gift{% endif %}">
+              {%- comment -%}
+                Baris berhadiah ditandai ikon kado, bukan titik. Penandanya
+                memisahkan barang fisik yang punya nilai rupiah dari benefit
+                layanan seperti gratis ongkir, sehingga angka di kanan langsung
+                terbaca sebagai nilai hadiah. Kata "worth" tetap ada di markup
+                tapi hanya untuk pembaca layar — ikon menyampaikan kategori,
+                bukan makna, jadi teksnya tidak boleh hilang sama sekali.
+              {%- endcomment -%}
+              <span class="v2-plan__marker" aria-hidden="true">
+                {%- if v2_perk_parts.size > 1 -%}
+                  <svg class="v2-plan__gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                    <rect x="3" y="8" width="18" height="4" rx="1" />
+                    <path d="M12 8v13" />
+                    <path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7" />
+                    <path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5" />
+                  </svg>
+                {%- else -%}
+                  <span class="v2-plan__dot"></span>
+                {%- endif -%}
+              </span>
               <span class="v2-plan__perk-text">{{ v2_perk_parts[0] | strip }}</span>
               {%- if v2_perk_parts.size > 1 -%}
                 {%- assign v2_perk_value = v2_perk_parts[1] | strip -%}
                 <span class="v2-plan__perk-value">
-                  {%- if is_id_locale -%}senilai {{ v2_perk_value }}{%- else -%}worth {{ v2_perk_value }}{%- endif -%}
+                  <span class="v2-plan__sr">
+                    {%- if is_id_locale -%}senilai {%- else -%}worth {%- endif -%}
+                  </span>
+                  {{- v2_perk_value -}}
                 </span>
               {%- endif -%}
             </li>
@@ -321,7 +343,7 @@
   .v2-plan__perks {
     list-style: none;
     margin: 9px 0 0;
-    padding: 0 0 0 12px;
+    padding: 0 0 0 4px;
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -336,12 +358,40 @@
     color: #1f2a22;
   }
 
+  /* Titik dan ikon kado berbagi kotak penanda selebar sama, supaya teks semua
+     bullet tetap lurus meski penandanya berbeda ukuran. */
+  .v2-plan__marker {
+    width: 14px;
+    height: 14px;
+    flex: 0 0 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .v2-plan__dot {
     width: 6px;
     height: 6px;
-    flex: 0 0 6px;
     border-radius: 50%;
     background-color: #1f2a22;
+  }
+
+  .v2-plan__gift {
+    width: 14px;
+    height: 14px;
+    color: #5c6b4a;
+  }
+
+  .v2-plan__sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
   }
 
   .v2-plan__perk-value {
@@ -430,7 +480,7 @@
     }
 
     .v2-plan__perks {
-      padding-left: 10px;
+      padding-left: 2px;
     }
   }
 
@@ -494,7 +544,7 @@
     .v2-plan__perks {
       margin-top: 8px;
       gap: 5px;
-      padding-left: 14px;
+      padding-left: 6px;
     }
 
     .v2-plan__perk {
@@ -502,10 +552,20 @@
       gap: 9px;
     }
 
+    .v2-plan__marker {
+      width: 15px;
+      height: 15px;
+      flex: 0 0 15px;
+    }
+
     .v2-plan__dot {
       width: 7px;
       height: 7px;
-      flex: 0 0 7px;
+    }
+
+    .v2-plan__gift {
+      width: 15px;
+      height: 15px;
     }
 
     .button-quick-add-cart.v2-atc {
