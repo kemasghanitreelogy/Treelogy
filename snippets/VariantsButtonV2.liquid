@@ -193,11 +193,11 @@
                 {%- assign v2_perk_value = v2_perk_parts[1] | strip -%}
                 <span class="v2-plan__perk-value">
                   {%- comment -%}
-                    Spasi pemisahnya &nbsp; supaya tidak ikut terpangkas oleh
-                    trim Liquid — tanpa itu pembaca layar melafalkan
-                    "worthRp 120.000".
+                    Spasi pengapitnya &nbsp; supaya tidak terpangkas trim Liquid
+                    maupun penciutan spasi HTML. Tanpa keduanya pembaca layar
+                    melafalkannya menyatu: "Free Bamboo Spoonworth Rp 120.000".
                   {%- endcomment -%}
-                  <span class="v2-plan__sr">{% if is_id_locale %}senilai{% else %}worth{% endif %}&nbsp;</span>
+                  <span class="v2-plan__sr">&nbsp;{% if is_id_locale %}senilai{% else %}worth{% endif %}&nbsp;</span>
                   {{- v2_perk_value -}}
                 </span>
               {%- endif -%}
