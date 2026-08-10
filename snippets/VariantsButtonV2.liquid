@@ -231,7 +231,18 @@
                   <span class="v2-plan__sr">
                     {%- if is_id_locale -%}&nbsp;gratis, senilai&nbsp;{%- else -%}&nbsp;free, worth&nbsp;{%- endif -%}
                   </span>
-                  <s class="v2-plan__perk-price">{{ v2_perk_value }}</s>
+                  {%- comment -%}
+                    Tanda "~" berarti perkiraan dan berlaku pada nilainya, jadi
+                    ia berada DI LUAR coretan — yang dicoret hanya angkanya.
+                    Mencoret tildenya membuat garis mulai sebelum "Rp" dan
+                    terbaca seperti tanda hubung.
+                  {%- endcomment -%}
+                  {%- assign v2_perk_amount_text = v2_perk_value -%}
+                  {%- if v2_perk_value contains '~' -%}
+                    {%- assign v2_perk_amount_text = v2_perk_value | split: '~' | last | strip -%}
+                    <span class="v2-plan__approx" aria-hidden="true">~</span>
+                  {%- endif -%}
+                  <s class="v2-plan__perk-price">{{ v2_perk_amount_text }}</s>
                 </span>
               {%- endif -%}
             </li>
@@ -369,10 +380,12 @@
     justify-self: end;
   }
 
-  /* Di bawah 375px kolom judul tinggal ~70px, sehingga label sependek
-     "180 grams" pun sudah pecah dua baris. Di lebar itu semua kartu memakai
-     susunan bertumpuk, bukan hanya yang labelnya panjang. */
-  @media screen and (max-width: 374px) {
+/* Di bawah 480px kolom judul tinggal 95-107px — diukur langsung, bukan
+     dikira-kira — sehingga "The Complete Ritual Bundle" pecah empat baris dan
+     "180 grams" pun sudah dua baris. Tiga kolom sejajar baru masuk akal dari
+     480px ke atas, di mana kolom judulnya >=136px dan nama panjang cukup dua
+     baris seperti di desain. Di bawah itu badge turun ke kolom harga. */
+  @media screen and (max-width: 479px) {
     .v2-plan__head {
       grid-template-columns: minmax(0, 1fr) auto;
       grid-template-areas:
@@ -546,6 +559,13 @@
     white-space: nowrap;
   }
 
+  .v2-plan__approx {
+    margin-right: 0.25em;
+    color: #2b3c35;
+    font-size: 0.625rem;
+    font-weight: 500;
+  }
+
   .v2-plan__perk-price {
     color: #2b3c35;
     font-size: 0.625rem;
@@ -663,7 +683,8 @@
     }
 
     .v2-plan__compare,
-    .v2-plan__perk-price {
+    .v2-plan__perk-price,
+    .v2-plan__approx {
       font-size: 0.6875rem;
     }
 
