@@ -298,7 +298,13 @@
     display: block !important;
     position: relative;
     padding: 13px 14px !important;
-    min-height: 44px;
+    /* Kartu lama memaksa min-height: 68px !important pada
+       .protocol-variant-card.checkbox-button, dan CSS-nya ikut termuat di
+       halaman ini lewat popup varian produk lain. Tanpa dipaksa balik, kartu
+       satu baris terkunci di 68px dan sisa ruangnya menumpuk di bawah — itulah
+       jarak bawah yang terlihat lebih besar pada produk tanpa harga coret.
+       44px hanya menjaga ambang target sentuh; tinggi sebenarnya mengikuti isi. */
+    min-height: 44px !important;
     /* theme.css memakai selektor 4-kelas untuk .checkbox-button di dalam
        .variant-button, yang lebih spesifik dari aturan ini — border dan radius
        harus dipaksa, sama seperti padding dan background di atas. */
