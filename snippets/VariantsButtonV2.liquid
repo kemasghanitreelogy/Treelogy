@@ -123,23 +123,23 @@
     >
       <div class="v2-plan__head">
         {%- comment -%}
-          Radio, judul, dan badge dikelompokkan supaya merekalah yang boleh
-          turun baris saat kartu menyempit. Tanpa pengelompokan ini blok harga
-          yang ikut membungkus, dan ia mendarat sendirian di baris bawah.
+          Tiga anak langsung dari baris judul = tiga kolom grid: judul, badge,
+          harga. Badge harus jadi kolom tersendiri, bukan menempel pada judul,
+          supaya grid bisa menaruhnya tepat di sumbu tengah kartu.
         {%- endcomment -%}
         <span class="v2-plan__main">
           <span class="v2-plan__radio" aria-hidden="true"></span>
           <span class="v2-plan__title">{{ v2_label }}</span>
-
-          {%- assign v2_badge = variant.metafields.custom.custom_badge_text -%}
-          {%- if v2_saving > 0 -%}
-            <span class="v2-plan__badge">
-              {%- if is_id_locale -%}hemat {{ v2_saving_text }}{%- else -%}save {{ v2_saving_text }}{%- endif -%}
-            </span>
-          {%- elsif v2_badge != blank -%}
-            <span class="v2-plan__badge">{{ v2_badge }}</span>
-          {%- endif -%}
         </span>
+
+        {%- assign v2_badge = variant.metafields.custom.custom_badge_text -%}
+        {%- if v2_saving > 0 -%}
+          <span class="v2-plan__badge">
+            {%- if is_id_locale -%}hemat {{ v2_saving_text }}{%- else -%}save {{ v2_saving_text }}{%- endif -%}
+          </span>
+        {%- elsif v2_badge != blank -%}
+          <span class="v2-plan__badge">{{ v2_badge }}</span>
+        {%- endif -%}
 
         <span class="v2-plan__prices">
           {%- if v2_compare_text != blank -%}
@@ -296,20 +296,25 @@
      turun dan mendarat sendirian di baris bawah. Yang boleh turun hanyalah
      badge di dalam .v2-plan__main, dan itu pun hanya sebagai jaring pengaman
      untuk label yang luar biasa panjang. */
+  /* Kolom kiri dan kanan sama-sama minmax(0, 1fr), jadi lebarnya selalu sama
+     dan kolom tengah jatuh tepat di sumbu kartu — pusatnya hasil geometri,
+     bukan penempatan manual. Bedanya dengan position:absolute yang dipakai
+     sebelumnya: di sini badge punya jalur sendiri, sehingga judul panjang
+     membungkus di kolomnya alih-alih tertutup badge. minmax(0, ...) wajib —
+     tanpanya min-width:auto membuat judul panjang memaksa kolomnya melebar
+     dan kesamaan lebar itu batal. */
   .v2-plan__head {
-    position: relative;
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: center;
-    flex-wrap: nowrap;
     gap: 8px;
   }
 
   .v2-plan__main {
+    grid-column: 1;
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 6px 8px;
-    flex: 1 1 auto;
+    gap: 8px;
     min-width: 0;
   }
 
@@ -337,7 +342,6 @@
     font-weight: 500;
     line-height: 1.25;
     color: #2b3c35;
-    white-space: nowrap;
   }
 
   /* Badge diposisikan absolut tepat di sumbu tengah kartu, bukan mengekor
@@ -345,10 +349,7 @@
      dengan titik tengah kartu. Karena keluar dari alur, ia juga tidak lagi
      mendorong judul atau blok harga. */
   .v2-plan__badge {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    grid-column: 2;
     display: inline-flex;
     align-items: center;
     padding: 2px 8px;
@@ -362,8 +363,8 @@
   }
 
   .v2-plan__prices {
-    flex: 0 0 auto;
-    margin-left: auto;
+    grid-column: 3;
+    justify-self: end;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
@@ -541,7 +542,7 @@
     }
 
     .v2-plan__main {
-      gap: 5px 6px;
+      gap: 6px;
     }
 
     .v2-plan__perks {
@@ -574,7 +575,7 @@
     }
 
     .v2-plan__main {
-      gap: 6px 10px;
+      gap: 10px;
     }
 
     .v2-plan__radio {
