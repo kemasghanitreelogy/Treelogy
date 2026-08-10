@@ -267,8 +267,11 @@
     position: relative;
     padding: 13px 14px !important;
     min-height: 44px;
-    border: 2px solid #6c7257;
-    border-radius: 6px;
+    /* theme.css memakai selektor 4-kelas untuk .checkbox-button di dalam
+       .variant-button, yang lebih spesifik dari aturan ini — border dan radius
+       harus dipaksa, sama seperti padding dan background di atas. */
+    border: 2px solid #6c7257 !important;
+    border-radius: 6px !important;
     background-color: #fff !important;
     cursor: pointer;
     transition: border-color 180ms ease, background-color 180ms ease;
@@ -276,12 +279,12 @@
 
   .v2-plan.protocol-variant-card.checkbox-button.active,
   .v2-plan.protocol-variant-card.checkbox-button.static-active {
-    border-color: #3f4c39;
+    border-color: #3f4c39 !important;
     background-color: #e1e7da !important;
   }
 
   .v2-plan:hover {
-    border-color: #3f4c39;
+    border-color: #3f4c39 !important;
   }
 
   .v2-plan:focus-visible {
@@ -531,30 +534,8 @@
       gap: 5px 6px;
     }
 
-    .v2-plan__badge {
-      font-size: 0.6875rem;
-      padding: 3px 7px;
-    }
-
     .v2-plan__perks {
       padding-left: 2px;
-    }
-  }
-
-  /* Di bawah 375px ("180 grams" + "save 290.000" pada layar Android lama)
-     ruangnya masih kurang belasan piksel, jadi tipografinya diturunkan satu
-     tingkat lagi hanya di sini. */
-  @media screen and (max-width: 374px) {
-    .v2-plan__title {
-      font-size: 0.9375rem;
-    }
-
-    .v2-plan__badge {
-      padding: 3px 6px;
-    }
-
-    .v2-plan__price {
-      font-size: 0.875rem;
     }
   }
 
