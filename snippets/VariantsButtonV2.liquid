@@ -649,7 +649,10 @@
      jadi aturan ini tidak berlaku di sana. */
   @media screen and (max-width: 599px) {
     .v2-plan__head--flow {
-      grid-template-columns: minmax(0, auto) auto minmax(0, 1fr);
+      /* Judul yang fleksibel, badge dan harga selebar isinya. Kebalikannya
+         (1fr di kolom harga) membuat kolom itu menyusut ke nol lalu harga
+         menimpa badge. */
+      grid-template-columns: minmax(0, 1fr) auto auto;
     }
   }
 
