@@ -183,7 +183,7 @@
               {%- continue -%}
             {%- endif -%}
             {%- assign v2_perk_parts = v2_perk_text | split: '|' -%}
-            <li class="v2-plan__perk{% if v2_perk_parts.size > 1 %} v2-plan__perk--gift{% endif %}">
+            <li class="v2-plan__perk">
               {%- comment -%}
                 Baris berhadiah ditandai ikon kado, bukan titik. Penandanya
                 memisahkan barang fisik yang punya nilai rupiah dari benefit
@@ -306,8 +306,7 @@
     transition: border-color 180ms ease, background-color 180ms ease;
   }
 
-  .v2-plan.protocol-variant-card.checkbox-button.active,
-  .v2-plan.protocol-variant-card.checkbox-button.static-active {
+  .v2-plan.protocol-variant-card.checkbox-button.active {
     border-color: #3f4c39 !important;
     background-color: #e1e7da !important;
   }
