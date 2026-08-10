@@ -174,20 +174,22 @@
 </div>
 
 <style>
-  /* Ukuran dasar mengikuti layar sempit; media query di bawah menaikkannya
-     sedikit untuk desktop. Skala tunggal lewat clamp() sebelumnya membuat
-     kartu terlalu besar di layar lebar. */
+  /* Ukuran dasar dipilih agar radio + judul + badge + harga tetap muat pada
+     SATU baris di layar 360-390px. Kalau salah satunya kebesaran, badge turun
+     ke baris kedua dan kartu langsung terlihat berantakan. Media query di bawah
+     menaikkannya untuk desktop, tapi tetap di bawah ukuran teks isi halaman
+     (16px) supaya kartu tidak mendominasi. */
   .v2-plans {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    margin: 0 0 18px;
+    gap: 10px;
+    margin: 0 0 16px;
   }
 
   .v2-plan.protocol-variant-card.checkbox-button {
     display: block !important;
     position: relative;
-    padding: 14px 16px !important;
+    padding: 13px 14px !important;
     min-height: 44px;
     border: 1.5px solid #8a9479;
     border-radius: 12px;
@@ -213,27 +215,28 @@
 
   /* Baris judul tidak boleh membungkus: kalau ia membungkus, blok harga yang
      turun dan mendarat sendirian di baris bawah. Yang boleh turun hanyalah
-     badge di dalam .v2-plan__main. */
+     badge di dalam .v2-plan__main, dan itu pun hanya sebagai jaring pengaman
+     untuk label yang luar biasa panjang. */
   .v2-plan__head {
     display: flex;
     align-items: center;
     flex-wrap: nowrap;
-    gap: 10px;
+    gap: 8px;
   }
 
   .v2-plan__main {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 8px 10px;
+    gap: 6px 8px;
     flex: 1 1 auto;
     min-width: 0;
   }
 
   .v2-plan__radio {
-    width: 20px;
-    height: 20px;
-    flex: 0 0 20px;
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
     display: block;
     border: 2px solid #3f4c39;
     border-radius: 50%;
@@ -250,22 +253,23 @@
   }
 
   .v2-plan__title {
-    font-size: 1.0625rem;
+    font-size: 1rem;
     font-weight: 600;
     line-height: 1.25;
     color: #1f2a22;
+    white-space: nowrap;
   }
 
   .v2-plan__badge {
     display: inline-flex;
     align-items: center;
-    padding: 4px 10px;
-    border-radius: 7px;
+    padding: 3px 8px;
+    border-radius: 6px;
     background-color: #2b3c35;
     color: #f8f8f2;
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
     font-weight: 700;
-    line-height: 1.3;
+    line-height: 1.35;
     white-space: nowrap;
   }
 
@@ -277,17 +281,17 @@
     align-items: flex-end;
     text-align: right;
     white-space: nowrap;
-    line-height: 1.25;
+    line-height: 1.2;
   }
 
   .v2-plan__compare {
-    font-size: 0.75rem;
+    font-size: 0.6875rem;
     font-weight: 400;
     color: #6c7256;
   }
 
   .v2-plan__price {
-    font-size: 1rem;
+    font-size: 0.9375rem;
     font-weight: 700;
     color: #1f2a22;
   }
@@ -302,26 +306,26 @@
 
   .v2-plan__perks {
     list-style: none;
-    margin: 10px 0 0;
+    margin: 9px 0 0;
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 4px;
   }
 
   .v2-plan__perk {
     display: flex;
     align-items: center;
-    gap: 9px;
-    font-size: 0.8125rem;
+    gap: 8px;
+    font-size: 0.78125rem;
     line-height: 1.4;
     color: #1f2a22;
   }
 
   .v2-plan__dot {
-    width: 7px;
-    height: 7px;
-    flex: 0 0 7px;
+    width: 6px;
+    height: 6px;
+    flex: 0 0 6px;
     border-radius: 50%;
     background-color: #1f2a22;
   }
@@ -338,11 +342,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 9px;
     flex-wrap: wrap;
     width: 100%;
-    min-height: 52px;
-    padding: 14px 16px;
+    min-height: 48px;
+    padding: 13px 14px;
     border: 0;
     border-radius: 10px;
     background-color: #2b3c35;
@@ -361,7 +365,7 @@
   }
 
   .v2-atc__label {
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
     font-weight: 700;
     letter-spacing: 0.02em;
     text-transform: uppercase;
@@ -369,12 +373,12 @@
 
   .v2-atc__sep {
     width: 2px;
-    height: 18px;
+    height: 16px;
     background-color: rgb(248 248 242 / 65%);
   }
 
   .v2-atc__compare {
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
     color: rgb(248 248 242 / 80%);
   }
 
@@ -383,67 +387,82 @@
   }
 
   .v2-atc__price {
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
     font-weight: 700;
   }
 
   @media screen and (min-width: 768px) {
     .v2-plans {
-      gap: 14px;
+      gap: 12px;
     }
 
     .v2-plan.protocol-variant-card.checkbox-button {
-      padding: 16px 18px !important;
-      border-radius: 14px;
+      padding: 14px 16px !important;
     }
 
     .v2-plan__head {
-      gap: 12px;
+      gap: 10px;
+    }
+
+    .v2-plan__main {
+      gap: 6px 10px;
     }
 
     .v2-plan__radio {
-      width: 22px;
-      height: 22px;
-      flex: 0 0 22px;
+      width: 20px;
+      height: 20px;
+      flex: 0 0 20px;
     }
 
     .v2-plan__title {
-      font-size: 1.25rem;
-    }
-
-    .v2-plan__badge {
-      font-size: 0.875rem;
-      padding: 5px 12px;
-    }
-
-    .v2-plan__compare {
-      font-size: 0.8125rem;
-    }
-
-    .v2-plan__price {
       font-size: 1.125rem;
     }
 
-    .v2-plan__perk {
-      font-size: 0.9375rem;
+    .v2-plan__badge {
+      font-size: 0.8125rem;
+      padding: 4px 10px;
+    }
+
+    .v2-plan__compare {
+      font-size: 0.75rem;
+    }
+
+    .v2-plan__price {
+      font-size: 1rem;
     }
 
     .v2-plan__perks {
-      gap: 6px;
+      margin-top: 8px;
+      gap: 5px;
+    }
+
+    .v2-plan__perk {
+      font-size: 0.875rem;
+      gap: 9px;
+    }
+
+    .v2-plan__dot {
+      width: 7px;
+      height: 7px;
+      flex: 0 0 7px;
     }
 
     .button-quick-add-cart.v2-atc {
-      min-height: 58px;
-      gap: 12px;
+      min-height: 52px;
+      gap: 11px;
     }
 
     .v2-atc__label,
     .v2-atc__price {
-      font-size: 1.0625rem;
+      font-size: 1rem;
     }
 
     .v2-atc__compare {
-      font-size: 0.875rem;
+      font-size: 0.8125rem;
+    }
+
+    .v2-atc__sep {
+      height: 18px;
     }
   }
 
