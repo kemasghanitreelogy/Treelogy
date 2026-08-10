@@ -297,6 +297,7 @@
      badge di dalam .v2-plan__main, dan itu pun hanya sebagai jaring pengaman
      untuk label yang luar biasa panjang. */
   .v2-plan__head {
+    position: relative;
     display: flex;
     align-items: center;
     flex-wrap: nowrap;
@@ -339,7 +340,15 @@
     white-space: nowrap;
   }
 
+  /* Badge diposisikan absolut tepat di sumbu tengah kartu, bukan mengekor
+     lebar judul. Padding kartu simetris, jadi titik tengah baris judul sama
+     dengan titik tengah kartu. Karena keluar dari alur, ia juga tidak lagi
+     mendorong judul atau blok harga. */
   .v2-plan__badge {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
     display: inline-flex;
     align-items: center;
     padding: 2px 8px;
