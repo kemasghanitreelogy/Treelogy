@@ -64,8 +64,17 @@
         assign v2_label = variant.title
       endif
 
-      assign v2_compare = variant.metafields.custom.staged_compare_at_price.value | plus: 0
-      if v2_compare == 0 and variant.compare_at_price > variant.price
+      comment
+        staged_compare_at_price disimpan dalam rupiah penuh (mengikuti
+        custom.original_price), sedangkan variant.price dalam satuan terkecil.
+        Tanpa dikalikan 100 perbandingannya selalu kalah dan harga coretnya
+        tidak pernah muncul.
+      endcomment
+      assign v2_compare = 0
+      assign v2_compare_meta = variant.metafields.custom.staged_compare_at_price.value | plus: 0
+      if v2_compare_meta > 0
+        assign v2_compare = v2_compare_meta | times: 100
+      elsif variant.compare_at_price > variant.price
         assign v2_compare = variant.compare_at_price
       endif
 
