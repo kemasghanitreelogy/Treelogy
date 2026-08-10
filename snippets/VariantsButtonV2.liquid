@@ -364,6 +364,32 @@
     justify-self: center;
   }
 
+  /* Di bawah 375px kolom judul tinggal ~70px, sehingga label sependek
+     "180 grams" pun sudah pecah dua baris. Di lebar itu semua kartu memakai
+     susunan bertumpuk, bukan hanya yang labelnya panjang. */
+  @media screen and (max-width: 374px) {
+    .v2-plan__head {
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas:
+        "main prices"
+        "badge badge";
+      row-gap: 8px;
+    }
+
+    .v2-plan__main {
+      grid-area: main;
+    }
+
+    .v2-plan__prices {
+      grid-area: prices;
+    }
+
+    .v2-plan__badge {
+      grid-area: badge;
+      justify-self: center;
+    }
+  }
+
   .v2-plan__radio {
     width: 18px;
     height: 18px;
@@ -600,13 +626,6 @@
      360px badge berukuran Figma membuat baris judul membungkus, jadi hanya di
      sana ia diturunkan satu tingkat. Ini penyimpangan sadar dari spesifikasi,
      bukan kelalaian. */
-  @media screen and (max-width: 374px) {
-    .v2-plan__badge {
-      font-size: 0.6875rem;
-      padding: 2px 6px;
-    }
-  }
-
   @media screen and (min-width: 768px) {
     .v2-plans {
       gap: 12px;
