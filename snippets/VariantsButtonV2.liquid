@@ -243,7 +243,7 @@
 <div class="v2-sticky" data-v2-sticky>
   <button type="button" class="v2-sticky__btn" data-v2-sticky-btn>
     <span class="v2-atc__label">{{ 'products.general.add_to_cart' | t }}</span>
-    <span class="v2-atc__sep" aria-hidden="true"></span>
+    <span class="v2-atc__sep" aria-hidden="true">|</span>
     <s class="v2-atc__compare" data-v2-atc-compare></s>
     <span class="v2-atc__price" data-v2-atc-price></span>
   </button>
@@ -468,13 +468,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 9px;
+    gap: 12px;
     flex-wrap: wrap;
     width: 100%;
-    min-height: 48px;
-    padding: 13px 14px;
+    min-height: 50px;
+    padding: 12px 14px;
     border: 0;
-    border-radius: 10px;
+    border-radius: 6px;
     background-color: #2b3c35;
     color: #f8f8f2;
     cursor: pointer;
@@ -490,31 +490,29 @@
     outline-offset: 3px;
   }
 
-  .v2-atc__label {
+  .v2-atc__label,
+  .v2-atc__sep,
+  .v2-atc__price {
     font-size: 0.875rem;
     font-weight: 700;
-    letter-spacing: 0.02em;
+    line-height: 1.25;
+  }
+
+  .v2-atc__label {
     text-transform: uppercase;
   }
 
-  .v2-atc__sep {
-    width: 2px;
-    height: 16px;
-    background-color: rgb(248 248 242 / 65%);
-  }
-
+  /* Harga coret di tombol memakai Inter Light dan warna yang sama dengan teks
+     lain — di Figma ia tidak diredupkan, hanya lebih tipis dan lebih kecil. */
   .v2-atc__compare {
     font-size: 0.75rem;
-    color: rgb(248 248 242 / 80%);
+    font-weight: 300;
+    line-height: 1.25;
+    color: #f8f8f2;
   }
 
   .v2-atc__compare:empty {
     display: none;
-  }
-
-  .v2-atc__price {
-    font-size: 0.875rem;
-    font-weight: 700;
   }
 
   /* Layar 360-375px adalah kasus tersempit yang nyata. Label terpanjang
@@ -621,21 +619,18 @@
     }
 
     .button-quick-add-cart.v2-atc {
-      min-height: 52px;
-      gap: 11px;
+      min-height: 60px;
+      gap: 14px;
     }
 
     .v2-atc__label,
+    .v2-atc__sep,
     .v2-atc__price {
-      font-size: 1rem;
+      font-size: 1.0625rem;
     }
 
     .v2-atc__compare {
-      font-size: 0.8125rem;
-    }
-
-    .v2-atc__sep {
-      height: 18px;
+      font-size: 0.875rem;
     }
   }
 
@@ -687,13 +682,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 9px;
+    gap: 12px;
     flex-wrap: wrap;
     width: 100%;
-    min-height: 48px;
-    padding: 13px 14px;
+    min-height: 50px;
+    padding: 12px 14px;
     border: 0;
-    border-radius: 10px;
+    border-radius: 6px;
     background-color: #2b3c35;
     color: #f8f8f2;
     cursor: pointer;
@@ -749,8 +744,8 @@
     }
 
     .v2-sticky__btn {
-      min-height: 52px;
-      gap: 11px;
+      min-height: 60px;
+      gap: 14px;
       max-width: 640px;
       margin: 0 auto;
     }
