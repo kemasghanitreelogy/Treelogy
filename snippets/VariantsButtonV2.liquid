@@ -539,6 +539,16 @@
     }
   }
 
+  /* Figma menggambar kartu ini pada frame 355px (setara viewport ~390px). Di
+     360px badge berukuran Figma membuat baris judul membungkus, jadi hanya di
+     sana ia diturunkan satu tingkat. Ini penyimpangan sadar dari spesifikasi,
+     bukan kelalaian. */
+  @media screen and (max-width: 374px) {
+    .v2-plan__badge {
+      font-size: 0.75rem;
+    }
+  }
+
   @media screen and (min-width: 768px) {
     .v2-plans {
       gap: 12px;
