@@ -474,16 +474,18 @@
     min-height: 50px;
     padding: 12px 14px;
     border: 0;
-    /* theme.css memberi .button radius 8px dari selektor yang lebih spesifik. */
+    /* theme.css menata .button-quick-add-cart lewat selektor yang lebih
+       spesifik — radius 8px dan latar hijau #526547. Keduanya harus dipaksa
+       agar tombol ini mengikuti Figma (#2b3c35, radius 6). */
     border-radius: 6px !important;
-    background-color: #2b3c35;
+    background-color: #2b3c35 !important;
     color: #f8f8f2;
     cursor: pointer;
     transition: background-color 180ms ease;
   }
 
   .button-quick-add-cart.v2-atc:hover {
-    background-color: #1f2a22;
+    background-color: #1f2a22 !important;
   }
 
   .button-quick-add-cart.v2-atc:focus-visible {
