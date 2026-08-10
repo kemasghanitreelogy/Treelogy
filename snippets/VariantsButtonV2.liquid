@@ -658,6 +658,20 @@
      sini ada skala 1.2x buatan sendiri yang membuat badge (17px tebal) lebih
      besar daripada teks isi halaman (16px) — kartunya jadi berteriak. Ukuran
      huruf sekarang mengikuti Figma di semua lebar layar. */
+  /* Di susunan sebaris kolom judul hanya dapat sisa setelah badge dan harga.
+     Merapatkan jarak radio-judul dan antar-kolom mengembalikan ~4px ke kolom
+     itu — cukup agar label Indonesia terpanjang ("Paket Kesehatan Harian")
+     muat dua baris, bukan tiga. */
+  @media screen and (min-width: 600px) {
+    .v2-plan__head {
+      gap: 6px;
+    }
+
+    .v2-plan__main {
+      gap: 6px;
+    }
+  }
+
   @media screen and (min-width: 768px) {
     .v2-plans {
       gap: 12px;
@@ -735,6 +749,15 @@
 
     .v2-atc__compare {
       font-size: 0.8125rem;
+    }
+
+    .v2-sticky {
+      padding: 12px 24px calc(12px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .v2-sticky__btn {
+      max-width: 640px;
+      margin: 0 auto;
     }
   }
 
@@ -840,19 +863,6 @@
 
   .v2-sticky.is-visible .v2-sticky__btn > :nth-child(4) {
     transition-delay: 180ms;
-  }
-
-  @media screen and (min-width: 768px) {
-    .v2-sticky {
-      padding: 12px 24px calc(12px + env(safe-area-inset-bottom, 0px));
-    }
-
-    .v2-sticky__btn {
-      min-height: 60px;
-      gap: 14px;
-      max-width: 640px;
-      margin: 0 auto;
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {
