@@ -192,9 +192,12 @@
               {%- if v2_perk_parts.size > 1 -%}
                 {%- assign v2_perk_value = v2_perk_parts[1] | strip -%}
                 <span class="v2-plan__perk-value">
-                  <span class="v2-plan__sr">
-                    {%- if is_id_locale -%}senilai {%- else -%}worth {%- endif -%}
-                  </span>
+                  {%- comment -%}
+                    Spasi pemisahnya &nbsp; supaya tidak ikut terpangkas oleh
+                    trim Liquid — tanpa itu pembaca layar melafalkan
+                    "worthRp 120.000".
+                  {%- endcomment -%}
+                  <span class="v2-plan__sr">{% if is_id_locale %}senilai{% else %}worth{% endif %}&nbsp;</span>
                   {{- v2_perk_value -}}
                 </span>
               {%- endif -%}
