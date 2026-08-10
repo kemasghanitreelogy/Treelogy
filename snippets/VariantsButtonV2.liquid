@@ -65,8 +65,19 @@
       if v2_label == blank
         assign v2_label = variant.metafields.custom.time_protocol
       endif
+      comment
+        Produk tanpa opsi memakai varian bernama "Default Title" — placeholder
+        Shopify yang tidak pernah boleh terbaca pembeli. Kartu lama sudah
+        menggantinya dengan nama produk; v2 harus melakukan hal yang sama.
+        Pengecekannya lewat has_only_default_variant, bukan mencocokkan teks,
+        karena nama itu tidak diterjemahkan dan mudah meleset antar-locale.
+      endcomment
       if v2_label == blank
-        assign v2_label = variant.title
+        if product.has_only_default_variant
+          assign v2_label = product.title
+        else
+          assign v2_label = variant.title
+        endif
       endif
 
       comment
