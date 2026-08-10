@@ -642,9 +642,73 @@
       padding: 14px 16px !important;
     }
 
+    /* Kartu desktop 482px lawan 355px di Figma, jadi hurufnya dinaikkan satu
+       tingkat — tapi judul dan badge berhenti di 16px, sama dengan teks isi
+       halaman dan tidak melewatinya. Batas itu yang dilanggar skala 1.2x
+       sebelumnya (badge 17px tebal) sehingga kartunya terasa berteriak.
+       Perbandingan antar-elemen tetap seperti Figma: judul = badge, harga satu
+       tingkat di bawahnya, bullet paling kecil. */
+    .v2-plan__title,
+    .v2-plan__badge {
+      font-size: 1rem;
+    }
+
+    .v2-plan__price {
+      font-size: 0.875rem;
+    }
+
+    .v2-plan__compare,
+    .v2-plan__perk-price {
+      font-size: 0.6875rem;
+    }
+
+    .v2-plan__perk {
+      font-size: 0.75rem;
+    }
+
+    /* Penanda ikut naik sedikit supaya tidak tampak mengecil terhadap teks;
+       radio 20 + jarak 8 dikurangi penanda 16 + jarak 8 tetap 4px, jadi
+       indentasi bullet masih lurus dengan judul tanpa disetel ulang. */
+    .v2-plan__radio {
+      width: 20px;
+      height: 20px;
+      flex: 0 0 20px;
+    }
+
+    .v2-plan__marker {
+      width: 16px;
+      height: 16px;
+      flex: 0 0 16px;
+    }
+
+    .v2-plan__dot {
+      width: 10px;
+      height: 10px;
+    }
+
+    .v2-plan__gift {
+      width: 16px;
+      height: 16px;
+    }
+
     .v2-plan__perks {
       margin-top: 8px;
       gap: 5px;
+    }
+
+    .button-quick-add-cart.v2-atc,
+    .v2-sticky__btn {
+      min-height: 56px;
+    }
+
+    .v2-atc__label,
+    .v2-atc__sep,
+    .v2-atc__price {
+      font-size: 0.9375rem;
+    }
+
+    .v2-atc__compare {
+      font-size: 0.8125rem;
     }
   }
 
