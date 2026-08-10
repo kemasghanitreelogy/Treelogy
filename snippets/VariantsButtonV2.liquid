@@ -149,8 +149,17 @@
         </span>
       </div>
 
+      {%- comment -%}
+        Nilai hadiah TIDAK dicoret. Dalam satu kartu, coretan hanya boleh punya
+        satu arti — "harga yang tadinya kamu bayar" — dan itu sudah dipakai
+        harga lama di kanan atas. Mencoret Rp 120.000 di samping "Free Bamboo
+        Spoon" memakai simbol yang sama untuk maksud yang berlawanan (barang
+        yang kamu TERIMA, bukan yang batal kamu bayar), dan pembaca harus
+        berhenti menebak. Karena itu nilainya diberi label "worth/senilai".
+      {%- endcomment -%}
       {%- capture v2_perks_html -%}{{ variant.metafields.custom.description | metafield_tag }}{%- endcapture -%}
       {%- assign v2_perk_items = v2_perks_html | split: '<li>' -%}
+      {%- assign v2_extras_sub = 0 -%}
       {%- if v2_perk_items.size > 1 -%}
         <ul class="v2-plan__perks">
           {%- for v2_perk_raw in v2_perk_items offset: 1 -%}
@@ -163,11 +172,48 @@
               <span class="v2-plan__dot" aria-hidden="true"></span>
               <span class="v2-plan__perk-text">{{ v2_perk_parts[0] | strip }}</span>
               {%- if v2_perk_parts.size > 1 -%}
-                <s class="v2-plan__perk-value">{{ v2_perk_parts[1] | strip }}</s>
+                {%- assign v2_perk_value = v2_perk_parts[1] | strip -%}
+                {%- assign v2_perk_amount = v2_perk_value | remove: 'Rp' | remove: '.' | remove: ',' | strip | plus: 0 -%}
+                {%- if v2_perk_amount > 0 -%}
+                  {%- assign v2_perk_sub = v2_perk_amount | times: 100 -%}
+                  {%- assign v2_extras_sub = v2_extras_sub | plus: v2_perk_sub -%}
+                {%- endif -%}
+                <span class="v2-plan__perk-value">
+                  {%- if is_id_locale -%}senilai {{ v2_perk_value }}{%- else -%}worth {{ v2_perk_value }}{%- endif -%}
+                </span>
               {%- endif -%}
             </li>
           {%- endfor -%}
         </ul>
+      {%- endif -%}
+
+      {%- comment -%}
+        Baris total hanya muncul kalau paket ini benar-benar membawa hadiah,
+        supaya ia tidak sekadar mengulang badge hemat. Angkanya konsisten
+        dengan badge: potongan harga + nilai hadiah = total hemat.
+      {%- endcomment -%}
+      {%- if v2_extras_sub > 0 -%}
+        {%- liquid
+          assign v2_base = v2_compare
+          if v2_base == 0
+            assign v2_base = variant.price
+          endif
+          assign v2_total_value = v2_base | plus: v2_extras_sub
+          assign v2_total_save = v2_total_value | minus: variant.price
+        -%}
+        <div class="v2-plan__total">
+          <span class="v2-plan__total-left">
+            {% if is_id_locale %}Total nilai{% else %}Total value{% endif %}
+            <span class="v2-plan__total-value">{{ v2_total_value | money_without_trailing_zeros }}</span>
+          </span>
+          <span class="v2-plan__total-save">
+            {%- if is_id_locale -%}
+              hemat {{ v2_total_save | money_without_trailing_zeros }}
+            {%- else -%}
+              you save {{ v2_total_save | money_without_trailing_zeros }}
+            {%- endif -%}
+          </span>
+        </div>
       {%- endif -%}
     </div>
   {%- endfor -%}
@@ -304,10 +350,13 @@
     letter-spacing: 0.04em;
   }
 
+  /* Bullet dimasukkan ke dalam sejauh (lebar radio + jarak) dikurangi (lebar
+     titik + jarak), supaya teks manfaat lurus dengan teks judul dan daftar
+     tidak terlihat menggantung di tepi kartu. */
   .v2-plan__perks {
     list-style: none;
     margin: 9px 0 0;
-    padding: 0;
+    padding: 0 0 0 12px;
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -333,7 +382,42 @@
   .v2-plan__perk-value {
     margin-left: auto;
     padding-left: 10px;
-    color: #6c7256;
+    color: #5c6b4a;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  /* Total nilai + total hemat. Hemat diberi latar sage tipis, bukan pil gelap,
+     supaya menonjol tanpa bersaing dengan badge di baris judul. */
+  .v2-plan__total {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 9px;
+    padding-top: 8px;
+    border-top: 1px solid rgb(63 76 57 / 18%);
+    font-size: 0.78125rem;
+    line-height: 1.35;
+  }
+
+  .v2-plan__total-left {
+    color: #515e56;
+  }
+
+  .v2-plan__total-value {
+    font-weight: 600;
+    color: #1f2a22;
+    white-space: nowrap;
+  }
+
+  .v2-plan__total-save {
+    flex: 0 0 auto;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background-color: rgb(82 101 71 / 16%);
+    color: #2b3c35;
+    font-weight: 700;
     white-space: nowrap;
   }
 
@@ -412,6 +496,10 @@
       font-size: 0.6875rem;
       padding: 3px 7px;
     }
+
+    .v2-plan__perks {
+      padding-left: 10px;
+    }
   }
 
   /* Di bawah 375px ("180 grams" + "save 290.000" pada layar Android lama)
@@ -474,11 +562,18 @@
     .v2-plan__perks {
       margin-top: 8px;
       gap: 5px;
+      padding-left: 14px;
     }
 
     .v2-plan__perk {
       font-size: 0.875rem;
       gap: 9px;
+    }
+
+    .v2-plan__total {
+      font-size: 0.875rem;
+      margin-top: 10px;
+      padding-top: 9px;
     }
 
     .v2-plan__dot {
