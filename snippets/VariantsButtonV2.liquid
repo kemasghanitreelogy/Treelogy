@@ -647,21 +647,26 @@
      sumbu kartu di sini — itu memang konsekuensi yang diterima supaya namanya
      muat dua baris, bukan empat. Dari 600px ke atas kolom sama lebar sudah cukup,
      jadi aturan ini tidak berlaku di sana. */
-  @media screen and (max-width: 599px) {
-    .v2-plan__head--flow {
-      /* Judul yang fleksibel, badge dan harga selebar isinya. Kebalikannya
-         (1fr di kolom harga) membuat kolom itu menyusut ke nol lalu harga
-         menimpa badge. */
-      grid-template-columns: minmax(0, 1fr) auto auto;
-    }
+  /* Kartu berlabel panjang memakai kolom yang mengikuti isi, di SEMUA lebar:
+     judul mengambil ruang yang ia perlukan, badge mengalir setelahnya, harga
+     tetap rata kanan. Badge tidak lagi tepat di sumbu kartu di sini, dan itu
+     memang seperti referensi desainnya. Kolom sama lebar (badge di tengah)
+     tetap dipakai kartu berlabel pendek.
 
-    /* Badge berukuran Figma memakan 111px di 390px, menyisakan 85px untuk judul
-       padahal "The Complete" butuh 96px. Dikecilkan HANYA pada kartu berlabel
-       panjang, jadi empat produk utama tetap memakai ukuran Figma. */
-    .v2-plan__head--flow .v2-plan__badge {
-      font-size: 0.6875rem;
-      padding: 2px 7px;
-    }
+     Catatan: 1fr harus di kolom judul. Menaruhnya di kolom harga membuat kolom
+     itu menyusut ke nol lalu harga menimpa badge. Ukuran badge tetap sama
+     dengan kartu lain; ruang untuk judul diambil dari jarak dan padding. */
+  .v2-plan__head--flow {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 4px;
+  }
+
+  .v2-plan__head--flow .v2-plan__main {
+    gap: 4px;
+  }
+
+  .v2-plan__head--flow .v2-plan__badge {
+    padding: 2px 5px;
   }
 
   /* Di 360-389px pengecilan badge pun tidak cukup — judul hanya dapat 84px.
