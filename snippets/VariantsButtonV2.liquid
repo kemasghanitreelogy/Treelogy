@@ -113,6 +113,21 @@
 
       assign v2_badge = variant.metafields.custom.custom_badge_text
 
+      comment
+        Kolom kiri dan kanan yang sama lebar membuat badge tepat di tengah, tapi
+        kolom judul jadi cuma separuh sisa ruang. Untuk nama panjang di layar
+        sempit itu tidak cukup: di 390px kolomnya 77px sedangkan "The Complete"
+        saja butuh 96px, sehingga namanya pecah empat baris. Kartu berlabel
+        panjang diberi penanda agar kolomnya mengikuti isi — badge lalu mengalir
+        setelah judul, persis seperti referensi desainnya. Label terpanjang di
+        desain "180 grams" hanya 9 karakter; nama bundel 18-26.
+      endcomment
+      assign v2_flow_head = false
+      assign v2_label_length = v2_label | strip | size
+      if v2_label_length > 12
+        assign v2_flow_head = true
+      endif
+
 
       assign v2_is_active = false
       if current_variant
@@ -135,7 +150,7 @@
       aria-checked="{% if v2_is_active %}true{% else %}false{% endif %}"
       tabindex="0"
     >
-      <div class="v2-plan__head">
+      <div class="v2-plan__head{% if v2_flow_head %} v2-plan__head--flow{% endif %}">
         {%- comment -%}
           Tiga anak langsung dari baris judul = tiga kolom grid: judul, badge,
           harga. Badge harus jadi kolom tersendiri, bukan menempel pada judul,
@@ -627,6 +642,17 @@
      judul, sedangkan "180 grams" butuh 72px — pecah dua baris. Mengecilkan
      badge satu tingkat di layar itu mengembalikan ~4px ke tiap kolom, cukup
      untuk menahannya tetap satu baris. */
+  /* Nama panjang di layar sempit: kolom judul mengambil lebar yang ia perlukan,
+     badge mengalir setelahnya, harga tetap rata kanan. Badge tidak lagi tepat di
+     sumbu kartu di sini — itu memang konsekuensi yang diterima supaya namanya
+     muat dua baris, bukan empat. Dari 600px ke atas kolom sama lebar sudah cukup,
+     jadi aturan ini tidak berlaku di sana. */
+  @media screen and (max-width: 599px) {
+    .v2-plan__head--flow {
+      grid-template-columns: minmax(0, auto) auto minmax(0, 1fr);
+    }
+  }
+
   @media screen and (max-width: 389px) {
     .v2-plan__badge {
       font-size: 0.6875rem;
