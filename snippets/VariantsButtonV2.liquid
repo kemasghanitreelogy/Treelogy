@@ -198,7 +198,15 @@
                     melafalkannya menyatu: "Free Bamboo Spoonworth Rp 120.000".
                   {%- endcomment -%}
                   <span class="v2-plan__sr">&nbsp;{% if is_id_locale %}senilai{% else %}worth{% endif %}&nbsp;</span>
-                  {{- v2_perk_value -}}
+                  <s class="v2-plan__perk-price">{{ v2_perk_value }}</s>
+                  {%- comment -%}
+                    Chip-nya aria-hidden: kata "Free" sudah ada di label baris,
+                    jadi pembaca layar tidak perlu mendengarnya dua kali. Ia
+                    murni penanda visual yang memberi arti pada coretan.
+                  {%- endcomment -%}
+                  <span class="v2-plan__free" aria-hidden="true">
+                    {%- if is_id_locale -%}GRATIS{%- else -%}FREE{%- endif -%}
+                  </span>
                 </span>
               {%- endif -%}
             </li>
@@ -397,12 +405,34 @@
     border: 0;
   }
 
+  /* Nilai hadiah dicoret lalu diberi chip GRATIS. Coretannya jadi punya arti
+     yang tegas — "angka ini batal kamu bayar" — sehingga tidak lagi tertukar
+     dengan coretan harga lama di baris judul. Chip-nya sengaja bernada sage,
+     bukan pil gelap seperti badge hemat, supaya hierarkinya tetap: badge =
+     potongan harga utama, chip = hadiah pelengkap. */
   .v2-plan__perk-value {
     margin-left: auto;
     padding-left: 10px;
-    color: #5c6b4a;
-    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     white-space: nowrap;
+  }
+
+  .v2-plan__perk-price {
+    color: #6c7256;
+    font-weight: 400;
+  }
+
+  .v2-plan__free {
+    padding: 1px 6px;
+    border-radius: 4px;
+    background-color: rgb(82 101 71 / 18%);
+    color: #2b3c35;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1.45;
   }
 
 
@@ -569,6 +599,10 @@
     .v2-plan__gift {
       width: 15px;
       height: 15px;
+    }
+
+    .v2-plan__free {
+      font-size: 0.75rem;
     }
 
     .button-quick-add-cart.v2-atc {
