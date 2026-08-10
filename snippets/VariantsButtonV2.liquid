@@ -629,6 +629,10 @@
      360px badge berukuran Figma membuat baris judul membungkus, jadi hanya di
      sana ia diturunkan satu tingkat. Ini penyimpangan sadar dari spesifikasi,
      bukan kelalaian. */
+  /* Desktop hanya melonggarkan ruang, TIDAK memperbesar huruf. Sebelumnya di
+     sini ada skala 1.2x buatan sendiri yang membuat badge (17px tebal) lebih
+     besar daripada teks isi halaman (16px) — kartunya jadi berteriak. Ukuran
+     huruf sekarang mengikuti Figma di semua lebar layar. */
   @media screen and (min-width: 768px) {
     .v2-plans {
       gap: 12px;
@@ -638,81 +642,9 @@
       padding: 14px 16px !important;
     }
 
-    .v2-plan__head {
-      gap: 10px;
-    }
-
-    .v2-plan__main {
-      gap: 10px;
-    }
-
-    .v2-plan__radio {
-      width: 20px;
-      height: 20px;
-      flex: 0 0 20px;
-    }
-
-    .v2-plan__title {
-      font-size: 1.0625rem;
-    }
-
-    .v2-plan__badge {
-      font-size: 1.0625rem;
-      padding: 3px 10px;
-    }
-
-    .v2-plan__compare {
-      font-size: 0.75rem;
-    }
-
-    .v2-plan__price {
-      font-size: 0.875rem;
-    }
-
     .v2-plan__perks {
       margin-top: 8px;
       gap: 5px;
-      padding-left: 6px;
-    }
-
-    .v2-plan__perk {
-      font-size: 0.75rem;
-      gap: 9px;
-    }
-
-    .v2-plan__marker {
-      width: 15px;
-      height: 15px;
-      flex: 0 0 15px;
-    }
-
-    .v2-plan__dot {
-      width: 7px;
-      height: 7px;
-    }
-
-    .v2-plan__gift {
-      width: 15px;
-      height: 15px;
-    }
-
-    .v2-plan__perk-price {
-      font-size: 0.75rem;
-    }
-
-    .button-quick-add-cart.v2-atc {
-      min-height: 60px;
-      gap: 14px;
-    }
-
-    .v2-atc__label,
-    .v2-atc__sep,
-    .v2-atc__price {
-      font-size: 1.0625rem;
-    }
-
-    .v2-atc__compare {
-      font-size: 0.875rem;
     }
   }
 
