@@ -111,27 +111,7 @@
       endif
       assign v2_price_text = variant.price | money_without_trailing_zeros
 
-      comment
-        Tiga kolom sejajar hanya masuk akal kalau labelnya pendek. Label paket
-        terpanjang di desain adalah "180 grams" (9 karakter); begitu jauh lebih
-        panjang dari itu — misalnya "The Complete Ritual Bundle" — kolom judul
-        menyempit dan teksnya pecah sampai empat baris. Ambang 12 karakter
-        memisahkan kedua kasus itu dengan jelas. Ini memang proxy: lebar piksel
-        tidak sama dengan jumlah karakter, tapi fontnya satu dan keputusannya
-        hanya biner, jadi cukup.
-      endcomment
       assign v2_badge = variant.metafields.custom.custom_badge_text
-      assign v2_has_badge = false
-      if v2_saving > 0 or v2_badge != blank
-        assign v2_has_badge = true
-      endif
-      assign v2_stack_badge = false
-      if v2_has_badge
-        assign v2_label_length = v2_label | strip | size
-        if v2_label_length > 12
-          assign v2_stack_badge = true
-        endif
-      endif
 
       assign v2_is_active = false
       if current_variant
@@ -154,7 +134,7 @@
       aria-checked="{% if v2_is_active %}true{% else %}false{% endif %}"
       tabindex="0"
     >
-      <div class="v2-plan__head{% if v2_stack_badge %} v2-plan__head--stacked{% endif %}">
+      <div class="v2-plan__head">
         {%- comment -%}
           Tiga anak langsung dari baris judul = tiga kolom grid: judul, badge,
           harga. Badge harus jadi kolom tersendiri, bukan menempel pada judul,
