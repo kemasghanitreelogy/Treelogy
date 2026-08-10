@@ -18,8 +18,11 @@
   - custom.staged_compare_at_price → harga coret; compare_at_price bawaan tidak
     dipakai sebab mengubahnya langsung memunculkan badge hemat di tema live
   - custom.description            → daftar manfaat. Satu <li> per baris; teks
-    setelah tanda "|" ditempatkan rata kanan sebagai nilai yang dicoret,
-    misalnya "Free mystery gift|Rp 47.000"
+    setelah tanda "|" ditempatkan rata kanan sebagai nilai yang dicoret dan
+    barisnya ditandai ikon kado, misalnya "Mystery gift|Rp 47.000".
+    Label baris bernilai cukup menyebut barangnya saja — jangan diawali
+    "Free/Gratis", karena ikon dan coretan sudah menyatakannya dan kata itu
+    membuat barisnya panjang tanpa menambah informasi.
 
   @param {product} product - Produk yang varian-variannya dirender
   @param {variant} [current_variant] - Varian terpilih dari ?variant= bila ada
@@ -150,12 +153,11 @@
       </div>
 
       {%- comment -%}
-        Nilai hadiah TIDAK dicoret. Dalam satu kartu, coretan hanya boleh punya
-        satu arti — "harga yang tadinya kamu bayar" — dan itu sudah dipakai
-        harga lama di kanan atas. Mencoret Rp 120.000 di samping "Free Bamboo
-        Spoon" memakai simbol yang sama untuk maksud yang berlawanan (barang
-        yang kamu TERIMA, bukan yang batal kamu bayar), dan pembaca harus
-        berhenti menebak. Karena itu nilainya diberi label "worth/senilai".
+        Nilai hadiah dicoret, sama seperti harga lama di kanan atas. Dua coretan
+        dengan arti berbeda dalam satu kartu sebenarnya rawan tertukar, dan yang
+        membedakannya di sini adalah ikon kado pada barisnya: coretan di baris
+        berikon = barang yang kamu terima, coretan di baris judul = harga yang
+        batal kamu bayar. Jangan hilangkan ikonnya tanpa mengganti pembeda lain.
       {%- endcomment -%}
       {%- capture v2_perks_html -%}{{ variant.metafields.custom.description | metafield_tag }}{%- endcapture -%}
       {%- assign v2_perk_items = v2_perks_html | split: '<li>' -%}
@@ -328,10 +330,13 @@
     line-height: 1.2;
   }
 
+  /* #515e56, bukan #6c7256: di atas kartu terpilih yang bernada sage, warna
+     lama hanya mencapai 3.89:1 dan tidak lolos ambang 4.5:1 untuk teks kecil.
+     Teks yang dicoret tetap menyampaikan informasi, jadi tidak dikecualikan. */
   .v2-plan__compare {
     font-size: 0.6875rem;
     font-weight: 400;
-    color: #6c7256;
+    color: #515e56;
   }
 
   .v2-plan__price {
@@ -418,7 +423,7 @@
   }
 
   .v2-plan__perk-price {
-    color: #5f6a4e;
+    color: #515e56;
     font-size: 0.6875rem;
     font-weight: 400;
   }
