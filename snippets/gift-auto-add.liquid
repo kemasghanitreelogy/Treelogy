@@ -254,7 +254,13 @@
             parent.insertBefore(real, parent.firstChild);
           });
         })
-        .catch(function () { awaiting = 0; clearSkeletons(c); });
+        .catch(function (err) {
+          /* Diteruskan, bukan ditelan: 429 di sini harus memicu percobaan
+             ulang. Skeleton sengaja DIBIARKAN — prosesnya memang belum
+             selesai, jadi membersihkannya sekarang membuat hadiah berkedip
+             hilang lalu muncul lagi. */
+          throw err;
+        });
     }
 
     function runSync() {
@@ -323,7 +329,9 @@
             }
           });
         })
-        .catch(function (err) { awaiting = 0; clearSkeletons(); throw err; });
+        /* Skeleton dibiarkan selama percobaan ulang; hanya syncOnce yang
+           membersihkannya, dan itu pun setelah semua percobaan habis. */
+        .catch(function (err) { throw err; });
     }
 
     /* Sinkronisasi penuh dengan percobaan ulang. Kalau tetap gagal, keranjang
