@@ -115,15 +115,14 @@
     </div>
 
     {% if is_eg_gift %}
+      {% comment %}
+        Baris hadiah tidak menampilkan angka sama sekali — harga aslinya yang
+        dicoret maupun "Rp 0". Badge GRATIS di atas sudah menyatakan seluruh
+        maksudnya, dan dua angka tambahan hanya membuat pembeli berhenti untuk
+        memastikan ia tidak sedang ditagih. Nilai hadiahnya tetap terhitung di
+        ringkasan "You're saving" di kaki keranjang.
+      {% endcomment %}
       <div class="detail-bottom">
-        <div class="price-row">
-          <s class="price-wrapper compare-at-price gift-strike" aria-hidden="true">
-            {{- item.original_price | money -}}
-          </s>
-          <div class="sub-head price-wrapper gift-price">
-            {{ 0 | money }}
-          </div>
-        </div>
         <div class="gift-qty">&times;{{ item.quantity }}</div>
       </div>
       <p class="gift-note">{{ 'cart.gift_note' | t }}</p>
