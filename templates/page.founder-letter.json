@@ -32,9 +32,9 @@
         "greeting": {
           "type": "greeting",
           "settings": {
-            "greeting": "Hi",
-            "greeting_suffix": ",",
-            "personalize": true
+            "greeting": "Halo, Para Customer Treelogy",
+            "greeting_suffix": "",
+            "personalize": false
           }
         },
         "intro": {
