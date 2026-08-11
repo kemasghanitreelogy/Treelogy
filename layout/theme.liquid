@@ -798,6 +798,7 @@
 
     {%- liquid
       assign is_chromeless = false
+      assign chromeless_keep_footer = false
       assign chromeless_bg = '#1d2a24'
       if template == 'page.links'
         assign is_chromeless = true
@@ -809,6 +810,7 @@
       if template == 'page.founder-letter'
         assign is_chromeless = true
         assign chromeless_bg = '#ffffff'
+        assign chromeless_keep_footer = true
       endif
     -%}
     {%- if is_chromeless -%}
@@ -833,8 +835,10 @@
         }
         body.t-chromeless .announcement-bar,
         body.t-chromeless #shopify-section-announcement-bar,
-        body.t-chromeless [id^="shopify-section-header"],
-        body.t-chromeless [id^="shopify-section-footer"] {
+        {%- unless chromeless_keep_footer %}
+        body.t-chromeless [id^="shopify-section-footer"],
+        {%- endunless %}
+        body.t-chromeless [id^="shopify-section-header"] {
           display: none !important;
         }
       </style>
