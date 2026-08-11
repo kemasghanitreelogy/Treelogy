@@ -531,18 +531,30 @@
      lagi" dan harus menghapus dua kali. 429 bersifat sesaat; tiga percobaan
      berjeda menaik hampir selalu cukup. */
   window.cartChangeWithRetry = function (payload, tries, delay) {
-    tries = tries || 3;
+    tries = tries || 5;
     delay = delay || 1200;
     return fetch('/cart/change.js', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify(payload)
     }).then(function (r) {
-      if (!r.ok) throw new Error('cart ' + r.status);
+      if (!r.ok) {
+        var err = new Error('cart ' + r.status);
+        /* Kalau server memberi tahu kapan boleh kembali, patuhi itu. */
+        var ra = parseInt(r.headers.get('Retry-After'), 10);
+        if (ra > 0 && ra <= 30) err.retryAfter = ra * 1000;
+        throw err;
+      }
       return r.json();
     }).catch(function (err) {
-      if (tries <= 1) throw err;
-      return new Promise(function (res) { setTimeout(res, delay); })
+      if (tries <= 1) {
+        /* Jejak untuk debug: tanpa ini, baris yang "balik lagi" tampak
+           seperti bug UI padahal servernya yang menolak terus. */
+        try { console.warn('[cart] change gagal setelah semua percobaan:', err && err.message); } catch (e) {}
+        throw err;
+      }
+      var pause = (err && err.retryAfter) ? err.retryAfter : delay;
+      return new Promise(function (res) { setTimeout(res, pause); })
         .then(function () { return window.cartChangeWithRetry(payload, tries - 1, delay * 2); });
     });
   };

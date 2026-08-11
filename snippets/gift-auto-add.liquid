@@ -129,9 +129,19 @@
     function withRetry(fn, tries, delay) {
       return fn().catch(function (err) {
         if (tries <= 1) throw err;
-        return new Promise(function (resolve) { setTimeout(resolve, delay); })
+        /* Kalau server memberi tahu kapan boleh kembali (Retry-After),
+           patuhi itu; tebakan eksponensial hanya untuk yang tidak memberi. */
+        var pause = (err && err.retryAfter) ? err.retryAfter : delay;
+        return new Promise(function (resolve) { setTimeout(resolve, pause); })
           .then(function () { return withRetry(fn, tries - 1, delay * 2); });
       });
+    }
+
+    function limitError(prefix, res) {
+      var err = new Error(prefix + ' ' + res.status);
+      var ra = parseInt(res.headers.get('Retry-After'), 10);
+      if (ra > 0 && ra <= 30) err.retryAfter = ra * 1000;
+      return err;
     }
 
     function post(url, payload) {
@@ -141,10 +151,10 @@
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
           body: JSON.stringify(payload)
         }).then(function (res) {
-          if (!res.ok) throw new Error('cart ' + res.status);
+          if (!res.ok) throw limitError('cart', res);
           return res.json();
         });
-      }, 3, 1200);
+      }, 4, 1200);
     }
 
     function readCart() {
@@ -156,10 +166,10 @@
                atasnya melempar SyntaxError yang tertelan .catch di ujung
                rantai — sinkronisasi mati diam-diam dan hadiahnya tampak
                menyangkut. */
-            if (!r.ok) throw new Error('cart ' + r.status);
+            if (!r.ok) throw limitError('cart', r);
             return r.json();
           });
-      }, 3, 1200);
+      }, 4, 1200);
     }
 
     function itemsParent(root) {
@@ -224,10 +234,10 @@
             /* Halaman 429 tetap HTML yang sah, jadi tanpa penjagaan ini ia
                ter-parse jadi dokumen tanpa baris hadiah — dan rekonsiliasi dua
                arah di bawah akan MENGHAPUS hadiah yang sebenarnya sah. */
-            if (!r.ok) throw new Error('mini ' + r.status);
+            if (!r.ok) throw limitError('mini', r);
             return r.text();
           });
-      }, 3, 1200)
+      }, 4, 1200)
         .then(function (html) {
           var doc = new DOMParser().parseFromString(html, 'text/html');
           var parent = itemsParent(c);
