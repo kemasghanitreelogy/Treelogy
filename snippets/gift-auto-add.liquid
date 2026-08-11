@@ -196,6 +196,25 @@
           var parent = itemsParent(c);
           awaiting = 0;
           clearSkeletons(c);
+
+          /* Rekonsiliasi DUA ARAH. Versi sebelumnya hanya menyisipkan baris
+             hadiah yang kurang, tidak pernah membuang yang berlebih — sehingga
+             saat produk utamanya dihapus, hadiahnya lenyap di server tapi
+             node-nya tertinggal di drawer dan tampak menyangkut. */
+          var fresh = {};
+          doc.querySelectorAll('.cart-item--gift').forEach(function (node) {
+            var k = node.getAttribute('data-key');
+            if (k) fresh[k] = true;
+          });
+          c.querySelectorAll('.cart-item--gift').forEach(function (node) {
+            if (node.hasAttribute('data-gift-skeleton')) return;
+            var k = node.getAttribute('data-key');
+            if (!k || !fresh[k]) {
+              node.classList.add('cart-item--gift-out');
+              setTimeout(function () { if (node.parentNode) node.remove(); }, 180);
+            }
+          });
+
           doc.querySelectorAll('.cart-item--gift').forEach(function (node) {
             var key = node.getAttribute('data-key');
             if (key && c.querySelector('.cart-item[data-key="' + key + '"]')) return;
@@ -261,10 +280,13 @@
         })
         .then(function (cart) {
           if (!cart) return null;
-          if (typeof window.refreshCartUI === 'function') {
-            try { window.refreshCartUI(cart); } catch (e) { /* abaikan */ }
-          }
-          return paintGifts();
+          /* Cat ulang baris hadiah DULU, baru totalnya. Kalau urutannya
+             dibalik, total sempat dihitung saat baris basi masih terpasang. */
+          return paintGifts().then(function () {
+            if (typeof window.refreshCartUI === 'function') {
+              try { window.refreshCartUI(cart); } catch (e) { /* abaikan */ }
+            }
+          });
         })
         .catch(function () { awaiting = 0; clearSkeletons(); });
     }
