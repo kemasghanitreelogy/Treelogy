@@ -105,6 +105,21 @@
             "size": "small",
             "width": "normal"
           }
+        },
+        "footer": {
+          "type": "footer",
+          "settings": {
+            "logo": "shopify://shop_images/founder-letter-badge.png",
+            "social_instagram": "https://www.instagram.com/treelogy/",
+            "social_facebook": "https://www.facebook.com/treelogy.moringa",
+            "social_tiktok": "https://www.tiktok.com/@treelogy.moringa",
+            "social_pinterest": "https://www.pinterest.com/treelogymoringa/",
+            "social_whatsapp": "https://wa.me/6281139603993",
+            "unsubscribe_text": "<p>Tidak ingin lagi menerima email ini? <a href=\"#\">Unsubscribe<\/a>.<\/p>",
+            "copyright": "© Treelogy 2026. All Rights Reserved.",
+            "background_color": "#2A3B34",
+            "text_color": "#F8F8F2"
+          }
         }
       },
       "block_order": [
@@ -120,7 +135,8 @@
         "closing",
         "cta",
         "guarantee",
-        "ps"
+        "ps",
+        "footer"
       ],
       "settings": {
         "body_font": "inter_n4",
