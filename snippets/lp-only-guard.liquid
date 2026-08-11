@@ -62,37 +62,14 @@
     data-source="{{ cart.attributes.lp_source | escape }}"
     data-landing-handle="{{ lp_guard_pages | split: ',' | first | strip | escape }}"
     hidden
-  >
-    <p class="lp-guard__toast" data-lp-guard-toast role="status" hidden>
-      Penawaran itu hanya berlaku lewat halaman promonya, jadi produknya kami keluarkan dari keranjang.
-    </p>
-  </div>
+  ></div>
 {%- endif -%}
 
 {% stylesheet %}
-  .lp-guard[hidden] {
-    display: none;
-  }
-
-  .lp-guard__toast {
-    position: fixed;
-    z-index: 120;
-    left: 50%;
-    bottom: 1.5rem;
-    transform: translateX(-50%);
-    max-width: min(30rem, calc(100vw - 2rem));
-    margin: 0;
-    padding: 0.875rem 1.25rem;
-    border-radius: 10px;
-    background: #22302a;
-    color: #f8f8f2;
-    font-size: 0.9375rem;
-    line-height: 1.5;
-    text-align: center;
-    box-shadow: 0 8px 28px rgb(0 0 0 / 24%);
-  }
-
-  .lp-guard__toast[hidden] {
+  /* Elemen ini hanya pembawa data untuk skrip di bawah, tidak pernah terlihat.
+     Toast pemberitahuan sengaja dihapus: penghapusan item tetap berjalan diam-diam
+     supaya pembeli tidak dihadapkan pesan yang membingungkan di luar konteks LP. */
+  .lp-guard {
     display: none;
   }
 {% endstylesheet %}
@@ -110,17 +87,6 @@
         if (!res.ok) throw new Error('cart request failed: ' + res.status);
         return res.json();
       });
-    }
-
-    function announce(root) {
-      var toast = root.querySelector('[data-lp-guard-toast]');
-      if (!toast) return;
-      root.hidden = false;
-      toast.hidden = false;
-      setTimeout(function () {
-        toast.hidden = true;
-        root.hidden = true;
-      }, 6000);
     }
 
     function repaint(cart) {
@@ -172,7 +138,6 @@
 
       post('/cart/update.js', { updates: updates })
         .then(function (cart) {
-          announce(root);
           if (!repaint(cart)) window.location.reload();
         })
         .catch(function () {});
