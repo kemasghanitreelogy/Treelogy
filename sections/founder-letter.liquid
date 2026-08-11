@@ -10,7 +10,8 @@
   {% endif %}
 
   #fl-{{ section.id }} {
-    --fl-u: calc(min(100vw, 1200px) / 1200);
+    --fl-u: calc(min(100vw, {{ section.settings.column_width }}px) / 1200);
+    --fl-outer: {{ section.settings.outer_background_color }};
     --fl-bg: {{ section.settings.background_color }};
     --fl-ink: {{ section.settings.text_color }};
     --fl-font: {{ fl_font.family }}, {{ fl_font.fallback_families }};
@@ -117,7 +118,7 @@
 
 {% stylesheet %}
   .fl {
-    background: var(--fl-bg);
+    background: var(--fl-outer);
     color: var(--fl-ink);
     font-family: var(--fl-font);
     overflow: hidden;
@@ -128,10 +129,11 @@
     flex-direction: column;
     align-items: center;
     row-gap: calc(85 * var(--fl-u));
-    max-width: 1200px;
+    width: calc(1200 * var(--fl-u));
     margin-inline: auto;
     padding-top: calc(36 * var(--fl-u));
     padding-bottom: calc(85 * var(--fl-u));
+    background: var(--fl-bg);
   }
 
   .fl-hero {
@@ -300,12 +302,33 @@
     },
     {
       "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "column_width",
+      "label": "Column width",
+      "info": "Width of the letter column on desktop, like an email",
+      "min": 400,
+      "max": 1200,
+      "step": 20,
+      "unit": "px",
+      "default": 600
+    },
+    {
+      "type": "header",
       "content": "Colors"
     },
     {
       "type": "color",
+      "id": "outer_background_color",
+      "label": "Page background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
       "id": "background_color",
-      "label": "Background",
+      "label": "Letter background",
       "default": "#FBFCF7"
     },
     {
