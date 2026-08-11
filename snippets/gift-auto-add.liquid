@@ -130,7 +130,25 @@
 
     function readCart() {
       return ownFetch('/cart.js', { headers: { Accept: 'application/json' } })
-        .then(function (r) { return r.json(); });
+        .then(function (r) {
+          /* Status WAJIB diperiksa. Saat Shopify membatasi laju endpoint
+             keranjang ia membalas 429 dengan halaman HTML, dan .json() atasnya
+             melempar SyntaxError yang tertelan .catch di ujung rantai —
+             sinkronisasi mati diam-diam dan hadiahnya tampak menyangkut. */
+          if (!r.ok) throw new Error('cart ' + r.status);
+          return r.json();
+        });
+    }
+
+    /* Ulangi dengan jeda menaik. 429 di endpoint keranjang bersifat sesaat,
+       jadi menyerah pada percobaan pertama membuat keranjang tertinggal di
+       keadaan setengah jadi yang tidak pernah pulih sendiri. */
+    function withRetry(fn, tries, delay) {
+      return fn().catch(function (err) {
+        if (tries <= 1) throw err;
+        return new Promise(function (resolve) { setTimeout(resolve, delay); })
+          .then(function () { return withRetry(fn, tries - 1, delay * 2); });
+      });
     }
 
     function itemsParent(root) {
@@ -190,7 +208,13 @@
       if (!c) { awaiting = 0; return Promise.resolve(); }
       var prefix = (window.Shopify && window.Shopify.locale === 'id') ? '/id' : '';
       return ownFetch(prefix + '/cart?view=mini', { headers: { Accept: 'text/html' } })
-        .then(function (r) { return r.text(); })
+        .then(function (r) {
+          /* Halaman 429 tetap HTML yang sah, jadi tanpa penjagaan ini ia
+             ter-parse jadi dokumen tanpa baris hadiah — dan rekonsiliasi dua
+             arah di bawah akan MENGHAPUS hadiah yang sebenarnya sah. */
+          if (!r.ok) throw new Error('mini ' + r.status);
+          return r.text();
+        })
         .then(function (html) {
           var doc = new DOMParser().parseFromString(html, 'text/html');
           var parent = itemsParent(c);
@@ -246,27 +270,33 @@
              baris apa pun yang variannya ada di daftar hadiah juga dibuang:
              produk hadiah tidak bisa dibeli terpisah, jadi kalau ia ada tanpa
              pemicunya, ia pasti sisa yang tersangkut. */
-          var updates = {};
-          var stale = false;
+          var drop = [];
           cart.items.forEach(function (item) {
             var ours = item.properties && item.properties._Gifted;
-            if ((ours || GIFTS[item.variant_id]) && !wanted[item.variant_id]) {
-              updates[item.key] = 0;
-              stale = true;
-            }
+            if ((ours || GIFTS[item.variant_id]) && !wanted[item.variant_id]) drop.push(item.key);
           });
 
           var present = {};
           cart.items.forEach(function (item) { present[item.variant_id] = true; });
           var missing = Object.keys(wanted).filter(function (g) { return !present[g]; });
 
-          if (!stale && !missing.length) {
+          if (!drop.length && !missing.length) {
             if (awaiting) { awaiting = 0; clearSkeletons(); }
             return null;
           }
 
-          var work = Promise.resolve();
-          if (stale) work = work.then(function () { return post('/cart/update.js', { updates: updates }); });
+          /* Semua penghapusan digabung ke satu /cart/update.js. Endpoint ini
+             menerima line key sebagai kunci (diuji langsung ke toko) dan
+             mengembalikan keranjang penuh, jadi satu permintaan sudah cukup —
+             makin sedikit permintaan, makin jarang kena batas laju. */
+          var work = Promise.resolve(null);
+          if (drop.length) {
+            work = work.then(function () {
+              var updates = {};
+              drop.forEach(function (key) { updates[key] = 0; });
+              return post('/cart/update.js', { updates: updates });
+            });
+          }
           if (missing.length) {
             work = work.then(function () {
               return post('/cart/add.js', {
@@ -275,8 +305,13 @@
                 })
               });
             });
+            /* /cart/add.js hanya mengembalikan baris yang ditambahkan, bukan
+               keranjang penuh, jadi di jalur ini pembacaan ulang wajib. */
+            return work.then(readCart);
           }
-          return work.then(readCart);
+          /* Jalur hapus-saja: /cart/update.js sudah mengembalikan keranjang
+             penuh, jadi tidak perlu dibaca ulang. */
+          return work;
         })
         .then(function (cart) {
           if (!cart) return null;
@@ -288,11 +323,27 @@
             }
           });
         })
-        .catch(function () { awaiting = 0; clearSkeletons(); });
+        .catch(function (err) { awaiting = 0; clearSkeletons(); throw err; });
+    }
+
+    /* Sinkronisasi penuh dengan percobaan ulang. Kalau tetap gagal, keranjang
+       dibaca sekali lagi supaya total di tombol checkout tidak tertinggal di
+       angka lama — angka basi lebih berbahaya daripada baris yang telat hilang,
+       karena pembeli memutuskan berdasarkan angka itu. */
+    function syncOnce() {
+      return withRetry(runSync, 3, 1200).catch(function () {
+        awaiting = 0;
+        clearSkeletons();
+        return readCart()
+          .then(function (cart) {
+            if (typeof window.refreshCartUI === 'function') window.refreshCartUI(cart);
+          })
+          .catch(function () { /* keranjang benar-benar tak terjangkau */ });
+      });
     }
 
     function sync() {
-      chain = chain.then(runSync, runSync);
+      chain = chain.then(syncOnce, syncOnce);
       return chain;
     }
 
