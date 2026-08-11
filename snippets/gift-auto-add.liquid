@@ -1,0 +1,163 @@
+{% doc %}
+  Memasukkan hadiah ke keranjang saat paket yang menjanjikannya dibeli.
+
+  Diskon otomatis Shopify (BXGY) hanya membuat hadiahnya gratis — ia TIDAK
+  menambahkan barang ke keranjang. Tanpa snippet ini, janji "Free Bamboo Spoon"
+  di halaman produk tidak pernah terwujud di keranjang maupun checkout.
+
+  Hadiah ditambahkan dengan properti `_Gifted`. Itu konvensi yang sudah dipakai
+  tema di snippets/CartItemCard.liquid dan snippets/MiniCart.liquid untuk
+  merender baris hadiah (badge GRATIS, harga dicoret), jadi tampilannya
+  mengikuti yang sudah ada, bukan bikin gaya baru.
+
+  Syarat agar barisnya terbaca sebagai hadiah oleh tema: harga aslinya > 0 lalu
+  didiskon jadi 0 oleh BXGY. Karena itu Travel Pouch dan Mystery Gift diberi
+  harga sesuai nilai yang tertulis di kartu produk; kalau harganya 0 sejak awal,
+  barisnya hanya tampak sebagai item gratis biasa tanpa penanda hadiah.
+
+  Baris hadiah yang tidak lagi berhak akan dihapus, tapi hanya yang punya
+  properti `_Gifted` — hadiah yang sengaja dibeli pembeli sendiri tidak disentuh.
+
+  @example
+  {% render 'gift-auto-add' %}
+{% enddoc %}
+
+{%- comment -%}
+  Peta hadiah per varian. Sengaja eksplisit, bukan diturunkan dari daftar
+  manfaat di kartu: teks kartu bisa berubah kapan saja, sedangkan yang mengikat
+  di keranjang adalah pasangan varian ini dan harus cocok persis dengan diskon
+  otomatis yang mendampinginya.
+{%- endcomment -%}
+{%- capture gift_map -%}
+{
+  "47255408378044": [47228130001084],
+  "44314284785852": [45377783562428],
+  "44314284753084": [45377783562428],
+  "46129728487612": [47228068561084, 47228130001084],
+  "47228045492412": [47228068561084, 47228130001084],
+  "46129731666108": [47228068561084],
+  "47228045459644": [47228068561084],
+  "44527091351740": [47228068561084]
+}
+{%- endcapture -%}
+
+<script type="application/json" data-gift-map>{{ gift_map }}</script>
+
+<script>
+  (function () {
+    var el = document.querySelector('[data-gift-map]');
+    if (!el) return;
+
+    var MAP;
+    try {
+      MAP = JSON.parse(el.textContent);
+    } catch (e) {
+      return;
+    }
+
+    var GIFTS = {};
+    Object.keys(MAP).forEach(function (k) {
+      MAP[k].forEach(function (g) { GIFTS[g] = true; });
+    });
+
+    var busy = false;
+
+    function post(url, payload) {
+      return fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(payload)
+      }).then(function (res) {
+        if (!res.ok) throw new Error('cart ' + res.status);
+        return res.json();
+      });
+    }
+
+    function repaint(cart) {
+      if (typeof window.refreshCartUI === 'function') {
+        try { window.refreshCartUI(cart); return true; } catch (e) { /* jatuh ke muat ulang */ }
+      }
+      return false;
+    }
+
+    function sync() {
+      if (busy) return Promise.resolve();
+      busy = true;
+
+      return fetch('/cart.js', { headers: { Accept: 'application/json' } })
+        .then(function (r) { return r.json(); })
+        .then(function (cart) {
+          var wanted = {};
+          cart.items.forEach(function (item) {
+            var gifts = MAP[String(item.variant_id)];
+            if (gifts) gifts.forEach(function (g) { wanted[g] = true; });
+          });
+
+          /* Hanya baris yang KITA tambahkan yang boleh dihapus. Hadiah yang
+             dibeli sendiri oleh pembeli tidak punya properti _Gifted. */
+          var updates = {};
+          var stale = false;
+          cart.items.forEach(function (item) {
+            var ours = item.properties && item.properties._Gifted;
+            if (ours && !wanted[item.variant_id]) {
+              updates[item.key] = 0;
+              stale = true;
+            }
+          });
+
+          var present = {};
+          cart.items.forEach(function (item) { present[item.variant_id] = true; });
+          var missing = Object.keys(wanted).filter(function (g) { return !present[g]; });
+
+          if (!stale && !missing.length) return null;
+
+          var chain = Promise.resolve(cart);
+          if (stale) chain = chain.then(function () { return post('/cart/update.js', { updates: updates }); });
+          if (missing.length) {
+            chain = chain.then(function () {
+              return post('/cart/add.js', {
+                items: missing.map(function (g) {
+                  return { id: Number(g), quantity: 1, properties: { _Gifted: 'true' } };
+                })
+              });
+            }).then(function () {
+              return fetch('/cart.js', { headers: { Accept: 'application/json' } }).then(function (r) { return r.json(); });
+            });
+          }
+          return chain;
+        })
+        .then(function (cart) {
+          if (!cart) return;
+          if (!repaint(cart)) {
+            /* Di halaman keranjang, totalnya dirender server-side, jadi harus
+               dimuat ulang agar angkanya benar. Di halaman lain tidak. */
+            if (/\/cart\b/.test(window.location.pathname)) window.location.reload();
+          }
+        })
+        .catch(function () {})
+        .then(function () { busy = false; });
+    }
+
+    /* Jalankan setelah keranjang berubah. Tema memakai fetch untuk semua
+       operasi keranjang, jadi menyadap fetch menangkap semua jalurnya —
+       tombol beli, mini cart, maupun halaman keranjang. */
+    var origFetch = window.fetch;
+    window.fetch = function () {
+      var url = arguments[0];
+      var href = typeof url === 'string' ? url : (url && url.url) || '';
+      /* Harus dipanggil dengan window sebagai this — fetch yang dilepas dari
+         konteksnya melempar "Illegal invocation" di sebagian browser. */
+      var result = origFetch.apply(window, arguments);
+      if (/\/cart\/(add|change|update)(\.js)?/.test(href)) {
+        result.then(function () { setTimeout(sync, 60); }).catch(function () {});
+      }
+      return result;
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function () { sync(); });
+    } else {
+      sync();
+    }
+  })();
+</script>

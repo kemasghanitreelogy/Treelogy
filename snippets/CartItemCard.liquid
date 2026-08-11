@@ -19,13 +19,18 @@
   assign original_price_sub = original_price | times: 100
 
   comment
-    EasyGift auto-added gift: line is 100%-discounted by the app's automatic
-    discount and tagged with the _Gifted line-item property. Both signals are
-    required to be truthful — a leftover property without the discount must
-    still render as a paid line.
+    Baris hadiah: yang menentukan adalah pembeli TIDAK membayar apa pun untuk
+    baris itu, ditambah satu penanda bahwa ia memang hadiah — properti _Gifted
+    (dipasang EasyGift maupun snippets/gift-auto-add.liquid) atau diskon
+    baris 100%. Properti yang tertinggal pada baris berbayar tetap dirender
+    sebagai baris biasa, jadi klaimnya tidak pernah berbohong.
+
+    Sebelumnya syaratnya original_line_price > 0, yang mengandaikan hadiah
+    selalu berharga lalu didiskon nol. Hadiah yang harganya memang nol sejak
+    awal jadi tidak pernah terbaca — nilainya kini datang dari compare-at.
   endcomment
   assign is_eg_gift = false
-  if item.original_line_price > 0 and item.final_line_price == 0
+  if item.final_line_price == 0
     assign gifted_prop = item.properties['_Gifted']
     if gifted_prop != blank or item.line_level_discount_allocations.size > 0
       assign is_eg_gift = true
@@ -33,7 +38,14 @@
   endif
   if is_eg_gift
     assign item_price = 0
+    comment
+      Nilai yang dicoret diambil dari harga asli baris; kalau hadiahnya memang
+      berharga nol, compare-at varian yang dipakai supaya nilainya tetap terlihat.
+    endcomment
     assign original_price_sub = item.original_price
+    if original_price_sub == 0
+      assign original_price_sub = item.variant.compare_at_price | default: 0
+    endif
   endif
 -%}
 <div
