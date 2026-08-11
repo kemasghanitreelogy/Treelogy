@@ -55,7 +55,7 @@
 {%- endcomment -%}
 <script type="application/json" data-cart-seed>[
   {%- for item in cart.items -%}
-    {"variant_id": {{ item.variant_id }}, "key": {{ item.key | json }}, "properties": {{ item.properties | json }}}{%- unless forloop.last -%},{%- endunless -%}
+    {"variant_id": {{ item.variant_id }}, "key": {{ item.key | json }}, "quantity": {{ item.quantity }}, "properties": {{ item.properties | json }}}{%- unless forloop.last -%},{%- endunless -%}
   {%- endfor -%}
 ]</script>
 
@@ -169,6 +169,41 @@
       MAP[k].forEach(function (g) { GIFTS[g] = true; });
     });
 
+    /* Status keranjang terakhir yang diketahui — dasar verifikasi gerbang
+       checkout TANPA menyentuh jaringan. Diperbarui setiap kali payload
+       keranjang penuh lewat: seed Liquid, respons mutasi, hasil putaran
+       sinkronisasi. */
+    var lastCart = null;
+
+    /* Benar bila baris hadiah PERSIS sesuai patokan gift_map: tiap varian
+       hadiah berjumlah total kuantitas pemicunya, tidak ada hadiah yatim,
+       tidak ada hadiah kurang. Murni komputasi lokal — nol permintaan. */
+    function giftsMatch(cart) {
+      if (!cart || !cart.items) return false;
+      var wanted = {};
+      var have = {};
+      var sane = true;
+      cart.items.forEach(function (item) {
+        if (typeof item.quantity !== 'number') sane = false;
+        var gifts = MAP[String(item.variant_id)];
+        if (gifts) gifts.forEach(function (g) {
+          wanted[g] = (wanted[g] || 0) + item.quantity;
+        });
+        if ((item.properties && item.properties._Gifted) || GIFTS[item.variant_id]) {
+          have[item.variant_id] = (have[item.variant_id] || 0) + item.quantity;
+        }
+      });
+      if (!sane) return false;
+      var ok = true;
+      Object.keys(wanted).forEach(function (g) {
+        if ((have[g] || 0) !== wanted[g]) ok = false;
+      });
+      Object.keys(have).forEach(function (g) {
+        if (!(g in wanted)) ok = false;
+      });
+      return ok;
+    }
+
     var seed = null;
     var seedEl = document.querySelector('[data-cart-seed]');
     if (seedEl) {
@@ -185,6 +220,10 @@
     /* Berapa baris hadiah yang sedang ditunggu. Selama > 0, drawer diberi
        kartu skeleton supaya pembeli langsung melihat hadiahnya sedang datang. */
     var awaiting = 0;
+    /* Mutasi keranjang yang balasannya belum selesai disinkronkan. Selama
+       > 0, baris hadiah belum tentu cocok dengan pemicunya — gerbang checkout
+       di bawah menahan navigasi sampai angka ini kembali nol. */
+    var pendingMuts = 0;
 
     /* ===== Pemutus arus =====
        Endpoint keranjang membatasi laju PER SESI dan membalas 429 sebagai
@@ -374,6 +413,7 @@
     function runSync(seedCart) {
       var start = seedCart ? Promise.resolve(seedCart) : readCart();
       return start.then(function (cart) {
+        lastCart = cart;
         /* Kuantitas hadiah MENGIKUTI kuantitas pemicunya: 2 kaleng Powder
            berhak atas 2 Bamboo Scoop. wanted = varian hadiah → total jumlah,
            dijumlah lintas pemicu (satu hadiah bisa dijanjikan beberapa paket). */
@@ -436,7 +476,10 @@
       }).then(function (cart) {
         /* Cat ulang baris hadiah DULU, baru totalnya — kalau dibalik, total
            sempat dihitung saat baris basi masih terpasang. */
-        if (cart) paint(cart);
+        if (cart) {
+          lastCart = cart;
+          paint(cart);
+        }
         return null;
       });
       /* Sengaja tanpa .catch: errornya milik syncOnce. Skeleton dibiarkan
@@ -455,17 +498,37 @@
           return request('/cart.js', { headers: { Accept: 'application/json' } })
             .then(function (r) { return r.json(); });
         }, 1)
-          .then(function (cart) { paint(cart); })
+          .then(function (cart) {
+            lastCart = cart;
+            paint(cart);
+          })
           .catch(function () { /* keranjang benar-benar tak terjangkau */ });
       });
     }
 
+    /* Seed milik putaran yang sedang antre. Digugurkan (null) bila pemicu
+       kedua datang sebelum putarannya mulai — dua respons mutasi bisa
+       mendarat di jendela microtask yang sama, dan seed pemicu pertama
+       sudah basi terhadap pemicu kedua. Tanpa seed, putaran membaca
+       /cart.js segar; harga kebenarannya satu permintaan ekstra, dan
+       hanya di kasus langka itu. */
+    var nextSeed = null;
+
     function sync(seedCart) {
       /* Pemicu yang datang saat satu putaran sudah antre tidak menambah
          antrean: putaran yang antre itu membaca status TERKINI saat mulai. */
-      if (queued) return chain;
+      if (queued) {
+        nextSeed = null;
+        return chain;
+      }
       queued = true;
-      var run = function () { queued = false; return syncOnce(seedCart); };
+      nextSeed = seedCart || null;
+      var run = function () {
+        queued = false;
+        var s = nextSeed;
+        nextSeed = null;
+        return syncOnce(s);
+      };
       chain = chain.then(run, run);
       return chain;
     }
@@ -500,6 +563,12 @@
         }
       } catch (e) { /* payload tak terbaca: lewati skeleton, sinkronisasi tetap jalan */ }
 
+      /* Dihitung SEKARANG (sinkron), bukan saat balasannya tiba: pembeli bisa
+         menekan checkout di tengah round-trip mutasi, dan gerbang harus sudah
+         tahu ada sinkronisasi yang menyusul. */
+      pendingMuts++;
+      var settle = function () { if (pendingMuts > 0) pendingMuts--; };
+
       result.then(function (res) {
         /* /cart/change.js dan /cart/update.js sudah membawa keranjang penuh
            di badannya — dipakai ulang sebagai seed supaya sinkronisasi tidak
@@ -507,13 +576,13 @@
            jadi jalur itu tetap membaca sendiri. */
         if (!isAdd && res.ok) {
           res.clone().json().then(
-            function (cart) { sync(cart && cart.items ? cart : null); },
-            function () { sync(); }
+            function (cart) { sync(cart && cart.items ? cart : null).then(settle, settle); },
+            function () { sync().then(settle, settle); }
           );
         } else {
-          sync();
+          sync().then(settle, settle);
         }
-      }).catch(function () { awaiting = 0; clearSkeletons(); });
+      }).catch(function () { awaiting = 0; clearSkeletons(); settle(); });
       return result;
     };
 
@@ -529,10 +598,68 @@
        dan seed-nya sudah basi — baca ulang sungguhan. */
     window.addEventListener('pageshow', function (e) { if (e.persisted) sync(); });
 
-    /* Jaring terakhir: sebelum pembeli menuju checkout. */
+    /* ===== Gerbang checkout =====
+       Order #9844 lolos membawa hadiah ×2: pembeli menurunkan kuantitas
+       pemicu 2→1 lalu menekan checkout sebelum koreksi jumlah hadiah selesai —
+       submit form tidak menunggu siapa pun, dan halaman keburu dibongkar.
+
+       Aturannya: klik lewat tanpa hambatan HANYA bila tidak ada sinkronisasi
+       menggantung DAN status keranjang terakhir yang diketahui lolos
+       giftsMatch — baris hadiah persis sesuai patokan gift_map. Jalur cepat
+       ini murni komputasi lokal, nol permintaan jaringan. Selain itu, klik
+       ditahan, overlay loading milik tema ditampilkan, disinkronkan (dan
+       diverifikasi ulang; satu kali baca segar bila masih meleset), lalu
+       klik diteruskan.
+
+       Batas tunggu 4 detik: kalau keranjang tak terjangkau (mis. jendela
+       429), pembeli TETAP diloloskan checkout — hadiah selalu Rp 0, jadi
+       skenario terburuknya baris gratis kelebihan, bukan salah tagih;
+       kehilangan pembelian karena tombol macet jauh lebih mahal. */
+    var gatePass = false;
     document.addEventListener('click', function (e) {
       var t = e.target;
-      if (t && t.closest && t.closest('[name="checkout"], a[href*="/checkout"]')) sync();
+      var btn = t && t.closest && t.closest('[name="checkout"], a[href*="/checkout"]');
+      if (!btn) return;
+      if (gatePass) { gatePass = false; return; }
+      if (!pendingMuts && !queued && giftsMatch(lastCart)) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+      if (typeof window.cartShowLoading === 'function') {
+        try { window.cartShowLoading(); } catch (err) { /* abaikan */ }
+      }
+
+      var done = false;
+      var go = function () {
+        if (done) return;
+        done = true;
+        gatePass = true;
+        /* Render ulang drawer bisa mengganti node tombolnya — cari padanan
+           yang masih hidup sebelum meneruskan klik. */
+        var live = document.contains(btn)
+          ? btn
+          : document.getElementById('cart-checkout-btn');
+        if (live) {
+          live.click();
+        } else if (typeof window.cartHideLoading === 'function') {
+          try { window.cartHideLoading(); } catch (err) { /* abaikan */ }
+        }
+      };
+
+      var retried = false;
+      (function waitVerified() {
+        if (done) return;
+        if (!pendingMuts && !queued) {
+          if (giftsMatch(lastCart)) return go();
+          /* Sudah tenang tapi masih meleset dari patokan: satu kali paksa
+             putaran tanpa seed (baca /cart.js segar + perbaiki). Kalau
+             setelah itu tetap meleset, timeout 4 detik yang memutuskan —
+             hadiah selalu Rp 0, pembeli tidak boleh tertahan. */
+          if (!retried) { retried = true; sync(); }
+        }
+        setTimeout(waitVerified, 100);
+      })();
+      setTimeout(go, 4000);
     }, true);
   })();
 </script>
