@@ -111,6 +111,69 @@
               {{- block.settings.label -}}
             </a>
           </div>
+
+        {% when 'footer' %}
+          <div
+            class="fl-footer"
+            style="--fl-footer-bg: {{ block.settings.background_color }}; --fl-footer-ink: {{ block.settings.text_color }};"
+            {{ block.shopify_attributes }}
+          >
+            <nav class="fl-footer__nav" aria-label="Footer">
+              {% if block.settings.menu != blank %}
+                {% for link in block.settings.menu.links %}
+                  <a href="{{ link.url }}">{{ link.title }}</a>
+                {% endfor %}
+              {% else %}
+                <a href="{{ routes.all_products_collection_url }}">Toko</a>
+                {% if pages['moringa-tree'] != blank %}
+                  <a href="{{ pages['moringa-tree'].url }}">Pohon Moringa</a>
+                {% endif %}
+                {% if pages['benefit'] != blank %}
+                  <a href="{{ pages['benefit'].url }}">Manfaat</a>
+                {% endif %}
+                {% if pages['farm'] != blank %}
+                  <a href="{{ pages['farm'].url }}">Perkebunan Kami</a>
+                {% endif %}
+              {% endif %}
+            </nav>
+            <div class="fl-footer__social">
+              {% if block.settings.social_instagram != blank %}
+                <a href="{{ block.settings.social_instagram }}" target="_blank" rel="noopener" aria-label="Instagram">
+                  {%- render 'founder-letter-icon', icon: 'instagram' -%}
+                </a>
+              {% endif %}
+              {% if block.settings.social_facebook != blank %}
+                <a href="{{ block.settings.social_facebook }}" target="_blank" rel="noopener" aria-label="Facebook">
+                  {%- render 'founder-letter-icon', icon: 'facebook' -%}
+                </a>
+              {% endif %}
+              {% if block.settings.social_tiktok != blank %}
+                <a href="{{ block.settings.social_tiktok }}" target="_blank" rel="noopener" aria-label="TikTok">
+                  {%- render 'founder-letter-icon', icon: 'tiktok' -%}
+                </a>
+              {% endif %}
+              {% if block.settings.social_pinterest != blank %}
+                <a href="{{ block.settings.social_pinterest }}" target="_blank" rel="noopener" aria-label="Pinterest">
+                  {%- render 'founder-letter-icon', icon: 'pinterest' -%}
+                </a>
+              {% endif %}
+              {% if block.settings.social_whatsapp != blank %}
+                <a href="{{ block.settings.social_whatsapp }}" target="_blank" rel="noopener" aria-label="WhatsApp">
+                  {%- render 'founder-letter-icon', icon: 'whatsapp' -%}
+                </a>
+              {% endif %}
+            </div>
+            {% if block.settings.logo %}
+              {{ block.settings.logo | image_url: width: 700 | image_tag: class: 'fl-footer__logo', alt: '' }}
+            {% endif %}
+            <div class="fl-footer__divider"></div>
+            {% if block.settings.unsubscribe_text != blank %}
+              <div class="fl-footer__unsub">{{ block.settings.unsubscribe_text }}</div>
+            {% endif %}
+            {% if block.settings.copyright != blank %}
+              <p class="fl-footer__copyright">{{ block.settings.copyright }}</p>
+            {% endif %}
+          </div>
       {% endcase %}
     {% endfor %}
   </div>
@@ -281,6 +344,111 @@
 
   .fl-cta:hover {
     opacity: 0.9;
+  }
+
+  .fl__canvas:has(.fl-footer) {
+    padding-bottom: 0;
+  }
+
+  .fl-footer {
+    position: relative;
+    width: calc(1200 * var(--fl-u));
+    height: calc(813 * var(--fl-u));
+    background: var(--fl-footer-bg);
+    color: var(--fl-footer-ink);
+  }
+
+  .fl-footer__nav {
+    position: absolute;
+    top: calc(75 * var(--fl-u));
+    left: calc(136 * var(--fl-u));
+    display: flex;
+    flex-direction: column;
+    row-gap: calc(45 * var(--fl-u));
+    font-size: calc(40 * var(--fl-u));
+    line-height: normal;
+  }
+
+  .fl-footer__nav a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .fl-footer__nav a:hover {
+    text-decoration: underline;
+  }
+
+  .fl-footer__social {
+    position: absolute;
+    top: calc(447 * var(--fl-u));
+    left: calc(124 * var(--fl-u));
+    display: flex;
+    column-gap: calc(17.5 * var(--fl-u));
+  }
+
+  .fl-footer__social a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(79 * var(--fl-u));
+    height: calc(79 * var(--fl-u));
+    color: inherit;
+  }
+
+  .fl-footer__social .fl-icon--social {
+    width: 100%;
+    height: 100%;
+  }
+
+  .fl-footer__social .fl-icon--instagram {
+    width: calc(43.28 * var(--fl-u));
+    height: calc(43.3 * var(--fl-u));
+  }
+
+  .fl-footer__logo {
+    position: absolute;
+    top: calc(68 * var(--fl-u));
+    left: calc(748 * var(--fl-u));
+    width: calc(343.19 * var(--fl-u));
+    height: calc(343 * var(--fl-u));
+    object-fit: contain;
+  }
+
+  .fl-footer__divider {
+    position: absolute;
+    top: calc(596 * var(--fl-u));
+    left: 0;
+    right: 0;
+    border-top: 0.5px solid var(--fl-footer-ink);
+  }
+
+  .fl-footer__unsub {
+    position: absolute;
+    top: calc(653 * var(--fl-u));
+    left: 0;
+    width: 100%;
+    font-size: calc(30 * var(--fl-u));
+    line-height: normal;
+    text-align: center;
+  }
+
+  .fl-footer__unsub p {
+    margin: 0;
+  }
+
+  .fl-footer__unsub a {
+    color: inherit;
+  }
+
+  .fl-footer__copyright {
+    position: absolute;
+    top: calc(709 * var(--fl-u));
+    left: 0;
+    width: 100%;
+    margin: 0;
+    font-size: calc(30 * var(--fl-u));
+    line-height: normal;
+    text-align: center;
   }
 {% endstylesheet %}
 
@@ -487,6 +655,90 @@
           "label": "Link"
         }
       ]
+    },
+    {
+      "type": "footer",
+      "name": "Email footer",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "Menu",
+          "info": "Leave empty to show the default links"
+        },
+        {
+          "type": "image_picker",
+          "id": "logo",
+          "label": "Logo"
+        },
+        {
+          "type": "header",
+          "content": "Social links"
+        },
+        {
+          "type": "text",
+          "id": "social_instagram",
+          "label": "Instagram",
+          "default": "https://www.instagram.com/treelogy/"
+        },
+        {
+          "type": "text",
+          "id": "social_facebook",
+          "label": "Facebook",
+          "default": "https://www.facebook.com/treelogy.moringa"
+        },
+        {
+          "type": "text",
+          "id": "social_tiktok",
+          "label": "TikTok",
+          "default": "https://www.tiktok.com/@treelogy.moringa"
+        },
+        {
+          "type": "text",
+          "id": "social_pinterest",
+          "label": "Pinterest",
+          "default": "https://www.pinterest.com/treelogymoringa/"
+        },
+        {
+          "type": "text",
+          "id": "social_whatsapp",
+          "label": "WhatsApp",
+          "default": "https://wa.me/6281139603993"
+        },
+        {
+          "type": "header",
+          "content": "Bottom text"
+        },
+        {
+          "type": "richtext",
+          "id": "unsubscribe_text",
+          "label": "Small text",
+          "default": "<p>Tidak ingin lagi menerima email ini? <a href=\"#\">Unsubscribe</a>.</p>"
+        },
+        {
+          "type": "text",
+          "id": "copyright",
+          "label": "Copyright",
+          "default": "© Treelogy 2026. All Rights Reserved."
+        },
+        {
+          "type": "header",
+          "content": "Colors"
+        },
+        {
+          "type": "color",
+          "id": "background_color",
+          "label": "Background",
+          "default": "#2A3B34"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text",
+          "default": "#F8F8F2"
+        }
+      ]
     }
   ],
   "presets": [
@@ -502,7 +754,8 @@
         { "type": "text" },
         { "type": "price_table" },
         { "type": "text" },
-        { "type": "cta" }
+        { "type": "cta" },
+        { "type": "footer" }
       ]
     }
   ]
