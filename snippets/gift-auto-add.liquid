@@ -347,9 +347,14 @@
     function paint(cart) {
       pruneGifts(cart);
       insertGifts(cart);
-      if (typeof window.refreshCartUI === 'function') {
-        try { window.refreshCartUI(cart); } catch (e) { /* abaikan */ }
-      }
+      /* refreshCartUI ditunda melewati animasi keluar (180ms): recalcSavings
+         membaca DOM, jadi memanggilnya saat baris basi masih terpasang membuat
+         "You're saving" menampilkan nilai hadiah yang sudah pergi. */
+      setTimeout(function () {
+        if (typeof window.refreshCartUI === 'function') {
+          try { window.refreshCartUI(cart); } catch (e) { /* abaikan */ }
+        }
+      }, 220);
     }
 
     /* seedCart: status keranjang yang sudah di tangan (seed Liquid saat muat

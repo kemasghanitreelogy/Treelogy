@@ -494,6 +494,13 @@
     var pct = Math.min((progressBase / threshold) * 100, 100);
     window.setShippingProgress(pct, remaining, isFree);
 
+    /* -- Keranjang kosong: tutup drawer dengan hormat -- */
+    if (cart.item_count === 0) {
+      window.cartScheduleEmptyClose();
+    } else if (window.cartCancelEmptyClose) {
+      window.cartCancelEmptyClose();
+    }
+
     /* -- Checkout total -- */
     var te = c.querySelector('#sub-total-mini');
     if (te) {
@@ -521,6 +528,56 @@
        Idempotent: the restore marker is cleared on the first pass, so a
        second call in the same tick finds nothing to animate. */
     if (window.syncFBTVisibility) window.syncFBTVisibility(cart);
+  };
+
+  /* ===== Tutup premium saat keranjang kosong =====
+     Doktrin gerak yang sama dengan kedatangan hadiah, dibalik: kepergian
+     lebih cepat dari kedatangan, kurva MEMPERCEPAT (cubic-bezier(0.7,0,0.84,0)),
+     hanya transform + opacity, dan berlapis — isi panel pamit duluan
+     (memudar turun 150ms), baru panelnya meluncur keluar lewat transisi
+     tutup milik tema. Drawer kosong yang menganga membebani pembeli dengan
+     keputusan "sekarang apa?"; menutupnya mengembalikan mereka ke halaman. */
+  window.cartPremiumClose = function () {
+    var mini = document.querySelector('.mini-cart.active');
+    if (!mini) return;
+    var panel = document.getElementById('cart');
+    var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var slideOut = function () {
+      mini.classList.remove('active');
+      /* Bersihkan jejak inline setelah panel selesai keluar (transisi tema
+         0.38 detik) supaya pembukaan berikutnya mulai dari keadaan murni. */
+      setTimeout(function () {
+        if (panel) {
+          panel.style.removeProperty('opacity');
+          panel.style.removeProperty('transform');
+          panel.style.removeProperty('transition');
+        }
+      }, 450);
+    };
+    if (reduced || !panel) { slideOut(); return; }
+    panel.style.transition = 'opacity 150ms cubic-bezier(0.7, 0, 0.84, 0), transform 150ms cubic-bezier(0.7, 0, 0.84, 0)';
+    panel.style.opacity = '0.35';
+    panel.style.transform = 'translateY(0.375rem)';
+    setTimeout(slideOut, 140);
+  };
+
+  /* Dipanggil refreshCartUI setiap kali keranjang menjadi kosong. Jedanya
+     satu tarikan napas (650ms): baris terakhir sempat menuntaskan animasi
+     keluarnya dan pembeli sempat MELIHAT keranjangnya kosong — menutup
+     seketika terasa seperti diusir. Batal otomatis bila sempat ada isi lagi
+     (mis. pembeli menekan ADD di Frequently Bought Together). */
+  var _emptyCloseTimer = null;
+  window.cartCancelEmptyClose = function () {
+    if (_emptyCloseTimer) { clearTimeout(_emptyCloseTimer); _emptyCloseTimer = null; }
+  };
+  window.cartScheduleEmptyClose = function () {
+    if (_emptyCloseTimer) return;
+    _emptyCloseTimer = setTimeout(function () {
+      _emptyCloseTimer = null;
+      var c = document.getElementById('cart');
+      if (c && c.querySelector('.cart-item')) return; /* sudah terisi lagi */
+      window.cartPremiumClose();
+    }, 650);
   };
 
   /* ===== Mutasi keranjang dengan percobaan ulang =====
@@ -577,7 +634,6 @@
       window.syncFBTVisibility(cart);
       // If qty became 0 (shouldn't happen with select 1-10, but safety)
       if (qty === 0 && row) row.remove();
-      if (cart.item_count === 0) window.location.reload();
       window.cartHideLoading();
     })
     .catch(function() { window.cartHideLoading(); });
@@ -670,7 +726,6 @@
           if (row) row.remove();
           window.refreshCartUI(cart);
           window.syncFBTVisibility(cart);
-          if (cart.item_count === 0) window.location.reload();
           window.cartHideLoading();
         })
         .catch(function() {
