@@ -806,6 +806,10 @@
         assign is_chromeless = true
         assign chromeless_bg = '#f8f8f2'
       endif
+      if template == 'page.founder-letter'
+        assign is_chromeless = true
+        assign chromeless_bg = '#ffffff'
+      endif
     -%}
     {%- if is_chromeless -%}
       <style>
