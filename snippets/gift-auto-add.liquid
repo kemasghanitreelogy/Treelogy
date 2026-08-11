@@ -61,6 +61,7 @@
     });
 
     var busy = false;
+    var pending = false;
 
     function post(url, payload) {
       return fetch(url, {
@@ -81,7 +82,11 @@
     }
 
     function sync() {
-      if (busy) return Promise.resolve();
+      /* Kalau satu putaran sedang berjalan, permintaan berikutnya DIANTRE —
+         bukan dibuang. Membuangnya membuat hadiah tertinggal di keranjang saat
+         produk utamanya dihapus tepat ketika putaran sebelumnya belum selesai,
+         dan keranjang tersangkut berisi hadiah saja dengan total Rp 0. */
+      if (busy) { pending = true; return Promise.resolve(); }
       busy = true;
 
       return fetch('/cart.js', { headers: { Accept: 'application/json' } })
@@ -93,13 +98,17 @@
             if (gifts) gifts.forEach(function (g) { wanted[g] = true; });
           });
 
-          /* Hanya baris yang KITA tambahkan yang boleh dihapus. Hadiah yang
-             dibeli sendiri oleh pembeli tidak punya properti _Gifted. */
+          /* Buang hadiah yang tidak lagi berhak. Selain baris bertanda _Gifted,
+             baris apa pun yang variannya ada di daftar hadiah juga dibuang:
+             produk hadiah tidak bisa dibeli terpisah (PDP-nya dialihkan), jadi
+             kalau ia ada tanpa pemicunya, ia pasti sisa yang tersangkut —
+             termasuk yang ditambahkan sebelum properti ini dipakai. */
           var updates = {};
           var stale = false;
           cart.items.forEach(function (item) {
             var ours = item.properties && item.properties._Gifted;
-            if (ours && !wanted[item.variant_id]) {
+            var isGift = GIFTS[item.variant_id];
+            if ((ours || isGift) && !wanted[item.variant_id]) {
               updates[item.key] = 0;
               stale = true;
             }
@@ -135,7 +144,10 @@
           }
         })
         .catch(function () {})
-        .then(function () { busy = false; });
+        .then(function () {
+          busy = false;
+          if (pending) { pending = false; setTimeout(sync, 0); }
+        });
     }
 
     /* Jalankan setelah keranjang berubah. Tema memakai fetch untuk semua
@@ -159,5 +171,15 @@
     } else {
       sync();
     }
+
+    /* Halaman yang dipulihkan dari bfcache tidak menjalankan DOMContentLoaded,
+       jadi keranjang basi bisa tampil apa adanya. */
+    window.addEventListener('pageshow', function (e) { if (e.persisted) sync(); });
+
+    /* Jaring terakhir: sebelum pembeli menuju checkout. */
+    document.addEventListener('click', function (e) {
+      var t = e.target;
+      if (t && t.closest && t.closest('[name="checkout"], a[href*="/checkout"]')) sync();
+    }, true);
   })();
 </script>
