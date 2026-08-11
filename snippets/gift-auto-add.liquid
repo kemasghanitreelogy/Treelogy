@@ -327,11 +327,22 @@
       var parent = itemsParent(c);
       cart.items.forEach(function (item) {
         if (!(item.properties && item.properties._Gifted)) return;
-        if (c.querySelector('.cart-item[data-key="' + item.key + '"]')) return;
+        var existing = c.querySelector('.cart-item[data-key="' + item.key + '"]');
+        if (existing) {
+          /* Jumlah berubah tanpa ganti line key — cukup label ×N-nya yang
+             disegarkan, barisnya tidak dirender ulang. */
+          var q = existing.querySelector('.gift-qty');
+          if (q) q.textContent = '\u00d7' + item.quantity;
+          existing.setAttribute('data-qty', item.quantity);
+          return;
+        }
         var tpl = document.querySelector('template[data-gift-template="' + item.variant_id + '"]');
         if (!tpl || !tpl.content.firstElementChild) return;
         var real = tpl.content.firstElementChild.cloneNode(true);
         real.setAttribute('data-key', item.key);
+        real.setAttribute('data-qty', item.quantity);
+        var qEl = real.querySelector('.gift-qty');
+        if (qEl) qEl.textContent = '\u00d7' + item.quantity;
         real.classList.add('cart-item--gift-in');
         /* Kelas animasinya dilepas setelah selesai supaya render ulang
            berikutnya tidak memutarnya lagi. */
@@ -363,47 +374,55 @@
     function runSync(seedCart) {
       var start = seedCart ? Promise.resolve(seedCart) : readCart();
       return start.then(function (cart) {
+        /* Kuantitas hadiah MENGIKUTI kuantitas pemicunya: 2 kaleng Powder
+           berhak atas 2 Bamboo Scoop. wanted = varian hadiah → total jumlah,
+           dijumlah lintas pemicu (satu hadiah bisa dijanjikan beberapa paket). */
         var wanted = {};
         cart.items.forEach(function (item) {
           var gifts = MAP[String(item.variant_id)];
-          if (gifts) gifts.forEach(function (g) { wanted[g] = true; });
+          if (gifts) gifts.forEach(function (g) {
+            wanted[g] = (wanted[g] || 0) + item.quantity;
+          });
         });
 
-        /* Buang hadiah yang tidak lagi berhak. Selain baris bertanda _Gifted,
-           baris apa pun yang variannya ada di daftar hadiah juga dibuang:
-           produk hadiah tidak bisa dibeli terpisah, jadi kalau ia ada tanpa
-           pemicunya, ia pasti sisa yang tersangkut. */
-        var drop = [];
+        /* Selaraskan baris hadiah yang ada: buang yang tak lagi berhak
+           (termasuk varian hadiah tanpa penanda — produk hadiah tidak bisa
+           dibeli terpisah, jadi kalau ia ada tanpa pemicunya, ia pasti sisa
+           yang tersangkut), dan setel ulang jumlah baris _Gifted yang tidak
+           cocok. Baris bukan-_Gifted tidak pernah diubah jumlahnya. */
+        var adjust = {};
         cart.items.forEach(function (item) {
           var ours = item.properties && item.properties._Gifted;
-          if ((ours || GIFTS[item.variant_id]) && !wanted[item.variant_id]) drop.push(item.key);
+          if (!ours && !GIFTS[item.variant_id]) return;
+          var want = wanted[item.variant_id] || 0;
+          if (want === 0) adjust[item.key] = 0;
+          else if (ours && item.quantity !== want) adjust[item.key] = want;
         });
 
         var present = {};
         cart.items.forEach(function (item) { present[item.variant_id] = true; });
         var missing = Object.keys(wanted).filter(function (g) { return !present[g]; });
 
-        if (!drop.length && !missing.length) {
+        if (!Object.keys(adjust).length && !missing.length) {
           if (awaiting) { awaiting = 0; clearSkeletons(); }
           return null;
         }
 
-        /* Semua penghapusan digabung ke satu /cart/update.js. Endpoint ini
-           menerima line key sebagai kunci (diuji langsung ke toko) dan
-           mengembalikan keranjang penuh — satu permintaan sudah cukup. */
+        /* Semua penyetelan (hapus maupun ubah jumlah) digabung ke satu
+           /cart/update.js. Endpoint ini menerima line key sebagai kunci
+           (diuji langsung ke toko) dan mengembalikan keranjang penuh —
+           satu permintaan sudah cukup. */
         var work = Promise.resolve(null);
-        if (drop.length) {
+        if (Object.keys(adjust).length) {
           work = work.then(function () {
-            var updates = {};
-            drop.forEach(function (key) { updates[key] = 0; });
-            return post('/cart/update.js', { updates: updates });
+            return post('/cart/update.js', { updates: adjust });
           });
         }
         if (missing.length) {
           work = work.then(function () {
             return post('/cart/add.js', {
               items: missing.map(function (g) {
-                return { id: Number(g), quantity: 1, properties: { _Gifted: 'true' } };
+                return { id: Number(g), quantity: wanted[g], properties: { _Gifted: 'true' } };
               })
             });
           });
