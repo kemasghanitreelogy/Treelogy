@@ -523,6 +523,30 @@
     if (window.syncFBTVisibility) window.syncFBTVisibility(cart);
   };
 
+  /* ===== Mutasi keranjang dengan percobaan ulang =====
+     Endpoint keranjang membalas 429 sebagai halaman HTML, jadi pola lama
+     fetch().then(r => r.json()) melempar SyntaxError yang jatuh ke .catch —
+     handler remove lalu MEMULIHKAN barisnya seolah pembeli membatalkan,
+     padahal servernya cuma minta napas. Pembeli melihat barangnya "balik
+     lagi" dan harus menghapus dua kali. 429 bersifat sesaat; tiga percobaan
+     berjeda menaik hampir selalu cukup. */
+  window.cartChangeWithRetry = function (payload, tries, delay) {
+    tries = tries || 3;
+    delay = delay || 1200;
+    return fetch('/cart/change.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(function (r) {
+      if (!r.ok) throw new Error('cart ' + r.status);
+      return r.json();
+    }).catch(function (err) {
+      if (tries <= 1) throw err;
+      return new Promise(function (res) { setTimeout(res, delay); })
+        .then(function () { return window.cartChangeWithRetry(payload, tries - 1, delay * 2); });
+    });
+  };
+
   /* ===== Qty change handler ===== */
   window.cartChangeQty = function(sel) {
     var key = sel.getAttribute('data-key') || sel.getAttribute('data-id');
@@ -531,12 +555,7 @@
 
     window.cartShowLoading();
 
-    fetch('/cart/change.js', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: key, quantity: qty })
-    })
-    .then(function(r) { return r.json(); })
+    window.cartChangeWithRetry({ id: key, quantity: qty })
     .then(function(cart) {
       window.refreshCartUI(cart);
       window.syncFBTVisibility(cart);
@@ -630,12 +649,7 @@
 
         window.cartShowLoading();
 
-        fetch('/cart/change.js', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: key, quantity: 0 })
-        })
-        .then(function(r) { return r.json(); })
+        window.cartChangeWithRetry({ id: key, quantity: 0 })
         .then(function(cart) {
           if (row) row.remove();
           window.refreshCartUI(cart);
