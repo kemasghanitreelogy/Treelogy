@@ -81,7 +81,12 @@
     data-compare-at="{{ gift_variant.compare_at_price | default: 0 }}"
     data-qty="1">
     <span class="thumb" aria-hidden="true">
-      <img src="{{ gift_product.featured_image | image_url: width: 240 }}" alt="{{ gift_product.title | escape }}">
+      <img
+        src="{{ gift_product.featured_image | image_url: width: 240, height: 240, crop: 'center' }}"
+        alt="{{ gift_product.title | escape }}"
+        width="240"
+        height="240"
+        loading="lazy">
     </span>
     <div class="detail">
       <div class="detail-top">
