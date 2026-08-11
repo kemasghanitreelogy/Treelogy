@@ -531,8 +531,12 @@
      lagi" dan harus menghapus dua kali. 429 bersifat sesaat; tiga percobaan
      berjeda menaik hampir selalu cukup. */
   window.cartChangeWithRetry = function (payload, tries, delay) {
-    tries = tries || 5;
-    delay = delay || 1200;
+    /* Anggaran total dijaga di bawah ~10 detik. Lima percobaan dengan
+       Retry-After 30 detik pernah membuat spinner menggiling hampir semenit —
+       lebih jujur menyerah cepat dan memulihkan barisnya daripada menyandera
+       pembeli di depan overlay. */
+    tries = tries || 3;
+    delay = delay || 1000;
     return fetch('/cart/change.js', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -542,7 +546,7 @@
         var err = new Error('cart ' + r.status);
         /* Kalau server memberi tahu kapan boleh kembali, patuhi itu. */
         var ra = parseInt(r.headers.get('Retry-After'), 10);
-        if (ra > 0 && ra <= 30) err.retryAfter = ra * 1000;
+        if (ra > 0 && ra <= 6) err.retryAfter = ra * 1000;
         throw err;
       }
       return r.json();

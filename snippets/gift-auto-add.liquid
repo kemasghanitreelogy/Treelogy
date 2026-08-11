@@ -2,21 +2,27 @@
   Memasukkan hadiah ke keranjang saat paket yang menjanjikannya dibeli.
 
   Diskon otomatis Shopify (BXGY) hanya membuat hadiahnya gratis — ia TIDAK
-  menambahkan barang ke keranjang. Tanpa snippet ini, janji "Free Bamboo Spoon"
+  menambahkan barang ke keranjang. Tanpa snippet ini, janji "Free Bamboo Scoop"
   di halaman produk tidak pernah terwujud di keranjang maupun checkout.
 
-  Hadiah ditambahkan dengan properti `_Gifted`. Itu konvensi yang sudah dipakai
-  tema di snippets/CartItemCard.liquid dan snippets/MiniCart.liquid untuk
-  merender baris hadiah (badge GRATIS, harga dicoret), jadi tampilannya
-  mengikuti yang sudah ada, bukan bikin gaya baru.
+  Kebenaran harga TIDAK bergantung pada snippet ini: semua produk hadiah
+  berharga 0 dengan compare-at sebagai nilai coretnya. Skenario terburuk
+  (hadiah yatim tertinggal karena jaringan) hanya menambah baris Rp 0 —
+  tidak pernah menagih pembeli.
 
-  Syarat agar barisnya terbaca sebagai hadiah oleh tema: harga aslinya > 0 lalu
-  didiskon jadi 0 oleh BXGY. Karena itu Travel Pouch dan Mystery Gift diberi
-  harga sesuai nilai yang tertulis di kartu produk; kalau harganya 0 sejak awal,
-  barisnya hanya tampak sebagai item gratis biasa tanpa penanda hadiah.
+  Hadiah ditambahkan dengan properti `_Gifted`, konvensi yang sudah dipakai
+  snippets/CartItemCard.liquid untuk merender baris hadiah (badge GRATIS).
+  Baris hadiah yang tidak lagi berhak dihapus; hadiah yang sengaja dibeli
+  pembeli sendiri tidak pernah tersentuh.
 
-  Baris hadiah yang tidak lagi berhak akan dihapus, tapi hanya yang punya
-  properti `_Gifted` — hadiah yang sengaja dibeli pembeli sendiri tidak disentuh.
+  Disiplin permintaan (endpoint keranjang dibatasi laju dan membalas 429
+  sebagai halaman HTML):
+  - Muat halaman: NOL permintaan — status awal dibaca dari seed Liquid.
+  - Baris hadiah dirender dari <template> Liquid di bawah — NOL permintaan.
+  - Respons /cart/change|update.js dipakai ulang sebagai status terkini.
+  - Pemutus arus global: satu 429 menjeda SEMUA lalu lintas keranjang
+    selama jendela Retry-After (default 8 detik), bukan tiap pemanggil
+    mengulang sendiri-sendiri dan memperparah kemacetannya.
 
   @example
   {% render 'gift-auto-add' %}
@@ -42,6 +48,63 @@
 {%- endcapture -%}
 
 <script type="application/json" data-gift-map>{{ gift_map }}</script>
+
+{%- comment -%}
+  Seed status keranjang saat halaman dirender — supaya pemeriksaan awal tidak
+  perlu menembak /cart.js sama sekali. Hanya kolom yang dipakai sinkronisasi.
+{%- endcomment -%}
+<script type="application/json" data-cart-seed>[
+  {%- for item in cart.items -%}
+    {"variant_id": {{ item.variant_id }}, "key": {{ item.key | json }}, "properties": {{ item.properties | json }}}{%- unless forloop.last -%},{%- endunless -%}
+  {%- endfor -%}
+]</script>
+
+{%- comment -%}
+  Baris hadiah siap pakai, dirender server-side dengan markup yang meniru
+  cabang hadiah snippets/CartItemCard.liquid. Menghapus ketergantungan pada
+  fetch /cart?view=mini yang dulu jadi titik gagal saat 429: tampilan hadiah
+  kini bebas rate limit sepenuhnya. data-key diisi JS dari respons keranjang.
+  Judulnya bukan tautan — produk hadiah memang tidak bisa dibeli terpisah.
+{%- endcomment -%}
+{%- assign gift_handles = 'bamboo-scoop,travel-pouch,mystery-gift' | split: ',' -%}
+{%- for gift_handle in gift_handles -%}
+  {%- assign gift_product = all_products[gift_handle] -%}
+  {%- assign gift_variant = gift_product.variants.first -%}
+  {%- if gift_variant -%}
+<template data-gift-template="{{ gift_variant.id }}">
+  <div
+    class="cart-item cart-item--gift"
+    id="item-{{ gift_variant.id }}"
+    data-variant="{{ gift_variant.id }}"
+    data-key=""
+    data-price="0"
+    data-compare-at="{{ gift_variant.compare_at_price | default: 0 }}"
+    data-qty="1">
+    <span class="thumb" aria-hidden="true">
+      <img src="{{ gift_product.featured_image | image_url: width: 240 }}" alt="{{ gift_product.title | escape }}">
+    </span>
+    <div class="detail">
+      <div class="detail-top">
+        <div class="detail-info">
+          <span class="sub-head title">{{ gift_product.title }}</span>
+          <span class="gift-badge">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M20 12v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-8M2 7h20v4H2V7Zm10-1v15M12 6H8.5a2.25 2.25 0 1 1 0-4.5C11 1.5 12 6 12 6Zm0 0h3.5a2.25 2.25 0 1 0 0-4.5C13 1.5 12 6 12 6Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            {{ 'cart.gift_free_label' | t }}
+          </span>
+          <div class="variant body-desk-s"></div>
+        </div>
+      </div>
+      <div class="detail-bottom">
+        <div class="gift-qty">&times;1</div>
+      </div>
+      <p class="gift-note">{{ 'cart.gift_note' | t }}</p>
+    </div>
+  </div>
+</template>
+  {%- endif -%}
+{%- endfor -%}
 
 <style>
   /* Gerak kedatangan hadiah. Doktrinnya: transform + opacity saja (tidak
@@ -101,75 +164,85 @@
       MAP[k].forEach(function (g) { GIFTS[g] = true; });
     });
 
+    var seed = null;
+    var seedEl = document.querySelector('[data-cart-seed]');
+    if (seedEl) {
+      try { seed = { items: JSON.parse(seedEl.textContent) }; } catch (e) { /* jatuh ke readCart */ }
+    }
+
     /* Putaran sinkronisasi diserialkan lewat satu rantai promise supaya dua
-       putaran tidak pernah berjalan bersamaan dan tidak ada yang terbuang. */
+       putaran tidak pernah berjalan bersamaan; `queued` memampatkan pemicu
+       beruntun jadi satu putaran susulan, bukan antrean panjang. */
     var chain = Promise.resolve();
+    var queued = false;
     /* Menandai permintaan keranjang milik snippet ini sendiri. */
     var internal = 0;
     /* Berapa baris hadiah yang sedang ditunggu. Selama > 0, drawer diberi
        kartu skeleton supaya pembeli langsung melihat hadiahnya sedang datang. */
     var awaiting = 0;
 
-    function ownFetch(url, opts) {
-      internal++;
-      var req = fetch(url, opts);
-      internal--;
-      return req;
+    /* ===== Pemutus arus =====
+       Endpoint keranjang membatasi laju PER SESI dan membalas 429 sebagai
+       halaman HTML. Sekali tersentuh, mengulang agresif justru memperpanjang
+       blokirnya. Maka satu 429 menjeda SEMUA lalu lintas keranjang snippet ini
+       selama jendela yang diminta server (Retry-After, dibatasi 15 detik)
+       atau 8 detik bila server tidak memberi tahu. */
+    var cooldownUntil = 0;
+
+    function trip(res) {
+      var ra = parseInt(res.headers.get('Retry-After'), 10);
+      var ms = ra > 0 && ra <= 15 ? ra * 1000 : 8000;
+      var until = Date.now() + ms;
+      if (until > cooldownUntil) cooldownUntil = until;
     }
 
-    /* Ulangi dengan jeda menaik. 429 di endpoint keranjang bersifat sesaat,
-       jadi menyerah pada percobaan pertama membuat keranjang tertinggal di
-       keadaan setengah jadi yang tidak pernah pulih sendiri.
+    function breakerWait() {
+      var wait = cooldownUntil - Date.now();
+      return wait > 0
+        ? new Promise(function (r) { setTimeout(r, wait); })
+        : Promise.resolve();
+    }
 
-       Retry dipasang PER PERMINTAAN, bukan membungkus seluruh sinkronisasi.
-       Simulasi membuktikan versi pembungkus gagal: saat beberapa endpoint
-       terkena 429 berurutan (baca keranjang, lalu update, lalu render mini),
-       tiap endpoint memakan jatah percobaan bersama sampai habis sebelum
-       penghapusannya sempat menang. */
-    function withRetry(fn, tries, delay) {
-      return fn().catch(function (err) {
-        if (tries <= 1) throw err;
-        /* Kalau server memberi tahu kapan boleh kembali (Retry-After),
-           patuhi itu; tebakan eksponensial hanya untuk yang tidak memberi. */
-        var pause = (err && err.retryAfter) ? err.retryAfter : delay;
-        return new Promise(function (resolve) { setTimeout(resolve, pause); })
-          .then(function () { return withRetry(fn, tries - 1, delay * 2); });
+    /* Satu permintaan: menunggu pemutus arus, lalu WAJIB memeriksa status —
+       .json() di atas halaman 429 melempar SyntaxError yang dulu tertelan
+       senyap dan membuat hadiah tampak menyangkut. */
+    function request(url, opts) {
+      return breakerWait().then(function () {
+        internal++;
+        var req = fetch(url, opts);
+        internal--;
+        return req;
+      }).then(function (r) {
+        if (!r.ok) { trip(r); throw new Error('cart ' + r.status); }
+        return r;
       });
     }
 
-    function limitError(prefix, res) {
-      var err = new Error(prefix + ' ' + res.status);
-      var ra = parseInt(res.headers.get('Retry-After'), 10);
-      if (ra > 0 && ra <= 30) err.retryAfter = ra * 1000;
-      return err;
+    /* Percobaan ulang per permintaan. Jedanya nyaris nol karena penjedaan
+       sesungguhnya milik pemutus arus — retry hanya menyeberangi jendelanya. */
+    function withRetry(fn, tries) {
+      return fn().catch(function (err) {
+        if (tries <= 1) throw err;
+        return new Promise(function (r) { setTimeout(r, 400); })
+          .then(function () { return withRetry(fn, tries - 1); });
+      });
     }
 
     function post(url, payload) {
       return withRetry(function () {
-        return ownFetch(url, {
+        return request(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
           body: JSON.stringify(payload)
-        }).then(function (res) {
-          if (!res.ok) throw limitError('cart', res);
-          return res.json();
-        });
-      }, 4, 1200);
+        }).then(function (r) { return r.json(); });
+      }, 3);
     }
 
     function readCart() {
       return withRetry(function () {
-        return ownFetch('/cart.js', { headers: { Accept: 'application/json' } })
-          .then(function (r) {
-            /* Status WAJIB diperiksa. Saat Shopify membatasi laju endpoint
-               keranjang ia membalas 429 dengan halaman HTML, dan .json()
-               atasnya melempar SyntaxError yang tertelan .catch di ujung
-               rantai — sinkronisasi mati diam-diam dan hadiahnya tampak
-               menyangkut. */
-            if (!r.ok) throw limitError('cart', r);
-            return r.json();
-          });
-      }, 4, 1200);
+        return request('/cart.js', { headers: { Accept: 'application/json' } })
+          .then(function (r) { return r.json(); });
+      }, 3);
     }
 
     function itemsParent(root) {
@@ -220,157 +293,151 @@
         .observe(cartRoot, { childList: true, subtree: true });
     }
 
-    /* Ganti skeleton dengan baris hadiah sungguhan, diambil dari render server
-       supaya markup dan gayanya persis sama dengan baris keranjang lain. Hanya
-       node hadiah yang disisipkan — sisa drawer tidak disentuh agar event
-       binding milik tema tetap utuh. */
-    function paintGifts() {
+    function animateOut(node) {
+      node.classList.add('cart-item--gift-out');
+      setTimeout(function () { if (node.parentNode) node.remove(); }, 180);
+    }
+
+    /* Buang baris hadiah di DOM yang tidak ada lagi di keranjang. Murni
+       operasi DOM dari status yang sudah di tangan — nol permintaan. */
+    function pruneGifts(cart) {
       var c = document.getElementById('cart');
-      if (!c) { awaiting = 0; return Promise.resolve(); }
-      var prefix = (window.Shopify && window.Shopify.locale === 'id') ? '/id' : '';
-      return withRetry(function () {
-        return ownFetch(prefix + '/cart?view=mini', { headers: { Accept: 'text/html' } })
-          .then(function (r) {
-            /* Halaman 429 tetap HTML yang sah, jadi tanpa penjagaan ini ia
-               ter-parse jadi dokumen tanpa baris hadiah — dan rekonsiliasi dua
-               arah di bawah akan MENGHAPUS hadiah yang sebenarnya sah. */
-            if (!r.ok) throw limitError('mini', r);
-            return r.text();
-          });
-      }, 4, 1200)
-        .then(function (html) {
-          var doc = new DOMParser().parseFromString(html, 'text/html');
-          var parent = itemsParent(c);
-          awaiting = 0;
-          clearSkeletons(c);
-
-          /* Rekonsiliasi DUA ARAH. Versi sebelumnya hanya menyisipkan baris
-             hadiah yang kurang, tidak pernah membuang yang berlebih — sehingga
-             saat produk utamanya dihapus, hadiahnya lenyap di server tapi
-             node-nya tertinggal di drawer dan tampak menyangkut. */
-          var fresh = {};
-          doc.querySelectorAll('.cart-item--gift').forEach(function (node) {
-            var k = node.getAttribute('data-key');
-            if (k) fresh[k] = true;
-          });
-          c.querySelectorAll('.cart-item--gift').forEach(function (node) {
-            if (node.hasAttribute('data-gift-skeleton')) return;
-            var k = node.getAttribute('data-key');
-            if (!k || !fresh[k]) {
-              node.classList.add('cart-item--gift-out');
-              setTimeout(function () { if (node.parentNode) node.remove(); }, 180);
-            }
-          });
-
-          doc.querySelectorAll('.cart-item--gift').forEach(function (node) {
-            var key = node.getAttribute('data-key');
-            if (key && c.querySelector('.cart-item[data-key="' + key + '"]')) return;
-            var real = document.importNode(node, true);
-            real.classList.add('cart-item--gift-in');
-            /* Kelas animasinya dilepas setelah selesai supaya render ulang
-               berikutnya tidak memutarnya lagi. */
-            real.addEventListener('animationend', function handler(ev) {
-              if (ev.target !== real) return;
-              real.classList.remove('cart-item--gift-in');
-              real.removeEventListener('animationend', handler);
-            });
-            parent.insertBefore(real, parent.firstChild);
-          });
-        })
-        /* Sengaja tanpa .catch: 429 di sini harus memicu percobaan ulang,
-           bukan tertelan jadi "selesai". Skeleton dibiarkan karena prosesnya
-           memang belum selesai. */;
+      if (!c) return;
+      var live = {};
+      cart.items.forEach(function (item) { live[item.key] = true; });
+      c.querySelectorAll('.cart-item--gift').forEach(function (node) {
+        if (node.hasAttribute('data-gift-skeleton')) return;
+        var k = node.getAttribute('data-key');
+        if (!k || !live[k]) animateOut(node);
+      });
     }
 
-    function runSync() {
-      return readCart()
-        .then(function (cart) {
-          var wanted = {};
-          cart.items.forEach(function (item) {
-            var gifts = MAP[String(item.variant_id)];
-            if (gifts) gifts.forEach(function (g) { wanted[g] = true; });
-          });
-
-          /* Buang hadiah yang tidak lagi berhak. Selain baris bertanda _Gifted,
-             baris apa pun yang variannya ada di daftar hadiah juga dibuang:
-             produk hadiah tidak bisa dibeli terpisah, jadi kalau ia ada tanpa
-             pemicunya, ia pasti sisa yang tersangkut. */
-          var drop = [];
-          cart.items.forEach(function (item) {
-            var ours = item.properties && item.properties._Gifted;
-            if ((ours || GIFTS[item.variant_id]) && !wanted[item.variant_id]) drop.push(item.key);
-          });
-
-          var present = {};
-          cart.items.forEach(function (item) { present[item.variant_id] = true; });
-          var missing = Object.keys(wanted).filter(function (g) { return !present[g]; });
-
-          if (!drop.length && !missing.length) {
-            if (awaiting) { awaiting = 0; clearSkeletons(); }
-            return null;
-          }
-
-          /* Semua penghapusan digabung ke satu /cart/update.js. Endpoint ini
-             menerima line key sebagai kunci (diuji langsung ke toko) dan
-             mengembalikan keranjang penuh, jadi satu permintaan sudah cukup —
-             makin sedikit permintaan, makin jarang kena batas laju. */
-          var work = Promise.resolve(null);
-          if (drop.length) {
-            work = work.then(function () {
-              var updates = {};
-              drop.forEach(function (key) { updates[key] = 0; });
-              return post('/cart/update.js', { updates: updates });
-            });
-          }
-          if (missing.length) {
-            work = work.then(function () {
-              return post('/cart/add.js', {
-                items: missing.map(function (g) {
-                  return { id: Number(g), quantity: 1, properties: { _Gifted: 'true' } };
-                })
-              });
-            });
-            /* /cart/add.js hanya mengembalikan baris yang ditambahkan, bukan
-               keranjang penuh, jadi di jalur ini pembacaan ulang wajib. */
-            return work.then(readCart);
-          }
-          /* Jalur hapus-saja: /cart/update.js sudah mengembalikan keranjang
-             penuh, jadi tidak perlu dibaca ulang. */
-          return work;
-        })
-        .then(function (cart) {
-          if (!cart) return null;
-          /* Cat ulang baris hadiah DULU, baru totalnya. Kalau urutannya
-             dibalik, total sempat dihitung saat baris basi masih terpasang. */
-          return paintGifts().then(function () {
-            if (typeof window.refreshCartUI === 'function') {
-              try { window.refreshCartUI(cart); } catch (e) { /* abaikan */ }
-            }
-          });
-        })
-        /* Sengaja tanpa .catch: errornya harus sampai ke withRetry. Skeleton
-           pun dibiarkan selama percobaan ulang — hanya syncOnce yang
-           membersihkannya, setelah semua percobaan habis. */;
+    /* Sisipkan baris hadiah yang belum tampil, dari <template> yang dirender
+       server-side saat halaman dibuat — nol permintaan, kebal rate limit. */
+    function insertGifts(cart) {
+      var c = document.getElementById('cart');
+      if (!c) { awaiting = 0; return; }
+      awaiting = 0;
+      clearSkeletons(c);
+      var parent = itemsParent(c);
+      cart.items.forEach(function (item) {
+        if (!(item.properties && item.properties._Gifted)) return;
+        if (c.querySelector('.cart-item[data-key="' + item.key + '"]')) return;
+        var tpl = document.querySelector('template[data-gift-template="' + item.variant_id + '"]');
+        if (!tpl || !tpl.content.firstElementChild) return;
+        var real = tpl.content.firstElementChild.cloneNode(true);
+        real.setAttribute('data-key', item.key);
+        real.classList.add('cart-item--gift-in');
+        /* Kelas animasinya dilepas setelah selesai supaya render ulang
+           berikutnya tidak memutarnya lagi. */
+        real.addEventListener('animationend', function handler(ev) {
+          if (ev.target !== real) return;
+          real.classList.remove('cart-item--gift-in');
+          real.removeEventListener('animationend', handler);
+        });
+        parent.insertBefore(real, parent.firstChild);
+      });
     }
 
-    /* Sinkronisasi penuh dengan percobaan ulang. Kalau tetap gagal, keranjang
-       dibaca sekali lagi supaya total di tombol checkout tidak tertinggal di
-       angka lama — angka basi lebih berbahaya daripada baris yang telat hilang,
-       karena pembeli memutuskan berdasarkan angka itu. */
-    function syncOnce() {
-      return runSync().catch(function () {
+    function paint(cart) {
+      pruneGifts(cart);
+      insertGifts(cart);
+      if (typeof window.refreshCartUI === 'function') {
+        try { window.refreshCartUI(cart); } catch (e) { /* abaikan */ }
+      }
+    }
+
+    /* seedCart: status keranjang yang sudah di tangan (seed Liquid saat muat
+       halaman, atau respons /cart/change|update.js) — dipakai ulang supaya
+       tidak perlu membaca ulang keranjang. */
+    function runSync(seedCart) {
+      var start = seedCart ? Promise.resolve(seedCart) : readCart();
+      return start.then(function (cart) {
+        var wanted = {};
+        cart.items.forEach(function (item) {
+          var gifts = MAP[String(item.variant_id)];
+          if (gifts) gifts.forEach(function (g) { wanted[g] = true; });
+        });
+
+        /* Buang hadiah yang tidak lagi berhak. Selain baris bertanda _Gifted,
+           baris apa pun yang variannya ada di daftar hadiah juga dibuang:
+           produk hadiah tidak bisa dibeli terpisah, jadi kalau ia ada tanpa
+           pemicunya, ia pasti sisa yang tersangkut. */
+        var drop = [];
+        cart.items.forEach(function (item) {
+          var ours = item.properties && item.properties._Gifted;
+          if ((ours || GIFTS[item.variant_id]) && !wanted[item.variant_id]) drop.push(item.key);
+        });
+
+        var present = {};
+        cart.items.forEach(function (item) { present[item.variant_id] = true; });
+        var missing = Object.keys(wanted).filter(function (g) { return !present[g]; });
+
+        if (!drop.length && !missing.length) {
+          if (awaiting) { awaiting = 0; clearSkeletons(); }
+          return null;
+        }
+
+        /* Semua penghapusan digabung ke satu /cart/update.js. Endpoint ini
+           menerima line key sebagai kunci (diuji langsung ke toko) dan
+           mengembalikan keranjang penuh — satu permintaan sudah cukup. */
+        var work = Promise.resolve(null);
+        if (drop.length) {
+          work = work.then(function () {
+            var updates = {};
+            drop.forEach(function (key) { updates[key] = 0; });
+            return post('/cart/update.js', { updates: updates });
+          });
+        }
+        if (missing.length) {
+          work = work.then(function () {
+            return post('/cart/add.js', {
+              items: missing.map(function (g) {
+                return { id: Number(g), quantity: 1, properties: { _Gifted: 'true' } };
+              })
+            });
+          });
+          /* /cart/add.js hanya mengembalikan baris yang ditambahkan, bukan
+             keranjang penuh, jadi di jalur ini pembacaan ulang wajib. */
+          return work.then(function () { return readCart(); });
+        }
+        /* Jalur hapus-saja: /cart/update.js sudah mengembalikan keranjang
+           penuh, jadi tidak perlu dibaca ulang. */
+        return work;
+      }).then(function (cart) {
+        /* Cat ulang baris hadiah DULU, baru totalnya — kalau dibalik, total
+           sempat dihitung saat baris basi masih terpasang. */
+        if (cart) paint(cart);
+        return null;
+      });
+      /* Sengaja tanpa .catch: errornya milik syncOnce. Skeleton dibiarkan
+         selama percobaan ulang — prosesnya memang belum selesai. */
+    }
+
+    /* Kalau tetap gagal setelah semua percobaan, keranjang dibaca sekali lagi
+       (satu percobaan, tetap lewat pemutus arus) supaya total di tombol
+       checkout tidak tertinggal di angka lama — angka basi lebih berbahaya
+       daripada baris yang telat hilang. */
+    function syncOnce(seedCart) {
+      return runSync(seedCart).catch(function () {
         awaiting = 0;
         clearSkeletons();
-        return readCart()
-          .then(function (cart) {
-            if (typeof window.refreshCartUI === 'function') window.refreshCartUI(cart);
-          })
+        return withRetry(function () {
+          return request('/cart.js', { headers: { Accept: 'application/json' } })
+            .then(function (r) { return r.json(); });
+        }, 1)
+          .then(function (cart) { paint(cart); })
           .catch(function () { /* keranjang benar-benar tak terjangkau */ });
       });
     }
 
-    function sync() {
-      chain = chain.then(syncOnce, syncOnce);
+    function sync(seedCart) {
+      /* Pemicu yang datang saat satu putaran sudah antre tidak menambah
+         antrean: putaran yang antre itu membaca status TERKINI saat mulai. */
+      if (queued) return chain;
+      queued = true;
+      var run = function () { queued = false; return syncOnce(seedCart); };
+      chain = chain.then(run, run);
       return chain;
     }
 
@@ -388,9 +455,10 @@
       /* Responsnya TIDAK ditahan: drawer harus terbuka secepat biasanya.
          Sebagai gantinya jumlah hadiah yang akan datang dihitung dari payload
          permintaan ini, lalu skeleton dipasang begitu drawer selesai dirender. */
+      var isAdd = /\/cart\/add/.test(href);
       try {
         var body = arguments[1] && arguments[1].body;
-        if (body && /\/cart\/add/.test(href)) {
+        if (body && isAdd) {
           var parsed = JSON.parse(body);
           var incoming = parsed.items || [parsed];
           var expect = {};
@@ -403,18 +471,33 @@
         }
       } catch (e) { /* payload tak terbaca: lewati skeleton, sinkronisasi tetap jalan */ }
 
-      result.then(function () { sync(); }).catch(function () { awaiting = 0; clearSkeletons(); });
+      result.then(function (res) {
+        /* /cart/change.js dan /cart/update.js sudah membawa keranjang penuh
+           di badannya — dipakai ulang sebagai seed supaya sinkronisasi tidak
+           membaca ulang. /cart/add.js hanya membawa baris yang ditambahkan,
+           jadi jalur itu tetap membaca sendiri. */
+        if (!isAdd && res.ok) {
+          res.clone().json().then(
+            function (cart) { sync(cart && cart.items ? cart : null); },
+            function () { sync(); }
+          );
+        } else {
+          sync();
+        }
+      }).catch(function () { awaiting = 0; clearSkeletons(); });
       return result;
     };
 
+    /* Muat halaman: seed Liquid sudah memuat status keranjang saat render,
+       jadi pemeriksaan awal tidak menyentuh jaringan sama sekali. */
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', function () { sync(); });
+      document.addEventListener('DOMContentLoaded', function () { sync(seed); });
     } else {
-      sync();
+      sync(seed);
     }
 
     /* Halaman yang dipulihkan dari bfcache tidak menjalankan DOMContentLoaded,
-       jadi keranjang basi bisa tampil apa adanya. */
+       dan seed-nya sudah basi — baca ulang sungguhan. */
     window.addEventListener('pageshow', function (e) { if (e.persisted) sync(); });
 
     /* Jaring terakhir: sebelum pembeli menuju checkout. */
