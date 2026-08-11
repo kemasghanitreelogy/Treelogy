@@ -929,6 +929,32 @@
       transform: none;
     }
   }
+
+  /* ===== Teaser Klaviyo mengalah pada bilah sticky =====
+     Teaser "Get 10% Off" menempel fixed di kanan-bawah dan tertindih bilah
+     saat bilahnya muncul. Saat bilah tampil, teaser terangkat setinggi bilah
+     dengan pegas overshoot (cubic-bezier(0.34, 1.56, 0.64, 1) — naik sedikit
+     melewati tujuannya lalu memantul balik); saat bilah pergi, teaser turun
+     lebih cepat dengan kurva melambat tanpa pantulan — kedatangan boleh
+     bermain, kepulangan harus tenang. Hanya transform yang disentuh; animasi
+     dan gaya inline milik Klaviyo tidak diusik (jebakan animation-name
+     terdokumentasi di memori proyek). */
+  [class*="kl-teaser"] {
+    transition: transform 340ms cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
+  }
+
+  body.v2-sticky-open [class*="kl-teaser"] {
+    transform: translateY(calc(-1 * var(--v2-sticky-h, 84px)));
+    transition: transform 520ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [class*="kl-teaser"],
+    body.v2-sticky-open [class*="kl-teaser"] {
+      transition-duration: 1ms;
+    }
+  }
 </style>
 
 <script>
