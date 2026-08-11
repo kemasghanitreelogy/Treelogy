@@ -1731,7 +1731,11 @@
     var sa = cartEl.querySelector('#cart-saving-amount');
     if (!sr || !sa) return;
     var saved = 0;
-    cartEl.querySelectorAll('.cart-item[data-compare-at]').forEach(function(el) {
+    /* Hanya diskon PRODUK yang dihitung. Baris hadiah dikecualikan: nilai
+       hadiah sudah dinyatakan lewat badge FREE di barisnya sendiri, dan
+       menjumlahkannya di sini membuat angka hemat melompat melebihi selisih
+       harga yang benar-benar dilihat pembeli di baris produk. */
+    cartEl.querySelectorAll('.cart-item[data-compare-at]:not(.cart-item--gift)').forEach(function(el) {
       var cap = parseInt(el.getAttribute('data-compare-at') || '0', 10);
       var price = parseInt(el.getAttribute('data-price') || '0', 10);
       var qtyEl = el.querySelector('.qty-select');
