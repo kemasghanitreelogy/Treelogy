@@ -43,60 +43,179 @@
 
 <script type="application/json" data-gift-map>{{ gift_map }}</script>
 
+<style>
+  /* Gerak kedatangan hadiah. Doktrinnya: transform + opacity saja (tidak
+     pernah properti layout), kurva melambat power4.out untuk kedatangan, dan
+     opasitas selesai lebih dulu daripada geraknya sehingga barisnya "mendarat"
+     alih-alih sekadar memudar masuk. Durasi ditahan di bawah 500ms sesuai
+     pedoman micro-interaction.
+
+     Skeleton-nya sendiri memakai .cart-item--optimistic milik tema, jadi
+     animasi masuknya sudah seragam dengan kartu optimistis mini cart. */
+  @keyframes v2GiftLand {
+    from { opacity: 0; transform: translateY(0.5rem) scale(0.985); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  .cart-item--gift-in {
+    animation: v2GiftLand 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  /* Isi barisnya menyusul badannya dengan tumpang-tindih kecil — kedatangan
+     bertahap terbaca lebih mahal daripada satu lempeng yang muncul utuh. */
+  .cart-item--gift-in .detail-info > * {
+    animation: v2GiftLand 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .cart-item--gift-in .detail-info > :nth-child(1) { animation-delay: 70ms; }
+  .cart-item--gift-in .detail-info > :nth-child(2) { animation-delay: 110ms; }
+  .cart-item--gift-in .detail-info > :nth-child(3) { animation-delay: 140ms; }
+
+  /* Skeleton pergi lebih cepat dan dengan kurva mempercepat — kepergian tidak
+     boleh menahan perhatian selama kedatangan. */
+  .cart-item--gift-out {
+    animation: v2GiftLand 160ms cubic-bezier(0.7, 0, 0.84, 0) reverse both;
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cart-item--gift-in,
+    .cart-item--gift-in .detail-info > *,
+    .cart-item--gift-out {
+      animation-duration: 1ms;
+      animation-delay: 0ms;
+    }
+  }
+</style>
+
 <script>
   (function () {
     var el = document.querySelector('[data-gift-map]');
     if (!el) return;
 
     var MAP;
-    try {
-      MAP = JSON.parse(el.textContent);
-    } catch (e) {
-      return;
-    }
+    try { MAP = JSON.parse(el.textContent); } catch (e) { return; }
 
     var GIFTS = {};
     Object.keys(MAP).forEach(function (k) {
       MAP[k].forEach(function (g) { GIFTS[g] = true; });
     });
 
-    /* Permintaan sinkronisasi diserialkan lewat satu rantai promise. Selain
-       mencegah dua putaran berjalan bersamaan, ini membuat sync() selalu
-       mengembalikan promise yang selesai SETELAH pekerjaannya benar-benar
-       beres — dipakai untuk menahan respons add-to-cart di bawah. */
+    /* Putaran sinkronisasi diserialkan lewat satu rantai promise supaya dua
+       putaran tidak pernah berjalan bersamaan dan tidak ada yang terbuang. */
     var chain = Promise.resolve();
-
-    /* Menandai permintaan keranjang milik snippet ini sendiri supaya tidak
-       memicu putaran baru dan tidak ikut ditahan. */
+    /* Menandai permintaan keranjang milik snippet ini sendiri. */
     var internal = 0;
+    /* Berapa baris hadiah yang sedang ditunggu. Selama > 0, drawer diberi
+       kartu skeleton supaya pembeli langsung melihat hadiahnya sedang datang. */
+    var awaiting = 0;
+
+    function ownFetch(url, opts) {
+      internal++;
+      var req = fetch(url, opts);
+      internal--;
+      return req;
+    }
 
     function post(url, payload) {
-      internal++;
-      var req = fetch(url, {
+      return ownFetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify(payload)
-      });
-      internal--;
-      return req.then(function (res) {
+      }).then(function (res) {
         if (!res.ok) throw new Error('cart ' + res.status);
         return res.json();
       });
     }
 
-    function repaint(cart) {
-      if (typeof window.refreshCartUI === 'function') {
-        try { window.refreshCartUI(cart); return true; } catch (e) { /* jatuh ke muat ulang */ }
-      }
-      return false;
+    function readCart() {
+      return ownFetch('/cart.js', { headers: { Accept: 'application/json' } })
+        .then(function (r) { return r.json(); });
+    }
+
+    function itemsParent(root) {
+      var first = root.querySelector('.cart-item');
+      return first ? first.parentNode : root;
+    }
+
+    /* Skeleton memakai kelas loading milik tema (.cart-item--optimistic dan
+       .opt-shimmer) supaya animasi, warna, dan iramanya identik dengan kartu
+       optimistis yang sudah dipakai mini cart — bukan gaya baru yang bersaing. */
+    function skeletonCard() {
+      var el = document.createElement('div');
+      el.className = 'cart-item cart-item--gift cart-item--optimistic';
+      el.setAttribute('data-gift-skeleton', '');
+      el.setAttribute('aria-hidden', 'true');
+      el.innerHTML =
+        '<div class="thumb"><span class="opt-shimmer" style="display:block;width:100%;height:100%"></span></div>' +
+        '<div class="detail"><div class="detail-top"><div class="detail-info">' +
+        '<span class="opt-shimmer" style="display:block;width:7.5rem;height:0.875rem;margin-bottom:0.5rem"></span>' +
+        '<span class="opt-shimmer" style="display:block;width:4rem;height:1.25rem;border-radius:999px"></span>' +
+        '</div></div></div>';
+      return el;
+    }
+
+    function clearSkeletons(root) {
+      (root || document).querySelectorAll('[data-gift-skeleton]').forEach(function (n) {
+        /* Beri kepergian singkat lalu buang. Kalau animasi dimatikan pengguna,
+           timeout tetap membersihkannya sehingga tidak ada sisa yang menempel. */
+        n.classList.add('cart-item--gift-out');
+        setTimeout(function () { if (n.parentNode) n.remove(); }, 180);
+      });
+    }
+
+    function ensureSkeletons() {
+      var c = document.getElementById('cart');
+      if (!c || awaiting < 1) return;
+      var have = c.querySelectorAll('[data-gift-skeleton]').length;
+      var parent = itemsParent(c);
+      for (var i = have; i < awaiting; i++) parent.insertBefore(skeletonCard(), parent.firstChild);
+    }
+
+    /* Tema mengisi #cart dengan HTML dari /cart?view=mini setiap kali drawer
+       dibuka, jadi skeleton yang disisipkan lebih awal akan tersapu. Mengamati
+       perubahan isinya membuat skeleton dipasang ulang tepat setelah render. */
+    var cartRoot = document.getElementById('cart');
+    if (cartRoot) {
+      new MutationObserver(function () { ensureSkeletons(); })
+        .observe(cartRoot, { childList: true, subtree: true });
+    }
+
+    /* Ganti skeleton dengan baris hadiah sungguhan, diambil dari render server
+       supaya markup dan gayanya persis sama dengan baris keranjang lain. Hanya
+       node hadiah yang disisipkan — sisa drawer tidak disentuh agar event
+       binding milik tema tetap utuh. */
+    function paintGifts() {
+      var c = document.getElementById('cart');
+      if (!c) { awaiting = 0; return Promise.resolve(); }
+      var prefix = (window.Shopify && window.Shopify.locale === 'id') ? '/id' : '';
+      return ownFetch(prefix + '/cart?view=mini', { headers: { Accept: 'text/html' } })
+        .then(function (r) { return r.text(); })
+        .then(function (html) {
+          var doc = new DOMParser().parseFromString(html, 'text/html');
+          var parent = itemsParent(c);
+          awaiting = 0;
+          clearSkeletons(c);
+          doc.querySelectorAll('.cart-item--gift').forEach(function (node) {
+            var key = node.getAttribute('data-key');
+            if (key && c.querySelector('.cart-item[data-key="' + key + '"]')) return;
+            var real = document.importNode(node, true);
+            real.classList.add('cart-item--gift-in');
+            /* Kelas animasinya dilepas setelah selesai supaya render ulang
+               berikutnya tidak memutarnya lagi. */
+            real.addEventListener('animationend', function handler(ev) {
+              if (ev.target !== real) return;
+              real.classList.remove('cart-item--gift-in');
+              real.removeEventListener('animationend', handler);
+            });
+            parent.insertBefore(real, parent.firstChild);
+          });
+        })
+        .catch(function () { awaiting = 0; clearSkeletons(c); });
     }
 
     function runSync() {
-      internal++;
-      var read = fetch('/cart.js', { headers: { Accept: 'application/json' } });
-      internal--;
-      return read
-        .then(function (r) { return r.json(); })
+      return readCart()
         .then(function (cart) {
           var wanted = {};
           cart.items.forEach(function (item) {
@@ -106,15 +225,13 @@
 
           /* Buang hadiah yang tidak lagi berhak. Selain baris bertanda _Gifted,
              baris apa pun yang variannya ada di daftar hadiah juga dibuang:
-             produk hadiah tidak bisa dibeli terpisah (PDP-nya dialihkan), jadi
-             kalau ia ada tanpa pemicunya, ia pasti sisa yang tersangkut —
-             termasuk yang ditambahkan sebelum properti ini dipakai. */
+             produk hadiah tidak bisa dibeli terpisah, jadi kalau ia ada tanpa
+             pemicunya, ia pasti sisa yang tersangkut. */
           var updates = {};
           var stale = false;
           cart.items.forEach(function (item) {
             var ours = item.properties && item.properties._Gifted;
-            var isGift = GIFTS[item.variant_id];
-            if ((ours || isGift) && !wanted[item.variant_id]) {
+            if ((ours || GIFTS[item.variant_id]) && !wanted[item.variant_id]) {
               updates[item.key] = 0;
               stale = true;
             }
@@ -124,35 +241,32 @@
           cart.items.forEach(function (item) { present[item.variant_id] = true; });
           var missing = Object.keys(wanted).filter(function (g) { return !present[g]; });
 
-          if (!stale && !missing.length) return null;
+          if (!stale && !missing.length) {
+            if (awaiting) { awaiting = 0; clearSkeletons(); }
+            return null;
+          }
 
-          var chain = Promise.resolve(cart);
-          if (stale) chain = chain.then(function () { return post('/cart/update.js', { updates: updates }); });
+          var work = Promise.resolve();
+          if (stale) work = work.then(function () { return post('/cart/update.js', { updates: updates }); });
           if (missing.length) {
-            chain = chain.then(function () {
+            work = work.then(function () {
               return post('/cart/add.js', {
                 items: missing.map(function (g) {
                   return { id: Number(g), quantity: 1, properties: { _Gifted: 'true' } };
                 })
               });
-            }).then(function () {
-              internal++;
-              var reread = fetch('/cart.js', { headers: { Accept: 'application/json' } });
-              internal--;
-              return reread.then(function (r) { return r.json(); });
             });
           }
-          return chain;
+          return work.then(readCart);
         })
         .then(function (cart) {
-          if (!cart) return;
-          if (!repaint(cart)) {
-            /* Di halaman keranjang, totalnya dirender server-side, jadi harus
-               dimuat ulang agar angkanya benar. Di halaman lain tidak. */
-            if (/\/cart\b/.test(window.location.pathname)) window.location.reload();
+          if (!cart) return null;
+          if (typeof window.refreshCartUI === 'function') {
+            try { window.refreshCartUI(cart); } catch (e) { /* abaikan */ }
           }
+          return paintGifts();
         })
-        .catch(function () {});
+        .catch(function () { awaiting = 0; clearSkeletons(); });
     }
 
     function sync() {
@@ -160,9 +274,6 @@
       return chain;
     }
 
-    /* Jalankan setelah keranjang berubah. Tema memakai fetch untuk semua
-       operasi keranjang, jadi menyadap fetch menangkap semua jalurnya —
-       tombol beli, mini cart, maupun halaman keranjang. */
     var origFetch = window.fetch;
     window.fetch = function () {
       var url = arguments[0];
@@ -174,15 +285,26 @@
 
       if (mine || !/\/cart\/(add|change|update)(\.js)?/.test(href)) return result;
 
-      /* Respons add-to-cart SENGAJA ditahan sampai hadiahnya selesai masuk.
-         Tema membuka cart drawer di .then() permintaan ini lalu mengambil
-         /cart?view=mini; kalau tidak ditahan, drawer merender keranjang versi
-         sebelum hadiah ada dan pembeli harus menutup lalu membukanya lagi.
-         Objek respons aslinya dikembalikan utuh — badan responsnya tidak kami
-         baca, jadi pemanggil tetap bisa memakainya. */
-      return result.then(function (res) {
-        return sync().then(function () { return res; }, function () { return res; });
-      });
+      /* Responsnya TIDAK ditahan: drawer harus terbuka secepat biasanya.
+         Sebagai gantinya jumlah hadiah yang akan datang dihitung dari payload
+         permintaan ini, lalu skeleton dipasang begitu drawer selesai dirender. */
+      try {
+        var body = arguments[1] && arguments[1].body;
+        if (body && /\/cart\/add/.test(href)) {
+          var parsed = JSON.parse(body);
+          var incoming = parsed.items || [parsed];
+          var expect = {};
+          incoming.forEach(function (it) {
+            var gifts = MAP[String(it.id)];
+            if (gifts) gifts.forEach(function (g) { expect[g] = true; });
+          });
+          var n = Object.keys(expect).length;
+          if (n) { awaiting = n; ensureSkeletons(); }
+        }
+      } catch (e) { /* payload tak terbaca: lewati skeleton, sinkronisasi tetap jalan */ }
+
+      result.then(function () { sync(); }).catch(function () { awaiting = 0; clearSkeletons(); });
+      return result;
     };
 
     if (document.readyState === 'loading') {
