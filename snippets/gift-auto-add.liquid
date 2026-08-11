@@ -60,15 +60,25 @@
       MAP[k].forEach(function (g) { GIFTS[g] = true; });
     });
 
-    var busy = false;
-    var pending = false;
+    /* Permintaan sinkronisasi diserialkan lewat satu rantai promise. Selain
+       mencegah dua putaran berjalan bersamaan, ini membuat sync() selalu
+       mengembalikan promise yang selesai SETELAH pekerjaannya benar-benar
+       beres — dipakai untuk menahan respons add-to-cart di bawah. */
+    var chain = Promise.resolve();
+
+    /* Menandai permintaan keranjang milik snippet ini sendiri supaya tidak
+       memicu putaran baru dan tidak ikut ditahan. */
+    var internal = 0;
 
     function post(url, payload) {
-      return fetch(url, {
+      internal++;
+      var req = fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify(payload)
-      }).then(function (res) {
+      });
+      internal--;
+      return req.then(function (res) {
         if (!res.ok) throw new Error('cart ' + res.status);
         return res.json();
       });
@@ -81,15 +91,11 @@
       return false;
     }
 
-    function sync() {
-      /* Kalau satu putaran sedang berjalan, permintaan berikutnya DIANTRE —
-         bukan dibuang. Membuangnya membuat hadiah tertinggal di keranjang saat
-         produk utamanya dihapus tepat ketika putaran sebelumnya belum selesai,
-         dan keranjang tersangkut berisi hadiah saja dengan total Rp 0. */
-      if (busy) { pending = true; return Promise.resolve(); }
-      busy = true;
-
-      return fetch('/cart.js', { headers: { Accept: 'application/json' } })
+    function runSync() {
+      internal++;
+      var read = fetch('/cart.js', { headers: { Accept: 'application/json' } });
+      internal--;
+      return read
         .then(function (r) { return r.json(); })
         .then(function (cart) {
           var wanted = {};
@@ -130,7 +136,10 @@
                 })
               });
             }).then(function () {
-              return fetch('/cart.js', { headers: { Accept: 'application/json' } }).then(function (r) { return r.json(); });
+              internal++;
+              var reread = fetch('/cart.js', { headers: { Accept: 'application/json' } });
+              internal--;
+              return reread.then(function (r) { return r.json(); });
             });
           }
           return chain;
@@ -143,11 +152,12 @@
             if (/\/cart\b/.test(window.location.pathname)) window.location.reload();
           }
         })
-        .catch(function () {})
-        .then(function () {
-          busy = false;
-          if (pending) { pending = false; setTimeout(sync, 0); }
-        });
+        .catch(function () {});
+    }
+
+    function sync() {
+      chain = chain.then(runSync, runSync);
+      return chain;
     }
 
     /* Jalankan setelah keranjang berubah. Tema memakai fetch untuk semua
@@ -157,13 +167,22 @@
     window.fetch = function () {
       var url = arguments[0];
       var href = typeof url === 'string' ? url : (url && url.url) || '';
+      var mine = internal > 0;
       /* Harus dipanggil dengan window sebagai this — fetch yang dilepas dari
          konteksnya melempar "Illegal invocation" di sebagian browser. */
       var result = origFetch.apply(window, arguments);
-      if (/\/cart\/(add|change|update)(\.js)?/.test(href)) {
-        result.then(function () { setTimeout(sync, 60); }).catch(function () {});
-      }
-      return result;
+
+      if (mine || !/\/cart\/(add|change|update)(\.js)?/.test(href)) return result;
+
+      /* Respons add-to-cart SENGAJA ditahan sampai hadiahnya selesai masuk.
+         Tema membuka cart drawer di .then() permintaan ini lalu mengambil
+         /cart?view=mini; kalau tidak ditahan, drawer merender keranjang versi
+         sebelum hadiah ada dan pembeli harus menutup lalu membukanya lagi.
+         Objek respons aslinya dikembalikan utuh — badan responsnya tidak kami
+         baca, jadi pemanggil tetap bisa memakainya. */
+      return result.then(function (res) {
+        return sync().then(function () { return res; }, function () { return res; });
+      });
     };
 
     if (document.readyState === 'loading') {
