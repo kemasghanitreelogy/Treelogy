@@ -5,7 +5,7 @@
       {
         "id": {{ v.id }},
         "price": {{ v.price | default: 0 }},
-        "original_price": {{ v.metafields.custom.original_price.value | default: 0 }}
+        "original_price": {% if v.metafields.custom.original_price.value and v.metafields.custom.original_price.value != 0 %}{{ v.metafields.custom.original_price.value }}{% else %}{{ v.compare_at_price | default: 0 | divided_by: 100.0 | round }}{% endif %}
       }{% unless forloop.last %},{% endunless %}
     {%- endfor -%}
   ]

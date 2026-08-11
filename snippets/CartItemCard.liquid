@@ -17,6 +17,14 @@
 
   assign original_price = item.variant.metafields.custom.original_price.value | default: 0 | plus: 0
   assign original_price_sub = original_price | times: 100
+  comment
+    Fallback: varian tanpa metafield original_price tapi punya compare-at
+    Shopify tetap menampilkan harga coretnya. compare_at_price sudah dalam
+    satuan terkecil, jadi tidak dikali 100.
+  endcomment
+  if original_price_sub == 0
+    assign original_price_sub = item.variant.compare_at_price | default: 0
+  endif
 
   comment
     Baris hadiah: yang menentukan adalah pembeli TIDAK membayar apa pun untuk
@@ -58,7 +66,12 @@
   data-qty="{{ item.quantity }}">
   <a href="{{ item.url | within: collections.all }}" class="thumb">
     {% assign image_to_show = item.image | default: item.product.featured_image %}
-    <img src="{{ image_to_show | img_url: 'medium' }}" alt="{{ item.title | escape }}">
+    <img
+      src="{{ image_to_show | image_url: width: 240, height: 240, crop: 'center' }}"
+      alt="{{ item.title | escape }}"
+      width="240"
+      height="240"
+      loading="lazy">
   </a>
 
   {% assign is_free_roduct = false %}
