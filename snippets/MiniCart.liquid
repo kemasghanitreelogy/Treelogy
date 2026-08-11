@@ -494,12 +494,9 @@
     var pct = Math.min((progressBase / threshold) * 100, 100);
     window.setShippingProgress(pct, remaining, isFree);
 
-    /* -- Keranjang kosong: tutup drawer dengan hormat -- */
-    if (cart.item_count === 0) {
-      window.cartScheduleEmptyClose();
-    } else if (window.cartCancelEmptyClose) {
-      window.cartCancelEmptyClose();
-    }
+    /* -- Keranjang kosong: tutup drawer dengan hormat (hanya bila BARU
+          menjadi kosong — lihat cartMaybeCloseOnEmpty) -- */
+    window.cartMaybeCloseOnEmpty(cart.item_count);
 
     /* -- Checkout total -- */
     var te = c.querySelector('#sub-total-mini');
@@ -548,17 +545,19 @@
          0.38 detik) supaya pembukaan berikutnya mulai dari keadaan murni. */
       setTimeout(function () {
         if (panel) {
-          panel.style.removeProperty('opacity');
           panel.style.removeProperty('transform');
           panel.style.removeProperty('transition');
         }
       }, 450);
     };
     if (reduced || !panel) { slideOut(); return; }
-    panel.style.transition = 'opacity 150ms cubic-bezier(0.7, 0, 0.84, 0), transform 150ms cubic-bezier(0.7, 0, 0.84, 0)';
-    panel.style.opacity = '0.35';
-    panel.style.transform = 'translateY(0.375rem)';
-    setTimeout(slideOut, 140);
+    /* Parallax dua lapis, TANPA fade: konten mendahului ke arah keluar
+       (24px, kurva mempercepat), panel menyusul lewat transisi tema 70ms
+       kemudian. Dua lapisan yang bergerak dengan kecepatan berbeda terbaca
+       sebagai kedalaman; opacity tidak disentuh sama sekali. */
+    panel.style.transition = 'transform 220ms cubic-bezier(0.7, 0, 0.84, 0)';
+    panel.style.transform = 'translateX(1.5rem)';
+    setTimeout(slideOut, 70);
   };
 
   /* Dipanggil refreshCartUI setiap kali keranjang menjadi kosong. Jedanya
@@ -567,8 +566,21 @@
      seketika terasa seperti diusir. Batal otomatis bila sempat ada isi lagi
      (mis. pembeli menekan ADD di Frequently Bought Together). */
   var _emptyCloseTimer = null;
+  var _lastItemCount = null;
   window.cartCancelEmptyClose = function () {
     if (_emptyCloseTimer) { clearTimeout(_emptyCloseTimer); _emptyCloseTimer = null; }
+  };
+  /* Hanya TRANSISI berisi → kosong yang menutup. Drawer yang memang dibuka
+     dalam keadaan kosong (klik ikon keranjang tanpa isi) harus tetap terbuka —
+     pembeli sengaja membukanya dan empty state punya pekerjaan: menunjukkan
+     jalan mulai belanja. */
+  window.cartMaybeCloseOnEmpty = function (count) {
+    if (count === 0) {
+      if (_lastItemCount !== null && _lastItemCount > 0) window.cartScheduleEmptyClose();
+    } else {
+      window.cartCancelEmptyClose();
+    }
+    _lastItemCount = count;
   };
   window.cartScheduleEmptyClose = function () {
     if (_emptyCloseTimer) return;
