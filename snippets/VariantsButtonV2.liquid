@@ -1031,7 +1031,15 @@
          bilahnya sendiri — tanpa ini keduanya saling memicu dan berkedip. */
       new IntersectionObserver(
         function (entries) {
-          bar.classList.toggle('is-visible', !entries[0].isIntersecting);
+          var show = !entries[0].isIntersecting;
+          bar.classList.toggle('is-visible', show);
+          /* Keadaan bilah diumumkan ke <body> supaya elemen pihak ketiga yang
+             menempel di dasar layar (teaser Klaviyo) bisa mengalah. Tingginya
+             diukur sungguhan — beda di mobile/desktop dan safe-area. */
+          document.body.classList.toggle('v2-sticky-open', show);
+          if (show) {
+            document.body.style.setProperty('--v2-sticky-h', bar.offsetHeight + 'px');
+          }
         },
         { rootMargin: '0px 0px -84px 0px', threshold: 0 }
       ).observe(realButton);
