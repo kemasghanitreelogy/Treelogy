@@ -87,7 +87,7 @@
           "type": "cta",
           "settings": {
             "label": "Belanja di Harga Hari Ini",
-            "link": "shopify://collections/all"
+            "link": "https://treelogy.com/id/collections/all"
           }
         },
         "guarantee": {
