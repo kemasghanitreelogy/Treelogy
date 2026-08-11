@@ -2792,9 +2792,15 @@ input.red {
 }
 .cart-item .detail .price-row {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  align-items: flex-start;
+  /* Sebaris, coret di kiri — harga final di kanan. Biswas dkk. (2013, J. of
+     Marketing): harga jual di kanan harga asli menaikkan persepsi hemat
+     karena mengikuti arah hitung "asli - jual" kiri ke kanan; anchoring
+     angka tinggi yang terbaca duluan menguatkannya. Baseline disejajarkan
+     karena ukuran fontnya beda; wrap sebagai degradasi aman di layar sempit. */
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 8px;
 }
 .cart-item .detail .price-row .price-wrapper {
   font-size: 14px;
