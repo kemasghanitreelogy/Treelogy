@@ -117,38 +117,49 @@
       return req;
     }
 
-    function post(url, payload) {
-      return ownFetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify(payload)
-      }).then(function (res) {
-        if (!res.ok) throw new Error('cart ' + res.status);
-        return res.json();
-      });
-    }
-
-    function readCart() {
-      return ownFetch('/cart.js', { headers: { Accept: 'application/json' } })
-        .then(function (r) {
-          /* Status WAJIB diperiksa. Saat Shopify membatasi laju endpoint
-             keranjang ia membalas 429 dengan halaman HTML, dan .json() atasnya
-             melempar SyntaxError yang tertelan .catch di ujung rantai —
-             sinkronisasi mati diam-diam dan hadiahnya tampak menyangkut. */
-          if (!r.ok) throw new Error('cart ' + r.status);
-          return r.json();
-        });
-    }
-
     /* Ulangi dengan jeda menaik. 429 di endpoint keranjang bersifat sesaat,
        jadi menyerah pada percobaan pertama membuat keranjang tertinggal di
-       keadaan setengah jadi yang tidak pernah pulih sendiri. */
+       keadaan setengah jadi yang tidak pernah pulih sendiri.
+
+       Retry dipasang PER PERMINTAAN, bukan membungkus seluruh sinkronisasi.
+       Simulasi membuktikan versi pembungkus gagal: saat beberapa endpoint
+       terkena 429 berurutan (baca keranjang, lalu update, lalu render mini),
+       tiap endpoint memakan jatah percobaan bersama sampai habis sebelum
+       penghapusannya sempat menang. */
     function withRetry(fn, tries, delay) {
       return fn().catch(function (err) {
         if (tries <= 1) throw err;
         return new Promise(function (resolve) { setTimeout(resolve, delay); })
           .then(function () { return withRetry(fn, tries - 1, delay * 2); });
       });
+    }
+
+    function post(url, payload) {
+      return withRetry(function () {
+        return ownFetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(payload)
+        }).then(function (res) {
+          if (!res.ok) throw new Error('cart ' + res.status);
+          return res.json();
+        });
+      }, 3, 1200);
+    }
+
+    function readCart() {
+      return withRetry(function () {
+        return ownFetch('/cart.js', { headers: { Accept: 'application/json' } })
+          .then(function (r) {
+            /* Status WAJIB diperiksa. Saat Shopify membatasi laju endpoint
+               keranjang ia membalas 429 dengan halaman HTML, dan .json()
+               atasnya melempar SyntaxError yang tertelan .catch di ujung
+               rantai — sinkronisasi mati diam-diam dan hadiahnya tampak
+               menyangkut. */
+            if (!r.ok) throw new Error('cart ' + r.status);
+            return r.json();
+          });
+      }, 3, 1200);
     }
 
     function itemsParent(root) {
@@ -207,14 +218,16 @@
       var c = document.getElementById('cart');
       if (!c) { awaiting = 0; return Promise.resolve(); }
       var prefix = (window.Shopify && window.Shopify.locale === 'id') ? '/id' : '';
-      return ownFetch(prefix + '/cart?view=mini', { headers: { Accept: 'text/html' } })
-        .then(function (r) {
-          /* Halaman 429 tetap HTML yang sah, jadi tanpa penjagaan ini ia
-             ter-parse jadi dokumen tanpa baris hadiah — dan rekonsiliasi dua
-             arah di bawah akan MENGHAPUS hadiah yang sebenarnya sah. */
-          if (!r.ok) throw new Error('mini ' + r.status);
-          return r.text();
-        })
+      return withRetry(function () {
+        return ownFetch(prefix + '/cart?view=mini', { headers: { Accept: 'text/html' } })
+          .then(function (r) {
+            /* Halaman 429 tetap HTML yang sah, jadi tanpa penjagaan ini ia
+               ter-parse jadi dokumen tanpa baris hadiah — dan rekonsiliasi dua
+               arah di bawah akan MENGHAPUS hadiah yang sebenarnya sah. */
+            if (!r.ok) throw new Error('mini ' + r.status);
+            return r.text();
+          });
+      }, 3, 1200)
         .then(function (html) {
           var doc = new DOMParser().parseFromString(html, 'text/html');
           var parent = itemsParent(c);
@@ -335,7 +348,7 @@
        angka lama — angka basi lebih berbahaya daripada baris yang telat hilang,
        karena pembeli memutuskan berdasarkan angka itu. */
     function syncOnce() {
-      return withRetry(runSync, 3, 1200).catch(function () {
+      return runSync().catch(function () {
         awaiting = 0;
         clearSkeletons();
         return readCart()
