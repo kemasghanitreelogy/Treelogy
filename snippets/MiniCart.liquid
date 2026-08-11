@@ -97,6 +97,37 @@
   </div>
 </div>
 
+
+<style>
+  /* ===== Penjaga zoom mobile =====
+     Zoom halaman yang "kadang muncul saat remove" punya dua mekanisme:
+
+     1) Double-tap zoom — dua ketukan cepat berdekatan (ikon sampah lalu
+        tombol Remove di modal, atau ketukan ganda karena tak sabar) sesekali
+        ditafsirkan browser sebagai double tap dan men-zoom seluruh halaman.
+        touch-action: manipulation mematikannya di area drawer dan modal;
+        pan dan pinch zoom tetap hidup untuk aksesibilitas.
+
+     2) Zoom fokus iOS — WebKit men-zoom viewport saat kontrol form ber-font
+        di bawah 16px menerima fokus. Satu-satunya yang tersisa di drawer
+        adalah .qty-select (13px); di layar sentuh dinaikkan ke 16px dengan
+        padding vertikal dirapatkan supaya tinggi kontrolnya tidak berubah. */
+  .mini-cart,
+  .mini-cart *,
+  .cart-remove-modal,
+  .cart-remove-modal * {
+    touch-action: manipulation;
+  }
+
+  @media (hover: none) and (pointer: coarse) {
+    .cart-item .qty-select {
+      font-size: 16px;
+      padding-top: 2px;
+      padding-bottom: 2px;
+    }
+  }
+</style>
+
 <script>
   /* Shopify's `t` filter HTML-escapes its output, so a translation containing
      an apostrophe reaches JS as the literal characters "Couldn&#39;t" and
