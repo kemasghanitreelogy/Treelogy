@@ -124,16 +124,10 @@
                   <a href="{{ link.url }}">{{ link.title }}</a>
                 {% endfor %}
               {% else %}
-                <a href="{{ routes.all_products_collection_url }}">Toko</a>
-                {% if pages['moringa-tree'] != blank %}
-                  <a href="{{ pages['moringa-tree'].url }}">Pohon Moringa</a>
-                {% endif %}
-                {% if pages['benefit'] != blank %}
-                  <a href="{{ pages['benefit'].url }}">Manfaat</a>
-                {% endif %}
-                {% if pages['farm'] != blank %}
-                  <a href="{{ pages['farm'].url }}">Perkebunan Kami</a>
-                {% endif %}
+                <a href="/id/collections/all">Toko</a>
+                <a href="/id/pages/moringa-tree">Pohon Moringa</a>
+                <a href="/id/pages/benefit">Manfaat</a>
+                <a href="/id/pages/farm">Perkebunan Kami</a>
               {% endif %}
             </nav>
             <div class="fl-footer__social">
