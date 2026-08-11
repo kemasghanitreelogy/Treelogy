@@ -1,0 +1,133 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "letter": {
+      "type": "founder-letter",
+      "blocks": {
+        "hero": {
+          "type": "hero",
+          "settings": {
+            "image": "shopify://shop_images/founder-letter-hero.jpg",
+            "badge": "shopify://shop_images/founder-letter-badge.png"
+          }
+        },
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "Surat dari <strong>founder<\/strong> kami."
+          }
+        },
+        "arrow": {
+          "type": "arrow",
+          "settings": {}
+        },
+        "greeting": {
+          "type": "greeting",
+          "settings": {
+            "greeting": "Hi",
+            "greeting_suffix": ",",
+            "personalize": true
+          }
+        },
+        "intro": {
+          "type": "text",
+          "settings": {
+            "content": "<p>Lima tahun lalu kami menanam pohon moringa pertama di Bali. Tahun 2024, Treelogy lahir dari kebun itu. Hari ini, lebih dari 10.000 orang merawat kesehatan dari dalam dengan daun kami, dan dari luar dengan seed oil kami. Kami bersyukur kamu ada di sini. Sejak itu:<\/p>",
+            "size": "body",
+            "width": "wide"
+          }
+        },
+        "milestones": {
+          "type": "checklist",
+          "settings": {
+            "items": "9 hektar lahan yang kembali hidup\nGaji 36,9% di atas UMK, sejak hari pertama\n60 karyawan dan 30 ibu-ibu yang berdedikasi\n10.000+ orang terbantu, Inside & Out\nPabrik milik sendiri: BPOM, GMP, HACCP, ISO\nProduk bersertifikat halal, organik, FairTSA\nSustainable Brand of the Year 2024\nSustainable Product of the Year 2025\nJanji kualitas terbaik yang kami tepati"
+          }
+        },
+        "story": {
+          "type": "text",
+          "settings": {
+            "content": "<p>Dan ini baru permulaan.<\/p><p>Kami sedang dalam proses menjadi brand moringa pertama di dunia dengan sertifikasi <strong>Regenerative Organic Certified.<\/strong><\/p><p>Langkah terakhir sebelum membawa Treelogy ke panggung internasional, dan membuat <strong>moringa Indonesia bersinar untuk dunia.<\/strong><\/p><p>Selama dua tahun, saat harga hampir semua hal naik, harga kami tidak bergerak.<\/p><p>Tahun ini ada yang berubah. Pemerintah mulai mewajibkan kami memungut pajak seperti perusahaan besar. Jadi mulai 1 September, harga kami menyesuaikan.<\/p>",
+            "size": "body",
+            "width": "normal"
+          }
+        },
+        "table_intro": {
+          "type": "text",
+          "settings": {
+            "content": "<p><strong>Supaya semuanya jelas:<\/strong><\/p>",
+            "size": "body",
+            "width": "normal"
+          }
+        },
+        "prices": {
+          "type": "price_table",
+          "settings": {
+            "column_today": "Hari Ini",
+            "column_next": "Mulai 1 Sept",
+            "rows": "Moringa Capsules 1 bulan | Rp390.000 | Rp455.000\nMoringa Capsules 2 bulan | Rp690.000 | Rp795.000\nMoringa Capsules 3 bulan | Rp990.000 | Rp1.170.000\nMoringa Powder 45g | Rp320.000 | Rp370.000\nMoringa Powder 90g | Rp540.000 | Rp625.000\nMoringa Powder 180g | Rp990.000 | Rp1.145.000\nMoringa Seed Oil 30 ml | tidak berubah | tidak berubah\nMoringa Seed Oil 60 ml | tidak berubah | tidak berubah"
+          }
+        },
+        "closing": {
+          "type": "text",
+          "settings": {
+            "content": "<p>Tapi tenang, kami sudah menyiapkan ini untuk kamu. Siapa pun yang pernah memesan dari kami, atau memesan sebelum 1 September, akan menerima kode pribadi lewat email pada 1 September. Kode itu mengunci harga hari ini untuk maksimal tiga kali pemesanan, sampai 30 November. Jadi kalau kamu belum mulai, bulan ini saatnya.<\/p><p>Dan untuk yang butuh lebih banyak, kami menyiapkan bundle yang membuat harga hari ini tetap berlaku, dengan komitmen yang lebih besar.<\/p><p><strong>Terima kasih sudah menjadi bagian dari perjalanan ini. Semoga kamu dan keluarga selalu sehat.<\/strong><\/p><p><strong>Salam hangat dari Bali,<br\/>Sacha, Founder<\/strong><\/p>",
+            "size": "body",
+            "width": "normal"
+          }
+        },
+        "cta": {
+          "type": "cta",
+          "settings": {
+            "label": "Belanja di Harga Hari Ini",
+            "link": "shopify://collections/all"
+          }
+        },
+        "guarantee": {
+          "type": "text",
+          "settings": {
+            "content": "<p>Garansi uang kembali 60 hari kami tetap berlaku, seperti biasa. Minum setiap hari, dan kalau kamu tidak merasakan bedanya, uang kembali.<\/p>",
+            "size": "body",
+            "width": "normal"
+          }
+        },
+        "ps": {
+          "type": "text",
+          "settings": {
+            "content": "<p>PS. Setiap balasan email ini langsung sampai ke saya, bukan ke tim. Kalau perubahan ini terasa berat untuk rutinitas harian, tulis saja. Kita bicarakan baik-baik, dan cari jalannya bersama.<\/p>",
+            "size": "small",
+            "width": "normal"
+          }
+        }
+      },
+      "block_order": [
+        "hero",
+        "heading",
+        "arrow",
+        "greeting",
+        "intro",
+        "milestones",
+        "story",
+        "table_intro",
+        "prices",
+        "closing",
+        "cta",
+        "guarantee",
+        "ps"
+      ],
+      "settings": {
+        "body_font": "inter_n4",
+        "background_color": "#FBFCF7",
+        "text_color": "#2A3B34"
+      }
+    }
+  },
+  "order": ["letter"]
+}

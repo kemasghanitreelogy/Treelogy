@@ -1,0 +1,487 @@
+{% liquid
+  assign fl_font = section.settings.body_font
+  assign fl_font_bold = fl_font | font_modify: 'weight', '700'
+%}
+
+{% style %}
+  {{ fl_font | font_face: font_display: 'swap' }}
+  {% if fl_font_bold %}
+    {{ fl_font_bold | font_face: font_display: 'swap' }}
+  {% endif %}
+
+  #fl-{{ section.id }} {
+    --fl-u: calc(min(100vw, 1200px) / 1200);
+    --fl-bg: {{ section.settings.background_color }};
+    --fl-ink: {{ section.settings.text_color }};
+    --fl-font: {{ fl_font.family }}, {{ fl_font.fallback_families }};
+  }
+{% endstyle %}
+
+<div id="fl-{{ section.id }}" class="fl" data-cs-capture>
+  <div class="fl__canvas">
+    {% for block in section.blocks %}
+      {% case block.type %}
+        {% when 'hero' %}
+          <div class="fl-hero" {{ block.shopify_attributes }}>
+            {% if block.settings.image %}
+              {{
+                block.settings.image
+                | image_url: width: 2302
+                | image_tag:
+                  widths: '750, 1151, 1600, 2302',
+                  sizes: '(min-width: 1200px) 1151px, 96vw',
+                  class: 'fl-hero__img'
+              }}
+            {% else %}
+              {{ 'lifestyle-1' | placeholder_svg_tag: 'fl-hero__img fl-hero__img--placeholder' }}
+            {% endif %}
+            {% if block.settings.badge %}
+              {{
+                block.settings.badge
+                | image_url: width: 640
+                | image_tag: class: 'fl-hero__badge', alt: ''
+              }}
+            {% endif %}
+          </div>
+
+        {% when 'heading' %}
+          <h1 class="fl-heading" {{ block.shopify_attributes }}>{{ block.settings.heading }}</h1>
+
+        {% when 'arrow' %}
+          <div class="fl-arrow" {{ block.shopify_attributes }}>
+            {% render 'founder-letter-icon', icon: 'arrow-down' %}
+          </div>
+
+        {% when 'greeting' %}
+          <p class="fl-text fl-text--body fl-greeting" {{ block.shopify_attributes }}>
+            {{- block.settings.greeting -}}
+            {%- if block.settings.personalize and customer -%}
+              {{- ' ' -}}{{- customer.first_name -}}
+            {%- endif -%}
+            {{- block.settings.greeting_suffix -}}
+          </p>
+
+        {% when 'text' %}
+          <div
+            class="fl-text {% if block.settings.size == 'small' %}fl-text--small{% else %}fl-text--body{% endif %} {% if block.settings.width == 'wide' %}fl-text--wide{% endif %}"
+            {{ block.shopify_attributes }}
+          >
+            {{ block.settings.content }}
+          </div>
+
+        {% when 'checklist' %}
+          <ul class="fl-checklist" {{ block.shopify_attributes }}>
+            {% assign fl_items = block.settings.items | strip | newline_to_br | split: '<br />' %}
+            {% for fl_item in fl_items %}
+              {% assign fl_item_text = fl_item | strip %}
+              {% if fl_item_text != blank %}
+                <li class="fl-checklist__item">
+                  {% render 'founder-letter-icon', icon: 'check' %}
+                  <span>{{ fl_item_text }}</span>
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+
+        {% when 'price_table' %}
+          <div class="fl-table" role="table" {{ block.shopify_attributes }}>
+            <div class="fl-table__row" role="row">
+              <span class="fl-table__cell fl-table__cell--head" role="columnheader"></span>
+              <span class="fl-table__cell fl-table__cell--head" role="columnheader">{{ block.settings.column_today }}</span>
+              <span class="fl-table__cell fl-table__cell--head" role="columnheader">{{ block.settings.column_next }}</span>
+            </div>
+            {% assign fl_rows = block.settings.rows | strip | newline_to_br | split: '<br />' %}
+            {% for fl_row in fl_rows %}
+              {% assign fl_row_text = fl_row | strip %}
+              {% if fl_row_text != blank %}
+                {% assign fl_cells = fl_row_text | split: '|' %}
+                <div class="fl-table__row" role="row">
+                  <span class="fl-table__cell fl-table__cell--name" role="rowheader">{{ fl_cells[0] | strip }}</span>
+                  <span class="fl-table__cell" role="cell">{{ fl_cells[1] | strip }}</span>
+                  <span class="fl-table__cell" role="cell">{{ fl_cells[2] | strip }}</span>
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+
+        {% when 'cta' %}
+          <div class="fl-cta-wrap" {{ block.shopify_attributes }}>
+            <a class="fl-cta" href="{{ block.settings.link | default: routes.all_products_collection_url }}">
+              {{- block.settings.label -}}
+            </a>
+          </div>
+      {% endcase %}
+    {% endfor %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .fl {
+    background: var(--fl-bg);
+    color: var(--fl-ink);
+    font-family: var(--fl-font);
+    overflow: hidden;
+  }
+
+  .fl__canvas {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: calc(85 * var(--fl-u));
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-top: calc(36 * var(--fl-u));
+    padding-bottom: calc(85 * var(--fl-u));
+  }
+
+  .fl-hero {
+    position: relative;
+    width: calc(1151 * var(--fl-u));
+    height: calc(670 * var(--fl-u));
+    border-radius: calc(30 * var(--fl-u));
+    overflow: hidden;
+    background: linear-gradient(180deg, #f9f9f9 0%, #f8f8fa 29.5%, #e6e1de 100%);
+  }
+
+  .fl-hero__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .fl-hero__badge {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: calc(301 * var(--fl-u));
+    height: calc(283 * var(--fl-u));
+    transform: translate(calc(-50% - 4 * var(--fl-u)), calc(-50% + 84.5 * var(--fl-u)));
+    object-fit: contain;
+  }
+
+  .fl-heading {
+    margin: calc(37 * var(--fl-u)) 0 0;
+    width: calc(886 * var(--fl-u));
+    font-size: calc(64 * var(--fl-u));
+    font-weight: 400;
+    line-height: normal;
+    text-align: center;
+  }
+
+  .fl-arrow {
+    width: calc(70 * var(--fl-u));
+    height: calc(70 * var(--fl-u));
+  }
+
+  .fl-arrow .fl-icon--arrow {
+    display: block;
+    width: 100%;
+    height: 100%;
+    transform: rotate(90deg);
+  }
+
+  .fl-text {
+    width: calc(920 * var(--fl-u));
+    text-align: center;
+    line-height: normal;
+  }
+
+  .fl-text--wide {
+    width: calc(990 * var(--fl-u));
+  }
+
+  .fl-text--body {
+    font-size: calc(45 * var(--fl-u));
+  }
+
+  .fl-text--small {
+    font-size: calc(39 * var(--fl-u));
+  }
+
+  .fl-text p {
+    margin: 0;
+  }
+
+  .fl-text p + p {
+    margin-top: calc(85 * var(--fl-u));
+  }
+
+  .fl-greeting {
+    margin: 0;
+  }
+
+  .fl-checklist {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: 0;
+    padding: calc(18 * var(--fl-u)) 0 0 calc(148 * var(--fl-u));
+    list-style: none;
+  }
+
+  .fl-checklist__item {
+    display: flex;
+    align-items: flex-start;
+    column-gap: calc(46 * var(--fl-u));
+    width: calc(969 * var(--fl-u));
+    font-size: calc(39 * var(--fl-u));
+    font-weight: 700;
+    line-height: calc(67 * var(--fl-u));
+  }
+
+  .fl-checklist__item .fl-icon--check {
+    flex: 0 0 auto;
+    width: calc(38.112 * var(--fl-u));
+    height: calc(29.055 * var(--fl-u));
+    margin-top: calc(19 * var(--fl-u));
+  }
+
+  .fl-table {
+    display: flex;
+    flex-direction: column;
+    row-gap: calc(44 * var(--fl-u));
+    width: calc(1059 * var(--fl-u));
+    font-size: calc(36 * var(--fl-u));
+    line-height: normal;
+  }
+
+  .fl-table__row {
+    display: grid;
+    grid-template-columns: calc(550 * var(--fl-u)) calc(272 * var(--fl-u)) calc(237 * var(--fl-u));
+  }
+
+  .fl-table__cell--head,
+  .fl-table__cell--name {
+    font-weight: 700;
+  }
+
+  .fl-cta-wrap {
+    display: flex;
+    justify-content: center;
+  }
+
+  .fl-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: calc(22 * var(--fl-u)) calc(60 * var(--fl-u));
+    border-radius: calc(150 * var(--fl-u));
+    background: var(--fl-ink);
+    color: var(--fl-bg);
+    font-size: calc(45 * var(--fl-u));
+    line-height: normal;
+    text-align: center;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .fl-cta:hover {
+    opacity: 0.9;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Founder Letter",
+  "tag": "section",
+  "class": "founder-letter-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "font_picker",
+      "id": "body_font",
+      "label": "Font",
+      "default": "inter_n4"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#FBFCF7"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#2A3B34"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "hero",
+      "name": "Hero image",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "image_picker",
+          "id": "badge",
+          "label": "Badge overlay",
+          "info": "Centered logo displayed on top of the hero image"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "name": "Heading",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Surat dari <strong>founder</strong> kami."
+        }
+      ]
+    },
+    {
+      "type": "arrow",
+      "name": "Arrow icon",
+      "limit": 1,
+      "settings": []
+    },
+    {
+      "type": "greeting",
+      "name": "Greeting",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "greeting",
+          "label": "Greeting",
+          "default": "Hi"
+        },
+        {
+          "type": "text",
+          "id": "greeting_suffix",
+          "label": "Suffix",
+          "default": ","
+        },
+        {
+          "type": "checkbox",
+          "id": "personalize",
+          "label": "Add customer first name when logged in",
+          "default": true
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Paragraphs",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content",
+          "default": "<p>Tulis isi surat di sini.</p>"
+        },
+        {
+          "type": "select",
+          "id": "size",
+          "label": "Text size",
+          "options": [
+            { "value": "body", "label": "Body" },
+            { "value": "small", "label": "Small" }
+          ],
+          "default": "body"
+        },
+        {
+          "type": "select",
+          "id": "width",
+          "label": "Width",
+          "options": [
+            { "value": "normal", "label": "Normal" },
+            { "value": "wide", "label": "Wide" }
+          ],
+          "default": "normal"
+        }
+      ]
+    },
+    {
+      "type": "checklist",
+      "name": "Checklist",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "items",
+          "label": "Items",
+          "info": "One item per line",
+          "default": "9 hektar lahan yang kembali hidup\nGaji 36,9% di atas UMK, sejak hari pertama\n60 karyawan dan 30 ibu-ibu yang berdedikasi\n10.000+ orang terbantu, Inside & Out\nPabrik milik sendiri: BPOM, GMP, HACCP, ISO\nProduk bersertifikat halal, organik, FairTSA\nSustainable Brand of the Year 2024\nSustainable Product of the Year 2025\nJanji kualitas terbaik yang kami tepati"
+        }
+      ]
+    },
+    {
+      "type": "price_table",
+      "name": "Price table",
+      "settings": [
+        {
+          "type": "text",
+          "id": "column_today",
+          "label": "First column heading",
+          "default": "Hari Ini"
+        },
+        {
+          "type": "text",
+          "id": "column_next",
+          "label": "Second column heading",
+          "default": "Mulai 1 Sept"
+        },
+        {
+          "type": "textarea",
+          "id": "rows",
+          "label": "Rows",
+          "info": "One row per line: Product | Price today | Price next",
+          "default": "Moringa Capsules 1 bulan | Rp390.000 | Rp455.000\nMoringa Capsules 2 bulan | Rp690.000 | Rp795.000\nMoringa Capsules 3 bulan | Rp990.000 | Rp1.170.000\nMoringa Powder 45g | Rp320.000 | Rp370.000\nMoringa Powder 90g | Rp540.000 | Rp625.000\nMoringa Powder 180g | Rp990.000 | Rp1.145.000\nMoringa Seed Oil 30 ml | tidak berubah | tidak berubah\nMoringa Seed Oil 60 ml | tidak berubah | tidak berubah"
+        }
+      ]
+    },
+    {
+      "type": "cta",
+      "name": "Button",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Belanja di Harga Hari Ini"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Founder Letter",
+      "blocks": [
+        { "type": "hero" },
+        { "type": "heading" },
+        { "type": "arrow" },
+        { "type": "greeting" },
+        { "type": "text" },
+        { "type": "checklist" },
+        { "type": "text" },
+        { "type": "price_table" },
+        { "type": "text" },
+        { "type": "cta" }
+      ]
+    }
+  ]
+}
+{% endschema %}
