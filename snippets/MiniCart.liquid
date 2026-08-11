@@ -37,6 +37,16 @@
             </div>
           {% endfor %}
           {% for product in up_selling %}
+            {%- comment -%}
+              Produk hadiah (harga 0, dibagikan otomatis oleh gift-auto-add)
+              tidak boleh ditawarkan di FBT: ia tidak bisa dibeli terpisah dan
+              tampil sebagai "Rp 0" yang membingungkan. Disaring di kode, bukan
+              di setting, supaya tidak bergantung pada isi "Up Selling
+              Products" di Header.
+            {%- endcomment -%}
+            {%- if product.price == 0 -%}
+              {%- continue -%}
+            {%- endif -%}
             <div
               class="fbt-card upsel-product-cart"
               id="upsel-product-{{ product.id }}"
