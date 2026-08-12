@@ -694,7 +694,13 @@
       document.querySelectorAll('.atc-btn.is-adding').forEach(function (b) {
         b.classList.remove('is-adding');
         b.removeAttribute('aria-busy');
-        if (b.dataset.idleLabel) b.textContent = b.dataset.idleLabel;
+        /* innerHTML dulu, baru teks. Tombol kartu varian v2 berisi elemen anak
+           (label huruf besar, <s> harga coret, dan simpul sasaran syncAtc);
+           memulihkan lewat textContent meratakannya jadi satu simpul teks dan
+           membuat harga di tombol berhenti mengikuti paket yang dipilih.
+           Markup aslinya disimpan MiniCart.liquid di properti _idleHTML. */
+        if (b._idleHTML != null) b.innerHTML = b._idleHTML;
+        else if (b.dataset.idleLabel) b.textContent = b.dataset.idleLabel;
       });
       awaiting = 0;
       clearSkeletons();

@@ -1457,6 +1457,18 @@
       var priceText = optimisticPrice(variantId, item.selling_plan);
 
       var t0 = Date.now();
+      /* Simpan MARKUP-nya, bukan sekadar teksnya. Tombol kartu varian v2 berisi
+         beberapa elemen anak: <span class="v2-atc__label"> yang memberi gaya
+         huruf besar, <s class="v2-atc__compare"> yang mencoret harga lama, dan
+         <span data-v2-atc-price> yang jadi SASARAN syncAtc() ketika pembeli
+         berpindah paket. Memulihkan lewat textContent meratakan semuanya jadi
+         satu simpul teks — coretan dan huruf besar hilang, dan yang lebih parah
+         harga di tombol berhenti mengikuti paket yang dipilih karena simpul
+         sasarannya sudah tidak ada lagi.
+
+         Disimpan ulang pada SETIAP penambahan, bukan sekali saja, supaya
+         markup yang dipulihkan selalu mencerminkan paket yang sedang aktif. */
+      btn._idleHTML = btn.innerHTML;
       if (!btn.dataset.idleLabel) btn.dataset.idleLabel = btn.textContent.trim();
       btn.classList.add('atc-btn', 'is-adding');
       btn.setAttribute('aria-busy', 'true');
@@ -1513,7 +1525,22 @@
           btn.textContent = label;
           setTimeout(function () {
             btn.classList.remove(stateClass);
-            btn.textContent = btn.dataset.idleLabel;
+            /* innerHTML, bukan textContent — lihat catatan di titik penyimpanan. */
+            if (btn._idleHTML != null) {
+              btn.innerHTML = btn._idleHTML;
+              /* Bila paket diganti selagi tombol sibuk, markup yang dipulihkan
+                 membawa harga paket lama. Selaraskan lagi dari kartu aktif;
+                 syncAtc() milik VariantsButtonV2 tidak diekspos global. */
+              var act = document.querySelector('.v2-plan.active');
+              if (act) {
+                var cmp = act.getAttribute('data-v2-compare') || '';
+                var prc = act.getAttribute('data-v2-price') || '';
+                btn.querySelectorAll('[data-v2-atc-compare]').forEach(function (el) { el.textContent = cmp; });
+                btn.querySelectorAll('[data-v2-atc-price]').forEach(function (el) { el.textContent = prc; });
+              }
+            } else if (btn.dataset.idleLabel) {
+              btn.textContent = btn.dataset.idleLabel;
+            }
           }, hold);
         }, wait);
       }
