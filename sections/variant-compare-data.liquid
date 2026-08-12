@@ -1,3 +1,16 @@
+{%- comment -%}
+  Harga coret bersumber TUNGGAL dari `compare_at_price` bawaan Shopify.
+
+  Dulu di sini ada cabang yang mendahulukan metafield `custom.original_price`.
+  Itu sumber kedua, dan sumber kedua selalu berakhir menyimpang: PDP menampilkan
+  compare-at sementara keranjang menampilkan metafield, tanpa satu pun error.
+  Insiden 12 Agu 2026 — Protocol 60 Days tampil 1.160.000 di PDP tapi 1.450.000
+  di keranjang, karena `window.loadCompareAtPrices` di MiniCart membaca section
+  ini lalu MENIMPA angka yang sudah benar dari server.
+
+  Nilai di sini dipakai persis begitu oleh MiniCart (dikali 100 saat dibandingkan
+  dengan `price`), jadi satuannya harus rupiah penuh — karena itu dibagi 100.
+{%- endcomment -%}
 <script type="application/json" data-variant-prices>
 {
   "variants": [
@@ -5,7 +18,7 @@
       {
         "id": {{ v.id }},
         "price": {{ v.price | default: 0 }},
-        "original_price": {% if v.metafields.custom.original_price.value and v.metafields.custom.original_price.value != 0 %}{{ v.metafields.custom.original_price.value }}{% else %}{{ v.compare_at_price | default: 0 | divided_by: 100.0 | round }}{% endif %}
+        "original_price": {{ v.compare_at_price | default: 0 | divided_by: 100.0 | round }}
       }{% unless forloop.last %},{% endunless %}
     {%- endfor -%}
   ]
