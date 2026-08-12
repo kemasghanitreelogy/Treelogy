@@ -225,6 +225,20 @@
        di bawah menahan navigasi sampai angka ini kembali nol. */
     var pendingMuts = 0;
 
+    /* Penanda versi keranjang di server, dinaikkan setiap kali SNIPPET INI
+       mengubahnya. Seed dari respons /cart/change|update.js adalah potret pada
+       saat mutasi itu dijawab; kalau di antara penangkapan dan pemakaiannya
+       kita sendiri menambah atau menghapus baris hadiah, potret itu sudah
+       berbohong — ia tidak memuat baris yang baru saja kita tambahkan.
+
+       Dulu satu-satunya penjaga adalah `queued`, dan itu hanya menutup kasus
+       "dua pemicu datang saat putaran MENGANTRE". Pemicu yang datang saat
+       putaran SEDANG BERJALAN lolos, karena `queued` sudah dikembalikan ke
+       false di baris pertama run. Akibatnya putaran berikutnya memakai potret
+       pra-hadiah, mengira hadiahnya masih kurang, lalu menambahkannya untuk
+       kedua kali — hadiah ×2, persis order #9844. */
+    var cartEpoch = 0;
+
     /* ===== Pemutus arus =====
        Endpoint keranjang membatasi laju PER SESI dan membalas 429 sebagai
        halaman HTML. Sekali tersentuh, mengulang agresif justru memperpanjang
@@ -273,6 +287,12 @@
     }
 
     function post(url, payload) {
+      /* post() hanya dipakai untuk mutasi (add/update). Sejak detik ini
+         keranjang di server berubah karena kita, jadi setiap seed yang sudah
+         ditangkap sebelumnya harus dianggap basi. Dinaikkan SEBELUM permintaan,
+         bukan sesudah: kalau permintaannya gagal di tengah jalan, membaca ulang
+         yang segar tetap jawaban yang aman. */
+      cartEpoch++;
       return withRetry(function () {
         return request(url, {
           method: 'POST',
@@ -289,9 +309,15 @@
       }, 3);
     }
 
+    /* Skeleton hanya boleh hidup di dalam .cart-items: fallback lama ke root
+       #cart menyisipkannya di luar scope .cart-page, sehingga seluruh gaya
+       .cart-item yang discope hilang dan kartunya render sebagai kotak rusak
+       (persis glitch "skeleton ngaco" pada add pertama dari cart kosong). */
     function itemsParent(root) {
+      var wrap = root.querySelector('.cart-items');
+      if (wrap) return wrap;
       var first = root.querySelector('.cart-item');
-      return first ? first.parentNode : root;
+      return first ? first.parentNode : null;
     }
 
     /* Skeleton memakai kelas loading milik tema (.cart-item--optimistic dan
@@ -302,11 +328,18 @@
       el.className = 'cart-item cart-item--gift cart-item--optimistic';
       el.setAttribute('data-gift-skeleton', '');
       el.setAttribute('aria-hidden', 'true');
+      /* Struktur mencerminkan CartItemCard.liquid persis (a.thumb + detail-top
+         + detail-bottom) dan setiap ukuran ditulis eksplisit, supaya kartunya
+         tetap utuh bahkan bila tersisip sebelum gaya scope-nya terpasang. */
       el.innerHTML =
-        '<div class="thumb"><span class="opt-shimmer" style="display:block;width:100%;height:100%"></span></div>' +
+        '<a class="thumb" style="display:block;width:80px;height:80px;border-radius:8px;overflow:hidden">' +
+        '<span class="opt-shimmer" style="display:block;width:80px;height:80px;border-radius:8px"></span></a>' +
         '<div class="detail"><div class="detail-top"><div class="detail-info">' +
         '<span class="opt-shimmer" style="display:block;width:7.5rem;height:0.875rem;margin-bottom:0.5rem"></span>' +
         '<span class="opt-shimmer" style="display:block;width:4rem;height:1.25rem;border-radius:999px"></span>' +
+        '</div></div>' +
+        '<div class="detail-bottom"><div class="price-row">' +
+        '<span class="opt-shimmer" style="display:block;width:5rem;height:0.875rem"></span>' +
         '</div></div></div>';
       return el;
     }
@@ -320,11 +353,23 @@
       });
     }
 
+    var skeletonTTL = null;
+    function armSkeletonTTL() {
+      /* Jaring pengaman: kalau sinkronisasi macet (429, tab tidur), skeleton
+         tidak boleh menempel selamanya. Setelah tenggat lewat ia dibersihkan;
+         sinkronisasi berikutnya tetap jalan dan barisnya dirender ulang. */
+      if (skeletonTTL) clearTimeout(skeletonTTL);
+      skeletonTTL = setTimeout(function () {
+        if (awaiting > 0) { awaiting = 0; clearSkeletons(); }
+      }, 8000);
+    }
+
     function ensureSkeletons() {
       var c = document.getElementById('cart');
       if (!c || awaiting < 1) return;
       var have = c.querySelectorAll('[data-gift-skeleton]').length;
       var parent = itemsParent(c);
+      if (!parent) return;
       for (var i = have; i < awaiting; i++) parent.insertBefore(skeletonCard(), parent.firstChild);
     }
 
@@ -425,22 +470,53 @@
           });
         });
 
-        /* Selaraskan baris hadiah yang ada: buang yang tak lagi berhak
-           (termasuk varian hadiah tanpa penanda — produk hadiah tidak bisa
-           dibeli terpisah, jadi kalau ia ada tanpa pemicunya, ia pasti sisa
-           yang tersangkut), dan setel ulang jumlah baris _Gifted yang tidak
-           cocok. Baris bukan-_Gifted tidak pernah diubah jumlahnya. */
+        /* Selaraskan baris hadiah yang ada. SEMUA baris yang varian-nya hadiah
+           dianggap milik sistem ini — produk hadiah berharga 0 dan tidak dijual
+           terpisah, jadi baris hadiah tanpa penanda _Gifted pun pasti berasal
+           dari sini (penanda bisa hilang saat baris digabung atau saat baris
+           lama dipulihkan dari sesi sebelumnya).
+
+           Dulu baris tanpa penanda hanya bisa DIHAPUS (cabang want === 0) tapi
+           tidak pernah bisa dikoreksi JUMLAHNYA, karena cabang kedua mensyaratkan
+           `ours`. Baris seperti itu lalu terjebak di jumlah yang salah selamanya:
+           giftsMatch tidak pernah lolos, gerbang checkout jatuh ke batas waktu
+           4 detik pada setiap klik, dan pembeli tetap diloloskan membawa jumlah
+           hadiah yang keliru. Perlakuannya kini konsisten dengan cabang hapus.
+
+           Bila satu varian hadiah punya lebih dari satu baris, baris PERTAMA
+           memikul seluruh jumlah dan sisanya dinolkan. Menyetel tiap baris ke
+           `want` akan menghasilkan kelipatan dan tidak pernah konvergen. */
         var adjust = {};
+        var assigned = {};
         cart.items.forEach(function (item) {
-          var ours = item.properties && item.properties._Gifted;
-          if (!ours && !GIFTS[item.variant_id]) return;
+          var marked = !!(item.properties && item.properties._Gifted);
+          var isGiftLine = marked || GIFTS[item.variant_id];
+          if (!isGiftLine) return;
           var want = wanted[item.variant_id] || 0;
-          if (want === 0) adjust[item.key] = 0;
-          else if (ours && item.quantity !== want) adjust[item.key] = want;
+          /* Baris tanpa penanda dinolkan, bukan dikoreksi jumlahnya. Penanda
+             itulah yang membuatnya dirender sebagai baris hadiah (badge GRATIS)
+             baik oleh CartItemCard.liquid maupun <template> di atas; tanpa itu
+             ia muncul sebagai baris biasa berharga Rp 0 lengkap dengan dropdown
+             kuantitas. Kalau masih berhak, penggantinya ditambahkan lewat jalur
+             `missing` di bawah — sudah membawa penanda. */
+          if (want === 0 || !marked || assigned[item.variant_id]) {
+            adjust[item.key] = 0;
+            return;
+          }
+          assigned[item.variant_id] = true;
+          if (item.quantity !== want) adjust[item.key] = want;
         });
 
+        /* `present` hanya boleh menghitung baris yang BERTAHAN. Baris yang
+           sedang dinolkan tidak boleh menutupi kekurangan: kalau ia terhitung
+           hadir, jalur `missing` melewatinya dan hadiahnya lenyap sama sekali
+           alih-alih diganti. Urutan di `work` sudah benar — update (menolkan)
+           dijalankan sebelum add, jadi tidak pernah ada baris dobel. */
         var present = {};
-        cart.items.forEach(function (item) { present[item.variant_id] = true; });
+        cart.items.forEach(function (item) {
+          if (adjust[item.key] === 0) return;
+          present[item.variant_id] = true;
+        });
         var missing = Object.keys(wanted).filter(function (g) { return !present[g]; });
 
         if (!Object.keys(adjust).length && !missing.length) {
@@ -513,6 +589,7 @@
        /cart.js segar; harga kebenarannya satu permintaan ekstra, dan
        hanya di kasus langka itu. */
     var nextSeed = null;
+    var nextSeedEpoch = 0;
 
     function sync(seedCart) {
       /* Pemicu yang datang saat satu putaran sudah antre tidak menambah
@@ -523,10 +600,16 @@
       }
       queued = true;
       nextSeed = seedCart || null;
+      nextSeedEpoch = cartEpoch;
       var run = function () {
         queued = false;
         var s = nextSeed;
         nextSeed = null;
+        /* Seed hanya sah bila keranjang belum kita ubah sejak ia ditangkap.
+           Kalau epoch-nya sudah bergerak, potret itu mendahului baris hadiah
+           yang baru kita tulis — buang, dan bayar satu /cart.js segar. Itu
+           harga yang jauh lebih murah daripada hadiah dobel di pesanan. */
+        if (s && nextSeedEpoch !== cartEpoch) s = null;
         return syncOnce(s);
       };
       chain = chain.then(run, run);
@@ -559,7 +642,7 @@
             if (gifts) gifts.forEach(function (g) { expect[g] = true; });
           });
           var n = Object.keys(expect).length;
-          if (n) { awaiting = n; ensureSkeletons(); }
+          if (n) { awaiting = n; ensureSkeletons(); armSkeletonTTL(); }
         }
       } catch (e) { /* payload tak terbaca: lewati skeleton, sinkronisasi tetap jalan */ }
 
@@ -596,7 +679,27 @@
 
     /* Halaman yang dipulihkan dari bfcache tidak menjalankan DOMContentLoaded,
        dan seed-nya sudah basi — baca ulang sungguhan. */
-    window.addEventListener('pageshow', function (e) { if (e.persisted) sync(); });
+    window.addEventListener('pageshow', function (e) {
+      if (!e.persisted) return;
+      /* Restorasi bfcache (kembali dari checkout): overlay loading milik
+         gerbang checkout ikut terbekukan di snapshot halaman — matikan dulu,
+         bersihkan tombol yang tertinggal sibuk, baru sinkronkan keranjang.
+         Tanpa ini drawer terlihat "loading tak berhenti" selamanya. */
+      if (typeof window.cartHideLoading === 'function') {
+        try { window.cartHideLoading(); } catch (err) { /* abaikan */ }
+      }
+      document.querySelectorAll('.uc-add[data-busy]').forEach(function (b) {
+        b.removeAttribute('data-busy');
+      });
+      document.querySelectorAll('.atc-btn.is-adding').forEach(function (b) {
+        b.classList.remove('is-adding');
+        b.removeAttribute('aria-busy');
+        if (b.dataset.idleLabel) b.textContent = b.dataset.idleLabel;
+      });
+      awaiting = 0;
+      clearSkeletons();
+      sync();
+    });
 
     /* ===== Gerbang checkout =====
        Order #9844 lolos membawa hadiah ×2: pembeli menurunkan kuantitas
