@@ -15,16 +15,19 @@
     assign has_selling_plan = true
   endif
 
-  assign original_price = item.variant.metafields.custom.original_price.value | default: 0 | plus: 0
-  assign original_price_sub = original_price | times: 100
   comment
-    Fallback: varian tanpa metafield original_price tapi punya compare-at
-    Shopify tetap menampilkan harga coretnya. compare_at_price sudah dalam
-    satuan terkecil, jadi tidak dikali 100.
+    Harga coret bersumber TUNGGAL dari compare_at_price bawaan Shopify, yang
+    sudah dalam satuan terkecil sehingga tidak dikali 100.
+
+    Dulu metafield varian custom.original_price didahulukan di sini. Itu sumber
+    kedua, dan sumber kedua selalu berakhir menyimpang tanpa satu pun error:
+    12 Agu 2026 Protocol 60 Days menampilkan coret 1.160.000 di halaman produk
+    tapi 1.450.000 di keranjang, karena metafieldnya tertinggal di nilai lama.
+    Metafieldnya sudah dihapus dari seluruh katalog; cabangnya ikut dibuang
+    supaya mengisinya lagi tidak bisa menghidupkan ulang perbedaan itu.
+    Lihat juga sections/variant-compare-data.liquid yang disederhanakan sama.
   endcomment
-  if original_price_sub == 0
-    assign original_price_sub = item.variant.compare_at_price | default: 0
-  endif
+  assign original_price_sub = item.variant.compare_at_price | default: 0
 
   comment
     Baris hadiah: yang menentukan adalah pembeli TIDAK membayar apa pun untuk
