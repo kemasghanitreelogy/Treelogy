@@ -795,84 +795,29 @@
 </script>
 
 <script>
-  /* ===== Fetch compare_at_price via Section Rendering API ===== */
-  /* Shopify cart context does NOT expose compare_at_price.        */
-  /* Product page context DOES — so we fetch each product's       */
-  /* variant-compare-data section to get the real values.         */
+  /* ===== Harga coret: dirender server, tidak disentuh klien =====
+     Dulu di sini setiap produk di keranjang ditarik ulang lewat
+     ?section_id=variant-compare-data, lalu teks harga coret dan
+     data-compare-at DITIMPA dengan nilai dari sana.
+
+     Komentar lamanya keliru: konteks keranjang MEMANG mengekspos
+     compare_at_price, dan snippets/CartItemCard.liquid sudah merendernya
+     server-side. Lapisan ini tidak menambah kebenaran apa pun — ia hanya
+     menyalin ulang angka yang sudah benar, sambil membuka satu jalan bagi
+     angka yang salah untuk masuk: bila render section itu tersaji dari
+     cache basi, ia menimpa harga coret yang benar dengan nilai lama.
+     12 Agu 2026 justru itu yang terjadi — Protocol 60 Days berubah dari
+     1.160.000 menjadi 1.450.000 di keranjang, dan "You're saving" ikut
+     menggelembung 290.000.
+
+     Sekarang server satu-satunya sumber; yang tersisa hanyalah menghitung
+     ulang total hemat dari data-compare-at yang sudah terpasang. Nol
+     permintaan jaringan per pembukaan drawer.
+
+     Catatan: window.loadFBTRatings di bawah masih memakai section yang sama
+     untuk badge rating Judge.me — itu tidak menyentuh harga, jadi tetap. */
   window.loadCompareAtPrices = function() {
-    var c = document.getElementById('cart');
-    if (!c) return;
-
-    var cartItems = c.querySelectorAll('.cart-item');
-    if (!cartItems.length) return;
-
-    /* Collect unique product handles from cart item links */
-    var handleMap = {};
-    cartItems.forEach(function(el) {
-      var link = el.querySelector('a.thumb');
-      if (!link) return;
-      var href = link.getAttribute('href') || '';
-      var match = href.match(/\/products\/([^?/#]+)/);
-      if (match) {
-        var handle = match[1];
-        if (!handleMap[handle]) handleMap[handle] = [];
-        handleMap[handle].push(el);
-      }
-    });
-
-    var handles = Object.keys(handleMap);
-    if (!handles.length) return;
-
-    /* Fetch all products in parallel, then update DOM + savings */
-    var fetches = handles.map(function(handle) {
-      return fetch('/products/' + handle + '?section_id=variant-compare-data')
-        .then(function(r) { return r.text(); })
-        .then(function(html) {
-          var doc = new DOMParser().parseFromString(html, 'text/html');
-          var script = doc.querySelector('[data-variant-prices]');
-          if (!script) return;
-          var data;
-          try { data = JSON.parse(script.textContent); } catch(e) { return; }
-          if (!data || !data.variants) return;
-
-          /* Build lookup: variantId → original_price (in IDR display units) */
-          var lookup = {};
-          data.variants.forEach(function(v) {
-            var opSub = v.original_price * 100;
-            if (opSub > 0 && opSub > v.price) {
-              lookup[v.id] = { price: v.price, original_price: v.original_price, opSub: opSub };
-            }
-          });
-
-          /* Update each matching cart-item element */
-          handleMap[handle].forEach(function(el) {
-            var vid = el.getAttribute('data-variant');
-            if (!vid || !lookup[vid]) return;
-            var v = lookup[vid];
-            el.setAttribute('data-compare-at', v.opSub);
-
-            /* Insert or update strikethrough price */
-            var priceRow = el.querySelector('.price-row');
-            if (!priceRow) return;
-            var capSpan = priceRow.querySelector('.compare-at-price');
-            var formatted = window.formatRp(v.original_price);
-            if (capSpan) {
-              capSpan.textContent = formatted;
-            } else {
-              capSpan = document.createElement('span');
-              capSpan.className = 'price-wrapper compare-at-price';
-              capSpan.textContent = formatted;
-              priceRow.insertBefore(capSpan, priceRow.firstChild);
-            }
-          });
-        })
-        .catch(function(err) { console.warn('Original price fetch failed for', handle, err); });
-    });
-
-    /* After ALL fetches complete, recalculate total savings */
-    Promise.all(fetches).then(function() {
-      window.recalcSavings();
-    });
+    if (typeof window.recalcSavings === 'function') window.recalcSavings();
   };
 
   /* ===== Fetch Judge.me ratings for FBT products ===== */
