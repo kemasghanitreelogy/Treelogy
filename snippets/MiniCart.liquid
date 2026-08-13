@@ -1029,14 +1029,15 @@
     flex-wrap: wrap;
     margin: 4px 0 2px;
   }
-  /* Chip nilai: pil hantu ber-hairline berisi harga asli yang dicoret —
-     pengganti kalimat "Complimentary with your order". Tingginya disamakan
-     dengan badge GRATIS di sebelahnya supaya terbaca sebagai satu pasangan. */
-  .gift-worth {
+  /* Chip asal-usul: pil hantu ber-hairline berisi glyph panah-cabang + nama
+     produk utama yang menghadiahkannya — pengganti kalimat "Complimentary
+     with your order". Tingginya disamakan dengan badge GRATIS di sebelahnya
+     supaya keduanya terbaca sebagai satu pasangan sebab-akibat. */
+  .gift-source {
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    padding: 3px 9px;
+    padding: 3px 10px;
     border-radius: 999px;
     border: 1px solid rgba(43, 60, 53, 0.16);
     background: rgba(242, 242, 232, 0.6);
@@ -1045,12 +1046,15 @@
     font-weight: 600;
     letter-spacing: 0.02em;
     line-height: 1.4;
-    font-variant-numeric: tabular-nums;
+    max-width: 100%;
+    min-width: 0;
   }
-  .gift-worth svg { flex: 0 0 auto; opacity: 0.75; }
-  .gift-worth s {
-    text-decoration-thickness: 1px;
-    text-decoration-color: rgba(43, 60, 53, 0.45);
+  .gift-source svg { flex: 0 0 auto; opacity: 0.7; }
+  .gift-source__name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 24ch;
   }
   /* Kalimat lengkap untuk screen reader — visual digantikan chip nilai. */
   .gift-sr {

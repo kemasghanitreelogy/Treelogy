@@ -120,13 +120,32 @@
               </svg>
               {{ 'cart.gift_free_label' | t }}
             </span>
-            {%- if original_price_sub > 0 -%}
-              <span class="gift-worth" aria-hidden="true">
+            {%- liquid
+              # Chip asal-usul: hadiah ini ada KARENA produk utama tertentu di
+              # keranjang. Sumbernya ditelusuri balik lewat metafield yang sama
+              # yang dipakai mesin hadiah (variant.custom.eligible_gifts), jadi
+              # chip dan aturan tidak pernah bisa berbeda pendapat.
+              assign gift_source_title = blank
+              for gift_src in cart.items
+                if gift_source_title != blank
+                  break
+                endif
+                assign gift_src_gifts = gift_src.variant.metafields.custom.eligible_gifts.value
+                for gift_src_gift in gift_src_gifts
+                  if gift_src_gift.id == item.variant.id
+                    assign gift_source_title = gift_src.product.title
+                    break
+                  endif
+                endfor
+              endfor
+            -%}
+            {%- if gift_source_title != blank -%}
+              <span class="gift-source">
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                  <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
-                  <path d="M19 15.5l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9.9-2.1Z" fill="currentColor"/>
+                  <polyline points="15 10 20 15 15 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M4 4v7a4 4 0 0 0 4 4h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                <s>{{ original_price_sub | money }}</s>
+                <span class="gift-source__name">{{ gift_source_title }}</span>
               </span>
             {%- endif -%}
             <span class="gift-sr">{{ 'cart.gift_note' | t }}</span>

@@ -155,15 +155,19 @@
               </svg>
               {{ 'cart.gift_free_label' | t }}
             </span>
-            {%- if gift_variant.compare_at_price > 0 -%}
-              <span class="gift-worth" aria-hidden="true">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                  <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
-                  <path d="M19 15.5l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9.9-2.1Z" fill="currentColor"/>
-                </svg>
-                <s>{{ gift_variant.compare_at_price | money }}</s>
-              </span>
-            {%- endif -%}
+            {%- comment -%}
+              Chip asal-usul. Template ini dirender per varian hadiah sebelum
+              tahu produk apa yang memicunya, jadi namanya diisi insertGifts
+              dari keranjang terkini (peta yang sama dengan mesin) dan chip
+              tetap tersembunyi sampai sumbernya ketemu.
+            {%- endcomment -%}
+            <span class="gift-source" hidden data-gift-source>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <polyline points="15 10 20 15 15 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M4 4v7a4 4 0 0 0 4 4h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span class="gift-source__name" data-gift-source-name></span>
+            </span>
             <span class="gift-sr">{{ 'cart.gift_note' | t }}</span>
           </span>
           <div class="variant body-desk-s"></div>
@@ -510,6 +514,26 @@
         real.setAttribute('data-qty', item.quantity);
         var qEl = real.querySelector('.gift-qty');
         if (qEl) qEl.textContent = '\u00d7' + item.quantity;
+        /* Chip asal-usul: cari produk pemicu hadiah ini di keranjang lewat
+           peta yang sama dengan mesin, lalu tampilkan namanya. Tanpa sumber
+           (jendela transisi), chip tetap tersembunyi \u2014 render server
+           berikutnya melengkapinya. */
+        var srcEl = real.querySelector('[data-gift-source]');
+        if (srcEl) {
+          var srcTitle = '';
+          cart.items.forEach(function (ci) {
+            if (srcTitle) return;
+            var ciGifts = MAP[String(ci.variant_id)];
+            if (ciGifts && ciGifts.indexOf(item.variant_id) !== -1) {
+              srcTitle = ci.product_title || '';
+            }
+          });
+          if (srcTitle) {
+            var srcName = srcEl.querySelector('[data-gift-source-name]');
+            if (srcName) srcName.textContent = srcTitle;
+            srcEl.hidden = false;
+          }
+        }
         real.classList.add('cart-item--gift-in');
         /* Kelas animasinya dilepas setelah selesai supaya render ulang
            berikutnya tidak memutarnya lagi. */
