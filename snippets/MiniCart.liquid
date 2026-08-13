@@ -1022,12 +1022,54 @@
       rgba(43, 60, 53, 0.035) 100%
     );
   }
+  .gift-badge-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin: 4px 0 2px;
+  }
+  /* Chip nilai: pil hantu ber-hairline berisi harga asli yang dicoret —
+     pengganti kalimat "Complimentary with your order". Tingginya disamakan
+     dengan badge GRATIS di sebelahnya supaya terbaca sebagai satu pasangan. */
+  .gift-worth {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    border: 1px solid rgba(43, 60, 53, 0.16);
+    background: rgba(242, 242, 232, 0.6);
+    color: rgba(43, 60, 53, 0.78);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    line-height: 1.4;
+    font-variant-numeric: tabular-nums;
+  }
+  .gift-worth svg { flex: 0 0 auto; opacity: 0.75; }
+  .gift-worth s {
+    text-decoration-thickness: 1px;
+    text-decoration-color: rgba(43, 60, 53, 0.45);
+  }
+  /* Kalimat lengkap untuk screen reader — visual digantikan chip nilai. */
+  .gift-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
   .gift-badge {
     display: inline-flex;
     align-items: center;
     gap: 4px;
     width: fit-content;
-    margin: 4px 0 2px;
+    margin: 0;
     padding: 3px 9px 3px 7px;
     border-radius: 999px;
     background: #2b3c35;

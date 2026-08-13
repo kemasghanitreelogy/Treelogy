@@ -143,11 +143,28 @@
       <div class="detail-top">
         <div class="detail-info">
           <span class="sub-head title">{{ gift_product.title }}</span>
-          <span class="gift-badge">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <path d="M20 12v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-8M2 7h20v4H2V7Zm10-1v15M12 6H8.5a2.25 2.25 0 1 1 0-4.5C11 1.5 12 6 12 6Zm0 0h3.5a2.25 2.25 0 1 0 0-4.5C13 1.5 12 6 12 6Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            {{ 'cart.gift_free_label' | t }}
+          {%- comment -%}
+            Cermin persis pasangan badge di CartItemCard.liquid: GRATIS (gelap)
+            + chip nilai hantu berisi harga asli tercoret. Kalimatnya pindah ke
+            .gift-sr untuk screen reader.
+          {%- endcomment -%}
+          <span class="gift-badge-row">
+            <span class="gift-badge">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M20 12v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-8M2 7h20v4H2V7Zm10-1v15M12 6H8.5a2.25 2.25 0 1 1 0-4.5C11 1.5 12 6 12 6Zm0 0h3.5a2.25 2.25 0 1 0 0-4.5C13 1.5 12 6 12 6Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              {{ 'cart.gift_free_label' | t }}
+            </span>
+            {%- if gift_variant.compare_at_price > 0 -%}
+              <span class="gift-worth" aria-hidden="true">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                  <path d="M19 15.5l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9.9-2.1Z" fill="currentColor"/>
+                </svg>
+                <s>{{ gift_variant.compare_at_price | money }}</s>
+              </span>
+            {%- endif -%}
+            <span class="gift-sr">{{ 'cart.gift_note' | t }}</span>
           </span>
           <div class="variant body-desk-s"></div>
         </div>
@@ -155,7 +172,6 @@
       <div class="detail-bottom">
         <div class="gift-qty">&times;1</div>
       </div>
-      <p class="gift-note">{{ 'cart.gift_note' | t }}</p>
     </div>
   </div>
 </template>
