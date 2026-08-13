@@ -669,6 +669,47 @@
     padding: 2px 5px;
   }
 
+  /* ===== Kartu berlabel panjang: tata ulang empat sudut (13 Agu) =====
+     Badge save di pojok kanan-ATAS, blok harga di pojok kanan-BAWAH, judul
+     dan daftar manfaat mengalir bebas di kolom kiri. display:contents
+     membubarkan kotak head sehingga judul/badge/harga menjadi anak langsung
+     grid kartu — empat area, nol position:absolute, jadi tidak pernah
+     tumpang-tindih di lebar sempit maupun pada kartu tanpa daftar manfaat.
+     Browser tanpa :has() jatuh kembali ke baris tunggal lama — tetap utuh. */
+  .v2-plan:has(> .v2-plan__head--flow) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "main  badge"
+      "perks prices";
+    align-items: start;
+    column-gap: 10px;
+    row-gap: 7px;
+  }
+  .v2-plan:has(> .v2-plan__head--flow) > .v2-plan__head--flow {
+    display: contents;
+  }
+  .v2-plan:has(> .v2-plan__head--flow) .v2-plan__main {
+    grid-area: main;
+    align-self: start;
+  }
+  .v2-plan:has(> .v2-plan__head--flow) .v2-plan__badge {
+    grid-area: badge;
+    align-self: start;
+    justify-self: end;
+  }
+  .v2-plan:has(> .v2-plan__head--flow) .v2-plan__prices {
+    grid-area: prices;
+    align-self: end;
+    justify-self: end;
+    text-align: right;
+  }
+  .v2-plan:has(> .v2-plan__head--flow) > .v2-plan__perks {
+    grid-area: perks;
+    align-self: end;
+    margin: 0;
+  }
+
   /* Di 360-389px pengecilan badge pun tidak cukup — judul hanya dapat 84px.
      Di lebar itu badge turun ke bawah harga sehingga judul memakai lebar penuh. */
   @media screen and (max-width: 389px) {
