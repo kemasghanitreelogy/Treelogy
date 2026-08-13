@@ -58,6 +58,23 @@
       assign original_price_sub = item.variant.compare_at_price | default: 0
     endif
   endif
+
+  comment
+    Label varian di keranjang harus berbunyi persis seperti kartu paket yang
+    ditekan pembeli di halaman produk. Kartu itu (snippets/VariantsButtonV2)
+    memakai metafield custom.staged_plan_label — "180 grams" — sedangkan judul
+    varian bawaan berbunyi "Up to 120 servings". Bukan sekadar beda kata:
+    angkanya pun berbeda, sehingga keranjang terbaca seolah menjual ukuran lain
+    daripada yang barusan dipilih. Rantai fallback dijaga identik dengan kartu
+    tersebut supaya keduanya tidak akan pernah bisa menyimpang.
+  endcomment
+  assign cart_variant_label = item.variant.metafields.custom.staged_plan_label
+  if cart_variant_label == blank
+    assign cart_variant_label = item.variant.metafields.custom.time_protocol
+  endif
+  if cart_variant_label == blank
+    assign cart_variant_label = item.variant.title
+  endif
 -%}
 <div
   class="cart-item{% if is_eg_gift %} cart-item--gift{% endif %}"
@@ -98,7 +115,7 @@
         {% endif %}
         <div class="variant body-desk-s">
           {% unless is_free_roduct or item.product.has_only_default_variant %}
-            {{ item.variant.title }}
+            {{ cart_variant_label }}
           {% endunless %}
         </div>
         {% if has_selling_plan %}

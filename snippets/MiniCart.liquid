@@ -1286,7 +1286,17 @@
         var h1 = document.querySelector('.product-detail-wrapper h1');
         var sel = document.getElementById('productSelect');
         var variantText = '';
-        if (sel && sel.options.length > 1 && sel.selectedIndex >= 0) {
+        /* Kartu paket v2 adalah yang benar-benar ditekan pembeli, dan judulnya
+           berasal dari metafield staged_plan_label — label yang sama yang kini
+           dirender snippets/CartItemCard.liquid. Membacanya dari sini membuat
+           kartu optimistis dan baris hasil server berbunyi sama, jadi tidak ada
+           teks yang berganti saat keduanya bertukar. Select bawaan tetap jadi
+           cadangan untuk halaman produk yang belum memakai kartu v2. */
+        var plans = document.querySelectorAll('.v2-plan');
+        var activePlan = document.querySelector('.v2-plan.active .v2-plan__title, .v2-plan[aria-checked="true"] .v2-plan__title');
+        if (plans.length > 1 && activePlan) {
+          variantText = (activePlan.textContent || '').trim();
+        } else if (sel && sel.options.length > 1 && sel.selectedIndex >= 0) {
           variantText = (sel.options[sel.selectedIndex].text || '').split(' - ')[0].trim();
         }
         return {
