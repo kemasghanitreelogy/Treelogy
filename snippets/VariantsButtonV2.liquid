@@ -676,8 +676,12 @@
      grid kartu — empat area, nol position:absolute, jadi tidak pernah
      tumpang-tindih di lebar sempit maupun pada kartu tanpa daftar manfaat.
      Browser tanpa :has() jatuh kembali ke baris tunggal lama — tetap utuh. */
-  .v2-plan:has(> .v2-plan__head--flow) {
-    display: grid;
+  /* Kartu memaksa display:block !important beberapa baris di atas (perisai
+     lawan CSS popup lama) — grid di sini wajib ikut !important dengan
+     selektor setara, kalau tidak seluruh tata empat sudut runtuh ke aliran
+     block: badge nyangkut di kiri bawah judul (bug yang sempat live 13 Agu). */
+  .v2-plan.protocol-variant-card.checkbox-button:has(> .v2-plan__head--flow) {
+    display: grid !important;
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas:
       "main  badge"
