@@ -2442,3 +2442,116 @@
     }
   });
 </script>
+
+
+<style>
+  /* ===== Roll harga — micro-motion ala HyperFrames =====
+     Angka lama terbang naik (percepat-keluar) sementara angka baru mendarat
+     dari bawah (perlambat + overshoot kecil) — pasangan ease cermin, murni
+     transform+opacity, tanpa menggeser layout. tabular-nums menjaga digit
+     tidak bergetar lebarnya saat berganti. */
+  #sub-total-mini,
+  #cart-saving-amount {
+    display: inline-block;
+    position: relative;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+</style>
+<script>
+  (function () {
+    'use strict';
+    if (window.__priceRollInstalled) return;
+    window.__priceRollInstalled = true;
+
+    var REDUCED = window.matchMedia
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* Dua angka yang pembeli pakai untuk mengambil keputusan: total di tombol
+       checkout dan "You're saving". Keduanya diperbarui banyak jalur (swap
+       innerHTML footer, refreshCartUI, recalcSavings) — maka pemicunya bukan
+       menempel di tiap jalur, melainkan satu pengamat DOM yang membandingkan
+       teks terakhir yang diketahui. Jalur mana pun yang mengubah angka,
+       animasinya tetap jalan. */
+    var TARGETS = [
+      { sel: '#sub-total-mini', align: 'left' },
+      { sel: '#cart-saving-amount', align: 'right' }
+    ];
+    var last = {};
+
+    function roll(el, oldText, cfg) {
+      if (REDUCED || !el.animate) return;
+      try { el.getAnimations().forEach(function (a) { a.cancel(); }); } catch (e) { /* abaikan */ }
+
+      /* Angka baru dibungkus span transien supaya bisa digerakkan terpisah
+         dari ghost. Pembaruan teks berikutnya oleh tema (textContent /
+         innerHTML) menyapu bungkusnya sendiri — tidak pernah menumpuk. */
+      var inner = document.createElement('span');
+      while (el.firstChild) inner.appendChild(el.firstChild);
+      inner.style.display = 'inline-block';
+      inner.style.whiteSpace = 'nowrap';
+      el.appendChild(inner);
+
+      var ghost = document.createElement('span');
+      ghost.textContent = oldText;
+      ghost.setAttribute('aria-hidden', 'true');
+      ghost.style.cssText = 'position:absolute;top:0;' +
+        (cfg.align === 'right' ? 'right:0;' : 'left:0;') +
+        'white-space:nowrap;pointer-events:none;';
+      el.appendChild(ghost);
+
+      /* Keluar: memercepat — perhatian tidak boleh tertahan pada angka lama. */
+      var out = ghost.animate(
+        [
+          { transform: 'translateY(0)', opacity: 1 },
+          { transform: 'translateY(-0.55em)', opacity: 0 }
+        ],
+        { duration: 190, easing: 'cubic-bezier(0.55, 0, 0.8, 0.4)', fill: 'forwards' }
+      );
+      var cleanup = function () { if (ghost.parentNode) ghost.remove(); };
+      out.onfinish = cleanup; out.oncancel = cleanup;
+
+      /* Masuk: melambat dengan overshoot kecil — angka "mendarat", terlihat
+         tanpa perlu ganti warna. */
+      inner.animate(
+        [
+          { transform: 'translateY(0.55em) scale(0.94)', opacity: 0 },
+          { transform: 'translateY(-0.06em) scale(1.05)', opacity: 1, offset: 0.7 },
+          { transform: 'translateY(0) scale(1)', opacity: 1 }
+        ],
+        { duration: 340, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'both' }
+      );
+    }
+
+    function scan() {
+      TARGETS.forEach(function (cfg) {
+        var el = document.querySelector(cfg.sel);
+        if (!el) { delete last[cfg.sel]; return; }
+        /* Abaikan ghost yang sedang beranimasi saat membaca nilai kini. */
+        var text = '';
+        for (var n = el.firstChild; n; n = n.nextSibling) {
+          if (n.getAttribute && n.getAttribute('aria-hidden') === 'true') continue;
+          text += n.textContent || '';
+        }
+        text = text.trim();
+        var prev = last[cfg.sel];
+        if (prev != null && text && prev !== text) roll(el, prev, cfg);
+        if (text) last[cfg.sel] = text;
+      });
+    }
+
+    function arm() {
+      var root = document.getElementById('cart');
+      if (!root) return;
+      scan(); /* seed nilai awal tanpa animasi */
+      new MutationObserver(scan).observe(root, {
+        childList: true, characterData: true, subtree: true
+      });
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', arm);
+    } else {
+      arm();
+    }
+  })();
+</script>
