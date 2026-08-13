@@ -711,7 +711,10 @@
   .v2-plan:has(> .v2-plan__head--flow) > .v2-plan__perks {
     grid-area: perks;
     align-self: end;
-    margin: 0;
+    /* Renggang judul→bullet meniru irama kartu normal (margin dasar 9px):
+       bersama row-gap 7px totalnya ±15px — bullet turun, kartu bisa bernapas.
+       margin:0 yang lama menghapus jarak itu dan bullet menempel ke judul. */
+    margin: 8px 0 0;
   }
 
   /* Di 360-389px pengecilan badge pun tidak cukup — judul hanya dapat 84px.
