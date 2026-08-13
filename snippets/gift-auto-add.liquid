@@ -33,6 +33,21 @@
   manfaat di kartu: teks kartu bisa berubah kapan saja, sedangkan yang mengikat
   di keranjang adalah pasangan varian ini dan harus cocok persis dengan diskon
   otomatis yang mendampinginya.
+
+  Katalog LP dan katalog utama BOLEH punya aturan berbeda — itu memang desainnya,
+  dan peta ini sudah bisa menampungnya karena kuncinya variant id, sedangkan tiap
+  funnel memakai listing (dan variant id) sendiri. Konsekuensinya: entri varian LP
+  harus dijaga cocok dengan blok `lp-pricing` di template LP-nya, sebab blok itulah
+  yang menampilkan janji hadiah ke pembeli sekaligus mem-bake varian hadiah ke
+  permalink keranjang.
+
+  Contoh nyata kenapa ini penting: permalink LP melompat langsung ke checkout,
+  jadi hadiah bawaan permalink lolos tanpa pernah disentuh snippet ini. Tapi
+  permalink juga mengisi keranjang storefront, sehingga begitu pembeli kembali ke
+  toko, peta inilah yang jadi wasitnya. Paket LP 30 hari sempat tercatat "pouch
+  saja" di sini — nilai milik paket 30 hari katalog utama — padahal kartu LP-nya
+  menjanjikan pouch + mystery; pembeli yang mundur dari checkout kehilangan
+  Mystery Gift-nya secara diam-diam.
 {%- endcomment -%}
 {%- capture gift_map -%}
 {
@@ -42,7 +57,7 @@
   "46129728487612": [47228068561084, 47228130001084],
   "47228045492412": [47228068561084, 47228130001084],
   "46129731666108": [47228068561084],
-  "47228045459644": [47228068561084],
+  "47228045459644": [47228068561084, 47228130001084],
   "44527091351740": [47228068561084]
 }
 {%- endcapture -%}
