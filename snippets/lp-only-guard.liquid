@@ -20,6 +20,12 @@
   page. Atribut itu tidak lagi menentukan penghapusan, tetapi ikut sampai ke
   pesanan sehingga bisa dipakai untuk pelaporan atau otomasi Flow.
 
+  Baris hadiah berproperti `_Gifted` DIKECUALIKAN dari guard: baris itu milik
+  snippets/gift-auto-add.liquid sepenuhnya. Produk hadiahnya memang bertag
+  lp-only (varian yang sama dipakai permalink LP), tetapi menghapusnya di sini
+  membuat dua sistem saling bertarung di setiap halaman — dan pesanan yang
+  checkout di tengah pertarungan itu kehilangan hadiahnya (insiden #9920).
+
   @example
   {% render 'lp-only-guard' %}
 {% enddoc %}
@@ -47,6 +53,16 @@
   endunless
 
   for lp_item in cart.items
+    # Baris hadiah bermarker _Gifted milik gift-auto-add: ia yang menambahkan,
+    # menyesuaikan jumlah, dan menghapusnya saat pemicunya hilang. Produk hadiah
+    # ikut bertag lp-only (dipakai permalink LP), jadi tanpa pengecualian ini
+    # guard menghapusnya di setiap halaman non-funnel dan bertarung dengan
+    # gift-auto-add yang menambahkannya kembali — order #9920 checkout tepat
+    # di jendela hapus itu dan kehilangan hadiahnya. Baris hadiah TANPA marker
+    # (bawaan permalink LP) tetap dibersihkan di sini seperti biasa.
+    if lp_item.properties._Gifted != blank
+      continue
+    endif
     if lp_item.product.tags contains lp_guard_tag
       assign lp_guard_keys = lp_guard_keys | append: lp_item.key | append: '~~'
     endif
