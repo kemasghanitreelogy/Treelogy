@@ -234,17 +234,26 @@
       var wanted = {};
       var have = {};
       var sane = true;
+      var pending = false;
       cart.items.forEach(function (item) {
         if (typeof item.quantity !== 'number') sane = false;
         var gifts = MAP[String(item.variant_id)];
         if (gifts) gifts.forEach(function (g) {
           wanted[g] = (wanted[g] || 0) + item.quantity;
         });
-        if ((item.properties && item.properties._Gifted) || GIFTS[item.variant_id]) {
+        if (item.properties && item.properties._Gifted) {
           have[item.variant_id] = (have[item.variant_id] || 0) + item.quantity;
+        } else if (GIFTS[item.variant_id]) {
+          /* Baris varian hadiah TANPA marker statusnya selalu "sedang
+             dinormalkan" — runSync akan menolkannya lalu menambah pengganti
+             bermarker. Dulu baris begini dihitung "hadir", sehingga gerbang
+             meloloskan klik tepat di tengah jendela nolkan-lalu-ganti dan
+             checkout berangkat tanpa hadiah (QA G4). Keranjang yang masih
+             memuatnya belum terverifikasi, titik. */
+          pending = true;
         }
       });
-      if (!sane) return false;
+      if (!sane || pending) return false;
       var ok = true;
       Object.keys(wanted).forEach(function (g) {
         if ((have[g] || 0) !== wanted[g]) ok = false;
@@ -266,6 +275,13 @@
        beruntun jadi satu putaran susulan, bukan antrean panjang. */
     var chain = Promise.resolve();
     var queued = false;
+    /* Benar selama sebuah putaran sinkronisasi SEDANG BERLARI. `queued` saja
+       tidak cukup untuk gerbang checkout: ia dikembalikan ke false di baris
+       pertama run, jadi sepanjang putaran berjalan gerbang mengira keadaan
+       tenang dan mempercayai lastCart yang bisa jadi potret lama (QA G4/G5c:
+       klik yang mendarat di tengah putaran lolos membawa keranjang setengah
+       jadi). Gerbang kini menahan selama salah satu dari keduanya menyala. */
+    var roundBusy = false;
     /* Menandai permintaan keranjang milik snippet ini sendiri. */
     var internal = 0;
     /* Berapa baris hadiah yang sedang ditunggu. Selama > 0, drawer diberi
@@ -662,6 +678,7 @@
       nextSeedEpoch = cartEpoch;
       var run = function () {
         queued = false;
+        roundBusy = true;
         var s = nextSeed;
         nextSeed = null;
         /* Seed hanya sah bila keranjang belum kita ubah sejak ia ditangkap.
@@ -669,7 +686,13 @@
            yang baru kita tulis — buang, dan bayar satu /cart.js segar. Itu
            harga yang jauh lebih murah daripada hadiah dobel di pesanan. */
         if (s && nextSeedEpoch !== cartEpoch) s = null;
-        return syncOnce(s);
+        /* syncOnce tidak pernah reject (catch-nya menelan semua), tapi
+           roundBusy tetap dipulihkan di kedua cabang — bendera yang
+           tersangkut menyala berarti gerbang menahan sampai timeout terus. */
+        return syncOnce(s).then(
+          function (v) { roundBusy = false; return v; },
+          function (err) { roundBusy = false; throw err; }
+        );
       };
       chain = chain.then(run, run);
       return chain;
@@ -886,6 +909,13 @@
       });
       awaiting = 0;
       clearSkeletons();
+      /* Heap hasil restorasi bfcache membawa lastCart LAMA — potret sebelum
+         pembeli pergi ke checkout. Server bisa saja sudah bergeser selama
+         halaman tertidur, dan gerbang yang mempercayai potret itu meloloskan
+         klik checkout kedua membawa keranjang yang salah (QA G5c). Nol-kan:
+         giftsMatch(null) = false, jadi klik ditahan sampai pembacaan segar
+         di bawah selesai — paling lama sebatas timeout 4 detik gerbang. */
+      lastCart = null;
       sync();
     });
 
@@ -912,7 +942,7 @@
       var btn = t && t.closest && t.closest('[name="checkout"], a[href*="/checkout"]');
       if (!btn) return;
       if (gatePass) { gatePass = false; return; }
-      if (!pendingMuts && !queued && giftsMatch(lastCart)) return;
+      if (!pendingMuts && !queued && !roundBusy && giftsMatch(lastCart)) return;
 
       e.preventDefault();
       e.stopPropagation();
@@ -940,7 +970,7 @@
       var retried = false;
       (function waitVerified() {
         if (done) return;
-        if (!pendingMuts && !queued) {
+        if (!pendingMuts && !queued && !roundBusy) {
           if (giftsMatch(lastCart)) return go();
           /* Sudah tenang tapi masih meleset dari patokan: satu kali paksa
              putaran tanpa seed (baca /cart.js segar + perbaiki). Kalau
