@@ -572,6 +572,14 @@
 
         if (!Object.keys(adjust).length && !missing.length) {
           if (awaiting) { awaiting = 0; clearSkeletons(); }
+          /* Server sudah benar BUKAN berarti layar sudah benar. Sejak mutasi
+             hadiah menumpang atomik pada mutasi pemicunya, putaran ini hampir
+             selalu mendarat di sini dalam keadaan tidak ada yang perlu diubah —
+             padahal tema hanya mem-patch baris yang pembeli sentuh, jadi label
+             ×N baris hadiah (dan baris hadiah yatim setelah pemicunya dihapus)
+             masih menampilkan keadaan lama. Cat ulang dari kebenaran server:
+             murni operasi DOM, nol permintaan jaringan. */
+          paint(cart);
           return null;
         }
 
