@@ -155,22 +155,22 @@
               </svg>
               {{ 'cart.gift_free_label' | t }}
             </span>
-            {%- comment -%}
-              Chip asal-usul. Template ini dirender per varian hadiah sebelum
-              tahu produk apa yang memicunya, jadi namanya diisi insertGifts
-              dari keranjang terkini (peta yang sama dengan mesin) dan chip
-              tetap tersembunyi sampai sumbernya ketemu.
-            {%- endcomment -%}
-            <span class="gift-source" hidden data-gift-source role="img">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <polyline points="15 10 20 15 15 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M4 4v7a4 4 0 0 0 4 4h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </span>
             <span class="gift-sr">{{ 'cart.gift_note' | t }}</span>
           </span>
           <div class="variant body-desk-s"></div>
         </div>
+        {%- comment -%}
+          Ikon asal-usul di slot kanan detail-top (cermin CartItemCard).
+          Template dirender sebelum tahu produk pemicunya, jadi title/aria
+          diisi insertGifts dari keranjang terkini; tersembunyi sampai
+          sumbernya ketemu.
+        {%- endcomment -%}
+        <span class="gift-source" hidden data-gift-source role="img">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <polyline points="15 10 20 15 15 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4 4v7a4 4 0 0 0 4 4h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
       </div>
       <div class="detail-bottom">
         <div class="gift-qty">&times;1</div>

@@ -139,18 +139,6 @@
                 endfor
               endfor
             -%}
-            {%- if gift_source_title != blank -%}
-              {%- comment -%}
-                Ikon saja — nama produk pemicunya pindah ke title (hover) dan
-                aria-label supaya tetap informatif tanpa memakan lebar baris.
-              {%- endcomment -%}
-              <span class="gift-source" title="{{ gift_source_title | escape }}" role="img" aria-label="{{ gift_source_title | escape }}">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                  <polyline points="15 10 20 15 15 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M4 4v7a4 4 0 0 0 4 4h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </span>
-            {%- endif -%}
             <span class="gift-sr">{{ 'cart.gift_note' | t }}</span>
           </span>
         {% endif %}
@@ -168,6 +156,19 @@
           </div>
         {% endif %}
       </div>
+      {%- if is_eg_gift and gift_source_title != blank -%}
+        {%- comment -%}
+          Sisi kanan card hadiah kosong (tak ada tombol hapus) — ikon
+          asal-usul mengisinya, sejajar posisi kontrol baris berbayar.
+          Nama produk pemicu di title (hover) + aria-label.
+        {%- endcomment -%}
+        <span class="gift-source" title="{{ gift_source_title | escape }}" role="img" aria-label="{{ gift_source_title | escape }}">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <polyline points="15 10 20 15 15 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4 4v7a4 4 0 0 0 4 4h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      {%- endif -%}
       {% unless is_free_roduct or is_eg_gift %}
         <div
           role="button"
