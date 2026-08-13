@@ -367,21 +367,10 @@
     function ensureSkeletons() {
       var c = document.getElementById('cart');
       if (!c || awaiting < 1) return;
+      var have = c.querySelectorAll('[data-gift-skeleton]').length;
       var parent = itemsParent(c);
       if (!parent) return;
-      /* Sejak mutasi hadiah ditembakkan sejajar dengan pemicunya, render
-         drawer dari server sering sudah MEMUAT baris hadiahnya. Skeleton
-         hanya untuk selisih yang benar-benar belum tampil — kalau semua
-         sudah dirender server, tidak ada yang perlu ditunggu. */
-      var real = c.querySelectorAll('.cart-item--gift:not([data-gift-skeleton])').length;
-      var need = awaiting - real;
-      if (need < 1) {
-        awaiting = 0;
-        clearSkeletons(c);
-        return;
-      }
-      var have = c.querySelectorAll('[data-gift-skeleton]').length;
-      for (var i = have; i < need; i++) parent.insertBefore(skeletonCard(), parent.firstChild);
+      for (var i = have; i < awaiting; i++) parent.insertBefore(skeletonCard(), parent.firstChild);
     }
 
     /* Tema mengisi #cart dengan HTML dari /cart?view=mini setiap kali drawer
@@ -644,73 +633,18 @@
       var isAdd = /\/cart\/add/.test(href);
       try {
         var body = arguments[1] && arguments[1].body;
-        if (body && typeof body === 'string') {
+        if (body && isAdd) {
           var parsed = JSON.parse(body);
-
-          /* ===== Akselerator =====
-             Dulu urutannya serial: tunggu round-trip pemicu selesai, baru
-             putaran sinkronisasi menembak mutasi hadiahnya — hadiah datang
-             2-3 detik setelah barisnya sendiri. Sekarang keranjang PREDIKSI
-             (lastCart + mutasi yang sedang berangkat ini) diserahkan ke
-             sync() SEKARANG JUGA, sehingga mutasi hadiah mengudara sejajar
-             dengan mutasi pemicunya. Saat tema mengambil /cart?view=mini
-             (yang baru berangkat setelah add pemicu dijawab), hadiahnya
-             biasanya sudah tertulis di server dan barisnya ikut dirender
-             server-side — tanpa skeleton, tanpa paint susulan.
-
-             Aturannya tidak berubah sedikit pun: sync() tetap satu-satunya
-             pintu mutasi hadiah dan tetap serial di satu rantai promise,
-             jadi tidak pernah ada dua putaran beradu (akar hadiah ×2 di
-             #9844). Prediksi yang meleset (add pemicu gagal, payload aneh)
-             dikoreksi putaran verifikasi yang tetap berjalan setelah
-             responsnya tiba — epoch membuang seed basi seperti biasa. */
-          var predicted = null;
-          if (isAdd) {
-            var incoming = parsed.items || [parsed];
-            var expect = {};
-            incoming.forEach(function (it) {
-              var gifts = MAP[String(it.id)];
-              if (gifts) gifts.forEach(function (g) { expect[g] = true; });
-            });
-            var n = Object.keys(expect).length;
-            if (n) { awaiting = n; ensureSkeletons(); armSkeletonTTL(); }
-            if (n && lastCart && lastCart.items) {
-              predicted = { items: lastCart.items.concat(incoming.map(function (it) {
-                return {
-                  variant_id: Number(it.id),
-                  key: 'pending-' + it.id,
-                  quantity: Number(it.quantity) || 1,
-                  properties: it.properties || {}
-                };
-              })) };
-            }
-          } else if (
-            parsed && parsed.quantity != null &&
-            (parsed.id != null || parsed.line != null) &&
-            lastCart && lastCart.items
-          ) {
-            /* /cart/change.js: satu baris berubah. id bisa berupa line key
-               (string) atau variant id (angka); line = indeks 1-based. */
-            var idx = -1;
-            lastCart.items.forEach(function (item, i) {
-              if (idx >= 0 || parsed.id == null) return;
-              if (item.key === parsed.id || item.variant_id === Number(parsed.id)) idx = i;
-            });
-            if (idx < 0 && parsed.line != null) idx = Number(parsed.line) - 1;
-            var target = lastCart.items[idx];
-            /* Hanya baris PEMICU yang menggeser hak hadiah; baris lain tidak
-               perlu putaran dini. */
-            if (target && MAP[String(target.variant_id)]) {
-              var newQty = Number(parsed.quantity) || 0;
-              predicted = { items: lastCart.items.map(function (item, i) {
-                if (i !== idx) return item;
-                return { variant_id: item.variant_id, key: item.key, quantity: newQty, properties: item.properties };
-              }).filter(function (item) { return item.quantity > 0; }) };
-            }
-          }
-          if (predicted) sync(predicted);
+          var incoming = parsed.items || [parsed];
+          var expect = {};
+          incoming.forEach(function (it) {
+            var gifts = MAP[String(it.id)];
+            if (gifts) gifts.forEach(function (g) { expect[g] = true; });
+          });
+          var n = Object.keys(expect).length;
+          if (n) { awaiting = n; ensureSkeletons(); armSkeletonTTL(); }
         }
-      } catch (e) { /* payload tak terbaca: lewati akselerator, jalur verifikasi tetap menyusul */ }
+      } catch (e) { /* payload tak terbaca: lewati skeleton, sinkronisasi tetap jalan */ }
 
       /* Dihitung SEKARANG (sinkron), bukan saat balasannya tiba: pembeli bisa
          menekan checkout di tengah round-trip mutasi, dan gerbang harus sudah
