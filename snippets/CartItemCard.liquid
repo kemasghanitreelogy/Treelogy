@@ -140,12 +140,15 @@
               endfor
             -%}
             {%- if gift_source_title != blank -%}
-              <span class="gift-source">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              {%- comment -%}
+                Ikon saja — nama produk pemicunya pindah ke title (hover) dan
+                aria-label supaya tetap informatif tanpa memakan lebar baris.
+              {%- endcomment -%}
+              <span class="gift-source" title="{{ gift_source_title | escape }}" role="img" aria-label="{{ gift_source_title | escape }}">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                   <polyline points="15 10 20 15 15 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                   <path d="M4 4v7a4 4 0 0 0 4 4h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                <span class="gift-source__name">{{ gift_source_title }}</span>
               </span>
             {%- endif -%}
             <span class="gift-sr">{{ 'cart.gift_note' | t }}</span>

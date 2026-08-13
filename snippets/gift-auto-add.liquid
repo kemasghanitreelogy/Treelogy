@@ -161,12 +161,11 @@
               dari keranjang terkini (peta yang sama dengan mesin) dan chip
               tetap tersembunyi sampai sumbernya ketemu.
             {%- endcomment -%}
-            <span class="gift-source" hidden data-gift-source>
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <span class="gift-source" hidden data-gift-source role="img">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <polyline points="15 10 20 15 15 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M4 4v7a4 4 0 0 0 4 4h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-              <span class="gift-source__name" data-gift-source-name></span>
             </span>
             <span class="gift-sr">{{ 'cart.gift_note' | t }}</span>
           </span>
@@ -529,8 +528,8 @@
             }
           });
           if (srcTitle) {
-            var srcName = srcEl.querySelector('[data-gift-source-name]');
-            if (srcName) srcName.textContent = srcTitle;
+            srcEl.title = srcTitle;
+            srcEl.setAttribute('aria-label', srcTitle);
             srcEl.hidden = false;
           }
         }

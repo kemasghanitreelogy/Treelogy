@@ -1036,26 +1036,17 @@
   .gift-source {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    padding: 3px 10px;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    flex: 0 0 auto;
     border-radius: 999px;
     border: 1px solid rgba(43, 60, 53, 0.16);
     background: rgba(242, 242, 232, 0.6);
-    color: rgba(43, 60, 53, 0.78);
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    line-height: 1.4;
-    max-width: 100%;
-    min-width: 0;
+    color: rgba(43, 60, 53, 0.7);
+    cursor: help;
   }
-  .gift-source svg { flex: 0 0 auto; opacity: 0.7; }
-  .gift-source__name {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 24ch;
-  }
+  .gift-source svg { display: block; }
   /* Kalimat lengkap untuk screen reader — visual digantikan chip nilai. */
   .gift-sr {
     position: absolute;
