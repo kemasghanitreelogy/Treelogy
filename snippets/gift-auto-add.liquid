@@ -49,7 +49,42 @@
   menjanjikan pouch + mystery; pembeli yang mundur dari checkout kehilangan
   Mystery Gift-nya secara diam-diam.
 {%- endcomment -%}
-{%- capture gift_map -%}
+{%- comment -%}
+  SUMBER PETA: metafield, bukan hardcode. Aturannya kini diedit dari admin:
+  - Shop → Custom data → "Gift trigger products" (custom.gift_trigger_products):
+    daftar produk yang varian-variannya membawa aturan hadiah.
+  - Varian → "Eligible gifts" (custom.eligible_gifts, list varian):
+    hadiah yang menyertai varian itu. Kosongkan = varian tanpa hadiah.
+  Menambah aturan baru = isi metafield-nya; tema tidak perlu disentuh lagi.
+
+  Fallback hardcode di bawah hanya menyala bila daftar produk pemicu KOSONG
+  (mis. metafield shop terhapus tak sengaja) — supaya kecelakaan admin tidak
+  pernah mematikan hadiah di seluruh toko secara diam-diam.
+{%- endcomment -%}
+{%- assign gm_products = shop.metafields.custom.gift_trigger_products.value -%}
+{%- assign gm_products_count = gm_products | size -%}
+{%- if gm_products_count > 0 -%}
+  {%- capture gift_map -%}
+{
+  {%- assign gm_first = true -%}
+  {%- for gm_product in gm_products -%}
+    {%- for gm_variant in gm_product.variants -%}
+      {%- assign gm_gifts = gm_variant.metafields.custom.eligible_gifts.value -%}
+      {%- assign gm_gifts_count = gm_gifts | size -%}
+      {%- if gm_gifts_count > 0 -%}
+        {%- unless gm_first -%},{%- endunless -%}
+        {%- assign gm_first = false -%}
+        "{{ gm_variant.id }}": [
+          {%- for gm_gift in gm_gifts -%}
+            {{- gm_gift.id -}}{%- unless forloop.last -%}, {% endunless -%}
+          {%- endfor -%}]
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endfor -%}
+}
+  {%- endcapture -%}
+{%- else -%}
+  {%- capture gift_map -%}
 {
   "47255408378044": [47228130001084],
   "44314284785852": [45377783562428],
@@ -60,7 +95,8 @@
   "47228045459644": [47228068561084, 47228130001084],
   "44527091351740": [47228068561084]
 }
-{%- endcapture -%}
+  {%- endcapture -%}
+{%- endif -%}
 
 <script type="application/json" data-gift-map>{{ gift_map }}</script>
 
@@ -631,28 +667,151 @@
       return chain;
     }
 
+    /* Total kuantitas tiap varian hadiah yang PANTAS ada untuk daftar baris
+       ini — dijumlah lintas pemicu, kuantitas hadiah mengikuti pemicunya. */
+    function wantedFor(items) {
+      var wanted = {};
+      items.forEach(function (it) {
+        var gifts = MAP[String(it.variant_id != null ? it.variant_id : it.id)];
+        if (gifts) gifts.forEach(function (g) {
+          wanted[g] = (wanted[g] || 0) + (Number(it.quantity) || 1);
+        });
+      });
+      return wanted;
+    }
+
     var origFetch = window.fetch;
     window.fetch = function () {
       var url = arguments[0];
       var href = typeof url === 'string' ? url : (url && url.url) || '';
       var mine = internal > 0;
-      /* Harus dipanggil dengan window sebagai this — fetch yang dilepas dari
-         konteksnya melempar "Illegal invocation" di sebagian browser. */
+
+      if (mine || !/\/cart\/(add|change|update)(\.js)?/.test(href)) {
+        /* Harus dipanggil dengan window sebagai this — fetch yang dilepas dari
+           konteksnya melempar "Illegal invocation" di sebagian browser. */
+        return origFetch.apply(window, arguments);
+      }
+
+      var isAdd = /\/cart\/add/.test(href);
+      var origUrl = arguments[0];
+      var origInit = arguments[1];
+      var piggybacked = false;
+
+      /* ===== Piggyback atomik =====
+         Hadiah tidak lagi menyusul lewat permintaan kedua — ia MENUMPANG pada
+         mutasi pemicunya sendiri:
+         - add.js  : baris hadiah (delta terhadap keranjang terakhir) disisipkan
+                     ke body permintaan yang sama. Satu round-trip, hadiah sudah
+                     tertulis saat tema mengambil /cart?view=mini, barisnya ikut
+                     dirender server-side oleh CartItemCard — animasi masuknya
+                     satu paket dengan baris produknya, bukan susulan.
+         - change.js pada baris PEMICU: ditulis ulang menjadi /cart/update.js
+                     dengan penyesuaian baris hadiah bermarker digabung di
+                     permintaan yang sama (kedua endpoint sama-sama membalas
+                     keranjang penuh, jadi pemanggilnya tidak bisa membedakan).
+         Delta dihitung dari potret lokal (lastCart), jadi bisa saja meleset —
+         putaran verifikasi yang tetap berjalan sesudah respons adalah wasitnya,
+         dan permintaan gabungan yang DITOLAK server diulang persis seperti
+         aslinya di bawah, sehingga alur pembeli tidak pernah lebih buruk
+         daripada tanpa piggyback. */
+      try {
+        var body = origInit && origInit.body;
+        if (typeof body === 'string' && lastCart && lastCart.items) {
+          var parsed = JSON.parse(body);
+          if (isAdd && parsed && Object.prototype.toString.call(parsed.items) === '[object Array]') {
+            var touchesGift = parsed.items.some(function (it) { return GIFTS[Number(it.id)]; });
+            if (!touchesGift) {
+              /* wanted sesudah add ini = hak dari isi keranjang + hak dari
+                 baris yang sedang ditambahkan; have = baris hadiah yang ada. */
+              var wantedAfter = wantedFor(lastCart.items.concat(parsed.items));
+              var have = {};
+              lastCart.items.forEach(function (item) {
+                if ((item.properties && item.properties._Gifted) || GIFTS[item.variant_id]) {
+                  have[item.variant_id] = (have[item.variant_id] || 0) + item.quantity;
+                }
+              });
+              var extra = [];
+              Object.keys(wantedAfter).forEach(function (g) {
+                var need = wantedAfter[g] - (have[g] || 0);
+                if (need > 0) extra.push({ id: Number(g), quantity: need, properties: { _Gifted: 'true' } });
+              });
+              if (extra.length) {
+                cartEpoch++;
+                arguments[1] = Object.assign({}, origInit, {
+                  body: JSON.stringify({ items: parsed.items.concat(extra) })
+                });
+                piggybacked = true;
+              }
+            }
+          } else if (
+            !isAdd && !/\/cart\/update/.test(href) &&
+            parsed && parsed.quantity != null && (parsed.id != null || parsed.line != null)
+          ) {
+            var idx = -1;
+            lastCart.items.forEach(function (item, i) {
+              if (idx >= 0 || parsed.id == null) return;
+              if (item.key === parsed.id || item.variant_id === Number(parsed.id)) idx = i;
+            });
+            if (idx < 0 && parsed.line != null) idx = Number(parsed.line) - 1;
+            var target = lastCart.items[idx];
+            if (target && MAP[String(target.variant_id)]) {
+              var newQty = Number(parsed.quantity) || 0;
+              var predictedItems = lastCart.items
+                .map(function (item, i) {
+                  if (i !== idx) return item;
+                  return { variant_id: item.variant_id, key: item.key, quantity: newQty, properties: item.properties };
+                })
+                .filter(function (item) { return item.quantity > 0; });
+              var wantedNow = wantedFor(predictedItems);
+              var updates = {};
+              updates[target.key] = newQty;
+              /* Hanya baris hadiah BERMARKER yang ikut disetel di sini —
+                 update.js tidak bisa MENAMBAH baris, dan baris tanpa marker
+                 adalah urusan putaran verifikasi. Satu baris per varian:
+                 baris pertama memikul seluruh want (pola runSync). */
+              var assignedPB = {};
+              lastCart.items.forEach(function (item) {
+                if (!(item.properties && item.properties._Gifted)) return;
+                if (assignedPB[item.variant_id]) return;
+                assignedPB[item.variant_id] = true;
+                var want = wantedNow[item.variant_id] || 0;
+                if (item.quantity !== want) updates[item.key] = want;
+              });
+              if (Object.keys(updates).length > 1) {
+                cartEpoch++;
+                arguments[0] = href.replace(/\/cart\/change(\.js)?/, '/cart/update.js');
+                arguments[1] = Object.assign({}, origInit, {
+                  body: JSON.stringify({ updates: updates })
+                });
+                piggybacked = true;
+              }
+            }
+          }
+        }
+      } catch (e) { piggybacked = false; arguments[0] = origUrl; arguments[1] = origInit; }
+
       var result = origFetch.apply(window, arguments);
 
-      if (mine || !/\/cart\/(add|change|update)(\.js)?/.test(href)) return result;
+      if (piggybacked) {
+        result = result.then(function (res) {
+          if (res.ok) return res;
+          /* Permintaan gabungan ditolak (potret lokal basi, key hilang, dll):
+             ulangi persis permintaan asli si tema. Hadiahnya dibereskan
+             putaran verifikasi seperti biasa. */
+          return origFetch.call(window, origUrl, origInit);
+        });
+      }
 
       /* Responsnya TIDAK ditahan: drawer harus terbuka secepat biasanya.
-         Sebagai gantinya jumlah hadiah yang akan datang dihitung dari payload
-         permintaan ini, lalu skeleton dipasang begitu drawer selesai dirender. */
-      var isAdd = /\/cart\/add/.test(href);
+         Skeleton hanya untuk jalur yang TIDAK bisa ditumpangi (body bukan
+         JSON items) — pada jalur piggyback baris hadiahnya sudah ikut
+         dirender server bersama baris produknya. */
       try {
-        var body = arguments[1] && arguments[1].body;
-        if (body && isAdd) {
-          var parsed = JSON.parse(body);
-          var incoming = parsed.items || [parsed];
+        if (isAdd && !piggybacked && typeof (origInit && origInit.body) === 'string') {
+          var parsedSk = JSON.parse(origInit.body);
+          var incomingSk = parsedSk.items || [parsedSk];
           var expect = {};
-          incoming.forEach(function (it) {
+          incomingSk.forEach(function (it) {
             var gifts = MAP[String(it.id)];
             if (gifts) gifts.forEach(function (g) { expect[g] = true; });
           });
