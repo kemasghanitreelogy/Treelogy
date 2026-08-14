@@ -2,6 +2,26 @@
 <html class="no-js" lang="{{ request.locale.iso_code }}">
   <head>
     <meta charset="utf-8">
+    {%- comment -%}
+      HOTFIX 14 Agu 2026 — halaman produk berharga Rp 0 bukan halaman
+      pendaratan. Produk hadiah (Travel Pouch, Mystery Gift, Bamboo Scoop,
+      Sample Free Pouch) tidak bisa dibeli sendiri, tapi tautannya ada di
+      keranjang dan URL-nya bisa muncul di hasil pencarian; pembeli yang
+      mendarat di sana melihat produk Rp 0 tanpa jalan beli. Alihkan ke
+      katalog.
+
+      Ditaruh sebagai anak PERTAMA <head> sesudah charset supaya berjalan
+      sebelum satu piksel pun dirender — tidak ada kedipan konten.
+
+      price_max == 0 berarti SELURUH varian gratis, jadi produk berbayar yang
+      kebetulan punya satu varian Rp 0 tidak akan pernah tersentuh.
+      location.replace (bukan href) agar tombol back tidak terjebak memantul.
+      design_mode dikecualikan supaya produk ini tetap bisa dibuka dari
+      theme editor.
+    {%- endcomment -%}
+    {%- if request.page_type == 'product' and product.price_max == 0 and request.design_mode != true -%}
+      <script>window.location.replace({{ routes.all_products_collection_url | json }});</script>
+    {%- endif -%}
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     {%- comment -%}
       interactive-widget=resizes-content lets the on-screen keyboard shrink the
