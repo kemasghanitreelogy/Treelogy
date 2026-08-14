@@ -1,7 +1,9 @@
 {% doc %}
   Menghidupkan angka bukti sosial: "Trusted by more than 17.233 customers"
-  menghitung naik dari nol saat baris itu benar-benar terlihat pembeli, dan
-  lima bintangnya menyala satu per satu dengan kilau singkat mendahuluinya.
+  menghitung naik dari nol saat baris itu benar-benar terlihat pembeli.
+
+  Hitungan angkanya berlaku di SEMUA permukaan; letupan bintangnya HANYA di
+  section featured-product (blok hero produk).
 
   Teksnya datang dari metafield `custom.rating` yang dirender snippets/Rating.liquid,
   jadi kalimatnya bebas — skrip ini mencari token angka di dalamnya, bukan
@@ -103,11 +105,17 @@
          dan dijalankan compositor, dan yang terpenting — tanpa kelas ini
          bintangnya tampil normal. Jadi kalau JS gagal atau tidak pernah jalan,
          pembeli tetap melihat lima bintang utuh, bukan baris kosong. */
+      /* Bintang HANYA dianimasikan di section featured-product (blok hero
+         produk). Di kartu koleksi dan popup ia tetap tampil diam: di sana
+         bintangnya kecil dan berjajar banyak, dan lima letupan per kartu
+         berubah dari aksen jadi kebisingan. Pembatasannya ditegakkan di CSS
+         (selektor discope) DAN di sini, supaya niatnya terbaca dari kode. */
       var host = el.closest ? el.closest('.star-review') : null;
+      var inHero = host && host.closest && host.closest('.featured-product');
 
       if (REDUCED) return;
 
-      if (host) host.classList.add('rt-stars-in');
+      if (inHero) host.classList.add('rt-stars-in');
 
       num.textContent = group(0, sep);
       num.style.transform = 'scale(' + START_SCALE + ')';
@@ -195,24 +203,24 @@
      yang melewati batas itu — tanpa baris ini, setiap pembesaran di atas 1.0
      ujung bintangnya terpangkas dan pop-nya terlihat kepentok dinding. Inilah
      penyebab utama versi sebelumnya terasa kasar. */
-  .star-review svg {
+  .featured-product .star-review svg {
     overflow: visible;
   }
 
-  .star-review svg > path {
+  .featured-product .star-review svg > path {
     transform-box: fill-box;
     transform-origin: 50% 50%;
   }
 
-  .star-review.rt-stars-in svg > path {
+  .featured-product .star-review.rt-stars-in svg > path {
     animation: rtStarPop 640ms both;
   }
 
-  .star-review.rt-stars-in svg > path:nth-of-type(1) { animation-delay: 0ms; }
-  .star-review.rt-stars-in svg > path:nth-of-type(2) { animation-delay: 150ms; }
-  .star-review.rt-stars-in svg > path:nth-of-type(3) { animation-delay: 300ms; }
-  .star-review.rt-stars-in svg > path:nth-of-type(4) { animation-delay: 450ms; }
-  .star-review.rt-stars-in svg > path:nth-of-type(5) { animation-delay: 600ms; }
+  .featured-product .star-review.rt-stars-in svg > path:nth-of-type(1) { animation-delay: 0ms; }
+  .featured-product .star-review.rt-stars-in svg > path:nth-of-type(2) { animation-delay: 150ms; }
+  .featured-product .star-review.rt-stars-in svg > path:nth-of-type(3) { animation-delay: 300ms; }
+  .featured-product .star-review.rt-stars-in svg > path:nth-of-type(4) { animation-delay: 450ms; }
+  .featured-product .star-review.rt-stars-in svg > path:nth-of-type(5) { animation-delay: 600ms; }
 
   /* Pantulan teredam sungguhan: melesat melewati ukuran akhir, jatuh sedikit,
      memantul lebih kecil, lalu diam. Dua ayunan yang mengecil — itu yang
@@ -261,7 +269,7 @@
       will-change: auto;
     }
 
-    .star-review.rt-stars-in svg > path {
+    .featured-product .star-review.rt-stars-in svg > path {
       animation: none;
     }
   }
