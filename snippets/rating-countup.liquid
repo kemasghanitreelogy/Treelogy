@@ -191,41 +191,67 @@
      HANYA hidup di dalam keyframes (animation-fill-mode: both menerapkan frame
      0% selama delay). Jadi kalau JS gagal, pembeli tetap melihat lima bintang
      utuh; tidak pernah ada baris kosong. */
+  /* viewBox-nya persis sebesar bintangnya (0 0 76 12) dan SVG MEMOTONG apa pun
+     yang melewati batas itu — tanpa baris ini, setiap pembesaran di atas 1.0
+     ujung bintangnya terpangkas dan pop-nya terlihat kepentok dinding. Inilah
+     penyebab utama versi sebelumnya terasa kasar. */
+  .star-review svg {
+    overflow: visible;
+  }
+
   .star-review svg > path {
     transform-box: fill-box;
     transform-origin: 50% 50%;
   }
 
   .star-review.rt-stars-in svg > path {
-    animation: rtStarPop 700ms cubic-bezier(0.34, 1.28, 0.44, 1) both;
+    animation: rtStarPop 640ms both;
   }
 
   .star-review.rt-stars-in svg > path:nth-of-type(1) { animation-delay: 0ms; }
-  .star-review.rt-stars-in svg > path:nth-of-type(2) { animation-delay: 190ms; }
-  .star-review.rt-stars-in svg > path:nth-of-type(3) { animation-delay: 380ms; }
-  .star-review.rt-stars-in svg > path:nth-of-type(4) { animation-delay: 570ms; }
-  .star-review.rt-stars-in svg > path:nth-of-type(5) { animation-delay: 760ms; }
+  .star-review.rt-stars-in svg > path:nth-of-type(2) { animation-delay: 150ms; }
+  .star-review.rt-stars-in svg > path:nth-of-type(3) { animation-delay: 300ms; }
+  .star-review.rt-stars-in svg > path:nth-of-type(4) { animation-delay: 450ms; }
+  .star-review.rt-stars-in svg > path:nth-of-type(5) { animation-delay: 600ms; }
 
-  /* Kilau dibuat dari brightness + bloom sewarna bintangnya sendiri, bukan
-     glow putih: putih hilang di latar terang (kartu produk) dan menyilaukan di
-     latar hijau. Naik cepat ke puncak, lalu padam — kemerlap, bukan lampu. */
+  /* Pantulan teredam sungguhan: melesat melewati ukuran akhir, jatuh sedikit,
+     memantul lebih kecil, lalu diam. Dua ayunan yang mengecil — itu yang
+     membuat gerakan terbaca sebagai pegas, bukan sebagai kedutan.
+
+     Rotasi DIBUANG: pada bintang setinggi 12px, putaran tidak terbaca sebagai
+     gerakan melainkan sebagai getaran. Yang membawa rasa "melompat keluar"
+     adalah translateY kecil yang berpasangan dengan skalanya.
+
+     Kilau tinggal brightness murni — drop-shadow 4px di bintang sekecil ini
+     menghasilkan halo buram, bukan kilau. */
   @keyframes rtStarPop {
     0% {
       opacity: 0;
-      transform: scale(0.28) rotate(-24deg);
+      transform: translateY(3px) scale(0.2);
+      animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
     }
-    45% {
+    32% {
       opacity: 1;
-      transform: scale(1.18) rotate(5deg);
-      filter: brightness(1.6) drop-shadow(0 0 4px rgba(140, 180, 120, 0.8));
+      transform: translateY(-2px) scale(1.34);
+      filter: brightness(1.28);
+      animation-timing-function: cubic-bezier(0.4, 0, 0.25, 1);
     }
-    72% {
-      transform: scale(0.96) rotate(-1deg);
-      filter: brightness(1.14) drop-shadow(0 0 2px rgba(140, 180, 120, 0.35));
+    54% {
+      transform: translateY(1px) scale(0.93);
+      filter: brightness(1);
+      animation-timing-function: cubic-bezier(0.4, 0, 0.25, 1);
+    }
+    74% {
+      transform: translateY(-0.5px) scale(1.09);
+      animation-timing-function: cubic-bezier(0.4, 0, 0.25, 1);
+    }
+    90% {
+      transform: scale(0.985);
+      animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
     }
     100% {
       opacity: 1;
-      transform: none;
+      transform: translateY(0) scale(1);
       filter: none;
     }
   }
