@@ -1,17 +1,30 @@
 {% doc %}
   Menghidupkan angka bukti sosial: "Trusted by more than 17.233 customers"
-  menghitung naik dari nol saat baris itu benar-benar terlihat pembeli.
+  menghitung naik dari nol saat baris itu benar-benar terlihat pembeli, dan
+  bintangnya terisi dalam ketukan yang sama.
 
   Teksnya datang dari metafield `custom.rating` yang dirender snippets/Rating.liquid,
   jadi kalimatnya bebas — skrip ini mencari token angka di dalamnya, bukan
   mengandalkan susunan kata tertentu. Pemisah ribuannya pun ditiru dari teks
-  aslinya (titik untuk konvensi Indonesia, koma untuk Inggris), sehingga angka
-  yang berjalan selalu berformat sama dengan angka akhirnya.
+  aslinya (titik untuk konvensi Indonesia, koma untuk Inggris).
 
   Dipasang sekali dari layout/theme.liquid dan berlaku untuk SEMUA permukaan
   yang memakai .rating-text — kartu koleksi, PDP, section featured, dan popup
   "Choose your size" (app.bundle.js menyalin .star-review ke dalam popup,
   jadi elemen baru itu ditangkap MutationObserver di bawah).
+
+  ── Doktrin gerak (rule counting-dynamic-scale) ──
+  1. SATU penggerak, satu progres ter-ease. Nilai angka, skala angka, dan
+     penyingkapan bintang membaca progres yang SAMA — mereka mendarat sebagai
+     satu ketukan (chord), bukan tiga animasi yang kebetulan berbarengan.
+  2. `power3.out`, BUKAN `expo.out`. Versi pertama memakai expo dan itulah yang
+     membuatnya terasa murah: 87% hitungan selesai di 30% waktu pertama, lalu
+     angkanya merangkak hampir sedetik — terbaca seperti tersendat, bukan
+     melambat.
+  3. Angka TIDAK PERNAH overshoot. Ia data, bukan dekorasi; pantulan membuatnya
+     terlihat tidak stabil. Yang tumbuh hanya skalanya, dan hanya sampai 1.
+  4. Per frame hanya menulis teks + transform. Tidak pernah font-size, tidak
+     pernah properti layout.
 
   @example
   {% render 'rating-countup' %}
@@ -23,7 +36,10 @@
     if (window.__ratingCountUp) return;
     window.__ratingCountUp = true;
 
-    var DURATION = 1400;
+    /* 1.2–2.5s: di bawah ~0.8s hitungannya terbaca sebagai kedipan, mata tidak
+       sempat membaca digit yang berlari. */
+    var DURATION = 1600;
+    var START_SCALE = 0.86;
     var REDUCED = window.matchMedia
       && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -72,19 +88,42 @@
       var w = num.offsetWidth;
       if (w) num.style.minWidth = w + 'px';
 
-      if (REDUCED) return;
+      /* Grafik pendamping: bintang di baris yang sama. Doktrin menuntut angka
+         tidak berjalan sendirian — bintang tersingkap oleh progres yang SAMA
+         sehingga keduanya mendarat berbarengan. clip-path dipilih karena ia
+         properti komposit: nol reflow, nol repaint teks. */
+      var stars = null;
+      var host = el.closest ? el.closest('.star-review') : null;
+      if (host) stars = host.querySelector('svg');
+
+      if (REDUCED) {
+        if (stars) stars.style.clipPath = 'none';
+        return;
+      }
 
       num.textContent = group(0, sep);
+      num.style.transform = 'scale(' + START_SCALE + ')';
+      if (stars) stars.style.clipPath = 'inset(0 100% 0 0)';
+
       var start = 0;
       function frame(now) {
         if (!start) start = now;
         var t = Math.min(1, (now - start) / DURATION);
-        /* Melambat tajam di ujung (expo-out): angkanya "mendarat" pada nilai
-           akhir alih-alih berhenti mendadak. */
-        var eased = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
-        num.textContent = group(Math.round(target * eased), sep);
-        if (t < 1) requestAnimationFrame(frame);
-        else num.textContent = group(target, sep);
+        /* power3.out — melambat tegas tapi tidak asimtotik: angkanya tetap
+           bergerak terbaca sampai dekat akhir, lalu berhenti mantap. */
+        var e = 1 - Math.pow(1 - t, 3);
+
+        num.textContent = group(Math.round(target * e), sep);
+        num.style.transform = 'scale(' + (START_SCALE + (1 - START_SCALE) * e) + ')';
+        if (stars) stars.style.clipPath = 'inset(0 ' + ((1 - e) * 100) + '% 0 0)';
+
+        if (t < 1) {
+          requestAnimationFrame(frame);
+        } else {
+          num.textContent = group(target, sep);
+          num.style.transform = '';
+          if (stars) stars.style.clipPath = '';
+        }
       }
       requestAnimationFrame(frame);
     }
@@ -130,11 +169,27 @@
 </script>
 
 {% stylesheet %}
-  /* Angka berjalan: lebar digit seragam supaya tidak bergetar antar frame,
-     dan rata kanan supaya titik pemisah ribuan tetap di tempatnya. */
+  /* Angka berjalan: lebar digit seragam supaya tidak bergetar antar frame, dan
+     rata kanan supaya titik pemisah ribuan tetap di tempatnya. transform-origin
+     kanan-tengah — angka tumbuh dari sisi yang menempel pada kata sesudahnya,
+     jadi jarak antar kata tidak pernah terlihat memuai. */
   .rating-text .rt-num {
     display: inline-block;
     text-align: right;
     font-variant-numeric: tabular-nums;
+    transform-origin: 100% 50%;
+    will-change: transform;
+  }
+
+  /* Bintang tersingkap oleh clip-path pada progres yang sama dengan angkanya. */
+  .star-review svg {
+    will-change: clip-path;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rating-text .rt-num,
+    .star-review svg {
+      will-change: auto;
+    }
   }
 {% endstylesheet %}
