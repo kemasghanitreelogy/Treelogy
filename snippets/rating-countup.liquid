@@ -36,9 +36,13 @@
     if (window.__ratingCountUp) return;
     window.__ratingCountUp = true;
 
-    /* 1.2–2.5s: di bawah ~0.8s hitungannya terbaca sebagai kedipan, mata tidak
-       sempat membaca digit yang berlari. */
-    var DURATION = 1600;
+    /* Dua kali lebih lambat atas permintaan (14 Agu): 1600ms → 3200ms.
+       Doktrin menyebut 1.2–2.5s sebagai rentang lazim, tapi batas bawahnya yang
+       keras ("di bawah ~0.8s jadi kedipan") — memperlambat aman, dan pada angka
+       lima digit justru memberi mata waktu membaca digit yang berlari.
+       Pasangannya (skala + penyingkapan bintang) ikut otomatis karena ketiganya
+       membaca progres yang SAMA. */
+    var DURATION = 3200;
     var START_SCALE = 0.86;
     var REDUCED = window.matchMedia
       && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
