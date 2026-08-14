@@ -726,7 +726,12 @@
         }
 
         // 3. Push UTM + GA ids to cart attributes
-        function pushToCart() {
+        //
+        // Satu sumber untuk kedua jalur penulisan: POST /cart/update.js (jalur
+        // normal) dan penitipan lewat URL permalink (3c). Kalau keduanya
+        // membangun atributnya sendiri-sendiri, cepat atau lambat isinya
+        // berbeda dan datanya tidak bisa dibandingkan.
+        function buildAttrs() {
           var attrs = gaAttrs();
           var stored = readStored();
           if (stored) { for (var k in stored) attrs[k] = stored[k]; }
@@ -735,6 +740,11 @@
             attrs.wa_click_at = wa.at;
             attrs.wa_click_page = wa.page;
           }
+          return attrs;
+        }
+
+        function pushToCart() {
+          var attrs = buildAttrs();
           if (!Object.keys(attrs).length) return;
           rawFetch('/cart/update.js', {
       method: 'POST',
@@ -752,7 +762,7 @@
         // menyeberang ke WhatsApp", bukan berapa kali. Ditulis langsung saat itu
         // juga supaya atributnya sudah menempel walau pembeli belum menaruh
         // apa pun di keranjang.
-        window.addEventListener('click', function (e) {
+        function onWhatsappClick(e) {
           var t = e.target;
           var link = t && t.closest && t.closest(
             'a[href*="wa.me/"], a[href*="api.whatsapp.com"], a[href^="whatsapp:"]'
@@ -766,7 +776,61 @@
             }));
           } catch (err) { return; }
           pushToCart();
-        }, true);
+        }
+
+        // auxclick ikut didengar: klik tengah / "buka di tab baru" TIDAK
+        // memicu event click, dan tanpa ini penyeberangan ke WhatsApp lewat
+        // cara itu tidak pernah tercatat.
+        window.addEventListener('click', onWhatsappClick, true);
+        window.addEventListener('auxclick', onWhatsappClick, true);
+
+        // 3c. Permalink keranjang — CTA beli di landing page — MENGGANTI isi
+        // keranjang dan MEMBUANG seluruh atributnya, lalu melompat langsung ke
+        // /checkouts/cn/...  Tidak ada satu pun page load tema di antaranya,
+        // jadi pushToCart tidak pernah kebagian giliran menulis ulang.
+        // Terukur pada order Agustus 2026: order LP murni (line item-nya hanya
+        // produk LP, jadi benar-benar lewat permalink) 0% ber-_ga_cid,
+        // sementara order yang keranjangnya sempat tersentuh halaman tema 95%.
+        //
+        // Obatnya: permalink MENERIMA ?attributes[key]=value (diuji langsung di
+        // toko live), jadi atributnya dititipkan pada URL-nya sendiri. Alur beli
+        // LP tidak berubah sama sekali — tetap tanpa keranjang, tetap langsung
+        // ke checkout.
+        //
+        // Dipasang site-wide, bukan hanya di halaman LP: begitu ada LP baru
+        // atau permalink dipasang di tempat lain, lubangnya tidak terbuka lagi.
+        var CART_PERMALINK_RE = /^(?:\/[\w-]+)?\/cart\/\d+:\d+/;
+
+        function decorateCartPermalink(e) {
+          var t = e.target;
+          var link = t && t.closest && t.closest('a[href]');
+          if (!link) return;
+
+          var href = link.getAttribute('href') || '';
+          // Sudah dititipi (mis. pembeli menekan tombol yang sama dua kali).
+          if (href.indexOf('attributes%5B') !== -1 || href.indexOf('attributes[') !== -1) return;
+          if (!CART_PERMALINK_RE.test(href.split('?')[0])) return;
+
+          var attrs = buildAttrs();
+          var parts = [];
+          for (var k in attrs) {
+            var v = String(attrs[k]);
+            // Nilai raksasa (utm_content sebagian iklan bisa ratusan karakter)
+            // tidak ikut dititipkan: kehilangan satu parameter jauh lebih baik
+            // daripada URL ditolak dan pembeli gagal masuk checkout.
+            if (!v || v.length > 200) continue;
+            parts.push('attributes%5B' + encodeURIComponent(k) + '%5D=' + encodeURIComponent(v));
+          }
+          if (!parts.length) return;
+
+          // Ditulis balik ke href, bukan e.preventDefault() + location.assign:
+          // navigasi bawaan browser tetap yang menjalankan, sehingga klik
+          // tengah, Cmd-klik, dan "buka di tab baru" berperilaku normal.
+          link.setAttribute('href', href + (href.indexOf('?') === -1 ? '?' : '&') + parts.join('&'));
+        }
+
+        window.addEventListener('click', decorateCartPermalink, true);
+        window.addEventListener('auxclick', decorateCartPermalink, true);
 
         // 4. Re-apply after cart mutations (pushToCart bypasses this wrapper
         // via rawFetch, so it can never re-trigger itself; /cart/clear in the
