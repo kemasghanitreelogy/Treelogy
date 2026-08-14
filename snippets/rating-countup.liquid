@@ -1,0 +1,140 @@
+{% doc %}
+  Menghidupkan angka bukti sosial: "Trusted by more than 17.233 customers"
+  menghitung naik dari nol saat baris itu benar-benar terlihat pembeli.
+
+  Teksnya datang dari metafield `custom.rating` yang dirender snippets/Rating.liquid,
+  jadi kalimatnya bebas — skrip ini mencari token angka di dalamnya, bukan
+  mengandalkan susunan kata tertentu. Pemisah ribuannya pun ditiru dari teks
+  aslinya (titik untuk konvensi Indonesia, koma untuk Inggris), sehingga angka
+  yang berjalan selalu berformat sama dengan angka akhirnya.
+
+  Dipasang sekali dari layout/theme.liquid dan berlaku untuk SEMUA permukaan
+  yang memakai .rating-text — kartu koleksi, PDP, section featured, dan popup
+  "Choose your size" (app.bundle.js menyalin .star-review ke dalam popup,
+  jadi elemen baru itu ditangkap MutationObserver di bawah).
+
+  @example
+  {% render 'rating-countup' %}
+{% enddoc %}
+
+<script>
+  (function () {
+    'use strict';
+    if (window.__ratingCountUp) return;
+    window.__ratingCountUp = true;
+
+    var DURATION = 1400;
+    var REDUCED = window.matchMedia
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function group(n, sep) {
+      var s = String(n);
+      if (!sep) return s;
+      var out = '';
+      for (var i = 0; i < s.length; i++) {
+        if (i > 0 && (s.length - i) % 3 === 0) out += sep;
+        out += s.charAt(i);
+      }
+      return out;
+    }
+
+    function run(el) {
+      if (el.dataset.countDone) return;
+      var text = el.textContent;
+      var m = text.match(/\d[\d.,]*\d|\d+/);
+      if (!m) { el.dataset.countDone = '1'; return; }
+
+      var raw = m[0];
+      var sep = raw.indexOf('.') >= 0 ? '.' : (raw.indexOf(',') >= 0 ? ',' : '');
+      var target = parseInt(raw.replace(/[.,]/g, ''), 10);
+      if (!target || target < 2) { el.dataset.countDone = '1'; return; }
+      el.dataset.countDone = '1';
+
+      /* Kalimat utuh dikunci ke aria-label lebih dulu: pembaca layar harus
+         mendapat angka final, bukan angka yang sedang berlari. */
+      el.setAttribute('aria-label', text);
+
+      var before = text.slice(0, m.index);
+      var after = text.slice(m.index + raw.length);
+      var num = document.createElement('span');
+      num.className = 'rt-num';
+      num.setAttribute('aria-hidden', 'true');
+
+      el.textContent = '';
+      el.appendChild(document.createTextNode(before));
+      el.appendChild(num);
+      el.appendChild(document.createTextNode(after));
+
+      /* Lebar dikunci pada angka FINAL sebelum hitungan mulai. Tanpa ini kata
+         sesudahnya bergeser tiap kali jumlah digit bertambah — gerakan yang
+         terbaca sebagai kutu, bukan sebagai animasi. */
+      num.textContent = group(target, sep);
+      var w = num.offsetWidth;
+      if (w) num.style.minWidth = w + 'px';
+
+      if (REDUCED) return;
+
+      num.textContent = group(0, sep);
+      var start = 0;
+      function frame(now) {
+        if (!start) start = now;
+        var t = Math.min(1, (now - start) / DURATION);
+        /* Melambat tajam di ujung (expo-out): angkanya "mendarat" pada nilai
+           akhir alih-alih berhenti mendadak. */
+        var eased = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+        num.textContent = group(Math.round(target * eased), sep);
+        if (t < 1) requestAnimationFrame(frame);
+        else num.textContent = group(target, sep);
+      }
+      requestAnimationFrame(frame);
+    }
+
+    /* Hitungan dimulai saat barisnya benar-benar masuk layar — kalau dijalankan
+       saat muat halaman, animasi paling berharga di halaman ini habis sebelum
+       ada yang melihatnya. */
+    var io = window.IntersectionObserver
+      ? new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (!e.isIntersecting) return;
+            io.unobserve(e.target);
+            run(e.target);
+          });
+        }, { threshold: 0.6 })
+      : null;
+
+    function scan(root) {
+      (root || document).querySelectorAll('.rating-text').forEach(function (el) {
+        if (el.dataset.countSeen) return;
+        el.dataset.countSeen = '1';
+        if (io) io.observe(el); else run(el);
+      });
+    }
+
+    function arm() {
+      scan();
+      /* Popup "Choose your size" menyalin .star-review ke dalam dirinya saat
+         dibuka, jadi elemen ratingnya baru lahir sesudah halaman siap. */
+      new MutationObserver(function (muts) {
+        for (var i = 0; i < muts.length; i++) {
+          if (muts[i].addedNodes && muts[i].addedNodes.length) { scan(); return; }
+        }
+      }).observe(document.body, { childList: true, subtree: true });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', arm);
+    } else {
+      arm();
+    }
+  })();
+</script>
+
+{% stylesheet %}
+  /* Angka berjalan: lebar digit seragam supaya tidak bergetar antar frame,
+     dan rata kanan supaya titik pemisah ribuan tetap di tempatnya. */
+  .rating-text .rt-num {
+    display: inline-block;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+{% endstylesheet %}

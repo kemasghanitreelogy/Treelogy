@@ -1336,6 +1336,11 @@
       Menjaga produk eksklusif landing page agar tidak terbeli dari luar
       funnel-nya. Lihat snippets/lp-only-guard.liquid.
     {%- endcomment -%}
+    {%- comment -%}
+      Angka bukti sosial menghitung naik dari nol saat terlihat.
+      Lihat snippets/rating-countup.liquid.
+    {%- endcomment -%}
+    {% render 'rating-countup' %}
     {% render 'lp-only-guard' %}
     {%- comment -%}
       Hadiah harus disinkronkan di setiap halaman, bukan hanya halaman produk —
