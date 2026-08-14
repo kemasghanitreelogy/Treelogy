@@ -283,6 +283,60 @@
       return ok;
     }
 
+    /* ===== Telemetri =====
+       Order #9933 (13 Agu) lolos dengan hadiah kurang, dan penyebabnya TIDAK
+       bisa dipastikan retroaktif: yang menentukan adalah nasib satu permintaan
+       di browser pembeli, dan tidak ada tempat yang mencatatnya. Dua event di
+       bawah menutup buta itu — sesudah ini kejadian serupa menjawab dirinya
+       sendiri lewat satu query GA4, bukan lewat dugaan.
+
+       Sengaja hanya DUA nama event (`gift_gate_timeout`, `gift_sync_failed`),
+       sisanya dibedakan lewat parameter, karena tiap nama baru harus
+       didaftarkan ke regex trigger GTM (aturan keras #15 TRACKING-MASTER).
+       Tanpa pendaftaran itu event tetap masuk dataLayer tapi tidak sampai GA4.
+
+       Nol PII, nol pengaruh ke alur beli: seluruhnya dibungkus try/catch dan
+       digerbang prerender (aturan keras #4). */
+    var lastFailStatus = 0;
+
+    function giftSummary(cart) {
+      /* Ringkas "yang seharusnya vs yang ada" jadi satu string pendek supaya
+         bisa dibaca langsung di GA4 tanpa menggabungkan beberapa parameter. */
+      if (!cart || !cart.items) return 'no-cart';
+      var wanted = {}, have = {};
+      cart.items.forEach(function (item) {
+        var gs = MAP[String(item.variant_id)];
+        if (gs) gs.forEach(function (g) { wanted[g] = (wanted[g] || 0) + item.quantity; });
+        if ((item.properties && item.properties._Gifted) || GIFTS[item.variant_id]) {
+          have[item.variant_id] = (have[item.variant_id] || 0) + item.quantity;
+        }
+      });
+      var keys = {};
+      Object.keys(wanted).forEach(function (k) { keys[k] = 1; });
+      Object.keys(have).forEach(function (k) { keys[k] = 1; });
+      var out = Object.keys(keys).map(function (k) {
+        return k + ':' + (wanted[k] || 0) + '/' + (have[k] || 0);
+      });
+      return out.length ? out.join(',') : 'no-gift';
+    }
+
+    function giftTrack(name, data) {
+      try {
+        if (document.prerendering) return;
+        window.dataLayer = window.dataLayer || [];
+        var payload = { event: name };
+        var reset = {};
+        Object.keys(data || {}).forEach(function (k) {
+          payload[k] = data[k];
+          reset[k] = null;
+        });
+        window.dataLayer.push(payload);
+        /* Reset parameter ephemeral supaya tidak bocor ke event berikutnya
+           (aturan keras #5). */
+        window.dataLayer.push(reset);
+      } catch (e) { /* telemetri tidak boleh pernah mengganggu keranjang */ }
+    }
+
     var seed = null;
     var seedEl = document.querySelector('[data-cart-seed]');
     if (seedEl) {
@@ -357,7 +411,7 @@
         internal--;
         return req;
       }).then(function (r) {
-        if (!r.ok) { trip(r); throw new Error('cart ' + r.status); }
+        if (!r.ok) { lastFailStatus = r.status; trip(r); throw new Error('cart ' + r.status); }
         return r;
       });
     }
@@ -682,6 +736,11 @@
        daripada baris yang telat hilang. */
     function syncOnce(seedCart) {
       return runSync(seedCart).catch(function () {
+        giftTrack('gift_sync_failed', {
+          gift_reason: lastFailStatus === 429 ? 'http_429' : (lastFailStatus ? 'http_error' : 'network'),
+          gift_status: lastFailStatus,
+          gift_state: giftSummary(lastCart)
+        });
         awaiting = 0;
         clearSkeletons();
         return withRetry(function () {
@@ -868,6 +927,11 @@
           /* Permintaan gabungan ditolak (potret lokal basi, key hilang, dll):
              ulangi persis permintaan asli si tema. Hadiahnya dibereskan
              putaran verifikasi seperti biasa. */
+          giftTrack('gift_sync_failed', {
+            gift_reason: 'piggyback_rejected',
+            gift_status: res.status,
+            gift_state: giftSummary(lastCart)
+          });
           return origFetch.call(window, origUrl, origInit);
         });
       }
@@ -1019,7 +1083,21 @@
         }
         setTimeout(waitVerified, 100);
       })();
-      setTimeout(go, 4000);
+      setTimeout(function () {
+        if (done) return;
+        /* Inilah jalur G6 yang tidak bisa ditutup dari sisi klien: keranjang
+           tak terjangkau, dan pembeli SENGAJA dilepas karena hadiah selalu
+           Rp 0. Yang selama ini hilang adalah catatannya. */
+        giftTrack('gift_gate_timeout', {
+          gift_state: giftSummary(lastCart),
+          gift_pending_muts: pendingMuts,
+          gift_queued: queued ? 1 : 0,
+          gift_round_busy: roundBusy ? 1 : 0,
+          gift_breaker: cooldownUntil > Date.now() ? 1 : 0,
+          gift_last_status: lastFailStatus
+        });
+        go();
+      }, 4000);
     }, true);
   })();
 </script>
