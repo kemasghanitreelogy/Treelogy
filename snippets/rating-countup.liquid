@@ -1,7 +1,7 @@
 {% doc %}
   Menghidupkan angka bukti sosial: "Trusted by more than 17.233 customers"
   menghitung naik dari nol saat baris itu benar-benar terlihat pembeli, dan
-  bintangnya terisi dalam ketukan yang sama.
+  lima bintangnya menyala satu per satu dengan kilau singkat mendahuluinya.
 
   Teksnya datang dari metafield `custom.rating` yang dirender snippets/Rating.liquid,
   jadi kalimatnya bebas — skrip ini mencari token angka di dalamnya, bukan
@@ -14,9 +14,11 @@
   jadi elemen baru itu ditangkap MutationObserver di bawah).
 
   ── Doktrin gerak (rule counting-dynamic-scale) ──
-  1. SATU penggerak, satu progres ter-ease. Nilai angka, skala angka, dan
-     penyingkapan bintang membaca progres yang SAMA — mereka mendarat sebagai
-     satu ketukan (chord), bukan tiga animasi yang kebetulan berbarengan.
+  1. Angka dan skalanya membaca SATU progres ter-ease dari satu penggerak —
+     keduanya mendarat sebagai satu ketukan, bukan dua animasi berbarengan.
+     Bintang sengaja punya ketukannya sendiri dan selesai lebih dulu (±1,5 dtk):
+     ia menyatakan MUTU, angkanya menyatakan JUMLAH — dua fakta berbeda, jadi
+     dibaca berurutan justru lebih jelas daripada dipaksa serentak.
   2. `power3.out`, BUKAN `expo.out`. Versi pertama memakai expo dan itulah yang
      membuatnya terasa murah: 87% hitungan selesai di 30% waktu pertama, lalu
      angkanya merangkak hampir sedetik — terbaca seperti tersendat, bukan
@@ -92,22 +94,23 @@
       var w = num.offsetWidth;
       if (w) num.style.minWidth = w + 'px';
 
-      /* Grafik pendamping: bintang di baris yang sama. Doktrin menuntut angka
-         tidak berjalan sendirian — bintang tersingkap oleh progres yang SAMA
-         sehingga keduanya mendarat berbarengan. clip-path dipilih karena ia
-         properti komposit: nol reflow, nol repaint teks. */
-      var stars = null;
-      var host = el.closest ? el.closest('.star-review') : null;
-      if (host) stars = host.querySelector('svg');
+      /* Grafik pendamping: bintang di baris yang sama, muncul SATU PER SATU
+         dengan kilau singkat di puncaknya — bukan tersingkap sebagai satu
+         sapuan. Lima bintang itu path SVG terpisah, jadi tiap bintang punya
+         ketukannya sendiri (lihat keyframes rtStarPop di bawah).
 
-      if (REDUCED) {
-        if (stars) stars.style.clipPath = 'none';
-        return;
-      }
+         Dijalankan lewat kelas CSS, bukan per-frame JS: keyframes-nya deklaratif
+         dan dijalankan compositor, dan yang terpenting — tanpa kelas ini
+         bintangnya tampil normal. Jadi kalau JS gagal atau tidak pernah jalan,
+         pembeli tetap melihat lima bintang utuh, bukan baris kosong. */
+      var host = el.closest ? el.closest('.star-review') : null;
+
+      if (REDUCED) return;
+
+      if (host) host.classList.add('rt-stars-in');
 
       num.textContent = group(0, sep);
       num.style.transform = 'scale(' + START_SCALE + ')';
-      if (stars) stars.style.clipPath = 'inset(0 100% 0 0)';
 
       var start = 0;
       function frame(now) {
@@ -119,14 +122,12 @@
 
         num.textContent = group(Math.round(target * e), sep);
         num.style.transform = 'scale(' + (START_SCALE + (1 - START_SCALE) * e) + ')';
-        if (stars) stars.style.clipPath = 'inset(0 ' + ((1 - e) * 100) + '% 0 0)';
 
         if (t < 1) {
           requestAnimationFrame(frame);
         } else {
           num.textContent = group(target, sep);
           num.style.transform = '';
-          if (stars) stars.style.clipPath = '';
         }
       }
       requestAnimationFrame(frame);
@@ -185,15 +186,57 @@
     will-change: transform;
   }
 
-  /* Bintang tersingkap oleh clip-path pada progres yang sama dengan angkanya. */
-  .star-review svg {
-    will-change: clip-path;
+  /* ===== Bintang menyala satu per satu =====
+     Tanpa kelas .rt-stars-in bintangnya tampil normal — keadaan tersembunyi
+     HANYA hidup di dalam keyframes (animation-fill-mode: both menerapkan frame
+     0% selama delay). Jadi kalau JS gagal, pembeli tetap melihat lima bintang
+     utuh; tidak pernah ada baris kosong. */
+  .star-review svg > path {
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+  }
+
+  .star-review.rt-stars-in svg > path {
+    animation: rtStarPop 700ms cubic-bezier(0.34, 1.28, 0.44, 1) both;
+  }
+
+  .star-review.rt-stars-in svg > path:nth-of-type(1) { animation-delay: 0ms; }
+  .star-review.rt-stars-in svg > path:nth-of-type(2) { animation-delay: 190ms; }
+  .star-review.rt-stars-in svg > path:nth-of-type(3) { animation-delay: 380ms; }
+  .star-review.rt-stars-in svg > path:nth-of-type(4) { animation-delay: 570ms; }
+  .star-review.rt-stars-in svg > path:nth-of-type(5) { animation-delay: 760ms; }
+
+  /* Kilau dibuat dari brightness + bloom sewarna bintangnya sendiri, bukan
+     glow putih: putih hilang di latar terang (kartu produk) dan menyilaukan di
+     latar hijau. Naik cepat ke puncak, lalu padam — kemerlap, bukan lampu. */
+  @keyframes rtStarPop {
+    0% {
+      opacity: 0;
+      transform: scale(0.28) rotate(-24deg);
+    }
+    45% {
+      opacity: 1;
+      transform: scale(1.18) rotate(5deg);
+      filter: brightness(1.6) drop-shadow(0 0 4px rgba(140, 180, 120, 0.8));
+    }
+    72% {
+      transform: scale(0.96) rotate(-1deg);
+      filter: brightness(1.14) drop-shadow(0 0 2px rgba(140, 180, 120, 0.35));
+    }
+    100% {
+      opacity: 1;
+      transform: none;
+      filter: none;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .rating-text .rt-num,
-    .star-review svg {
+    .rating-text .rt-num {
       will-change: auto;
+    }
+
+    .star-review.rt-stars-in svg > path {
+      animation: none;
     }
   }
 {% endstylesheet %}
