@@ -298,6 +298,7 @@
        Nol PII, nol pengaruh ke alur beli: seluruhnya dibungkus try/catch dan
        digerbang prerender (aturan keras #4). */
     var lastFailStatus = 0;
+    var lastFailReport = 0;
 
     function giftSummary(cart) {
       /* Ringkas "yang seharusnya vs yang ada" jadi satu string pendek supaya
@@ -411,7 +412,24 @@
         internal--;
         return req;
       }).then(function (r) {
-        if (!r.ok) { lastFailStatus = r.status; trip(r); throw new Error('cart ' + r.status); }
+        if (!r.ok) {
+          lastFailStatus = r.status;
+          /* Dipancarkan SEKETIKA, bukan menunggu semua percobaan habis:
+             retry + jendela pemutus arus bisa memakan >8 detik, dan pembeli
+             sering sudah pindah ke checkout sebelum itu — event yang terlambat
+             ikut mati bersama halamannya. Dibatasi satu per 10 detik supaya
+             badai 429 tidak membanjiri dataLayer. */
+          if (Date.now() - lastFailReport > 10000) {
+            lastFailReport = Date.now();
+            giftTrack('gift_sync_failed', {
+              gift_reason: r.status === 429 ? 'http_429' : 'http_error',
+              gift_status: r.status,
+              gift_state: giftSummary(lastCart)
+            });
+          }
+          trip(r);
+          throw new Error('cart ' + r.status);
+        }
         return r;
       });
     }
@@ -737,7 +755,7 @@
     function syncOnce(seedCart) {
       return runSync(seedCart).catch(function () {
         giftTrack('gift_sync_failed', {
-          gift_reason: lastFailStatus === 429 ? 'http_429' : (lastFailStatus ? 'http_error' : 'network'),
+          gift_reason: lastFailStatus ? 'exhausted' : 'network',
           gift_status: lastFailStatus,
           gift_state: giftSummary(lastCart)
         });
