@@ -41,23 +41,38 @@
           makes app.bundle.js post straight to /cart/add.js and open the mini cart.
         {% endcomment %}
         <div class="buttons">
+          {% comment %}
+            Tiap tombol dibungkus .fp-cta supaya tombol dan deret hadiahnya
+            menjadi satu kolom — hadiah menempel pada paket yang menjanjikannya,
+            bukan mengambang di antara keduanya. Pembungkus ini juga yang
+            menangkap :hover, sehingga menyentuh tombol "membuka" hadiahnya.
+            Anchor-nya sendiri tidak disentuh: app.bundle.js menyimpan dan
+            memulihkan innerHTML-nya saat "Adding...", jadi deret hadiah harus
+            berada DI LUAR anchor agar tidak ikut tersapu.
+          {% endcomment %}
           {% if fp_v1 %}
-            <a
-              href="#"
-              class="button-quick-add-cart button-cart button-direct-add protocol-cta"
-              data-variant="{{ fp_v1.id }}"
-            >
-              {{ section.settings.cta_label_1 | default: '30 Day Protocol' }}
-            </a>
+            <div class="fp-cta">
+              <a
+                href="#"
+                class="button-quick-add-cart button-cart button-direct-add protocol-cta"
+                data-variant="{{ fp_v1.id }}"
+              >
+                {{ section.settings.cta_label_1 | default: '30 Day Protocol' }}
+              </a>
+              {% render 'GiftRail', variant: fp_v1 %}
+            </div>
           {% endif %}
           {% if fp_v2 %}
-            <a
-              href="#"
-              class="button-quick-add-cart button-cart button-direct-add protocol-cta"
-              data-variant="{{ fp_v2.id }}"
-            >
-              {{ section.settings.cta_label_2 | default: '60 Day Protocol' }}
-            </a>
+            <div class="fp-cta">
+              <a
+                href="#"
+                class="button-quick-add-cart button-cart button-direct-add protocol-cta"
+                data-variant="{{ fp_v2.id }}"
+              >
+                {{ section.settings.cta_label_2 | default: '60 Day Protocol' }}
+              </a>
+              {% render 'GiftRail', variant: fp_v2 %}
+            </div>
           {% endif %}
         </div>
       </div>
@@ -87,6 +102,29 @@
     .featured-product .product-detail .inner .excerpt { animation-delay: 0.24s; }
     .featured-product .product-detail .inner .price-outer { animation-delay: 0.32s; }
     .featured-product .product-detail .buttons { animation-delay: 0.4s; }
+
+    /* Kolom per CTA: tombol di atas, hadiahnya tepat di bawahnya.
+       align-items:flex-start menjaga pil tetap selebar isinya (tidak melar
+       memenuhi kolom), persis seperti sebelum pembungkus ini ada. */
+    .featured-product .product-detail .buttons .fp-cta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 9px;
+      min-width: 0;
+    }
+
+    /* Mobile tetap DUA kolom (grid 1fr 1fr dari theme.css) — dua paket
+       berdampingan itu yang membuat perbandingannya langsung terbaca, dan
+       menumpuknya vertikal justru memakan layar. Yang dirampingkan adalah
+       deret hadiahnya, di snippets/GiftRail.liquid: ia dipecah dua baris
+       pendek yang DISENGAJA (foto+FREE, lalu nama), bukan dibiarkan
+       membungkus asal — karena disengaja, kedua kolom selalu sama tinggi. */
+    @media only screen and (max-width: 900px) {
+      .featured-product .product-detail .buttons .fp-cta {
+        gap: 7px;
+      }
+    }
     @keyframes fpTextRise {
       from {
         opacity: 0;

@@ -1336,6 +1336,13 @@
       Menjaga produk eksklusif landing page agar tidak terbeli dari luar
       funnel-nya. Lihat snippets/lp-only-guard.liquid.
     {%- endcomment -%}
+    {%- comment -%}
+      Melengkapi popup "Choose your size": nama varian disamakan dengan kartu
+      PDP dan baris keranjang, plus pil hadiah per baris varian. Popup itu
+      dibangun app.bundle.js dari product.json yang tidak membawa metafield —
+      lihat snippets/popup-variant-enrich.liquid.
+    {%- endcomment -%}
+    {% render 'popup-variant-enrich' %}
     {% render 'lp-only-guard' %}
     {%- comment -%}
       Hadiah harus disinkronkan di setiap halaman, bukan hanya halaman produk —
