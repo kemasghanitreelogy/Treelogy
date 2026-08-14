@@ -1,36 +1,3 @@
-{%- capture pc_plan_gifts -%}
-[
-{%- for pc_v in item.variants -%}
-  {%- assign pc_g = pc_v.metafields.custom.eligible_gifts.value -%}
-  {%- assign pc_gc = pc_g | size -%}
-  {%- if pc_gc > 0 -%}
-    [
-    {%- for pc_gift in pc_g -%}
-      {"i":{{ pc_gift.product.featured_image | image_url: width: 72, height: 72, crop: 'center' | json }},"n":{{ pc_gift.product.title | json }}}
-      {%- unless forloop.last -%},{%- endunless -%}
-    {%- endfor -%}
-    ]
-  {%- else -%}null{%- endif -%}
-  {%- unless forloop.last -%},{%- endunless -%}
-{%- endfor -%}
-]
-{%- endcapture -%}
-{%- capture pc_plan_labels -%}
-[
-{%- for pc_v in item.variants -%}
-  {%- liquid
-    assign pc_vl = pc_v.metafields.custom.staged_plan_label
-    if pc_vl == blank
-      assign pc_vl = pc_v.metafields.custom.time_protocol
-    endif
-    if pc_vl == blank
-      assign pc_vl = pc_v.title
-    endif
-  -%}
-  {{- pc_vl | json -}}{%- unless forloop.last -%},{%- endunless -%}
-{%- endfor -%}
-]
-{%- endcapture -%}
 {% if item %}
   {% assign first_variant = item.variants.first %}
   {% assign card_image = item.media.first %}
@@ -73,8 +40,6 @@
           class="button-cart button-quick-add-cart overlay-button open-popup-variants"
           data-title="{{ item.title }}"
           data-slug="{{ item.url }}"
-          data-plan-labels="{{ pc_plan_labels | strip | escape }}"
-          data-plan-gifts="{{ pc_plan_gifts | strip | escape }}"
         >
           {{ 'products.general.add_to_cart' | t }}
         </a>
@@ -109,8 +74,6 @@
           class="button-cart button-quick-add-cart open-popup-variants"
           data-title="{{ item.title }}"
           data-slug="{{ item.url }}"
-          data-plan-labels="{{ pc_plan_labels | strip | escape }}"
-          data-plan-gifts="{{ pc_plan_gifts | strip | escape }}"
         >
           {{ 'products.general.add_to_cart' | t }}
         </a>
