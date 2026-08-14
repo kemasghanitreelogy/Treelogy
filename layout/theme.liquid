@@ -702,11 +702,39 @@
           return out;
         }
 
+        // 2c. Klik CTA WhatsApp. Saat tombol itu ditekan pembeli MENINGGALKAN
+        // situs dan percakapannya terjadi di luar jangkauan kita — klik itulah
+        // hal terakhir yang masih bisa dicatat. Ditulis ke atribut keranjang,
+        // bukan sekadar ke GA4, karena GA4 Data API TIDAK membuka clientId
+        // sebagai dimensi laporan: tanpa ini, klik dan order-nya tidak akan
+        // pernah bisa disambungkan kembali. Disimpan 30 hari, menyamai jendela
+        // atribusi Shopify sendiri.
+        var WA_KEY = 'app_wa_click';
+        var WA_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+
+        function waStored() {
+          try {
+            var raw = localStorage.getItem(WA_KEY);
+            if (!raw) return null;
+            var o = JSON.parse(raw);
+            if (!o || !o.at || Date.now() - new Date(o.at).getTime() > WA_TTL_MS) {
+              localStorage.removeItem(WA_KEY);
+              return null;
+            }
+            return o;
+          } catch (e) { return null; }
+        }
+
         // 3. Push UTM + GA ids to cart attributes
         function pushToCart() {
           var attrs = gaAttrs();
           var stored = readStored();
           if (stored) { for (var k in stored) attrs[k] = stored[k]; }
+          var wa = waStored();
+          if (wa) {
+            attrs.wa_click_at = wa.at;
+            attrs.wa_click_page = wa.page;
+          }
           if (!Object.keys(attrs).length) return;
           rawFetch('/cart/update.js', {
       method: 'POST',
@@ -715,6 +743,30 @@
           }).catch(function () {});
         }
         pushToCart();
+
+        // 3b. Penangkap kliknya. Dipasang di WINDOW fase capture, bukan di
+        // document: interceptor seamless-ATC memanggil stopImmediatePropagation
+        // di document-capture, sehingga listener setingkat document bisa tidak
+        // pernah melihat klik yang melewatinya (aturan keras #6 TRACKING-MASTER).
+        // Klik PERTAMA yang disimpan — yang ingin diketahui adalah "pernahkah ia
+        // menyeberang ke WhatsApp", bukan berapa kali. Ditulis langsung saat itu
+        // juga supaya atributnya sudah menempel walau pembeli belum menaruh
+        // apa pun di keranjang.
+        window.addEventListener('click', function (e) {
+          var t = e.target;
+          var link = t && t.closest && t.closest(
+            'a[href*="wa.me/"], a[href*="api.whatsapp.com"], a[href^="whatsapp:"]'
+          );
+          if (!link) return;
+          if (waStored()) return;
+          try {
+            localStorage.setItem(WA_KEY, JSON.stringify({
+              at: new Date().toISOString(),
+              page: location.pathname
+            }));
+          } catch (err) { return; }
+          pushToCart();
+        }, true);
 
         // 4. Re-apply after cart mutations (pushToCart bypasses this wrapper
         // via rawFetch, so it can never re-trigger itself; /cart/clear in the
