@@ -461,7 +461,19 @@
               <p class="lp-plan__perday">{{ block.settings.per_day }}</p>
             {% endif %}
 
-            {% if lp_live and lp_gift_total > 0 %}
+            {%- comment -%}
+              Nilai hadiah boleh diletakkan SEBAGAI POIN di dalam daftar
+              jaminan: tulis `{gift}` pada baris yang diinginkan. Kalau token
+              itu tidak dipakai, nilainya tetap tampil sebagai baris tersendiri
+              di sini — jadi angkanya tidak pernah hilang hanya karena merchant
+              lupa menuliskannya.
+            {%- endcomment -%}
+            {%- assign lp_gift_inline = false -%}
+            {%- if block.settings.guarantee contains '{gift}' -%}
+              {%- assign lp_gift_inline = true -%}
+            {%- endif -%}
+
+            {% if lp_live and lp_gift_total > 0 and lp_gift_inline == false %}
               <p class="lp-plan__giftvalue">
                 {{- block.settings.gift_value_label }} {{ lp_gift_total | money -}}
               </p>
@@ -478,14 +490,23 @@
                 {%- assign lp_promises = block.settings.guarantee | strip | newline_to_br | split: '<br />' -%}
                 {% for lp_promise in lp_promises %}
                   {%- assign lp_promise_text = lp_promise | strip -%}
-                  {% if lp_promise_text != blank %}
+                  {%- if lp_promise_text == '{gift}' -%}
+                    {%- if lp_live and lp_gift_total > 0 -%}
+                      <li class="lp-plan__guarantee-line">
+                        {%- if block.settings.guarantee_marker != blank -%}
+                          <strong>{{ block.settings.guarantee_marker }}</strong>
+                        {%- endif -%}
+                        {{ block.settings.gift_value_label }} {{ lp_gift_total | money }}
+                      </li>
+                    {%- endif -%}
+                  {%- elsif lp_promise_text != blank -%}
                     <li class="lp-plan__guarantee-line">
                       {%- if block.settings.guarantee_marker != blank -%}
                         <strong>{{ block.settings.guarantee_marker }}</strong>
                       {%- endif -%}
                       {{ lp_promise_text }}
                     </li>
-                  {% endif %}
+                  {%- endif -%}
                 {% endfor %}
               </ul>
             {% endif %}
