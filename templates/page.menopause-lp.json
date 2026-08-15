@@ -1133,8 +1133,8 @@
         }
       },
       "block_order": [
-        "pcaps",
         "p60",
+        "pcaps",
         "p30"
       ],
       "settings": {
