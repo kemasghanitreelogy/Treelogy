@@ -139,7 +139,7 @@
           "settings": {
             "prefix": "✓",
             "highlight": "",
-            "text": "Garansi 30 Hari",
+            "text": "Garansi 60 Hari",
             "link_url": "",
             "link_label": ""
           }
@@ -183,7 +183,7 @@
         "offer_plan": "PROTOKOL INSIDE OUT 30 HARI",
         "offer_price": "Rp 795.000",
         "offer_perday": "Setara Rp 26.500 per hari",
-        "offer_note": "Garansi 30 hari · Pengiriman ke seluruh Indonesia",
+        "offer_note": "Garansi 60 hari · Pengiriman ke seluruh Indonesia",
         "show_savings": false,
         "savings_text": "Hemat Rp 170.000",
         "cta_label": "Mulai Protokol",
@@ -359,7 +359,7 @@
         "i5": {
           "type": "item",
           "settings": {
-            "text": "Garansi Uang Kembali 30 Hari"
+            "text": "Garansi Uang Kembali 60 Hari"
           }
         }
       },
@@ -468,7 +468,7 @@
         "connector": "+",
         "cta_label": "Mulai Protokol",
         "cta_url": "#pricing",
-        "cta_note": "Garansi Uang Kembali 30 Hari · Gratis Ongkir"
+        "cta_note": "Garansi Uang Kembali 60 Hari · Gratis Ongkir"
       }
     },
     "nutrients_inside": {
@@ -685,7 +685,7 @@
         "subheading": "Kebanyakan suplemen gagal di hari ke-14. Karena di situ orang berhenti. Ini yang terjadi kalau kamu lanjut.",
         "cta_label": "Mulai Transformasi",
         "cta_url": "#pricing",
-        "cta_note": "Garansi Uang Kembali 30 Hari · Gratis Ongkir"
+        "cta_note": "Garansi Uang Kembali 60 Hari · Gratis Ongkir"
       }
     },
     "comparison": {
@@ -1000,7 +1000,7 @@
             "price": "",
             "per_day": "",
             "guarantee_marker": "✓",
-            "guarantee": "Garansi uang kembali 30 hari\n{gift}\nKapsul: Obat Tradisional BPOM\nMinyak: Kosmetik BPOM",
+            "guarantee": "Garansi uang kembali 60 hari\n{gift}\nKapsul: Obat Tradisional BPOM\nMinyak: Kosmetik BPOM",
             "cta_label": "Ambil Protokol 60 Hari",
             "variant_id": "47228045492412:1,47228068561084:1,47228130001084:1",
             "quantity": 1,
@@ -1060,7 +1060,7 @@
             "price": "",
             "per_day": "",
             "guarantee_marker": "✓",
-            "guarantee": "Garansi uang kembali 30 hari\n{gift}\nKapsul: Obat Tradisional BPOM\nMinyak: Kosmetik BPOM",
+            "guarantee": "Garansi uang kembali 60 hari\n{gift}\nKapsul: Obat Tradisional BPOM\nMinyak: Kosmetik BPOM",
             "cta_label": "Ambil Protokol 30 Hari",
             "variant_id": "47228045459644:1,47228130001084:1,47228068561084:1",
             "quantity": 1,
@@ -1119,7 +1119,7 @@
             "price": "",
             "per_day": "",
             "guarantee_marker": "✓",
-            "guarantee": "Garansi uang kembali 30 hari\nKapsul: Obat Tradisional BPOM\n{gift}",
+            "guarantee": "Garansi uang kembali 60 hari\nKapsul: Obat Tradisional BPOM\n{gift}",
             "cta_label": "Mulai dengan Kapsul",
             "variant_id": "47228067315900:1",
             "quantity": 1,
@@ -1154,7 +1154,7 @@
         "quote_author": "Ibu Ratna, 55, Surabaya",
         "pledge_icon": "🛡️",
         "pledge_title": "Nggak Terasa? Uang Kembali.",
-        "pledge_text": "Jalani protokol setiap hari selama 30 hari. Kalau tidak terasa bedanya, kami kembalikan uang sepenuhnya. Tanpa banyak tanya."
+        "pledge_text": "Jalani protokol setiap hari selama 60 hari. Kalau tidak terasa bedanya, kami kembalikan uang sepenuhnya. Tanpa banyak tanya."
       }
     },
     "ticker_bottom": {
@@ -1175,7 +1175,7 @@
         "j3": {
           "type": "item",
           "settings": {
-            "text": "30-Day Guarantee"
+            "text": "60-Day Guarantee"
           }
         },
         "j4": {
@@ -1371,7 +1371,7 @@
           "type": "item",
           "settings": {
             "question": "Seberapa cepat saya merasakan bedanya?",
-            "answer": "<p>Energi: 7-10 hari. Hot flashes: minggu 2-3. Kulit dan rambut: minggu 3-4. Manfaat lebih dalam: 2 bulan lebih pemakaian rutin. Tubuh tiap orang berbeda. Karena itu ada garansi uang kembali 30 hari. Tidak ada yang hilang kecuali keluhannya.</p>"
+            "answer": "<p>Energi: 7-10 hari. Hot flashes: minggu 2-3. Kulit dan rambut: minggu 3-4. Manfaat lebih dalam: 2 bulan lebih pemakaian rutin. Tubuh tiap orang berbeda. Karena itu ada garansi uang kembali 60 hari. Tidak ada yang hilang kecuali keluhannya.</p>"
           }
         },
         "q6": {
@@ -1420,7 +1420,7 @@
         "text": "Bergabung dengan 10.000+ perempuan Indonesia yang memilih jalan alami. Dan kembali jadi diri mereka sendiri.",
         "cta_label": "Mulai Inside Out Protocol",
         "cta_url": "#pricing",
-        "proof": "Garansi Uang Kembali 30 Hari · Gratis Ongkir · Sertifikasi BPOM & Halal",
+        "proof": "Garansi Uang Kembali 60 Hari · Gratis Ongkir · Sertifikasi BPOM & Halal",
         "disclaimer": "<p>© 2026 Treelogy Premium Organic Moringa · treelogy.com</p><p>*Produk ini tidak dimaksudkan untuk mendiagnosis, mengobati, menyembuhkan, atau mencegah penyakit apa pun. Konsultasikan dengan tenaga kesehatan sebelum digunakan.</p>"
       }
     },
@@ -1501,7 +1501,7 @@
           "type": "item",
           "settings": {
             "question": "Bagaimana garansinya bekerja?",
-            "answer": "<p>Jalani protokolnya. Kalau dalam 30 hari tidak terasa bedanya, hubungi kami dan uang kembali sepenuhnya. Tanpa banyak tanya.</p>"
+            "answer": "<p>Jalani protokolnya. Kalau dalam 60 hari tidak terasa bedanya, hubungi kami dan uang kembali sepenuhnya. Tanpa banyak tanya.</p>"
           }
         },
         "q3": {
