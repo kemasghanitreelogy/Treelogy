@@ -1006,7 +1006,12 @@
             "quantity": 1,
             "discount_code": "MENOPAUSE60",
             "cta_url": "/products/inside-out-moringa-protocol?variant=47228045492412",
-            "footer_note": "Pesan hari ini, dikirim besok"
+            "footer_note": "Pesan hari ini, dikirim besok",
+            "component_1_icon": "kapsul",
+            "component_2_icon": "dropper",
+            "gift_1_icon": "pouch",
+            "gift_2_icon": "gift",
+            "shipping_icon": "truck"
           }
         },
         "p30": {
@@ -1058,7 +1063,12 @@
             "quantity": 1,
             "discount_code": "MENOPAUSE30",
             "cta_url": "/products/inside-out-moringa-protocol?variant=47228045459644",
-            "footer_note": "Pesan hari ini, dikirim besok"
+            "footer_note": "Pesan hari ini, dikirim besok",
+            "component_1_icon": "kapsul",
+            "component_2_icon": "dropper",
+            "gift_1_icon": "pouch",
+            "gift_2_icon": "gift",
+            "shipping_icon": "truck"
           }
         },
         "pcaps": {
@@ -1111,7 +1121,9 @@
             "quantity": 1,
             "discount_code": "",
             "cta_url": "/products/organic-moringa-capsules-1?variant=47228067315900",
-            "footer_note": "Pesan hari ini, dikirim besok"
+            "footer_note": "Pesan hari ini, dikirim besok",
+            "component_1_icon": "kapsul",
+            "gift_1_icon": "gift"
           }
         }
       },

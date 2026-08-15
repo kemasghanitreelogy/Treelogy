@@ -332,19 +332,26 @@
               <div class="lp-plan__stack">
                 {% if lp_comp1 != blank %}
                   <div class="lp-plan__row">
-                    <span>{{ block.settings.component_1_label | default: lp_comp1.title }}</span>
+                    <span>
+                      {%- render 'lp-icon', name: block.settings.component_1_icon -%}
+                      {{ block.settings.component_1_label | default: lp_comp1.title }}
+                    </span>
                     <span class="lp-plan__value">{{ lp_c1v.price | money }}</span>
                   </div>
                 {% endif %}
                 {% if lp_comp2 != blank %}
                   <div class="lp-plan__row">
-                    <span>{{ block.settings.component_2_label | default: lp_comp2.title }}</span>
+                    <span>
+                      {%- render 'lp-icon', name: block.settings.component_2_icon -%}
+                      {{ block.settings.component_2_label | default: lp_comp2.title }}
+                    </span>
                     <span class="lp-plan__value">{{ lp_c2v.price | money }}</span>
                   </div>
                 {% endif %}
                 {% if lp_gift1 != blank %}
                   <div class="lp-plan__row">
                     <span>
+                      {%- render 'lp-icon', name: block.settings.gift_1_icon -%}
                       {%- if lp_g1_qty > 1 -%}{{ lp_g1_qty }}&times; {% endif -%}
                       {{ block.settings.gift_1_label | default: lp_gift1.title }}
                     </span>
@@ -356,6 +363,7 @@
                 {% if lp_gift2 != blank %}
                   <div class="lp-plan__row">
                     <span>
+                      {%- render 'lp-icon', name: block.settings.gift_2_icon -%}
                       {%- if lp_g2_qty > 1 -%}{{ lp_g2_qty }}&times; {% endif -%}
                       {{ block.settings.gift_2_label | default: lp_gift2.title }}
                     </span>
@@ -366,7 +374,10 @@
                 {% endif %}
                 {% if block.settings.show_free_shipping %}
                   <div class="lp-plan__row">
-                    <span>{{ block.settings.shipping_label }}</span>
+                    <span>
+                      {%- render 'lp-icon', name: block.settings.shipping_icon -%}
+                      {{ block.settings.shipping_label }}
+                    </span>
                     <span class="lp-plan__free">
                       {%- if block.settings.shipping_compare != blank -%}
                         <s>{{ block.settings.shipping_compare }}</s>
@@ -834,6 +845,32 @@
     min-width: 0;
   }
 
+  /* Ikon disejajarkan ke baris teksnya, bukan ke tengah kotak: baris ini
+     memakai align-items baseline, jadi SVG yang dibiarkan inline akan
+     "menggantung" sedikit terlalu rendah. translateY kecil mengembalikannya
+     ke garis mata. Ukurannya dikunci supaya nama hadiah yang panjang tidak
+     pernah menggencet ikonnya. */
+  .lp-plan__row .lp-icon {
+    flex: 0 0 auto;
+    width: 17px;
+    height: 17px;
+    margin-right: 0.5rem;
+    vertical-align: -0.22em;
+    opacity: 0.72;
+  }
+
+  .lp-plan--featured .lp-plan__row .lp-icon {
+    opacity: 0.85;
+  }
+
+  @media (max-width: 480px) {
+    .lp-plan__row .lp-icon {
+      width: 15px;
+      height: 15px;
+      margin-right: 0.4rem;
+    }
+  }
+
   .lp-plan__value {
     white-space: nowrap;
   }
@@ -1060,9 +1097,18 @@
       "id": "checkout_locale",
       "label": "Bahasa halaman checkout",
       "options": [
-        { "value": "id", "label": "Indonesia" },
-        { "value": "en", "label": "English" },
-        { "value": "auto", "label": "Ikuti bahasa halaman" }
+        {
+          "value": "id",
+          "label": "Indonesia"
+        },
+        {
+          "value": "en",
+          "label": "English"
+        },
+        {
+          "value": "auto",
+          "label": "Ikuti bahasa halaman"
+        }
       ],
       "default": "id",
       "info": "Bahasa utama toko adalah English, jadi tanpa ini pembeli mendarat di checkout berbahasa Inggris."
@@ -1100,8 +1146,14 @@
       "id": "countdown_mode",
       "label": "Mode",
       "options": [
-        { "value": "evergreen", "label": "Evergreen (per pengunjung)" },
-        { "value": "fixed", "label": "Tanggal tetap" }
+        {
+          "value": "evergreen",
+          "label": "Evergreen (per pengunjung)"
+        },
+        {
+          "value": "fixed",
+          "label": "Tanggal tetap"
+        }
       ],
       "default": "evergreen"
     },
@@ -1248,6 +1300,42 @@
           "label": "Nama isi 1 di kartu"
         },
         {
+          "type": "select",
+          "id": "component_1_icon",
+          "label": "Ikon komponen 1",
+          "default": "kapsul",
+          "options": [
+            {
+              "value": "none",
+              "label": "Tanpa ikon"
+            },
+            {
+              "value": "kapsul",
+              "label": "Kapsul"
+            },
+            {
+              "value": "dropper",
+              "label": "Botol pipet (seed oil)"
+            },
+            {
+              "value": "pouch",
+              "label": "Kantong serut (travel pouch)"
+            },
+            {
+              "value": "gift",
+              "label": "Kado"
+            },
+            {
+              "value": "truck",
+              "label": "Pengiriman"
+            },
+            {
+              "value": "leaf",
+              "label": "Daun"
+            }
+          ]
+        },
+        {
           "type": "product",
           "id": "component_2",
           "label": "Isi 2"
@@ -1265,6 +1353,42 @@
           "type": "text",
           "id": "component_2_label",
           "label": "Nama isi 2 di kartu"
+        },
+        {
+          "type": "select",
+          "id": "component_2_icon",
+          "label": "Ikon komponen 2",
+          "default": "dropper",
+          "options": [
+            {
+              "value": "none",
+              "label": "Tanpa ikon"
+            },
+            {
+              "value": "kapsul",
+              "label": "Kapsul"
+            },
+            {
+              "value": "dropper",
+              "label": "Botol pipet (seed oil)"
+            },
+            {
+              "value": "pouch",
+              "label": "Kantong serut (travel pouch)"
+            },
+            {
+              "value": "gift",
+              "label": "Kado"
+            },
+            {
+              "value": "truck",
+              "label": "Pengiriman"
+            },
+            {
+              "value": "leaf",
+              "label": "Daun"
+            }
+          ]
         },
         {
           "type": "header",
@@ -1285,6 +1409,42 @@
           "label": "Nama hadiah 1 di kartu"
         },
         {
+          "type": "select",
+          "id": "gift_1_icon",
+          "label": "Ikon hadiah 1",
+          "default": "gift",
+          "options": [
+            {
+              "value": "none",
+              "label": "Tanpa ikon"
+            },
+            {
+              "value": "kapsul",
+              "label": "Kapsul"
+            },
+            {
+              "value": "dropper",
+              "label": "Botol pipet (seed oil)"
+            },
+            {
+              "value": "pouch",
+              "label": "Kantong serut (travel pouch)"
+            },
+            {
+              "value": "gift",
+              "label": "Kado"
+            },
+            {
+              "value": "truck",
+              "label": "Pengiriman"
+            },
+            {
+              "value": "leaf",
+              "label": "Daun"
+            }
+          ]
+        },
+        {
           "type": "number",
           "id": "gift_1_qty",
           "label": "Jumlah hadiah 1",
@@ -1299,6 +1459,42 @@
           "type": "text",
           "id": "gift_2_label",
           "label": "Nama hadiah 2 di kartu"
+        },
+        {
+          "type": "select",
+          "id": "gift_2_icon",
+          "label": "Ikon hadiah 2",
+          "default": "gift",
+          "options": [
+            {
+              "value": "none",
+              "label": "Tanpa ikon"
+            },
+            {
+              "value": "kapsul",
+              "label": "Kapsul"
+            },
+            {
+              "value": "dropper",
+              "label": "Botol pipet (seed oil)"
+            },
+            {
+              "value": "pouch",
+              "label": "Kantong serut (travel pouch)"
+            },
+            {
+              "value": "gift",
+              "label": "Kado"
+            },
+            {
+              "value": "truck",
+              "label": "Pengiriman"
+            },
+            {
+              "value": "leaf",
+              "label": "Daun"
+            }
+          ]
         },
         {
           "type": "number",
@@ -1324,6 +1520,42 @@
           "id": "shipping_label",
           "label": "Nama baris ongkir",
           "default": "Ongkos Kirim"
+        },
+        {
+          "type": "select",
+          "id": "shipping_icon",
+          "label": "Ikon ongkos kirim",
+          "default": "truck",
+          "options": [
+            {
+              "value": "none",
+              "label": "Tanpa ikon"
+            },
+            {
+              "value": "kapsul",
+              "label": "Kapsul"
+            },
+            {
+              "value": "dropper",
+              "label": "Botol pipet (seed oil)"
+            },
+            {
+              "value": "pouch",
+              "label": "Kantong serut (travel pouch)"
+            },
+            {
+              "value": "gift",
+              "label": "Kado"
+            },
+            {
+              "value": "truck",
+              "label": "Pengiriman"
+            },
+            {
+              "value": "leaf",
+              "label": "Daun"
+            }
+          ]
         },
         {
           "type": "text",
@@ -1387,8 +1619,14 @@
           "id": "tag_style",
           "label": "Warna label",
           "options": [
-            { "value": "dark", "label": "Hijau" },
-            { "value": "gold", "label": "Emas" }
+            {
+              "value": "dark",
+              "label": "Hijau"
+            },
+            {
+              "value": "gold",
+              "label": "Emas"
+            }
           ],
           "default": "dark"
         },
@@ -1524,9 +1762,15 @@
     {
       "name": "LP · Pricing",
       "blocks": [
-        { "type": "plan" },
-        { "type": "plan" },
-        { "type": "plan" }
+        {
+          "type": "plan"
+        },
+        {
+          "type": "plan"
+        },
+        {
+          "type": "plan"
+        }
       ]
     }
   ]
