@@ -336,7 +336,14 @@
                       {%- render 'lp-icon', name: block.settings.component_1_icon -%}
                       {{ block.settings.component_1_label | default: lp_comp1.title }}
                     </span>
-                    <span class="lp-plan__value">{{ lp_c1v.price | money }}</span>
+                    <span class="lp-plan__value">
+                      {%- if block.settings.component_1_discounted > 0 -%}
+                        <s>{{ lp_c1v.price | money }}</s>
+                        {{ block.settings.component_1_discounted | times: 100 | money }}
+                      {%- else -%}
+                        {{ lp_c1v.price | money }}
+                      {%- endif -%}
+                    </span>
                   </div>
                 {% endif %}
                 {% if lp_comp2 != blank %}
@@ -345,7 +352,14 @@
                       {%- render 'lp-icon', name: block.settings.component_2_icon -%}
                       {{ block.settings.component_2_label | default: lp_comp2.title }}
                     </span>
-                    <span class="lp-plan__value">{{ lp_c2v.price | money }}</span>
+                    <span class="lp-plan__value">
+                      {%- if block.settings.component_2_discounted > 0 -%}
+                        <s>{{ lp_c2v.price | money }}</s>
+                        {{ block.settings.component_2_discounted | times: 100 | money }}
+                      {%- else -%}
+                        {{ lp_c2v.price | money }}
+                      {%- endif -%}
+                    </span>
                   </div>
                 {% endif %}
                 {% if lp_gift1 != blank %}
@@ -440,7 +454,8 @@
             {% if lp_live and block.settings.days > 0 %}
               <p class="lp-plan__perday">
                 {{- block.settings.per_day_label }}
-                {{ lp_final | divided_by: block.settings.days | money -}}
+                {{ lp_final | divided_by: block.settings.days | money }}
+                {{ block.settings.per_day_suffix -}}
               </p>
             {% elsif block.settings.per_day != blank %}
               <p class="lp-plan__perday">{{ block.settings.per_day }}</p>
@@ -452,13 +467,27 @@
               </p>
             {% endif %}
 
-            {% if block.settings.guarantee != blank or block.settings.guarantee_marker != blank %}
-              <p class="lp-plan__guarantee-line">
-                {%- if block.settings.guarantee_marker != blank -%}
-                  <strong>{{ block.settings.guarantee_marker }}</strong>
-                {%- endif -%}
-                {{ block.settings.guarantee }}
-              </p>
+            {%- comment -%}
+              Satu baris teks = satu poin jaminan. Dibuat begini supaya merchant
+              bisa menambah/mengurangi poin tanpa menyentuh kode, dan supaya
+              tiap poin punya penanda centangnya sendiri — dulu semuanya
+              menyatu jadi satu kalimat panjang.
+            {%- endcomment -%}
+            {% if block.settings.guarantee != blank %}
+              <ul class="lp-plan__guarantees">
+                {%- assign lp_promises = block.settings.guarantee | strip | newline_to_br | split: '<br />' -%}
+                {% for lp_promise in lp_promises %}
+                  {%- assign lp_promise_text = lp_promise | strip -%}
+                  {% if lp_promise_text != blank %}
+                    <li class="lp-plan__guarantee-line">
+                      {%- if block.settings.guarantee_marker != blank -%}
+                        <strong>{{ block.settings.guarantee_marker }}</strong>
+                      {%- endif -%}
+                      {{ lp_promise_text }}
+                    </li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
             {% endif %}
 
             <div class="lp-plan__footer">
@@ -938,6 +967,12 @@
     text-align: right;
   }
 
+  .lp-plan__guarantees {
+    margin: 1rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
   .lp-plan__guarantee-line {
     margin: 0 0 1rem;
     color: var(--lp-text-mid);
@@ -1298,6 +1333,12 @@
           "label": "Nama isi 1 di kartu"
         },
         {
+          "type": "number",
+          "id": "component_1_discounted",
+          "label": "Harga komponen 1 setelah potongan",
+          "info": "Kosongkan bila tidak ada harga coret."
+        },
+        {
           "type": "select",
           "id": "component_1_icon",
           "label": "Ikon komponen 1",
@@ -1351,6 +1392,12 @@
           "type": "text",
           "id": "component_2_label",
           "label": "Nama isi 2 di kartu"
+        },
+        {
+          "type": "number",
+          "id": "component_2_discounted",
+          "label": "Harga komponen 2 setelah potongan",
+          "info": "Kosongkan bila tidak ada harga coret."
         },
         {
           "type": "select",
@@ -1589,6 +1636,12 @@
         },
         {
           "type": "text",
+          "id": "per_day_suffix",
+          "label": "Akhiran per hari",
+          "default": "per hari"
+        },
+        {
+          "type": "text",
           "id": "gift_value_label",
           "label": "Awalan nilai hadiah",
           "info": "Angka ini sama persis dengan TOTAL PENGHEMATAN di checkout.",
@@ -1710,9 +1763,9 @@
           "default": "✓"
         },
         {
-          "type": "text",
+          "type": "textarea",
           "id": "guarantee",
-          "label": "Baris garansi",
+          "label": "Poin jaminan (satu baris = satu poin)",
           "default": "Garansi uang kembali 30 hari"
         },
         {

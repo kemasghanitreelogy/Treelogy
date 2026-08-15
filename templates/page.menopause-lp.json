@@ -981,7 +981,7 @@
             "shipping_compare": "Rp 35.000",
             "promo_discount": 170000,
             "days": 60,
-            "per_day_label": "Setara per hari:",
+            "per_day_label": "Setara",
             "gift_value_label": "Hadiah gratis senilai",
             "tag_show_savings": true,
             "savings_word": "Hemat",
@@ -1000,7 +1000,7 @@
             "price": "",
             "per_day": "",
             "guarantee_marker": "✓",
-            "guarantee": "Garansi uang kembali 30 hari",
+            "guarantee": "Garansi uang kembali 30 hari\nKapsul: Obat Tradisional BPOM\nMinyak: Kosmetik BPOM",
             "cta_label": "Ambil Protokol 60 Hari",
             "variant_id": "47228045492412:1,47228068561084:1,47228130001084:1",
             "quantity": 1,
@@ -1011,7 +1011,10 @@
             "component_2_icon": "dropper",
             "gift_1_icon": "pouch",
             "gift_2_icon": "gift",
-            "shipping_icon": "truck"
+            "shipping_icon": "truck",
+            "per_day_suffix": "per hari",
+            "component_1_discounted": 590000,
+            "component_2_discounted": 400000
           }
         },
         "p30": {
@@ -1038,7 +1041,7 @@
             "shipping_compare": "Rp 35.000",
             "promo_discount": 125000,
             "days": 30,
-            "per_day_label": "Setara per hari:",
+            "per_day_label": "Setara",
             "gift_value_label": "Hadiah gratis senilai",
             "tag_show_savings": true,
             "savings_word": "Hemat",
@@ -1057,7 +1060,7 @@
             "price": "",
             "per_day": "",
             "guarantee_marker": "✓",
-            "guarantee": "Garansi uang kembali 30 hari",
+            "guarantee": "Garansi uang kembali 30 hari\nKapsul: Obat Tradisional BPOM\nMinyak: Kosmetik BPOM",
             "cta_label": "Ambil Protokol 30 Hari",
             "variant_id": "47228045459644:1,47228130001084:1,47228068561084:1",
             "quantity": 1,
@@ -1068,7 +1071,8 @@
             "component_2_icon": "dropper",
             "gift_1_icon": "pouch",
             "gift_2_icon": "gift",
-            "shipping_icon": "truck"
+            "shipping_icon": "truck",
+            "per_day_suffix": "per hari"
           }
         },
         "pcaps": {
@@ -1096,7 +1100,7 @@
             "shipping_compare": "Rp 35.000",
             "promo_discount": 0,
             "days": 60,
-            "per_day_label": "Setara per hari:",
+            "per_day_label": "Setara",
             "gift_value_label": "Hadiah gratis senilai",
             "tag_show_savings": false,
             "savings_word": "Hemat",
@@ -1115,7 +1119,7 @@
             "price": "",
             "per_day": "",
             "guarantee_marker": "✓",
-            "guarantee": "Garansi uang kembali 30 hari",
+            "guarantee": "Garansi uang kembali 30 hari\nKapsul: Obat Tradisional BPOM",
             "cta_label": "Mulai dengan Kapsul",
             "variant_id": "47228067315900:1",
             "quantity": 1,
@@ -1123,7 +1127,8 @@
             "cta_url": "/products/organic-moringa-capsules-1?variant=47228067315900",
             "footer_note": "Pesan hari ini, dikirim besok",
             "component_1_icon": "kapsul",
-            "gift_1_icon": "gift"
+            "gift_1_icon": "gift",
+            "per_day_suffix": "per hari"
           }
         }
       },
