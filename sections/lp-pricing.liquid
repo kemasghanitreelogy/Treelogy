@@ -131,23 +131,38 @@
             # diskon otomatis: paket toko ini hanya menerapkan satu diskon produk
             # otomatis per pesanan, sehingga diskon hadiah akan kalah oleh
             # potongan bundel. Nilai aslinya disimpan sebagai harga coret.
+            # Satu varian hadiah boleh diberikan lebih dari satu (metafield
+            # eligible_gifts memuat varian yang sama dua kali → engine menambah
+            # dua baris). Jumlahnya ditulis di sini supaya kartu menyebut angka
+            # yang SAMA dengan yang benar-benar masuk keranjang; kalau tidak,
+            # nilai hadiah di kartu lebih kecil daripada yang diterima pembeli.
             assign lp_gift_total = 0
             assign lp_gift1 = block.settings.gift_1
+            assign lp_g1_qty = block.settings.gift_1_qty | default: 1
+            if lp_g1_qty < 1
+              assign lp_g1_qty = 1
+            endif
             if lp_gift1 != blank
               assign lp_g1v = lp_gift1.selected_or_first_available_variant
               assign lp_g1_value = lp_g1v.price
               if lp_g1v.price == 0 and lp_g1v.compare_at_price > 0
                 assign lp_g1_value = lp_g1v.compare_at_price
               endif
+              assign lp_g1_value = lp_g1_value | times: lp_g1_qty
               assign lp_gift_total = lp_gift_total | plus: lp_g1_value
             endif
             assign lp_gift2 = block.settings.gift_2
+            assign lp_g2_qty = block.settings.gift_2_qty | default: 1
+            if lp_g2_qty < 1
+              assign lp_g2_qty = 1
+            endif
             if lp_gift2 != blank
               assign lp_g2v = lp_gift2.selected_or_first_available_variant
               assign lp_g2_value = lp_g2v.price
               if lp_g2v.price == 0 and lp_g2v.compare_at_price > 0
                 assign lp_g2_value = lp_g2v.compare_at_price
               endif
+              assign lp_g2_value = lp_g2_value | times: lp_g2_qty
               assign lp_gift_total = lp_gift_total | plus: lp_g2_value
             endif
 
@@ -177,10 +192,10 @@
             # dibalik di bawah karena permalink membangun baris dari belakang.
             assign lp_cart_line = lp_variant.id | append: ':1'
             if lp_gift1 != blank
-              assign lp_cart_line = lp_cart_line | append: ',' | append: lp_g1v.id | append: ':1'
+              assign lp_cart_line = lp_cart_line | append: ',' | append: lp_g1v.id | append: ':' | append: lp_g1_qty
             endif
             if lp_gift2 != blank
-              assign lp_cart_line = lp_cart_line | append: ',' | append: lp_g2v.id | append: ':1'
+              assign lp_cart_line = lp_cart_line | append: ',' | append: lp_g2v.id | append: ':' | append: lp_g2_qty
             endif
           endif
         -%}
@@ -329,7 +344,10 @@
                 {% endif %}
                 {% if lp_gift1 != blank %}
                   <div class="lp-plan__row">
-                    <span>{{ block.settings.gift_1_label | default: lp_gift1.title }}</span>
+                    <span>
+                      {%- if lp_g1_qty > 1 -%}{{ lp_g1_qty }}&times; {% endif -%}
+                      {{ block.settings.gift_1_label | default: lp_gift1.title }}
+                    </span>
                     <span class="lp-plan__free">
                       <s>{{- lp_g1_value | money -}}</s>{{ block.settings.free_word }}
                     </span>
@@ -337,7 +355,10 @@
                 {% endif %}
                 {% if lp_gift2 != blank %}
                   <div class="lp-plan__row">
-                    <span>{{ block.settings.gift_2_label | default: lp_gift2.title }}</span>
+                    <span>
+                      {%- if lp_g2_qty > 1 -%}{{ lp_g2_qty }}&times; {% endif -%}
+                      {{ block.settings.gift_2_label | default: lp_gift2.title }}
+                    </span>
                     <span class="lp-plan__free">
                       <s>{{- lp_g2_value | money -}}</s>{{ block.settings.free_word }}
                     </span>
@@ -1264,6 +1285,12 @@
           "label": "Nama hadiah 1 di kartu"
         },
         {
+          "type": "number",
+          "id": "gift_1_qty",
+          "label": "Jumlah hadiah 1",
+          "info": "Isi 2 bila varian hadiah ini didaftarkan dua kali di metafield eligible_gifts."
+        },
+        {
           "type": "product",
           "id": "gift_2",
           "label": "Hadiah 2"
@@ -1272,6 +1299,12 @@
           "type": "text",
           "id": "gift_2_label",
           "label": "Nama hadiah 2 di kartu"
+        },
+        {
+          "type": "number",
+          "id": "gift_2_qty",
+          "label": "Jumlah hadiah 2",
+          "info": "Isi 2 bila varian hadiah ini didaftarkan dua kali di metafield eligible_gifts."
         },
         {
           "type": "text",

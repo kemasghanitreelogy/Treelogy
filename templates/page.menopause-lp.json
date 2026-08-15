@@ -418,51 +418,19 @@
     },
     "founder": {
       "type": "lp-founder",
-      "blocks": {
-        "l1": {
-          "type": "item",
-          "settings": {
-            "text": "Perempuan yang berjuang dengan PMS"
-          }
-        },
-        "l2": {
-          "type": "item",
-          "settings": {
-            "text": "Ibu baru yang memulihkan nutrisi tubuh"
-          }
-        },
-        "l3": {
-          "type": "item",
-          "settings": {
-            "text": "Ibu yang kesulitan dengan kelancaran ASI"
-          }
-        },
-        "l4": {
-          "type": "item",
-          "settings": {
-            "text": "Eksim, nyeri sendi, gula darah, tekanan darah"
-          }
-        }
-      },
-      "block_order": [
-        "l1",
-        "l2",
-        "l3",
-        "l4"
-      ],
       "settings": {
         "avatar": "shopify://shop_images/treelogy-moringa-brand-cap-founder-portrait-bali.jpg",
         "eyebrow": "Dari Founder",
         "heading": "Halo, saya Sacha.",
         "role": "Founder Treelogy",
-        "content_top": "<p>Saya pertama kali tiba di Bali umur 13 tahun. Itu 17 tahun lalu. Sejak itu saya jatuh cinta pada moringa. Daunnya membantu saya melawan kelelahan kronis. Minyaknya membereskan masalah kulit yang saya bawa bertahun-tahun. <strong>Bukan tanpa alasan ia dijuluki Miracle Tree.</strong></p><p>Tapi saya tidak menemukan brand yang bisa saya percaya. Tidak ada yang menunjukkan bagaimana moringa mereka dibuat. Atau oleh siapa.</p><p>Maka saya mendirikan Treelogy. Sepenuhnya berbasis di Bali. <strong>Kami menanam, mengolah, dan mengantar moringa dari tanah kami sampai ke tanganmu.</strong> Kamu bisa melihat bagaimana ia dibuat. Dan siapa yang membuatnya.</p><p>Kebanyakan brand menggiling seluruh ranting, termasuk batangnya. Tubuh kita tidak bisa mencerna batang. Itu sebabnya moringa mereka cokelat, pahit, dan menimbulkan rasa begah. <strong>Moringa kami dipisahkan helai demi helai. Dengan tangan.</strong></p>",
-        "show_compare": true,
+        "content_top": "<p>Saya pertama kali tiba di Bali umur 13 tahun. Itu 17 tahun lalu. Sejak itu saya jatuh cinta pada moringa. Daunnya membantu saya melawan kelelahan kronis. Minyaknya membereskan masalah kulit yang saya bawa bertahun-tahun. <strong>Bukan tanpa alasan ia dijuluki Miracle Tree.</strong></p><p>Tapi saya tidak menemukan brand yang bisa saya percaya. Tidak ada yang menunjukkan bagaimana moringa mereka dibuat. Atau oleh siapa.</p><p>Maka saya mendirikan Treelogy. Sepenuhnya berbasis di Bali. <strong>Kami menanam, mengolah, dan mengantar moringa dari tanah kami sampai ke tanganmu.</strong> Kamu bisa melihat bagaimana ia dibuat. Dan siapa yang membuatnya.</p>",
+        "show_compare": false,
         "compare_image": "shopify://shop_images/moringa-powder-quality-comparison-dull-vs-vibrant-green.png",
         "compare_label_left": "Lainnya",
         "compare_label_right": "Treelogy",
         "compare_caption": "Daun yang sama. Standar yang berbeda.",
-        "content_middle": "<p>Seiring waktu, kami menemukan bahwa daun ini mendukung jauh lebih banyak dari sekadar keluhan saya dulu. <strong>Ia mendukung kesehatan lintas generasi:</strong></p>",
-        "highlight": "Dan untuk perempuan yang sedang menopause: moringa mendukung sendi yang nyeri, energi yang drop di siang hari, tidur lebih nyenyak, hot flashes berkurang, rambut rontok berkurang, dan kulit lebih sehat."
+        "content_middle": "",
+        "highlight": ""
       }
     },
     "protocol": {
@@ -1006,18 +974,21 @@
             "gift_1_label": "Travel Pouch",
             "gift_2": "mystery-gift",
             "gift_2_label": "Mystery Gift",
+            "gift_2_qty": 2,
             "free_word": "GRATIS",
             "show_free_shipping": true,
             "shipping_label": "Ongkos Kirim",
+            "shipping_compare": "Rp 35.000",
+            "promo_discount": 170000,
             "days": 60,
             "per_day_label": "Setara per hari:",
             "gift_value_label": "Hadiah gratis senilai",
             "tag_show_savings": true,
             "savings_word": "Hemat",
-            "tag": "Best Value",
+            "tag": "Jalur 2 · Best Value",
             "tag_style": "gold",
-            "title": "Protokol Inside Out 60 Hari",
-            "description": "Dua bulan. Durasi saat transformasi terasa utuh.",
+            "title": "Protokol Lengkap 60 Hari",
+            "description": "Kapsul + seed oil. Sistem lengkap untuk hasil dalam dan luar.",
             "variants": "",
             "variants_as_radio": false,
             "variant_default": 1,
@@ -1035,16 +1006,14 @@
             "quantity": 1,
             "discount_code": "MENOPAUSE60",
             "cta_url": "/products/inside-out-moringa-protocol?variant=47228045492412",
-            "footer_note": "Pesan hari ini, dikirim besok",
-            "promo_discount": 170000,
-            "shipping_compare": "Rp 35.000"
+            "footer_note": "Pesan hari ini, dikirim besok"
           }
         },
         "p30": {
           "type": "plan",
           "settings": {
             "featured": false,
-            "hidden": false,
+            "hidden": true,
             "product": "inside-out-moringa-protocol",
             "variant_position": 1,
             "variants_from_product": false,
@@ -1061,6 +1030,8 @@
             "free_word": "GRATIS",
             "show_free_shipping": true,
             "shipping_label": "Ongkos Kirim",
+            "shipping_compare": "Rp 35.000",
+            "promo_discount": 125000,
             "days": 30,
             "per_day_label": "Setara per hari:",
             "gift_value_label": "Hadiah gratis senilai",
@@ -1087,9 +1058,7 @@
             "quantity": 1,
             "discount_code": "MENOPAUSE30",
             "cta_url": "/products/inside-out-moringa-protocol?variant=47228045459644",
-            "footer_note": "Pesan hari ini, dikirim besok",
-            "promo_discount": 125000,
-            "shipping_compare": "Rp 35.000"
+            "footer_note": "Pesan hari ini, dikirim besok"
           }
         },
         "pcaps": {
@@ -1098,63 +1067,64 @@
             "featured": false,
             "hidden": false,
             "product": "organic-moringa-capsules-1",
-            "variant_position": 0,
-            "variants_from_product": true,
-            "component_1": "",
-            "component_1_variant": 0,
-            "component_1_label": "",
+            "variant_position": 2,
+            "variants_from_product": false,
+            "component_1": "organic-moringa-capsules-1",
+            "component_1_variant": 2,
+            "component_1_label": "180 Kapsul · 60 hari",
             "component_2": "",
             "component_2_variant": 0,
             "component_2_label": "",
-            "gift_1": "",
-            "gift_1_label": "",
+            "gift_1": "mystery-gift",
+            "gift_1_label": "Mystery Gift",
+            "gift_1_qty": 1,
             "gift_2": "",
             "gift_2_label": "",
             "free_word": "GRATIS",
             "show_free_shipping": false,
             "shipping_label": "Ongkos Kirim",
-            "days": 0,
+            "shipping_compare": "Rp 35.000",
+            "promo_discount": 0,
+            "days": 60,
             "per_day_label": "Setara per hari:",
             "gift_value_label": "Hadiah gratis senilai",
             "tag_show_savings": false,
             "savings_word": "Hemat",
-            "tag": "Mulai dari Sini",
+            "tag": "Jalur 1 · Mulai dari Sini",
             "tag_style": "dark",
-            "title": "Moringa Capsules Saja",
-            "description": "Mulai dengan kapsul. Tambahkan minyaknya saat sudah siap.",
+            "title": "Mulai dengan Kapsul",
+            "description": "Dukungan menopause dengan komitmen ringan. Tambahkan minyaknya nanti.",
             "variants": "",
-            "variants_as_radio": true,
+            "variants_as_radio": false,
             "variant_default": 2,
             "variants_label": "Pilih ukuran",
             "stack": "",
             "total_label": "Beli terpisah:",
             "total_value": "",
-            "price_label": "",
+            "price_label": "Hari ini:",
             "price": "",
             "per_day": "",
             "guarantee_marker": "✓",
             "guarantee": "Garansi uang kembali 30 hari",
-            "cta_label": "Belanja Capsules",
-            "variant_id": "47228067283132:1",
+            "cta_label": "Mulai dengan Kapsul",
+            "variant_id": "47228067315900:1",
             "quantity": 1,
             "discount_code": "",
-            "cta_url": "/products/organic-moringa-capsules-1",
-            "footer_note": "Pesan hari ini, dikirim besok",
-            "promo_discount": 0,
-            "shipping_compare": "Rp 35.000"
+            "cta_url": "/products/organic-moringa-capsules-1?variant=47228067315900",
+            "footer_note": "Pesan hari ini, dikirim besok"
           }
         }
       },
       "block_order": [
+        "pcaps",
         "p60",
-        "p30",
-        "pcaps"
+        "p30"
       ],
       "settings": {
         "anchor_id": "pricing",
         "checkout_locale": "id",
         "eyebrow": "Offer Terbatas",
-        "heading": "Pilih Protokol",
+        "heading": "Pilih Cara Memulai",
         "show_countdown": true,
         "countdown_label": "Offer Berakhir Dalam:",
         "countdown_mode": "evergreen",
@@ -1451,6 +1421,90 @@
         "whatsapp_message": "Halo Treelogy, saya ingin bertanya tentang Inside Out Protocol",
         "whatsapp_label": "Chat dengan Treelogy di WhatsApp"
       }
+    },
+    "founder_why": {
+      "type": "lp-founder",
+      "blocks": {
+        "l1": {
+          "type": "item",
+          "settings": {
+            "text": "Perempuan yang berjuang dengan PMS"
+          }
+        },
+        "l2": {
+          "type": "item",
+          "settings": {
+            "text": "Ibu baru yang memulihkan nutrisi tubuh"
+          }
+        },
+        "l3": {
+          "type": "item",
+          "settings": {
+            "text": "Ibu yang kesulitan dengan kelancaran ASI"
+          }
+        },
+        "l4": {
+          "type": "item",
+          "settings": {
+            "text": "Eksim, nyeri sendi, gula darah, tekanan darah"
+          }
+        }
+      },
+      "block_order": [
+        "l1",
+        "l2",
+        "l3",
+        "l4"
+      ],
+      "settings": {
+        "eyebrow": "Kenapa Treelogy",
+        "heading": "Moringa yang Benar-Benar Terasa Bedanya",
+        "role": "",
+        "content_top": "<p>Kebanyakan brand menggiling seluruh ranting, termasuk batangnya. Tubuh kita tidak bisa mencerna batang. Itu sebabnya moringa mereka cokelat, pahit, dan menimbulkan rasa begah. <strong>Moringa kami dipisahkan helai demi helai. Dengan tangan.</strong></p>",
+        "show_compare": true,
+        "compare_image": "shopify://shop_images/moringa-powder-quality-comparison-dull-vs-vibrant-green.png",
+        "compare_label_left": "Lainnya",
+        "compare_label_right": "Treelogy",
+        "compare_caption": "Daun yang sama. Standar yang berbeda.",
+        "content_middle": "<p>Pohon moringa kami tumbuh di kebun kami sendiri. Semua produk kami olah sendiri, di fasilitas BPOM milik kami yang hanya beberapa menit dari kebun, demi menjaga kualitas dan integritasnya. <strong>Kamu tahu persis siapa yang menanam, bagaimana ditanam, dan bagaimana diolah. Dari tanah kami, langsung ke tanganmu.</strong></p><p>Kami mempelopori pendaftaran kapsul moringa murni sebagai <strong>obat tradisional BPOM</strong>, kategori yang sebelumnya tidak pernah diberikan untuk produk seperti ini. Minyaknya terdaftar sebagai kosmetik. Teruji lab independen, Halal, dan tersertifikasi organik.</p><p>Semua ini kami lakukan karena moringa, jika ditanam dan diolah dengan benar, benar-benar menjadi dukungan unik untuk kesehatan lintas generasi:</p>",
+        "highlight": "Dan untuk perempuan yang sedang menopause: moringa mendukung sendi yang nyeri, energi yang drop di siang hari, tidur lebih nyenyak, hot flashes berkurang, rambut rontok berkurang, dan kulit lebih sehat."
+      }
+    },
+    "faq_quick": {
+      "type": "lp-faq",
+      "blocks": {
+        "q1": {
+          "type": "item",
+          "settings": {
+            "question": "Kenapa saya perlu kapsul DAN minyak?",
+            "answer": "<p>Kapsul mengurus sisi dalam: energi, tulang, tidur, keseimbangan. Minyak mengurus yang terlihat: kulit kering, rambut menipis. Boleh mulai dengan kapsul saja. Yang memakai keduanya melaporkan hasil lebih cepat dan lebih terlihat.</p>"
+          }
+        },
+        "q2": {
+          "type": "item",
+          "settings": {
+            "question": "Bagaimana garansinya bekerja?",
+            "answer": "<p>Jalani protokolnya. Kalau dalam 30 hari tidak terasa bedanya, hubungi kami dan uang kembali sepenuhnya. Tanpa banyak tanya.</p>"
+          }
+        },
+        "q3": {
+          "type": "item",
+          "settings": {
+            "question": "Berapa kapsul per hari?",
+            "answer": "<p>3 kapsul bersama sarapan. Perut sensitif? Mulai dengan 2 di beberapa hari pertama. Minyaknya: 3-4 tetes setiap malam.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "q1",
+        "q2",
+        "q3"
+      ],
+      "settings": {
+        "eyebrow": "Pertanyaan Cepat",
+        "heading": "",
+        "exclusive": true
+      }
     }
   },
   "order": [
@@ -1459,19 +1513,21 @@
     "hero",
     "trust",
     "testimonials",
+    "pricing",
+    "faq_quick",
     "ticker_top",
-    "familiar",
+    "founder_why",
     "founder",
+    "familiar",
     "protocol",
+    "ritual",
+    "audience",
     "nutrients_inside",
     "nutrients_outside",
     "timeline",
     "comparison",
-    "ritual",
-    "audience",
     "heritage",
     "certs",
-    "pricing",
     "ticker_bottom",
     "reviews",
     "faq",

@@ -1,16 +1,21 @@
 <div class="lp-founder lp-pad">
   <div class="lp-container lp-container--narrow lp-reveal">
-    <div class="lp-founder__avatar">
-      {% if section.settings.avatar %}
+    {%- comment -%}
+      Avatar hanya dirender kalau fotonya benar-benar dipilih. Section ini
+      dipakai dua kali di LP: blok "Kenapa Treelogy" (tanpa wajah) dan blok
+      "Halo, saya Sacha" (dengan wajah). Placeholder bulat yang dulu tampil
+      saat kosong akan muncul sebagai lingkaran abu-abu di blok pertama —
+      terbaca sebagai gambar yang gagal dimuat, bukan sebagai keputusan.
+    {%- endcomment -%}
+    {% if section.settings.avatar %}
+      <div class="lp-founder__avatar">
         {{
           section.settings.avatar
           | image_url: width: 192
           | image_tag: widths: '96, 192', sizes: '96px', alt: section.settings.heading
         }}
-      {% else %}
-        {{ 'lifestyle-1' | placeholder_svg_tag: 'lp-placeholder' }}
-      {% endif %}
-    </div>
+      </div>
+    {% endif %}
 
     {% if section.settings.eyebrow != blank %}
       <div class="lp-eyebrow">{{ section.settings.eyebrow }}</div>
@@ -99,6 +104,13 @@
 
   .lp-founder .lp-founder__heading {
     margin-bottom: 0.25rem;
+  }
+
+  /* Tanpa baris jabatan, judul menempel ke paragraf pertama (margin judul
+     sengaja hanya 0.25rem karena biasanya disusul jabatan). Selektor
+     saudara-langsung ini hanya menyala persis pada kondisi itu. */
+  .lp-founder .lp-founder__heading + .lp-founder__text {
+    margin-top: 1.5rem;
   }
 
   .lp-founder__role {
