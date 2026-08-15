@@ -25,6 +25,10 @@
       <h2 class="lp-h2 lp-pricing__heading">{{ section.settings.heading }}</h2>
     {% endif %}
 
+    {% if section.settings.intro != blank %}
+      <p class="lp-pricing__intro">{{ section.settings.intro }}</p>
+    {% endif %}
+
     {% if section.settings.show_countdown %}
       <div class="lp-pricing__urgency">
         <div
@@ -633,6 +637,19 @@
     margin-bottom: 0.5rem;
   }
 
+  /* Lebar dikunci ~46ch: kalimat pengantar yang melebar selebar kartu jadi
+     satu baris panjang dan berhenti terbaca sebagai pengantar. */
+  .lp-pricing__intro {
+    max-width: 29rem;
+    margin: 0.5rem auto 1.5rem;
+    color: var(--lp-text-mid);
+    font-family: var(--lp-font-body);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    text-align: center;
+    text-wrap: balance;
+  }
+
   .lp-pricing__urgency {
     margin-bottom: 2.5rem;
   }
@@ -1178,6 +1195,12 @@
       "id": "heading",
       "label": "Judul",
       "default": "Pilih Protokol"
+    },
+    {
+      "type": "text",
+      "id": "intro",
+      "label": "Paragraf pengantar",
+      "info": "Kalimat singkat di bawah judul. Kosongkan bila tidak dipakai."
     },
     {
       "type": "header",
