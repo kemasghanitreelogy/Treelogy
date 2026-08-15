@@ -850,24 +850,22 @@
      "menggantung" sedikit terlalu rendah. translateY kecil mengembalikannya
      ke garis mata. Ukurannya dikunci supaya nama hadiah yang panjang tidak
      pernah menggencet ikonnya. */
+  /* Ikon kini berwarna penuh, jadi TIDAK diredupkan: opacity di bawah 1
+     akan mencampurnya dengan latar dan justru mengembalikan masalah lama —
+     bidang krem lenyap di kartu emas. */
   .lp-plan__row .lp-icon {
     flex: 0 0 auto;
-    width: 17px;
-    height: 17px;
-    margin-right: 0.5rem;
-    vertical-align: -0.22em;
-    opacity: 0.72;
-  }
-
-  .lp-plan--featured .lp-plan__row .lp-icon {
-    opacity: 0.85;
+    width: 20px;
+    height: 20px;
+    margin-right: 0.55rem;
+    vertical-align: -0.28em;
   }
 
   @media (max-width: 480px) {
     .lp-plan__row .lp-icon {
-      width: 15px;
-      height: 15px;
-      margin-right: 0.4rem;
+      width: 18px;
+      height: 18px;
+      margin-right: 0.45rem;
     }
   }
 

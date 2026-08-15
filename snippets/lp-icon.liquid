@@ -1,35 +1,36 @@
 {% doc %}
-  Ikon garis untuk baris rincian kartu paket di landing page.
+  Ikon produk untuk baris rincian kartu paket di landing page.
 
-  Digambar sebagai SVG inline, bukan emoji: emoji dirender berbeda di tiap
-  sistem operasi (Android menampilkan kapsul biru, Windows menggambar kado
-  dengan gaya lain), sehingga kartu harga tidak pernah terlihat sama untuk
-  dua pembeli. SVG juga bisa diwarnai dan diberi isian tembus pandang —
-  emoji tidak.
+  Digambar sebagai SVG inline, bukan emoji dan bukan foto produk. Emoji
+  dirender berbeda di tiap sistem operasi sehingga kartu harga tak pernah
+  terlihat sama untuk dua pembeli. Foto produk sempat dicoba dan ditolak
+  kenyataannya: satu-satunya packshot bersih yang dimiliki toko hanyalah
+  pouch dan mystery gift — foto kapsul dan minyaknya semuanya foto gaya
+  hidup bertumpuk teks, yang pada 20px berubah jadi noda tak terbaca.
 
-  Semua ikon memakai kanvas 24×24, garis 1.6, ujung membulat — satu bahasa
-  visual, bukan kumpulan ikon dari sumber berbeda.
+  ── Kenapa berwarna penuh, bukan garis ──
+  Versi garis tunggal gagal dua kali: pada 20px, outline 1.6px kehilangan
+  isi bendanya sehingga botol minyak dan kantong serut terbaca sebagai dua
+  benda yang sama. Yang membuat sebuah benda terbaca sekecil ini adalah
+  MASSA dan KONTRAS DUA NADA, bukan detail garis. Karena itu tiap ikon kini
+  punya bidang terisi, satu sisi lebih gelap sebagai bayangan bentuk, satu
+  sorotan tipis, lalu garis tepi gelap tipis.
 
-  ── Warna ──
-  Tiap ikon punya satu warna yang diambil dari BENDA ASLINYA, bukan dipilih
-  acak biar ramai: kantong serut memang kain kanvas krem, minyaknya hijau
-  zaitun bening, kado memakai merah bata hangat. Warnanya diset sekali
-  sebagai `color` pada SVG, lalu garis memakai `currentColor` dan isiannya
-  memakai warna yang sama pada opacity rendah — jadi satu nilai mengatur
-  keduanya dan keduanya mustahil berselisih.
+  Garis tepi itu penting: kartu unggulan berlatar EMAS, dan tanpa tepi gelap
+  bidang krem (pouch, kotak kado, badan botol) lenyap ke latarnya.
 
-  Semua warna dipilih agar lolos kontras di atas latar hijau tua kartu
-  (#16210f) MAUPUN kartu unggulan yang berlatar emas.
+  Warna diambil dari benda aslinya — kapsul hijau-krem, botol serum putih
+  berkerah gelap, kantong kanvas krem, kado krem berpita hijau tua.
 
   @param {string} name - kapsul | dropper | pouch | gift | truck | leaf
-  @param {number} [size] - lebar & tinggi dalam px (default 17)
+  @param {number} [size] - lebar & tinggi dalam px (default 20)
 
   @example
   {% render 'lp-icon', name: 'dropper' %}
 {% enddoc %}
 
 {%- liquid
-  assign icon_size = size | default: 17
+  assign icon_size = size | default: 20
   assign icon_name = name | strip
 -%}
 
@@ -40,113 +41,93 @@
     height="{{ icon_size }}"
     viewBox="0 0 24 24"
     fill="none"
-    stroke="currentColor"
-    stroke-width="1.6"
-    stroke-linecap="round"
-    stroke-linejoin="round"
     aria-hidden="true"
     focusable="false"
   >
     {%- case icon_name -%}
       {%- when 'kapsul' -%}
-        {%- comment -%}
-          Kapsul miring 45°. Hanya SATU paruh yang diisi warna — itulah yang
-          membuatnya langsung terbaca sebagai kapsul, bukan sebagai lozenge.
-        {%- endcomment -%}
-        <path
-          d="M7.4 16.6a4.1 4.1 0 0 1 0-5.8l2.7-2.7 5.8 5.8-2.7 2.7a4.1 4.1 0 0 1-5.8 0Z"
-          fill="currentColor"
-          fill-opacity="0.3"
-          stroke="none"
-        />
-        <path d="M7.4 16.6a4.1 4.1 0 0 1 0-5.8l3.4-3.4a4.1 4.1 0 1 1 5.8 5.8l-3.4 3.4a4.1 4.1 0 0 1-5.8 0Z" />
-        <path d="M10.1 13.9l3.8-3.8" />
+        {%- comment -%} Kapsul dua nada: paruh krem dan paruh hijau, persis kapsul aslinya. {%- endcomment -%}
+        <g>
+        <path d="M6.7 17.3a4.6 4.6 0 0 1 0-6.5l4-4a4.6 4.6 0 1 1 6.5 6.5l-4 4a4.6 4.6 0 0 1-6.5 0Z" fill="#F2E6C8"/>
+        <path d="M6.7 17.3a4.6 4.6 0 0 1 0-6.5l3.25-3.25 6.5 6.5-3.25 3.25a4.6 4.6 0 0 1-6.5 0Z" fill="#5C7A4A"/>
+        <path d="M8.6 9.6a3 3 0 0 1 1.9-1.4" stroke="#fff" stroke-opacity=".55" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+        <path d="M6.7 17.3a4.6 4.6 0 0 1 0-6.5l4-4a4.6 4.6 0 1 1 6.5 6.5l-4 4a4.6 4.6 0 0 1-6.5 0Z" fill="none" stroke="#2B3A22" stroke-opacity=".48" stroke-width="1"/>
+        </g>
 
       {%- when 'dropper' -%}
-        {%- comment -%}
-          Botol serum bertutup pipet. Yang membuatnya terbaca pada 17px bukan
-          detail, melainkan PROPORSI: badan lurus dan gemuk (lebar 10 dari 24
-          kanvas), kerah yang jelas lebih sempit dari badan, lalu bulb karet
-          bulat di puncak. Versi pertama gagal karena badannya terlalu ramping
-          sehingga siluetnya sama saja dengan kantong — dua ikon bersebelahan
-          yang tidak bisa dibedakan sama sekali gunanya.
-        {%- endcomment -%}
-        <path d="M7 15.2h10v4.4a2.2 2.2 0 0 1-2.2 2.2H9.2A2.2 2.2 0 0 1 7 19.6Z" fill="currentColor" fill-opacity="0.34" stroke="none" />
-        <rect x="10.1" y="2.4" width="3.8" height="3.4" rx="1.5" fill="currentColor" fill-opacity="0.26" />
-        <path d="M12 5.8v1.6" />
-        <rect x="8.4" y="7.4" width="7.2" height="2.6" rx="0.9" fill="currentColor" fill-opacity="0.3" />
-        <path d="M9 10h6a2 2 0 0 1 2 2v7.6a2.2 2.2 0 0 1-2.2 2.2H9.2A2.2 2.2 0 0 1 7 19.6V12a2 2 0 0 1 2-2Z" />
-        <path d="M7 15.2h10" />
+        {%- comment -%} Botol serum: bulb karet bulat, leher ramping, kerah gelap, badan berlabel. {%- endcomment -%}
+        <g>
+        <ellipse cx="12" cy="3.5" rx="2.1" ry="2.3" fill="#F4F4F1"/>
+        <ellipse cx="12" cy="3.5" rx="2.1" ry="2.3" fill="none" stroke="#2B3A22" stroke-opacity=".45" stroke-width="1"/>
+        <rect x="11.3" y="5.4" width="1.4" height="1.9" fill="#C9CCC4"/>
+        <rect x="8.1" y="7.1" width="7.8" height="3" rx=".9" fill="#3A4033"/>
+        <path d="M9 10.1h6a1.9 1.9 0 0 1 1.9 1.9v7.9a2.1 2.1 0 0 1-2.1 2.1H9.2a2.1 2.1 0 0 1-2.1-2.1V12A1.9 1.9 0 0 1 9 10.1Z" fill="#F7F5F0"/>
+        <path d="M7.1 13.1h9.8v4.6H7.1z" fill="#E4E8DA"/>
+        <path d="M8.6 14.6h6.2M8.6 16.2h4.4" stroke="#8FA37D" stroke-width=".95" stroke-linecap="round"/>
+        <path d="M9 10.1h6a1.9 1.9 0 0 1 1.9 1.9v7.9a2.1 2.1 0 0 1-2.1 2.1H9.2a2.1 2.1 0 0 1-2.1-2.1V12A1.9 1.9 0 0 1 9 10.1Z" fill="none" stroke="#2B3A22" stroke-opacity=".45" stroke-width="1.05"/>
+        </g>
 
       {%- when 'pouch' -%}
-        {%- comment -%}
-          Kantong serut. Tiga isyarat yang membuatnya tak tertukar dengan
-          botol: badannya MENGGEMBUNG melebihi lebar mulutnya, mulutnya
-          terkerut jadi pita sempit, dan dua tali serut melengkung keluar di
-          atasnya. Talinya yang paling menentukan — tanpa itu, sesuatu yang
-          gemuk di bawah dan sempit di atas masih bisa terbaca sebagai botol.
-        {%- endcomment -%}
-        <path d="M8.6 9.6c-2.2 2-3.6 4.6-3.6 6.9 0 2.8 3.1 4.8 7 4.8s7-2 7-4.8c0-2.3-1.4-4.9-3.6-6.9Z" fill="currentColor" fill-opacity="0.3" stroke="none" />
-        <path d="M9.2 7.2C8.4 4.8 9.6 3.2 11.2 3" />
-        <path d="M14.8 7.2c.8-2.4-.4-4-2-4.2" />
-        <rect x="8" y="7.2" width="8" height="2.4" rx="1.2" fill="currentColor" fill-opacity="0.38" />
-        <path d="M8.6 9.6c-2.2 2-3.6 4.6-3.6 6.9 0 2.8 3.1 4.8 7 4.8s7-2 7-4.8c0-2.3-1.4-4.9-3.6-6.9" />
+        {%- comment -%} Kantong serut: mulut terkerut bergaris lipatan, badan menggembung, tali terjulur. {%- endcomment -%}
+        <g>
+        <path d="M9.7 7.1C8.7 5 9.4 3.2 11.1 2.5" stroke="#B9A47B" stroke-width="1.15" fill="none" stroke-linecap="round"/>
+        <path d="M14.3 7.1c1-2.1.3-3.9-1.4-4.6" stroke="#B9A47B" stroke-width="1.15" fill="none" stroke-linecap="round"/>
+        <path d="M8.9 9.6c-2.4 2.2-3.9 4.9-3.9 7.3 0 2.9 3.1 4.8 7 4.8s7-1.9 7-4.8c0-2.4-1.5-5.1-3.9-7.3Z" fill="#E8DABA"/>
+        <path d="M14.2 9.6c1.8 2.1 2.8 4.5 2.8 6.8 0 2.4-2.1 4.1-5 4.6 3.3-.2 5.9-2.1 5.9-4.7 0-2.4-1.5-4.9-3.7-6.7Z" fill="#D2BE93"/>
+        <circle cx="12" cy="16.1" r="3" fill="#D8C69E" fill-opacity=".75"/>
+        <path d="M11 15a2.5 2.5 0 0 1 1.8-1.2" stroke="#F7F1E3" stroke-width=".9" fill="none" stroke-linecap="round"/>
+        <rect x="7.9" y="6.8" width="8.2" height="2.8" rx="1.4" fill="#DCC9A2"/>
+        <path d="M9.5 7.1v2.2M11.1 6.9v2.6M12.9 6.9v2.6M14.5 7.1v2.2" stroke="#B39F76" stroke-width=".75" stroke-linecap="round"/>
+        <rect x="7.9" y="6.8" width="8.2" height="2.8" rx="1.4" fill="none" stroke="#2B3A22" stroke-opacity=".4" stroke-width=".95"/>
+        <path d="M8.9 9.6c-2.4 2.2-3.9 4.9-3.9 7.3 0 2.9 3.1 4.8 7 4.8s7-1.9 7-4.8c0-2.4-1.5-5.1-3.9-7.3" fill="none" stroke="#2B3A22" stroke-opacity=".45" stroke-width="1.05"/>
+        </g>
 
       {%- when 'gift' -%}
-        <path d="M4.2 11.4h15.6v8.1a1.6 1.6 0 0 1-1.6 1.6H5.8a1.6 1.6 0 0 1-1.6-1.6Z" fill="currentColor" fill-opacity="0.26" stroke="none" />
-        <rect x="3.2" y="7.6" width="17.6" height="3.8" rx="0.9" fill="currentColor" fill-opacity="0.34" />
-        <path d="M4.2 11.4h15.6v8.1a1.6 1.6 0 0 1-1.6 1.6H5.8a1.6 1.6 0 0 1-1.6-1.6Z" />
-        <path d="M12 7.6v13.5" />
-        <path d="M12 7.6C11 5.4 9.9 4.2 8.6 4.2a2 2 0 0 0 0 3.4" />
-        <path d="M12 7.6c1-2.2 2.1-3.4 3.4-3.4a2 2 0 0 1 0 3.4" />
+        {%- comment -%} Kotak kado krem berpita hijau tua — mengikuti foto Mystery Gift yang asli. {%- endcomment -%}
+        <g>
+        <path d="M4.4 11.6h15.2v7.9a1.7 1.7 0 0 1-1.7 1.7H6.1a1.7 1.7 0 0 1-1.7-1.7Z" fill="#F2EDE0"/>
+        <path d="M12 11.6h7.6v7.9a1.7 1.7 0 0 1-1.7 1.7H12Z" fill="#E6DECB"/>
+        <rect x="3.3" y="7.7" width="17.4" height="3.9" rx="1" fill="#F7F3E9"/>
+        <path d="M12 7.7h8.7v3.9H12z" fill="#EDE7D8"/>
+        <path d="M10.2 7.7h3.6v13.5h-3.6z" fill="#2E5138"/>
+        <path d="M12 7.7C10.9 5.4 9.8 4.1 8.5 4.1a2.05 2.05 0 0 0 0 3.6" fill="none" stroke="#2E5138" stroke-width="1.7" stroke-linecap="round"/>
+        <path d="M12 7.7c1.1-2.3 2.2-3.6 3.5-3.6a2.05 2.05 0 0 1 0 3.6" fill="none" stroke="#2E5138" stroke-width="1.7" stroke-linecap="round"/>
+        <path d="M4.4 11.6h15.2v7.9a1.7 1.7 0 0 1-1.7 1.7H6.1a1.7 1.7 0 0 1-1.7-1.7Z" fill="none" stroke="#2B3A22" stroke-opacity=".45" stroke-width="1"/>
+        <rect x="3.3" y="7.7" width="17.4" height="3.9" rx="1" fill="none" stroke="#2B3A22" stroke-opacity=".45" stroke-width="1"/>
+        </g>
 
       {%- when 'truck' -%}
-        <path d="M2.6 6.4h10.2v9.4H2.6z" fill="currentColor" fill-opacity="0.26" stroke="none" />
-        <path d="M12.8 9.6h3.6l3 3v3.2h-6.6z" fill="currentColor" fill-opacity="0.2" stroke="none" />
-        <path d="M2.6 6.4h10.2v9.4H2.6z" />
-        <path d="M12.8 9.6h3.6l3 3v3.2h-6.6z" />
-        <circle cx="7" cy="18.2" r="1.9" />
-        <circle cx="16.6" cy="18.2" r="1.9" />
-        <path d="M8.9 18.2h5.8" />
+        {%- comment -%} Kendaraan kirim: kabin, bak, dua roda bermata terang. {%- endcomment -%}
+        <g>
+        <path d="M2.4 7.1h9.9a1 1 0 0 1 1 1v8.3H2.4a1 1 0 0 1-1-1V8.1a1 1 0 0 1 1-1Z" fill="#DCE7CE"/>
+        <path d="M13.3 10.2h3.1a1 1 0 0 1 .75.34l2.4 2.7a1 1 0 0 1 .25.66v2.5h-6.5Z" fill="#C3D6AF"/>
+        <rect x="14.3" y="11.2" width="3.4" height="2.3" rx=".5" fill="#EFF5E8"/>
+        <circle cx="7" cy="17.9" r="2.2" fill="#3A4033"/>
+        <circle cx="7" cy="17.9" r=".85" fill="#DCE7CE"/>
+        <circle cx="16.6" cy="17.9" r="2.2" fill="#3A4033"/>
+        <circle cx="16.6" cy="17.9" r=".85" fill="#DCE7CE"/>
+        <path d="M2.4 7.1h9.9a1 1 0 0 1 1 1v8.3H2.4a1 1 0 0 1-1-1V8.1a1 1 0 0 1 1-1Z" fill="none" stroke="#2B3A22" stroke-opacity=".45" stroke-width="1"/>
+        <path d="M13.3 10.2h3.1a1 1 0 0 1 .75.34l2.4 2.7a1 1 0 0 1 .25.66v2.5h-6.5Z" fill="none" stroke="#2B3A22" stroke-opacity=".45" stroke-width="1"/>
+        </g>
 
       {%- when 'leaf' -%}
-        <path d="M20 4.4c0 8-4.9 12.4-11.2 12.4A4.8 4.8 0 0 1 4 12c0-4.6 5.4-7.6 16-7.6Z" fill="currentColor" fill-opacity="0.28" stroke="none" />
-        <path d="M20 4.4c0 8-4.9 12.4-11.2 12.4A4.8 4.8 0 0 1 4 12c0-4.6 5.4-7.6 16-7.6Z" />
-        <path d="M4.6 20c1.6-4.4 4.6-7.6 8.6-9.4" />
+        {%- comment -%} Daun kelor dua nada dengan tulang daun. {%- endcomment -%}
+        <g>
+        <path d="M20.4 3.9c.6 8.4-4.4 13.4-11 13.4A5.2 5.2 0 0 1 4 12c0-4.9 5.6-8.1 16.4-8.1Z" fill="#8FB56E"/>
+        <path d="M20.4 3.9c-6 1.3-10.6 4.4-13.4 9.4a5.2 5.2 0 0 0 6.4 4c4.5-1.4 7.3-6.1 7-13.4Z" fill="#6E9A52"/>
+        <path d="M4.2 20.6c1.8-4.7 4.9-8.1 9.2-10.2" stroke="#4E7238" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        </g>
+
     {%- endcase -%}
   </svg>
 {%- endif -%}
 
 {% stylesheet %}
-  /* Satu properti `color` per ikon mengatur garis DAN isiannya sekaligus,
-     karena keduanya membaca currentColor. Warnanya diambil dari benda
-     aslinya: kapsul krem-emas, minyak hijau zaitun, kanvas kantong krem
-     kecokelatan, kado merah bata, kendaraan kirim hijau daun. */
+  /* Ikon membawa warnanya sendiri, jadi tidak ada yang perlu diwarisi dari
+     teks. Yang diatur di sini hanya perilaku tata letaknya. */
   .lp-icon {
-    color: var(--lp-sage-light, #b9cfa4);
-  }
-
-  .lp-icon--kapsul {
-    color: #e6c36a;
-  }
-
-  .lp-icon--dropper {
-    color: #8fc4a8;
-  }
-
-  .lp-icon--pouch {
-    color: #d9c49b;
-  }
-
-  .lp-icon--gift {
-    color: #e08a63;
-  }
-
-  .lp-icon--truck {
-    color: #9fc47f;
-  }
-
-  .lp-icon--leaf {
-    color: #9fc47f;
+    display: inline-block;
+    flex: 0 0 auto;
+    vertical-align: -0.28em;
   }
 {% endstylesheet %}
