@@ -3088,7 +3088,7 @@ input.red {
 .mini-cart .fbt-section .fbt-track {
   display: flex;
   gap: 12px;
-  padding: 0 24px 18px 0;
+  padding: 0 24px 0 0;
   overflow-x: auto;
   overflow-y: hidden;
   scroll-snap-type: x mandatory;
