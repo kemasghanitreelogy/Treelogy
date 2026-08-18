@@ -38,38 +38,32 @@
       {
         "type": "text",
         "id": "cart_usp_heading_1",
-        "label": "Slide 1 — Heading",
-        "default": "Secure Checkout"
+        "label": "Slide 1 — Heading"
       },
       {
         "type": "text",
         "id": "cart_usp_text_1",
-        "label": "Slide 1 — Text",
-        "default": "QRIS • E-wallet • Debit Card"
+        "label": "Slide 1 — Text"
       },
       {
         "type": "text",
         "id": "cart_usp_heading_2",
-        "label": "Slide 2 — Heading",
-        "default": "Fast Dispatch Orders"
+        "label": "Slide 2 — Heading"
       },
       {
         "type": "text",
         "id": "cart_usp_text_2",
-        "label": "Slide 2 — Text",
-        "default": "before 3pm ship same-day"
+        "label": "Slide 2 — Text"
       },
       {
         "type": "text",
         "id": "cart_usp_heading_3",
-        "label": "Slide 3 — Heading",
-        "default": "Real Human Support"
+        "label": "Slide 3 — Heading"
       },
       {
         "type": "text",
         "id": "cart_usp_text_3",
-        "label": "Slide 3 — Text",
-        "default": "Join thousands of healthier customers"
+        "label": "Slide 3 — Text"
       }
     ]
   },

@@ -79,7 +79,7 @@
       "shipping": "Shipping",
       "shipping_estimated": "Shipping to be estimated",
       "total": "Total",
-      "empty": "Cart is empty", 
+      "empty": "Cart is empty",
       "checkout": "Check Out"
     },
     "upselling": {
@@ -116,7 +116,13 @@
       "conflict": "This code can't be combined with __CODE__",
       "cancel": "Cancel",
       "remove": "Remove voucher"
-    }
+    },
+    "usp_heading_1": "Secure Checkout",
+    "usp_text_1": "QRIS • E-wallet • Debit Card",
+    "usp_heading_2": "Fast Dispatch Orders",
+    "usp_text_2": "before 3pm ship same-day",
+    "usp_heading_3": "Real Human Support",
+    "usp_text_3": "Join thousands of healthier customers"
   },
   "checkout": {
     "login": {
@@ -273,7 +279,7 @@
   },
   "search": {
     "placeholder": "Search"
-  }, 
+  },
   "blogs": {
     "general": {
       "recent_posts": "Recent Posts"

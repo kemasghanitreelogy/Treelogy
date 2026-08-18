@@ -117,7 +117,13 @@
       "conflict": "Kode ini tidak bisa digabung dengan __CODE__",
       "cancel": "Batal",
       "remove": "Hapus voucher"
-    }
+    },
+    "usp_heading_1": "Checkout Aman",
+    "usp_text_1": "QRIS • E-wallet • Kartu Debit",
+    "usp_heading_2": "Pengiriman Cepat",
+    "usp_text_2": "pesan sebelum jam 3 sore, dikirim hari itu juga",
+    "usp_heading_3": "Dilayani Orang Sungguhan",
+    "usp_text_3": "Bergabung dengan ribuan pelanggan yang lebih sehat"
   },
   "checkout": {
     "login": {

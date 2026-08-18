@@ -94,24 +94,61 @@
             <button type="submit" name="checkout" id="cart-checkout-btn">
               {{ 'cart.checkout_button_label' | t | upcase }}&nbsp; - &nbsp;<span id="sub-total-mini" data-total="{{ cart.total_price }}">{{ cart.total_price | money }}</span>
             </button>
+            {%- comment -%}
+              Teksnya berasal dari terjemahan tema, dengan setting sebagai
+              penimpa opsional. Dulu isinya HANYA setting bawaan schema, jadi
+              di /id pun tetap berbahasa Inggris — setting bertipe `text` tidak
+              ikut berkas locale, dan nilai default schema tidak pernah tersimpan
+              sehingga tidak muncul sebagai sumber terjemahan.
+            {%- endcomment -%}
+            {%- liquid
+              # Setting yang diisi merchant menang; kalau kosong barulah terjemahan
+              # tema dipakai. Nilai merchant TIDAK boleh dilewatkan filter `t` —
+              # `t` pada teks bebas menghasilkan "Translation missing", bukan
+              # teksnya sendiri.
+              assign usp_h1 = settings.cart_usp_heading_1
+              if usp_h1 == blank
+                assign usp_h1 = 'cart.usp_heading_1' | t
+              endif
+              assign usp_t1 = settings.cart_usp_text_1
+              if usp_t1 == blank
+                assign usp_t1 = 'cart.usp_text_1' | t
+              endif
+              assign usp_h2 = settings.cart_usp_heading_2
+              if usp_h2 == blank
+                assign usp_h2 = 'cart.usp_heading_2' | t
+              endif
+              assign usp_t2 = settings.cart_usp_text_2
+              if usp_t2 == blank
+                assign usp_t2 = 'cart.usp_text_2' | t
+              endif
+              assign usp_h3 = settings.cart_usp_heading_3
+              if usp_h3 == blank
+                assign usp_h3 = 'cart.usp_heading_3' | t
+              endif
+              assign usp_t3 = settings.cart_usp_text_3
+              if usp_t3 == blank
+                assign usp_t3 = 'cart.usp_text_3' | t
+              endif
+            -%}
             <div class="cart-trust-slider" data-cart-trust-slider>
               <div class="cart-trust-wrapper">
-                {%- if settings.cart_usp_heading_1 != blank or settings.cart_usp_text_1 != blank -%}
+                {%- if usp_h1 != blank or usp_t1 != blank -%}
                   <div class="cart-trust-slide">
-                    <span class="cart-trust-heading">{{ settings.cart_usp_heading_1 }}</span>
-                    <span class="cart-trust-text">{{ settings.cart_usp_text_1 }}</span>
+                    <span class="cart-trust-heading">{{ usp_h1 }}</span>
+                    <span class="cart-trust-text">{{ usp_t1 }}</span>
                   </div>
                 {%- endif -%}
-                {%- if settings.cart_usp_heading_2 != blank or settings.cart_usp_text_2 != blank -%}
+                {%- if usp_h2 != blank or usp_t2 != blank -%}
                   <div class="cart-trust-slide">
-                    <span class="cart-trust-heading">{{ settings.cart_usp_heading_2 }}</span>
-                    <span class="cart-trust-text">{{ settings.cart_usp_text_2 }}</span>
+                    <span class="cart-trust-heading">{{ usp_h2 }}</span>
+                    <span class="cart-trust-text">{{ usp_t2 }}</span>
                   </div>
                 {%- endif -%}
-                {%- if settings.cart_usp_heading_3 != blank or settings.cart_usp_text_3 != blank -%}
+                {%- if usp_h3 != blank or usp_t3 != blank -%}
                   <div class="cart-trust-slide">
-                    <span class="cart-trust-heading">{{ settings.cart_usp_heading_3 }}</span>
-                    <span class="cart-trust-text">{{ settings.cart_usp_text_3 }}</span>
+                    <span class="cart-trust-heading">{{ usp_h3 }}</span>
+                    <span class="cart-trust-text">{{ usp_t3 }}</span>
                   </div>
                 {%- endif -%}
               </div>
