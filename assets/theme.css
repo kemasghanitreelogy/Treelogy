@@ -2499,25 +2499,44 @@ input.red {
 .cart-page.min-cart-template .cart .empty-msg {
   margin-top: 15px;
 }
+/* SATU area gulir untuk seluruh isi drawer (daftar + FBT), bukan dua zona.
+   Sebelumnya hanya .cart-items yang bisa digulir, sementara strip FBT dan
+   footer mengunci ~400px secara permanen; di layar pendek yang tersisa untuk
+   daftar tinggal 16-80px dan pembeli tidak bisa mencapai barisnya. */
 .cart-page.min-cart-template .cart form {
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-}
-.cart-page.min-cart-template .cart-items {
-  flex: 1 1 0;
-  min-height: 0;
+  justify-content: flex-start;
   overflow-y: auto;
-  padding: 8px 0;
   overscroll-behavior-y: contain;
   -webkit-overflow-scrolling: touch;
+}
+.cart-page.min-cart-template .cart-items {
+  flex: 0 0 auto;
+  padding: 8px 0;
   touch-action: pan-y;
 }
 .cart-page.min-cart-template .cart-item {
   background-color: white;
   gap: 12px;
 }
+/* === Blok bawah drawer ===
+   Wadah untuk strip FBT + ringkasan + tombol checkout. Disematkan di dasar
+   area gulir, bukan diletakkan di luarnya: tampilannya tetap menempel di bawah
+   seperti sebelumnya, tapi karena ia berada DI DALAM wadah gulir, menggeser
+   jari di atasnya ikut menggulir daftar barang. Sebelumnya blok ini berada di
+   luar area gulir sehingga 68% permukaan drawer mati terhadap geseran.
+   Latar wajib opak — isi daftar lewat di bawahnya saat digulir. */
+.cart-bottom-dock {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  margin-top: auto;
+  flex: 0 0 auto;
+  background-color: #F8F8F2;
+}
+
 /* === Cart Footer === */
 .cart-page.min-cart-template .cart-footer {
   color: #2B3C35;
@@ -2642,7 +2661,6 @@ input.red {
   opacity: 1;
   transform: scale(1.25);
 }
-
 /* === Empty Cart State === */
 .cart-empty-state {
   display: flex;
@@ -3095,9 +3113,14 @@ input.red {
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  overscroll-behavior: contain;
-  overscroll-behavior-y: none;
-  touch-action: pan-x;
+  /* Sumbu mendatar tetap dikurung supaya geseran carousel tidak merembet ke
+     halaman. Sumbu tegak justru harus diteruskan ke wadah gulir di atasnya —
+     `overscroll-behavior-y: none` dulu memutus rantai itu, dan bersama
+     `touch-action: pan-x` membuat strip ini menolak geseran tegak sama sekali.
+     Padahal di ponsel pendek strip inilah yang paling sering tersentuh jari. */
+  overscroll-behavior-x: contain;
+  overscroll-behavior-y: auto;
+  touch-action: pan-x pan-y;
   will-change: scroll-position;
   -ms-overflow-style: none;
   margin-left: 24px;
@@ -9561,4 +9584,86 @@ html, body, .announcement-slider-section {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+
+/* ==========================================================================
+   Penyesuaian layar pendek untuk drawer keranjang.
+   Sengaja diletakkan DI AKHIR berkas: aturan dasar .fbt-card,
+   .fbt-card-image dan .fbt-header berada jauh di bawah bagian keranjang,
+   sehingga blok ini harus datang sesudahnya agar menang tanpa perlu
+   menaikkan kekhususan selektor atau memakai !important.
+   ========================================================================== */
+/* === Blok bawah mengalah bertahap saat layar memendek ===
+   Header dan blok bawah menempel permanen, jadi keduanya memakan tinggi yang
+   sama di layar mana pun; sisanyalah jatah daftar barang. Di layar pendek sisa
+   itu habis. Karena blok bawah harus tetap terlihat, ia yang mengalah — dari
+   yang paling murah (kartu FBT diperkecil) sampai yang paling mahal (FBT
+   dilepas, progress ongkir dilepas). Ambangnya TINGGI layar, bukan lebar. */
+
+/* <= 700px — kartu FBT diperkecil. Menangkap in-app browser di ponsel besar. */
+@media (max-height: 700px) {
+  .mini-cart .mini-cart-wrapper .fbt-section .fbt-header {
+    padding: 6px 24px 6px;
+    font-size: 13px;
+  }
+  .fbt-card {
+    padding: 10px;
+  }
+  .fbt-card-image,
+  .fbt-card-image img {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+/* <= 620px — judul FBT dan trust slider dilepas, ringkasan dirapatkan.
+   Menangkap iPhone SE/8 dan Android 360x640 saat toolbar browser terlihat. */
+@media (max-height: 620px) {
+  .mini-cart .mini-cart-wrapper .fbt-section .fbt-header {
+    display: none;
+  }
+  .cart-page.min-cart-template .cart-header {
+    padding-bottom: 4px;
+  }
+  .cart-page.min-cart-template .cart-footer {
+    padding-top: 4px;
+    padding-bottom: 8px;
+  }
+  .cart-page.min-cart-template .cart-footer .cart-trust-slider {
+    display: none;
+  }
+  .cart-page.min-cart-template .cart-footer .cart-footer-summary {
+    margin-bottom: 8px;
+  }
+  .cart-page.min-cart-template .cart-footer .cart-footer-row {
+    padding: 5px 0;
+  }
+}
+
+/* <= 500px — FBT dilepas seluruhnya. Di sini upsell harus mengalah pada
+   kemampuan pembeli memeriksa belanjaannya sendiri. */
+@media (max-height: 500px) {
+  .mini-cart .up-selling.fbt-section {
+    display: none;
+  }
+}
+
+/* <= 430px — ponsel dimiringkan: progress ongkir dilepas, tombol diperpendek. */
+@media (max-height: 430px) {
+  .cart-page.min-cart-template .cart-header.main-header .free-shipping-progress {
+    display: none;
+  }
+  .cart-page.min-cart-template .cart-footer {
+    padding-bottom: 4px;
+  }
+  .cart-page.min-cart-template .cart-footer .cart-footer-summary {
+    padding: 0 12px 4px;
+  }
+  .cart-page.min-cart-template .cart-footer .cart-footer-row {
+    padding: 3px 0;
+  }
+  .cart-page.min-cart-template .cart-footer button {
+    height: 40px;
+  }
 }

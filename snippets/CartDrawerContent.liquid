@@ -54,111 +54,120 @@
           {%- endif -%}
         {%- endfor -%}
 
-        <div class="sub-total cart-footer">
-          {% if cart.item_count > 0 %}
-            <div class="cart-footer-summary">
-              {% render 'CartVoucher' %}
-              <div class="cart-footer-row{% if total_savings > 0 %} visible{% endif %}" id="cart-saving-row">
-                <span>{{ 'cart.saving_label' | t }}</span>
-                <span id="cart-saving-amount">{{ total_savings | money }}</span>
+        {%- comment -%}
+          Blok bawah drawer: satu wadah untuk strip "Sering Dibeli Bersamaan"
+          dan ringkasan + tombol checkout. Wadahnya dideklarasikan di sini,
+          bukan dibentuk oleh JavaScript — MiniCart hanya MEMINDAHKAN simpul
+          FBT ke dalamnya. Wadah inilah yang disematkan di dasar area gulir,
+          sehingga tampil menempel di bawah tanpa merampas ruang gulir daftar.
+        {%- endcomment -%}
+        <div class="cart-bottom-dock">
+          <div class="sub-total cart-footer">
+            {% if cart.item_count > 0 %}
+              <div class="cart-footer-summary">
+                {% render 'CartVoucher' %}
+                <div class="cart-footer-row{% if total_savings > 0 %} visible{% endif %}" id="cart-saving-row">
+                  <span>{{ 'cart.saving_label' | t }}</span>
+                  <span id="cart-saving-amount">{{ total_savings | money }}</span>
+                </div>
+                {%- comment -%}
+                  Once the threshold is met the header block retracts and THIS is
+                  where the earned benefit lives — as money, in the row the
+                  customer is already reading to work out what they will pay.
+                  Rendered server-side so a qualifying cart opens resolved
+                  instead of flashing "Calculated at checkout" first.
+                {%- endcomment -%}
+                {%- liquid
+                  assign fsp_min = settings.min_shipping | default: 1000000
+                  assign fsp_sub = cart.items_subtotal_price | divided_by: 100
+                  assign fsp_earned = false
+                  if fsp_sub >= fsp_min
+                    assign fsp_earned = true
+                  endif
+                -%}
+                <div class="cart-footer-row visible" id="cart-shipping-row">
+                  <span>{{ 'cart.shipping_label' | t }}</span>
+                  <span
+                    id="cart-shipping-value"
+                    class="cart-shipping-value{% if fsp_earned %} is-free{% endif %}"
+                  >
+                    {%- if fsp_earned -%}
+                      {{ 'cart.shipping_free' | t }}
+                    {%- else -%}
+                      {{ 'cart.shipping_calculated' | t }}
+                    {%- endif -%}
+                  </span>
+                </div>
               </div>
+              <button type="submit" name="checkout" id="cart-checkout-btn">
+                {{ 'cart.checkout_button_label' | t | upcase }}&nbsp; - &nbsp;<span id="sub-total-mini" data-total="{{ cart.total_price }}">{{ cart.total_price | money }}</span>
+              </button>
               {%- comment -%}
-                Once the threshold is met the header block retracts and THIS is
-                where the earned benefit lives — as money, in the row the
-                customer is already reading to work out what they will pay.
-                Rendered server-side so a qualifying cart opens resolved
-                instead of flashing "Calculated at checkout" first.
+                Teksnya berasal dari terjemahan tema, dengan setting sebagai
+                penimpa opsional. Dulu isinya HANYA setting bawaan schema, jadi
+                di /id pun tetap berbahasa Inggris — setting bertipe `text` tidak
+                ikut berkas locale, dan nilai default schema tidak pernah tersimpan
+                sehingga tidak muncul sebagai sumber terjemahan.
               {%- endcomment -%}
               {%- liquid
-                assign fsp_min = settings.min_shipping | default: 1000000
-                assign fsp_sub = cart.items_subtotal_price | divided_by: 100
-                assign fsp_earned = false
-                if fsp_sub >= fsp_min
-                  assign fsp_earned = true
+                # Setting yang diisi merchant menang; kalau kosong barulah terjemahan
+                # tema dipakai. Nilai merchant TIDAK boleh dilewatkan filter `t` —
+                # `t` pada teks bebas menghasilkan "Translation missing", bukan
+                # teksnya sendiri.
+                assign usp_h1 = settings.cart_usp_heading_1
+                if usp_h1 == blank
+                  assign usp_h1 = 'cart.usp_heading_1' | t
+                endif
+                assign usp_t1 = settings.cart_usp_text_1
+                if usp_t1 == blank
+                  assign usp_t1 = 'cart.usp_text_1' | t
+                endif
+                assign usp_h2 = settings.cart_usp_heading_2
+                if usp_h2 == blank
+                  assign usp_h2 = 'cart.usp_heading_2' | t
+                endif
+                assign usp_t2 = settings.cart_usp_text_2
+                if usp_t2 == blank
+                  assign usp_t2 = 'cart.usp_text_2' | t
+                endif
+                assign usp_h3 = settings.cart_usp_heading_3
+                if usp_h3 == blank
+                  assign usp_h3 = 'cart.usp_heading_3' | t
+                endif
+                assign usp_t3 = settings.cart_usp_text_3
+                if usp_t3 == blank
+                  assign usp_t3 = 'cart.usp_text_3' | t
                 endif
               -%}
-              <div class="cart-footer-row visible" id="cart-shipping-row">
-                <span>{{ 'cart.shipping_label' | t }}</span>
-                <span
-                  id="cart-shipping-value"
-                  class="cart-shipping-value{% if fsp_earned %} is-free{% endif %}"
-                >
-                  {%- if fsp_earned -%}
-                    {{ 'cart.shipping_free' | t }}
-                  {%- else -%}
-                    {{ 'cart.shipping_calculated' | t }}
+              <div class="cart-trust-slider" data-cart-trust-slider>
+                <div class="cart-trust-wrapper">
+                  {%- if usp_h1 != blank or usp_t1 != blank -%}
+                    <div class="cart-trust-slide">
+                      <span class="cart-trust-heading">{{ usp_h1 }}</span>
+                      <span class="cart-trust-text">{{ usp_t1 }}</span>
+                    </div>
                   {%- endif -%}
-                </span>
+                  {%- if usp_h2 != blank or usp_t2 != blank -%}
+                    <div class="cart-trust-slide">
+                      <span class="cart-trust-heading">{{ usp_h2 }}</span>
+                      <span class="cart-trust-text">{{ usp_t2 }}</span>
+                    </div>
+                  {%- endif -%}
+                  {%- if usp_h3 != blank or usp_t3 != blank -%}
+                    <div class="cart-trust-slide">
+                      <span class="cart-trust-heading">{{ usp_h3 }}</span>
+                      <span class="cart-trust-text">{{ usp_t3 }}</span>
+                    </div>
+                  {%- endif -%}
+                </div>
+                <div class="cart-trust-dots"></div>
               </div>
-            </div>
-            <button type="submit" name="checkout" id="cart-checkout-btn">
-              {{ 'cart.checkout_button_label' | t | upcase }}&nbsp; - &nbsp;<span id="sub-total-mini" data-total="{{ cart.total_price }}">{{ cart.total_price | money }}</span>
-            </button>
-            {%- comment -%}
-              Teksnya berasal dari terjemahan tema, dengan setting sebagai
-              penimpa opsional. Dulu isinya HANYA setting bawaan schema, jadi
-              di /id pun tetap berbahasa Inggris — setting bertipe `text` tidak
-              ikut berkas locale, dan nilai default schema tidak pernah tersimpan
-              sehingga tidak muncul sebagai sumber terjemahan.
-            {%- endcomment -%}
-            {%- liquid
-              # Setting yang diisi merchant menang; kalau kosong barulah terjemahan
-              # tema dipakai. Nilai merchant TIDAK boleh dilewatkan filter `t` —
-              # `t` pada teks bebas menghasilkan "Translation missing", bukan
-              # teksnya sendiri.
-              assign usp_h1 = settings.cart_usp_heading_1
-              if usp_h1 == blank
-                assign usp_h1 = 'cart.usp_heading_1' | t
-              endif
-              assign usp_t1 = settings.cart_usp_text_1
-              if usp_t1 == blank
-                assign usp_t1 = 'cart.usp_text_1' | t
-              endif
-              assign usp_h2 = settings.cart_usp_heading_2
-              if usp_h2 == blank
-                assign usp_h2 = 'cart.usp_heading_2' | t
-              endif
-              assign usp_t2 = settings.cart_usp_text_2
-              if usp_t2 == blank
-                assign usp_t2 = 'cart.usp_text_2' | t
-              endif
-              assign usp_h3 = settings.cart_usp_heading_3
-              if usp_h3 == blank
-                assign usp_h3 = 'cart.usp_heading_3' | t
-              endif
-              assign usp_t3 = settings.cart_usp_text_3
-              if usp_t3 == blank
-                assign usp_t3 = 'cart.usp_text_3' | t
-              endif
-            -%}
-            <div class="cart-trust-slider" data-cart-trust-slider>
-              <div class="cart-trust-wrapper">
-                {%- if usp_h1 != blank or usp_t1 != blank -%}
-                  <div class="cart-trust-slide">
-                    <span class="cart-trust-heading">{{ usp_h1 }}</span>
-                    <span class="cart-trust-text">{{ usp_t1 }}</span>
-                  </div>
-                {%- endif -%}
-                {%- if usp_h2 != blank or usp_t2 != blank -%}
-                  <div class="cart-trust-slide">
-                    <span class="cart-trust-heading">{{ usp_h2 }}</span>
-                    <span class="cart-trust-text">{{ usp_t2 }}</span>
-                  </div>
-                {%- endif -%}
-                {%- if usp_h3 != blank or usp_t3 != blank -%}
-                  <div class="cart-trust-slide">
-                    <span class="cart-trust-heading">{{ usp_h3 }}</span>
-                    <span class="cart-trust-text">{{ usp_t3 }}</span>
-                  </div>
-                {%- endif -%}
-              </div>
-              <div class="cart-trust-dots"></div>
-            </div>
-          {% else %}
-            <a href="/collections/all" class="cart-empty-shop-btn">
-              {{ 'cart.empty_cta' | t | upcase }}
-            </a>
-          {% endif %}
+            {% else %}
+              <a href="/collections/all" class="cart-empty-shop-btn">
+                {{ 'cart.empty_cta' | t | upcase }}
+              </a>
+            {% endif %}
+          </div>
         </div>
       </form>
     </div>

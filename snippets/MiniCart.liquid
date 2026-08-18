@@ -1738,7 +1738,15 @@
     var form = document.querySelector('#cart .min-cart-template .cart form');
     if (!form) return;
 
-    var footer = form.querySelector('.cart-footer');
+    /* Tujuannya blok bawah yang sudah dideklarasikan di CartDrawerContent.
+       Fungsi ini tidak membentuk struktur, hanya memindahkan simpul FBT ke
+       tempat yang memang disediakan untuknya. Bila wadah itu tidak ada —
+       misalnya HTML lama yang masih tersaji dari cache — perilaku lama tetap
+       berlaku: sisipkan langsung sebelum footer. */
+    var dock = form.querySelector('.cart-bottom-dock');
+    var induk = dock || form;
+
+    var footer = induk.querySelector('.cart-footer');
     if (!footer) return;
 
     /* Already in place? Skip. */
@@ -1749,7 +1757,7 @@
     if (!fbt) return;
 
     _fbtRef = fbt;
-    form.insertBefore(fbt, footer);
+    induk.insertBefore(fbt, footer);
   };
 
   /* ===== Recalculate savings from DOM data attributes ===== */
