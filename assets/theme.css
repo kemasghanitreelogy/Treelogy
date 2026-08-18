@@ -2582,7 +2582,6 @@ input.red {
   position: relative;
   overflow: hidden;
   margin-top: 12px;
-  padding-bottom: 22px;
 }
 .cart-trust-wrapper {
   display: flex;
@@ -2612,16 +2611,13 @@ input.red {
   font-weight: 400;
   color: #515E56;
 }
+/* Titik indikator slider kepercayaan disembunyikan atas permintaan: pada
+   drawer sempit ia menempel di bawah tombol checkout dan terbaca sebagai
+   noda, bukan sebagai kontrol. Slidernya sendiri tetap berjalan otomatis,
+   jadi tidak ada navigasi yang hilang. Elemennya dibiarkan ada di DOM karena
+   MiniCart.liquid masih membangun dan menyegarkannya. */
 .cart-trust-dots {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  display: flex;
-  justify-content: end;
-  align-items: center;
-  gap: 6px;
-  height: 16px;
+  display: none;
 }
 .cart-trust-dot,
 .cart-page.min-cart-template .cart-footer .cart-trust-dot {
