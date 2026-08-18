@@ -2573,7 +2573,7 @@ input.red {
   cursor: pointer;
   color: #F8F8F2;
   border-radius: 8px;
-  background-color: #526547;
+  background-color: #2B3C35;
   text-align: center;
   letter-spacing: 0.5px;
 }
@@ -9037,7 +9037,7 @@ html, body, .announcement-slider-section {
    min/max-height so the trigger collapsing and the panel expanding read as a
    single continuous morph rather than two independent reveals.
    Buttons need .cart-voucher in the selector to out-specify the footer's
-   blanket `.cart-footer button { height: 48px; background: #526547 }` rule. */
+   blanket `.cart-footer button { height: 48px; background: #2B3C35 }` rule. */
 .cart-page.min-cart-template .cart-footer .cart-voucher {
   border-bottom: 1px solid rgba(43, 60, 53, 0.08);
   margin-bottom: 3px;
