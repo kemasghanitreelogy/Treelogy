@@ -3335,6 +3335,52 @@ input.red {
   transform: translateY(8px);
 }
 
+/* ===== Layar sempit: tombol tambah jadi ikon saja =====
+   Di lebar ≤480px, "TAMBAH [+]" / "ADD [+]" memakan hampir separuh baris
+   bawah kartu dan mendorong harganya membungkus ke dua baris. Katanya
+   diganti ikon, bukan dihapus: teksnya tetap ada di DOM (dibuat transparan,
+   bukan display:none) sehingga pembaca layar dan pengujian otomatis tetap
+   membacanya, dan label berbahasa mana pun tidak lagi mengubah lebar tombol.
+
+   Ikonnya keranjang bergaris dengan tanda plus — bukan plus telanjang, yang
+   di dalam kartu produk bisa terbaca sebagai "perbesar". Digambar sebagai
+   data URI supaya tidak ada permintaan tambahan, dan diwarnai putih agar
+   sepadan dengan teks kartu di atas latar hijaunya. */
+@media (max-width: 480px) {
+  .fbt-card-action {
+    min-width: 0;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border-radius: 999px;
+    background: rgba(43, 60, 53, 0.92);
+  }
+
+  .fbt-card-action .fbt-btn-idle {
+    color: transparent;
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+
+  .fbt-card-action .fbt-btn-idle::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FFFFFF' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.2 4.1h2.1l2 9.4a1.6 1.6 0 0 0 1.6 1.3h7.3a1.6 1.6 0 0 0 1.6-1.2l1.2-5.1H6.1'/%3E%3Ccircle cx='9.6' cy='19' r='1.5'/%3E%3Ccircle cx='16.8' cy='19' r='1.5'/%3E%3Cpath d='M13.2 6.4v4.2M11.1 8.5h4.2'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 17px 17px;
+  }
+
+  /* Keadaan memuat & sukses tetap memakai ikonnya sendiri, jadi hanya
+     perlu dipastikan tidak ikut mewarisi latar bulat dua kali. */
+  .fbt-card-action.is-loading .fbt-btn-idle::after,
+  .fbt-card-action.is-success .fbt-btn-idle::after {
+    opacity: 0;
+  }
+}
+
 /* Loading state */
 .fbt-card-action.is-loading .fbt-btn-idle {
   opacity: 0;
