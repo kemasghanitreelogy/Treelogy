@@ -545,17 +545,50 @@
       setTimeout(function () { if (node.parentNode) node.remove(); }, 180);
     }
 
-    /* Buang baris hadiah di DOM yang tidak ada lagi di keranjang. Murni
-       operasi DOM dari status yang sudah di tangan — nol permintaan. */
+    /* Baris hadiah yang SEHARUSNYA tampil, diturunkan dari PEMICUNYA — bukan
+       dari daftar baris hadiah yang kebetulan terbaca di snapshot ini.
+
+       Ini inti perbaikannya. Versi lama membandingkan `data-key` tiap baris
+       dengan kunci baris di snapshot, dan itu rapuh pada dua hal sekaligus:
+
+       1. Kunci baris TIDAK STABIL — Shopify memberi kunci baru setiap kali
+          keranjang dimutasi. Baris hadiah yang sah pun jadi "asing" dan dibuang.
+       2. Snapshot bisa datang tidak berurutan. Snapshot yang diambil sebelum
+          hadiah masuk memandang barisnya sebagai yatim, lalu menghapusnya —
+          padahal keranjang server sudah benar. Itulah sebabnya hadiah hilang
+          di drawer tapi tetap ada di checkout.
+
+       Patokan yang dipakai sekarang: selama PEMICUNYA masih di keranjang,
+       barisnya berhak tampil. Pemicu itu stabil dan tidak bergantung pada
+       urutan kedatangan snapshot, jadi dua snapshot yang berselisih menghasilkan
+       keputusan yang sama. */
+    function desiredGiftRows(cart) {
+      var want = {};
+      cart.items.forEach(function (item) {
+        var gifts = MAP[String(item.variant_id)];
+        if (gifts) gifts.forEach(function (g) {
+          want[g] = (want[g] || 0) + item.quantity;
+        });
+      });
+      return want;
+    }
+
+    /* Buang baris hadiah yang pemicunya sudah tidak ada, plus baris kembar.
+       Identitasnya `data-variant` (stabil), bukan `data-key` (berubah-ubah).
+       Murni operasi DOM dari status yang sudah di tangan — nol permintaan. */
     function pruneGifts(cart) {
       var c = document.getElementById('cart');
       if (!c) return;
-      var live = {};
-      cart.items.forEach(function (item) { live[item.key] = true; });
+      var want = desiredGiftRows(cart);
+      var seen = {};
       c.querySelectorAll('.cart-item--gift').forEach(function (node) {
         if (node.hasAttribute('data-gift-skeleton')) return;
-        var k = node.getAttribute('data-key');
-        if (!k || !live[k]) animateOut(node);
+        var v = node.getAttribute('data-variant');
+        if (!v || !want[v]) { animateOut(node); return; }
+        /* Satu varian hadiah = satu baris; jumlahnya ditulis pada label ×N.
+           Baris kembar hanya lahir dari render ganda, dan harus dirapikan. */
+        seen[v] = (seen[v] || 0) + 1;
+        if (seen[v] > 1) animateOut(node);
       });
     }
 
@@ -567,17 +600,33 @@
       awaiting = 0;
       clearSkeletons(c);
       var parent = itemsParent(c);
+      /* Baris digambar dari daftar YANG SEHARUSNYA TAMPIL, bukan dari baris
+         hadiah yang kebetulan sudah terbaca di snapshot. Dengan begitu baris
+         tetap muncul walau snapshot-nya belum sempat memuat baris hadiahnya —
+         keadaan yang dulu justru membuatnya lenyap. */
+      var want = desiredGiftRows(cart);
+      var lineOf = {};
       cart.items.forEach(function (item) {
-        if (!(item.properties && item.properties._Gifted)) return;
-        var existing = c.querySelector('.cart-item[data-key="' + item.key + '"]');
+        if (item.properties && item.properties._Gifted) lineOf[item.variant_id] = item;
+      });
+
+      Object.keys(want).forEach(function (variantId) {
+        var line = lineOf[variantId];
+        var qty = line ? line.quantity : want[variantId];
+        /* Dicari lewat data-variant, BUKAN data-key: kunci baris berubah tiap
+           keranjang dimutasi, dan pencarian lewat kunci membuat baris yang sah
+           dianggap belum ada lalu digambar kembar. */
+        var existing = c.querySelector('.cart-item--gift[data-variant="' + variantId + '"]');
         if (existing) {
-          /* Jumlah berubah tanpa ganti line key — cukup label ×N-nya yang
-             disegarkan, barisnya tidak dirender ulang. */
           var q = existing.querySelector('.gift-qty');
-          if (q) q.textContent = '\u00d7' + item.quantity;
-          existing.setAttribute('data-qty', item.quantity);
+          if (q) q.textContent = '\u00d7' + qty;
+          existing.setAttribute('data-qty', qty);
+          /* Kunci disegarkan supaya kode lain yang masih mencari lewat
+             data-key tetap menemukannya. */
+          if (line) existing.setAttribute('data-key', line.key);
           return;
         }
+        var item = line || { variant_id: variantId, key: '', quantity: qty };
         var tpl = document.querySelector('template[data-gift-template="' + item.variant_id + '"]');
         if (!tpl || !tpl.content.firstElementChild) return;
         var real = tpl.content.firstElementChild.cloneNode(true);
@@ -618,6 +667,16 @@
     }
 
     function paint(cart) {
+      /* Payload cacat tidak boleh pernah menggerakkan DOM. Halaman error dan
+         balasan 429 kadang lolos parse sebagai objek biasa; kalau itu sampai
+         ke pruneGifts, `want` kosong dan SEMUA baris hadiah terhapus meski
+         keranjang server baik-baik saja. Kontrak yang sama sudah dipakai
+         MiniCart lewat window.isCartPayload — mesin ini kini ikut memakainya,
+         dengan pemeriksaan cadangan bila snippet itu belum termuat. */
+      var sane = typeof window.isCartPayload === 'function'
+        ? window.isCartPayload(cart)
+        : !!(cart && typeof cart === 'object' && Array.isArray(cart.items));
+      if (!sane) return;
       pruneGifts(cart);
       insertGifts(cart);
       /* refreshCartUI ditunda melewati animasi keluar (180ms): recalcSavings
