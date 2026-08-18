@@ -741,22 +741,6 @@
                 body: JSON.stringify({ items: parsed.items.concat(extra) })
               });
               piggybacked = true;
-              /* Gambar barisnya SEKARANG, jangan tunggu server.
-                 Pada titik ini kita sudah tahu persis hadiah apa yang ikut —
-                 kitalah yang barusan menyisipkannya ke badan permintaan. Tema
-                 menggambar kartu produknya optimistis (terukur 119 ms),
-                 sedangkan hadiah dulu menunggu respons (terukur 853 ms):
-                 yang berbayar muncul seketika, yang gratis menyusul. Timpang
-                 itu yang terbaca pembeli sebagai "hadiahnya telat".
-
-                 Tidak ada mekanisme baru — insertGifts memang sudah menggambar
-                 dari <template> server-side, dan patokannya sudah berbasis
-                 PEMICU, jadi cukup disuapi proyeksi keranjang sesudah add ini.
-                 Kalau permintaannya ternyata gagal, putaran verifikasi yang
-                 tetap berjalan sesudah respons akan membuang barisnya lagi. */
-              try {
-                insertGifts({ items: lastCart.items.concat(parsed.items) });
-              } catch (e) { /* tampilan optimistis tidak boleh menggagalkan add */ }
             }
           }
         } else if (
