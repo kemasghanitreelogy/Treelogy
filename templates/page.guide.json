@@ -9,10 +9,91 @@
  */
 {
   "sections": {
-    "content": {
-      "type": "DefaultContent",
+    "tokens": {
+      "type": "og-tokens",
+      "settings": {}
+    },
+    "hero": {
+      "type": "og-hero",
+      "settings": {
+        "image": "shopify://shop_images/oil-guide-hero.png"
+      }
+    },
+    "statement_leaf": {
+      "type": "og-statement",
+      "settings": {
+        "content_key": "leaf",
+        "show_arrow": false,
+        "image": "shopify://shop_images/oil-guide-leaf.png"
+      }
+    },
+    "statement_seeds": {
+      "type": "og-statement",
+      "settings": {
+        "content_key": "seeds",
+        "show_arrow": true,
+        "image": "shopify://shop_images/oil-guide-seeds.png"
+      }
+    },
+    "specs": {
+      "type": "og-specs",
+      "settings": {}
+    },
+    "use_cases": {
+      "type": "og-use-cases",
+      "blocks": {
+        "card_face": {
+          "type": "card",
+          "settings": {
+            "card_id": "face",
+            "image": "shopify://shop_images/oil-guide-face.png"
+          }
+        },
+        "card_skin": {
+          "type": "card",
+          "settings": {
+            "card_id": "skin",
+            "image": "shopify://shop_images/oil-guide-skin.png"
+          }
+        },
+        "card_hair": {
+          "type": "card",
+          "settings": {
+            "card_id": "hair",
+            "image": "shopify://shop_images/oil-guide-hair.png"
+          }
+        }
+      },
+      "block_order": ["card_face", "card_skin", "card_hair"],
+      "settings": {}
+    },
+    "know": {
+      "type": "og-know",
+      "settings": {
+        "image_1": "shopify://shop_images/oil-guide-bottle.png",
+        "image_2": "shopify://shop_images/oil-guide-bottle.png"
+      }
+    },
+    "proof": {
+      "type": "og-proof",
+      "settings": {
+        "product": "organic-moringa-oil"
+      }
+    },
+    "certs": {
+      "type": "og-certs",
       "settings": {}
     }
   },
-  "order": ["content"]
+  "order": [
+    "tokens",
+    "hero",
+    "statement_leaf",
+    "statement_seeds",
+    "specs",
+    "use_cases",
+    "know",
+    "proof",
+    "certs"
+  ]
 }
