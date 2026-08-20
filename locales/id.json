@@ -383,7 +383,9 @@
     "certs": {
       "heading_aria": "Sertifikasi",
       "stemfree_alt": "Bebas batang",
-      "organic_alt": "100% Organik",
+      "organic_alt": "Organik Indonesia",
+      "usda_alt": "USDA Organic",
+      "eu_alt": "Organik Uni Eropa",
       "lab_alt": "Teruji lab",
       "halal_alt": "Bersertifikat Halal",
       "bpom_alt": "Terdaftar BPOM"

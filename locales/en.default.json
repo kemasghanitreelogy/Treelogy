@@ -381,7 +381,9 @@
     "certs": {
       "heading_aria": "Certifications",
       "stemfree_alt": "Stem-free",
-      "organic_alt": "100% Organic",
+      "organic_alt": "Organik Indonesia",
+      "usda_alt": "USDA Organic",
+      "eu_alt": "EU Organic",
       "lab_alt": "Lab tested",
       "halal_alt": "Halal certified",
       "bpom_alt": "BPOM registered"

@@ -1,23 +1,23 @@
 <section class="og-certs og-section">
   <div class="og-container">
     <ul class="og-certs__row" role="list" aria-label="{{ 'oil_guide.certs.heading_aria' | t }}">
-      {%- assign certs = 'lp-cert-bebas-batang:stemfree,lp-cert-organik:organic,lp-cert-teruji-lab:lab,lp-cert-halal:halal,lp-cert-bpom:bpom' | split: ',' -%}
+      {%- assign certs = 'oil-guide-cert-halal.svg:halal:70:125,oil-guide-cert-usda.svg:usda:117:117,oil-guide-cert-eu.svg:eu:160:107,oil-guide-cert-organik.svg:organik:117:117,oil-guide-cert-pom.png:bpom:111:102' | split: ',' -%}
       {%- for cert in certs -%}
         {%- liquid
           assign parts = cert | split: ':'
-          assign asset_name = parts[0] | append: '.svg'
           assign alt_key = 'oil_guide.certs.' | append: parts[1] | append: '_alt'
           assign cert_alt = alt_key | t
         -%}
         <li class="og-certs__item">
           <img
-            src="{{ asset_name | asset_url }}"
+            src="{{ parts[0] | asset_url }}"
             alt="{{ cert_alt }}"
-            width="110"
-            height="122"
+            width="{{ parts[2] }}"
+            height="{{ parts[3] }}"
             loading="lazy"
             decoding="async"
             class="og-certs__logo"
+            style="height: calc({{ parts[3] }} * var(--og-u))"
           >
         </li>
       {%- endfor -%}
@@ -46,7 +46,7 @@
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    gap: calc(80 * var(--og-u));
+    gap: calc(98 * var(--og-u));
     margin: 0;
     padding: 0;
     list-style: none;
@@ -58,7 +58,6 @@
 
   .og-certs__logo {
     width: auto;
-    height: calc(107 * var(--og-u));
   }
 
   .og-certs__treeline {
