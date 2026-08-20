@@ -311,7 +311,7 @@
     },
     "seeds": {
       "heading_html": "The other <b>half ?</b>",
-      "body_html": "<b>The seeds.</b> Hand-peeled, cold-pressed to preserve their nutrients, then rested two weeks so the oil settles naturally. A precious multi-purpose oil, used for centuries across cultures to regenerate skin, on the face, the body and the hair.",
+      "body_html": "<b>The seeds.</b> Hand-peeled, cold-pressed to<br>preserve their nutrients, then rested two<br>weeks so the oil settles naturally. A precious<br>multi-purpose oil, used for centuries across<br>cultures to regenerate skin, on the face, the<br>body and the hair.",
       "image_alt": "Moringa seeds"
     },
     "specs": {
