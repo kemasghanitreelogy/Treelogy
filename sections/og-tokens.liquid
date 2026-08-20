@@ -7,15 +7,15 @@
     --og-cream: {{ section.settings.color_cream }};
     --og-container: {{ section.settings.container_width }}px;
     --og-font: var(--font-base, 'Inter', 'Inter Fallback', sans-serif);
-    --og-fs-display: clamp(2.5rem, 1.5rem + 4.24vw, 4.6875rem);
-    --og-fs-title: clamp(2.125rem, 1.39rem + 3.15vw, 3.75rem);
-    --og-fs-lead: clamp(1.3rem, 0.63rem + 2.91vw, 2.8125rem);
-    --og-fs-sub: clamp(1.125rem, 0.53rem + 2.55vw, 2.4375rem);
-    --og-fs-small: clamp(1rem, 0.46rem + 2.3vw, 2.1875rem);
-    --og-radius-hero: clamp(18px, 2.6vw, 30px);
-    --og-radius-card: clamp(28px, 5.2vw, 60px);
-    --og-gap-section: clamp(36px, 5.6vw, 65px);
-    --og-gap-block: clamp(44px, 7.4vw, 85px);
+    --og-fs-display: clamp(2.125rem, 1.5rem + 2vw, 2.75rem);
+    --og-fs-title: clamp(1.75rem, 1.3rem + 1.6vw, 2.25rem);
+    --og-fs-lead: clamp(1.25rem, 1rem + 0.95vw, 1.6875rem);
+    --og-fs-sub: clamp(1.0625rem, 0.85rem + 0.85vw, 1.5rem);
+    --og-fs-small: clamp(0.9375rem, 0.78rem + 0.6vw, 1.25rem);
+    --og-radius-hero: clamp(18px, 2.6vw, 24px);
+    --og-radius-card: clamp(24px, 4vw, 40px);
+    --og-gap-section: clamp(32px, 4.4vw, 48px);
+    --og-gap-block: clamp(40px, 6vw, 64px);
     background: {{ section.settings.color_bg }};
   }
 
@@ -46,7 +46,7 @@
 
   .og-lead {
     margin: 0 auto;
-    max-width: 968px;
+    max-width: 640px;
     font-size: var(--og-fs-lead);
     line-height: 1.3;
     text-align: center;
@@ -60,7 +60,7 @@
 
   .og-arrow {
     display: block;
-    width: clamp(40px, 6vw, 70px);
+    width: clamp(36px, 5vw, 44px);
     height: auto;
     margin: 0 auto var(--og-gap-section);
     transform: rotate(90deg);
@@ -121,11 +121,11 @@
       "type": "range",
       "id": "container_width",
       "label": "Lebar konten maksimum",
-      "min": 960,
+      "min": 600,
       "max": 1360,
-      "step": 4,
+      "step": 8,
       "unit": "px",
-      "default": 1152
+      "default": 760
     }
   ],
   "presets": [
