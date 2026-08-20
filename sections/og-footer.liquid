@@ -1,0 +1,204 @@
+<footer class="og-footer-section og-section">
+  <div
+    class="og-footer"
+    style="--og-footer-bg: {{ section.settings.background_color }}; --og-footer-ink: {{ section.settings.text_color }};"
+  >
+    <nav class="og-footer__nav" aria-label="Footer">
+      <a href="{{ routes.all_products_collection_url }}">{{ 'oil_guide.footer.shop' | t }}</a>
+      <a href="{{ pages['moringa-tree'].url }}">{{ 'oil_guide.footer.moringa_tree' | t }}</a>
+      <a href="{{ pages['benefit'].url }}">{{ 'oil_guide.footer.benefits' | t }}</a>
+      <a href="{{ pages['farm'].url }}">{{ 'oil_guide.footer.our_farm' | t }}</a>
+    </nav>
+
+    <div class="og-footer__social">
+      {% if section.settings.social_instagram != blank %}
+        <a href="{{ section.settings.social_instagram }}" target="_blank" rel="noopener" aria-label="Instagram">
+          {%- render 'founder-letter-icon', icon: 'instagram' -%}
+        </a>
+      {% endif %}
+      {% if section.settings.social_facebook != blank %}
+        <a href="{{ section.settings.social_facebook }}" target="_blank" rel="noopener" aria-label="Facebook">
+          {%- render 'founder-letter-icon', icon: 'facebook' -%}
+        </a>
+      {% endif %}
+      {% if section.settings.social_tiktok != blank %}
+        <a href="{{ section.settings.social_tiktok }}" target="_blank" rel="noopener" aria-label="TikTok">
+          {%- render 'founder-letter-icon', icon: 'tiktok' -%}
+        </a>
+      {% endif %}
+      {% if section.settings.social_pinterest != blank %}
+        <a href="{{ section.settings.social_pinterest }}" target="_blank" rel="noopener" aria-label="Pinterest">
+          {%- render 'founder-letter-icon', icon: 'pinterest' -%}
+        </a>
+      {% endif %}
+      {% if section.settings.social_whatsapp != blank %}
+        <a href="{{ section.settings.social_whatsapp }}" target="_blank" rel="noopener" aria-label="WhatsApp">
+          {%- render 'founder-letter-icon', icon: 'whatsapp' -%}
+        </a>
+      {% endif %}
+    </div>
+
+    {% if section.settings.logo %}
+      {{ section.settings.logo | image_url: width: 700 | image_tag: class: 'og-footer__logo', loading: 'lazy', alt: '' }}
+    {% endif %}
+
+    <div class="og-footer__divider"></div>
+
+    {% if section.settings.copyright != blank %}
+      <p class="og-footer__copyright">{{ section.settings.copyright }}</p>
+    {% endif %}
+  </div>
+</footer>
+
+{% style %}
+  .og-footer-section {
+    --og-fu: calc(min(100vw, var(--og-canvas, 792px)) / 1200);
+    width: min(100%, var(--og-canvas, 792px));
+    margin-inline: auto;
+  }
+
+  .og-footer {
+    position: relative;
+    width: calc(1200 * var(--og-fu));
+    height: calc(749 * var(--og-fu));
+    background: var(--og-footer-bg);
+    color: var(--og-footer-ink);
+    font-family: var(--og-font);
+  }
+
+  .og-footer__nav {
+    position: absolute;
+    top: calc(75 * var(--og-fu));
+    left: calc(136 * var(--og-fu));
+    display: flex;
+    flex-direction: column;
+    row-gap: calc(45 * var(--og-fu));
+    font-size: calc(40 * var(--og-fu));
+    line-height: normal;
+  }
+
+  .og-footer__nav a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .og-footer__nav a:hover {
+    text-decoration: underline;
+  }
+
+  .og-footer__social {
+    position: absolute;
+    top: calc(447 * var(--og-fu));
+    left: calc(124 * var(--og-fu));
+    display: flex;
+    column-gap: calc(17.5 * var(--og-fu));
+  }
+
+  .og-footer__social a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(79 * var(--og-fu));
+    height: calc(79 * var(--og-fu));
+    color: inherit;
+  }
+
+  .og-footer__social .fl-icon--social {
+    width: 100%;
+    height: 100%;
+  }
+
+  .og-footer__social .fl-icon--instagram {
+    width: calc(43.28 * var(--og-fu));
+    height: calc(43.3 * var(--og-fu));
+  }
+
+  .og-footer__logo {
+    position: absolute;
+    top: calc(68 * var(--og-fu));
+    left: calc(748 * var(--og-fu));
+    width: calc(343.19 * var(--og-fu));
+    height: calc(343 * var(--og-fu));
+    object-fit: contain;
+  }
+
+  .og-footer__divider {
+    position: absolute;
+    top: calc(596 * var(--og-fu));
+    left: 0;
+    right: 0;
+    border-top: 0.5px solid var(--og-footer-ink);
+  }
+
+  .og-footer__copyright {
+    position: absolute;
+    top: calc(650 * var(--og-fu));
+    left: 0;
+    width: 100%;
+    margin: 0;
+    font-size: calc(30 * var(--og-fu));
+    line-height: normal;
+    text-align: center;
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "OG Footer",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo badge"
+    },
+    {
+      "type": "url",
+      "id": "social_instagram",
+      "label": "URL Instagram"
+    },
+    {
+      "type": "url",
+      "id": "social_facebook",
+      "label": "URL Facebook"
+    },
+    {
+      "type": "url",
+      "id": "social_tiktok",
+      "label": "URL TikTok"
+    },
+    {
+      "type": "url",
+      "id": "social_pinterest",
+      "label": "URL Pinterest"
+    },
+    {
+      "type": "url",
+      "id": "social_whatsapp",
+      "label": "URL WhatsApp"
+    },
+    {
+      "type": "text",
+      "id": "copyright",
+      "label": "Teks copyright",
+      "default": "© Treelogy 2026. All Rights Reserved."
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Warna latar",
+      "default": "#2A3B34"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Warna teks",
+      "default": "#F8F8F2"
+    }
+  ],
+  "presets": [
+    {
+      "name": "OG Footer"
+    }
+  ]
+}
+{% endschema %}

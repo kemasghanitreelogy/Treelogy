@@ -385,6 +385,12 @@
       "lab_alt": "Lab tested",
       "halal_alt": "Halal certified",
       "bpom_alt": "BPOM registered"
+    },
+    "footer": {
+      "shop": "Shop",
+      "moringa_tree": "Moringa Tree",
+      "benefits": "Benefits",
+      "our_farm": "Our Farm"
     }
   }
 }

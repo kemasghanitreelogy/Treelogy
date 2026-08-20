@@ -387,6 +387,12 @@
       "lab_alt": "Teruji lab",
       "halal_alt": "Bersertifikat Halal",
       "bpom_alt": "Terdaftar BPOM"
+    },
+    "footer": {
+      "shop": "Toko",
+      "moringa_tree": "Pohon Moringa",
+      "benefits": "Manfaat",
+      "our_farm": "Perkebunan Kami"
     }
   }
 }

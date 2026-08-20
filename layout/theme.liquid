@@ -946,6 +946,10 @@
         assign is_chromeless = true
         assign chromeless_bg = '#ffffff'
       endif
+      if template == 'page.guide'
+        assign is_chromeless = true
+        assign chromeless_bg = '#ffffff'
+      endif
     -%}
     {%- if is_chromeless -%}
       <style>
