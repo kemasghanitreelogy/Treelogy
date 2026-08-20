@@ -1,0 +1,134 @@
+{%- liquid
+  assign hero_alt = 'oil_guide.hero.image_alt' | t
+-%}
+<section class="og-hero og-section">
+  <div class="og-container">
+    <div class="og-hero__card">
+      {%- if section.settings.image -%}
+        {{
+          section.settings.image
+          | image_url: width: 2304
+          | image_tag:
+            widths: '600, 900, 1150, 2304',
+            sizes: '(min-width: 1200px) 1152px, calc(100vw - 32px)',
+            loading: 'eager',
+            fetchpriority: 'high',
+            class: 'og-hero__img',
+            alt: hero_alt
+        }}
+      {%- endif -%}
+      <div class="og-hero__overlay">
+        <div class="og-hero__brand" aria-hidden="true">
+          <img
+            src="{{ 'oil-guide-logo-word.svg' | asset_url }}"
+            alt=""
+            width="234"
+            height="42"
+            class="og-hero__logo og-hero__logo--word"
+          >
+          <img
+            src="{{ 'oil-guide-logo-mark.svg' | asset_url }}"
+            alt=""
+            width="81"
+            height="41"
+            class="og-hero__logo og-hero__logo--mark"
+          >
+        </div>
+        <h1 class="og-hero__title">{{ 'oil_guide.hero.title_html' | t }}</h1>
+        <span class="og-hero__pill">{{ 'oil_guide.hero.pill' | t }}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% style %}
+  .og-hero {
+    padding-top: clamp(16px, 3vw, 36px);
+  }
+
+  .og-hero__card {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--og-radius-hero);
+    aspect-ratio: 1152 / 760;
+    background: #cdcdcd;
+  }
+
+  .og-hero__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .og-hero__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: clamp(20px, 4.3vw, 50px);
+  }
+
+  .og-hero__brand {
+    display: flex;
+    align-items: center;
+    gap: clamp(8px, 1.2vw, 14px);
+  }
+
+  .og-hero__logo {
+    height: clamp(20px, 3.6vw, 42px);
+    width: auto;
+  }
+
+  .og-hero__title {
+    margin: clamp(28px, 12vw, 148px) 0 0;
+    font-size: var(--og-fs-display);
+    font-weight: 400;
+    line-height: 1.25;
+    color: #101010;
+  }
+
+  .og-hero__title b {
+    font-weight: 700;
+  }
+
+  .og-hero__pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: auto;
+    padding: clamp(8px, 1.4vw, 14px) clamp(24px, 4vw, 48px);
+    border: 1px solid #2b3c35;
+    border-radius: 999px;
+    font-size: var(--og-fs-small);
+    line-height: 1.4;
+    color: #2b3c35;
+  }
+
+  @media (max-width: 767px) {
+    .og-hero__card {
+      aspect-ratio: 4 / 5;
+    }
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "OG Hero",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Foto hero"
+    }
+  ],
+  "presets": [
+    {
+      "name": "OG Hero"
+    }
+  ]
+}
+{% endschema %}

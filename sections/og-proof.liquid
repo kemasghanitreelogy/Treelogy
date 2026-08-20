@@ -1,0 +1,178 @@
+{%- liquid
+  if section.settings.product
+    assign cta_url = section.settings.product.url
+  else
+    assign cta_url = routes.all_products_collection_url
+  endif
+-%}
+<section class="og-proof og-section">
+  <div class="og-container og-proof__wrap">
+    <h2 class="og-visually-hidden">{{ 'oil_guide.proof.heading' | t }}</h2>
+
+    <div
+      class="og-proof__rating"
+      role="img"
+      aria-label="{{ 'oil_guide.proof.rating_aria' | t }}"
+    >
+      <img
+        src="{{ 'oil-guide-stars.svg' | asset_url }}"
+        alt=""
+        width="272"
+        height="58"
+        loading="lazy"
+        decoding="async"
+        class="og-proof__stars"
+      >
+      <span class="og-proof__score" aria-hidden="true">{{ 'oil_guide.proof.rating' | t }}</span>
+    </div>
+
+    <p class="og-proof__count">{{ 'oil_guide.proof.customers_html' | t }}</p>
+
+    <blockquote class="og-proof__quote">
+      <img
+        src="{{ 'oil-guide-quote-open.png' | asset_url }}"
+        alt=""
+        width="47"
+        height="48"
+        loading="lazy"
+        decoding="async"
+        class="og-proof__mark og-proof__mark--open"
+      >
+      <p class="og-proof__text">
+        {{ 'oil_guide.proof.quote' | t }}
+        <span class="og-proof__attr">{{ 'oil_guide.proof.attribution' | t }}</span>
+      </p>
+      <img
+        src="{{ 'oil-guide-quote-close.png' | asset_url }}"
+        alt=""
+        width="56"
+        height="55"
+        loading="lazy"
+        decoding="async"
+        class="og-proof__mark og-proof__mark--close"
+      >
+    </blockquote>
+
+    <a class="og-proof__cta" href="{{ cta_url }}">{{ 'oil_guide.proof.cta' | t }}</a>
+
+    <p class="og-proof__guarantee">{{ 'oil_guide.proof.guarantee' | t }}</p>
+  </div>
+</section>
+
+{% style %}
+  .og-proof {
+    padding-top: var(--og-gap-block);
+  }
+
+  .og-proof__wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .og-proof__rating {
+    display: flex;
+    align-items: center;
+    gap: clamp(10px, 1.6vw, 20px);
+  }
+
+  .og-proof__stars {
+    width: clamp(150px, 23vw, 272px);
+    height: auto;
+  }
+
+  .og-proof__score {
+    font-size: var(--og-fs-lead);
+    font-weight: 700;
+    color: var(--og-ink);
+  }
+
+  .og-proof__count {
+    margin: clamp(10px, 1.8vw, 22px) 0 0;
+    font-size: var(--og-fs-display);
+    font-weight: 700;
+    line-height: 1.21;
+    color: var(--og-ink);
+  }
+
+  .og-proof__quote {
+    position: relative;
+    max-width: 981px;
+    margin: var(--og-gap-section) 0 0;
+    padding: clamp(28px, 4.4vw, 52px) clamp(28px, 5vw, 60px);
+  }
+
+  .og-proof__text {
+    margin: 0;
+    font-size: var(--og-fs-lead);
+    line-height: 1.25;
+    color: var(--og-ink);
+  }
+
+  .og-proof__attr {
+    display: inline-block;
+    margin-left: 0.6em;
+    font-size: var(--og-fs-small);
+    white-space: nowrap;
+  }
+
+  .og-proof__mark {
+    position: absolute;
+    width: clamp(26px, 4vw, 47px);
+    height: auto;
+  }
+
+  .og-proof__mark--open {
+    top: 0;
+    left: 0;
+  }
+
+  .og-proof__mark--close {
+    right: 0;
+    bottom: 0;
+    width: clamp(30px, 4.7vw, 56px);
+  }
+
+  .og-proof__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: var(--og-gap-section);
+    padding: clamp(14px, 2.2vw, 26px) clamp(40px, 7vw, 84px);
+    border-radius: 999px;
+    background: var(--og-ink);
+    font-size: var(--og-fs-lead);
+    line-height: 1;
+    color: var(--og-cream);
+    text-decoration: none;
+  }
+
+  .og-proof__cta:hover {
+    opacity: 0.92;
+  }
+
+  .og-proof__guarantee {
+    margin: var(--og-gap-section) 0 0;
+    font-size: var(--og-fs-lead);
+    color: var(--og-ink);
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "OG Social Proof",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Produk tujuan CTA"
+    }
+  ],
+  "presets": [
+    {
+      "name": "OG Social Proof"
+    }
+  ]
+}
+{% endschema %}

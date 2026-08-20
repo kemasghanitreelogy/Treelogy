@@ -1,0 +1,93 @@
+{%- liquid
+  assign key_base = 'oil_guide.' | append: section.settings.content_key
+  assign heading_key = key_base | append: '.heading_html'
+  assign body_key = key_base | append: '.body_html'
+  assign alt_key = key_base | append: '.image_alt'
+  assign media_alt = alt_key | t
+-%}
+<section class="og-statement og-section">
+  <div class="og-container">
+    {%- if section.settings.show_arrow -%}
+      <img
+        class="og-arrow"
+        src="{{ 'oil-guide-arrow.svg' | asset_url }}"
+        alt=""
+        width="70"
+        height="70"
+        loading="lazy"
+        decoding="async"
+      >
+    {%- endif -%}
+
+    <h2 class="og-h2">{{ heading_key | t }}</h2>
+
+    {%- if section.settings.image -%}
+      <div class="og-statement__media">
+        {{
+          section.settings.image
+          | image_url: width: 1200
+          | image_tag:
+            widths: '400, 600, 800, 1200',
+            sizes: 'auto',
+            loading: 'lazy',
+            decoding: 'async',
+            class: 'og-statement__img',
+            alt: media_alt
+        }}
+      </div>
+    {%- endif -%}
+
+    <p class="og-lead og-statement__body">{{ body_key | t }}</p>
+  </div>
+</section>
+
+{% style %}
+  .og-statement {
+    padding-top: var(--og-gap-block);
+  }
+
+  .og-statement__media {
+    width: min(597px, 86%);
+    margin: var(--og-gap-section) auto;
+  }
+
+  .og-statement__img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "OG Statement",
+  "settings": [
+    {
+      "type": "select",
+      "id": "content_key",
+      "label": "Konten",
+      "options": [
+        { "value": "leaf", "label": "Daun (two things)" },
+        { "value": "seeds", "label": "Biji (the other half)" }
+      ],
+      "default": "leaf"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrow",
+      "label": "Tampilkan panah di atas judul",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Foto"
+    }
+  ],
+  "presets": [
+    {
+      "name": "OG Statement"
+    }
+  ]
+}
+{% endschema %}

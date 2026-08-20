@@ -278,11 +278,113 @@
     "login": "Login"
   },
   "search": {
-    "placeholder": "Search"
+    "placeholder": "Search",
+    "hint": "Try \u201ccapsules\u201d, \u201coil\u201d or \u201cpowder\u201d",
+    "eyebrow": "Search Treelogy",
+    "popular": "Popular searches",
+    "featured": "While you\u2019re here",
+    "result": "result for",
+    "results": "results for",
+    "view_all": "See all results",
+    "no_results": "Nothing found for",
+    "no_results_hint": "Check the spelling, or try one of the popular searches above.",
+    "error": "Search hit a snag \u2014 please try again.",
+    "searching": "Searching\u2026",
+    "clear": "Clear search",
+    "close": "Close search"
   },
   "blogs": {
     "general": {
       "recent_posts": "Recent Posts"
+    }
+  },
+  "oil_guide": {
+    "hero": {
+      "title_html": "Moringa<br>Seed Oil<br><b>Guide</b>",
+      "pill": "Outside Care",
+      "image_alt": "Treelogy moringa seed oil bottle"
+    },
+    "leaf": {
+      "heading_html": "Every moringa tree gives us <b>two things.</b>",
+      "body_html": "<b>The leaf</b> is only half the tree. Harvested at dawn, picked one by one by our community, stem-free, then dehydrated at low temperature and milled into the fine powder that fills our capsules.",
+      "image_alt": "Fine green moringa leaf powder"
+    },
+    "seeds": {
+      "heading_html": "The other <b>half ?</b>",
+      "body_html": "<b>The seeds.</b> Hand-peeled, cold-pressed to preserve their nutrients, then rested two weeks so the oil settles naturally. A precious multi-purpose oil, used for centuries across cultures to regenerate skin, on the face, the body and the hair.",
+      "image_alt": "Moringa seeds"
+    },
+    "specs": {
+      "ingredients_label": "Ingredients",
+      "ingredients_value": "One. Moringa seed oil.",
+      "dose_label": "Dose",
+      "dose_value": "Depending. See below.",
+      "texture_label": "Texture",
+      "texture_value": "Light. Absorbs in about a minute.",
+      "scent_label": "Scent",
+      "scent_value": "Light and nutty. Nothing added.",
+      "certified_label": "Certified",
+      "certified_value": "BPOM · Halal · 100% Organic",
+      "note_html": "Non-comedogenic. Around 70% oleic acid, close to what your own skin makes. That is why it goes in rather than sitting on top."
+    },
+    "how": {
+      "heading_html": "<b>How to</b> use ?",
+      "where_label": "Where.",
+      "when_label": "When.",
+      "how_label": "How."
+    },
+    "cards": {
+      "face": {
+        "title_html": "For the <b>face</b>",
+        "benefit": "Moisture, fine lines, even tone, dry lips",
+        "where": "Face, neck, lips",
+        "when": "At night, last step",
+        "how": "3 to 5 drops on damp skin",
+        "image_alt": "Applying moringa oil on the face"
+      },
+      "skin": {
+        "title_html": "For the <b>skin</b>",
+        "benefit": "Dry patches, irritated or inflamed skin, hands and nails, stretching skin",
+        "where": "Anywhere dry, irritated or inflamed. Elbows, knees, heels. Hands and nails.",
+        "when": "At night where skin meets daylight. Any time under clothes.",
+        "how": "4 to 6 drops after the shower. 1 drop for both hands.",
+        "image_alt": "Moringa oil on the skin"
+      },
+      "hair": {
+        "title_html": "For the <b>hair</b>",
+        "benefit": "Dry scalp, dandruff, frizz, split ends, shine",
+        "where": "Scalp before washing. Ends after.",
+        "when": "Scalp once or twice a week. Ends every wash.",
+        "how": "1 to 2 pipettes on the scalp, massage, leave 30 min or overnight. 3 to 5 drops spread in your hands then fluffs on damp ends.",
+        "image_alt": "Moringa oil for the hair"
+      }
+    },
+    "know": {
+      "heading_html": "Good to <b>know</b>",
+      "q1_title": "Where to keep it.",
+      "q1_body": "Away from light and heat. A bathroom shelf is fine.",
+      "q2_title": "If it goes cloudy.",
+      "q2_body": "Below about 25°C the oil clouds and thickens. Warm it in your hand and it clears. Nothing is wrong.",
+      "image_alt_1": "Moringa seed oil bottle",
+      "image_alt_2": "Moringa seed oil bottle detail"
+    },
+    "proof": {
+      "heading": "What customers say",
+      "rating": "4.9/5",
+      "rating_aria": "Rated 4.9 out of 5 stars",
+      "customers_html": "10,000+ customers",
+      "quote": "Utk yang moringa seed oil ini sih juara banget. Hari ke-4 setelah pemakaian setiap malam kulit muka terasa lbh lembab. Saya beranikan pergi keluar rumah tanpa skin care apapun. Dan amaaannnn… kulit ga terasa kering. Saya uji coba pakaikan ke bibir setiap malam cuma setetes kecil. Voila! Paginya bibir jadi lembab loh.. seriusan.",
+      "attribution": "— Verified buyer",
+      "cta": "Get The Full Size",
+      "guarantee": "60 days money-back guarantee"
+    },
+    "certs": {
+      "heading_aria": "Certifications",
+      "stemfree_alt": "Stem-free",
+      "organic_alt": "100% Organic",
+      "lab_alt": "Lab tested",
+      "halal_alt": "Halal certified",
+      "bpom_alt": "BPOM registered"
     }
   }
 }

@@ -1,0 +1,158 @@
+{%- liquid
+  assign alt_1 = 'oil_guide.know.image_alt_1' | t
+  assign alt_2 = 'oil_guide.know.image_alt_2' | t
+-%}
+<section class="og-know og-section">
+  <div class="og-container">
+    <img
+      class="og-arrow"
+      src="{{ 'oil-guide-arrow.svg' | asset_url }}"
+      alt=""
+      width="70"
+      height="70"
+      loading="lazy"
+      decoding="async"
+    >
+
+    <h2 class="og-h2 og-know__heading">{{ 'oil_guide.know.heading_html' | t }}</h2>
+
+    <div class="og-know__card">
+      <div class="og-know__media" aria-hidden="true">
+        {%- if section.settings.image_1 -%}
+          <div class="og-know__circle">
+            {{
+              section.settings.image_1
+              | image_url: width: 600
+              | image_tag:
+                widths: '200, 300, 600',
+                sizes: 'auto',
+                loading: 'lazy',
+                decoding: 'async',
+                class: 'og-know__img',
+                alt: alt_1
+            }}
+          </div>
+        {%- endif -%}
+        {%- if section.settings.image_2 -%}
+          <div class="og-know__circle">
+            {{
+              section.settings.image_2
+              | image_url: width: 600
+              | image_tag:
+                widths: '200, 300, 600',
+                sizes: 'auto',
+                loading: 'lazy',
+                decoding: 'async',
+                class: 'og-know__img',
+                alt: alt_2
+            }}
+          </div>
+        {%- endif -%}
+      </div>
+      <div class="og-know__body">
+        <div class="og-know__item">
+          <h3 class="og-know__q">{{ 'oil_guide.know.q1_title' | t }}</h3>
+          <p class="og-know__a">{{ 'oil_guide.know.q1_body' | t }}</p>
+        </div>
+        <div class="og-know__item">
+          <h3 class="og-know__q">{{ 'oil_guide.know.q2_title' | t }}</h3>
+          <p class="og-know__a">{{ 'oil_guide.know.q2_body' | t }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% style %}
+  .og-know {
+    padding-top: var(--og-gap-block);
+  }
+
+  .og-know__heading {
+    margin-bottom: var(--og-gap-section);
+  }
+
+  .og-know__card {
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+    gap: clamp(20px, 3vw, 36px);
+    padding: clamp(24px, 4.4vw, 50px) clamp(20px, 4vw, 64px) clamp(24px, 4.4vw, 50px) clamp(20px, 4vw, 50px);
+    border-radius: var(--og-radius-card);
+    background: var(--og-card);
+    color: #2b3c35;
+  }
+
+  .og-know__media {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(16px, 3vw, 55px);
+  }
+
+  .og-know__circle {
+    width: clamp(110px, 19vw, 227px);
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: 50%;
+    opacity: 0.6;
+  }
+
+  .og-know__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .og-know__q {
+    margin: 0;
+    font-size: var(--og-fs-sub);
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .og-know__a {
+    margin: 0;
+    font-size: var(--og-fs-sub);
+    font-weight: 300;
+    line-height: 1.35;
+  }
+
+  .og-know__item + .og-know__item {
+    margin-top: clamp(20px, 3.4vw, 44px);
+  }
+
+  @media (max-width: 767px) {
+    .og-know__card {
+      grid-template-columns: 1fr;
+    }
+
+    .og-know__media {
+      flex-direction: row;
+      justify-content: flex-start;
+    }
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "OG Good to Know",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image_1",
+      "label": "Foto lingkaran 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_2",
+      "label": "Foto lingkaran 2"
+    }
+  ],
+  "presets": [
+    {
+      "name": "OG Good to Know"
+    }
+  ]
+}
+{% endschema %}

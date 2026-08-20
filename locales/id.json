@@ -280,11 +280,113 @@
     "login": "Masuk"
   },
   "search": {
-    "placeholder": "Cari"
+    "placeholder": "Cari",
+    "hint": "Coba \u201ccapsules\u201d, \u201coil\u201d, atau \u201cpowder\u201d",
+    "eyebrow": "Cari Treelogy",
+    "popular": "Pencarian populer",
+    "featured": "Selagi di sini",
+    "result": "hasil untuk",
+    "results": "hasil untuk",
+    "view_all": "Lihat semua hasil",
+    "no_results": "Tidak ada hasil untuk",
+    "no_results_hint": "Periksa ejaan, atau coba salah satu pencarian populer di atas.",
+    "error": "Pencarian bermasalah \u2014 silakan coba lagi.",
+    "searching": "Mencari\u2026",
+    "clear": "Hapus pencarian",
+    "close": "Tutup pencarian"
   },
   "blogs": {
     "general": {
       "recent_posts": "Posting Terbaru"
+    }
+  },
+  "oil_guide": {
+    "hero": {
+      "title_html": "Moringa<br>Seed Oil<br><b>Guide</b>",
+      "pill": "Outside Care",
+      "image_alt": "Botol moringa seed oil Treelogy"
+    },
+    "leaf": {
+      "heading_html": "Setiap pohon moringa memberi kita <b>dua hal.</b>",
+      "body_html": "<b>Daunnya</b> hanya setengah dari pohon. Dipanen saat fajar, dipetik satu per satu oleh komunitas kami, bebas batang, lalu didehidrasi pada suhu rendah dan digiling jadi powder halus yang mengisi Moringa Capsules kami.",
+      "image_alt": "Powder halus daun moringa"
+    },
+    "seeds": {
+      "heading_html": "Lalu <b>setengahnya lagi?</b>",
+      "body_html": "<b>Bijinya.</b> Dikupas dengan tangan, cold-pressed untuk menjaga nutrisinya, lalu didiamkan dua minggu supaya minyaknya mengendap alami. Minyak serbaguna yang berharga, dipakai berabad-abad di berbagai budaya untuk meregenerasi kulit. Di wajah, badan, dan rambut.",
+      "image_alt": "Biji moringa"
+    },
+    "specs": {
+      "ingredients_label": "Bahan",
+      "ingredients_value": "Satu. Moringa seed oil.",
+      "dose_label": "Dosis",
+      "dose_value": "Tergantung. Lihat di bawah.",
+      "texture_label": "Tekstur",
+      "texture_value": "Ringan. Meresap dalam sekitar satu menit.",
+      "scent_label": "Aroma",
+      "scent_value": "Ringan, seperti kacang. Tanpa tambahan apa pun.",
+      "certified_label": "Sertifikasi",
+      "certified_value": "BPOM · Halal · 100% Organik",
+      "note_html": "Non-comedogenic. Sekitar 70% asam oleat, mirip dengan yang diproduksi kulit sendiri. Itu sebabnya minyaknya meresap, bukan menumpuk di permukaan."
+    },
+    "how": {
+      "heading_html": "Cara <b>pakainya?</b>",
+      "where_label": "Di mana.",
+      "when_label": "Kapan.",
+      "how_label": "Caranya."
+    },
+    "cards": {
+      "face": {
+        "title_html": "Untuk <b>Wajah</b>",
+        "benefit": "Kelembapan, garis halus, warna kulit merata, bibir kering",
+        "where": "Wajah, leher, bibir",
+        "when": "Malam hari, langkah terakhir",
+        "how": "3 sampai 5 tetes di kulit yang masih lembap",
+        "image_alt": "Mengoleskan moringa oil ke wajah"
+      },
+      "skin": {
+        "title_html": "Untuk <b>Kulit</b>",
+        "benefit": "Kulit kering bersisik, kulit iritasi atau meradang, tangan dan kuku, kulit yang meregang",
+        "where": "Di mana saja yang kering, iritasi, atau meradang. Siku, lutut, tumit. Tangan dan kuku.",
+        "when": "Malam hari untuk area yang kena sinar matahari. Kapan saja untuk area yang tertutup pakaian.",
+        "how": "4 sampai 6 tetes setelah mandi. 1 tetes untuk kedua tangan.",
+        "image_alt": "Moringa oil untuk kulit"
+      },
+      "hair": {
+        "title_html": "Untuk <b>Rambut</b>",
+        "benefit": "Kulit kepala kering, ketombe, rambut mengembang, ujung bercabang, kilau",
+        "where": "Kulit kepala sebelum keramas. Ujung rambut setelahnya.",
+        "when": "Kulit kepala satu sampai dua kali seminggu. Ujung rambut setiap keramas.",
+        "how": "1 sampai 2 pipet di kulit kepala, pijat, diamkan 30 menit atau semalaman. 3 sampai 5 tetes diratakan di telapak tangan, lalu usapkan ke ujung rambut yang masih lembap.",
+        "image_alt": "Moringa oil untuk rambut"
+      }
+    },
+    "know": {
+      "heading_html": "Yang perlu <b>kamu tahu</b>",
+      "q1_title": "Simpan di mana.",
+      "q1_body": "Jauh dari cahaya dan panas. Rak kamar mandi sudah cukup.",
+      "q2_title": "Kalau minyaknya keruh.",
+      "q2_body": "Di bawah sekitar 25°C, minyaknya jadi keruh dan mengental. Hangatkan di telapak tangan, nanti bening lagi. Tidak ada yang salah.",
+      "image_alt_1": "Botol moringa seed oil",
+      "image_alt_2": "Detail botol moringa seed oil"
+    },
+    "proof": {
+      "heading": "Kata pelanggan",
+      "rating": "4.9/5",
+      "rating_aria": "Dinilai 4,9 dari 5 bintang",
+      "customers_html": "10,000+ customers",
+      "quote": "Utk yang moringa seed oil ini sih juara banget. Hari ke-4 setelah pemakaian setiap malam kulit muka terasa lbh lembab. Saya beranikan pergi keluar rumah tanpa skin care apapun. Dan amaaannnn… kulit ga terasa kering. Saya uji coba pakaikan ke bibir setiap malam cuma setetes kecil. Voila! Paginya bibir jadi lembab loh.. seriusan.",
+      "attribution": "— Verified buyer",
+      "cta": "Beli Full Size",
+      "guarantee": "Garansi uang kembali 60 hari"
+    },
+    "certs": {
+      "heading_aria": "Sertifikasi",
+      "stemfree_alt": "Bebas batang",
+      "organic_alt": "100% Organik",
+      "lab_alt": "Teruji lab",
+      "halal_alt": "Bersertifikat Halal",
+      "bpom_alt": "Terdaftar BPOM"
     }
   }
 }

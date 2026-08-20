@@ -1,0 +1,82 @@
+<section class="og-certs og-section">
+  <div class="og-container">
+    <ul class="og-certs__row" role="list" aria-label="{{ 'oil_guide.certs.heading_aria' | t }}">
+      {%- assign certs = 'lp-cert-bebas-batang:stemfree,lp-cert-organik:organic,lp-cert-teruji-lab:lab,lp-cert-halal:halal,lp-cert-bpom:bpom' | split: ',' -%}
+      {%- for cert in certs -%}
+        {%- liquid
+          assign parts = cert | split: ':'
+          assign asset_name = parts[0] | append: '.svg'
+          assign alt_key = 'oil_guide.certs.' | append: parts[1] | append: '_alt'
+          assign cert_alt = alt_key | t
+        -%}
+        <li class="og-certs__item">
+          <img
+            src="{{ asset_name | asset_url }}"
+            alt="{{ cert_alt }}"
+            width="110"
+            height="122"
+            loading="lazy"
+            decoding="async"
+            class="og-certs__logo"
+          >
+        </li>
+      {%- endfor -%}
+    </ul>
+
+    <img
+      src="{{ 'oil-guide-treeline.svg' | asset_url }}"
+      alt=""
+      width="1154"
+      height="103"
+      loading="lazy"
+      decoding="async"
+      class="og-certs__treeline"
+    >
+  </div>
+</section>
+
+{% style %}
+  .og-certs {
+    padding-top: var(--og-gap-block);
+    padding-bottom: var(--og-gap-block);
+  }
+
+  .og-certs__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(20px, 4.6vw, 56px);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .og-certs__item {
+    display: flex;
+  }
+
+  .og-certs__logo {
+    width: auto;
+    height: clamp(56px, 9vw, 107px);
+  }
+
+  .og-certs__treeline {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-top: var(--og-gap-section);
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "OG Certifications",
+  "settings": [],
+  "presets": [
+    {
+      "name": "OG Certifications"
+    }
+  ]
+}
+{% endschema %}

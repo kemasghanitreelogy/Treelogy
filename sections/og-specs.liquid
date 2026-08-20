@@ -1,0 +1,76 @@
+<section class="og-specs og-section">
+  <div class="og-container">
+    <dl class="og-specs__list">
+      {%- assign rows = 'ingredients,dose,texture,scent,certified' | split: ',' -%}
+      {%- for row in rows -%}
+        {%- liquid
+          assign label_key = 'oil_guide.specs.' | append: row | append: '_label'
+          assign value_key = 'oil_guide.specs.' | append: row | append: '_value'
+        -%}
+        <div class="og-specs__row">
+          <dt class="og-specs__label">{{ label_key | t }}</dt>
+          <dd class="og-specs__value">{{ value_key | t }}</dd>
+        </div>
+      {%- endfor -%}
+    </dl>
+
+    <p class="og-lead og-specs__note">{{ 'oil_guide.specs.note_html' | t }}</p>
+  </div>
+</section>
+
+{% style %}
+  .og-specs {
+    padding-top: var(--og-gap-block);
+  }
+
+  .og-specs__list {
+    max-width: 925px;
+    margin: 0 auto;
+  }
+
+  .og-specs__row {
+    display: grid;
+    grid-template-columns: minmax(96px, 320px) 1fr;
+    gap: 16px;
+    padding-block: clamp(14px, 2.4vw, 28px);
+    border-top: 1px solid var(--og-ink);
+    font-size: var(--og-fs-sub);
+    line-height: 1.25;
+  }
+
+  .og-specs__row:last-child {
+    border-bottom: 1px solid var(--og-ink);
+  }
+
+  .og-specs__label {
+    margin: 0;
+    font-weight: 700;
+  }
+
+  .og-specs__value {
+    margin: 0;
+  }
+
+  .og-specs__note {
+    margin-top: var(--og-gap-block);
+  }
+
+  @media (max-width: 767px) {
+    .og-specs__row {
+      grid-template-columns: minmax(88px, 34%) 1fr;
+      gap: 10px;
+    }
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "OG Specs",
+  "settings": [],
+  "presets": [
+    {
+      "name": "OG Specs"
+    }
+  ]
+}
+{% endschema %}

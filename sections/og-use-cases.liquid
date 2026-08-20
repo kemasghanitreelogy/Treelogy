@@ -1,0 +1,196 @@
+<section class="og-usecases og-section">
+  <div class="og-container">
+    <img
+      class="og-arrow"
+      src="{{ 'oil-guide-arrow.svg' | asset_url }}"
+      alt=""
+      width="70"
+      height="70"
+      loading="lazy"
+      decoding="async"
+    >
+
+    <h2 class="og-h2 og-usecases__heading">{{ 'oil_guide.how.heading_html' | t }}</h2>
+
+    <div class="og-usecases__list">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign card_base = 'oil_guide.cards.' | append: block.settings.card_id
+          assign title_key = card_base | append: '.title_html'
+          assign benefit_key = card_base | append: '.benefit'
+          assign where_key = card_base | append: '.where'
+          assign when_key = card_base | append: '.when'
+          assign how_key = card_base | append: '.how'
+          assign alt_key = card_base | append: '.image_alt'
+          assign card_alt = alt_key | t
+        -%}
+        <article
+          class="og-usecase og-usecase--{{ block.settings.card_id }}"
+          {{ block.shopify_attributes }}
+        >
+          <div class="og-usecase__media">
+            {%- if block.settings.image -%}
+              {{
+                block.settings.image
+                | image_url: width: 1200
+                | image_tag:
+                  widths: '400, 600, 800, 1200',
+                  sizes: 'auto',
+                  loading: 'lazy',
+                  decoding: 'async',
+                  class: 'og-usecase__img',
+                  alt: card_alt
+              }}
+            {%- endif -%}
+          </div>
+          <div class="og-usecase__body">
+            <h3 class="og-usecase__title">{{ title_key | t }}</h3>
+            <p class="og-usecase__benefit">{{ benefit_key | t }}</p>
+            <div class="og-usecase__facts">
+              <p class="og-usecase__fact">
+                <strong>{{ 'oil_guide.how.where_label' | t }}</strong>
+                {{ where_key | t }}
+              </p>
+              <p class="og-usecase__fact">
+                <strong>{{ 'oil_guide.how.when_label' | t }}</strong>
+                {{ when_key | t }}
+              </p>
+              <p class="og-usecase__fact">
+                <strong>{{ 'oil_guide.how.how_label' | t }}</strong>
+                {{ how_key | t }}
+              </p>
+            </div>
+          </div>
+        </article>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% style %}
+  .og-usecases {
+    padding-top: var(--og-gap-block);
+  }
+
+  .og-usecases__heading {
+    margin-bottom: var(--og-gap-section);
+  }
+
+  .og-usecases__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--og-gap-block);
+  }
+
+  .og-usecase {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    overflow: hidden;
+    border-radius: var(--og-radius-card);
+    background: var(--og-card);
+    color: #2b3c35;
+  }
+
+  .og-usecase__media {
+    position: relative;
+    min-height: 100%;
+  }
+
+  .og-usecase__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .og-usecase__body {
+    padding: clamp(24px, 5vw, 80px) clamp(20px, 4.5vw, 64px) clamp(28px, 5vw, 80px) clamp(20px, 3vw, 34px);
+  }
+
+  .og-usecase__title {
+    margin: 0;
+    font-size: var(--og-fs-title);
+    font-weight: 400;
+    line-height: 1.35;
+  }
+
+  .og-usecase__title b {
+    font-weight: 700;
+  }
+
+  .og-usecase__benefit {
+    margin: clamp(12px, 2vw, 24px) 0 0;
+    font-size: var(--og-fs-sub);
+    line-height: 1.35;
+  }
+
+  .og-usecase__facts {
+    margin-top: clamp(16px, 2.8vw, 32px);
+    padding-top: clamp(16px, 2.8vw, 32px);
+    border-top: 2px solid #2b3c35;
+  }
+
+  .og-usecase__fact {
+    margin: 0;
+    font-size: var(--og-fs-sub);
+    line-height: 1.39;
+  }
+
+  .og-usecase__fact + .og-usecase__fact {
+    margin-top: clamp(12px, 2vw, 26px);
+  }
+
+  @media (max-width: 767px) {
+    .og-usecase {
+      grid-template-columns: 1fr;
+    }
+
+    .og-usecase__media {
+      aspect-ratio: 4 / 3;
+      min-height: 0;
+    }
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "OG Use Cases",
+  "max_blocks": 6,
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Kartu cara pakai",
+      "settings": [
+        {
+          "type": "select",
+          "id": "card_id",
+          "label": "Konten kartu",
+          "options": [
+            { "value": "face", "label": "Wajah" },
+            { "value": "skin", "label": "Kulit" },
+            { "value": "hair", "label": "Rambut" }
+          ],
+          "default": "face"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Foto"
+        }
+      ]
+    }
+  ],
+  "settings": [],
+  "presets": [
+    {
+      "name": "OG Use Cases",
+      "blocks": [
+        { "type": "card", "settings": { "card_id": "face" } },
+        { "type": "card", "settings": { "card_id": "skin" } },
+        { "type": "card", "settings": { "card_id": "hair" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
