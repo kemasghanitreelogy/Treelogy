@@ -391,7 +391,7 @@
       "moringa_tree": "Moringa Tree",
       "benefits": "Benefits",
       "our_farm": "Our Farm",
-      "unsub_html": "No longer want to receive these emails? <a href=\"#\">Unsubscribe</a>."
+      "unsub_html": "No longer want to receive these emails? <u>Unsubscribe</u>."
     }
   }
 }
