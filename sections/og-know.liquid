@@ -17,44 +17,45 @@
     <h2 class="og-h2 og-know__heading">{{ 'oil_guide.know.heading_html' | t }}</h2>
 
     <div class="og-know__card">
-      <div class="og-know__media" aria-hidden="true">
-        {%- if section.settings.image_1 -%}
-          <div class="og-know__circle">
+      <div class="og-know__row">
+        <div class="og-know__icon" aria-hidden="true">
+          {%- if section.settings.image_1 -%}
             {{
               section.settings.image_1
-              | image_url: width: 600
+              | image_url: width: 426
               | image_tag:
-                widths: '200, 300, 600',
+                widths: '213, 426',
                 sizes: 'auto',
                 loading: 'lazy',
                 decoding: 'async',
-                class: 'og-know__img',
+                class: 'og-know__glyph',
                 alt: alt_1
             }}
-          </div>
-        {%- endif -%}
-        {%- if section.settings.image_2 -%}
-          <div class="og-know__circle">
-            {{
-              section.settings.image_2
-              | image_url: width: 600
-              | image_tag:
-                widths: '200, 300, 600',
-                sizes: 'auto',
-                loading: 'lazy',
-                decoding: 'async',
-                class: 'og-know__img',
-                alt: alt_2
-            }}
-          </div>
-        {%- endif -%}
-      </div>
-      <div class="og-know__body">
-        <div class="og-know__item">
+          {%- endif -%}
+        </div>
+        <div class="og-know__text">
           <h3 class="og-know__q">{{ 'oil_guide.know.q1_title' | t }}</h3>
           <p class="og-know__a">{{ 'oil_guide.know.q1_body' | t }}</p>
         </div>
-        <div class="og-know__item">
+      </div>
+
+      <div class="og-know__row">
+        <div class="og-know__icon" aria-hidden="true">
+          {%- if section.settings.image_2 -%}
+            {{
+              section.settings.image_2
+              | image_url: width: 426
+              | image_tag:
+                widths: '213, 426',
+                sizes: 'auto',
+                loading: 'lazy',
+                decoding: 'async',
+                class: 'og-know__glyph',
+                alt: alt_2
+            }}
+          {%- endif -%}
+        </div>
+        <div class="og-know__text">
           <h3 class="og-know__q">{{ 'oil_guide.know.q2_title' | t }}</h3>
           <p class="og-know__a">{{ 'oil_guide.know.q2_body' | t }}</p>
         </div>
@@ -77,39 +78,33 @@
   }
 
   .og-know__card {
-    display: grid;
-    grid-template-columns: calc(452 * var(--og-u)) 1fr;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: calc(60 * var(--og-u));
     min-height: calc(631 * var(--og-u));
-    padding: calc(50 * var(--og-u)) calc(70 * var(--og-u)) calc(50 * var(--og-u)) 0;
+    padding: calc(60 * var(--og-u)) calc(70 * var(--og-u)) calc(60 * var(--og-u)) 0;
     border-radius: var(--og-radius-card);
     background: var(--og-card);
     color: #2b3c35;
   }
 
-  .og-know__media {
+  .og-know__row {
+    display: grid;
+    grid-template-columns: calc(452 * var(--og-u)) 1fr;
+    align-items: center;
+  }
+
+  .og-know__icon {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: calc(55 * var(--og-u));
-    padding-left: calc(118 * var(--og-u));
+    align-items: center;
+    justify-content: center;
   }
 
-  .og-know__circle {
-    width: calc(227 * var(--og-u));
-    aspect-ratio: 1;
-    overflow: hidden;
-    border-radius: 50%;
-    opacity: 0.6;
-  }
-
-  .og-know__img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .og-know__body {
-    padding-top: calc(18 * var(--og-u));
+  .og-know__glyph {
+    height: calc(190 * var(--og-u));
+    width: auto;
+    opacity: 0.7;
   }
 
   .og-know__q {
@@ -125,10 +120,6 @@
     font-weight: 300;
     line-height: 1.35;
   }
-
-  .og-know__item + .og-know__item {
-    margin-top: calc(53 * var(--og-u));
-  }
 {% endstyle %}
 
 {% schema %}
@@ -138,12 +129,12 @@
     {
       "type": "image_picker",
       "id": "image_1",
-      "label": "Foto lingkaran 1"
+      "label": "Ikon penyimpanan"
     },
     {
       "type": "image_picker",
       "id": "image_2",
-      "label": "Foto lingkaran 2"
+      "label": "Ikon awan"
     }
   ],
   "presets": [

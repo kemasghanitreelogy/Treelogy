@@ -83,8 +83,7 @@
   }
 
   .og-usecase {
-    display: grid;
-    grid-template-columns: calc(594 * var(--og-u)) 1fr;
+    position: relative;
     overflow: hidden;
     border-radius: var(--og-radius-card);
     background: var(--og-card);
@@ -92,20 +91,95 @@
   }
 
   .og-usecase__media {
-    position: relative;
-    min-height: calc(719 * var(--og-u));
+    position: absolute;
   }
 
   .og-usecase__img {
-    position: absolute;
-    inset: 0;
+    display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
 
   .og-usecase__body {
-    padding: calc(75 * var(--og-u)) calc(64 * var(--og-u)) calc(75 * var(--og-u)) 0;
+    position: absolute;
+    left: calc(594 * var(--og-u));
+  }
+
+  .og-usecase--face {
+    height: calc(760 * var(--og-u));
+  }
+
+  .og-usecase--face .og-usecase__media {
+    top: calc(24 * var(--og-u));
+    left: calc(11 * var(--og-u));
+    width: calc(555 * var(--og-u));
+    height: calc(719 * var(--og-u));
+  }
+
+  .og-usecase--face .og-usecase__body {
+    top: calc(90 * var(--og-u));
+    width: calc(515 * var(--og-u));
+  }
+
+  .og-usecase--face .og-usecase__benefit {
+    margin-top: calc(29 * var(--og-u));
+    max-width: calc(493 * var(--og-u));
+  }
+
+  .og-usecase--face .og-usecase__facts {
+    margin-top: calc(29 * var(--og-u));
+    padding-top: calc(48 * var(--og-u));
+  }
+
+  .og-usecase--skin {
+    height: calc(1150 * var(--og-u));
+  }
+
+  .og-usecase--skin .og-usecase__media {
+    top: calc(62 * var(--og-u));
+    left: calc(33.5 * var(--og-u));
+    width: calc(527 * var(--og-u));
+    height: calc(1010 * var(--og-u));
+  }
+
+  .og-usecase--skin .og-usecase__body {
+    top: calc(62 * var(--og-u));
+    width: calc(521 * var(--og-u));
+  }
+
+  .og-usecase--skin .og-usecase__benefit {
+    margin-top: calc(19 * var(--og-u));
+  }
+
+  .og-usecase--skin .og-usecase__facts {
+    margin-top: calc(32 * var(--og-u));
+    padding-top: calc(54 * var(--og-u));
+  }
+
+  .og-usecase--hair {
+    height: calc(1098 * var(--og-u));
+  }
+
+  .og-usecase--hair .og-usecase__media {
+    top: 0;
+    left: calc(17.5 * var(--og-u));
+    width: calc(544 * var(--og-u));
+    height: calc(923 * var(--og-u));
+  }
+
+  .og-usecase--hair .og-usecase__body {
+    top: calc(75 * var(--og-u));
+    width: calc(523 * var(--og-u));
+  }
+
+  .og-usecase--hair .og-usecase__benefit {
+    margin-top: calc(19 * var(--og-u));
+  }
+
+  .og-usecase--hair .og-usecase__facts {
+    margin-top: calc(49 * var(--og-u));
+    padding-top: calc(60 * var(--og-u));
   }
 
   .og-usecase__title {
@@ -120,25 +194,32 @@
   }
 
   .og-usecase__benefit {
-    margin: calc(20 * var(--og-u)) 0 0;
+    margin: 0;
     font-size: calc(39 * var(--og-u));
     line-height: 1.35;
   }
 
   .og-usecase__facts {
-    margin-top: calc(30 * var(--og-u));
-    padding-top: calc(30 * var(--og-u));
+    position: relative;
+  }
+
+  .og-usecase__facts::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: calc(5 * var(--og-u));
+    width: calc(488 * var(--og-u));
     border-top: 2px solid #2b3c35;
   }
 
   .og-usecase__fact {
     margin: 0;
     font-size: calc(39 * var(--og-u));
-    line-height: 1.35;
+    line-height: 1.39;
   }
 
   .og-usecase__fact + .og-usecase__fact {
-    margin-top: calc(26 * var(--og-u));
+    margin-top: calc(54 * var(--og-u));
   }
 {% endstyle %}
 
