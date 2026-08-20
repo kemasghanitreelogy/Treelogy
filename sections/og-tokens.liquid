@@ -16,11 +16,16 @@
     --og-radius-card: clamp(24px, 4vw, 40px);
     --og-gap-section: clamp(32px, 4.4vw, 48px);
     --og-gap-block: clamp(40px, 6vw, 64px);
-    background: {{ section.settings.color_bg }};
+    --og-outer: {{ section.settings.color_outer }};
+    background-color: {{ section.settings.color_outer }};
+    background-image: linear-gradient({{ section.settings.color_bg }}, {{ section.settings.color_bg }});
+    background-size: min(100%, var(--og-container)) 100%;
+    background-position: top center;
+    background-repeat: no-repeat;
   }
 
   .og-section {
-    background: var(--og-bg);
+    background: transparent;
     font-family: var(--og-font);
     color: var(--og-ink);
   }
@@ -90,8 +95,14 @@
     {
       "type": "color",
       "id": "color_bg",
-      "label": "Latar halaman",
+      "label": "Latar kanvas konten",
       "default": "#fbfcf7"
+    },
+    {
+      "type": "color",
+      "id": "color_outer",
+      "label": "Latar luar kanvas",
+      "default": "#ffffff"
     },
     {
       "type": "color",
