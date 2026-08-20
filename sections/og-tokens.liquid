@@ -8,7 +8,7 @@
     --og-container: {{ section.settings.container_width }}px;
     --og-font: var(--font-base, 'Inter', 'Inter Fallback', sans-serif);
     --og-outer: {{ section.settings.color_outer }};
-    --og-canvas: calc(var(--og-container) + 32px);
+    --og-canvas: var(--og-container);
     --og-u: calc(min(100vw, var(--og-canvas)) / 1200);
     --og-fs-display: calc(75 * var(--og-u));
     --og-fs-title: calc(60 * var(--og-u));
@@ -133,12 +133,12 @@
     {
       "type": "range",
       "id": "container_width",
-      "label": "Lebar konten maksimum",
-      "min": 600,
-      "max": 1360,
+      "label": "Lebar kanvas",
+      "min": 400,
+      "max": 1200,
       "step": 8,
       "unit": "px",
-      "default": 760
+      "default": 600
     }
   ],
   "presets": [
