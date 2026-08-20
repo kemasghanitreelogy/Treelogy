@@ -1,0 +1,136 @@
+{% style %}
+  #landing-page {
+    --og-bg: {{ section.settings.color_bg }};
+    --og-ink: {{ section.settings.color_ink }};
+    --og-card: {{ section.settings.color_card }};
+    --og-accent: {{ section.settings.color_accent }};
+    --og-cream: {{ section.settings.color_cream }};
+    --og-container: {{ section.settings.container_width }}px;
+    --og-font: var(--font-base, 'Inter', 'Inter Fallback', sans-serif);
+    --og-fs-display: clamp(2.5rem, 1.5rem + 4.24vw, 4.6875rem);
+    --og-fs-title: clamp(2.125rem, 1.39rem + 3.15vw, 3.75rem);
+    --og-fs-lead: clamp(1.3rem, 0.63rem + 2.91vw, 2.8125rem);
+    --og-fs-sub: clamp(1.125rem, 0.53rem + 2.55vw, 2.4375rem);
+    --og-fs-small: clamp(1rem, 0.46rem + 2.3vw, 2.1875rem);
+    --og-radius-hero: clamp(18px, 2.6vw, 30px);
+    --og-radius-card: clamp(28px, 5.2vw, 60px);
+    --og-gap-section: clamp(36px, 5.6vw, 65px);
+    --og-gap-block: clamp(44px, 7.4vw, 85px);
+    background: {{ section.settings.color_bg }};
+  }
+
+  .og-section {
+    background: var(--og-bg);
+    font-family: var(--og-font);
+    color: var(--og-ink);
+  }
+
+  .og-container {
+    width: min(100% - 32px, var(--og-container));
+    margin-inline: auto;
+  }
+
+  .og-h2 {
+    margin: 0;
+    font-size: var(--og-fs-display);
+    font-weight: 300;
+    line-height: 1.25;
+    text-align: center;
+    color: var(--og-ink);
+  }
+
+  .og-h2 b,
+  .og-h2 strong {
+    font-weight: 700;
+  }
+
+  .og-lead {
+    margin: 0 auto;
+    max-width: 968px;
+    font-size: var(--og-fs-lead);
+    line-height: 1.3;
+    text-align: center;
+    color: var(--og-ink);
+  }
+
+  .og-lead b,
+  .og-lead strong {
+    font-weight: 700;
+  }
+
+  .og-arrow {
+    display: block;
+    width: clamp(40px, 6vw, 70px);
+    height: auto;
+    margin: 0 auto var(--og-gap-section);
+  }
+
+  .og-visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "OG Tokens",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Palet Moringa Seed Oil Guide"
+    },
+    {
+      "type": "color",
+      "id": "color_bg",
+      "label": "Latar halaman",
+      "default": "#fbfcf7"
+    },
+    {
+      "type": "color",
+      "id": "color_ink",
+      "label": "Teks utama",
+      "default": "#2a3b34"
+    },
+    {
+      "type": "color",
+      "id": "color_card",
+      "label": "Latar kartu",
+      "default": "#bacba1"
+    },
+    {
+      "type": "color",
+      "id": "color_accent",
+      "label": "Aksen (bintang)",
+      "default": "#a5bb86"
+    },
+    {
+      "type": "color",
+      "id": "color_cream",
+      "label": "Teks di atas gelap",
+      "default": "#f8f8f2"
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "label": "Lebar konten maksimum",
+      "min": 960,
+      "max": 1360,
+      "step": 4,
+      "unit": "px",
+      "default": 1152
+    }
+  ],
+  "presets": [
+    {
+      "name": "OG Tokens"
+    }
+  ]
+}
+{% endschema %}
