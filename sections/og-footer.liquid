@@ -44,6 +44,8 @@
 
     <div class="og-footer__divider"></div>
 
+    <div class="og-footer__unsub">{{ 'oil_guide.footer.unsub_html' | t }}</div>
+
     {% if section.settings.copyright != blank %}
       <p class="og-footer__copyright">{{ section.settings.copyright }}</p>
     {% endif %}
@@ -60,7 +62,7 @@
   .og-footer {
     position: relative;
     width: calc(1200 * var(--og-fu));
-    height: calc(749 * var(--og-fu));
+    height: calc(813 * var(--og-fu));
     background: var(--og-footer-bg);
     color: var(--og-footer-ink);
     font-family: var(--og-font);
@@ -130,9 +132,23 @@
     border-top: 0.5px solid var(--og-footer-ink);
   }
 
+  .og-footer__unsub {
+    position: absolute;
+    top: calc(653 * var(--og-fu));
+    left: 0;
+    width: 100%;
+    font-size: calc(30 * var(--og-fu));
+    line-height: normal;
+    text-align: center;
+  }
+
+  .og-footer__unsub a {
+    color: inherit;
+  }
+
   .og-footer__copyright {
     position: absolute;
-    top: calc(650 * var(--og-fu));
+    top: calc(709 * var(--og-fu));
     left: 0;
     width: 100%;
     margin: 0;

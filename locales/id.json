@@ -392,7 +392,8 @@
       "shop": "Toko",
       "moringa_tree": "Pohon Moringa",
       "benefits": "Manfaat",
-      "our_farm": "Perkebunan Kami"
+      "our_farm": "Perkebunan Kami",
+      "unsub_html": "Tidak ingin lagi menerima email ini? <a href=\"#\">Unsubscribe</a>."
     }
   }
 }
