@@ -17,9 +17,10 @@
     --og-gap-section: clamp(32px, 4.4vw, 48px);
     --og-gap-block: clamp(40px, 6vw, 64px);
     --og-outer: {{ section.settings.color_outer }};
+    --og-canvas: calc(var(--og-container) + 32px);
     background-color: {{ section.settings.color_outer }};
     background-image: linear-gradient({{ section.settings.color_bg }}, {{ section.settings.color_bg }});
-    background-size: min(100%, var(--og-container)) 100%;
+    background-size: min(100%, var(--og-canvas)) 100%;
     background-position: top center;
     background-repeat: no-repeat;
   }
