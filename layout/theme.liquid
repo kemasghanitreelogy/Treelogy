@@ -725,6 +725,28 @@
           } catch (e) { return null; }
         }
 
+        // 2d. Klik CTA "Get The Full Size" di halaman guide. Pola yang sama
+        // dengan klik WA di atas: GA4 sudah melihat kliknya (select_item +
+        // from_section) tapi tidak bisa dipetakan ke nomor order, jadi jejaknya
+        // dititipkan ke atribut keranjang. UTM di link internal DILARANG
+        // (aturan keras #12) — atribut inilah padanannya yang tidak merusak
+        // sesi GA4 maupun utm_* iklan yang sudah tersimpan. Klik PERTAMA,
+        // umur 30 hari (jendela yang sama dengan wa_click).
+        var GUIDE_KEY = 'app_guide_cta';
+
+        function guideStored() {
+          try {
+            var raw = localStorage.getItem(GUIDE_KEY);
+            if (!raw) return null;
+            var o = JSON.parse(raw);
+            if (!o || !o.at || Date.now() - new Date(o.at).getTime() > WA_TTL_MS) {
+              localStorage.removeItem(GUIDE_KEY);
+              return null;
+            }
+            return o;
+          } catch (e) { return null; }
+        }
+
         // 3. Push UTM + GA ids to cart attributes
         //
         // Satu sumber untuk kedua jalur penulisan: POST /cart/update.js (jalur
@@ -739,6 +761,11 @@
           if (wa) {
             attrs.wa_click_at = wa.at;
             attrs.wa_click_page = wa.page;
+          }
+          var gd = guideStored();
+          if (gd) {
+            attrs.guide_cta_at = gd.at;
+            attrs.guide_cta_page = gd.page;
           }
           return attrs;
         }
@@ -783,6 +810,27 @@
         // cara itu tidak pernah tercatat.
         window.addEventListener('click', onWhatsappClick, true);
         window.addEventListener('auxclick', onWhatsappClick, true);
+
+        // Penangkap klik CTA guide. Window-capture + isTrusted (aturan keras
+        // #6 & #16). Ditulis saat klik, bukan saat ATC: pembeli menyeberang ke
+        // PDP dulu dan baru menambahkan ke keranjang di sana — jejaknya harus
+        // sudah menempel sebelum itu terjadi.
+        function onGuideCtaClick(e) {
+          if (!e.isTrusted) return;
+          var t = e.target;
+          var link = t && t.closest && t.closest('a.og-proof__cta');
+          if (!link) return;
+          if (guideStored()) return;
+          try {
+            localStorage.setItem(GUIDE_KEY, JSON.stringify({
+              at: new Date().toISOString(),
+              page: location.pathname
+            }));
+          } catch (err) { return; }
+          pushToCart();
+        }
+        window.addEventListener('click', onGuideCtaClick, true);
+        window.addEventListener('auxclick', onGuideCtaClick, true);
 
         // 3c. Permalink keranjang — CTA beli di landing page — MENGGANTI isi
         // keranjang dan MEMBUANG seluruh atributnya, lalu melompat langsung ke

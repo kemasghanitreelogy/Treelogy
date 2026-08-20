@@ -4,6 +4,7 @@
   else
     assign cta_url = routes.all_products_collection_url
   endif
+  assign cta_url = cta_url | append: '?ref=oil-guide-cta'
 -%}
 <section class="og-proof og-section">
   <div class="og-container og-proof__wrap">
