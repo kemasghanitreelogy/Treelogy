@@ -70,8 +70,8 @@
     "know": {
       "type": "og-know",
       "settings": {
-        "image_1": "shopify://shop_images/oil-guide-bottle.png",
-        "image_2": "shopify://shop_images/oil-guide-bottle.png"
+        "image_1": "shopify://shop_images/oil-guide-know-1.png",
+        "image_2": "shopify://shop_images/oil-guide-know-2.png"
       }
     },
     "proof": {
