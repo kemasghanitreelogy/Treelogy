@@ -696,6 +696,11 @@
     var origUrl = arguments[0];
     var origInit = arguments[1];
     var piggybacked = false;
+    /* Apa yang sebenarnya DIMINTA pemanggil pada baris pemicu, kalau
+       permintaannya ditulis ulang jadi update.js. Dipakai memverifikasi
+       bahwa penulisan ulang itu benar-benar terjadi — lihat catatan di
+       bawah `if (piggybacked)`. */
+    var pbTarget = null;
 
     /* ===== Piggyback atomik =====
        Hadiah tidak lagi menyusul lewat permintaan kedua — ia MENUMPANG pada
@@ -779,6 +784,21 @@
             });
             if (Object.keys(updates).length > 1) {
               cartEpoch++;
+              /* Yang direkam bukan cuma kuncinya: juga jumlah varian ini
+                 SEBELUM permintaan, supaya sesudahnya bisa dinilai apakah
+                 servernya benar-benar bergerak — kunci baris bisa saja
+                 berganti dan membuat pencocokan per-kunci buta. */
+              var pbBefore = 0;
+              lastCart.items.forEach(function (item) {
+                if (item.variant_id === target.variant_id) pbBefore += item.quantity;
+              });
+              pbTarget = {
+                key: target.key,
+                variant_id: target.variant_id,
+                prevQty: target.quantity,
+                quantity: newQty,
+                beforeTotal: pbBefore
+              };
               arguments[0] = href.replace(/\/cart\/change(\.js)?/, '/cart/update.js');
               arguments[1] = Object.assign({}, origInit, {
                 body: JSON.stringify({ updates: updates })
@@ -788,22 +808,55 @@
           }
         }
       }
-    } catch (e) { piggybacked = false; arguments[0] = origUrl; arguments[1] = origInit; }
+    } catch (e) { piggybacked = false; pbTarget = null; arguments[0] = origUrl; arguments[1] = origInit; }
 
     var result = origFetch.apply(window, arguments);
 
     if (piggybacked) {
       result = result.then(function (res) {
-        if (res.ok) return res;
-        /* Permintaan gabungan ditolak (potret lokal basi, key hilang, dll):
-           ulangi persis permintaan asli si tema. Hadiahnya dibereskan
-           putaran verifikasi seperti biasa. */
-        giftTrack('gift_sync_failed', {
-          gift_reason: 'piggyback_rejected',
-          gift_status: res.status,
-          gift_state: giftSummary(lastCart)
-        });
-        return origFetch.call(window, origUrl, origInit);
+        if (!res.ok) {
+          /* Permintaan gabungan ditolak (potret lokal basi, key hilang, dll):
+             ulangi persis permintaan asli si tema. Hadiahnya dibereskan
+             putaran verifikasi seperti biasa. */
+          giftTrack('gift_sync_failed', {
+            gift_reason: 'piggyback_rejected',
+            gift_status: res.status,
+            gift_state: giftSummary(lastCart)
+          });
+          return origFetch.call(window, origUrl, origInit);
+        }
+        if (!pbTarget) return res;
+        /* 200 BELUM tentu permintaannya dikerjakan. change.js menjawab 404
+           kalau line key-nya tak dikenal — keras, dan pemanggilnya tahu.
+           update.js, yang kita tukar di atas, MENGABAIKAN kunci tak dikenal
+           tanpa error sama sekali. Jadi penulisan ulang ini bisa mengubah
+           "hapus gagal dengan jujur" menjadi "hapus gagal diam-diam": server
+           tetap memegang barangnya sementara pemanggilnya mengira berhasil.
+           Maka hasilnya diperiksa terhadap apa yang tadi diminta.
+
+           Barisnya sudah tidak ada, atau kuncinya berubah? Jangan menebak —
+           serahkan ke putaran verifikasi. Yang diulang hanya kasus yang jelas:
+           barisnya masih ada persis dengan kuncinya, dan jumlahnya tidak
+           berubah menjadi yang diminta. */
+        return res.clone().json().then(function (cart) {
+          if (!cart || !cart.items) return res;
+          /* Diukur per VARIAN, bukan per kunci: kunci baris bisa berganti dan
+             pencocokan per-kunci akan salah menyimpulkan "barisnya hilang".
+             Jumlah varian tidak bergerak sedikit pun padahal yang diminta
+             memang perubahan jumlah = permintaannya diabaikan. */
+          var after = 0;
+          for (var i = 0; i < cart.items.length; i++) {
+            if (cart.items[i].variant_id === pbTarget.variant_id) after += cart.items[i].quantity;
+          }
+          if (pbTarget.prevQty === pbTarget.quantity) return res;
+          if (after !== pbTarget.beforeTotal) return res;
+          giftTrack('gift_sync_failed', {
+            gift_reason: 'piggyback_ignored',
+            gift_status: res.status,
+            gift_state: giftSummary(lastCart)
+          });
+          return origFetch.call(window, origUrl, origInit);
+        }, function () { return res; });
       });
     }
 

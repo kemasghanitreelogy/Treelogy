@@ -480,8 +480,126 @@
     }
   };
 
+  /* ===== Nomor urut mutasi =====
+     Naik satu setiap kali mutasi keranjang BERANGKAT dari drawer ini.
+     Gunanya satu: cartSyncRows harus tahu apakah payload yang baru mendarat
+     masih yang termuda. Respons yang potretnya diambil SEBELUM mutasi lain
+     berangkat tidak tahu apa-apa tentang baris yang lahir sesudahnya —
+     memakainya untuk membuang baris akan menghapus barang yang baru saja
+     ditambahkan pembeli. Kalau ragu, baris DIPERTAHANKAN: baris basi yang
+     tertinggal sebentar akan dibereskan mutasi berikutnya, sedangkan baris
+     yang salah dibuang membuat pembeli mengira barangnya hilang. */
+  window.cartMutSeq = 0;
+
+  /* ===== Daftar baris keranjang: satu penulis, bersumber dari server ======
+     Setiap permukaan keranjang di file ini digambar ulang dari payload yang
+     baru saja dijawab server — total, progress bar, hemat, voucher, FBT.
+     Daftar barangnya satu-satunya yang TIDAK: ia ditambal dengan tangan di
+     tiap pemanggil lewat `row.remove()`, memakai simpul yang direkam SEBELUM
+     permintaan berangkat. Simpul itu bisa meleset dua arah, dan pembeli
+     melihat keduanya sebagai keluhan yang sama — "sudah klik hapus, barangnya
+     tetap di sana; setelah reload baru benar":
+
+     1. Simpulnya TERCABUT. Jalur add (FBT, upsell, ATC saat drawer terbuka)
+        memasang ulang seluruh daftar. Bila itu mendarat antara pembeli
+        menekan ikon tong sampah dan menekan Konfirmasi — atau selagi
+        permintaan hapus masih di jalan — `row` menunjuk simpul yatim.
+        `row.remove()` mencabut simpul yang sudah tidak ada di dokumen:
+        server menghapus barangnya, layar tetap menampilkannya.
+
+     2. Server DIAM-DIAM menolak. Mesin hadiah menulis ulang change.js jadi
+        update.js untuk baris pemicu, dan update.js mengabaikan line key yang
+        tak dikenalnya TANPA error. Barisnya bertahan di keranjang, sementara
+        `row.remove()` telanjur menghapusnya dari layar — arah sebaliknya,
+        sama-sama menyesatkan, dan totalnya ikut salah karena recalcSavings
+        membaca baris dari DOM.
+
+     Akarnya satu: daftar barang tidak pernah direkonsiliasi dengan kebenaran
+     server. Rekonsiliasinya dipasang di sini dan `row.remove()` di pemanggil
+     dihapus, jadi pola berlakunya sama dengan setShippingProgress: satu
+     penulis, dipanggil dari satu tempat.
+
+     Yang sengaja TIDAK disentuh karena sudah ada pemiliknya:
+     - `.cart-item--optimistic` — placeholder yang memang mendahului server.
+     - `.cart-item--gift` — milik mesin hadiah, yang mengecatnya dari
+       kebenaran server juga dan sengaja tampil lebih dulu.
+
+     Fungsi ini hanya MEMBUANG baris yang sudah tidak ada di keranjang dan
+     MENYEGARKAN data-key; ia tidak pernah membuat baris. Membuat baris butuh
+     HTML server, dan jalur add memang sudah mengambilnya. */
+  window.cartSyncRows = function (cart, seq) {
+    var c = document.getElementById('cart');
+    if (!c || !cart || !Array.isArray(cart.items)) return;
+    var wrap = c.querySelector('.cart-items');
+    if (!wrap) return;
+
+    /* Payload yang sudah didahului mutasi lain hanya boleh MENYEGARKAN kunci,
+       tidak boleh membuang baris — lihat catatan cartMutSeq di atas. */
+    var bolehBuang = (seq === undefined || seq === null || seq === window.cartMutSeq);
+
+    var rows = Array.prototype.filter.call(
+      wrap.querySelectorAll('.cart-item'),
+      function (n) {
+        return !n.classList.contains('cart-item--optimistic')
+            && !n.classList.contains('cart-item--gift');
+      }
+    );
+    if (!rows.length) return;
+
+    /* Baris hadiah dikeluarkan dari pencocokan: pemiliknya mesin hadiah, dan
+       membiarkannya ikut bisa membuat baris produk berbayar "diselamatkan"
+       oleh baris hadiah bervarian sama. */
+    var lines = [];
+    for (var li = 0; li < cart.items.length; li++) {
+      var it = cart.items[li];
+      if (it.properties && it.properties._Gifted) continue;
+      lines.push(it);
+    }
+
+    var used = [];
+    var matched = [];
+
+    /* Babak 1 — cocokkan lewat data-key. Ini identitas paling tepat, dan
+       satu-satunya yang bisa membedakan dua baris bervarian sama dengan
+       properties berbeda. */
+    rows.forEach(function (row, ri) {
+      matched[ri] = -1;
+      var k = row.getAttribute('data-key');
+      if (!k) return;
+      for (var i = 0; i < lines.length; i++) {
+        if (used[i] || lines[i].key !== k) continue;
+        used[i] = true; matched[ri] = i; return;
+      }
+    });
+
+    /* Babak 2 — sisanya masih boleh diselamatkan lewat varian. data-key di
+       DOM bisa tertinggal bila barisnya dirender sebelum mutasi terakhir,
+       dan membuang baris yang sebenarnya masih ada jauh lebih berbahaya
+       daripada menahannya. Kuncinya sekalian disegarkan, supaya klik
+       BERIKUTNYA pada baris itu memakai kunci yang hidup. */
+    rows.forEach(function (row, ri) {
+      if (matched[ri] >= 0) return;
+      var v = row.getAttribute('data-variant');
+      if (!v) return;
+      for (var i = 0; i < lines.length; i++) {
+        if (used[i] || String(lines[i].variant_id) !== String(v)) continue;
+        used[i] = true; matched[ri] = i; return;
+      }
+    });
+
+    rows.forEach(function (row, ri) {
+      if (matched[ri] < 0) { if (bolehBuang) row.remove(); return; }
+      var line = lines[matched[ri]];
+      if (!line.key || row.getAttribute('data-key') === line.key) return;
+      row.setAttribute('data-key', line.key);
+      Array.prototype.forEach.call(row.querySelectorAll('[data-key]'), function (el) {
+        el.setAttribute('data-key', line.key);
+      });
+    });
+  };
+
   /* ===== Central UI refresh ===== */
-  window.refreshCartUI = function(cart) {
+  window.refreshCartUI = function(cart, seq) {
     var c = document.getElementById('cart');
     if (!c) return;
 
@@ -501,6 +619,10 @@
         .catch(function () { window.refreshCartUI._healing = false; });
       return;
     }
+
+    /* Daftar baris didamaikan DULU: recalcSavings di bawah membaca baris dari
+       DOM, jadi baris basi yang belum dibuang akan menggelembungkan "hemat". */
+    window.cartSyncRows(cart, seq);
 
     var i18n = window._cartI18n || {};
     var totalCents = cart.total_price;
@@ -645,6 +767,10 @@
        Retry-After 30 detik pernah membuat spinner menggiling hampir semenit —
        lebih jujur menyerah cepat dan memulihkan barisnya daripada menyandera
        pembeli di depan overlay. */
+    /* Hanya percobaan PERTAMA yang menaikkan nomor urut: percobaan ulang
+       adalah mutasi logis yang sama, dan menaikkannya lagi akan membuat
+       pemanggilnya sendiri terlihat basi. */
+    if (tries === undefined) window.cartMutSeq++;
     tries = tries || 3;
     delay = delay || 1000;
     return fetch('/cart/change.js', {
@@ -677,16 +803,16 @@
   window.cartChangeQty = function(sel) {
     var key = sel.getAttribute('data-key') || sel.getAttribute('data-id');
     var qty = parseInt(sel.value);
-    var row = sel.closest('.cart-item');
 
     window.cartShowLoading();
 
-    window.cartChangeWithRetry({ id: key, quantity: qty })
-    .then(function(cart) {
-      window.refreshCartUI(cart);
+    var req = window.cartChangeWithRetry({ id: key, quantity: qty });
+    var seq = window.cartMutSeq;
+    req.then(function(cart) {
+      window.refreshCartUI(cart, seq);
       window.syncFBTVisibility(cart);
-      // If qty became 0 (shouldn't happen with select 1-10, but safety)
-      if (qty === 0 && row) row.remove();
+      /* qty 0 (dan baris yang hilang karena sebab lain) dibuang cartSyncRows
+         dari refreshCartUI di atas — satu penulis, bukan salinan lokal. */
       window.cartHideLoading();
     })
     .catch(function() { window.cartHideLoading(); });
@@ -774,10 +900,15 @@
 
         window.cartShowLoading();
 
-        window.cartChangeWithRetry({ id: key, quantity: 0 })
-        .then(function(cart) {
-          if (row) row.remove();
-          window.refreshCartUI(cart);
+        var req = window.cartChangeWithRetry({ id: key, quantity: 0 });
+        var seq = window.cartMutSeq;
+        req.then(function(cart) {
+          /* Barisnya TIDAK dicabut di sini. `row` direkam sebelum permintaan
+             berangkat dan bisa sudah tercabut oleh re-render jalur add — dan
+             server bisa saja tidak benar-benar menghapusnya. cartSyncRows di
+             dalam refreshCartUI membuang baris berdasarkan jawaban server,
+             pada DOM yang sedang hidup. */
+          window.refreshCartUI(cart, seq);
           window.syncFBTVisibility(cart);
           window.cartHideLoading();
         })
@@ -925,6 +1056,7 @@
          cart, and restores an FBT card for a product that is now in it. */
       var addFailed = false;
 
+      window.cartMutSeq++;
       fetch('/cart/add.js', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -1592,6 +1724,7 @@
         }, wait);
       }
 
+      window.cartMutSeq++;
       fetch('/cart/add.js', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -2077,6 +2210,7 @@
     }
 
     function post(code) {
+      window.cartMutSeq++;
       return fetch('/cart/update.js', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
