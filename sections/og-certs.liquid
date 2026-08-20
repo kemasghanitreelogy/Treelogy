@@ -46,7 +46,7 @@
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    gap: clamp(20px, 3.4vw, 36px);
+    gap: calc(80 * var(--og-u));
     margin: 0;
     padding: 0;
     list-style: none;
@@ -58,14 +58,14 @@
 
   .og-certs__logo {
     width: auto;
-    height: clamp(52px, 6.4vw, 68px);
+    height: calc(107 * var(--og-u));
   }
 
   .og-certs__treeline {
     display: block;
     width: 100%;
     height: auto;
-    margin-top: var(--og-gap-section);
+    margin-top: calc(59 * var(--og-u));
   }
 {% endstyle %}
 

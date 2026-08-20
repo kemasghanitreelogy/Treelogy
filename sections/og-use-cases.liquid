@@ -69,7 +69,7 @@
 
 {% style %}
   .og-usecases {
-    padding-top: var(--og-gap-block);
+    padding-top: var(--og-gap-section);
   }
 
   .og-usecases__heading {
@@ -84,7 +84,7 @@
 
   .og-usecase {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: calc(594 * var(--og-u)) 1fr;
     overflow: hidden;
     border-radius: var(--og-radius-card);
     background: var(--og-card);
@@ -93,7 +93,7 @@
 
   .og-usecase__media {
     position: relative;
-    min-height: 100%;
+    min-height: calc(719 * var(--og-u));
   }
 
   .og-usecase__img {
@@ -105,12 +105,12 @@
   }
 
   .og-usecase__body {
-    padding: clamp(24px, 4vw, 40px) clamp(20px, 3.2vw, 32px) clamp(28px, 4vw, 44px) clamp(20px, 2.6vw, 26px);
+    padding: calc(75 * var(--og-u)) calc(64 * var(--og-u)) calc(75 * var(--og-u)) 0;
   }
 
   .og-usecase__title {
     margin: 0;
-    font-size: var(--og-fs-title);
+    font-size: calc(60 * var(--og-u));
     font-weight: 400;
     line-height: 1.35;
   }
@@ -120,36 +120,25 @@
   }
 
   .og-usecase__benefit {
-    margin: clamp(10px, 1.6vw, 16px) 0 0;
-    font-size: var(--og-fs-sub);
+    margin: calc(20 * var(--og-u)) 0 0;
+    font-size: calc(39 * var(--og-u));
     line-height: 1.35;
   }
 
   .og-usecase__facts {
-    margin-top: clamp(14px, 2.2vw, 22px);
-    padding-top: clamp(14px, 2.2vw, 22px);
+    margin-top: calc(30 * var(--og-u));
+    padding-top: calc(30 * var(--og-u));
     border-top: 2px solid #2b3c35;
   }
 
   .og-usecase__fact {
     margin: 0;
-    font-size: var(--og-fs-sub);
-    line-height: 1.39;
+    font-size: calc(39 * var(--og-u));
+    line-height: 1.35;
   }
 
   .og-usecase__fact + .og-usecase__fact {
-    margin-top: clamp(10px, 1.6vw, 16px);
-  }
-
-  @media (max-width: 767px) {
-    .og-usecase {
-      grid-template-columns: 1fr;
-    }
-
-    .og-usecase__media {
-      aspect-ratio: 4 / 3;
-      min-height: 0;
-    }
+    margin-top: calc(26 * var(--og-u));
   }
 {% endstyle %}
 

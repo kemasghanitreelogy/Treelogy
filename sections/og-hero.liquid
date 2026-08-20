@@ -43,14 +43,14 @@
 
 {% style %}
   .og-hero {
-    padding-top: clamp(16px, 3vw, 36px);
+    padding-top: calc(201 * var(--og-u));
   }
 
   .og-hero__card {
     position: relative;
     overflow: hidden;
     border-radius: var(--og-radius-hero);
-    aspect-ratio: 1152 / 760;
+    aspect-ratio: 1151 / 760;
     background: #cdcdcd;
   }
 
@@ -66,26 +66,33 @@
   .og-hero__overlay {
     position: absolute;
     inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: clamp(20px, 3.6vw, 36px);
   }
 
   .og-hero__brand {
+    position: absolute;
+    top: calc(64 * var(--og-u));
+    left: calc(50 * var(--og-u));
     display: flex;
-    align-items: center;
-    gap: clamp(8px, 1.2vw, 14px);
+    align-items: flex-start;
+    gap: calc(14 * var(--og-u));
   }
 
-  .og-hero__logo {
-    height: clamp(20px, 3vw, 28px);
-    width: auto;
+  .og-hero__logo--word {
+    width: calc(234.5 * var(--og-u));
+    height: auto;
+  }
+
+  .og-hero__logo--mark {
+    width: calc(80.7 * var(--og-u));
+    height: auto;
   }
 
   .og-hero__title {
-    margin: clamp(28px, 10vw, 96px) 0 0;
-    font-size: var(--og-fs-display);
+    position: absolute;
+    top: calc(202 * var(--og-u));
+    left: calc(62 * var(--og-u));
+    margin: 0;
+    font-size: calc(75 * var(--og-u));
     font-weight: 400;
     line-height: 1.25;
     color: #101010;
@@ -96,22 +103,20 @@
   }
 
   .og-hero__pill {
+    position: absolute;
+    top: calc(651 * var(--og-u));
+    left: calc(50 * var(--og-u));
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin-top: auto;
-    padding: clamp(8px, 1.2vw, 11px) clamp(22px, 3vw, 32px);
+    min-width: calc(263 * var(--og-u));
+    height: calc(68 * var(--og-u));
+    padding: 0 calc(30 * var(--og-u));
     border: 1px solid #2b3c35;
-    border-radius: 999px;
-    font-size: var(--og-fs-small);
+    border-radius: calc(34 * var(--og-u));
+    font-size: calc(35 * var(--og-u));
     line-height: 1.4;
     color: #2b3c35;
-  }
-
-  @media (max-width: 767px) {
-    .og-hero__card {
-      aspect-ratio: 4 / 5;
-    }
   }
 {% endstyle %}
 

@@ -5,7 +5,7 @@
   assign alt_key = key_base | append: '.image_alt'
   assign media_alt = alt_key | t
 -%}
-<section class="og-statement og-section">
+<section class="og-statement og-statement--{{ section.settings.content_key }} og-section">
   <div class="og-container">
     {%- if section.settings.show_arrow -%}
       <img
@@ -46,9 +46,17 @@
     padding-top: var(--og-gap-block);
   }
 
+  .og-statement:has(.og-arrow) {
+    padding-top: var(--og-gap-section);
+  }
+
   .og-statement__media {
-    width: min(400px, 82%);
+    width: calc(597 * var(--og-u));
     margin: var(--og-gap-section) auto;
+  }
+
+  .og-statement--leaf .og-statement__body {
+    max-width: calc(896 * var(--og-u));
   }
 
   .og-statement__img {

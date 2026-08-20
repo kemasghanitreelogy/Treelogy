@@ -74,24 +74,24 @@
   .og-proof__rating {
     display: flex;
     align-items: center;
-    gap: clamp(10px, 1.6vw, 20px);
+    gap: calc(22 * var(--og-u));
   }
 
   .og-proof__stars {
-    width: clamp(130px, 15vw, 180px);
+    width: calc(272 * var(--og-u));
     height: auto;
   }
 
   .og-proof__score {
-    font-size: var(--og-fs-lead);
+    font-size: calc(45 * var(--og-u));
     font-weight: 700;
-    line-height: 1.2;
+    line-height: 1.21;
     color: var(--og-ink);
   }
 
   .og-proof__count {
-    margin: clamp(10px, 1.8vw, 22px) 0 0;
-    font-size: var(--og-fs-display);
+    margin: calc(14 * var(--og-u)) 0 0;
+    font-size: calc(75 * var(--og-u));
     font-weight: 700;
     line-height: 1.21;
     color: var(--og-ink);
@@ -99,14 +99,14 @@
 
   .og-proof__quote {
     position: relative;
-    max-width: 680px;
-    margin: var(--og-gap-section) 0 0;
-    padding: clamp(28px, 3.6vw, 40px) clamp(28px, 3.8vw, 44px);
+    max-width: calc(981 * var(--og-u));
+    margin: calc(47 * var(--og-u)) 0 0;
+    padding: calc(34 * var(--og-u)) calc(52 * var(--og-u));
   }
 
   .og-proof__text {
     margin: 0;
-    font-size: var(--og-fs-lead);
+    font-size: calc(45 * var(--og-u));
     line-height: 1.25;
     color: var(--og-ink);
   }
@@ -114,13 +114,13 @@
   .og-proof__attr {
     display: inline-block;
     margin-left: 0.6em;
-    font-size: var(--og-fs-small);
+    font-size: calc(35 * var(--og-u));
     white-space: nowrap;
   }
 
   .og-proof__mark {
     position: absolute;
-    width: clamp(24px, 3vw, 32px);
+    width: calc(47 * var(--og-u));
     height: auto;
   }
 
@@ -132,18 +132,19 @@
   .og-proof__mark--close {
     right: 0;
     bottom: 0;
-    width: clamp(26px, 3.4vw, 38px);
+    width: calc(56 * var(--og-u));
   }
 
   .og-proof__cta {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin-top: var(--og-gap-section);
-    padding: clamp(14px, 1.8vw, 20px) clamp(40px, 5vw, 60px);
-    border-radius: 999px;
+    margin-top: calc(38 * var(--og-u));
+    height: calc(100 * var(--og-u));
+    padding: 0 calc(72 * var(--og-u));
+    border-radius: calc(150 * var(--og-u));
     background: var(--og-ink);
-    font-size: var(--og-fs-lead);
+    font-size: calc(45 * var(--og-u));
     line-height: 1;
     color: var(--og-cream);
     text-decoration: none;
@@ -154,8 +155,8 @@
   }
 
   .og-proof__guarantee {
-    margin: var(--og-gap-section) 0 0;
-    font-size: var(--og-fs-lead);
+    margin: calc(73 * var(--og-u)) 0 0;
+    font-size: calc(45 * var(--og-u));
     line-height: 1.3;
     color: var(--og-ink);
   }
