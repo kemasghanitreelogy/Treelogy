@@ -1,0 +1,33 @@
+{% comment %}
+  Hasil dropdown search premium — dirender via Section Rendering API oleh
+  penulisan-ulang URL di SearchInput.liquid: fetch bundle ke /search?view=card
+  dialihkan ke /search/suggest?...&section_id=search-suggest.
+
+  KENAPA: /search full-text ikut mencocokkan DESKRIPSI produk, jadi query
+  "powder" memunculkan Capsules (deskripsinya menyebut powder). Predictive
+  Search API mencocokkan field default title, product_type, variants.title,
+  vendor — TANPA body — persis yang diinginkan untuk typeahead.
+
+  KONTRAK dengan app.bundle.js (parseData): respons wajib memuat elemen
+  #search-results; isinya kartu .card (ProductCard) atau teks "No results!"
+  yang ditafsirkan SearchInput. Jangan ganti id/teks itu.
+{% endcomment %}
+<div id="search-results">
+  {%- if predictive_search.performed -%}
+    {%- assign shown = 0 -%}
+    {%- for product in predictive_search.resources.products -%}
+      {%- if shown >= 4 -%}{%- break -%}{%- endif -%}
+      {%- unless product.tags contains 'lp-only' -%}
+        {%- render 'ProductCard', item: product -%}
+        {%- assign shown = shown | plus: 1 -%}
+      {%- endunless -%}
+    {%- endfor -%}
+    {%- if shown == 0 -%}No results!{%- endif -%}
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Search Suggest"
+}
+{% endschema %}
