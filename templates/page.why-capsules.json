@@ -11,18 +11,26 @@
   "sections": {
     "tokens": {
       "type": "og-tokens",
-      "settings": {}
+      "settings": {
+        "color_bg": "#fbfcf7",
+        "color_outer": "#ffffff",
+        "color_ink": "#2a3b34",
+        "color_card": "#bacba1",
+        "color_accent": "#a5bb86",
+        "color_cream": "#f8f8f2",
+        "container_width": 600
+      }
     },
     "hero": {
       "type": "wc-hero",
       "settings": {
-        "image": "shopify://shop_images/why-capsules-hero.png"
+        "image": "shopify://shop_images/why-capsules-hero_11zon.webp"
       }
     },
     "body": {
       "type": "wc-body",
       "settings": {
-        "image": "shopify://shop_images/why-capsules-body.png"
+        "image": "shopify://shop_images/why-capsules-body_11zon.webp"
       }
     },
     "proof": {
@@ -32,7 +40,11 @@
     "offer": {
       "type": "wc-offer",
       "settings": {
-        "image": "shopify://shop_images/why-capsules-jar.png"
+        "image": "shopify://shop_images/why-capsules-jar_11zon.webp",
+        "variant_p3": "47255408378044",
+        "variant_p2": "44527085650108",
+        "variant_p1": "44527085617340",
+        "gift_variant": "47228130001084"
       }
     },
     "urgency": {
@@ -49,8 +61,8 @@
         "social_pinterest": "https://www.pinterest.com/treelogymoringa/",
         "social_whatsapp": "https://wa.me/6281139603993",
         "copyright": "© Treelogy 2026. All Rights Reserved.",
-        "background_color": "#2A3B34",
-        "text_color": "#F8F8F2"
+        "background_color": "#2a3b34",
+        "text_color": "#f8f8f2"
       }
     }
   },
