@@ -1,10 +1,5 @@
 {%- liquid
   assign hero_alt = 'why_capsules.hero.image_alt' | t
-  if section.settings.product
-    assign cta_url = section.settings.product.url | append: '?ref=why-capsules-cta'
-  else
-    assign cta_url = routes.all_products_collection_url
-  endif
 -%}
 <section class="wc-hero og-section">
   <div class="wc-hero__frame">
@@ -28,7 +23,7 @@
   <p class="wc-hero__sub">{{ 'why_capsules.hero.sub_html' | t }}</p>
 
   <div class="wc-hero__cta-row">
-    <a class="wc-cta" href="{{ cta_url }}">{{ 'why_capsules.hero.cta_cart' | t }}</a>
+    <a class="wc-cta" href="#wc-plans">{{ 'why_capsules.hero.cta_cart' | t }}</a>
   </div>
 
   <img
@@ -43,6 +38,16 @@
 </section>
 
 {% style %}
+  html {
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
   .wc-hero {
     padding-top: calc(36 * var(--og-u));
     font-family: var(--og-font);
@@ -115,11 +120,6 @@
       "type": "image_picker",
       "id": "image",
       "label": "Gambar hero"
-    },
-    {
-      "type": "product",
-      "id": "product",
-      "label": "Produk tujuan CTA"
     }
   ],
   "presets": [

@@ -441,7 +441,9 @@
       "p1_save": "",
       "p1_price_old": "",
       "p1_price": "Rp 390.000",
-      "cta_cart": "Cart +"
+      "cta_cart": "Cart +",
+      "cta_checkout": "Checkout",
+      "choose_aria": "Choose your plan"
     },
     "urgency": {
       "heading": "6 days left at today's price",

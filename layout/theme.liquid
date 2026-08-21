@@ -767,6 +767,11 @@
             attrs.guide_cta_at = gd.at;
             attrs.guide_cta_page = gd.page;
           }
+          var wc = wcStored();
+          if (wc) {
+            attrs.wc_cta_at = wc.at;
+            attrs.wc_cta_page = wc.page;
+          }
           return attrs;
         }
 
@@ -831,6 +836,43 @@
         }
         window.addEventListener('click', onGuideCtaClick, true);
         window.addEventListener('auxclick', onGuideCtaClick, true);
+
+        // Klik CTA halaman why-capsules (kampanye email). Pola & alasan sama
+        // dengan guide di atas; kuncinya sendiri supaya kedua halaman bisa
+        // dibaca terpisah. Listener ini TERDAFTAR SEBELUM decorateCartPermalink
+        // sehingga klik checkout yang sama sudah membawa wc_cta_* saat
+        // atribut dititipkan ke URL permalink.
+        var WC_KEY = 'app_wc_cta';
+
+        function wcStored() {
+          try {
+            var raw = localStorage.getItem(WC_KEY);
+            if (!raw) return null;
+            var o = JSON.parse(raw);
+            if (!o || !o.at || Date.now() - new Date(o.at).getTime() > WA_TTL_MS) {
+              localStorage.removeItem(WC_KEY);
+              return null;
+            }
+            return o;
+          } catch (e) { return null; }
+        }
+
+        function onWcCtaClick(e) {
+          if (!e.isTrusted) return;
+          var t = e.target;
+          var link = t && t.closest && t.closest('a.wc-cta');
+          if (!link) return;
+          if (wcStored()) return;
+          try {
+            localStorage.setItem(WC_KEY, JSON.stringify({
+              at: new Date().toISOString(),
+              page: location.pathname
+            }));
+          } catch (err) { return; }
+          pushToCart();
+        }
+        window.addEventListener('click', onWcCtaClick, true);
+        window.addEventListener('auxclick', onWcCtaClick, true);
 
         // 3c. Permalink keranjang — CTA beli di landing page — MENGGANTI isi
         // keranjang dan MEMBUANG seluruh atributnya, lalu melompat langsung ke

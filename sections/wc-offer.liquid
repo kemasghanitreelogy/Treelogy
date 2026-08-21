@@ -1,12 +1,17 @@
 {%- liquid
   assign jar_alt = 'why_capsules.offer.image_alt' | t
-  if section.settings.product
-    assign cta_url = section.settings.product.url | append: '?ref=why-capsules-cta'
-  else
-    assign cta_url = routes.all_products_collection_url
+  assign root = routes.root_url
+  if root == '/'
+    assign root = ''
   endif
+  assign co3 = root | append: '/cart/' | append: section.settings.variant_p3 | append: ':1'
+  if section.settings.gift_variant != blank
+    assign co3 = co3 | append: ',' | append: section.settings.gift_variant | append: ':1'
+  endif
+  assign co2 = root | append: '/cart/' | append: section.settings.variant_p2 | append: ':1'
+  assign co1 = root | append: '/cart/' | append: section.settings.variant_p1 | append: ':1'
 -%}
-<section class="wc-offer og-section">
+<section class="wc-offer og-section" id="wc-plans">
   <div class="og-container wc-offer__wrap">
     <img
       class="og-arrow wc-offer__arrow"
@@ -34,59 +39,100 @@
 
     <h2 class="wc-offer__title">{{ 'why_capsules.offer.title' | t }}</h2>
 
-    {%- assign plans = 'p3,p2,p1' | split: ',' -%}
-    {%- for plan in plans -%}
-      {%- liquid
-        assign base = 'why_capsules.offer.' | append: plan
-        assign name_key = base | append: '_name'
-        assign perks_key = base | append: '_perks_html'
-        assign save_key = base | append: '_save'
-        assign old_key = base | append: '_price_old'
-        assign price_key = base | append: '_price'
-        assign save_txt = save_key | t
-        assign old_txt = old_key | t
-      -%}
-      <div class="wc-plan wc-plan--{{ plan }}">
-        {%- unless save_txt == blank or save_txt contains 'why_capsules' -%}
-          <span class="wc-plan__badge">{{ save_txt }}</span>
-        {%- endunless -%}
-        <p class="wc-plan__name">{{ name_key | t }}</p>
-        <div class="wc-plan__perks">
-          {%- assign perk_lines = perks_key | t | split: '<br>' -%}
-          {%- for line in perk_lines -%}
-            <p class="wc-plan__perk">
-              <img
-                src="{{ 'why-capsules-check.svg' | asset_url }}"
-                alt=""
-                width="38"
-                height="29"
-                loading="lazy"
-                decoding="async"
-                class="wc-plan__check"
-              >
-              {{ line }}
-            </p>
-          {%- endfor -%}
-        </div>
-        <p class="wc-plan__price">
-          {%- unless old_txt == blank or old_txt contains 'why_capsules' -%}
-            <s>{{ old_txt }}</s><br>
+    <fieldset class="wc-plans" data-wc-plans>
+      <legend class="og-visually-hidden">{{ 'why_capsules.offer.choose_aria' | t }}</legend>
+
+      {%- assign plans = 'p3,p2,p1' | split: ',' -%}
+      {%- for plan in plans -%}
+        {%- liquid
+          assign base = 'why_capsules.offer.' | append: plan
+          assign name_key = base | append: '_name'
+          assign perks_key = base | append: '_perks_html'
+          assign save_key = base | append: '_save'
+          assign old_key = base | append: '_price_old'
+          assign price_key = base | append: '_price'
+          assign save_txt = save_key | t
+          assign old_txt = old_key | t
+          case plan
+            when 'p3'
+              assign plan_url = co3
+            when 'p2'
+              assign plan_url = co2
+            else
+              assign plan_url = co1
+          endcase
+        -%}
+        <label class="wc-plan wc-plan--{{ plan }}">
+          <input
+            type="radio"
+            name="wc-plan"
+            class="wc-plan__input og-visually-hidden"
+            value="{{ plan_url }}"
+            {% if plan == 'p3' %}checked{% endif %}
+          >
+          {%- unless save_txt == blank -%}
+            <span class="wc-plan__badge">{{ save_txt }}</span>
           {%- endunless -%}
-          <b>{{ price_key | t }}</b>
-        </p>
-      </div>
-    {%- endfor -%}
+          <span class="wc-plan__head">
+            <span class="wc-plan__radio" aria-hidden="true"></span>
+            <span class="wc-plan__name">{{ name_key | t }}</span>
+          </span>
+          <span class="wc-plan__perks">
+            {%- assign perk_lines = perks_key | t | split: '<br>' -%}
+            {%- for line in perk_lines -%}
+              <span class="wc-plan__perk">
+                <img
+                  src="{{ 'why-capsules-check.svg' | asset_url }}"
+                  alt=""
+                  width="38"
+                  height="29"
+                  loading="lazy"
+                  decoding="async"
+                  class="wc-plan__check"
+                >
+                {{ line }}
+              </span>
+            {%- endfor -%}
+          </span>
+          <span class="wc-plan__price">
+            {%- unless old_txt == blank -%}
+              <s>{{ old_txt }}</s><br>
+            {%- endunless -%}
+            <b>{{ price_key | t }}</b>
+          </span>
+        </label>
+      {%- endfor -%}
+    </fieldset>
 
     <div class="wc-offer__cta-row">
-      <a class="wc-cta wc-offer__cta" href="{{ cta_url }}">{{ 'why_capsules.offer.cta_cart' | t }}</a>
+      <a class="wc-cta wc-offer__cta" id="wc-checkout-link" href="{{ co3 }}">
+        {{- 'why_capsules.offer.cta_checkout' | t -}}
+      </a>
     </div>
   </div>
 </section>
+
+<script>
+  (function () {
+    var wrap = document.querySelector('[data-wc-plans]');
+    var link = document.getElementById('wc-checkout-link');
+    if (!wrap || !link) return;
+    wrap.addEventListener('change', function (e) {
+      var r = e.target;
+      if (!r || r.name !== 'wc-plan') return;
+      link.setAttribute('href', r.value);
+      link.classList.remove('wc-cta--pulse');
+      void link.offsetWidth;
+      link.classList.add('wc-cta--pulse');
+    });
+  })();
+</script>
 
 {% style %}
   .wc-offer {
     padding-top: calc(85 * var(--og-u));
     font-family: var(--og-font);
+    scroll-margin-top: calc(40 * var(--og-u));
   }
 
   .wc-offer__wrap {
@@ -111,18 +157,84 @@
     color: var(--og-ink);
   }
 
+  .wc-plans {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
   .wc-plan {
     position: relative;
+    display: block;
     width: 100%;
     min-height: calc(278 * var(--og-u));
     border-radius: calc(60 * var(--og-u));
     background: #f6f7ed;
     color: var(--og-ink);
     padding: calc(61 * var(--og-u)) calc(98 * var(--og-u)) calc(60 * var(--og-u)) calc(68 * var(--og-u));
+    cursor: pointer;
+    box-shadow: 0 0 0 calc(2 * var(--og-u)) transparent;
+    transition: box-shadow 0.22s ease, transform 0.22s ease, background-color 0.22s ease;
   }
 
   .wc-plan + .wc-plan {
     margin-top: calc(75 * var(--og-u));
+  }
+
+  .wc-plan:hover {
+    box-shadow: 0 0 0 calc(2 * var(--og-u)) rgba(42, 59, 52, 0.28);
+  }
+
+  .wc-plan:has(.wc-plan__input:checked) {
+    background: #f2f4e6;
+    box-shadow:
+      0 0 0 calc(3 * var(--og-u)) var(--og-ink),
+      0 calc(14 * var(--og-u)) calc(34 * var(--og-u)) rgba(42, 59, 52, 0.12);
+    transform: translateY(calc(-4 * var(--og-u)));
+  }
+
+  .wc-plan:has(.wc-plan__input:focus-visible) {
+    outline: 2px solid var(--og-ink);
+    outline-offset: 3px;
+  }
+
+  .wc-plan__head {
+    display: flex;
+    align-items: center;
+    gap: calc(28 * var(--og-u));
+  }
+
+  .wc-plan__radio {
+    flex: 0 0 auto;
+    width: calc(44 * var(--og-u));
+    height: calc(44 * var(--og-u));
+    border: calc(3 * var(--og-u)) solid var(--og-ink);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.2s ease;
+  }
+
+  .wc-plan__radio::after {
+    content: '';
+    width: calc(22 * var(--og-u));
+    height: calc(22 * var(--og-u));
+    border-radius: 50%;
+    background: var(--og-ink);
+    transform: scale(0);
+    transition: transform 0.26s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .wc-plan:has(.wc-plan__input:checked) .wc-plan__radio::after {
+    transform: scale(1);
+  }
+
+  .wc-plan__name {
+    font-size: calc(55 * var(--og-u));
+    font-weight: 700;
+    line-height: 1.4;
   }
 
   .wc-plan__badge {
@@ -135,20 +247,19 @@
     width: calc(408 * var(--og-u));
     height: calc(68 * var(--og-u));
     border-radius: calc(34 * var(--og-u));
-    background: var(--og-accent, #a5bb86);
+    background: #a5bb86;
     font-size: calc(40 * var(--og-u));
     font-weight: 700;
     line-height: 1.4;
+    transition: transform 0.22s ease;
   }
 
-  .wc-plan__name {
-    margin: 0;
-    font-size: calc(55 * var(--og-u));
-    font-weight: 700;
-    line-height: 1.4;
+  .wc-plan:has(.wc-plan__input:checked) .wc-plan__badge {
+    transform: translateY(calc(-2 * var(--og-u)));
   }
 
   .wc-plan__perks {
+    display: block;
     margin-top: calc(28 * var(--og-u));
   }
 
@@ -156,7 +267,6 @@
     display: flex;
     align-items: center;
     gap: calc(30 * var(--og-u));
-    margin: 0;
     font-size: calc(40 * var(--og-u));
     line-height: 1.88;
   }
@@ -205,6 +315,30 @@
   .wc-offer__cta {
     min-width: calc(400 * var(--og-u));
   }
+
+  .wc-cta--pulse {
+    animation: wc-cta-pulse 0.24s ease;
+  }
+
+  @keyframes wc-cta-pulse {
+    50% { transform: scale(1.035); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .wc-plan,
+    .wc-plan__radio::after,
+    .wc-plan__badge {
+      transition: none;
+    }
+
+    .wc-plan:has(.wc-plan__input:checked) {
+      transform: none;
+    }
+
+    .wc-cta--pulse {
+      animation: none;
+    }
+  }
 {% endstyle %}
 
 {% schema %}
@@ -217,9 +351,33 @@
       "label": "Foto produk"
     },
     {
-      "type": "product",
-      "id": "product",
-      "label": "Produk tujuan CTA"
+      "type": "header",
+      "content": "Checkout langsung per paket"
+    },
+    {
+      "type": "text",
+      "id": "variant_p3",
+      "label": "ID varian paket 3 bulan",
+      "default": "47255408378044"
+    },
+    {
+      "type": "text",
+      "id": "variant_p2",
+      "label": "ID varian paket 2 bulan",
+      "default": "44527085650108"
+    },
+    {
+      "type": "text",
+      "id": "variant_p1",
+      "label": "ID varian paket 1 bulan",
+      "default": "44527085617340"
+    },
+    {
+      "type": "text",
+      "id": "gift_variant",
+      "label": "ID varian Mystery Gift (ikut paket 3 bulan)",
+      "default": "47228130001084",
+      "info": "Dititipkan di permalink checkout supaya janji Gratis Mystery Gift tetap ditepati di jalur langsung checkout."
     }
   ],
   "presets": [

@@ -442,7 +442,9 @@
       "p1_save": "",
       "p1_price_old": "",
       "p1_price": "Rp 390.000",
-      "cta_cart": "Keranjang +"
+      "cta_cart": "Keranjang +",
+      "cta_checkout": "Checkout",
+      "choose_aria": "Pilih paketmu"
     },
     "urgency": {
       "heading": "6 hari lagi di harga sekarang",
