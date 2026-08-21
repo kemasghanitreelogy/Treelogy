@@ -1,27 +1,1088 @@
-<div class="search-input-wrapper" data-cs-capture>
+{%- comment -%}
+  Search overlay — revamp premium 20 Agu 2026.
+
+  KONTRAK app.bundle.js (kelas Search) — nama-nama ini WAJIB dipertahankan:
+    .search-input-wrapper        wadah; bundle men-toggle .active dari .button-search
+    .inner                       clickOutside terikat ke sini — semua isi harus di dalamnya
+    .search-input#search-input   keyup (debounce 300ms) memicu fetch bundle; URL-nya
+                                 ditulis ulang di sini ke /search/suggest (Predictive
+                                 Search, tanpa match deskripsi) + section search-suggest
+    [data-result]                nama kelas target hasil ("search-results")
+    .search-results              bundle menulis innerHTML: "Searching...", kartu, atau
+                                 "Error fetching results" — skrip di bawah menata ulang
+                                 teks mentah itu jadi state premium TANPA mengubah bundle
+    .button-search-close         tombol tutup; handler bundle membersihkan hasil di 500ms
+
+  KONTRAK Header.liquid (skrip inline): #search-upsell-block disembunyikan saat mengetik,
+  ditampilkan lagi saat input kosong — blok itu dihidupkan kembali di sini (dulu mati:
+  assign upsell_collection tidak pernah dirender).
+
+  Semua tambahan ter-scope .search-premium; motion = transform + opacity saja,
+  stagger per grup ≤ 0.5s, tiga kepribadian easing (expo-out masuk, accelerate keluar,
+  back-out untuk pop kecil), semuanya dimatikan di prefers-reduced-motion.
+{%- endcomment -%}
+<div class="search-input-wrapper search-premium"
+  data-cs-capture
+  data-t-searching="{{ 'search.searching' | t | escape }}"
+  data-t-result="{{ 'search.result' | t | escape }}"
+  data-t-results="{{ 'search.results' | t | escape }}"
+  data-t-viewall="{{ 'search.view_all' | t | escape }}"
+  data-t-nores="{{ 'search.no_results' | t | escape }}"
+  data-t-noreshint="{{ 'search.no_results_hint' | t | escape }}"
+  data-t-error="{{ 'search.error' | t | escape }}">
   <div class="inner">
     <div class="main-grid">
       <div class="input-container content">
-        <div class="button-colose button-search-close">
-          <svg
-            width="12"
-            height="12"
-            viewBox="0 0 12 12"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg">
+        <div class="sp-eyebrow" aria-hidden="true">
+          <span class="sp-eyebrow-rule"></span>
+          {{ 'search.eyebrow' | t }}
+        </div>
+
+        <div class="button-colose button-search-close" role="button" tabindex="0" aria-label="{{ 'search.close' | t | escape }}">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <path d="M12 1.26495L10.7351 0L6 4.73505L1.26495 0L0 1.26495L4.73505 6L0 10.7351L1.26495 12L6 7.26495L10.7351 12L12 10.7351L7.26495 6L12 1.26495Z" fill="#2B3C35" />
           </svg>
         </div>
-        <input
-          type="text"
-          id="search-input"
-          placeholder="{{ 'search.placeholder' | t }}"
-          class="search-input"
-          data-result="search-results">
+
+        <div class="sp-input-row">
+          {%- comment -%}
+            Logomark moringa — di-trace langsung dari berkas logo referensi
+            (potrace per komponen: batang+ranting dan 5 anak daun dipisah
+            secara morfologis) sehingga siluetnya identik dengan aslinya,
+            tapi tiap daun tetap simpul terpisah untuk animasi tumbuh.
+          {%- endcomment -%}
+          <svg class="sp-leaf" viewBox="91 97 759 759" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <g transform="translate(0.000000,936.000000) scale(1.000000,-1.000000)"><path class="sp-leaf-stem" d="M467 826 c-26 -4 -57 -33 -75 -70 -13 -27 -21 -63 -18 -83 4 -29 22 -70 41 -96 6 -7 21 -25 31 -36 21 -22 19 -13 19 -75 0 -53 -1 -59 -3 -59 -2 0 -19 13 -21 16 -1 1 -2 6 -3 17 -1 16 -3 24 -9 42 -11 33 -24 46 -63 65 -25 12 -24 12 -37 15 -15 5 -37 5 -46 0 -15 -8 -24 -30 -22 -55 1 -11 6 -28 8 -31 1 -1 1 -2 1 -3 0 -3 12 -26 17 -31 12 -14 37 -26 65 -30 21 -4 30 -5 40 -3 4 1 10 1 14 2 3 1 10 2 14 3 19 3 34 -4 42 -20 2 -5 2 -5 2 -69 0 -60 0 -64 -2 -66 -2 -3 -8 -3 -17 1 -10 5 -14 10 -19 22 -5 9 -8 17 -17 31 -30 52 -65 68 -143 68 -30 0 -35 -1 -46 -5 -11 -5 -23 -18 -27 -29 -3 -11 -1 -37 3 -43 0 -1 1 -3 1 -4 2 -9 14 -28 25 -41 28 -34 53 -43 105 -38 30 2 45 7 80 27 19 10 20 10 26 10 10 -1 28 -13 30 -20 0 -2 0 -36 0 -75 l1 -71 5 -1 c6 0 6 0 6 22 0 12 0 41 1 65 1 49 0 47 9 50 30 12 34 12 47 4 33 -20 64 -29 102 -29 39 0 58 7 78 30 27 31 37 50 39 76 1 18 -4 32 -14 41 -16 15 -64 19 -110 9 -3 0 -8 -2 -12 -3 -11 -2 -21 -6 -29 -10 -21 -10 -50 -46 -60 -71 -8 -22 -15 -31 -30 -36 -9 -3 -15 -3 -17 -1 -2 2 -2 3 -2 59 0 32 0 59 1 62 0 4 8 12 18 19 10 6 11 6 49 7 36 0 39 0 59 5 11 4 32 13 38 16 15 11 23 20 29 34 10 22 13 31 12 56 0 18 0 19 -2 26 -11 28 -33 37 -65 26 -33 -11 -77 -39 -89 -57 -12 -18 -17 -38 -20 -73 -2 -24 -5 -30 -18 -36 -6 -3 -10 -4 -10 -1 -2 3 -1 129 1 134 1 6 4 10 11 15 17 12 28 25 42 49 33 54 38 67 41 94 4 37 -11 83 -38 115 -24 29 -47 42 -69 38z m27 -9 c25 -12 53 -47 66 -82 7 -19 9 -31 9 -50 0 -31 -4 -43 -40 -102 -13 -22 -23 -34 -36 -44 -3 -2 -7 -6 -9 -7 -4 -4 -19 -4 -21 -1 -1 1 -7 7 -13 14 -28 30 -39 45 -52 71 -8 17 -11 23 -17 47 -3 10 -3 31 -1 42 6 23 10 34 16 47 15 31 41 58 64 67 8 3 25 2 34 -2z m-169 -258 c2 -1 6 -3 8 -3 8 -3 42 -19 53 -26 21 -12 33 -30 43 -64 3 -11 5 -20 6 -33 0 -14 0 -14 -6 -14 -3 0 -9 -1 -13 -2 -4 0 -10 -2 -13 -2 -11 -2 -38 -2 -49 1 -30 6 -51 17 -63 30 -5 5 -17 28 -17 31 0 1 0 2 -1 3 -3 3 -7 21 -7 35 0 23 10 41 27 45 4 1 26 0 32 -1z m328 -14 c12 -6 19 -14 24 -27 2 -7 2 -9 2 -22 0 -21 -2 -32 -12 -52 -6 -14 -14 -23 -29 -34 -3 -2 -19 -9 -26 -12 -25 -9 -38 -10 -74 -9 l-27 0 0 18 c1 43 11 74 28 90 20 17 56 39 79 46 13 5 28 6 35 2z m-350 -170 c20 -3 33 -6 42 -9 30 -13 50 -34 71 -77 6 -11 6 -12 6 -20 0 -8 0 -8 -4 -9 -2 -1 -8 -4 -13 -8 -38 -20 -53 -25 -86 -27 -33 -2 -48 1 -68 14 -19 13 -41 41 -49 62 0 2 -2 5 -2 7 -12 29 2 58 34 67 10 3 51 3 69 0z m402 -17 c30 -7 41 -19 41 -45 0 -25 -10 -44 -38 -76 -17 -19 -29 -25 -54 -29 -36 -4 -77 4 -109 23 -11 6 -16 9 -18 9 -2 1 -2 2 -2 9 0 21 23 59 50 83 16 14 31 19 75 26 13 3 44 2 55 0z" fill="#6D715C" fill-rule="evenodd"/></g>
+            <g transform="translate(0.000000,936.000000) scale(1.000000,-1.000000)"><path class="sp-leaflet sp-lf1" d="M230 379 c-18 -5 -32 -17 -36 -32 -4 -10 -2 -33 2 -43 0 -2 2 -5 2 -7 8 -21 30 -49 49 -62 21 -14 39 -17 81 -14 28 2 45 8 81 27 5 4 11 7 13 8 4 1 4 1 4 13 0 13 0 13 -6 24 -35 69 -68 88 -155 88 -24 0 -30 0 -35 -2z" fill="#6D715C" fill-rule="evenodd"/></g>
+            <g transform="translate(0.000000,936.000000) scale(1.000000,-1.000000)"><path class="sp-leaflet sp-lf2" d="M646 362 c-44 -7 -59 -12 -75 -26 -21 -18 -37 -41 -46 -66 -4 -9 -4 -10 -4 -21 0 -11 0 -12 2 -13 2 0 7 -3 18 -9 27 -16 58 -24 93 -24 39 0 58 7 78 30 29 33 38 51 38 80 0 31 -9 42 -41 49 -12 2 -50 3 -63 0z" fill="#6D715C" fill-rule="evenodd"/></g>
+            <g transform="translate(0.000000,936.000000) scale(1.000000,-1.000000)"><path class="sp-leaflet sp-lf3" d="M289 564 c-11 -3 -20 -12 -25 -28 -5 -13 -1 -54 5 -60 1 -1 1 -2 1 -3 0 -3 12 -26 17 -31 12 -13 33 -24 63 -30 11 -3 46 -3 57 -1 3 0 9 2 13 2 4 1 10 2 13 2 6 0 6 0 6 18 -1 12 -2 20 -3 26 -9 39 -23 61 -46 75 -11 7 -45 23 -53 26 -2 0 -6 2 -8 3 -6 1 -35 3 -40 1z" fill="#6D715C" fill-rule="evenodd"/></g>
+            <g transform="translate(0.000000,936.000000) scale(1.000000,-1.000000)"><path class="sp-leaflet sp-lf4" d="M614 547 c-23 -7 -59 -29 -79 -46 -4 -4 -12 -16 -15 -22 -9 -19 -12 -39 -13 -72 l0 -22 29 0 c36 -1 47 0 68 5 11 4 32 13 38 16 15 11 23 20 29 34 10 22 13 31 12 56 0 18 0 19 -2 26 -6 13 -12 21 -24 27 -7 4 -29 3 -43 -2z" fill="#6D715C" fill-rule="evenodd"/></g>
+            <g transform="translate(0.000000,936.000000) scale(1.000000,-1.000000)"><path class="sp-leaflet sp-lf5" d="M456 823 c-28 -11 -59 -49 -72 -86 -3 -9 -4 -13 -8 -28 -2 -11 -2 -40 1 -50 7 -24 9 -30 17 -47 13 -26 24 -41 52 -71 6 -7 12 -13 13 -14 1 -2 2 -2 14 -2 12 0 12 0 15 3 2 1 6 5 9 7 13 10 23 22 36 44 21 34 31 53 34 63 6 17 6 19 6 43 0 23 -1 34 -9 54 -13 35 -41 70 -66 82 -7 3 -8 4 -22 4 -13 0 -16 0 -20 -2z" fill="#6D715C" fill-rule="evenodd"/></g>
+          </svg>
+          <label class="sp-visually-hidden" for="search-input">{{ 'search.placeholder' | t }}</label>
+          <input
+            type="text"
+            id="search-input"
+            placeholder="{{ 'search.hint' | t | escape }}"
+            class="search-input"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="none"
+            spellcheck="false"
+            enterkeyhint="search"
+            data-result="search-results">
+          <button type="button" class="sp-clear" aria-label="{{ 'search.clear' | t | escape }}">
+            <svg width="10" height="10" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M12 1.26495L10.7351 0L6 4.73505L1.26495 0L0 1.26495L4.73505 6L0 10.7351L1.26495 12L6 7.26495L10.7351 12L12 10.7351L7.26495 6L12 1.26495Z" fill="currentColor"/>
+            </svg>
+          </button>
+        </div>
+        <div class="sp-underline" aria-hidden="true">
+          <i class="sp-underline-draw"></i>
+          <i class="sp-underline-focus"></i>
+          <i class="sp-underline-shimmer"></i>
+        </div>
+
+        <div class="sp-chips">
+          <span class="sp-chips-label">{{ 'search.popular' | t }}</span>
+          <button type="button" class="sp-chip" data-q="capsules" aria-pressed="false">Capsules</button>
+          <button type="button" class="sp-chip" data-q="powder" aria-pressed="false">Powder</button>
+          <button type="button" class="sp-chip" data-q="oil" aria-pressed="false">Oil</button>
+          <button type="button" class="sp-chip" data-q="protocol" aria-pressed="false">Protocol</button>
+          <button type="button" class="sp-chip" data-q="ritual set" aria-pressed="false">Ritual Set</button>
+        </div>
+
+        <div class="sp-status" aria-live="polite"></div>
       </div>
 
-      {% assign upsell_collection = collections['highlighted-product'] %}
+      <!--SP_UPSELL_START-->
+      {%- assign upsell_collection = collections['highlighted-product'] -%}
+      {%- if upsell_collection.products.size > 0 -%}
+        <div id="search-upsell-block" class="content sp-upsell">
+          <div class="sp-label">{{ 'search.featured' | t }}</div>
+          <div class="sp-upsell-rail">
+            {%- for p in upsell_collection.products limit: 4 -%}
+              {%- if p.vendor == 'TEST' or p.tags contains 'lp-only' -%}{%- continue -%}{%- endif -%}
+              <a class="sp-upsell-card" href="{{ p.url }}">
+                <span class="sp-upsell-thumb">
+                  {{- p.featured_image | image_url: width: 160 | image_tag: loading: 'lazy', widths: '80, 160', alt: p.title -}}
+                </span>
+                <span class="sp-upsell-meta">
+                  <span class="sp-upsell-title">{{ p.title }}</span>
+                  <span class="sp-upsell-price">
+                    {%- if p.price_varies %}{{ 'products.general.from' | t }} {% endif -%}
+                    {{- p.price_min | money -}}
+                  </span>
+                </span>
+                <svg class="sp-upsell-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                  <path d="M2 10L10 2M10 2H4M10 2V8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </a>
+            {%- endfor -%}
+          </div>
+        </div>
+      {%- endif -%}
+      <!--SP_UPSELL_END-->
+
       <div class="search-results content"></div>
     </div>
   </div>
 </div>
+
+<style>
+  /* ===== Search premium — semua ter-scope .search-premium ===== */
+  .search-input-wrapper.search-premium {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    --sp-ink: #2B3C35;
+    --sp-ink-70: rgba(43, 60, 53, 0.7);
+    --sp-ink-45: rgba(43, 60, 53, 0.45);
+    --sp-hair: rgba(43, 60, 53, 0.16);
+    --sp-cream: #F8F8F2;
+    --sp-sage: #A5BB87;
+    --sp-olive: #6D715C;
+    --sp-expo: cubic-bezier(0.16, 1, 0.3, 1);      /* masuk: decelerate panjang */
+    --sp-accel: cubic-bezier(0.7, 0, 0.84, 0);      /* keluar: accelerate (doktrin drawer) */
+    --sp-spring: cubic-bezier(0.34, 1.56, 0.64, 1); /* pop kecil: back-out */
+    background: linear-gradient(rgba(24, 34, 29, 0.38), rgba(24, 34, 29, 0.28));
+    -webkit-backdrop-filter: blur(16px) saturate(1.05);
+    backdrop-filter: blur(16px) saturate(1.05);
+  }
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .search-input-wrapper.search-premium { background: rgba(24, 34, 29, 0.55); }
+  }
+  html.sp-search-open { overflow: hidden; }
+
+  /* Panel: tirai clip-path + settle turun; scroll internal, halaman tidak ikut */
+  .search-input-wrapper.search-premium .inner {
+    padding: 44px 0 40px;
+    max-height: calc(100dvh - 95px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    border-bottom: 1px solid var(--sp-hair);
+    box-shadow: 0 44px 90px -48px rgba(24, 34, 29, 0.5);
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(-10px);
+    transition: clip-path 0.34s var(--sp-accel) 0.04s, transform 0.34s var(--sp-accel) 0.04s;
+  }
+  .search-input-wrapper.search-premium.active .inner {
+    clip-path: inset(0 0 0% 0);
+    transform: translateY(0);
+    transition: clip-path 0.52s var(--cb), transform 0.52s var(--cb);
+  }
+
+  /* ===== Beat masuk: anak-anak panel (transition + delay bertingkat) ===== */
+  .search-input-wrapper.search-premium .sp-eyebrow,
+  .search-input-wrapper.search-premium .sp-input-row,
+  .search-input-wrapper.search-premium .sp-chips,
+  .search-input-wrapper.search-premium .sp-status,
+  .search-input-wrapper.search-premium .sp-upsell,
+  .search-input-wrapper.search-premium .button-search-close {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.24s var(--sp-accel), transform 0.24s var(--sp-accel);
+  }
+  .search-input-wrapper.search-premium.active .sp-eyebrow,
+  .search-input-wrapper.search-premium.active .sp-input-row,
+  .search-input-wrapper.search-premium.active .sp-chips,
+  .search-input-wrapper.search-premium.active .sp-status,
+  .search-input-wrapper.search-premium.active .sp-upsell,
+  .search-input-wrapper.search-premium.active .button-search-close {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.5s var(--sp-expo), transform 0.5s var(--sp-expo);
+  }
+  .search-input-wrapper.search-premium.active .sp-eyebrow { transition-delay: 0.1s; }
+  .search-input-wrapper.search-premium.active .sp-input-row { transition-delay: 0.16s; }
+  .search-input-wrapper.search-premium.active .sp-chips { transition-delay: 0.24s; }
+  .search-input-wrapper.search-premium.active .sp-status { transition-delay: 0.28s; }
+  .search-input-wrapper.search-premium.active .sp-upsell { transition-delay: 0.3s; }
+  .search-input-wrapper.search-premium.active .button-search-close { transition-delay: 0.2s; }
+
+  /* Chip individual: menyusul berurutan di dalam beat chips */
+  .search-input-wrapper.search-premium .sp-chip {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.2s var(--sp-accel), transform 0.2s var(--sp-accel),
+                background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  }
+  .search-input-wrapper.search-premium.active .sp-chip {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.42s var(--sp-expo), transform 0.42s var(--sp-expo),
+                background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  }
+  .search-input-wrapper.search-premium.active .sp-chip:nth-of-type(1) { transition-delay: 0.26s; }
+  .search-input-wrapper.search-premium.active .sp-chip:nth-of-type(2) { transition-delay: 0.32s; }
+  .search-input-wrapper.search-premium.active .sp-chip:nth-of-type(3) { transition-delay: 0.38s; }
+  .search-input-wrapper.search-premium.active .sp-chip:nth-of-type(4) { transition-delay: 0.44s; }
+  .search-input-wrapper.search-premium.active .sp-chip:nth-of-type(5) { transition-delay: 0.5s; }
+
+  /* Kartu rail unggulan menyusul */
+  .search-input-wrapper.search-premium .sp-upsell-card {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.2s var(--sp-accel), transform 0.2s var(--sp-accel);
+  }
+  .search-input-wrapper.search-premium.active .sp-upsell-card {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.46s var(--sp-expo), transform 0.46s var(--sp-expo);
+  }
+  .search-input-wrapper.search-premium.active .sp-upsell-card:nth-of-type(1) { transition-delay: 0.34s; }
+  .search-input-wrapper.search-premium.active .sp-upsell-card:nth-of-type(2) { transition-delay: 0.41s; }
+  .search-input-wrapper.search-premium.active .sp-upsell-card:nth-of-type(3) { transition-delay: 0.48s; }
+  .search-input-wrapper.search-premium.active .sp-upsell-card:nth-of-type(4) { transition-delay: 0.55s; }
+
+  /* ===== Eyebrow ===== */
+  .search-input-wrapper.search-premium .sp-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--sp-ink-70);
+    margin-bottom: 22px;
+  }
+  .search-input-wrapper.search-premium .sp-eyebrow-rule {
+    width: 28px;
+    height: 1px;
+    background: var(--sp-sage);
+    transform-origin: left center;
+    transform: scaleX(0);
+    transition: transform 0.2s var(--sp-accel);
+  }
+  .search-input-wrapper.search-premium.active .sp-eyebrow-rule {
+    transform: scaleX(1);
+    transition: transform 0.6s var(--sp-expo) 0.18s;
+  }
+
+  /* ===== Baris input ===== */
+  .search-input-wrapper.search-premium .sp-input-row {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .search-input-wrapper.search-premium .sp-leaf {
+    width: 30px;
+    height: 30px;
+    flex: 0 0 30px;
+    transform: rotate(0deg);
+    transition: transform 0.5s var(--sp-expo);
+  }
+  .search-input-wrapper.search-premium .sp-leaf-stem {
+    transform-box: fill-box;
+    /* ruang lokal potrace terbalik Y — origin 0% = pangkal visual */
+    transform-origin: 50% 0%;
+    opacity: 0;
+    transform: scaleY(0.15);
+    transition: opacity 0.18s var(--sp-accel), transform 0.18s var(--sp-accel), fill 0.3s ease;
+  }
+  .search-input-wrapper.search-premium.active .sp-leaf-stem {
+    opacity: 1;
+    transform: scaleY(1);
+    transition: opacity 0.45s var(--sp-expo) 0.16s, transform 0.6s var(--sp-expo) 0.16s, fill 0.3s ease;
+  }
+  /* Anak daun tumbuh dari titik tempelnya. Kelas animasi ada di PATH (tanpa
+     atribut transform sendiri — transform potrace ada di <g> induk), jadi
+     CSS transform tidak menimpa apa pun. */
+  .search-input-wrapper.search-premium .sp-leaflet {
+    transform-box: fill-box;
+    opacity: 0;
+    transform: scale(0.25);
+    transition: opacity 0.18s var(--sp-accel), transform 0.18s var(--sp-accel), fill 0.3s ease;
+  }
+  .search-input-wrapper.search-premium .sp-lf1 { transform-origin: 88% 82%; }
+  .search-input-wrapper.search-premium .sp-lf2 { transform-origin: 12% 82%; }
+  .search-input-wrapper.search-premium .sp-lf3 { transform-origin: 88% 20%; }
+  .search-input-wrapper.search-premium .sp-lf4 { transform-origin: 12% 20%; }
+  .search-input-wrapper.search-premium .sp-lf5 { transform-origin: 50% 6%; }
+  .search-input-wrapper.search-premium.active .sp-leaflet {
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 0.4s var(--sp-expo), transform 0.42s var(--sp-spring), fill 0.3s ease;
+  }
+  .search-input-wrapper.search-premium.active .sp-lf1 { transition-delay: 0.3s; }
+  .search-input-wrapper.search-premium.active .sp-lf2 { transition-delay: 0.35s; }
+  .search-input-wrapper.search-premium.active .sp-lf3 { transition-delay: 0.4s; }
+  .search-input-wrapper.search-premium.active .sp-lf4 { transition-delay: 0.45s; }
+  .search-input-wrapper.search-premium.active .sp-lf5 { transition-delay: 0.52s; }
+  .search-input-wrapper.search-premium.is-focus .sp-leaf { transform: rotate(-9deg); }
+  .search-input-wrapper.search-premium.is-focus .sp-leaflet,
+  .search-input-wrapper.search-premium.is-focus .sp-leaf-stem { fill: var(--sp-ink); }
+
+  .search-input-wrapper.search-premium .inner .content input.search-input {
+    border: 0;
+    border-bottom: 0;
+    height: auto;
+    padding: 6px 0 14px;
+    font-size: clamp(26px, 3.2vw, 38px);
+    font-weight: 300;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--sp-ink);
+    caret-color: var(--sp-ink);
+    background: transparent;
+    flex: 1 1 auto;
+    min-width: 0;
+    outline: none;
+  }
+  .search-input-wrapper.search-premium .inner .content input.search-input::placeholder {
+    color: var(--sp-ink-45);
+    transition: opacity 0.3s ease;
+  }
+  .search-input-wrapper.search-premium.is-focus .inner .content input.search-input::placeholder { opacity: 0.55; }
+  .search-input-wrapper.search-premium .inner .content input.search-input::selection {
+    background: rgba(165, 187, 135, 0.45);
+  }
+
+  /* Tombol clear: pop back-out saat ada isi */
+  .search-input-wrapper.search-premium .sp-clear {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--sp-ink-45);
+    cursor: pointer;
+    padding: 0;
+    margin-right: 4px;
+    opacity: 0;
+    transform: scale(0.55);
+    pointer-events: none;
+    transition: opacity 0.18s ease, transform 0.18s ease,
+                background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  }
+  .search-input-wrapper.search-premium.has-value .sp-clear {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+    transition: opacity 0.26s var(--sp-spring), transform 0.26s var(--sp-spring),
+                background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  }
+  .search-input-wrapper.search-premium .sp-clear:hover {
+    background: rgba(43, 60, 53, 0.08);
+    color: var(--sp-ink);
+  }
+
+  /* ===== Garis bawah: draw masuk, tebal saat fokus, shimmer saat mencari ===== */
+  .search-input-wrapper.search-premium .sp-underline {
+    position: relative;
+    height: 2px;
+    overflow: hidden;
+    border-radius: 2px;
+  }
+  .search-input-wrapper.search-premium .sp-underline i {
+    position: absolute;
+    inset: 0;
+    display: block;
+  }
+  .search-input-wrapper.search-premium .sp-underline-draw {
+    background: var(--sp-hair);
+    transform-origin: left center;
+    transform: scaleX(0);
+    transition: transform 0.2s var(--sp-accel);
+  }
+  .search-input-wrapper.search-premium.active .sp-underline-draw {
+    transform: scaleX(1);
+    transition: transform 0.64s var(--sp-expo) 0.22s;
+  }
+  .search-input-wrapper.search-premium .sp-underline-focus {
+    background: var(--sp-ink);
+    transform-origin: left center;
+    transform: scaleX(0);
+    transition: transform 0.34s var(--sp-expo);
+  }
+  .search-input-wrapper.search-premium.is-focus .sp-underline-focus { transform: scaleX(1); }
+  .search-input-wrapper.search-premium .sp-underline-shimmer {
+    opacity: 0;
+    background: linear-gradient(90deg, transparent 0%, var(--sp-sage) 45%, #d5e3c2 50%, var(--sp-sage) 55%, transparent 100%);
+    background-size: 45% 100%;
+    background-repeat: no-repeat;
+    background-position-x: -50%;
+    transition: opacity 0.25s ease;
+  }
+  .search-input-wrapper.search-premium.is-searching .sp-underline-shimmer {
+    opacity: 1;
+    animation: sp-shimmer 1.15s linear infinite;
+  }
+  @keyframes sp-shimmer {
+    from { background-position-x: -50%; }
+    to   { background-position-x: 150%; }
+  }
+
+  /* ===== Chips ===== */
+  .search-input-wrapper.search-premium .sp-chips {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 22px;
+  }
+  .search-input-wrapper.search-premium .sp-chips-label {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--sp-ink-45);
+    margin-right: 6px;
+  }
+  .search-input-wrapper.search-premium .sp-chip {
+    font-family: var(--font-base);
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--sp-ink);
+    background: transparent;
+    border: 1px solid var(--sp-hair);
+    border-radius: 999px;
+    padding: 9px 18px;
+    min-height: 38px;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .search-input-wrapper.search-premium .sp-chip:hover {
+    background: rgba(43, 60, 53, 0.08);
+    border-color: var(--sp-ink);
+  }
+  .search-input-wrapper.search-premium .sp-chip.sp-chip--on,
+  .search-input-wrapper.search-premium .sp-chip.sp-chip--on:hover {
+    background: var(--sp-ink);
+    border-color: var(--sp-ink);
+    color: var(--sp-cream);
+  }
+
+  /* ===== Status ===== */
+  .search-input-wrapper.search-premium .sp-status {
+    min-height: 20px;
+    margin-top: 18px;
+    font-size: 13px;
+    color: var(--sp-ink-70);
+  }
+  .search-input-wrapper.search-premium .sp-status:empty { margin-top: 0; min-height: 0; }
+  .search-input-wrapper.search-premium .sp-status q { quotes: "\201C" "\201D"; font-weight: 500; color: var(--sp-ink); }
+  .search-input-wrapper.search-premium .sp-status .sp-viewall {
+    color: var(--sp-ink);
+    font-weight: 500;
+    text-decoration: none;
+    border-bottom: 1px solid var(--sp-sage);
+    margin-left: 10px;
+    padding-bottom: 1px;
+    transition: border-color 0.25s ease, color 0.25s ease;
+  }
+  .search-input-wrapper.search-premium .sp-status .sp-viewall:hover {
+    color: #1d2a24;
+    border-color: var(--sp-ink);
+  }
+
+  /* ===== Rail unggulan ===== */
+  .search-input-wrapper.search-premium .sp-upsell { margin-top: 30px; }
+  .search-input-wrapper.search-premium .sp-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--sp-ink-45);
+    margin-bottom: 14px;
+  }
+  .search-input-wrapper.search-premium .sp-upsell-rail {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+  }
+  .search-input-wrapper.search-premium .sp-upsell-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 14px;
+    border: 1px solid var(--sp-hair);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.45);
+    text-decoration: none;
+    color: var(--sp-ink);
+    min-height: 44px;
+  }
+  .search-input-wrapper.search-premium.active .sp-upsell-card {
+    transition: opacity 0.46s var(--sp-expo), transform 0.46s var(--sp-expo),
+                border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  }
+  .search-input-wrapper.search-premium.active .sp-upsell-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(43, 60, 53, 0.34);
+    background: rgba(255, 255, 255, 0.75);
+    box-shadow: 0 18px 34px -22px rgba(24, 34, 29, 0.45);
+    transition-delay: 0s;
+  }
+  .search-input-wrapper.search-premium .sp-upsell-thumb {
+    width: 54px;
+    height: 54px;
+    flex: 0 0 54px;
+    border-radius: 9px;
+    overflow: hidden;
+    background: #edeee6;
+  }
+  .search-input-wrapper.search-premium .sp-upsell-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transform: scale(1);
+    transition: transform 0.55s var(--sp-expo);
+  }
+  .search-input-wrapper.search-premium .sp-upsell-card:hover .sp-upsell-thumb img { transform: scale(1.07); }
+  .search-input-wrapper.search-premium .sp-upsell-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+  .search-input-wrapper.search-premium .sp-upsell-title {
+    font-size: 13.5px;
+    font-weight: 500;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .search-input-wrapper.search-premium .sp-upsell-price {
+    font-size: 12.5px;
+    color: var(--sp-ink-70);
+  }
+  .search-input-wrapper.search-premium .sp-upsell-arrow {
+    margin-left: auto;
+    flex: 0 0 12px;
+    color: var(--sp-ink-45);
+    opacity: 0;
+    transform: translate(-4px, 4px);
+    transition: opacity 0.3s ease, transform 0.3s var(--sp-expo);
+  }
+  .search-input-wrapper.search-premium .sp-upsell-card:hover .sp-upsell-arrow {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+
+  /* ===== Hasil: entrance kartu + hover premium (markup kartu milik bundle) ===== */
+  .search-input-wrapper.search-premium .inner .content.search-results { margin-top: 30px; }
+  .search-input-wrapper.search-premium .inner .content.search-results:empty { margin-top: 0; }
+  .search-input-wrapper.search-premium .search-results > * {
+    animation: sp-card-in 0.56s var(--sp-expo) both;
+  }
+  .search-input-wrapper.search-premium .search-results > *:nth-child(2) { animation-delay: 0.07s; }
+  .search-input-wrapper.search-premium .search-results > *:nth-child(3) { animation-delay: 0.14s; }
+  .search-input-wrapper.search-premium .search-results > *:nth-child(4) { animation-delay: 0.21s; }
+  .search-input-wrapper.search-premium .search-results > *:nth-child(n+5) { animation-delay: 0.28s; }
+  @keyframes sp-card-in {
+    from { opacity: 0; transform: translateY(18px) scale(0.985); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .search-input-wrapper.search-premium .search-results .card {
+    transition: transform 0.45s var(--sp-expo);
+  }
+  .search-input-wrapper.search-premium .search-results .card:hover { transform: translateY(-4px); }
+  .search-input-wrapper.search-premium .search-results .card figure {
+    overflow: hidden;
+    border-radius: 12px;
+  }
+  .search-input-wrapper.search-premium .search-results .card figure img {
+    transition: transform 0.6s var(--sp-expo);
+  }
+  .search-input-wrapper.search-premium .search-results .card:hover figure img { transform: scale(1.05); }
+
+  /* Skeleton saat menunggu (menggantikan teks "Searching...") */
+  .search-input-wrapper.search-premium .sp-skel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .search-input-wrapper.search-premium .sp-skel > span {
+    display: block;
+    border-radius: 10px;
+    background: linear-gradient(100deg, #e7e8df 40%, #f1f2ea 50%, #e7e8df 60%);
+    background-size: 200% 100%;
+    animation: sp-breathe 1.3s ease-in-out infinite;
+  }
+  .search-input-wrapper.search-premium .sp-skel-thumb { aspect-ratio: 1 / 1; width: 100%; }
+  .search-input-wrapper.search-premium .sp-skel-line { height: 13px; }
+  .search-input-wrapper.search-premium .sp-skel-line.w1 { width: 72%; }
+  .search-input-wrapper.search-premium .sp-skel-line.w2 { width: 45%; }
+  @keyframes sp-breathe {
+    from { background-position-x: 130%; }
+    to   { background-position-x: -30%; }
+  }
+
+  /* State kosong / error (menggantikan teks mentah bundle) */
+  .search-input-wrapper.search-premium .sp-state {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 26px 0 6px;
+    color: var(--sp-ink);
+  }
+  .search-input-wrapper.search-premium .sp-state-title { font-size: 17px; font-weight: 500; }
+  .search-input-wrapper.search-premium .sp-state-title q { quotes: "\201C" "\201D"; }
+  .search-input-wrapper.search-premium .sp-state-hint { font-size: 13.5px; color: var(--sp-ink-70); max-width: 52ch; }
+  .search-input-wrapper.search-premium .sp-state-rule {
+    width: 34px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--sp-sage);
+    margin-bottom: 4px;
+  }
+
+  /* Tombol tutup: sasaran 44px, lingkaran hairline */
+  .search-input-wrapper.search-premium .inner .content .button-colose {
+    top: 0;
+    right: 48px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--sp-hair);
+    border-radius: 50%;
+    background: transparent;
+    transition-property: opacity, transform, background-color, border-color;
+  }
+  .search-input-wrapper.search-premium .inner .content .button-colose:hover {
+    background: var(--sp-ink);
+    border-color: var(--sp-ink);
+  }
+  .search-input-wrapper.search-premium .inner .content .button-colose:hover svg path { fill: var(--sp-cream); }
+  .search-input-wrapper.search-premium .inner .content .button-colose svg path { transition: fill 0.25s ease; }
+
+  /* Fokus keyboard terlihat */
+  .search-input-wrapper.search-premium .sp-chip:focus-visible,
+  .search-input-wrapper.search-premium .sp-clear:focus-visible,
+  .search-input-wrapper.search-premium .button-colose:focus-visible,
+  .search-input-wrapper.search-premium .sp-upsell-card:focus-visible,
+  .search-input-wrapper.search-premium .sp-status .sp-viewall:focus-visible {
+    outline: 2px solid var(--sp-sage);
+    outline-offset: 3px;
+  }
+
+  .sp-visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Ikon header meredup halus saat overlay terbuka */
+  .button-search[aria-expanded="true"] svg { opacity: 0.45; transition: opacity 0.3s ease; }
+  .button-search svg { transition: opacity 0.3s ease; }
+
+  /* ===== Mobile ===== */
+  @media only screen and (max-width: 900px) {
+    .search-input-wrapper.search-premium .inner { padding: 26px 0 28px; }
+    .search-input-wrapper.search-premium .inner .content { padding: 0 20px; }
+    .search-input-wrapper.search-premium .inner .content .button-colose { right: 14px; width: 40px; height: 40px; }
+    .search-input-wrapper.search-premium .sp-eyebrow { margin-bottom: 14px; padding-right: 52px; }
+    .search-input-wrapper.search-premium .sp-input-row { gap: 12px; }
+    .search-input-wrapper.search-premium .sp-leaf { width: 24px; height: 24px; flex-basis: 24px; }
+    .search-input-wrapper.search-premium .inner .content input.search-input {
+      font-size: 21px;
+      padding: 4px 0 10px;
+    }
+    .search-input-wrapper.search-premium .sp-chips {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+      margin: 18px -20px 0;
+      padding: 0 20px 2px;
+    }
+    .search-input-wrapper.search-premium .sp-chips::-webkit-scrollbar { display: none; }
+    .search-input-wrapper.search-premium .sp-chip { flex: 0 0 auto; min-height: 44px; padding: 12px 18px; }
+    .search-input-wrapper.search-premium .sp-clear { width: 40px; height: 40px; flex-basis: 40px; }
+    .search-input-wrapper.search-premium .sp-chips-label { flex: 0 0 auto; }
+    .search-input-wrapper.search-premium .sp-upsell { margin-top: 22px; }
+    .search-input-wrapper.search-premium .sp-upsell-rail {
+      display: flex;
+      overflow-x: auto;
+      scrollbar-width: none;
+      margin: 0 -20px;
+      padding: 0 20px 4px;
+    }
+    .search-input-wrapper.search-premium .sp-upsell-rail::-webkit-scrollbar { display: none; }
+    .search-input-wrapper.search-premium .sp-upsell-card { flex: 0 0 78%; max-width: 300px; }
+    .search-input-wrapper.search-premium .inner .content.search-results { margin-top: 22px; }
+    .search-input-wrapper.search-premium .sp-skel {
+      flex-direction: row;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .search-input-wrapper.search-premium .sp-skel-thumb { width: 76px; height: 76px; flex: 0 0 76px; aspect-ratio: auto; }
+    .search-input-wrapper.search-premium .sp-skel-line { flex: 1 1 auto; }
+    .search-input-wrapper.search-premium .sp-skel-line.w2 { flex: 0 0 34%; }
+
+    /* ===== Daftar hasil mobile: skala editorial rapat =====
+       Kartu hasil dirender ProductCard dgn tipografi desktop tema; di lebar
+       ≤900px semua diturunkan satu tingkat dan baris diberi ritme hairline —
+       thumbnail 72px, judul 15px, harga 14px, rating 11.5px. */
+    .search-input-wrapper.search-premium .inner .content.search-results { margin-top: 12px; }
+    .search-input-wrapper.search-premium .search-results .card {
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 0;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--sp-hair);
+    }
+    .search-input-wrapper.search-premium .search-results .card:last-child { border-bottom: 0; }
+    /* Selector disamakan bentuknya dgn theme.css (.inner .content.search-results)
+       supaya menang spesifisitas — tanpa !important. */
+    .search-input-wrapper.search-premium .inner .content.search-results .card figure {
+      height: 76px;
+      flex: 0 0 76px;
+      width: 76px;
+      border-radius: 10px;
+    }
+    .search-input-wrapper.search-premium .search-results .card .card-detail { min-width: 0; }
+    .search-input-wrapper.search-premium .search-results .card .card-detail .top {
+      font-size: 11.5px;
+      line-height: 1.3;
+      color: var(--sp-ink-70);
+      margin-bottom: 2px;
+    }
+    .search-input-wrapper.search-premium .search-results .card .jdgm-star { font-size: 11px; }
+    .search-input-wrapper.search-premium .search-results .card .jdgm-star::before { font-size: 11px; }
+    .search-input-wrapper.search-premium .search-results .card .jdgm-prev-badge__text { font-size: 11.5px; }
+    .search-input-wrapper.search-premium .search-results .card h2.sub-head-alt {
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 1.35;
+      letter-spacing: -0.005em;
+      margin: 2px 0;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .search-input-wrapper.search-premium .search-results .card .sort-desc { display: none; }
+    .search-input-wrapper.search-premium .search-results .card .price-wrapper {
+      font-size: 12px;
+      color: var(--sp-ink-70);
+      display: flex;
+      align-items: baseline;
+      gap: 5px;
+      margin-top: 2px;
+    }
+    .search-input-wrapper.search-premium .search-results .card .price-wrapper .sub-head-alt {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--sp-ink);
+      margin: 0;
+    }
+    .search-input-wrapper.search-premium .search-results .card .compare-at-price { font-size: 11.5px; }
+    .search-input-wrapper.search-premium .sp-status { font-size: 12.5px; margin-top: 14px; }
+    .search-input-wrapper.search-premium .sp-status .sp-viewall { margin-left: 8px; }
+    .search-input-wrapper.search-premium .sp-state { padding: 18px 0 4px; }
+    .search-input-wrapper.search-premium .sp-state-title { font-size: 15px; }
+    .search-input-wrapper.search-premium .sp-state-hint { font-size: 12.5px; }
+  }
+
+  /* ===== Reduced motion: semua langsung pada posisinya ===== */
+  @media (prefers-reduced-motion: reduce) {
+    .search-input-wrapper.search-premium,
+    .search-input-wrapper.search-premium .inner,
+    .search-input-wrapper.search-premium .inner *,
+    .search-input-wrapper.search-premium .search-results > * {
+      transition-duration: 0.01ms !important;
+      transition-delay: 0s !important;
+      animation-duration: 0.01ms !important;
+      animation-delay: 0s !important;
+      animation-iteration-count: 1 !important;
+    }
+    .search-input-wrapper.search-premium .inner { clip-path: none; transform: none; }
+  }
+</style>
+
+<script>
+  /* Search premium — pendamping kelas Search milik app.bundle.js.
+     Tidak menggantikan satu pun perilaku bundle; hanya menambah state di
+     sekelilingnya. Idempoten, semua elemen di-guard, tanpa global bocor. */
+  (function () {
+    var wrap = document.querySelector('.search-input-wrapper.search-premium');
+    if (!wrap || wrap.dataset.spInit) return;
+    wrap.dataset.spInit = '1';
+
+    var input = wrap.querySelector('#search-input');
+    var results = wrap.querySelector('.search-results');
+    var status = wrap.querySelector('.sp-status');
+    var clearBtn = wrap.querySelector('.sp-clear');
+    var closeBtn = wrap.querySelector('.button-search-close');
+    var upsell = wrap.querySelector('#search-upsell-block');
+    if (!input || !results) return;
+
+    var T = {
+      searching: wrap.getAttribute('data-t-searching') || 'Searching…',
+      result: wrap.getAttribute('data-t-result') || 'result for',
+      results: wrap.getAttribute('data-t-results') || 'results for',
+      viewall: wrap.getAttribute('data-t-viewall') || 'See all results',
+      nores: wrap.getAttribute('data-t-nores') || 'Nothing found for',
+      noreshint: wrap.getAttribute('data-t-noreshint') || '',
+      error: wrap.getAttribute('data-t-error') || 'Search failed — please try again.'
+    };
+    var root = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
+
+    /* ---- alihkan fetch bundle ke Predictive Search ----
+       Akar bug "powder memunculkan Capsules": /search?view=card adalah
+       full-text search yang ikut mencocokkan DESKRIPSI produk. Predictive
+       Search API mencocokkan field default title, product_type,
+       variants.title, vendor — tanpa body — jadi URL milik bundle ditulis
+       ulang ke /search/suggest + section SearchSuggest, yang membalas dengan
+       wrapper #search-results yang sama sehingga parseData bundle tidak
+       melihat perbedaan apa pun. limit 8 (bukan 4) memberi ruang untuk
+       baris lp-only yang dibuang section sebelum render. */
+    if (!window.__spSuggestHook) {
+      window.__spSuggestHook = true;
+      var prevFetch = window.fetch;
+      window.fetch = function (u, o) {
+        try {
+          if (typeof u === 'string' && u.indexOf('view=card') !== -1) {
+            var qi = u.indexOf('search?q=');
+            if (qi !== -1) {
+              var q = u.slice(qi + 9).split('&')[0];
+              u = root + 'search/suggest?q=' + q +
+                '&resources[type]=product&resources[limit]=8' +
+                '&resources[options][unavailable_products]=last' +
+                '&section_id=search-suggest';
+            }
+          }
+        } catch (e) { /* biarkan URL asli */ }
+        return prevFetch.call(this, u, o);
+      };
+    }
+    var esc = function (s) {
+      return String(s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    };
+
+    /* ---- state kelas kecil ---- */
+    var setHasValue = function () {
+      wrap.classList.toggle('has-value', input.value.trim().length > 0);
+      syncChips();
+    };
+    /* Chip "terpilih" mengikuti ISI QUERY, bukan hover/fokus — tanpa ini chip
+       yang kebetulan di-hover tampak terpilih padahal query-nya lain. */
+    var chipEls = wrap.querySelectorAll('.sp-chip');
+    function syncChips() {
+      var q = input.value.trim().toLowerCase();
+      chipEls.forEach(function (c) {
+        var on = !!q && (c.getAttribute('data-q') || '').toLowerCase() === q;
+        c.classList.toggle('sp-chip--on', on);
+        c.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+    }
+    input.addEventListener('focus', function () { wrap.classList.add('is-focus'); });
+    input.addEventListener('blur', function () { wrap.classList.remove('is-focus'); });
+    input.addEventListener('input', function () {
+      setHasValue();
+      if (!input.value.trim()) {
+        wrap.classList.remove('is-searching');
+        if (status) status.textContent = '';
+      }
+    });
+
+    /* ---- interpretasi isi .search-results (ditulis bundle via innerHTML) ---- */
+    var skelTTL = null;
+    var clearTTLTimer = function () { if (skelTTL) { clearTimeout(skelTTL); skelTTL = null; } };
+    var showSkeletons = function () {
+      var one = '<div class="sp-skel" aria-hidden="true"><span class="sp-skel-thumb"></span><span class="sp-skel-line w1"></span><span class="sp-skel-line w2"></span></div>';
+      results.innerHTML = one + one + one + one;
+    };
+    var showState = function (title, hint) {
+      results.innerHTML =
+        '<div class="sp-state" role="status"><span class="sp-state-rule"></span>' +
+        '<span class="sp-state-title">' + title + '</span>' +
+        (hint ? '<span class="sp-state-hint">' + hint + '</span>' : '') +
+        '</div>';
+    };
+    var showError = function () {
+      wrap.classList.remove('is-searching');
+      clearTTLTimer();
+      if (status) status.textContent = '';
+      showState(esc(T.error), '');
+    };
+
+    var interpret = function () {
+      /* Tulisan milik sendiri: jangan ditafsirkan ulang (hindari loop observer). */
+      if (results.querySelector('.sp-skel, .sp-state')) return;
+
+      var text = (results.textContent || '').trim();
+      var cards = results.querySelectorAll('.card');
+
+      if (!results.firstChild) {
+        /* Bundle mengosongkan target saat respons tak memuat #search-results
+           (mis. section 404) ATAU saat pembersihan tutup — dua-duanya terminal,
+           status "Searching..." tidak boleh tertinggal menggantung. */
+        wrap.classList.remove('is-searching');
+        clearTTLTimer();
+        if (status) status.textContent = '';
+        return;
+      }
+      if (cards.length > 0) {
+        wrap.classList.remove('is-searching');
+        clearTTLTimer();
+        var q = input.value.trim();
+        if (status) {
+          status.innerHTML =
+            cards.length + ' ' + esc(cards.length === 1 ? T.result : T.results) +
+            ' <q>' + esc(q) + '</q>' +
+            '<a class="sp-viewall" href="' + esc(root) + 'search?q=' + encodeURIComponent(q) + '">' +
+            esc(T.viewall) + ' →</a>';
+        }
+        return;
+      }
+      if (text === 'Searching...') {
+        wrap.classList.add('is-searching');
+        if (status) status.textContent = T.searching;
+        showSkeletons();
+        clearTTLTimer();
+        skelTTL = setTimeout(showError, 8000); /* jaring pengaman: fetch menggantung */
+        return;
+      }
+      if (text === 'Error fetching results') {
+        showError();
+        return;
+      }
+      if (text.indexOf('No results!') !== -1) {
+        wrap.classList.remove('is-searching');
+        clearTTLTimer();
+        if (status) status.textContent = '';
+        showState(
+          esc(T.nores) + ' <q>' + esc(input.value.trim()) + '</q>',
+          esc(T.noreshint)
+        );
+        return;
+      }
+    };
+    new MutationObserver(interpret).observe(results, { childList: true });
+
+    /* ---- buka / tutup (kelas .active milik bundle; kami hanya bereaksi) ---- */
+    var wasActive = wrap.classList.contains('active');
+    var cleanupTimer = null;
+    var onOpen = function () {
+      if (cleanupTimer) { clearTimeout(cleanupTimer); cleanupTimer = null; }
+      document.documentElement.classList.add('sp-search-open');
+      setTimeout(function () {
+        if (wrap.classList.contains('active')) {
+          try { input.focus({ preventScroll: true }); } catch (e) { input.focus(); }
+        }
+      }, 340);
+    };
+    var onClose = function () {
+      document.documentElement.classList.remove('sp-search-open');
+      wrap.classList.remove('is-searching');
+      clearTTLTimer();
+      try { input.blur(); } catch (e) { /* abaikan */ }
+      /* Selaras dengan pembersihan hasil milik bundle di 500ms: kosongkan input
+         dan pulihkan rail supaya pembukaan berikutnya mulai dari keadaan murni
+         (sebelumnya teks lama menempel — state basi terasa seperti bug). */
+      cleanupTimer = setTimeout(function () {
+        cleanupTimer = null;
+        if (wrap.classList.contains('active')) return;
+        input.value = '';
+        setHasValue();
+        if (status) status.textContent = '';
+        if (upsell) upsell.style.display = '';
+      }, 520);
+    };
+    var syncButtons = function (open) {
+      document.querySelectorAll('.button-search').forEach(function (b) {
+        b.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    };
+    var lastCloseAt = 0;
+    new MutationObserver(function () {
+      var active = wrap.classList.contains('active');
+      if (active === wasActive) return;
+      wasActive = active;
+      if (!active) lastCloseAt = Date.now();
+      syncButtons(active);
+      if (active) onOpen(); else onClose();
+    }).observe(wrap, { attributes: true, attributeFilter: ['class'] });
+    syncButtons(wasActive);
+
+    /* Jendela basi bundle: setelah tutup, flag internal inputOpened miliknya
+       baru direset 500ms kemudian, jadi klik BUKA di jendela itu langsung
+       ditutup lagi oleh clickOutside-nya (tombol header memang di luar .inner)
+       — di produksi terasa sebagai "harus klik dua kali". Klik buka di jendela
+       itu dihentikan propagasinya ke document supaya clickOutside tidak
+       melihatnya; handler toggle bundle di elemen yang sama tetap jalan.
+       Di luar jendela 600ms ini propagasi normal — perilaku overlay lain
+       (mis. tutup-di-luar milik cart) tidak berubah. */
+    document.querySelectorAll('.button-search').forEach(function (b) {
+      b.addEventListener('click', function (e) {
+        if (!wrap.classList.contains('active') && (Date.now() - lastCloseAt) < 600) {
+          e.stopPropagation();
+        }
+      });
+    });
+
+    /* ---- chip: isi nilai lalu pinjam pipeline bundle (keyup debounce) ---- */
+    wrap.querySelectorAll('.sp-chip').forEach(function (chip) {
+      chip.addEventListener('click', function () {
+        input.value = chip.getAttribute('data-q') || chip.textContent.trim();
+        setHasValue();
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('keyup', { bubbles: true }));
+        try { input.focus({ preventScroll: true }); } catch (e) { input.focus(); }
+      });
+    });
+
+    /* ---- clear ---- */
+    if (clearBtn) {
+      clearBtn.addEventListener('click', function () {
+        input.value = '';
+        input.dispatchEvent(new Event('input', { bubbles: true })); /* skrip Header memulihkan rail + mengosongkan hasil */
+        try { input.focus({ preventScroll: true }); } catch (e) { input.focus(); }
+      });
+    }
+
+    /* ---- keyboard ---- */
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        var q = input.value.trim();
+        if (q) window.location.href = root + 'search?q=' + encodeURIComponent(q);
+      } else if (e.key === 'ArrowDown') {
+        var first = results.querySelector('a[href]') || wrap.querySelector('.sp-chip');
+        if (first) { e.preventDefault(); first.focus(); }
+      }
+    });
+    /* Tombol tutup punya role=button — layani Enter/Spasi (handler klik tetap milik bundle). */
+    if (closeBtn) {
+      closeBtn.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); closeBtn.click(); }
+      });
+    }
+    document.addEventListener('keydown', function (e) {
+      var active = wrap.classList.contains('active');
+      if (e.key === 'Escape' && active) {
+        if (closeBtn) closeBtn.click(); /* jalur tutup resmi milik bundle */
+        return;
+      }
+      var t = e.target;
+      var typing = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable);
+      var comboK = (e.metaKey || e.ctrlKey) && !e.shiftKey && !e.altKey && (e.key === 'k' || e.key === 'K');
+      var slash = e.key === '/' && !e.metaKey && !e.ctrlKey && !e.altKey;
+      if (!active && (comboK || (slash && !typing))) {
+        var opener = document.querySelector('.button-search');
+        if (opener) { e.preventDefault(); opener.click(); }
+      }
+    });
+  })();
+</script>
