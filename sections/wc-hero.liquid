@@ -1,0 +1,131 @@
+{%- liquid
+  assign hero_alt = 'why_capsules.hero.image_alt' | t
+  if section.settings.product
+    assign cta_url = section.settings.product.url | append: '?ref=why-capsules-cta'
+  else
+    assign cta_url = routes.all_products_collection_url
+  endif
+-%}
+<section class="wc-hero og-section">
+  <div class="wc-hero__frame">
+    {%- if section.settings.image -%}
+      {{
+        section.settings.image
+        | image_url: width: 2400
+        | image_tag:
+          widths: '600, 1200, 2400',
+          sizes: '(min-width: 1200px) 1200px, 100vw',
+          loading: 'eager',
+          fetchpriority: 'high',
+          class: 'wc-hero__img',
+          alt: hero_alt
+      }}
+    {%- endif -%}
+  </div>
+
+  <h1 class="wc-hero__title">{{ 'why_capsules.hero.title_html' | t }}</h1>
+
+  <p class="wc-hero__sub">{{ 'why_capsules.hero.sub_html' | t }}</p>
+
+  <div class="wc-hero__cta-row">
+    <a class="wc-cta" href="{{ cta_url }}">{{ 'why_capsules.hero.cta_cart' | t }}</a>
+  </div>
+
+  <img
+    class="og-arrow wc-hero__arrow"
+    src="{{ 'oil-guide-arrow.svg' | asset_url }}"
+    alt=""
+    width="70"
+    height="70"
+    loading="lazy"
+    decoding="async"
+  >
+</section>
+
+{% style %}
+  .wc-hero {
+    padding-top: calc(36 * var(--og-u));
+    font-family: var(--og-font);
+    text-align: center;
+  }
+
+  .wc-hero__frame {
+    width: calc(1200 * var(--og-u));
+    margin-inline: auto;
+  }
+
+  .wc-hero__img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .wc-hero__title {
+    margin: calc(85 * var(--og-u)) auto 0;
+    max-width: calc(728 * var(--og-u));
+    font-size: calc(72 * var(--og-u));
+    font-weight: 400;
+    line-height: normal;
+    color: var(--og-ink);
+  }
+
+  .wc-hero__title b {
+    font-weight: 700;
+  }
+
+  .wc-hero__sub {
+    margin: calc(60 * var(--og-u)) auto 0;
+    max-width: calc(988 * var(--og-u));
+    font-size: calc(45 * var(--og-u));
+    line-height: normal;
+    color: var(--og-ink);
+  }
+
+  .wc-hero__cta-row {
+    margin-top: calc(85 * var(--og-u));
+  }
+
+  .wc-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: calc(22 * var(--og-u)) calc(60 * var(--og-u));
+    border-radius: calc(150 * var(--og-u));
+    background: var(--og-ink);
+    font-size: calc(45 * var(--og-u));
+    line-height: normal;
+    color: #fbfcf7;
+    text-decoration: none;
+  }
+
+  .wc-cta:hover {
+    opacity: 0.92;
+  }
+
+  .wc-hero__arrow {
+    margin: calc(85 * var(--og-u)) auto 0;
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "WC Hero",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Gambar hero"
+    },
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Produk tujuan CTA"
+    }
+  ],
+  "presets": [
+    {
+      "name": "WC Hero"
+    }
+  ]
+}
+{% endschema %}

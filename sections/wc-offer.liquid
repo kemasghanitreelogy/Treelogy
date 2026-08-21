@@ -1,0 +1,231 @@
+{%- liquid
+  assign jar_alt = 'why_capsules.offer.image_alt' | t
+  if section.settings.product
+    assign cta_url = section.settings.product.url | append: '?ref=why-capsules-cta'
+  else
+    assign cta_url = routes.all_products_collection_url
+  endif
+-%}
+<section class="wc-offer og-section">
+  <div class="og-container wc-offer__wrap">
+    <img
+      class="og-arrow wc-offer__arrow"
+      src="{{ 'oil-guide-arrow.svg' | asset_url }}"
+      alt=""
+      width="70"
+      height="70"
+      loading="lazy"
+      decoding="async"
+    >
+
+    {%- if section.settings.image -%}
+      {{
+        section.settings.image
+        | image_url: width: 904
+        | image_tag:
+          widths: '452, 904',
+          sizes: 'auto',
+          loading: 'lazy',
+          decoding: 'async',
+          class: 'wc-offer__jar',
+          alt: jar_alt
+      }}
+    {%- endif -%}
+
+    <h2 class="wc-offer__title">{{ 'why_capsules.offer.title' | t }}</h2>
+
+    {%- assign plans = 'p3,p2,p1' | split: ',' -%}
+    {%- for plan in plans -%}
+      {%- liquid
+        assign base = 'why_capsules.offer.' | append: plan
+        assign name_key = base | append: '_name'
+        assign perks_key = base | append: '_perks_html'
+        assign save_key = base | append: '_save'
+        assign old_key = base | append: '_price_old'
+        assign price_key = base | append: '_price'
+        assign save_txt = save_key | t
+        assign old_txt = old_key | t
+      -%}
+      <div class="wc-plan wc-plan--{{ plan }}">
+        {%- unless save_txt == blank or save_txt contains 'why_capsules' -%}
+          <span class="wc-plan__badge">{{ save_txt }}</span>
+        {%- endunless -%}
+        <p class="wc-plan__name">{{ name_key | t }}</p>
+        <div class="wc-plan__perks">
+          {%- assign perk_lines = perks_key | t | split: '<br>' -%}
+          {%- for line in perk_lines -%}
+            <p class="wc-plan__perk">
+              <img
+                src="{{ 'why-capsules-check.svg' | asset_url }}"
+                alt=""
+                width="38"
+                height="29"
+                loading="lazy"
+                decoding="async"
+                class="wc-plan__check"
+              >
+              {{ line }}
+            </p>
+          {%- endfor -%}
+        </div>
+        <p class="wc-plan__price">
+          {%- unless old_txt == blank or old_txt contains 'why_capsules' -%}
+            <s>{{ old_txt }}</s><br>
+          {%- endunless -%}
+          <b>{{ price_key | t }}</b>
+        </p>
+      </div>
+    {%- endfor -%}
+
+    <div class="wc-offer__cta-row">
+      <a class="wc-cta wc-offer__cta" href="{{ cta_url }}">{{ 'why_capsules.offer.cta_cart' | t }}</a>
+    </div>
+  </div>
+</section>
+
+{% style %}
+  .wc-offer {
+    padding-top: calc(85 * var(--og-u));
+    font-family: var(--og-font);
+  }
+
+  .wc-offer__wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .wc-offer__jar {
+    display: block;
+    width: calc(452 * var(--og-u));
+    height: auto;
+    margin-top: calc(85 * var(--og-u));
+  }
+
+  .wc-offer__title {
+    margin: calc(46 * var(--og-u)) 0 calc(102 * var(--og-u));
+    font-size: calc(70 * var(--og-u));
+    font-weight: 400;
+    line-height: 1.21;
+    text-align: center;
+    color: var(--og-ink);
+  }
+
+  .wc-plan {
+    position: relative;
+    width: 100%;
+    min-height: calc(278 * var(--og-u));
+    border-radius: calc(60 * var(--og-u));
+    background: #f6f7ed;
+    color: var(--og-ink);
+    padding: calc(61 * var(--og-u)) calc(98 * var(--og-u)) calc(60 * var(--og-u)) calc(68 * var(--og-u));
+  }
+
+  .wc-plan + .wc-plan {
+    margin-top: calc(75 * var(--og-u));
+  }
+
+  .wc-plan__badge {
+    position: absolute;
+    top: calc(-20 * var(--og-u));
+    right: calc(60 * var(--og-u));
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(408 * var(--og-u));
+    height: calc(68 * var(--og-u));
+    border-radius: calc(34 * var(--og-u));
+    background: var(--og-accent, #a5bb86);
+    font-size: calc(40 * var(--og-u));
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  .wc-plan__name {
+    margin: 0;
+    font-size: calc(55 * var(--og-u));
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  .wc-plan__perks {
+    margin-top: calc(28 * var(--og-u));
+  }
+
+  .wc-plan__perk {
+    display: flex;
+    align-items: center;
+    gap: calc(30 * var(--og-u));
+    margin: 0;
+    font-size: calc(40 * var(--og-u));
+    line-height: 1.88;
+  }
+
+  .wc-plan__check {
+    width: calc(38 * var(--og-u));
+    height: auto;
+    flex: 0 0 auto;
+  }
+
+  .wc-plan__price {
+    position: absolute;
+    top: calc(55 * var(--og-u));
+    right: calc(98 * var(--og-u));
+    margin: 0;
+    font-size: calc(40 * var(--og-u));
+    line-height: 1.25;
+    text-align: right;
+  }
+
+  .wc-plan__price s {
+    text-decoration: line-through;
+  }
+
+  .wc-plan__price b {
+    font-size: calc(45 * var(--og-u));
+    font-weight: 700;
+  }
+
+  .wc-plan--p3 .wc-plan__price {
+    top: calc(206 * var(--og-u));
+  }
+
+  .wc-plan--p2 .wc-plan__price {
+    top: calc(101 * var(--og-u));
+  }
+
+  .wc-plan--p1 .wc-plan__price {
+    top: calc(61 * var(--og-u));
+  }
+
+  .wc-offer__cta-row {
+    margin-top: calc(85 * var(--og-u));
+  }
+
+  .wc-offer__cta {
+    min-width: calc(400 * var(--og-u));
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "WC Offer",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Foto produk"
+    },
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Produk tujuan CTA"
+    }
+  ],
+  "presets": [
+    {
+      "name": "WC Offer"
+    }
+  ]
+}
+{% endschema %}

@@ -998,6 +998,10 @@
         assign is_chromeless = true
         assign chromeless_bg = '#ffffff'
       endif
+      if template == 'page.why-capsules'
+        assign is_chromeless = true
+        assign chromeless_bg = '#ffffff'
+      endif
     -%}
     {%- if is_chromeless -%}
       <style>

@@ -1,0 +1,137 @@
+{%- liquid
+  assign body_alt = 'why_capsules.body.image_alt' | t
+-%}
+<section class="wc-body og-section">
+  <div class="og-container">
+    <h2 class="wc-body__heading">{{ 'why_capsules.body.heading_html' | t }}</h2>
+
+    <div class="wc-body__card">
+      {%- if section.settings.image -%}
+        {{
+          section.settings.image
+          | image_url: width: 2208
+          | image_tag:
+            widths: '600, 1104, 2208',
+            sizes: 'auto',
+            loading: 'lazy',
+            decoding: 'async',
+            class: 'wc-body__photo',
+            alt: body_alt
+        }}
+      {%- endif -%}
+
+      {%- assign items = 'stemfree:146:127,bpom:154:134,caps:120:83,bag:125:119' | split: ',' -%}
+      {%- for item in items -%}
+        {%- liquid
+          assign parts = item | split: ':'
+          assign key_base = 'why_capsules.body.' | append: parts[0]
+          assign title_key = key_base | append: '_title'
+          assign text_key = key_base | append: '_text'
+          if parts[0] == 'caps' or parts[0] == 'bag'
+            assign icon_file = 'why-capsules-icon-' | append: parts[0] | append: '.svg'
+          else
+            assign icon_file = 'why-capsules-icon-' | append: parts[0] | append: '.png'
+          endif
+        -%}
+        <div class="wc-body__row">
+          <div class="wc-body__icon">
+            <img
+              src="{{ icon_file | asset_url }}"
+              alt=""
+              width="{{ parts[1] }}"
+              height="{{ parts[2] }}"
+              loading="lazy"
+              decoding="async"
+              style="width: calc({{ parts[1] }} * var(--og-u))"
+            >
+          </div>
+          <p class="wc-body__text">
+            <b>{{ title_key | t }}</b><br>
+            {{ text_key | t }}
+          </p>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% style %}
+  .wc-body {
+    padding-top: calc(85 * var(--og-u));
+    font-family: var(--og-font);
+  }
+
+  .wc-body__heading {
+    margin: 0 auto calc(75 * var(--og-u));
+    max-width: calc(728 * var(--og-u));
+    font-size: calc(70 * var(--og-u));
+    font-weight: 400;
+    line-height: 1.21;
+    text-align: center;
+    color: var(--og-ink);
+  }
+
+  .wc-body__card {
+    border-radius: calc(60 * var(--og-u));
+    background: #dae3cb;
+    padding: calc(25 * var(--og-u)) 0 calc(100 * var(--og-u));
+  }
+
+  .wc-body__photo {
+    display: block;
+    width: calc(1104 * var(--og-u));
+    margin: 0 auto calc(106 * var(--og-u));
+    border-radius: calc(30 * var(--og-u));
+  }
+
+  .wc-body__row {
+    display: grid;
+    grid-template-columns: calc(235 * var(--og-u)) 1fr;
+    align-items: center;
+    padding: 0 calc(84 * var(--og-u)) 0 calc(60 * var(--og-u));
+  }
+
+  .wc-body__row + .wc-body__row {
+    margin-top: calc(85 * var(--og-u));
+  }
+
+  .wc-body__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .wc-body__icon img {
+    height: auto;
+  }
+
+  .wc-body__text {
+    margin: 0;
+    max-width: calc(833 * var(--og-u));
+    font-size: calc(45 * var(--og-u));
+    line-height: normal;
+    color: var(--og-ink);
+  }
+
+  .wc-body__text b {
+    font-weight: 700;
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "WC Body",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Foto dalam kartu"
+    }
+  ],
+  "presets": [
+    {
+      "name": "WC Body"
+    }
+  ]
+}
+{% endschema %}

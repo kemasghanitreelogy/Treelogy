@@ -394,5 +394,59 @@
       "benefits": "Benefits",
       "our_farm": "Our Farm"
     }
+  },
+  "why_capsules": {
+    "hero": {
+      "title_html": "Why Capsules<br>are our <b>bestseller</b>",
+      "sub_html": "No brewing needed,<br>no taste getting in the way.<br>Three capsules every morning, and done.",
+      "cta_cart": "Cart +",
+      "image_alt": "Moringa capsules in an open palm"
+    },
+    "body": {
+      "heading_html": "What's inside,<br>and how to take it",
+      "image_alt": "Opening a tin of moringa capsules",
+      "stemfree_title": "Pure stem-free leaf",
+      "stemfree_text": "Only moringa leaves, separated from their stems by hand. No fillers, no preservatives, nothing added.",
+      "bpom_title": "Registered as Traditional Medicine",
+      "bpom_text": "Our capsules are registered with BPOM as Traditional Medicine, so it's clear what you're taking every day.",
+      "caps_title": "Three capsules with a meal",
+      "caps_text": "Take three capsules with or after breakfast. One moment in the morning, then carry on with your day.",
+      "bag_title": "Made for busy mornings",
+      "bag_text": "Keep it in your bag and take it anywhere. No measuring, no stirring, no water."
+    },
+    "proof": {
+      "heading": "What customers say",
+      "rating": "4.9/5",
+      "rating_aria": "Rated 4.9 out of 5 stars",
+      "customers_html": "10,000+ customers",
+      "quote": "Saya awal beli Treelogy bulan Des 2025 dan Treelogy saya tidak pernah putus hingga saat ini",
+      "attribution": "— Rina S. Verified buyer",
+      "closing_html": "It really is made that simple.<br>And for thousands of customers, that's exactly what keeps them consistent."
+    },
+    "offer": {
+      "title": "Moringa Capsules",
+      "image_alt": "Treelogy Moringa Capsules jar",
+      "p3_name": "3 months",
+      "p3_perks_html": "60 days money-back guarantee<br>Free Mystery Gift<br>Free Shipping",
+      "p3_save": "Save 180.000",
+      "p3_price_old": "Rp 1.170.000",
+      "p3_price": "Rp 990.000",
+      "p2_name": "2 months",
+      "p2_perks_html": "60 days money-back guarantee",
+      "p2_save": "Save 90.000",
+      "p2_price_old": "Rp 780.000",
+      "p2_price": "Rp 690.000",
+      "p1_name": "1 month",
+      "p1_perks_html": "60 days money-back guarantee",
+      "p1_save": "",
+      "p1_price_old": "",
+      "p1_price": "Rp 390.000",
+      "cta_cart": "Cart +"
+    },
+    "urgency": {
+      "heading": "6 days left at today's price",
+      "sub_html": "Our prices go up on September 1. Order before then to<br>lock in today's price.",
+      "cta_letter": "Read the letter"
+    }
   }
 }

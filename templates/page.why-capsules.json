@@ -1,0 +1,68 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "tokens": {
+      "type": "og-tokens",
+      "settings": {}
+    },
+    "hero": {
+      "type": "wc-hero",
+      "settings": {
+        "image": "shopify://shop_images/why-capsules-hero.png",
+        "product": "organic-moringa-capsules"
+      }
+    },
+    "body": {
+      "type": "wc-body",
+      "settings": {
+        "image": "shopify://shop_images/why-capsules-body.png"
+      }
+    },
+    "proof": {
+      "type": "wc-proof",
+      "settings": {}
+    },
+    "offer": {
+      "type": "wc-offer",
+      "settings": {
+        "image": "shopify://shop_images/why-capsules-jar.png",
+        "product": "organic-moringa-capsules"
+      }
+    },
+    "urgency": {
+      "type": "wc-urgency",
+      "settings": {}
+    },
+    "footer": {
+      "type": "og-footer",
+      "settings": {
+        "logo": "shopify://shop_images/founder-letter-badge.png",
+        "social_instagram": "https://www.instagram.com/treelogy/",
+        "social_facebook": "https://www.facebook.com/treelogy.moringa",
+        "social_tiktok": "https://www.tiktok.com/@treelogy.moringa",
+        "social_pinterest": "https://www.pinterest.com/treelogymoringa/",
+        "social_whatsapp": "https://wa.me/6281139603993",
+        "copyright": "© Treelogy 2026. All Rights Reserved.",
+        "background_color": "#2A3B34",
+        "text_color": "#F8F8F2"
+      }
+    }
+  },
+  "order": [
+    "tokens",
+    "hero",
+    "body",
+    "proof",
+    "offer",
+    "urgency",
+    "footer"
+  ]
+}

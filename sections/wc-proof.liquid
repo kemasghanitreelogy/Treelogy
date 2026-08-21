@@ -1,0 +1,148 @@
+<section class="wc-proof og-section">
+  <div class="og-container wc-proof__wrap">
+    <h2 class="og-visually-hidden">{{ 'why_capsules.proof.heading' | t }}</h2>
+
+    <div
+      class="wc-proof__rating"
+      role="img"
+      aria-label="{{ 'why_capsules.proof.rating_aria' | t }}"
+    >
+      <img
+        src="{{ 'oil-guide-stars.svg' | asset_url }}"
+        alt=""
+        width="272"
+        height="58"
+        loading="lazy"
+        decoding="async"
+        class="wc-proof__stars"
+      >
+      <span class="wc-proof__score" aria-hidden="true">{{ 'why_capsules.proof.rating' | t }}</span>
+    </div>
+
+    <p class="wc-proof__count">{{ 'why_capsules.proof.customers_html' | t }}</p>
+
+    <blockquote class="wc-proof__quote">
+      <p class="wc-proof__text">
+        <img
+          src="{{ 'oil-guide-quote-open.png' | asset_url }}"
+          alt=""
+          width="500"
+          height="395"
+          loading="lazy"
+          decoding="async"
+          class="wc-proof__mark wc-proof__mark--open"
+        >
+        {{ 'why_capsules.proof.quote' | t }}
+        <img
+          src="{{ 'oil-guide-quote-close.png' | asset_url }}"
+          alt=""
+          width="499"
+          height="395"
+          loading="lazy"
+          decoding="async"
+          class="wc-proof__mark wc-proof__mark--close"
+        >
+        <span class="wc-proof__attr">{{ 'why_capsules.proof.attribution' | t }}</span>
+      </p>
+    </blockquote>
+
+    <p class="wc-proof__closing">{{ 'why_capsules.proof.closing_html' | t }}</p>
+  </div>
+</section>
+
+{% style %}
+  .wc-proof {
+    padding-top: calc(85 * var(--og-u));
+    font-family: var(--og-font);
+  }
+
+  .wc-proof__wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .wc-proof__rating {
+    display: flex;
+    align-items: center;
+    gap: calc(22 * var(--og-u));
+  }
+
+  .wc-proof__stars {
+    width: calc(272 * var(--og-u));
+    height: auto;
+  }
+
+  .wc-proof__score {
+    font-size: calc(45 * var(--og-u));
+    font-weight: 700;
+    line-height: 1.21;
+    color: var(--og-ink);
+  }
+
+  .wc-proof__count {
+    margin: calc(14 * var(--og-u)) 0 0;
+    font-size: calc(75 * var(--og-u));
+    font-weight: 700;
+    line-height: 1.21;
+    color: var(--og-ink);
+  }
+
+  .wc-proof__quote {
+    max-width: calc(897 * var(--og-u));
+    margin: calc(56 * var(--og-u)) 0 0;
+    padding: 0;
+  }
+
+  .wc-proof__text {
+    margin: 0;
+    font-size: calc(45 * var(--og-u));
+    line-height: 1.25;
+    color: var(--og-ink);
+  }
+
+  .wc-proof__mark {
+    display: inline-block;
+    width: auto;
+  }
+
+  .wc-proof__mark--open {
+    height: calc(44 * var(--og-u));
+    margin-right: calc(16 * var(--og-u));
+    vertical-align: -0.06em;
+  }
+
+  .wc-proof__mark--close {
+    height: calc(44 * var(--og-u));
+    margin: 0 calc(14 * var(--og-u));
+    vertical-align: -0.55em;
+  }
+
+  .wc-proof__attr {
+    display: inline-block;
+    margin-left: 0.6em;
+    font-size: calc(35 * var(--og-u));
+    white-space: nowrap;
+  }
+
+  .wc-proof__closing {
+    margin: calc(90 * var(--og-u)) 0 0;
+    max-width: calc(856 * var(--og-u));
+    font-size: calc(45 * var(--og-u));
+    line-height: normal;
+    color: var(--og-ink);
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "WC Social Proof",
+  "settings": [],
+  "presets": [
+    {
+      "name": "WC Social Proof"
+    }
+  ]
+}
+{% endschema %}

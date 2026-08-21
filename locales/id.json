@@ -395,5 +395,59 @@
       "benefits": "Manfaat",
       "our_farm": "Perkebunan Kami"
     }
+  },
+  "why_capsules": {
+    "hero": {
+      "title_html": "Kenapa Capsules<br>jadi <b>bestseller</b>",
+      "sub_html": "Tanpa perlu diseduh,<br>tanpa rasa yang mengganggu.<br>Tiga capsules setiap pagi, dan selesai.",
+      "cta_cart": "Keranjang +",
+      "image_alt": "Moringa capsules di telapak tangan"
+    },
+    "body": {
+      "heading_html": "Apa isinya,<br>dan cara minumnya",
+      "image_alt": "Membuka kaleng moringa capsules",
+      "stemfree_title": "Murni daun bebas batang",
+      "stemfree_text": "Hanya daun moringa yang dipisahkan dari batangnya dengan tangan. Tanpa bahan pengisi, tanpa pengawet, tanpa tambahan apa pun.",
+      "bpom_title": "Terdaftar sebagai Obat Tradisional",
+      "bpom_text": "Capsules kami terdaftar di BPOM sebagai Obat Tradisional, jadi jelas apa yang kamu minum setiap hari.",
+      "caps_title": "Tiga capsules bersama makanan",
+      "caps_text": "Minum tiga capsules saat atau setelah sarapan. Satu momen di pagi hari, lalu lanjutkan hari seperti biasa.",
+      "bag_title": "Dibuat untuk pagi yang sibuk",
+      "bag_text": "Simpan di dalam tas dan bawa ke mana saja. Tanpa takar, tanpa aduk, tanpa air."
+    },
+    "proof": {
+      "heading": "Kata pelanggan",
+      "rating": "4.9/5",
+      "rating_aria": "Dinilai 4,9 dari 5 bintang",
+      "customers_html": "10,000+ customers",
+      "quote": "Saya awal beli Treelogy bulan Des 2025 dan Treelogy saya tidak pernah putus hingga saat ini",
+      "attribution": "— Rina S. Verified buyer",
+      "closing_html": "Memang dibuat sesederhana itu.<br>Dan buat ribuan pelanggan, justru itu yang membuat mereka tetap konsisten."
+    },
+    "offer": {
+      "title": "Moringa Capsules",
+      "image_alt": "Jar Treelogy Moringa Capsules",
+      "p3_name": "3 bulan",
+      "p3_perks_html": "Garansi uang kembali 60 hari<br>Gratis Mystery Gift<br>Gratis Ongkir",
+      "p3_save": "Save 180.000",
+      "p3_price_old": "Rp 1.170.000",
+      "p3_price": "Rp 990.000",
+      "p2_name": "2 bulan",
+      "p2_perks_html": "Garansi uang kembali 60 hari",
+      "p2_save": "Save 90.000",
+      "p2_price_old": "Rp 780.000",
+      "p2_price": "Rp 690.000",
+      "p1_name": "1 bulan",
+      "p1_perks_html": "Garansi uang kembali 60 hari",
+      "p1_save": "",
+      "p1_price_old": "",
+      "p1_price": "Rp 390.000",
+      "cta_cart": "Keranjang +"
+    },
+    "urgency": {
+      "heading": "6 hari lagi di harga sekarang",
+      "sub_html": "Harga kami naik pada 1 September. Pesan sebelum itu untuk<br>mendapatkan harga hari ini.",
+      "cta_letter": "Baca Suratnya"
+    }
   }
 }
