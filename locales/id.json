@@ -7,7 +7,6 @@
  * made to this file may be overwritten.
  * ------------------------------------------------------------
  */
-
 {
   "shopify": {
     "checkout": {
@@ -281,7 +280,7 @@
   },
   "search": {
     "placeholder": "Cari",
-    "hint": "Coba \u201ccapsules\u201d, \u201coil\u201d, atau \u201cpowder\u201d",
+    "hint": "Coba “capsules”, “oil”, atau “powder”",
     "eyebrow": "Cari Treelogy",
     "popular": "Pencarian populer",
     "featured": "Selagi di sini",
@@ -290,8 +289,8 @@
     "view_all": "Lihat semua hasil",
     "no_results": "Tidak ada hasil untuk",
     "no_results_hint": "Periksa ejaan, atau coba salah satu pencarian populer di atas.",
-    "error": "Pencarian bermasalah \u2014 silakan coba lagi.",
-    "searching": "Mencari\u2026",
+    "error": "Pencarian bermasalah — silakan coba lagi.",
+    "searching": "Mencari…",
     "clear": "Hapus pencarian",
     "close": "Tutup pencarian"
   },
