@@ -154,7 +154,12 @@
   var internal = 0;
   /* Berapa baris hadiah yang sedang ditunggu. Selama > 0, drawer diberi
      kartu skeleton supaya pembeli langsung melihat hadiahnya sedang datang. */
-  var awaiting = 0;
+  /* Skeleton per VARIAN hadiah, bukan hitungan buta: ensureSkeletons dulu
+     hanya membandingkan jumlah skeleton dengan sebuah angka, sehingga
+     observer memasang skeleton BARU di samping baris hadiah asli yang sudah
+     tampil — terlihat sebagai hadiah dobel. */
+  var awaitingGifts = {};
+  function awaitingCount() { return Object.keys(awaitingGifts).length; }
   /* Mutasi keranjang yang balasannya belum selesai disinkronkan. Selama
      > 0, baris hadiah belum tentu cocok dengan pemicunya — gerbang checkout
      di bawah menahan navigasi sampai angka ini kembali nol. */
@@ -275,10 +280,11 @@
   /* Skeleton memakai kelas loading milik tema (.cart-item--optimistic dan
      .opt-shimmer) supaya animasi, warna, dan iramanya identik dengan kartu
      optimistis yang sudah dipakai mini cart — bukan gaya baru yang bersaing. */
-  function skeletonCard() {
+  function skeletonCard(variantId) {
     var el = document.createElement('div');
     el.className = 'cart-item cart-item--gift cart-item--optimistic';
     el.setAttribute('data-gift-skeleton', '');
+    if (variantId) el.setAttribute('data-skeleton-for', variantId);
     el.setAttribute('aria-hidden', 'true');
     /* Struktur mencerminkan CartItemCard.liquid persis (a.thumb + detail-top
        + detail-bottom) dan setiap ukuran ditulis eksplisit, supaya kartunya
@@ -298,10 +304,9 @@
 
   function clearSkeletons(root) {
     (root || document).querySelectorAll('[data-gift-skeleton]').forEach(function (n) {
-      /* Beri kepergian singkat lalu buang. Kalau animasi dimatikan pengguna,
-         timeout tetap membersihkannya sehingga tidak ada sisa yang menempel. */
-      n.classList.add('cart-item--gift-out');
-      setTimeout(function () { if (n.parentNode) n.remove(); }, 180);
+      /* Lewat animateOut supaya skeleton yang pergi ikut protokol simpul
+         sekarat — ensureSkeletons tidak menghitungnya lagi. */
+      animateOut(n);
     });
   }
 
@@ -312,17 +317,28 @@
        sinkronisasi berikutnya tetap jalan dan barisnya dirender ulang. */
     if (skeletonTTL) clearTimeout(skeletonTTL);
     skeletonTTL = setTimeout(function () {
-      if (awaiting > 0) { awaiting = 0; clearSkeletons(); }
+      if (awaitingCount()) { awaitingGifts = {}; clearSkeletons(); }
     }, 8000);
   }
 
   function ensureSkeletons() {
     var c = document.getElementById('cart');
-    if (!c || awaiting < 1) return;
-    var have = c.querySelectorAll('[data-gift-skeleton]').length;
+    if (!c || !awaitingCount()) return;
     var parent = itemsParent(c);
     if (!parent) return;
-    for (var i = have; i < awaiting; i++) parent.insertBefore(skeletonCard(), parent.firstChild);
+    Object.keys(awaitingGifts).forEach(function (v) {
+      /* Baris asli varian ini sudah tampil? Haknya atas skeleton dicabut —
+         skeleton yang menemani baris asli terlihat sebagai hadiah dobel. */
+      if (c.querySelector('.cart-item--gift[data-variant="' + v + '"]:not([data-gift-skeleton]):not([data-dying])')) {
+        delete awaitingGifts[v];
+        var sk = c.querySelector('[data-skeleton-for="' + v + '"]');
+        if (sk) animateOut(sk);
+        return;
+      }
+      if (!c.querySelector('[data-skeleton-for="' + v + '"]:not([data-dying])')) {
+        parent.insertBefore(skeletonCard(v), parent.firstChild);
+      }
+    });
   }
 
   /* Tema mengisi #cart dengan HTML dari /cart?view=mini setiap kali drawer
@@ -334,10 +350,31 @@
       .observe(cartRoot, { childList: true, subtree: true });
   }
 
+  /* ===== Protokol simpul sekarat =====
+     Baris yang dianimasikan keluar tetap di DOM selama 180ms. Tanpa penanda,
+     penulis lain tertipu dua arah: insertGifts mengira barisnya "masih ada"
+     lalu timer menghapusnya (hadiah hilang), dan cartReconcileRows menyahkan
+     simpulnya kembali tapi timer lama tetap menembak remove() (hadiah sah
+     ikut terhapus). Maka: setiap simpul sekarat ditandai `data-dying`,
+     timernya bisa DIBATALKAN lewat revive(), dan semua pencari baris wajib
+     memperlakukan simpul ber-penanda itu sebagai tidak ada. */
   function animateOut(node) {
+    if (node._dieTimer) return;
+    node.setAttribute('data-dying', '');
     node.classList.add('cart-item--gift-out');
-    setTimeout(function () { if (node.parentNode) node.remove(); }, 180);
+    node._dieTimer = setTimeout(function () {
+      node._dieTimer = null;
+      if (node.parentNode) node.remove();
+    }, 180);
   }
+  function revive(node) {
+    if (node._dieTimer) { clearTimeout(node._dieTimer); node._dieTimer = null; }
+    node.removeAttribute('data-dying');
+    node.classList.remove('cart-item--gift-out');
+  }
+  /* Dipakai cartReconcileRows (MiniCart) saat HTML server menyahkan kembali
+     simpul yang sedang kita animasikan keluar. */
+  window.giftRevive = revive;
 
   /* Baris hadiah yang SEHARUSNYA tampil, diturunkan dari PEMICUNYA — bukan
      dari daftar baris hadiah yang kebetulan terbaca di snapshot ini.
@@ -375,14 +412,29 @@
     if (!c) return;
     var want = desiredGiftRows(cart);
     var seen = {};
+    var nodes = [];
     c.querySelectorAll('.cart-item--gift').forEach(function (node) {
       if (node.hasAttribute('data-gift-skeleton')) return;
+      nodes.push(node);
+    });
+    /* Babak 1 — baris hidup. Satu varian hadiah = satu baris; jumlahnya
+       ditulis pada label ×N. Baris kembar hanya lahir dari render ganda. */
+    nodes.forEach(function (node) {
+      if (node.hasAttribute('data-dying')) return;
       var v = node.getAttribute('data-variant');
       if (!v || !want[v]) { animateOut(node); return; }
-      /* Satu varian hadiah = satu baris; jumlahnya ditulis pada label ×N.
-         Baris kembar hanya lahir dari render ganda, dan harus dirapikan. */
       seen[v] = (seen[v] || 0) + 1;
       if (seen[v] > 1) animateOut(node);
+    });
+    /* Babak 2 — baris sekarat yang ternyata masih berhak dan belum punya
+       kembaran hidup: hidupkan lagi, jangan biarkan timernya membunuh baris
+       yang baru disahkan. */
+    nodes.forEach(function (node) {
+      if (!node.hasAttribute('data-dying')) return;
+      var v = node.getAttribute('data-variant');
+      if (!v || !want[v] || seen[v]) return;
+      revive(node);
+      seen[v] = 1;
     });
   }
 
@@ -390,8 +442,8 @@
      server-side saat halaman dibuat — nol permintaan, kebal rate limit. */
   function insertGifts(cart) {
     var c = document.getElementById('cart');
-    if (!c) { awaiting = 0; return; }
-    awaiting = 0;
+    if (!c) { awaitingGifts = {}; return; }
+    awaitingGifts = {};
     clearSkeletons(c);
     var parent = itemsParent(c);
     /* Baris digambar dari daftar YANG SEHARUSNYA TAMPIL, bukan dari baris
@@ -410,8 +462,13 @@
       /* Dicari lewat data-variant, BUKAN data-key: kunci baris berubah tiap
          keranjang dimutasi, dan pencarian lewat kunci membuat baris yang sah
          dianggap belum ada lalu digambar kembar. */
-      var existing = c.querySelector('.cart-item--gift[data-variant="' + variantId + '"]');
+      var existing = c.querySelector('.cart-item--gift[data-variant="' + variantId + '"]:not([data-gift-skeleton])');
       if (existing) {
+        /* Simpul yang sedang dianimasikan keluar tapi ternyata masih berhak:
+           batalkan kematiannya. Tanpa ini ia dianggap "sudah ada", tidak
+           digambar ulang, lalu timer 180ms menghapusnya — hadiah lenyap dari
+           layar padahal keranjang server benar. */
+        if (existing.hasAttribute('data-dying')) revive(existing);
         var q = existing.querySelector('.gift-qty');
         if (q) q.textContent = '\u00d7' + qty;
         existing.setAttribute('data-qty', qty);
@@ -459,6 +516,20 @@
       parent.insertBefore(real, parent.firstChild);
     });
   }
+
+  /* Cat ulang baris hadiah dari potret yang diberikan (atau lastCart) —
+     murni DOM, nol jaringan, tanpa penjadwalan refresh. Dipanggil tema
+     SETELAH ia menulis ulang daftar (reconcile /cart?view=mini maupun
+     refreshCartUI ber-seq segar), supaya penulis terakhir selalu membawa
+     kebenaran termuda dan label ×N tidak pernah tertinggal di angka lama. */
+  window.giftRepaint = function (cart) {
+    var sane = cart && (typeof window.isCartPayload === 'function'
+      ? window.isCartPayload(cart)
+      : (typeof cart === 'object' && Array.isArray(cart.items)));
+    var snap = sane ? cart : lastCart;
+    if (!snap || !Array.isArray(snap.items)) return;
+    try { pruneGifts(snap); insertGifts(snap); } catch (e) { /* abaikan */ }
+  };
 
   function paint(cart) {
     /* Payload cacat tidak boleh pernah menggerakkan DOM. Halaman error dan
@@ -551,7 +622,7 @@
       var missing = Object.keys(wanted).filter(function (g) { return !present[g]; });
 
       if (!Object.keys(adjust).length && !missing.length) {
-        if (awaiting) { awaiting = 0; clearSkeletons(); }
+        if (awaitingCount()) { awaitingGifts = {}; clearSkeletons(); }
         /* Server sudah benar BUKAN berarti layar sudah benar. Sejak mutasi
            hadiah menumpang atomik pada mutasi pemicunya, putaran ini hampir
            selalu mendarat di sini dalam keadaan tidak ada yang perlu diubah —
@@ -612,7 +683,7 @@
         gift_status: lastFailStatus,
         gift_state: giftSummary(lastCart)
       });
-      awaiting = 0;
+      awaitingGifts = {};
       clearSkeletons();
       return withRetry(function () {
         return request('/cart.js', { headers: { Accept: 'application/json' } })
@@ -873,8 +944,11 @@
           var gifts = MAP[String(it.id)];
           if (gifts) gifts.forEach(function (g) { expect[g] = true; });
         });
-        var n = Object.keys(expect).length;
-        if (n) { awaiting = n; ensureSkeletons(); armSkeletonTTL(); }
+        if (Object.keys(expect).length) {
+          awaitingGifts = expect;
+          ensureSkeletons();
+          armSkeletonTTL();
+        }
       }
     } catch (e) { /* payload tak terbaca: lewati skeleton, sinkronisasi tetap jalan */ }
 
@@ -897,7 +971,7 @@
       } else {
         sync().then(settle, settle);
       }
-    }).catch(function () { awaiting = 0; clearSkeletons(); settle(); });
+    }).catch(function () { awaitingGifts = {}; clearSkeletons(); settle(); });
     return result;
   };
 
@@ -934,7 +1008,7 @@
       if (b._idleHTML != null) b.innerHTML = b._idleHTML;
       else if (b.dataset.idleLabel) b.textContent = b.dataset.idleLabel;
     });
-    awaiting = 0;
+    awaitingGifts = {};
     clearSkeletons();
     /* Heap hasil restorasi bfcache membawa lastCart LAMA — potret sebelum
        pembeli pergi ke checkout. Server bisa saja sudah bergeser selama

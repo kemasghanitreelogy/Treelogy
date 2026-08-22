@@ -515,6 +515,12 @@
       var id = idOf(baru);
       var simpul = id ? lama[id] : null;
       if (simpul) {
+        /* Simpul sedang dianimasikan keluar oleh mesin hadiah, tapi HTML
+           server yang baru MENYAHKANNYA lagi — batalkan kematiannya, atau
+           timer 180ms-nya menghapus baris yang baru saja dibenarkan. */
+        if (simpul.hasAttribute('data-dying') && typeof window.giftRevive === 'function') {
+          window.giftRevive(simpul);
+        }
         if (simpul.innerHTML !== baru.innerHTML) simpul.innerHTML = baru.innerHTML;
         for (var i = 0; i < baru.attributes.length; i++) {
           var a = baru.attributes[i];
@@ -676,6 +682,14 @@
     /* Daftar baris didamaikan DULU: recalcSavings di bawah membaca baris dari
        DOM, jadi baris basi yang belum dibuang akan menggelembungkan "hemat". */
     window.cartSyncRows(cart, seq);
+
+    /* Baris hadiah ikut disegarkan dari payload yang sama — lewat pemiliknya
+       (mesin hadiah), bukan salinan logika. Hanya payload termuda yang boleh:
+       potret basi yang mengecat hadiah justru penyakit yang sedang diobati. */
+    if ((seq === undefined || seq === null || seq === window.cartMutSeq)
+        && typeof window.giftRepaint === 'function') {
+      window.giftRepaint(cart);
+    }
 
     var i18n = window._cartI18n || {};
     var totalCents = cart.total_price;
@@ -1149,6 +1163,10 @@
           oldItems.style.opacity = '0';
           setTimeout(function() {
             window.cartReconcileRows(oldItems, newItems);
+            /* HTML mini diambil paralel dan bisa lebih tua daripada koreksi
+               hadiah — cat ulang baris hadiah SETELAH penukaran supaya
+               penulis terakhir jalur ini tetap membawa kebenaran termuda. */
+            if (typeof window.giftRepaint === 'function') window.giftRepaint(cart);
             oldItems.style.transition = 'opacity 0.18s ease-in';
             oldItems.style.opacity = '1';
             setTimeout(function() { oldItems.style.transition = ''; }, 200);
