@@ -68,6 +68,8 @@
             name="wc-plan"
             class="wc-plan__input og-visually-hidden"
             value="{{ plan_url }}"
+            data-variant="{{ section.settings['variant_' | append: plan] }}"
+            {% if plan == 'p3' %}data-gift="{{ section.settings.gift_variant }}"{% endif %}
             {% if plan == 'p3' %}checked{% endif %}
           >
           {%- unless save_txt == blank -%}
@@ -117,6 +119,11 @@
     var wrap = document.querySelector('[data-wc-plans]');
     var link = document.getElementById('wc-checkout-link');
     if (!wrap || !link) return;
+
+    function selected() {
+      return wrap.querySelector('input[name="wc-plan"]:checked');
+    }
+
     wrap.addEventListener('change', function (e) {
       var r = e.target;
       if (!r || r.name !== 'wc-plan') return;
@@ -124,6 +131,43 @@
       link.classList.remove('wc-cta--pulse');
       void link.offsetWidth;
       link.classList.add('wc-cta--pulse');
+    });
+
+    /* Checkout via /cart/add, BUKAN mengikuti permalink href-nya:
+       permalink tidak bisa membawa properti baris, sehingga hadiah paket
+       3 bulan mendarat tanpa _Gifted — dan begitu pembeli kembali ke situs,
+       guard lp-only tema menghapus baris hadiah "liar" itu (pola insiden
+       #9920). Lewat add.js hadiah masuk ber-_Gifted seperti hasil engine
+       resmi. href permalink tetap dipertahankan sebagai fallback tanpa JS. */
+    link.addEventListener('click', function (e) {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+      var r = selected();
+      if (!r || !r.getAttribute('data-variant')) return;
+      e.preventDefault();
+      if (link.dataset.busy) return;
+      link.dataset.busy = '1';
+      var items = [{ id: parseInt(r.getAttribute('data-variant'), 10), quantity: 1 }];
+      var gift = r.getAttribute('data-gift');
+      if (gift) {
+        items.push({ id: parseInt(gift, 10), quantity: 1, properties: { _Gifted: 'true' } });
+      }
+      var root = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
+      fetch(root + 'cart/clear.js', { method: 'POST' })
+        .then(function () {
+          return fetch(root + 'cart/add.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ items: items })
+          });
+        })
+        .then(function (res) {
+          if (!res.ok) throw new Error('add gagal');
+          window.location.href = root + 'checkout';
+        })
+        .catch(function () {
+          delete link.dataset.busy;
+          window.location.href = link.getAttribute('href');
+        });
     });
   })();
 </script>
