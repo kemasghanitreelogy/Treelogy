@@ -480,6 +480,59 @@
     }
   };
 
+  /* ===== Rekonsiliasi baris keranjang =====
+     Dulu drawer memasang ulang seluruh daftar: `oldItems.innerHTML =
+     newItems.innerHTML`. Benar hasilnya, tapi ia MENCABUT setiap simpul lalu
+     membuat penggantinya — termasuk baris yang isinya tidak berubah sama
+     sekali, dan termasuk baris yang digambar lebih awal oleh mesin hadiah.
+     Itulah sebabnya baris hadiah tidak pernah bisa tampil sebelum server
+     menjawab: berapa pun cepat ia digambar, penyapuan ini menghapusnya.
+
+     Sekarang: baris dengan identitas sama DIPERTAHANKAN simpulnya, hanya
+     isinya yang disegarkan. Identitasnya `data-variant` (+ penanda hadiah),
+     BUKAN `data-key` — Shopify mengganti kunci baris tiap kali keranjang
+     dimutasi, jadi memakainya membuat semua baris terlihat baru. Pelajaran
+     yang sama dengan bug baris hadiah 18 Agu.
+
+     Hasil akhirnya identik dengan HTML server: yang berubah ikut berubah,
+     yang hilang ikut hilang, yang baru ikut masuk. Yang berbeda hanya
+     caranya — memperbarui, bukan membangun ulang. */
+  window.cartReconcileRows = function (oldWrap, newWrap) {
+    if (!oldWrap || !newWrap) return false;
+    function idOf(el) {
+      if (!el || !el.getAttribute) return null;
+      var v = el.getAttribute('data-variant');
+      if (!v) return null;
+      return v + (el.classList && el.classList.contains('cart-item--gift') ? ':gift' : '');
+    }
+    var lama = {};
+    Array.prototype.forEach.call(oldWrap.querySelectorAll('.cart-item'), function (n) {
+      var id = idOf(n);
+      if (id && !lama[id]) lama[id] = n;
+    });
+    var frag = document.createDocumentFragment();
+    Array.prototype.forEach.call(newWrap.children, function (baru) {
+      var id = idOf(baru);
+      var simpul = id ? lama[id] : null;
+      if (simpul) {
+        if (simpul.innerHTML !== baru.innerHTML) simpul.innerHTML = baru.innerHTML;
+        for (var i = 0; i < baru.attributes.length; i++) {
+          var a = baru.attributes[i];
+          if (simpul.getAttribute(a.name) !== a.value) simpul.setAttribute(a.name, a.value);
+        }
+        delete lama[id];
+        frag.appendChild(simpul);
+      } else {
+        frag.appendChild(baru.cloneNode(true));
+      }
+    });
+    /* Sisa `lama` = baris yang tidak ada lagi di keranjang; dibuang bersama
+       isi lama saat wadahnya dikosongkan. */
+    oldWrap.innerHTML = '';
+    oldWrap.appendChild(frag);
+    return true;
+  };
+
   /* ===== Nomor urut mutasi =====
      Naik satu setiap kali mutasi keranjang BERANGKAT dari drawer ini.
      Gunanya satu: cartSyncRows harus tahu apakah payload yang baru mendarat
@@ -1095,7 +1148,7 @@
           oldItems.style.transition = 'opacity 0.12s ease-out';
           oldItems.style.opacity = '0';
           setTimeout(function() {
-            oldItems.innerHTML = newItems.innerHTML;
+            window.cartReconcileRows(oldItems, newItems);
             oldItems.style.transition = 'opacity 0.18s ease-in';
             oldItems.style.opacity = '1';
             setTimeout(function() { oldItems.style.transition = ''; }, 200);
@@ -1755,7 +1808,7 @@
             var oldItems = cartEl && cartEl.querySelector('.cart-items');
             var oldFooter = cartEl && cartEl.querySelector('.sub-total.cart-footer');
             if (oldItems && newItems) {
-              oldItems.innerHTML = newItems.innerHTML;
+              window.cartReconcileRows(oldItems, newItems);
               if (oldFooter && newFooter) {
                 oldFooter.innerHTML = newFooter.innerHTML;
                 if (window.initCartTrustSlider) window.initCartTrustSlider();
@@ -1921,67 +1974,25 @@
     }
   };
 
-  /* ===== Isolate scroll containers — prevent scroll-chaining ===== */
-  /* Ensures .fbt-track (horizontal) and .cart-items (vertical)     */
-  /* never interfere with each other's scroll. Handles edge cases   */
-  /* where CSS overscroll-behavior alone isn't enough (older iOS).  */
+  /* ===== Isolate scroll containers — kini murni CSS, TANPA kunci JS ===== */
+  /* Versi lama mengunci overflow lawan pada touchstart (fbt-track ⇄        */
+  /* cart-items). Sejak dock pindah KE DALAM .cart-items (fix 18 Agu),      */
+  /* touchstart di kartu FBT ikut membekukan scroller daftar di tengah      */
+  /* gesture — iOS menghentikan gesture itu, dan bila touchend/touchcancel  */
+  /* tidak sempat menyala (lazim saat native scroll mengambil alih), kunci  */
+  /* `overflowY: hidden` TERTINGGAL PERMANEN: daftar macet sampai reload.   */
+  /* Pemisahan sumbu sudah ditangani CSS .fbt-track (touch-action: pan-x    */
+  /* pan-y + overscroll-behavior-x: contain) — axis-locking bawaan browser  */
+  /* mengarahkan geseran mendatar ke track dan geseran tegak ke induknya.   */
+  /* Fungsi dipertahankan sebagai no-op pembersih agar call site tetap      */
+  /* valid dan sisa kunci dari sesi HTML lama ikut dilepas.                 */
   window.isolateScrollContainers = function() {
     var cartEl = document.getElementById('cart');
     if (!cartEl) return;
-
     var fbtTrack = cartEl.querySelector('.fbt-track');
     var cartItems = cartEl.querySelector('.cart-items');
-
-    /* Guard: only bind once per element */
-    if (fbtTrack && !fbtTrack._scrollIsolated) {
-      fbtTrack._scrollIsolated = true;
-
-      /* On touchstart inside FBT track, lock parent vertical scroll */
-      fbtTrack.addEventListener('touchstart', function() {
-        if (cartItems) cartItems.style.overflowY = 'hidden';
-      }, { passive: true });
-
-      /* On touchend / touchcancel, restore parent vertical scroll */
-      fbtTrack.addEventListener('touchend', function() {
-        if (cartItems) cartItems.style.overflowY = 'auto';
-      }, { passive: true });
-      fbtTrack.addEventListener('touchcancel', function() {
-        if (cartItems) cartItems.style.overflowY = 'auto';
-      }, { passive: true });
-
-      /* Pointer-based fallback (desktop trackpad / mouse wheel)        */
-      /* Prevent horizontal scroll at boundaries from chaining upward  */
-      fbtTrack.addEventListener('wheel', function(e) {
-        /* Only intercept if the wheel is mostly horizontal */
-        if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-          var atStart = fbtTrack.scrollLeft <= 0;
-          var atEnd = fbtTrack.scrollLeft + fbtTrack.clientWidth >= fbtTrack.scrollWidth - 1;
-
-          /* At boundary and still scrolling in that direction → stop propagation */
-          if ((atStart && e.deltaX < 0) || (atEnd && e.deltaX > 0)) {
-            return; /* Let browser handle normally — no interference */
-          }
-          e.stopPropagation();
-        }
-      }, { passive: true });
-    }
-
-    if (cartItems && !cartItems._scrollIsolated) {
-      cartItems._scrollIsolated = true;
-
-      /* On touchstart inside cart-items, lock FBT horizontal scroll */
-      cartItems.addEventListener('touchstart', function() {
-        if (fbtTrack) fbtTrack.style.overflowX = 'hidden';
-      }, { passive: true });
-
-      /* On touchend / touchcancel, restore FBT horizontal scroll */
-      cartItems.addEventListener('touchend', function() {
-        if (fbtTrack) fbtTrack.style.overflowX = 'auto';
-      }, { passive: true });
-      cartItems.addEventListener('touchcancel', function() {
-        if (fbtTrack) fbtTrack.style.overflowX = 'auto';
-      }, { passive: true });
-    }
+    if (cartItems) cartItems.style.overflowY = '';
+    if (fbtTrack) fbtTrack.style.overflowX = '';
   };
 
   /* ===== Cart Trust Badge Slider ===== */
