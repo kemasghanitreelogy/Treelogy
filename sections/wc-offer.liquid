@@ -68,7 +68,14 @@
             name="wc-plan"
             class="wc-plan__input og-visually-hidden"
             value="{{ plan_url }}"
-            data-variant="{{ section.settings['variant_' | append: plan] }}"
+            {%- case plan -%}
+              {%- when 'p3' -%}
+                data-variant="{{ section.settings.variant_p3 }}"
+              {%- when 'p2' -%}
+                data-variant="{{ section.settings.variant_p2 }}"
+              {%- else -%}
+                data-variant="{{ section.settings.variant_p1 }}"
+            {%- endcase -%}
             {% if plan == 'p3' %}data-gift="{{ section.settings.gift_variant }}"{% endif %}
             {% if plan == 'p3' %}checked{% endif %}
           >
