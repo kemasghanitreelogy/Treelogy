@@ -24,9 +24,33 @@
         >
       </span>
       <span class="product-card-detail">
-        <span class="rating">
+        {%- comment -%}
+          Badge Judge.me membawa handler klik DAN keydown yang melompat ke
+          #judgeme_product_reviews; atribut tabindex/role-nya ditulis ulang
+          oleh skrip mereka saat setup, jadi melucutinya di Liquid percuma.
+          Di kartu hero seluruh kartu adalah satu tautan ke PDP biasa, maka
+          badge dijadikan dekoratif dengan `inert` (mematikan pointer, fokus,
+          dan aktivasi keyboard sekaligus) + pointer-events di CSS section
+          sebagai cadangan untuk peramban tanpa dukungan inert. Nilainya
+          tetap sampai ke pembaca layar lewat teks tersembunyi di bawahnya.
+        {%- endcomment -%}
+        {%- liquid
+          assign badge_html = product.metafields.judgeme.badge | default: ''
+          assign rating_avg = ''
+          assign rating_cnt = ''
+          if badge_html contains "data-average-rating='"
+            assign rating_avg = badge_html | split: "data-average-rating='" | last | split: "'" | first
+          endif
+          if badge_html contains "data-number-of-reviews='"
+            assign rating_cnt = badge_html | split: "data-number-of-reviews='" | last | split: "'" | first
+          endif
+        -%}
+        <span class="rating" inert>
           {% render 'Rating', product: product %}
         </span>
+        {%- if rating_avg != blank -%}
+          <span class="hero-card-v2__sr">{{ rating_avg }}/5 ({{ rating_cnt }})</span>
+        {%- endif -%}
         <span class="product-title">{{ product.title }}</span>
         {%- if excerpt != blank -%}
           {%- comment -%}

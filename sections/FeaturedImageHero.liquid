@@ -177,6 +177,19 @@
     #shopify-section-{{ section.id }} .hero-v2 .hero-card-v2:active .hero-card-v2__inner {
       transform: scale(0.985);
     }
+    /* Klik di area rating harus jatuh ke tautan kartu (PDP biasa), bukan ke
+       handler Judge.me yang melompat ke bagian ulasan. */
+    #shopify-section-{{ section.id }} .hero-v2 .hero-card-v2 .rating {
+      pointer-events: none;
+    }
+    #shopify-section-{{ section.id }} .hero-v2 .hero-card-v2__sr {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
     #shopify-section-{{ section.id }} .hero-v2 .hero-card-v2 .product-excerpt {
       display: -webkit-box;
       -webkit-line-clamp: 2;
