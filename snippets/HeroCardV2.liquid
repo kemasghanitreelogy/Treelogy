@@ -1,0 +1,52 @@
+{% doc %}
+  Renders the hero v2 glass product card used inside HeroBannerSliderType1.
+  Keeps the legacy .product class (theme.css base styles) and .stagger class
+  (entrance is owned by the GSAP tween bundled in app.bundle.js).
+
+  @param {product} product - The product to feature on the card
+  @param {string} [excerpt] - Merchant-editable blurb; falls back to the
+    product description when the block setting is left empty
+
+  @example
+  {% render 'HeroCardV2', product: product, excerpt: block.settings.card_excerpt %}
+{% enddoc %}
+
+{% if product != empty %}
+  <a href="{{ product.url }}" class="product hero-card-v2 {% unless request.design_mode %} stagger {% endunless %}">
+    <span class="hero-card-v2__inner">
+      <span class="thumb">
+        <img
+          src="{{ product.featured_image | image_url: width: 192 }}"
+          width="96"
+          height="96"
+          alt="{{ product.featured_image.alt | default: product.title | escape }}"
+          loading="lazy"
+        >
+      </span>
+      <span class="product-card-detail">
+        <span class="rating">
+          {% render 'Rating', product: product %}
+        </span>
+        <span class="product-title">{{ product.title }}</span>
+        {%- if excerpt != blank -%}
+          {%- comment -%}
+            Teks dari theme editor dirender apa adanya: panjangnya sudah di
+            tangan merchant, dan pagar visualnya line-clamp 2 di CSS section.
+          {%- endcomment -%}
+          <span class="product-excerpt">{{ excerpt | newline_to_br }}</span>
+        {%- else -%}
+          {% assign description = product.excerpt | default: product.content | strip_html %}
+          <span class="product-excerpt desktop">{{ description | truncate: 80 }}</span>
+          <span class="product-excerpt mobile">{{ description | truncate: 68 }}</span>
+        {%- endif -%}
+        <span class="price">
+          <span class="hero-card-v2__price-label">From&nbsp;</span>
+          {% render 'PriceFormat', product: product %}
+          <svg class="hero-card-v2__arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+            <path d="M6 3.5 10.5 8 6 12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </span>
+    </span>
+  </a>
+{% endif %}

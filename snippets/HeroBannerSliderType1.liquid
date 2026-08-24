@@ -15,7 +15,9 @@
   {{ block.settings.content | newline_to_br }}
 </div>
 
-{% if product != empty %}
+{% if v2 %}
+  {% render 'HeroCardV2', product: product, excerpt: block.settings.card_excerpt %}
+{% elsif product != empty %}
   <a href="{{ product.url }}" class="product {% unless request.design_mode %} stagger {% endunless %}">
     <div class="thumb">
       <img
