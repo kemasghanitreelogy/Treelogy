@@ -1,0 +1,2560 @@
+<div class="mini-cart">
+  <div class="overlay"></div>
+
+  <!-- Remove item confirmation modal -->
+  <div class="cart-remove-modal" id="cart-remove-modal">
+    <div class="cart-remove-backdrop"></div>
+    <div class="cart-remove-dialog">
+      <div class="cart-remove-title">{{ 'cart.remove_title' | t }}</div>
+      <div class="cart-remove-msg">{{ 'cart.remove_prefix' | t }} <span class="cart-remove-name" id="cart-remove-name"></span> {{ 'cart.remove_suffix' | t }}</div>
+      <div class="cart-remove-actions">
+        <button type="button" class="cart-remove-btn cart-remove-cancel" id="cart-remove-cancel">{{ 'cart.remove_cancel' | t }}</button>
+        <button type="button" class="cart-remove-btn cart-remove-confirm" id="cart-remove-confirm">{{ 'cart.remove_confirm' | t }}</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="mini-cart-wrapper" role="dialog" aria-modal="true" aria-label="{{ 'cart.title' | t }}">
+    <div class="up-selling fbt-section">
+      <div class="fbt-header">
+        {{ 'cart.fbt_title' | t }} <strong>{{ 'cart.fbt_title_bold' | t }}</strong>
+      </div>
+      {% if up_selling != null %}
+        <div class="fbt-track">
+          {% for i in (1..2) %}
+            <div class="fbt-card fbt-card--skel" aria-hidden="true">
+              <div class="fbt-card-image"><span class="opt-shimmer opt-shimmer--light fbt-skel-imgfill"></span></div>
+              <div class="fbt-card-info">
+                <div class="fbt-card-title">
+                  <span class="opt-shimmer opt-shimmer--light fbt-skel-line" style="width: 82%"></span>
+                  <span class="opt-shimmer opt-shimmer--light fbt-skel-line" style="width: 48%; margin-top: 7px"></span>
+                </div>
+                <div class="fbt-card-bottom">
+                  <span class="opt-shimmer opt-shimmer--light fbt-skel-line" style="width: 74px; height: 13px"></span>
+                  <span class="opt-shimmer opt-shimmer--light fbt-skel-action"></span>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+          {% for product in up_selling %}
+            {%- comment -%}
+              Produk hadiah (harga 0, dibagikan otomatis oleh gift-auto-add)
+              tidak boleh ditawarkan di FBT: ia tidak bisa dibeli terpisah dan
+              tampil sebagai "Rp 0" yang membingungkan. Disaring di kode, bukan
+              di setting, supaya tidak bergantung pada isi "Up Selling
+              Products" di Header.
+            {%- endcomment -%}
+            {%- if product.price == 0 -%}
+              {%- continue -%}
+            {%- endif -%}
+            <div
+              class="fbt-card upsel-product-cart"
+              id="upsel-product-{{ product.id }}"
+              data-product="{{ product.id }}"
+              data-handle="{{ product.handle }}"
+              style="display: none;"
+            >
+              <div class="fbt-card-image">
+                <img
+                  src="{{ product.media.first | img_url: '160x' }}"
+                  alt="{{ product.title | escape }}"
+                  width="80"
+                  height="80"
+                  loading="lazy"
+                >
+              </div>
+              <div class="fbt-card-info">
+                <div class="fbt-rating" style="display:none;">
+                  <span class="fbt-star"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 0C5.80302 0 5.63472 0.0961647 5.5078 0.213572C5.38088 0.33098 5.27903 0.47454 5.18487 0.635508C4.99654 0.957443 4.83682 1.3563 4.68095 1.76327C4.52508 2.17024 4.37566 2.58362 4.23302 2.91318C4.09037 3.24274 3.92546 3.48566 3.88535 3.51613C3.84523 3.54659 3.57302 3.63634 3.22908 3.67631C2.88513 3.71627 2.4613 3.73567 2.04284 3.76486C1.62438 3.79405 1.21293 3.8321 0.861812 3.91983C0.686252 3.9637 0.523469 4.01877 0.377421 4.10866C0.231373 4.19855 0.091925 4.33478 0.0310553 4.5306C-0.0298147 4.72641 0.00641869 4.92552 0.0740254 5.08797C0.141632 5.25042 0.241827 5.3939 0.359191 5.53725C0.593919 5.82395 0.905579 6.10823 1.22771 6.38893C1.54984 6.66964 1.88211 6.94619 2.1379 7.18983C2.39368 7.43347 2.56269 7.67186 2.57801 7.72116C2.59334 7.77045 2.59064 8.06882 2.52072 8.42308C2.4508 8.77734 2.33831 9.20397 2.23555 9.62898C2.1328 10.054 2.03896 10.4744 2.01029 10.8505C1.99595 11.0386 1.99576 11.2167 2.03242 11.3897C2.06908 11.5626 2.15172 11.7453 2.31108 11.8663C2.47044 11.9873 2.66192 12.0122 2.83063 11.9952C2.99933 11.9782 3.16004 11.9243 3.32674 11.852C3.66013 11.7072 4.01478 11.4825 4.36974 11.249C4.7247 11.0155 5.07816 10.7729 5.37889 10.594C5.67962 10.415 5.95042 10.3205 6 10.3205C6.04958 10.3205 6.32039 10.415 6.62112 10.594C6.92184 10.7729 7.27531 11.0155 7.63026 11.249C7.98522 11.4825 8.33987 11.7072 8.67327 11.852C8.83997 11.9243 9.00067 11.9782 9.16938 11.9952C9.33808 12.0122 9.52957 11.9873 9.68892 11.8663C9.84828 11.7453 9.93092 11.5626 9.96758 11.3897C10.0042 11.2167 10.0041 11.0386 9.98971 10.8505C9.96103 10.4744 9.8672 10.054 9.76445 9.62898C9.66169 9.20397 9.5492 8.77734 9.47928 8.42308C9.40936 8.06882 9.40666 7.77045 9.42199 7.72116C9.43731 7.67186 9.60632 7.43347 9.86211 7.18983C10.1179 6.94619 10.4502 6.66964 10.7723 6.38893C11.0944 6.10823 11.4061 5.82395 11.6408 5.53725C11.7582 5.3939 11.8584 5.25042 11.926 5.08797C11.9936 4.92552 12.0298 4.72641 11.9689 4.5306C11.9081 4.33478 11.7686 4.19855 11.6226 4.10866C11.4765 4.01877 11.3138 3.9637 11.1382 3.91983C10.7871 3.8321 10.3756 3.79405 9.95716 3.76486C9.5387 3.73567 9.11487 3.71627 8.77093 3.67631C8.42698 3.63634 8.15477 3.54659 8.11465 3.51613C8.07454 3.48566 7.90963 3.24274 7.76699 2.91318C7.62434 2.58362 7.47492 2.17024 7.31906 1.76327C7.16319 1.3563 7.00346 0.957443 6.81513 0.635508C6.72097 0.47454 6.61913 0.33098 6.4922 0.213572C6.36528 0.0961647 6.19698 0 6 0Z" fill="#F8F8F2"/></svg></span>
+                  <span class="fbt-rating-text"></span>
+                </div>
+                <div class="fbt-card-title">{{ product.title }}</div>
+                {%- comment -%}
+                  Rendered only when there is one. An empty div still adds a
+                  gap, which is part of why a title-and-price-only product
+                  looked stretched next to a fully-populated card.
+                {%- endcomment -%}
+                {%- unless product.has_only_default_variant -%}
+                  <div class="fbt-card-variant">{{ product.variants.first.title }}</div>
+                {%- endunless -%}
+                <div class="fbt-card-bottom">
+                  <div class="fbt-card-price">{{ product.price | money }}</div>
+                  <div
+                    class="fbt-card-action button-quick-add-cart button-cart-icon"
+                    data-variant="{{ product.variants.first.id }}"
+                  >
+                <span class="fbt-btn-state fbt-btn-idle">{{ 'cart.fbt_add' | t }}</span>
+                <span class="fbt-btn-state fbt-btn-loading">
+                  <svg class="fbt-spinner" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2.5" opacity=".25"/>
+                    <path d="M12 3a9 9 0 0 1 9 9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                  </svg>
+                </span>
+                    <span class="fbt-btn-state fbt-btn-success">
+                      <svg width="14" height="11" viewBox="0 0 14 11" fill="none">
+                        <path d="M1 5.5L5 9.5L13 1.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+    <div id="cart">{% render 'CartDrawerContent' %}</div>
+  </div>
+</div>
+
+
+<style>
+  /* ===== Penjaga zoom mobile =====
+     Zoom halaman yang "kadang muncul saat remove" punya dua mekanisme:
+
+     1) Double-tap zoom — dua ketukan cepat berdekatan (ikon sampah lalu
+        tombol Remove di modal, atau ketukan ganda karena tak sabar) sesekali
+        ditafsirkan browser sebagai double tap dan men-zoom seluruh halaman.
+        touch-action: manipulation mematikannya di area drawer dan modal;
+        pan dan pinch zoom tetap hidup untuk aksesibilitas.
+
+     2) Zoom fokus iOS — WebKit men-zoom viewport saat kontrol form ber-font
+        di bawah 16px menerima fokus. Satu-satunya yang tersisa di drawer
+        adalah .qty-select (13px); di layar sentuh dinaikkan ke 16px dengan
+        padding vertikal dirapatkan supaya tinggi kontrolnya tidak berubah. */
+  .mini-cart,
+  .mini-cart *,
+  .cart-remove-modal,
+  .cart-remove-modal * {
+    touch-action: manipulation;
+  }
+
+  @media (hover: none) and (pointer: coarse) {
+    .cart-item .qty-select {
+      font-size: 16px;
+      padding-top: 2px;
+      padding-bottom: 2px;
+    }
+  }
+</style>
+
+<script>
+  /* Shopify's `t` filter HTML-escapes its output, so a translation containing
+     an apostrophe reaches JS as the literal characters "Couldn&#39;t" and
+     renders exactly that way through textContent. Decode once, at the boundary
+     where Liquid strings become JS strings. */
+  window.cartDecode = function (s) {
+    if (typeof s !== 'string' || s.indexOf('&') === -1) return s;
+    var el = document.createElement('textarea');
+    el.innerHTML = s;
+    return el.value;
+  };
+  window.cartDecodeMap = function (o) {
+    for (var k in o) {
+      if (typeof o[k] === 'string') o[k] = window.cartDecode(o[k]);
+    }
+    return o;
+  };
+
+  /* ===== Cart i18n strings (Liquid → JS) ===== */
+  window._cartI18n = window.cartDecodeMap({
+    allSet:            {{ 'cart.progress.all_set' | t | json }},
+    unlocked:          {{ 'cart.progress.unlocked' | t | json }},
+    progressAdd:       {{ 'cart.progress_add' | t | json }},
+    progressMore:      {{ 'cart.progress_more' | t | json }},
+    freeShippingBadge: {{ 'cart.free_shipping_badge' | t | json }},
+    progressAway:      {{ 'cart.progress_away' | t | json }},
+    shippingFree:      {{ 'cart.shipping_free' | t | json }},
+    shippingCalc:      {{ 'cart.shipping_calculated' | t | json }}
+  });
+
+  const minShipping = {{ settings.min_shipping | default: 1000000 }};
+
+  /* ===== Rp formatter (dots, no decimals) ===== */
+  window.formatRp = function(amount) {
+    var n = Math.round(Math.abs(Number(amount)));
+    /* Last line of defence: a customer must never be shown "Rp NaN". Callers
+       are guarded too, but this is the single place every price passes through. */
+    if (!isFinite(n)) return '';
+    return 'Rp ' + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  };
+
+  /* ===== Is this actually a cart? =====
+     The Ajax cart endpoints answer 200 with a cart on success but return
+     { status, message, description } on failure — no total_price, no items.
+     Verified live: POST /cart/change.js with a line key that no longer exists
+     (item removed in another tab, cart expired) answers exactly that shape.
+     Feeding it to refreshCartUI printed "Rp NaN" on the checkout button and the
+     progress line, and because item_count was undefined the
+     `if (cart.item_count === 0) reload()` safety never fired either. */
+  window.isCartPayload = function (c) {
+    return !!c && typeof c.total_price === 'number' && Array.isArray(c.items);
+  };
+
+  /* ===== Loading overlay for cart ===== */
+  window.cartShowLoading = function() {
+    var c = document.getElementById('cart');
+    if (!c) return;
+    var existing = c.querySelector('.cart-loading-overlay');
+    if (existing) { existing.style.display = 'flex'; return; }
+    var ov = document.createElement('div');
+    ov.className = 'cart-loading-overlay';
+    ov.innerHTML = '<div class="cart-loading-spinner"></div>';
+    c.appendChild(ov);
+  };
+  window.cartHideLoading = function() {
+    var ov = document.querySelector('#cart .cart-loading-overlay');
+    if (ov) ov.style.display = 'none';
+  };
+
+  /* ===== Shared error toast =====
+     One implementation for every cart surface. The premium-ATC block used to
+     carry its own private copy, which is how two toasts with different
+     lifetimes end up on the same page. */
+  window.cartToast = function(msg) {
+    if (!msg) return;
+    var t = document.getElementById('atc-error-toast');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'atc-error-toast';
+      t.setAttribute('role', 'alert');
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._hideTimer);
+    t._hideTimer = setTimeout(function() { t.classList.remove('show'); }, 4200);
+  };
+
+  /* ===== Sync FBT card visibility with current cart =======================
+     Matching is by PRODUCT, not variant, for two reasons.
+
+     One: correctness. An FBT card advertises a product but its ADD button
+     carries product.variants.first.id. A customer who bought "Powder — 60
+     servings" from the PDP holds a different variant than the card's first
+     one, so a variant match would keep upselling something already in the bag.
+
+     Two: app.bundle.js getCartItems() independently shows/hides these same
+     cards and matches on item.product_id. Matching on variant here meant the
+     two writers disagreed — the bundle hid the card, this function showed it,
+     and because the bundle sets style.display directly it never left the
+     restore marker behind, so removing the item brought the card back with no
+     animation at all. That was the "back to FBT doesn't work" symptom. */
+  function fbtReduced() {
+    return !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }
+
+  /* Plays the restore choreography on one card. Mirrors .fbt-card-exit — the
+     card left leftwards and shrinking, so it comes back from the same place,
+     which is what makes it read as "restored" rather than "some new card". */
+  function fbtPlayReturn(card, delay) {
+    card.classList.remove('fbt-card-enter', 'fbt-card-enter-active', 'fbt-card-returned');
+    card.style.removeProperty('--fbt-d');
+    if (fbtReduced()) return;
+
+    card.style.setProperty('--fbt-d', delay + 'ms');
+    card.classList.add('fbt-card-enter');
+    void card.offsetWidth; /* commit the from-state before transitioning */
+    card.classList.add('fbt-card-enter-active', 'fbt-card-returned');
+
+    /* Timed cleanup rather than transitionend. The previous version listened
+       for an opacity transition that could never fire — .fbt-card-enter had no
+       CSS at all — so every restored card leaked a listener that never ran. */
+    setTimeout(function () {
+      card.classList.remove('fbt-card-enter', 'fbt-card-enter-active', 'fbt-card-returned');
+      card.style.removeProperty('--fbt-d');
+    }, delay + 1000);
+  }
+
+  window.syncFBTVisibility = function(cart) {
+    if (!window.isCartPayload(cart)) return;
+    var inCartProducts = {};
+    var inCartVariants = {};
+    (cart.items || []).forEach(function(item) {
+      inCartProducts[String(item.product_id)] = true;
+      inCartVariants[String(item.variant_id)] = true;
+    });
+
+    /* Check each FBT card */
+    var fbtCards = document.querySelectorAll('.fbt-card.upsel-product-cart');
+    var anyVisible = false;
+    var returned = [];
+
+    fbtCards.forEach(function(card) {
+      var btn = card.querySelector('.fbt-card-action');
+      if (!btn) return;
+      var variantId = btn.getAttribute('data-variant');
+      /* id="upsel-product-<productId>" is the fallback for any card rendered
+         before data-product existed (e.g. a cached drawer still in the DOM). */
+      var productId = card.dataset.product || String(card.id || '').replace('upsel-product-', '');
+
+      var isInCart =
+        (productId && inCartProducts[productId]) ||
+        (variantId && inCartVariants[variantId]);
+
+      if (isInCart) {
+        /* In the cart — keep hidden, and record WHY it is hidden */
+        card.dataset.fbtInCart = '1';
+        /* A card already animating itself out owns its own hide; snapping
+           display:none here would cut the exit short mid-fade. */
+        if (!card.classList.contains('fbt-card-exit')) card.style.display = 'none';
+        card.classList.remove('fbt-card-enter', 'fbt-card-enter-active', 'fbt-card-returned');
+        return;
+      }
+
+      /* "Returned" means precisely: this card was hidden because its product
+         sat in the cart, and now it doesn't. The old check read
+         card.style.display === 'none', which is true for EVERY card on first
+         render (Liquid ships them hidden) — so the restore animation fired for
+         cards that had never been in the cart at all.
+         The reason lives on the element rather than in a module-level snapshot
+         of the last cart, because the FBT add flow hides its own card without
+         routing through this function; a snapshot would miss it and the card
+         would come back with no animation. */
+      var didReturn = card.dataset.fbtInCart === '1';
+      delete card.dataset.fbtInCart;
+
+      /* Not in the cart — restore to FBT */
+      card.style.display = 'flex';
+      card.classList.remove('fbt-card-exit');
+      btn.classList.remove('is-success', 'is-loading');
+      anyVisible = true;
+
+      if (didReturn) returned.push(card);
+    });
+
+    /* Show/hide the entire FBT section based on whether any cards are visible */
+    var fbtSection = document.querySelector('.fbt-section');
+    if (fbtSection) {
+      var wasShown = fbtSection.style.display !== 'none';
+      fbtSection.style.display = anyVisible ? '' : 'none';
+      /* Section coming back from empty is a bigger jump than any single card,
+         so it gets its own settle. Flagged for the fbt-reveal wrapper below so
+         the two entrance animations can't both claim the same cards. */
+      if (anyVisible && !wasShown && returned.length && !fbtReduced()) {
+        fbtSection.dataset.fbtReturning = '1';
+        fbtSection.classList.remove('fbt-section-in');
+        void fbtSection.offsetWidth;
+        fbtSection.classList.add('fbt-section-in');
+        setTimeout(function () {
+          fbtSection.classList.remove('fbt-section-in');
+          delete fbtSection.dataset.fbtReturning;
+        }, 700);
+      }
+    }
+
+    if (!returned.length) return;
+
+    /* Measure before animating: the enter transform would otherwise skew the
+       rect, and .fbt-track isn't positioned so offsetLeft can't be trusted. */
+    var track = returned[0].closest('.fbt-track');
+    var scrollTo = null;
+    if (track) {
+      scrollTo = track.scrollLeft
+        + (returned[0].getBoundingClientRect().left - track.getBoundingClientRect().left);
+      scrollTo = Math.max(0, scrollTo);
+    }
+
+    returned.forEach(function (card, i) {
+      fbtPlayReturn(card, i * 70);
+    });
+
+    /* Scroll to the card that came back, not to zero — with one card visible at
+       a time, scrolling to zero can land on a completely different product. */
+    if (track && scrollTo !== null) {
+      track.style.scrollSnapType = 'none';
+      track.scrollTo({ left: scrollTo, behavior: fbtReduced() ? 'auto' : 'smooth' });
+      var onDone = function() {
+        track.removeEventListener('scrollend', onDone);
+        clearTimeout(fallback);
+        track.style.scrollSnapType = '';
+      };
+      track.addEventListener('scrollend', onDone, { once: true });
+      var fallback = setTimeout(onDone, 600);
+    }
+  };
+
+  /* ===== Free-shipping progress: the ONLY writer for the bar ==============
+     refreshCartUI and the UTM override both route through here so they can't
+     drift apart (they previously kept their own copies of the fill/label/badge
+     logic, and the badge said the same thing as the label). */
+  function fspSetAmount(el, text) {
+    if (!el || el.textContent === text) return;
+    var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) { el.textContent = text; return; }
+    /* NB: opacity-only, so this is not "motion animation" under WCAG 2.3.3 and
+       stays on for reduced-motion users — they still get the state change. */
+    /* 100ms crossfade rather than a rolling count. Counting delays reading the
+       one number the customer needs, re-fires on every quantity tick, and has
+       no evidence behind it; a pure opacity change is also excluded from WCAG
+       2.3.3's definition of motion animation. */
+    el.classList.add('fsp-swap');
+    setTimeout(function () {
+      el.textContent = text;
+      el.classList.remove('fsp-swap');
+    }, 100);
+  }
+
+  /* The celebration is once per session. A customer who nudges quantity across
+     the line repeatedly is fiddling, not achieving something new, and a reward
+     that replays is not a reward. */
+  function fspAlreadyCelebrated() {
+    try { return sessionStorage.getItem('fsp_celebrated') === '1'; }
+    catch (e) { return false; }
+  }
+  function fspMarkCelebrated() {
+    try { sessionStorage.setItem('fsp_celebrated', '1'); } catch (e) {}
+  }
+
+  window.setShippingProgress = function (pct, remaining, isFree) {
+    var c = document.getElementById('cart');
+    if (!c) return;
+    var i18n = window._cartI18n || {};
+
+    /* scaleX, not width — compositor-only. Floored at 3% so an untouched cart
+       reads as started; the sentence still states the true remainder. */
+    var fill = c.querySelector('.progress-fill');
+    if (fill) fill.style.transform = 'scaleX(' + (Math.max(pct, 3) / 100) + ')';
+
+    var prefix = c.querySelector('[data-fsp-prefix]');
+    var amountEl = c.querySelector('[data-fsp-amount]');
+    var suffix = c.querySelector('[data-fsp-suffix]');
+    if (prefix && amountEl && suffix) {
+      if (isFree) {
+        /* Possession, not a system state. "Active"/"unlocked" describes a
+           feature toggle; "your shipping is free" describes something the
+           customer now has. And the value is stated as SCOPE, never as rupiah:
+           real shipping here runs Rp 15.000-85.000, so naming the floor would
+           understate the gift to everyone outside Java. */
+        prefix.textContent = i18n.unlocked || 'Your shipping is free.';
+        fspSetAmount(amountEl, '');
+        suffix.textContent = '';
+      } else {
+        prefix.textContent = (i18n.progressAdd || 'Spend') + ' ';
+        suffix.textContent = ' ' + (i18n.progressMore || 'more for free shipping');
+        fspSetAmount(amountEl, window.formatRp(remaining));
+      }
+    }
+
+    /* Single writer for the Shipping row too — it is where the earned state
+       actually lives once the header retracts. */
+    /* The row states the arithmetic; the header chip states the benefit. Only
+       the value changes here — giving the row its own emphasis too was the same
+       fact twice. */
+    var sv = c.querySelector('#cart-shipping-value');
+    if (sv) {
+      fspSetAmount(sv, isFree ? (i18n.shippingFree || 'FREE') : (i18n.shippingCalc || 'Calculated at checkout'));
+      sv.classList.toggle('is-free', !!isFree);
+    }
+
+    var wrap = c.querySelector('.free-shipping-progress');
+    if (!wrap) return;
+    var was = wrap.getAttribute('data-fsp-state') === 'earned';
+    /* Both states live in one fixed-height slot, so this swap moves nothing */
+    wrap.setAttribute('data-fsp-state', isFree ? 'earned' : 'progress');
+
+    /* Only on the crossing itself. A server-rendered qualifying cart never
+       gets .just-unlocked, so it opens already collapsed and plays nothing. */
+    if (isFree && !was) {
+      var announce = wrap.querySelector('[data-fsp-announce]');
+      if (announce) announce.textContent = i18n.unlocked || 'Your shipping is free.';
+
+      if (!fspAlreadyCelebrated()) {
+        fspMarkCelebrated();
+        wrap.classList.remove('just-unlocked');
+        void wrap.offsetWidth;
+        wrap.classList.add('just-unlocked');
+        setTimeout(function () { wrap.classList.remove('just-unlocked'); }, 1800);
+        /* One light tap. No sound: Indonesian mobile shoppers are frequently
+           browsing somewhere a chime would be unwelcome. */
+        try {
+          if (navigator.vibrate && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+            navigator.vibrate(10);
+          }
+        } catch (e) {}
+      }
+    } else if (!isFree && was) {
+      wrap.classList.remove('just-unlocked');
+      var undo = wrap.querySelector('[data-fsp-announce]');
+      if (undo) undo.textContent = '';
+    }
+  };
+
+  /* ===== Central UI refresh ===== */
+  window.refreshCartUI = function(cart) {
+    var c = document.getElementById('cart');
+    if (!c) return;
+
+    /* One choke point for every caller. An error payload must never reach the
+       renderers — it produces NaN prices and makes syncVoucherUI think a live
+       voucher expired. Re-read the real cart instead of guessing. */
+    if (!window.isCartPayload(cart)) {
+      console.error('[cart] non-cart payload rejected', cart);
+      if (window.refreshCartUI._healing) return;
+      window.refreshCartUI._healing = true;
+      fetch('/cart.js')
+        .then(function (r) { return r.json(); })
+        .then(function (fresh) {
+          window.refreshCartUI._healing = false;
+          if (window.isCartPayload(fresh)) window.refreshCartUI(fresh);
+        })
+        .catch(function () { window.refreshCartUI._healing = false; });
+      return;
+    }
+
+    var i18n = window._cartI18n || {};
+    var totalCents = cart.total_price;
+    var total = totalCents / 100;
+    /* Progress is measured on MERCHANDISE value (items_subtotal_price), not on
+       the post-voucher total. Two reasons.
+
+       The goal is "how much more product do I need to add" — a figure the
+       customer controls. Measuring it on the post-voucher total makes the goal
+       move backwards the moment they use a voucher, which reads as a bug: a
+       cart holding Rp 470.000 of product with a 100% code shows Rp 0 and asks
+       for the full Rp 700.000 again.
+
+       And it now matches the store rule: the automatic "Free Shipping"
+       discount (Indonesia) was moved to a Rp 700.000 minimum and set to
+       combine with order and product discounts, so a voucher should no longer
+       cost an earned free-shipping. Note that /cart/shipping_rates.json cannot
+       confirm this — that endpoint returns raw profile rates and is blind to
+       shipping discounts — so the checkout line item is the outstanding check. */
+    var progressCents = cart.items_subtotal_price;
+    if (progressCents === null || progressCents === undefined) progressCents = totalCents;
+    var progressBase = progressCents / 100;
+    var threshold = minShipping;
+    var remaining = threshold - progressBase;
+    var isFree = remaining <= 0;
+
+    // UTM override
+    var utmFree = (typeof window.isUtmFreeShipping === 'function' && window.isUtmFreeShipping());
+    if (utmFree) { isFree = true; remaining = 0; }
+
+    /* -- Progress bar: single writer, see setShippingProgress -- */
+    var pct = Math.min((progressBase / threshold) * 100, 100);
+    window.setShippingProgress(pct, remaining, isFree);
+
+    /* -- Keranjang kosong: tutup drawer dengan hormat (hanya bila BARU
+          menjadi kosong — lihat cartMaybeCloseOnEmpty) -- */
+    window.cartMaybeCloseOnEmpty(cart.item_count);
+
+    /* -- Checkout total -- */
+    var te = c.querySelector('#sub-total-mini');
+    if (te) {
+      te.dataset.total = totalCents;
+      te.textContent = window.formatRp(total);
+    }
+
+    /* -- Shipping row stays visible; its value is written by
+          setShippingProgress, which owns every free-shipping surface -- */
+    var shippingRow = c.querySelector('#cart-shipping-row');
+    if (shippingRow) shippingRow.classList.add('visible');
+
+    /* -- Savings row: recalculate from DOM data attributes -- */
+    window.recalcSavings();
+
+    /* -- Voucher row: reconcile with whatever the cart actually holds -- */
+    if (window.syncVoucherUI) window.syncVoucherUI(cart);
+
+    /* -- FBT: every cart mutation reconciles the carousel ------------------
+       Previously only two call sites did this by hand, so any path that
+       forgot (or that threw earlier in its own .then) left a removed product
+       missing from the carousel until the drawer was closed and reopened.
+       Routing it through here makes the restore a property of "the cart
+       changed" rather than of one particular handler remembering.
+       Idempotent: the restore marker is cleared on the first pass, so a
+       second call in the same tick finds nothing to animate. */
+    if (window.syncFBTVisibility) window.syncFBTVisibility(cart);
+  };
+
+  /* ===== Tutup premium saat keranjang kosong =====
+     Doktrin gerak yang sama dengan kedatangan hadiah, dibalik: kepergian
+     lebih cepat dari kedatangan, kurva MEMPERCEPAT (cubic-bezier(0.7,0,0.84,0)),
+     hanya transform + opacity, dan berlapis — isi panel pamit duluan
+     (memudar turun 150ms), baru panelnya meluncur keluar lewat transisi
+     tutup milik tema. Drawer kosong yang menganga membebani pembeli dengan
+     keputusan "sekarang apa?"; menutupnya mengembalikan mereka ke halaman. */
+  window.cartPremiumClose = function () {
+    var mini = document.querySelector('.mini-cart.active');
+    if (!mini) return;
+    var panel = document.getElementById('cart');
+    var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var slideOut = function () {
+      mini.classList.remove('active');
+      /* Bersihkan jejak inline setelah panel selesai keluar (transisi tema
+         0.38 detik) supaya pembukaan berikutnya mulai dari keadaan murni. */
+      setTimeout(function () {
+        if (panel) {
+          panel.style.removeProperty('transform');
+          panel.style.removeProperty('transition');
+        }
+      }, 450);
+    };
+    if (reduced || !panel) { slideOut(); return; }
+    /* Parallax dua lapis, TANPA fade: konten mendahului ke arah keluar
+       (24px, kurva mempercepat), panel menyusul lewat transisi tema 70ms
+       kemudian. Dua lapisan yang bergerak dengan kecepatan berbeda terbaca
+       sebagai kedalaman; opacity tidak disentuh sama sekali. */
+    panel.style.transition = 'transform 220ms cubic-bezier(0.7, 0, 0.84, 0)';
+    panel.style.transform = 'translateX(1.5rem)';
+    setTimeout(slideOut, 70);
+  };
+
+  /* Dipanggil refreshCartUI setiap kali keranjang menjadi kosong. Jedanya
+     satu tarikan napas (650ms): baris terakhir sempat menuntaskan animasi
+     keluarnya dan pembeli sempat MELIHAT keranjangnya kosong — menutup
+     seketika terasa seperti diusir. Batal otomatis bila sempat ada isi lagi
+     (mis. pembeli menekan ADD di Frequently Bought Together). */
+  var _emptyCloseTimer = null;
+  var _lastItemCount = null;
+  window.cartCancelEmptyClose = function () {
+    if (_emptyCloseTimer) { clearTimeout(_emptyCloseTimer); _emptyCloseTimer = null; }
+  };
+  /* Hanya TRANSISI berisi → kosong yang menutup. Drawer yang memang dibuka
+     dalam keadaan kosong (klik ikon keranjang tanpa isi) harus tetap terbuka —
+     pembeli sengaja membukanya dan empty state punya pekerjaan: menunjukkan
+     jalan mulai belanja. */
+  window.cartMaybeCloseOnEmpty = function (count) {
+    if (count === 0) {
+      if (_lastItemCount !== null && _lastItemCount > 0) window.cartScheduleEmptyClose();
+    } else {
+      window.cartCancelEmptyClose();
+    }
+    _lastItemCount = count;
+  };
+  window.cartScheduleEmptyClose = function () {
+    if (_emptyCloseTimer) return;
+    _emptyCloseTimer = setTimeout(function () {
+      _emptyCloseTimer = null;
+      var c = document.getElementById('cart');
+      if (c && c.querySelector('.cart-item')) return; /* sudah terisi lagi */
+      window.cartPremiumClose();
+    }, 650);
+  };
+
+  /* ===== Mutasi keranjang dengan percobaan ulang =====
+     Endpoint keranjang membalas 429 sebagai halaman HTML, jadi pola lama
+     fetch().then(r => r.json()) melempar SyntaxError yang jatuh ke .catch —
+     handler remove lalu MEMULIHKAN barisnya seolah pembeli membatalkan,
+     padahal servernya cuma minta napas. Pembeli melihat barangnya "balik
+     lagi" dan harus menghapus dua kali. 429 bersifat sesaat; tiga percobaan
+     berjeda menaik hampir selalu cukup. */
+  window.cartChangeWithRetry = function (payload, tries, delay) {
+    /* Anggaran total dijaga di bawah ~10 detik. Lima percobaan dengan
+       Retry-After 30 detik pernah membuat spinner menggiling hampir semenit —
+       lebih jujur menyerah cepat dan memulihkan barisnya daripada menyandera
+       pembeli di depan overlay. */
+    tries = tries || 3;
+    delay = delay || 1000;
+    return fetch('/cart/change.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(function (r) {
+      if (!r.ok) {
+        var err = new Error('cart ' + r.status);
+        /* Kalau server memberi tahu kapan boleh kembali, patuhi itu. */
+        var ra = parseInt(r.headers.get('Retry-After'), 10);
+        if (ra > 0 && ra <= 6) err.retryAfter = ra * 1000;
+        throw err;
+      }
+      return r.json();
+    }).catch(function (err) {
+      if (tries <= 1) {
+        /* Jejak untuk debug: tanpa ini, baris yang "balik lagi" tampak
+           seperti bug UI padahal servernya yang menolak terus. */
+        try { console.warn('[cart] change gagal setelah semua percobaan:', err && err.message); } catch (e) {}
+        throw err;
+      }
+      var pause = (err && err.retryAfter) ? err.retryAfter : delay;
+      return new Promise(function (res) { setTimeout(res, pause); })
+        .then(function () { return window.cartChangeWithRetry(payload, tries - 1, delay * 2); });
+    });
+  };
+
+  /* ===== Qty change handler ===== */
+  window.cartChangeQty = function(sel) {
+    var key = sel.getAttribute('data-key') || sel.getAttribute('data-id');
+    var qty = parseInt(sel.value);
+    var row = sel.closest('.cart-item');
+
+    window.cartShowLoading();
+
+    window.cartChangeWithRetry({ id: key, quantity: qty })
+    .then(function(cart) {
+      window.refreshCartUI(cart);
+      window.syncFBTVisibility(cart);
+      // If qty became 0 (shouldn't happen with select 1-10, but safety)
+      if (qty === 0 && row) row.remove();
+      window.cartHideLoading();
+    })
+    .catch(function() { window.cartHideLoading(); });
+  };
+
+  /* ===== Remove item confirmation modal ===== */
+  (function() {
+    var _pendingBtn = null;
+    var _closeTimer = null;
+    var modal = document.getElementById('cart-remove-modal');
+    var nameEl = document.getElementById('cart-remove-name');
+    var cancelBtn = document.getElementById('cart-remove-cancel');
+    var confirmBtn = document.getElementById('cart-remove-confirm');
+
+    /* Move modal to <body> so it isn't affected by .mini-cart pointer-events
+       or any stacking-context quirks of the cart drawer. */
+    if (modal && modal.parentNode !== document.body) {
+      document.body.appendChild(modal);
+    }
+
+    function openModal() {
+      if (!modal) return;
+      /* Cancel any pending close — prevents a stale timeout from hiding
+         a freshly-opened modal when the user rapidly re-triggers remove. */
+      if (_closeTimer) { clearTimeout(_closeTimer); _closeTimer = null; }
+      modal.classList.add('active');
+      /* Trigger reflow so the transition plays */
+      void modal.offsetWidth;
+      modal.classList.add('visible');
+    }
+
+    function closeModal() {
+      if (!modal) return;
+      if (_closeTimer) { clearTimeout(_closeTimer); _closeTimer = null; }
+      modal.classList.remove('visible');
+      /* Wait for the exit animation to finish, then hide */
+      _closeTimer = setTimeout(function() {
+        modal.classList.remove('active');
+        _closeTimer = null;
+      }, 250);
+    }
+
+    /* Show confirmation — called from trash button onclick */
+    window.cartRemoveItem = function(btn) {
+      _pendingBtn = btn;
+      var row = btn.closest('.cart-item');
+      var title = row ? (row.querySelector('.title') || {}).textContent : '';
+      if (nameEl) nameEl.textContent = '"' + (title || 'this item').trim() + '"';
+      openModal();
+    };
+
+    /* Cancel — close modal, do nothing */
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', function() {
+        _pendingBtn = null;
+        closeModal();
+      });
+    }
+
+    /* Also close on backdrop click */
+    if (modal) {
+      modal.querySelector('.cart-remove-backdrop').addEventListener('click', function() {
+        _pendingBtn = null;
+        closeModal();
+      });
+    }
+
+    /* Confirm — actually remove the item */
+    if (confirmBtn) {
+      confirmBtn.addEventListener('click', function() {
+        if (!_pendingBtn) return;
+        var btn = _pendingBtn;
+        _pendingBtn = null;
+        closeModal();
+
+        var key = btn.getAttribute('data-key');
+        var row = btn.closest('.cart-item');
+
+        /* Fade + shrink the row out */
+        if (row) {
+          row.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+          row.style.opacity = '0';
+          row.style.transform = 'scale(0.96)';
+        }
+
+        window.cartShowLoading();
+
+        window.cartChangeWithRetry({ id: key, quantity: 0 })
+        .then(function(cart) {
+          if (row) row.remove();
+          window.refreshCartUI(cart);
+          window.syncFBTVisibility(cart);
+          window.cartHideLoading();
+        })
+        .catch(function() {
+          if (row) {
+            row.style.opacity = '1';
+            row.style.transform = '';
+            row.style.transition = '';
+          }
+          window.cartHideLoading();
+        });
+      });
+    }
+  })();
+</script>
+
+<script>
+  /* ===== Harga coret: dirender server, tidak disentuh klien =====
+     Dulu di sini setiap produk di keranjang ditarik ulang lewat
+     ?section_id=variant-compare-data, lalu teks harga coret dan
+     data-compare-at DITIMPA dengan nilai dari sana.
+
+     Komentar lamanya keliru: konteks keranjang MEMANG mengekspos
+     compare_at_price, dan snippets/CartItemCard.liquid sudah merendernya
+     server-side. Lapisan ini tidak menambah kebenaran apa pun — ia hanya
+     menyalin ulang angka yang sudah benar, sambil membuka satu jalan bagi
+     angka yang salah untuk masuk: bila render section itu tersaji dari
+     cache basi, ia menimpa harga coret yang benar dengan nilai lama.
+     12 Agu 2026 justru itu yang terjadi — Protocol 60 Days berubah dari
+     1.160.000 menjadi 1.450.000 di keranjang, dan "You're saving" ikut
+     menggelembung 290.000.
+
+     Sekarang server satu-satunya sumber; yang tersisa hanyalah menghitung
+     ulang total hemat dari data-compare-at yang sudah terpasang. Nol
+     permintaan jaringan per pembukaan drawer.
+
+     Catatan: window.loadFBTRatings di bawah masih memakai section yang sama
+     untuk badge rating Judge.me — itu tidak menyentuh harga, jadi tetap. */
+  window.loadCompareAtPrices = function() {
+    if (typeof window.recalcSavings === 'function') window.recalcSavings();
+  };
+
+  /* ===== Fetch Judge.me ratings for FBT products ===== */
+  window.loadFBTRatings = function() {
+    var fbtCards = document.querySelectorAll('.fbt-card[data-handle]');
+    if (!fbtCards.length) return;
+
+    fbtCards.forEach(function(card) {
+      var handle = card.getAttribute('data-handle');
+      if (!handle) return;
+
+      fetch('/products/' + handle + '?section_id=variant-compare-data')
+        .then(function(r) { return r.text(); })
+        .then(function(html) {
+          var doc = new DOMParser().parseFromString(html, 'text/html');
+
+          /* Try to extract data-average-rating from Judge.me badge */
+          var badge = doc.querySelector('[data-rating-badge]');
+          if (!badge) return;
+
+          var ratingEl = badge.querySelector('[data-average-rating]');
+          var rating = ratingEl ? ratingEl.getAttribute('data-average-rating') : null;
+
+          /* Fallback: try to extract from badge text content */
+          if (!rating) {
+            var text = badge.textContent || '';
+            var match = text.match(/([\d.]+)\s*\/\s*5/);
+            if (match) rating = match[1];
+          }
+
+          if (!rating || parseFloat(rating) <= 0) return;
+
+          /* Update the FBT card rating display */
+          var ratingWrap = card.querySelector('.fbt-rating');
+          var ratingText = card.querySelector('.fbt-rating-text');
+          if (ratingWrap && ratingText) {
+            ratingText.textContent = rating + '/5';
+            ratingWrap.style.display = '';
+          }
+        })
+        .catch(function(err) { console.warn('FBT rating fetch failed for', handle, err); });
+    });
+  };
+
+  /* ===== FBT Add-to-Cart ==================================================
+     Capture-phase intercept blocks app.bundle.js, whose ajaxCart() does
+     innerHTML='' then innerHTML=html and flashes the whole drawer. We swap only
+     .cart-items and .cart-footer so the header, progress bar and FBT survive.
+
+     The card now leaves on the tap, before the network answers. The old order
+     was: await /cart/add.js, THEN await cart?view=mini (serialised), crossfade
+     120ms, show a checkmark, hold 500ms, and only then start the 250ms exit —
+     roughly 870ms of scripted waiting stacked on top of two round-trips. The
+     item appearing in the list above is the confirmation; the checkmark was
+     confirming something the customer could already see. */
+  (function() {
+    /* Resolves once the card is actually hidden. transitionend alone isn't
+       enough — a drawer re-render mid-flight detaches the node and the event
+       never lands, which would strand the card half-faded. */
+    function fbtExit(card) {
+      if (!card) return;
+      card.dataset.fbtInCart = '1';
+      if (fbtReduced()) { card.style.display = 'none'; return; }
+
+      card.classList.add('fbt-card-exit');
+      var done = false;
+      var finish = function () {
+        if (done) return;
+        done = true;
+        card.style.display = 'none';
+        card.classList.remove('is-success', 'fbt-card-exit');
+        var track = card.closest('.fbt-track');
+        if (track) track.scrollLeft = 0;
+      };
+      card.addEventListener('transitionend', function h(ev) {
+        if (ev.propertyName !== 'opacity') return;
+        card.removeEventListener('transitionend', h);
+        finish();
+      });
+      setTimeout(finish, 420);
+    }
+
+    var FBT_FAILED = window.cartDecode({{ 'cart.atc_failed_generic' | t | json }});
+
+    document.addEventListener('click', function(e) {
+      var btn = e.target.closest && e.target.closest('.fbt-card-action');
+      if (!btn || btn.dataset.fbtBusy) return;
+
+      var variant = btn.dataset.variant;
+      if (!variant) return;
+
+      e.stopImmediatePropagation();
+      e.preventDefault();
+      btn.dataset.fbtBusy = '1';
+
+      var card = btn.closest('.fbt-card');
+      var prefix = (typeof Shopify !== 'undefined' && Shopify.locale === 'id') ? '/id/' : '/';
+
+      /* Optimistic: the card goes now, the network catches up */
+      fbtExit(card);
+
+      /* Only a failed ADD justifies putting the card back. A crash in the
+         post-add DOM work must not roll back a line the customer really did
+         add — that reports "couldn't add to cart" over an item sitting in the
+         cart, and restores an FBT card for a product that is now in it. */
+      var addFailed = false;
+
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ items: [{ id: parseInt(variant, 10), quantity: 1 }] })
+      })
+      .then(function(r) {
+        return r.json().then(function (j) { if (!r.ok) throw j; return j; });
+      })
+      .catch(function (err) {
+        addFailed = true;
+        throw err;
+      })
+      .then(function() {
+        /* Parallel. These two don't depend on each other, and chaining them
+           doubled the wait before the drawer showed the new line. */
+        return Promise.all([
+          fetch(prefix + 'cart?view=mini').then(function(r) { return r.text(); }),
+          fetch('/cart.js').then(function(r) { return r.json(); })
+        ]);
+      })
+      .then(function(res) {
+        delete btn.dataset.fbtBusy;
+        var html = res[0];
+        var cart = res[1];
+
+        var cartEl = document.getElementById('cart');
+        if (!cartEl) return;
+
+        var doc = new DOMParser().parseFromString(html, 'text/html');
+        var newItems = doc.querySelector('.cart-items');
+        var newFooter = doc.querySelector('.sub-total.cart-footer');
+        var oldItems = cartEl.querySelector('.cart-items');
+        var oldFooter = cartEl.querySelector('.sub-total.cart-footer');
+
+        if (oldItems && newItems) {
+          oldItems.style.transition = 'opacity 0.12s ease-out';
+          oldItems.style.opacity = '0';
+          setTimeout(function() {
+            oldItems.innerHTML = newItems.innerHTML;
+            oldItems.style.transition = 'opacity 0.18s ease-in';
+            oldItems.style.opacity = '1';
+            setTimeout(function() { oldItems.style.transition = ''; }, 200);
+          }, 120);
+        }
+
+        if (oldFooter && newFooter) {
+          oldFooter.innerHTML = newFooter.innerHTML;
+          window.initCartTrustSlider();
+        }
+
+        window.refreshCartUI(cart);
+        if (cart.item_count > 0) window.loadCompareAtPrices();
+        var indicator = document.getElementById('cart-indicator');
+        if (indicator) indicator.classList.toggle('show', cart.item_count > 0);
+      })
+      .catch(function(err) {
+        delete btn.dataset.fbtBusy;
+
+        if (!addFailed) {
+          /* The item IS in the cart; only the redraw broke. Say nothing to the
+             customer, log it for us, and reconcile from the server so the
+             drawer isn't left half-updated. */
+          console.error('[cart] FBT post-add refresh failed', err);
+          fetch('/cart.js')
+            .then(function (r) { return r.json(); })
+            .then(function (cart) { window.refreshCartUI(cart); })
+            .catch(function () {});
+          return;
+        }
+
+        /* The optimistic exit was a promise we could not keep — put it back */
+        if (card) {
+          delete card.dataset.fbtInCart;
+          card.classList.remove('fbt-card-exit');
+          card.style.display = 'flex';
+          fbtPlayReturn(card, 0);
+        }
+        if (window.cartToast) window.cartToast((err && err.description) || FBT_FAILED);
+      });
+    }, true); /* capture: runs before (and blocks) the app.bundle.js handler */
+  })();
+</script>
+
+<style>
+  /* ===== EasyGift free-gift line item (see CartItemCard.liquid) ===== */
+  .cart-item--gift {
+    position: relative;
+    border: 1px solid rgba(43, 60, 53, 0.16);
+    border-radius: 12px;
+    padding: 10px;
+    background: linear-gradient(
+      120deg,
+      rgba(43, 60, 53, 0.055) 0%,
+      rgba(242, 242, 232, 0.65) 55%,
+      rgba(43, 60, 53, 0.035) 100%
+    );
+  }
+  .gift-badge-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin: 4px 0 2px;
+  }
+  /* Chip asal-usul: pil hantu ber-hairline berisi glyph panah-cabang + nama
+     produk utama yang menghadiahkannya — pengganti kalimat "Complimentary
+     with your order". Tingginya disamakan dengan badge GRATIS di sebelahnya
+     supaya keduanya terbaca sebagai satu pasangan sebab-akibat. */
+  .gift-source {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    flex: 0 0 auto;
+    border-radius: 999px;
+    border: 1px solid rgba(43, 60, 53, 0.16);
+    background: rgba(242, 242, 232, 0.6);
+    color: rgba(43, 60, 53, 0.7);
+    cursor: help;
+  }
+  .gift-source svg { display: block; }
+  /* Kalimat lengkap untuk screen reader — visual digantikan chip nilai. */
+  .gift-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .gift-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    width: fit-content;
+    margin: 0;
+    padding: 3px 9px 3px 7px;
+    border-radius: 999px;
+    background: #2b3c35;
+    color: #f2f2e8;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    line-height: 1.4;
+    position: relative;
+    overflow: hidden;
+  }
+  .gift-badge svg { flex: 0 0 auto; }
+  .gift-badge::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 25%,
+      rgba(242, 242, 232, 0.45) 50%,
+      transparent 75%
+    );
+    transform: translateX(-130%);
+    animation: giftShimmer 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.5s 2;
+  }
+  @keyframes giftShimmer {
+    to { transform: translateX(130%); }
+  }
+  .cart-item--gift .detail .price-row .gift-strike {
+    text-decoration: none;
+    position: relative;
+    color: rgba(43, 60, 53, 0.5);
+  }
+  .cart-item--gift .detail .price-row .gift-strike::after {
+    content: "";
+    position: absolute;
+    left: -2%;
+    top: 50%;
+    width: 104%;
+    height: 1.5px;
+    background: rgba(43, 60, 53, 0.55);
+    transform: scaleX(0);
+    transform-origin: left center;
+    animation: giftStrike 500ms cubic-bezier(0.22, 1, 0.36, 1) 350ms forwards;
+  }
+  @keyframes giftStrike {
+    to { transform: scaleX(1); }
+  }
+  .cart-item--gift .detail .price-row .gift-price {
+    color: #2b3c35;
+    font-weight: 700;
+  }
+  .gift-qty {
+    display: inline-flex;
+    align-items: center;
+    font-size: 12px;
+    color: rgba(43, 60, 53, 0.72);
+    border: 1px solid rgba(43, 60, 53, 0.18);
+    background: rgba(242, 242, 232, 0.75);
+    border-radius: 8px;
+    padding: 4px 10px;
+    cursor: default;
+    user-select: none;
+  }
+  .gift-note {
+    margin: 6px 0 0;
+    font-size: 11.5px;
+    line-height: 1.45;
+    color: rgba(43, 60, 53, 0.75);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .gift-badge::after { animation: none; }
+    .cart-item--gift .detail .price-row .gift-strike::after { display: none; animation: none; }
+    .cart-item--gift .detail .price-row .gift-strike { text-decoration: line-through; }
+  }
+
+  /* ===== Premium ATC choreography (all quick-add surfaces) ===== */
+  .atc-btn {
+    transition: transform 80ms ease-out, background-color 160ms ease-out, opacity 160ms ease-out;
+  }
+  .atc-btn.is-adding {
+    transform: scale(0.97);
+    opacity: 0.85;
+    pointer-events: none;
+  }
+  .atc-btn.is-added {
+    pointer-events: none;
+  }
+  .atc-btn.is-error {
+    background-color: #8a3232 !important;
+    color: #fff !important;
+  }
+  /* Optimistic card reuses the real .cart-item markup/classes so the
+     reconciliation swap is typographically invisible. */
+  .cart-item--optimistic {
+    animation: optIn 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .cart-item--optimistic .qty-select {
+    pointer-events: none;
+  }
+  .cart-item--optimistic .opt-shimmer {
+    display: inline-block;
+    width: 84px;
+    height: 14px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #ececec 25%, #f7f7f7 50%, #ececec 75%);
+    background-size: 200% 100%;
+    animation: optShimmer 1.1s linear infinite;
+  }
+  #atc-error-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 28px;
+    transform: translate(-50%, 12px);
+    background: #2b3c35;
+    color: #f8f8f2;
+    font-size: 14px;
+    line-height: 1.4;
+    padding: 12px 18px;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(43, 60, 53, 0.35);
+    max-width: min(92vw, 420px);
+    text-align: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms ease-out, transform 200ms ease-out;
+    z-index: 100000;
+  }
+  #atc-error-toast.show {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  @keyframes optIn {
+    from { opacity: 0; transform: translateY(8px); }
+  }
+  /* FBT skeleton: REAL .fbt-card markup+classes, so width (flex 0 0 88%),
+     green #A5BB87, padding and track gap are inherited — pixel-identical to
+     the loaded state; only the content shimmers. */
+  .fbt-card--skel {
+    display: none;
+  }
+  .fbt-section.fbt-loading .fbt-card--skel {
+    display: flex;
+  }
+  .fbt-section.fbt-loading .fbt-card:not(.fbt-card--skel) {
+    display: none !important;
+  }
+  .opt-shimmer--light {
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.32) 25%, rgba(255, 255, 255, 0.58) 50%, rgba(255, 255, 255, 0.32) 75%);
+    background-size: 200% 100%;
+  }
+  .fbt-skel-imgfill {
+    display: block;
+    width: 80px;
+    height: 80px;
+    border-radius: 10px;
+  }
+  .fbt-skel-line {
+    display: block;
+    height: 12px;
+    border-radius: 4px;
+  }
+  .fbt-skel-action {
+    flex: 0 0 auto;
+    width: 52px;
+    height: 15px;
+    border-radius: 4px;
+  }
+  /* Footer while the very first item is being added to an empty cart:
+     hide the empty-state CTA, show a checkout-bar skeleton instead */
+  .cart-footer.opt-pending .cart-empty-shop-btn {
+    display: none;
+  }
+  .opt-footer-skelwrap .cart-footer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+  }
+  .opt-skel-checkout {
+    height: 48px;
+    border-radius: 8px;
+    background-color: #526547;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .opt-skel-secure {
+    display: flex;
+    justify-content: center;
+    padding: 10px 0 0;
+  }
+  /* FBT entrance: soft rise + card stagger when it first appears */
+  .fbt-section.fbt-reveal {
+    animation: fbtRise 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .fbt-section.fbt-reveal .fbt-card {
+    animation: fbtCard 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .fbt-section.fbt-reveal .fbt-card:nth-child(2) { animation-delay: 60ms; }
+  .fbt-section.fbt-reveal .fbt-card:nth-child(3) { animation-delay: 120ms; }
+  .fbt-section.fbt-reveal .fbt-card:nth-child(n+4) { animation-delay: 180ms; }
+  @keyframes fbtRise {
+    from { opacity: 0; transform: translateY(14px); }
+  }
+  @keyframes fbtCard {
+    from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  }
+  @keyframes optShimmer {
+    to { background-position: -200% 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .atc-btn { transition: none; }
+    .atc-btn.is-adding { transform: none; }
+    .cart-item--optimistic { animation: none; }
+    .opt-shimmer { animation: none; }
+    .fbt-section.fbt-reveal,
+    .fbt-section.fbt-reveal .fbt-card { animation: none; }
+    #atc-error-toast { transition: opacity 200ms ease; transform: translate(-50%, 0); }
+  }
+</style>
+
+<script>
+  /* ===== Premium Add-to-Cart choreography — all quick-add surfaces ======== */
+  /* Optimistic UI (Shopify Hydrogen guidance): drawer opens with the item    */
+  /* already inside; the server response reconciles silently. No spinner for  */
+  /* sub-second ops (NN/g); pressed -> adding -> success morph with a 350ms   */
+  /* minimum state hold. Covers: PDP #AddToCart, the variant-popup button,    */
+  /* and .button-direct-add cards. FBT keeps its own surgical flow;           */
+  /* FeaturedBundle keeps its own stateful flow.                              */
+  (function () {
+    var SELECTOR = '#AddToCart, #popup-variants-button-bag, .button-direct-add';
+    var MIN_STATE = 350;
+    var L = window.cartDecodeMap({
+      adding: {{ 'cart.atc_adding' | t | json }},
+      added: '\u2713 ' + {{ 'cart.atc_added' | t | json }},
+      failed: {{ 'cart.atc_failed_generic' | t | json }}
+    });
+
+    function utmFlowOwnsButton() {
+      try {
+        return (
+          typeof window.isUtmFreeShipping === 'function' && window.isUtmFreeShipping()
+          && sessionStorage.getItem('utm_source_matched') === 'kesehatanwanita_blog'
+          && sessionStorage.getItem('utm_discount_code')
+        );
+      } catch (err) {
+        return false;
+      }
+    }
+
+    /* Image + title for the optimistic card, resolved per surface */
+    function cardContext(btn) {
+      if (btn.id === 'AddToCart') {
+        var h1 = document.querySelector('.product-detail-wrapper h1');
+        var sel = document.getElementById('productSelect');
+        var variantText = '';
+        /* Kartu paket v2 adalah yang benar-benar ditekan pembeli, dan judulnya
+           berasal dari metafield staged_plan_label — label yang sama yang kini
+           dirender snippets/CartItemCard.liquid. Membacanya dari sini membuat
+           kartu optimistis dan baris hasil server berbunyi sama, jadi tidak ada
+           teks yang berganti saat keduanya bertukar. Select bawaan tetap jadi
+           cadangan untuk halaman produk yang belum memakai kartu v2. */
+        var plans = document.querySelectorAll('.v2-plan');
+        var activePlan = document.querySelector('.v2-plan.active .v2-plan__title, .v2-plan[aria-checked="true"] .v2-plan__title');
+        if (plans.length > 1 && activePlan) {
+          variantText = (activePlan.textContent || '').trim();
+        } else if (sel && sel.options.length > 1 && sel.selectedIndex >= 0) {
+          variantText = (sel.options[sel.selectedIndex].text || '').split(' - ')[0].trim();
+        }
+        return {
+          img: document.querySelector('.native-gallery__slide img'),
+          title: h1 ? h1.textContent : '',
+          variant: variantText
+        };
+      }
+      if (btn.id === 'popup-variants-button-bag') {
+        var pt = document.getElementById('popup-variant-title');
+        return { img: null, title: pt ? pt.textContent : '' };
+      }
+      var scope = btn, img = null, hops = 0;
+      while (scope && hops++ < 5 && !img) {
+        scope = scope.parentElement;
+        if (scope) img = scope.querySelector('img');
+      }
+      var titleEl = scope && scope.querySelector('.product-info, .title, h3, h2, h1');
+      return { img: img, title: titleEl ? titleEl.textContent : '' };
+    }
+
+    /* Real price for the optimistic card when the data already exists
+       client-side (price matrix / variant cards); shimmer otherwise. */
+    function optimisticPrice(variantId, planId) {
+      try {
+        var m = window.subscriptionPriceMatrix && window.subscriptionPriceMatrix[String(variantId)];
+        if (m) {
+          if (planId && m.plans && m.plans[String(planId)]) return m.plans[String(planId)].final;
+          return m.onetime;
+        }
+        /* data-variant-price is denominated in rupiah (same contract the UTM
+           discount renderer uses) — NOT cents */
+        var card = document.querySelector('.protocol-variant-card[data-value="' + variantId + '"]');
+        if (card && card.dataset.variantPrice && window.formatRp) {
+          return window.formatRp(parseInt(card.dataset.variantPrice, 10));
+        }
+      } catch (err) {}
+      return null;
+    }
+
+    /* Markup mirrors snippets/CartItemCard.liquid exactly (same classes,
+       same structure) so fonts, sizes and spacing are identical before and
+       after reconciliation — the swap reads as a data refresh, not a
+       re-layout. Qty ghost is a real disabled <select> for pixel parity. */
+    function buildOptimisticCard(ctx, priceText) {
+      var el = document.createElement('div');
+      el.className = 'cart-item cart-item--optimistic';
+      el.innerHTML =
+        '<a class="thumb"></a>'
+        + '<div class="detail">'
+        +   '<div class="detail-top">'
+        +     '<div class="detail-info">'
+        +       '<a class="sub-head title"></a>'
+        +       '<div class="variant body-desk-s"></div>'
+        +     '</div>'
+        +   '</div>'
+        +   '<div class="detail-bottom">'
+        +     '<div class="price-row">'
+        +       '<div class="sub-head price-wrapper"></div>'
+        +     '</div>'
+        +     '<div class="qty-select-wrapper">'
+        +       '<select class="qty-select" disabled aria-hidden="true"><option>1</option></select>'
+        +       '<svg class="qty-arrow" width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="#2B3C35" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        +     '</div>'
+        +   '</div>'
+        + '</div>';
+      if (ctx.img) {
+        var im = document.createElement('img');
+        im.src = ctx.img.currentSrc || ctx.img.src;
+        im.alt = '';
+        el.querySelector('.thumb').appendChild(im);
+      }
+      el.querySelector('.title').textContent = (ctx.title || '').trim();
+      if (ctx.variant) el.querySelector('.variant').textContent = ctx.variant;
+      var priceEl = el.querySelector('.price-row .price-wrapper');
+      if (priceText) priceEl.textContent = priceText;
+      else priceEl.innerHTML = '<span class="opt-shimmer"></span>';
+      return el;
+    }
+
+    /* Scoped crossfade for the reconciliation swap. Deliberately NOT
+       document.startViewTransition: a full-page snapshot freezes every
+       running animation (shimmer, marquee) for ~180ms and reads as a
+       glitch. Fading only the drawer regions keeps the rest alive. */
+    function smoothApply(fn) {
+      var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var sel = ['#cart .cart-items', '#cart .sub-total.cart-footer'];
+      var targets = sel.map(function (q) { return document.querySelector(q); }).filter(Boolean);
+      if (reduce || !targets.length) { fn(); return; }
+      targets.forEach(function (el) {
+        el.style.transition = 'opacity 120ms ease-out';
+        el.style.opacity = '0';
+      });
+      setTimeout(function () {
+        fn();
+        /* re-query: the full-render fallback may have replaced the nodes */
+        var fresh = sel.map(function (q) { return document.querySelector(q); }).filter(Boolean);
+        fresh.forEach(function (el) {
+          el.style.transition = 'none';
+          el.style.opacity = '0';
+        });
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            fresh.forEach(function (el) {
+              el.style.transition = 'opacity 200ms cubic-bezier(0.16, 1, 0.3, 1)';
+              el.style.opacity = '1';
+            });
+            setTimeout(function () {
+              fresh.forEach(function (el) { el.style.transition = ''; el.style.opacity = ''; });
+            }, 280);
+          });
+        });
+      }, 125);
+    }
+
+    /* Central FBT choreography: wraps syncFBTVisibility so EVERY flow
+       (premium ATC, FBT add, app.bundle re-render) resolves the skeleton
+       into real cards with the stagger reveal. */
+    if (window.syncFBTVisibility && !window.syncFBTVisibility.__fbtWrapped) {
+      var __origSyncFBT = window.syncFBTVisibility;
+      window.syncFBTVisibility = function (cart) {
+        var sec = document.querySelector('.fbt-section');
+        var visBefore = !!(sec && sec.querySelector('.fbt-card[style*="flex"]'));
+        __origSyncFBT(cart);
+        if (!sec) return;
+        var visAfter = !!sec.querySelector('.fbt-card[style*="flex"]');
+        var wasLoading = sec.classList.contains('fbt-loading');
+        sec.classList.remove('fbt-loading');
+        /* syncFBTVisibility already ran its per-card restore choreography on
+           this pass; stacking the fbt-reveal stagger on top would re-animate
+           the same cards from a second from-state mid-transition. */
+        if (sec.dataset.fbtReturning) return;
+        if (visAfter && (wasLoading || !visBefore)) {
+          sec.classList.add('fbt-reveal');
+          setTimeout(function () { sec.classList.remove('fbt-reveal'); }, 700);
+        }
+      };
+      window.syncFBTVisibility.__fbtWrapped = true;
+    }
+
+    function showErrorToast(msg) {
+      window.cartToast(msg);
+    }
+
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest && e.target.closest(SELECTOR);
+      if (!btn) return;
+      var isMain = btn.id === 'AddToCart';
+      if (isMain && utmFlowOwnsButton()) return;
+
+      e.stopImmediatePropagation();
+      e.preventDefault();
+      if (btn.classList.contains('is-adding') || btn.classList.contains('is-added')) return;
+
+      var select = isMain ? document.getElementById('productSelect') : null;
+      var variantId = parseInt(btn.dataset.variant || btn.dataset.variantId || (select && select.value), 10);
+      if (!variantId) return; /* popup button before a variant is picked */
+
+      var item = { id: variantId, quantity: 1 };
+      if (isMain) {
+        var qtyInput = document.getElementById('Quantity');
+        if (qtyInput) item.quantity = parseInt(qtyInput.value, 10) || 1;
+        var plan = document.querySelector('input[name="selling_plan"]:checked');
+        if (plan && plan.value) item.selling_plan = parseInt(plan.value, 10);
+      }
+
+      var ctx = cardContext(btn);
+      var priceText = optimisticPrice(variantId, item.selling_plan);
+
+      var t0 = Date.now();
+      /* Simpan MARKUP-nya, bukan sekadar teksnya. Tombol kartu varian v2 berisi
+         beberapa elemen anak: <span class="v2-atc__label"> yang memberi gaya
+         huruf besar, <s class="v2-atc__compare"> yang mencoret harga lama, dan
+         <span data-v2-atc-price> yang jadi SASARAN syncAtc() ketika pembeli
+         berpindah paket. Memulihkan lewat textContent meratakan semuanya jadi
+         satu simpul teks — coretan dan huruf besar hilang, dan yang lebih parah
+         harga di tombol berhenti mengikuti paket yang dipilih karena simpul
+         sasarannya sudah tidak ada lagi.
+
+         Disimpan ulang pada SETIAP penambahan, bukan sekali saja, supaya
+         markup yang dipulihkan selalu mencerminkan paket yang sedang aktif. */
+      btn._idleHTML = btn.innerHTML;
+      if (!btn.dataset.idleLabel) btn.dataset.idleLabel = btn.textContent.trim();
+      btn.classList.add('atc-btn', 'is-adding');
+      btn.setAttribute('aria-busy', 'true');
+      btn.textContent = L.adding;
+
+      /* The popup hands off to the drawer */
+      if (btn.id === 'popup-variants-button-bag') {
+        var popup = document.getElementById('popup-variant');
+        if (popup) popup.classList.remove('active');
+        window.popupVariantActive = false;
+      }
+
+      /* Optimistic: drawer opens with the item already inside */
+      var mini = document.querySelector('.mini-cart');
+      if (mini) mini.classList.add('active');
+      var itemsWrap = document.querySelector('#cart .cart-items');
+      var optCard = null;
+      var emptyState = itemsWrap && itemsWrap.querySelector('.cart-empty-state');
+      if (itemsWrap) {
+        if (emptyState) emptyState.style.display = 'none';
+        optCard = buildOptimisticCard(ctx, priceText);
+        itemsWrap.insertBefore(optCard, itemsWrap.firstChild);
+      }
+      /* FBT skeleton immediately — the section is never an empty hole */
+      if (window.moveFBT) window.moveFBT();
+      var fbtSec = document.querySelector('.fbt-section');
+      if (fbtSec && !fbtSec.querySelector('.fbt-card[style*="flex"]')) {
+        fbtSec.classList.add('fbt-loading');
+        fbtSec.style.display = '';
+      }
+      /* Footer: swap the empty-cart CTA for a checkout-bar skeleton */
+      var footerEl = document.querySelector('#cart .sub-total.cart-footer');
+      if (footerEl && footerEl.querySelector('.cart-empty-shop-btn')) {
+        footerEl.classList.add('opt-pending');
+        var fskel = document.createElement('div');
+        fskel.className = 'opt-footer-skelwrap';
+        fskel.setAttribute('aria-hidden', 'true');
+        fskel.innerHTML =
+          '<div class="cart-footer-summary">'
+          + '<div class="cart-footer-row visible"><span class="opt-shimmer fbt-skel-line" style="width:96px"></span><span class="opt-shimmer fbt-skel-line" style="width:74px"></span></div>'
+          + '<div class="cart-footer-row visible"><span class="opt-shimmer fbt-skel-line" style="width:64px"></span><span class="opt-shimmer fbt-skel-line" style="width:42px"></span></div>'
+          + '</div>'
+          + '<div class="opt-skel-checkout"><span class="opt-shimmer opt-shimmer--light fbt-skel-line" style="width:172px;height:13px"></span></div>'
+          + '<div class="opt-skel-secure"><span class="opt-shimmer fbt-skel-line" style="width:210px;height:10px"></span></div>';
+        footerEl.appendChild(fskel);
+      }
+
+      function settle(stateClass, label, hold) {
+        var wait = Math.max(0, MIN_STATE - (Date.now() - t0));
+        setTimeout(function () {
+          btn.classList.remove('is-adding');
+          btn.removeAttribute('aria-busy');
+          btn.classList.add(stateClass);
+          btn.textContent = label;
+          setTimeout(function () {
+            btn.classList.remove(stateClass);
+            /* innerHTML, bukan textContent — lihat catatan di titik penyimpanan. */
+            if (btn._idleHTML != null) {
+              btn.innerHTML = btn._idleHTML;
+              /* Bila paket diganti selagi tombol sibuk, markup yang dipulihkan
+                 membawa harga paket lama. Selaraskan lagi dari kartu aktif;
+                 syncAtc() milik VariantsButtonV2 tidak diekspos global. */
+              var act = document.querySelector('.v2-plan.active');
+              if (act) {
+                var cmp = act.getAttribute('data-v2-compare') || '';
+                var prc = act.getAttribute('data-v2-price') || '';
+                btn.querySelectorAll('[data-v2-atc-compare]').forEach(function (el) { el.textContent = cmp; });
+                btn.querySelectorAll('[data-v2-atc-price]').forEach(function (el) { el.textContent = prc; });
+              }
+            } else if (btn.dataset.idleLabel) {
+              btn.textContent = btn.dataset.idleLabel;
+            }
+          }, hold);
+        }, wait);
+      }
+
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ items: [item] })
+      })
+        .then(function (r) {
+          return r.json().then(function (j) {
+            if (!r.ok) throw j;
+            return j;
+          });
+        })
+        .then(function () {
+          var prefix = (typeof Shopify !== 'undefined' && Shopify.locale === 'id') ? '/id/' : '/';
+          return Promise.all([
+            fetch(prefix + 'cart?view=mini').then(function (r) { return r.text(); }),
+            fetch('/cart.js').then(function (r) { return r.json(); })
+          ]);
+        })
+        .then(function (results) {
+          var doc = new DOMParser().parseFromString(results[0], 'text/html');
+          var cart = results[1];
+          /* One scoped crossfade: optimistic card -> real card, footer
+             totals and FBT resolve together instead of popping. */
+          smoothApply(function () {
+            var cartEl = document.getElementById('cart');
+            var newItems = doc.querySelector('.cart-items');
+            var newFooter = doc.querySelector('.sub-total.cart-footer');
+            var oldItems = cartEl && cartEl.querySelector('.cart-items');
+            var oldFooter = cartEl && cartEl.querySelector('.sub-total.cart-footer');
+            if (oldItems && newItems) {
+              oldItems.innerHTML = newItems.innerHTML;
+              if (oldFooter && newFooter) {
+                oldFooter.innerHTML = newFooter.innerHTML;
+                if (window.initCartTrustSlider) window.initCartTrustSlider();
+              }
+            } else if (cartEl) {
+              /* Container was never populated — full render like app.bundle */
+              var content = doc.getElementById('mini-cart-content');
+              if (content) {
+                cartEl.innerHTML = content.innerHTML;
+                if (window.initCartTrustSlider) window.initCartTrustSlider();
+              }
+            }
+            if (window.moveFBT) window.moveFBT();
+            if (window.refreshCartUI) window.refreshCartUI(cart);
+            if (window.syncFBTVisibility) window.syncFBTVisibility(cart);
+          });
+
+          /* opt-pending cleanup (footer innerHTML was replaced; the class
+             lives on the container and must be lifted here) */
+          var f2 = document.querySelector('#cart .sub-total.cart-footer');
+          if (f2) f2.classList.remove('opt-pending');
+
+          if (cart.item_count > 0 && window.loadCompareAtPrices) window.loadCompareAtPrices();
+          var indicator = document.getElementById('cart-indicator');
+          if (indicator) indicator.classList.toggle('show', cart.item_count > 0);
+          settle('is-added', L.added, 1400);
+        })
+        .catch(function (err) {
+          /* Rollback the optimistic state, tell the user WHY it failed */
+          if (optCard && optCard.parentNode) optCard.parentNode.removeChild(optCard);
+          if (emptyState) emptyState.style.display = '';
+          var secRb = document.querySelector('.fbt-section');
+          if (secRb && secRb.classList.contains('fbt-loading')) {
+            secRb.classList.remove('fbt-loading');
+            if (!secRb.querySelector('.fbt-card[style*="flex"]')) secRb.style.display = 'none';
+          }
+          var fRb = document.querySelector('#cart .sub-total.cart-footer');
+          if (fRb) {
+            fRb.classList.remove('opt-pending');
+            var skl = fRb.querySelector('.opt-footer-skelwrap');
+            if (skl) skl.remove();
+          }
+          showErrorToast((err && err.description) || L.failed);
+          settle('is-error', L.failed, 1600);
+        });
+    }, true); /* capture: runs before (and blocks) the app.bundle.js handler */
+
+    /* ===== Drawer dialog behavior: Esc, focus-in/restore, tab loop ======= */
+    var lastFocus = null;
+    document.addEventListener('keydown', function (e) {
+      var m = document.querySelector('.mini-cart.active');
+      if (!m) return;
+      if (e.key === 'Escape') {
+        m.classList.remove('active');
+        return;
+      }
+      if (e.key === 'Tab') {
+        var w = m.querySelector('.mini-cart-wrapper');
+        if (!w) return;
+        var nodes = w.querySelectorAll('a[href], button, select, input, [tabindex]:not([tabindex="-1"])');
+        var focusables = Array.prototype.filter.call(nodes, function (el) { return el.offsetParent !== null; });
+        if (!focusables.length) return;
+        var first = focusables[0];
+        var last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && (document.activeElement === last || !w.contains(document.activeElement))) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    });
+    var miniEl = document.querySelector('.mini-cart');
+    if (miniEl) {
+      new MutationObserver(function () {
+        var active = miniEl.classList.contains('active');
+        if (active && !miniEl.dataset.dialogFocused) {
+          miniEl.dataset.dialogFocused = '1';
+          lastFocus = document.activeElement;
+          var target = miniEl.querySelector('#cart .close-button') || miniEl.querySelector('.mini-cart-wrapper');
+          if (target) {
+            target.setAttribute('tabindex', '-1');
+            setTimeout(function () { target.focus({ preventScroll: true }); }, 80);
+          }
+        } else if (!active && miniEl.dataset.dialogFocused) {
+          delete miniEl.dataset.dialogFocused;
+          if (lastFocus && document.contains(lastFocus)) lastFocus.focus({ preventScroll: true });
+          lastFocus = null;
+        }
+      }).observe(miniEl, { attributes: true, attributeFilter: ['class'] });
+    }
+
+    /* Fallback close for the server-rendered drawer (idempotent alongside
+       whatever app.bundle binds after its own re-render). */
+    document.addEventListener('click', function (e) {
+      var mini = e.target.closest && e.target.closest('.mini-cart');
+      if (!mini || !mini.classList.contains('active')) return;
+      if (e.target.closest('.close-button') || e.target.classList.contains('overlay')) {
+        mini.classList.remove('active');
+      }
+    });
+  })();
+</script>
+
+<script>
+  /* ===== Move FBT into cart form flow (insertBefore, NOT clone) ===== */
+  /* Uses backup reference so FBT survives bundle re-renders of #cart. */
+  /* No Swiper — FBT track uses native CSS scroll-snap.               */
+  var _fbtRef = null;
+
+  window.moveFBT = function() {
+    var form = document.querySelector('#cart .min-cart-template .cart form');
+    if (!form) return;
+
+    /* Tujuannya blok bawah yang sudah dideklarasikan di CartDrawerContent.
+       Fungsi ini tidak membentuk struktur, hanya memindahkan simpul FBT ke
+       tempat yang memang disediakan untuknya. Bila wadah itu tidak ada —
+       misalnya HTML lama yang masih tersaji dari cache — perilaku lama tetap
+       berlaku: sisipkan langsung sebelum footer. */
+    var dock = form.querySelector('.cart-bottom-dock');
+    var induk = dock || form;
+
+    var footer = induk.querySelector('.cart-footer');
+    if (!footer) return;
+
+    /* Already in place? Skip. */
+    if (form.querySelector('.fbt-section')) return;
+
+    /* Get from original position OR backup (after bundle re-render) */
+    var fbt = document.querySelector('.mini-cart-wrapper > .fbt-section') || _fbtRef;
+    if (!fbt) return;
+
+    _fbtRef = fbt;
+    induk.insertBefore(fbt, footer);
+  };
+
+  /* ===== Recalculate savings from DOM data attributes ===== */
+  window.recalcSavings = function() {
+    var cartEl = document.getElementById('cart');
+    if (!cartEl) return;
+    var sr = cartEl.querySelector('#cart-saving-row');
+    var sa = cartEl.querySelector('#cart-saving-amount');
+    if (!sr || !sa) return;
+    var saved = 0;
+    /* Hanya diskon PRODUK yang dihitung. Baris hadiah dikecualikan: nilai
+       hadiah sudah dinyatakan lewat badge FREE di barisnya sendiri, dan
+       menjumlahkannya di sini membuat angka hemat melompat melebihi selisih
+       harga yang benar-benar dilihat pembeli di baris produk. */
+    cartEl.querySelectorAll('.cart-item[data-compare-at]:not(.cart-item--gift)').forEach(function(el) {
+      var cap = parseInt(el.getAttribute('data-compare-at') || '0', 10);
+      var price = parseInt(el.getAttribute('data-price') || '0', 10);
+      var qtyEl = el.querySelector('.qty-select');
+      var qty = qtyEl ? parseInt(qtyEl.value, 10) : parseInt(el.getAttribute('data-qty') || '1', 10);
+      if (cap > 0 && cap > price) saved += (cap - price) * qty;
+    });
+    if (saved > 0) {
+      sr.style.display = '';
+      sr.classList.add('visible');
+      sa.textContent = window.formatRp(saved / 100);
+    } else {
+      sr.classList.remove('visible');
+    }
+  };
+
+  /* ===== Isolate scroll containers — prevent scroll-chaining ===== */
+  /* Ensures .fbt-track (horizontal) and .cart-items (vertical)     */
+  /* never interfere with each other's scroll. Handles edge cases   */
+  /* where CSS overscroll-behavior alone isn't enough (older iOS).  */
+  window.isolateScrollContainers = function() {
+    var cartEl = document.getElementById('cart');
+    if (!cartEl) return;
+
+    var fbtTrack = cartEl.querySelector('.fbt-track');
+    var cartItems = cartEl.querySelector('.cart-items');
+
+    /* Guard: only bind once per element */
+    if (fbtTrack && !fbtTrack._scrollIsolated) {
+      fbtTrack._scrollIsolated = true;
+
+      /* On touchstart inside FBT track, lock parent vertical scroll */
+      fbtTrack.addEventListener('touchstart', function() {
+        if (cartItems) cartItems.style.overflowY = 'hidden';
+      }, { passive: true });
+
+      /* On touchend / touchcancel, restore parent vertical scroll */
+      fbtTrack.addEventListener('touchend', function() {
+        if (cartItems) cartItems.style.overflowY = 'auto';
+      }, { passive: true });
+      fbtTrack.addEventListener('touchcancel', function() {
+        if (cartItems) cartItems.style.overflowY = 'auto';
+      }, { passive: true });
+
+      /* Pointer-based fallback (desktop trackpad / mouse wheel)        */
+      /* Prevent horizontal scroll at boundaries from chaining upward  */
+      fbtTrack.addEventListener('wheel', function(e) {
+        /* Only intercept if the wheel is mostly horizontal */
+        if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+          var atStart = fbtTrack.scrollLeft <= 0;
+          var atEnd = fbtTrack.scrollLeft + fbtTrack.clientWidth >= fbtTrack.scrollWidth - 1;
+
+          /* At boundary and still scrolling in that direction → stop propagation */
+          if ((atStart && e.deltaX < 0) || (atEnd && e.deltaX > 0)) {
+            return; /* Let browser handle normally — no interference */
+          }
+          e.stopPropagation();
+        }
+      }, { passive: true });
+    }
+
+    if (cartItems && !cartItems._scrollIsolated) {
+      cartItems._scrollIsolated = true;
+
+      /* On touchstart inside cart-items, lock FBT horizontal scroll */
+      cartItems.addEventListener('touchstart', function() {
+        if (fbtTrack) fbtTrack.style.overflowX = 'hidden';
+      }, { passive: true });
+
+      /* On touchend / touchcancel, restore FBT horizontal scroll */
+      cartItems.addEventListener('touchend', function() {
+        if (fbtTrack) fbtTrack.style.overflowX = 'auto';
+      }, { passive: true });
+      cartItems.addEventListener('touchcancel', function() {
+        if (fbtTrack) fbtTrack.style.overflowX = 'auto';
+      }, { passive: true });
+    }
+  };
+
+  /* ===== Cart Trust Badge Slider ===== */
+  /* Scoped to [data-cart-trust-slider] — no conflict with product USP slider */
+  window.initCartTrustSlider = function() {
+    var container = document.querySelector('[data-cart-trust-slider]');
+    if (!container) return;
+
+    /* Prevent double-init on same DOM node */
+    if (container._trustInit) return;
+
+    var wrapper = container.querySelector('.cart-trust-wrapper');
+    var slides = container.querySelectorAll('.cart-trust-slide');
+    var dotsWrap = container.querySelector('.cart-trust-dots');
+
+    if (!wrapper || slides.length < 2) {
+      /* Single slide or none — hide dots, no slider needed */
+      if (dotsWrap) dotsWrap.style.display = 'none';
+      if (container) container.style.paddingBottom = '4px';
+      return;
+    }
+
+    container._trustInit = true;
+
+    var current = 0;
+    var total = slides.length;
+    var interval;
+
+    /* Build dots */
+    dotsWrap.innerHTML = '';
+    for (var i = 0; i < total; i++) {
+      var dot = document.createElement('button');
+      dot.className = 'cart-trust-dot' + (i === 0 ? ' active' : '');
+      dot.setAttribute('aria-label', 'Slide ' + (i + 1));
+      (function(idx) {
+        dot.addEventListener('click', function() {
+          goTo(idx);
+          reset();
+        });
+      })(i);
+      dotsWrap.appendChild(dot);
+    }
+
+    function goTo(idx) {
+      if (idx < 0) idx = total - 1;
+      if (idx >= total) idx = 0;
+      current = idx;
+      wrapper.style.transform = 'translateX(-' + (current * 100) + '%)';
+      var dots = dotsWrap.querySelectorAll('.cart-trust-dot');
+      dots.forEach(function(d) { d.classList.remove('active'); });
+      if (dots[current]) dots[current].classList.add('active');
+    }
+
+    function start() { stop(); interval = setInterval(function() { goTo(current + 1); }, 3000); }
+    function stop() { if (interval) clearInterval(interval); }
+    function reset() { stop(); start(); }
+
+    /* Touch swipe */
+    var sx = 0;
+    wrapper.addEventListener('touchstart', function(e) { sx = e.changedTouches[0].screenX; stop(); }, { passive: true });
+    wrapper.addEventListener('touchend', function(e) {
+      var diff = e.changedTouches[0].screenX - sx;
+      if (Math.abs(diff) > 40) { diff < 0 ? goTo(current + 1) : goTo(current - 1); }
+      start();
+    }, { passive: true });
+
+    start();
+  };
+</script>
+
+<script>
+  /* ===== Cart voucher (discount code) ====================================
+     Applies a code with POST /cart/update.js { discount: "CODE" }.
+
+     Two behaviours of that endpoint drive the whole design and are verified
+     against this store, not assumed:
+       1. It ALWAYS answers 200 — an unusable code comes back as
+          discount_codes: [{ code, applicable: false }], never as an HTTP error.
+          So success is decided by reading `applicable`, not by r.ok.
+       2. discount_codes[] carries no amount. The money value lives in
+          cart_level_discount_applications, which nests the application under
+          `.discount_application` in the Ajax JSON but NOT in Liquid — hence
+          the shape-tolerant read below.
+
+     All listeners are delegated off document because #cart gets its innerHTML
+     replaced by app.bundle.js and by the drawer's own re-render paths. */
+  (function () {
+    var I18N = window.cartDecodeMap({
+      invalid:   {{ 'cart.voucher.invalid' | t | json }},
+      failed:    {{ 'cart.voucher.error_generic' | t | json }},
+      empty:     {{ 'cart.voucher.empty' | t | json }},
+      success:   {{ 'cart.voucher.success' | t | json }},
+      expired:   {{ 'cart.voucher.no_longer_valid' | t | json }},
+      atCheckout:{{ 'cart.voucher.applied_at_checkout' | t | json }},
+      addMore:   {{ 'cart.voucher.add_more' | t | json }},
+      remove:    {{ 'cart.voucher.remove' | t | json }},
+      duplicate: {{ 'cart.voucher.duplicate' | t | json }},
+      conflict:  {{ 'cart.voucher.conflict' | t | json }}
+    });
+    var MIN_BUSY = 350; /* same state-hold the ATC choreography uses */
+    var lastApplied = [];
+
+    function root() { return document.querySelector('#cart [data-cart-voucher]'); }
+    function input() { var el = root(); return el && el.querySelector('[data-voucher-input]'); }
+
+    function setState(el, state) {
+      el.setAttribute('data-state', state);
+      var trigger = el.querySelector('[data-voucher-open]');
+      if (trigger) trigger.setAttribute('aria-expanded', state === 'open' ? 'true' : 'false');
+    }
+
+    function say(el, text, isError) {
+      var m = el.querySelector('[data-voucher-msg]');
+      if (!m) return;
+      if (!text) {
+        m.classList.remove('is-visible', 'is-error');
+        m.textContent = '';
+        return;
+      }
+      m.textContent = text;
+      m.classList.toggle('is-error', !!isError);
+      m.classList.add('is-visible');
+    }
+
+    function flashSummary() {
+      var s = document.querySelector('#cart .cart-footer-summary');
+      if (!s) return;
+      s.classList.remove('cart-voucher-flash');
+      void s.offsetWidth;
+      s.classList.add('cart-voucher-flash');
+      setTimeout(function () { s.classList.remove('cart-voucher-flash'); }, 950);
+    }
+
+    /* Reads every applicable code plus the money they account for. Tolerates
+       both the Ajax shape ({ amount, discount_application }) and the flat
+       Liquid shape so the same helper can serve either source. */
+    function appliedFromCart(cart) {
+      var codes = (cart && cart.discount_codes) || [];
+      var applied = [];
+      var rejected = [];
+      for (var i = 0; i < codes.length; i++) {
+        (codes[i].applicable ? applied : rejected).push(codes[i].code);
+      }
+
+      var amount = 0;
+      var apps = (cart && cart.cart_level_discount_applications) || [];
+      for (var j = 0; j < apps.length; j++) {
+        var wrap = apps[j];
+        var app = wrap.discount_application || wrap;
+        if (app.type !== 'discount_code') continue;
+        amount += wrap.amount != null ? wrap.amount : (app.total_allocated_amount || 0);
+      }
+      return { applied: applied, rejected: rejected, amount: amount };
+    }
+
+    function sameSet(a, b) {
+      if (a.length !== b.length) return false;
+      var x = a.slice().sort().join('|').toUpperCase();
+      var y = b.slice().sort().join('|').toUpperCase();
+      return x === y;
+    }
+
+    function chipHtml(code) {
+      var safe = String(code).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+      return '<span class="cart-voucher-chip" data-voucher-chip="' + safe + '">'
+        + '<svg width="11" height="9" viewBox="0 0 14 11" fill="none" aria-hidden="true">'
+        + '<path d="M1 5.5 5 9.5 13 1.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        + '<span class="cart-voucher-code">' + safe + '</span>'
+        + '<button type="button" class="cart-voucher-remove" data-voucher-remove="' + safe + '"'
+        + ' aria-label="' + I18N.remove + ' ' + safe + '">'
+        + '<svg width="9" height="9" viewBox="0 0 12 12" fill="none" aria-hidden="true">'
+        + '<path d="M1 1 11 11M11 1 1 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>'
+        + '</button></span>';
+    }
+
+    /* Single source of truth for the row — called after every cart mutation
+       (qty change, remove, FBT add) via refreshCartUI, not just after apply.
+       A code can silently stop qualifying when the cart shrinks below its
+       minimum, and the customer must be told rather than quietly overcharged. */
+    window.syncVoucherUI = function (cart) {
+      var el = root();
+      if (!el) return;
+      /* Without this an error payload reads as "no applicable codes" and the
+         row wrongly announces that a perfectly good voucher expired. */
+      if (!window.isCartPayload(cart)) return;
+
+      var state = appliedFromCart(cart);
+      if (state.applied.length) {
+        var chips = el.querySelector('[data-voucher-chips]');
+        if (chips) {
+          var addMore = '<button type="button" class="cart-voucher-addmore" data-voucher-open>+ '
+            + I18N.addMore + '</button>';
+          chips.innerHTML = state.applied.map(chipHtml).join('') + addMore;
+        }
+        var amtEl = el.querySelector('[data-voucher-amount]');
+        if (amtEl) {
+          amtEl.textContent = state.amount > 0
+            ? '−' + window.formatRp(state.amount / 100)
+            : I18N.atCheckout;
+        }
+        setState(el, 'applied');
+        lastApplied = state.applied.slice();
+        return;
+      }
+
+      var wasApplied = lastApplied.length || el.getAttribute('data-state') === 'applied';
+      lastApplied = [];
+      if (!wasApplied) {
+        if (el.getAttribute('data-state') === 'applied') setState(el, 'idle');
+        return;
+      }
+
+      /* Had codes, none qualify now — reopen with the first one prefilled */
+      setState(el, 'open');
+      var inp = el.querySelector('[data-voucher-input]');
+      if (inp && state.rejected.length) inp.value = state.rejected[0];
+      say(el, I18N.expired, true);
+    };
+
+    function hold(t0) {
+      return new Promise(function (res) {
+        setTimeout(res, Math.max(0, MIN_BUSY - (Date.now() - t0)));
+      });
+    }
+
+    function post(code) {
+      return fetch('/cart/update.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ discount: code })
+      }).then(function (r) { return r.json(); });
+    }
+
+    /* Shared by the cancel button and Escape so the two can't drift apart. */
+    function closePanel(el, refocusTrigger) {
+      if (!el) return;
+      var inp = el.querySelector('[data-voucher-input]');
+      if (inp) inp.value = '';
+      el.classList.remove('is-invalid');
+      say(el, '');
+      setState(el, lastApplied.length ? 'applied' : 'idle');
+      if (refocusTrigger) {
+        var trigger = el.querySelector('[data-voucher-open]');
+        if (trigger) trigger.focus();
+      }
+    }
+
+    function reject(el, message) {
+      el.classList.add('is-invalid');
+      say(el, message, true);
+      var inp = el.querySelector('[data-voucher-input]');
+      if (inp) { inp.focus(); inp.select(); }
+      setTimeout(function () { el.classList.remove('is-invalid'); }, 520);
+    }
+
+    function apply(code) {
+      var el = root();
+      if (!el || el.hasAttribute('data-busy')) return;
+      if (!code) { reject(el, I18N.empty); return; }
+
+      /* Posting `discount` REPLACES the whole set, so the existing codes have
+         to be resent alongside the new one or they are dropped. */
+      var prev = lastApplied.slice();
+      var already = prev.some(function (c) {
+        return c.toUpperCase() === code.toUpperCase();
+      });
+      if (already) { reject(el, I18N.duplicate); return; }
+      var next = prev.concat([code]);
+
+      var t0 = Date.now();
+      el.setAttribute('data-busy', '');
+      el.classList.remove('is-invalid');
+      say(el, '');
+
+      post(next.join(','))
+        .then(function (cart) { return hold(t0).then(function () { return cart; }); })
+        .then(function (cart) {
+          el.removeAttribute('data-busy');
+          var state = appliedFromCart(cart);
+          var accepted = state.applied.some(function (c) {
+            return c.toUpperCase() === code.toUpperCase();
+          });
+
+          /* Verified on this store: sending MOR10,HABIT10 returns MOR10 with
+             applicable:false — a non-combinable code silently evicts the one
+             already on the cart. Detect that by comparing sets, and say which
+             pairing failed instead of letting a discount vanish. */
+          var evicted = prev.filter(function (c) {
+            return !state.applied.some(function (a) {
+              return a.toUpperCase() === c.toUpperCase();
+            });
+          });
+
+          if (accepted && !evicted.length) {
+            window.refreshCartUI(cart);
+            flashSummary();
+            say(el, I18N.success, false);
+            setTimeout(function () {
+              var later = root();
+              if (later && later.getAttribute('data-state') === 'applied') say(later, '');
+            }, 2800);
+            return;
+          }
+
+          reject(el, evicted.length ? I18N.conflict.replace('__CODE__', evicted.join(', ')) : I18N.invalid);
+          /* Undo the attempt: the failed code is still on the cart and would
+             otherwise resurface as a phantom on the next quantity change. */
+          lastApplied = [];
+          post(prev.join(','))
+            .then(function (restored) { window.refreshCartUI(restored); })
+            .catch(function () {});
+        })
+        .catch(function () {
+          el.removeAttribute('data-busy');
+          reject(el, I18N.failed);
+        });
+    }
+
+    function remove(code) {
+      var el = root();
+      if (!el || el.hasAttribute('data-busy')) return;
+      el.setAttribute('data-busy', '');
+
+      /* Drop just this one and resend the rest — `discount` replaces the whole
+         set, so an empty string here would clear every code the cart holds. */
+      var keep = lastApplied.filter(function (c) {
+        return c.toUpperCase() !== String(code).toUpperCase();
+      });
+      lastApplied = [];
+
+      post(keep.join(','))
+        .then(function (cart) {
+          el.removeAttribute('data-busy');
+          var inp = el.querySelector('[data-voucher-input]');
+          if (inp) inp.value = '';
+          say(el, '');
+          setState(el, 'idle');
+          window.refreshCartUI(cart);
+          flashSummary();
+        })
+        .catch(function () {
+          el.removeAttribute('data-busy');
+        });
+    }
+
+    /* The drawer footer is pinned to the bottom of a fixed-height panel, so an
+       on-screen keyboard covers it outright — scrollIntoView cannot help. Match
+       the wrapper to the visual viewport instead; the flex layout compresses
+       .cart-items and the field stays above the keyboard. Height (not
+       transform) because the wrapper's transform drives the slide-in. */
+    function bindKeyboardFit() {
+      var vv = window.visualViewport;
+      if (!vv) return;
+      function fit() {
+        var wrap = document.querySelector('.mini-cart-wrapper');
+        var el = root();
+        if (!wrap) return;
+        var inp = el && el.querySelector('[data-voucher-input]');
+        var focused = inp && document.activeElement === inp;
+        var overlap = window.innerHeight - vv.height;
+        if (focused && overlap > 80) wrap.style.height = vv.height + 'px';
+        else wrap.style.height = '';
+      }
+      vv.addEventListener('resize', fit);
+      document.addEventListener('focusin', function () { setTimeout(fit, 120); });
+      document.addEventListener('focusout', function () { setTimeout(fit, 120); });
+    }
+    bindKeyboardFit();
+
+    document.addEventListener('click', function (e) {
+      var t = e.target;
+      if (!t || !t.closest) return;
+
+      if (t.closest('[data-voucher-open]')) {
+        e.preventDefault();
+        var el = root();
+        if (!el) return;
+        setState(el, 'open');
+        var trigger = el.querySelector('[data-voucher-open]');
+        if (trigger) trigger.setAttribute('aria-expanded', 'true');
+        var inp = el.querySelector('[data-voucher-input]');
+        if (inp) setTimeout(function () { inp.focus(); }, 220);
+        return;
+      }
+
+      if (t.closest('[data-voucher-submit]')) {
+        e.preventDefault();
+        var i = input();
+        apply(i ? i.value.trim() : '');
+        return;
+      }
+
+      if (t.closest('[data-voucher-cancel]')) {
+        e.preventDefault();
+        closePanel(root(), false);
+        return;
+      }
+
+      var rm = t.closest('[data-voucher-remove]');
+      if (rm) {
+        e.preventDefault();
+        remove(rm.getAttribute('data-voucher-remove'));
+      }
+    });
+
+    /* ===== Hand the voucher over to checkout ===============================
+       A code applied with /cart/update.js sits on the cart object and shows a
+       discounted total in the drawer, but it does NOT survive into checkout —
+       verified by reading the checkout document for a cart carrying MOR10:
+
+         "merchandiseDiscount":{"__typename":"FilledDiscountTerms","lines":[]}
+         "deliveryDiscount":  {"__typename":"FilledDiscountTerms","lines":[]}
+
+       Empty. Without this handoff the customer sees Rp 621.000 on the button
+       and Rp 690.000 on the next screen, and has to retype the code.
+
+       /discount/CODE?redirect=... is Shopify's own mechanism for exactly this
+       and is already the path the UTM flow uses in layout/theme.liquid.
+
+       Deliberately bound in the BUBBLE phase with no stopImmediatePropagation:
+       anything else listening on this button still runs first. begin_checkout
+       is emitted by the Shopify custom pixel inside checkout, not from here,
+       so the redirect leaves analytics untouched. */
+    function appliedVoucherCode() {
+      var els = document.querySelectorAll(
+        '#cart [data-cart-voucher][data-state="applied"] [data-voucher-chip]'
+      );
+      var codes = [];
+      for (var i = 0; i < els.length; i++) {
+        var c = (els[i].getAttribute('data-voucher-chip') || '').trim();
+        if (c) codes.push(c);
+      }
+      /* Shopify's discount URL takes a comma-separated list, the same shape
+         /cart/update.js accepts. */
+      return codes.join(',');
+    }
+
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest && e.target.closest('#cart-checkout-btn');
+      if (!btn || btn.dataset.voucherHandoff) return;
+
+      var code = appliedVoucherCode();
+      if (!code) return; /* no voucher — leave the native submit alone */
+
+      e.preventDefault();
+      btn.dataset.voucherHandoff = '1';
+      if (window.cartShowLoading) window.cartShowLoading();
+
+      var root = (window.Shopify && Shopify.routes && Shopify.routes.root) || '/';
+      window.location.href =
+        root + 'discount/' + encodeURIComponent(code) + '?redirect=' + root + 'checkout';
+
+      /* If the navigation is blocked or the customer comes back via bfcache,
+         don't leave the button permanently inert. */
+      setTimeout(function () { delete btn.dataset.voucherHandoff; }, 4000);
+    });
+
+    /* The field lives inside <form action="/cart" method="post">, so a bare
+       Enter would submit the cart form and navigate away from the drawer. */
+    document.addEventListener('keydown', function (e) {
+      var t = e.target;
+      if (!t || !t.matches || !t.matches('[data-voucher-input]')) return;
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        e.stopPropagation();
+        apply(t.value.trim());
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
+        closePanel(root(), true);
+      }
+    });
+  })();
+</script>
+
+<script>
+  /* ===== After bundle renders: move FBT, sync UI, load prices ===== */
+  (function() {
+    function onCartRender() {
+      var c = document.getElementById('cart');
+      if (!c) return;
+
+      /* 1. Always show progress bar (even when cart is empty) */
+      var pw = c.querySelector('.free-shipping-progress');
+      if (pw) pw.classList.add('active');
+      var ch = c.querySelector('.min-cart-template .cart-header');
+      if (ch) ch.classList.add('with-progress');
+
+      /* 2. Move FBT into form flow (between cart-items and footer) */
+      window.moveFBT();
+
+      /* 3. Isolate scroll containers to prevent scroll-chaining conflicts */
+      window.isolateScrollContainers();
+
+      /* 4. Fetch cart data and update UI */
+      fetch('/cart.js').then(function(r) { return r.json(); }).then(function(cart) {
+        window.refreshCartUI(cart);
+        window.syncFBTVisibility(cart);
+
+        /* 5. Fetch original_price from product pages, then recalc savings */
+        if (cart.item_count > 0) {
+          window.loadCompareAtPrices();
+        }
+      });
+
+      /* 6. Fetch Judge.me ratings for FBT products */
+      window.loadFBTRatings();
+
+      /* 7. Init cart trust badge slider */
+      window.initCartTrustSlider();
+    }
+
+    var cartContainer = document.getElementById('cart');
+    if (!cartContainer) return;
+
+    var observer = new MutationObserver(function(mutations) {
+      var dominated = mutations.some(function(m) {
+        return m.type === 'childList' && m.target === cartContainer;
+      });
+      if (!dominated) return;
+      setTimeout(onCartRender, 500);
+      setTimeout(onCartRender, 1200);
+    });
+    observer.observe(cartContainer, { childList: true });
+  })();
+</script>
+
+<script>
+  /* ===== UTM free shipping override ===== */
+  (function() {
+    if (typeof window.isUtmFreeShipping !== 'function' || !window.isUtmFreeShipping()) return;
+
+    function forceAllSet() {
+      if (!window.isUtmFreeShipping()) return;
+      var c = document.getElementById('cart');
+      if (!c) return;
+
+      var pw = c.querySelector('.free-shipping-progress');
+      var sv = c.querySelector('#cart-shipping-value');
+      var ch = c.querySelector('.min-cart-template .cart-header');
+
+      var i18n = window._cartI18n || {};
+      if (pw) pw.classList.add('active');
+      if (sv) sv.textContent = i18n.shippingFree || 'FREE';
+      if (ch) ch.classList.add('with-progress');
+
+      /* Same writer as refreshCartUI — this used to keep its own copy of the
+         fill/label/badge logic and pinned the marker to a hardcoded 88%. */
+      window.setShippingProgress(100, 0, true);
+    }
+
+    var cartContainer = document.getElementById('cart');
+    if (!cartContainer) return;
+
+    var observer = new MutationObserver(function(mutations) {
+      var dominated = mutations.some(function(m) {
+        return m.type === 'childList' && m.target === cartContainer;
+      });
+      if (!dominated) return;
+      setTimeout(forceAllSet, 500);
+      setTimeout(forceAllSet, 1000);
+    });
+    observer.observe(cartContainer, { childList: true });
+  })();
+</script>
+
+<script>
+  // This automatically locks the background scroll when the cart opens
+  document.addEventListener('DOMContentLoaded', () => {
+    const miniCart = document.querySelector('.mini-cart');
+    if (miniCart) {
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.attributeName === 'class') {
+            if (miniCart.classList.contains('active')) {
+              // Lock the body
+              document.body.style.position = 'fixed';
+              document.body.style.top = `-${window.scrollY}px`;
+              document.body.style.width = '100%';
+            } else {
+              // Unlock the body and restore scroll position
+              const scrollY = document.body.style.top;
+              document.body.style.position = '';
+              document.body.style.top = '';
+              document.body.style.width = '';
+              window.scrollTo(0, parseInt(scrollY || '0') * -1);
+            }
+          }
+        });
+      });
+      observer.observe(miniCart, { attributes: true });
+    }
+  });
+</script>
+
+
+<style>
+  /* ===== Roll harga — micro-motion ala HyperFrames =====
+     Angka lama terbang naik (percepat-keluar) sementara angka baru mendarat
+     dari bawah (perlambat + overshoot kecil) — pasangan ease cermin, murni
+     transform+opacity, tanpa menggeser layout. tabular-nums menjaga digit
+     tidak bergetar lebarnya saat berganti. */
+  #sub-total-mini,
+  #cart-saving-amount {
+    display: inline-block;
+    position: relative;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+</style>
+<script>
+  (function () {
+    'use strict';
+    if (window.__priceRollInstalled) return;
+    window.__priceRollInstalled = true;
+
+    var REDUCED = window.matchMedia
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* Dua angka yang pembeli pakai untuk mengambil keputusan: total di tombol
+       checkout dan "You're saving". Keduanya diperbarui banyak jalur (swap
+       innerHTML footer, refreshCartUI, recalcSavings) — maka pemicunya bukan
+       menempel di tiap jalur, melainkan satu pengamat DOM yang membandingkan
+       teks terakhir yang diketahui. Jalur mana pun yang mengubah angka,
+       animasinya tetap jalan. */
+    var TARGETS = [
+      { sel: '#sub-total-mini', align: 'left' },
+      { sel: '#cart-saving-amount', align: 'right' }
+    ];
+    var last = {};
+
+    function roll(el, oldText, cfg) {
+      if (REDUCED || !el.animate) return;
+      try { el.getAnimations().forEach(function (a) { a.cancel(); }); } catch (e) { /* abaikan */ }
+
+      /* Angka baru dibungkus span transien supaya bisa digerakkan terpisah
+         dari ghost. Pembaruan teks berikutnya oleh tema (textContent /
+         innerHTML) menyapu bungkusnya sendiri — tidak pernah menumpuk. */
+      var inner = document.createElement('span');
+      while (el.firstChild) inner.appendChild(el.firstChild);
+      inner.style.display = 'inline-block';
+      inner.style.whiteSpace = 'nowrap';
+      el.appendChild(inner);
+
+      var ghost = document.createElement('span');
+      ghost.textContent = oldText;
+      ghost.setAttribute('aria-hidden', 'true');
+      ghost.style.cssText = 'position:absolute;top:0;' +
+        (cfg.align === 'right' ? 'right:0;' : 'left:0;') +
+        'white-space:nowrap;pointer-events:none;';
+      el.appendChild(ghost);
+
+      /* Keluar: memercepat — perhatian tidak boleh tertahan pada angka lama. */
+      var out = ghost.animate(
+        [
+          { transform: 'translateY(0)', opacity: 1 },
+          { transform: 'translateY(-0.55em)', opacity: 0 }
+        ],
+        { duration: 190, easing: 'cubic-bezier(0.55, 0, 0.8, 0.4)', fill: 'forwards' }
+      );
+      var cleanup = function () { if (ghost.parentNode) ghost.remove(); };
+      out.onfinish = cleanup; out.oncancel = cleanup;
+
+      /* Masuk: melambat dengan overshoot kecil — angka "mendarat", terlihat
+         tanpa perlu ganti warna. */
+      inner.animate(
+        [
+          { transform: 'translateY(0.55em) scale(0.94)', opacity: 0 },
+          { transform: 'translateY(-0.06em) scale(1.05)', opacity: 1, offset: 0.7 },
+          { transform: 'translateY(0) scale(1)', opacity: 1 }
+        ],
+        { duration: 340, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'both' }
+      );
+    }
+
+    function scan() {
+      TARGETS.forEach(function (cfg) {
+        var el = document.querySelector(cfg.sel);
+        if (!el) { delete last[cfg.sel]; return; }
+        /* Abaikan ghost yang sedang beranimasi saat membaca nilai kini. */
+        var text = '';
+        for (var n = el.firstChild; n; n = n.nextSibling) {
+          if (n.getAttribute && n.getAttribute('aria-hidden') === 'true') continue;
+          text += n.textContent || '';
+        }
+        text = text.trim();
+        var prev = last[cfg.sel];
+        if (prev != null && text && prev !== text) roll(el, prev, cfg);
+        if (text) last[cfg.sel] = text;
+      });
+    }
+
+    function arm() {
+      var root = document.getElementById('cart');
+      if (!root) return;
+      scan(); /* seed nilai awal tanpa animasi */
+      new MutationObserver(scan).observe(root, {
+        childList: true, characterData: true, subtree: true
+      });
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', arm);
+    } else {
+      arm();
+    }
+  })();
+</script>
