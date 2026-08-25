@@ -191,18 +191,76 @@
     return !!c && typeof c.total_price === 'number' && Array.isArray(c.items);
   };
 
-  /* ===== Loading overlay for cart ===== */
-  window.cartShowLoading = function() {
+  /* ===== Telemetri keranjang =====
+     Bentuknya sama dengan giftTrack di gift-auto-add.js: dorong event, lalu
+     dorong reset null supaya parameter ephemeral tidak bocor ke event
+     berikutnya. Telemetri tidak boleh pernah mengganggu keranjang. */
+  window.cartTrack = function (name, data) {
+    try {
+      if (document.prerendering) return;
+      window.dataLayer = window.dataLayer || [];
+      var payload = { event: name };
+      var reset = {};
+      Object.keys(data || {}).forEach(function (k) {
+        payload[k] = data[k];
+        reset[k] = null;
+      });
+      window.dataLayer.push(payload);
+      window.dataLayer.push(reset);
+    } catch (e) { /* diam */ }
+  };
+
+  /* ===== Loading overlay for cart =====
+     Overlay ini `position:absolute` menutup seluruh #cart dengan `z-index:100`
+     dan TANPA `pointer-events:none` — selama ia tampil, SETIAP sentuhan di
+     dalam drawer ditelan: tombol checkout, tombol tutup, ubah jumlah, hapus
+     baris. Itu benar untuk permintaan yang kita tunggu lalu tutup sendiri.
+     Tapi pemanggil yang menyalakannya lalu pergi — navigasi yang tak pernah
+     mendarat, promise yang tak pernah selesai — meninggalkan pembeli menatap
+     keranjang pudar berspinner tanpa satu pun jalan keluar. Laporan "checkout
+     freeze" dari in-app browser Instagram berpangkal persis di sini.
+
+     Karena itu masa hidup overlay dijamin di PRIMITIF, bukan dititipkan ke
+     setiap pemanggil: tiap `show` memasang penjaga yang menutupnya kembali,
+     dan `hide` melucuti penjaga itu — sehingga pasangan show/hide yang normal
+     tidak pernah memicunya. Satu perbaikan di sini menutup semua jalur yang
+     ada sekarang maupun yang ditambahkan nanti.
+
+     Bawaan 12 detik dipilih DI ATAS anggaran ~10 detik `cartChangeWithRetry`,
+     supaya penjaga tidak pernah memotong percobaan ulang yang masih sah.
+     Pemanggil dengan anggaran lebih pendek mengirim batasnya sendiri. */
+  var loadingWatchdog = null;
+  var LOADING_WATCHDOG_MS = 12000;
+
+  window.cartShowLoading = function (maxMs) {
     var c = document.getElementById('cart');
     if (!c) return;
-    var existing = c.querySelector('.cart-loading-overlay');
-    if (existing) { existing.style.display = 'flex'; return; }
-    var ov = document.createElement('div');
-    ov.className = 'cart-loading-overlay';
-    ov.innerHTML = '<div class="cart-loading-spinner"></div>';
-    c.appendChild(ov);
+    var ov = c.querySelector('.cart-loading-overlay');
+    if (ov) {
+      ov.style.display = 'flex';
+    } else {
+      ov = document.createElement('div');
+      ov.className = 'cart-loading-overlay';
+      ov.innerHTML = '<div class="cart-loading-spinner"></div>';
+      c.appendChild(ov);
+    }
+    if (loadingWatchdog) clearTimeout(loadingWatchdog);
+    loadingWatchdog = setTimeout(function () {
+      loadingWatchdog = null;
+      window.cartHideLoading();
+      /* Pemulihan yang tak terlihat sama saja dengan bug yang tak terhitung.
+         Penjaga yang menyala SELALU berarti ada yang gagal, jadi beri tahu
+         siapa pun yang sedang menunggu (mis. serah-terima voucher) lalu
+         catat kejadiannya. */
+      try {
+        document.dispatchEvent(new CustomEvent('cart:loading-timeout'));
+      } catch (err) { /* diam */ }
+      window.cartTrack('cart_loading_timeout');
+    }, typeof maxMs === 'number' && maxMs > 0 ? maxMs : LOADING_WATCHDOG_MS);
   };
-  window.cartHideLoading = function() {
+
+  window.cartHideLoading = function () {
+    if (loadingWatchdog) { clearTimeout(loadingWatchdog); loadingWatchdog = null; }
     var ov = document.querySelector('#cart .cart-loading-overlay');
     if (ov) ov.style.display = 'none';
   };
@@ -2451,24 +2509,49 @@
       return codes.join(',');
     }
 
+    /* Satu serah-terima pada satu waktu. Statusnya hidup di closure, BUKAN di
+       `btn.dataset`: render ulang drawer mengganti simpul tombolnya, dan
+       penanda yang ikut lenyap bersamanya membuat penjaga ini bocor tanpa
+       suara. Penjaga dilepas ketika overlay menyerah (cart:loading-timeout)
+       atau ketika pembeli kembali dari checkout lewat bfcache — dua-duanya
+       berarti navigasinya tidak jadi, jadi percobaan berikutnya harus boleh
+       berangkat lagi. */
+    var handoffInFlight = false;
+    var HANDOFF_WATCHDOG_MS = 8000;
+
+    function releaseHandoff() { handoffInFlight = false; }
+    document.addEventListener('cart:loading-timeout', releaseHandoff);
+    window.addEventListener('pageshow', function (e) {
+      if (e.persisted) releaseHandoff();
+    });
+
     document.addEventListener('click', function (e) {
       var btn = e.target.closest && e.target.closest('#cart-checkout-btn');
-      if (!btn || btn.dataset.voucherHandoff) return;
+      if (!btn) return;
 
       var code = appliedVoucherCode();
       if (!code) return; /* no voucher — leave the native submit alone */
 
+      /* Sejak titik ini submit natif TIDAK BOLEH lolos. Dulu ketukan kedua —
+         yang pasti terjadi, karena redirect terasa lama — jatuh ke `return`
+         tanpa preventDefault: form ikut submit ke /cart dan pembeli mendarat
+         di checkout TANPA kodenya. Diskonnya hilang diam-diam, dan tidak ada
+         yang tahu. */
       e.preventDefault();
-      btn.dataset.voucherHandoff = '1';
-      if (window.cartShowLoading) window.cartShowLoading();
+      if (handoffInFlight) return;
+      handoffInFlight = true;
 
-      var root = (window.Shopify && Shopify.routes && Shopify.routes.root) || '/';
-      window.location.href =
-        root + 'discount/' + encodeURIComponent(code) + '?redirect=' + root + 'checkout';
+      if (window.cartShowLoading) window.cartShowLoading(HANDOFF_WATCHDOG_MS);
 
-      /* If the navigation is blocked or the customer comes back via bfcache,
-         don't leave the button permanently inert. */
-      setTimeout(function () { delete btn.dataset.voucherHandoff; }, 4000);
+      /* Satu lompatan, bukan dua. `/discount/CODE?redirect=/checkout` harus
+         singgah dulu di /discount (terukur 1,0–4,2 dtk, sangat bervariasi)
+         sebelum melanjut ke /checkout; `/checkout?discount=CODE` mendarat
+         langsung di /checkouts/cn/... (terukur 0,8–1,0 dtk) dengan kodenya
+         tetap terbawa — daftar berkoma sekalipun, ter-encode maupun tidak,
+         dan tetap benar di bawah awalan market `/id/`. Makin sedikit lompatan,
+         makin kecil peluang WebView in-app tersendat di tengah rantai. */
+      var shopRoot = (window.Shopify && Shopify.routes && Shopify.routes.root) || '/';
+      window.location.href = shopRoot + 'checkout?discount=' + encodeURIComponent(code);
     });
 
     /* The field lives inside <form action="/cart" method="post">, so a bare
