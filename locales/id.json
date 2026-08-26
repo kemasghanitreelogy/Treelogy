@@ -54,6 +54,9 @@
     "atc_failed_generic": "Gagal menambahkan — coba lagi",
     "title": "Keranjang",
     "checkout_button_label": "Check Out",
+    "trust_guarantee": "Garansi 60 hari uang kembali",
+    "trust_certified": "BPOM & Halal bersertifikat",
+    "trust_expiry": "ED",
     "empty_cart_text": "Keranjang masih kosong",
     "empty_title": "Keranjang kamu kosong",
     "empty_subtitle": "Temukan produk terbaik kami dan mulai perjalanan wellness kamu",
@@ -175,6 +178,9 @@
       "from": "Dari",
       "about_product": "Tentang Produk Ini",
       "add_to_cart": "Tambahkan",
+      "benefit_1": "Kaku pagi berkurang",
+      "benefit_2": "Energi stabil seharian",
+      "benefit_3": "Tidur lebih nyenyak",
       "shop_now": "Belanja Sekarang"
     },
     "product": {

@@ -2743,6 +2743,54 @@
      mendatar berisi label, pemisah, harga coret, harga bayar. Ukuran dan bobot
      hurufnya sengaja disamakan dengan .v2-atc__* supaya kedua tombol terbaca
      sebagai satu bahasa, bukan dua komponen berbeda yang kebetulan mirip. */
+  /* ---- Baris kepercayaan di atas tombol checkout ---- */
+  .cart-assure {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 4px 14px;
+    margin: 0 0 10px;
+    padding: 10px 4px 0;
+    border-top: 1px solid rgba(43, 60, 53, 0.1);
+  }
+
+  .cart-assure__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex: 0 0 auto;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    line-height: 1.4;
+    /* Kontras ~7:1 di atas latar drawer — sengaja lebih redup dari harga dan
+       tombol, tetap terbaca nyaman. */
+    color: #4a5b52;
+    white-space: nowrap;
+  }
+
+  .cart-assure__icon {
+    width: 13px;
+    height: 13px;
+    flex: 0 0 13px;
+    color: #6f8a63;
+  }
+
+  /* Drawer di layar pendek sudah berebut ruang tegak (lihat anggaran scroll
+     cart drawer); di sana baris ini merapat, bukan menambah tinggi furnitur. */
+  @media screen and (max-height: 700px) {
+    .cart-assure {
+      gap: 3px 10px;
+      margin-bottom: 8px;
+      padding-top: 8px;
+    }
+
+    .cart-assure__item {
+      font-size: 0.625rem;
+    }
+  }
+
   #cart-checkout-btn.cart-checkout {
     display: flex;
     align-items: center;

@@ -54,6 +54,9 @@
     "atc_failed_generic": "Couldn't add to cart — please try again",
     "title": "Cart",
     "checkout_button_label": "Check Out",
+    "trust_guarantee": "60-day money-back guarantee",
+    "trust_certified": "BPOM & Halal certified",
+    "trust_expiry": "Best before",
     "empty_cart_text": "Cart is empty",
     "empty_title": "Your cart is empty",
     "empty_subtitle": "Discover our best-selling products and start your wellness journey",
@@ -174,7 +177,10 @@
     "general": {
       "from": "From",
       "about_product": "About this Product",
-      "add_to_cart": "Add to Cart"
+      "add_to_cart": "Add to Cart",
+      "benefit_1": "Less morning stiffness",
+      "benefit_2": "Steady energy all day",
+      "benefit_3": "Deeper, calmer sleep"
     },
     "product": {
       "adding": "Adding..."
