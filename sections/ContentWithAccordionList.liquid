@@ -190,8 +190,13 @@
     transition: transform 0.3s ease;
   }
 
-  /* Optional: Rotate icon when active */
-  .accordion.active .accordion-header svg {
+  /* Rotate icon when active.
+     Diikat ke id section supaya menang atas
+     `.accordion-list .right-list .scroll-container .accordion.active svg`
+     di theme.css:5703 (0,4,1) yang memutar ikon 180deg. Aturan itu dibuat untuk
+     ikon panah; di sini ikonnya tanda `+`, dan `+` diputar 180deg terlihat persis
+     sama — jadi tanda buka/tutup tidak pernah berubah. 45deg mengubahnya jadi `x`. */
+  #shopify-section-{{ section.id }} .accordion.active .accordion-header svg {
     transform: rotate(45deg);
   }
 </style>
@@ -222,7 +227,20 @@
       id="ShowMore-{{ section.id }}"
       class="accordion-toggle-checkbox">
 
-    <div class="scroll-container __accordion">
+    {%- comment -%}
+      JANGAN tambahkan kelas `__accordion` di sini. Section ini punya handler
+      accordion sendiri (di bawah), sementara `Accodion()` di app.bundle.js
+      memindai `.__accordion` lalu memasang handler KEDUA di `.__accordion-button`
+      yang sama. Keduanya menumpuk di elemen yang sama dan urutannya kalah:
+      handler section menambah `.active`, handler global membacanya sebagai
+      "sudah terbuka" lalu langsung menghapusnya lagi — accordion tidak pernah
+      membuka dan terlihat seperti mati total.
+
+      Kelas `__accordion-wrapper` / `-button` / `-content` di dalam sengaja
+      DIPERTAHANKAN: theme.css memakainya untuk gaya buka/tutup, dan tanpa
+      `.__accordion` di pembungkus, `Accodion()` tidak akan pernah menemukannya.
+    {%- endcomment -%}
+    <div class="scroll-container">
       {% for block in section.blocks %}
 
         {% assign is_extended = false %}
@@ -343,10 +361,18 @@
     }
 
     // Initialize on Page Load
-    document.addEventListener("DOMContentLoaded", function() {
-      const sectionContainer = document.getElementById("Accordion-{{ section.id }}");
-      initAccordion(sectionContainer);
-    });
+    function boot() {
+      initAccordion(document.getElementById("Accordion-{{ section.id }}"));
+    }
+    // Menunggu DOMContentLoaded hanya sah kalau dokumen memang masih diurai.
+    // Kalau section ini disuntikkan belakangan (Section Rendering API), event
+    // itu sudah lewat dan tidak akan pernah datang lagi — accordion-nya mati
+    // tanpa jejak error.
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", boot);
+    } else {
+      boot();
+    }
 
     // Initialize in Shopify Design Mode
     document.addEventListener("shopify:section:load", function(event) {

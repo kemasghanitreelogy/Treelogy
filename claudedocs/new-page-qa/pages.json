@@ -1,0 +1,64 @@
+{
+  "_doc": "Manifes keputusan tiap halaman custom. WAJIB diisi SEBELUM halaman dibuat. qa.mjs GAGAL kalau handle-nya belum terdaftar di sini — itu yang memaksa pertanyaan 'include atau exclude sign-up form?' ditanyakan lebih dulu, bukan diasumsikan.",
+  "_schema": {
+    "signup": "include | exclude  (wajib)",
+    "signup_section": "type section form yang dipakai, wajib kalau signup=include",
+    "reason": "kenapa (wajib) — jawaban user, bukan tebakan",
+    "decided_on": "YYYY-MM-DD",
+    "locale_namespace": "prefix key locale milik halaman ini, mis. why_capsules",
+    "offer": "opsional; isi kalau halaman menjual paket per varian. Dipakai mode --live untuk mengunci offer per varian ke email konfirmasi. email_label_ack adalah sidik jari (varian + judul email + label halaman) - begitu salah satunya berubah, QA gagal dan memaksa email ditinjau ulang."
+  },
+  "pages": {
+    "why-capsules": {
+      "signup": "exclude",
+      "reason": "halaman kampanye email #25 AUG — trafiknya SUDAH subscriber, CTA tunggal ke checkout; form kedua bikin konflik konversi",
+      "decided_on": "2026-08-21",
+      "locale_namespace": "why_capsules",
+      "offer": {
+        "section": "wc-offer",
+        "plans": { "p3": "variant_p3", "p2": "variant_p2", "p1": "variant_p1" },
+        "gift_settings": { "p3": ["gift_variant"] },
+        "keys": {
+          "name": "{ns}.offer.{plan}_name",
+          "price": "{ns}.offer.{plan}_price",
+          "price_old": "{ns}.offer.{plan}_price_old",
+          "perks": "{ns}.offer.{plan}_perks_html"
+        },
+        "non_product_perks": ["shipping", "ongkir", "money-back", "uang kembali", "garansi", "guarantee"],
+        "email_label_ack": {
+          "p3": {
+            "variant": "47255408378044",
+            "email_title": "Organic Moringa Capsules - 270 Moringa Capsules",
+            "page_label": "3 months",
+            "reason": "BELUM DIKONFIRMASI USER - halaman menjual durasi (3 months), email mencetak jumlah kapsul (270). Ganti reason ini setelah user memutuskan: samakan variant.title, atau terima perbedaannya."
+          },
+          "p2": {
+            "variant": "44527085650108",
+            "email_title": "Organic Moringa Capsules - 180 Moringa Capsules",
+            "page_label": "2 months",
+            "reason": "BELUM DIKONFIRMASI USER - sama seperti p3."
+          },
+          "p1": {
+            "variant": "44527085617340",
+            "email_title": "Organic Moringa Capsules - 90 Moringa Capsules",
+            "page_label": "1 month",
+            "reason": "BELUM DIKONFIRMASI USER - sama seperti p3."
+          }
+        }
+      }
+    },
+    "guide": {
+      "signup": "exclude",
+      "reason": "halaman edukasi/SEO moringa-seed-oil-guide; CTA ke katalog, bukan capture email",
+      "decided_on": "2026-08-20",
+      "locale_namespace": "oil_guide"
+    },
+    "sub": {
+      "signup": "include",
+      "signup_section": "NewslletterForm",
+      "reason": "halaman subscribe — form adalah tujuan utama halaman",
+      "decided_on": "2026-08-26",
+      "locale_namespace": null
+    }
+  }
+}

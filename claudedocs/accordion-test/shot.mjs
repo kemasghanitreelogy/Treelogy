@@ -1,0 +1,17 @@
+import { launch, attach } from '../search-premium-test/cdp.mjs';
+import fs from 'node:fs';
+const PATCH = `(() => { const s=()=>{try{document.querySelectorAll('.scroll-container.__accordion').forEach(n=>n.classList.remove('__accordion'))}catch(e){}}; setInterval(s,5); s(); })();`;
+const proc = await launch(9380, '/tmp/cdp-shot'); const cdp = await attach(9380);
+await cdp.send('Page.addScriptToEvaluateOnNewDocument', { source: PATCH });
+await cdp.goto('https://treelogy.com/id/pages/moringa-tree');
+await cdp.eval('new Promise(r=>setTimeout(r,3000))');
+await cdp.eval(`return (()=>{document.querySelectorAll('[class*="kl-private"],[data-testid="POPUP"]').forEach(n=>n.remove());return 1})()`);
+await cdp.eval(`return (()=>{document.querySelectorAll('.accordion.__accordion-wrapper')[0].scrollIntoView({block:'center',behavior:'instant'});return 1})()`);
+await cdp.eval('new Promise(r=>setTimeout(r,600))');
+const b = await cdp.eval(`return (()=>{const h=document.querySelectorAll('.accordion.__accordion-wrapper')[0].querySelector('.accordion-header');const r=h.getBoundingClientRect();return {x:Math.round(r.left+r.width/2),y:Math.round(r.top+r.height/2)}})()`);
+for (const type of ['mousePressed','mouseReleased']) await cdp.send('Input.dispatchMouseEvent',{type,x:b.x,y:b.y,button:'left',clickCount:1});
+await cdp.eval('new Promise(r=>setTimeout(r,900))');
+const { data } = await cdp.send('Page.captureScreenshot', { format: 'png' });
+fs.writeFileSync('sesudah-fix.png', Buffer.from(data, 'base64'));
+console.log('tersimpan sesudah-fix.png; state:', JSON.stringify(await cdp.eval(`return (()=>{const it=document.querySelectorAll('.accordion.__accordion-wrapper')[0];return {active:it.classList.contains('active'),tinggi:Math.round(it.querySelector('.accordion-description').getBoundingClientRect().height)}})()`)));
+cdp.close(); proc.kill();

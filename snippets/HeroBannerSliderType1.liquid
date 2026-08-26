@@ -41,7 +41,12 @@
       <div class="product-excerpt mobile">
         {{ description | truncate: '68' }}
       </div>
-      <div class="price">From&nbsp;{% render 'PriceFormat' .product: block.settings.product %}</div>
+      {%- comment -%}
+        Cabang legacy (kill-switch v2 dimatikan). `.product:` di sini salah tulis
+        — pemisah argumen render harus koma; dibiarkan begitu, fallback-nya rusak
+        justru saat dibutuhkan.
+      {%- endcomment -%}
+      <div class="price">{{ 'products.general.from' | t }}&nbsp;{% render 'PriceFormat', product: block.settings.product %}</div>
     </div>
   </a>
 {% endif %}
