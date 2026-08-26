@@ -178,9 +178,9 @@
       "from": "From",
       "about_product": "About this Product",
       "add_to_cart": "Add to Cart",
-      "benefit_1": "Less morning stiffness",
-      "benefit_2": "Steady energy all day",
-      "benefit_3": "Deeper, calmer sleep"
+      "benefit_1": "Less stiffness",
+      "benefit_2": "Steady energy",
+      "benefit_3": "Deeper sleep"
     },
     "product": {
       "adding": "Adding..."

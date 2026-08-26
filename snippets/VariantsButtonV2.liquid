@@ -373,10 +373,16 @@
   .v2-benefits {
     list-style: none;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px 16px;
-    /* Butir dua baris tidak boleh menggeser garis dasar tetangganya. */
-    align-items: start;
+    /* `auto auto` + justify-content:center, BUKAN `1fr 1fr`.
+       Dengan 1fr, tiap kolom dipaksa tepat separuh lebar pita; label yang satu
+       huruf lebih panjang dari jatah itu langsung pecah dua baris sementara
+       tetangganya tetap satu baris — tinggi kolomnya jadi timpang dan itulah
+       yang terbaca berantakan. Dengan auto, kolom memeluk isinya dan pasangan
+       itu berdiri di tengah, jadi tidak ada lebar yang dipaksakan. */
+    grid-template-columns: auto auto;
+    justify-content: center;
+    gap: 10px 18px;
+    align-items: center;
     margin: 16px 0;
     padding: 14px 16px;
     border-radius: 12px;
@@ -386,8 +392,8 @@
 
   .v2-benefit {
     display: grid;
-    grid-template-columns: 15px 1fr;
-    align-items: start;
+    grid-template-columns: 15px auto;
+    align-items: center;
     gap: 9px;
   }
 
@@ -405,9 +411,6 @@
     width: 15px;
     height: 15px;
     color: #5f7a55;
-    /* Disejajarkan ke BARIS TEKS PERTAMA, bukan ke tengah kotak teks; tanpa ini
-       centang melayang di tengah saat labelnya membungkus dua baris. */
-    margin-top: 2px;
   }
 
   .v2-benefit__tick svg {
@@ -429,7 +432,7 @@
      dua baris. Itu diterima; yang dijaga adalah bentuk gridnya tetap sama. */
   @media screen and (max-width: 419px) {
     .v2-benefits {
-      gap: 9px 12px;
+      gap: 9px 14px;
       margin: 14px 0;
       padding: 12px 12px;
     }
@@ -445,8 +448,10 @@
       height: 14px;
     }
 
+    /* 11,5px memberi ruang cukup agar label terpanjang tetap satu baris di
+       lebar 360px — ambang yang menentukan rapi atau tidaknya baris pertama. */
     .v2-benefit__text {
-      font-size: 0.75rem;
+      font-size: 0.71875rem;
       line-height: 1.3;
     }
   }
