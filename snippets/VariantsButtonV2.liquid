@@ -22,6 +22,8 @@
       "60-day money-back guarantee"            → titik biasa, tanpa nilai
       "Free Bamboo Spoon|Rp 120.000"           → ikon kado (bawaan)
       "Free Shipping included|~ Rp 25.000|ship" → ikon truk
+    Baris berikon `ship` HANYA dirender di market Indonesia; di market lain
+    barisnya dilewati sepenuhnya karena gratis ongkirnya tidak berlaku di sana.
     Nilainya dirender rata kanan dan dicoret. Ruas ikon ada supaya baris yang
     bernilai tapi bukan barang fisik — ongkos kirim — tidak ikut memakai ikon
     kado, karena itu akan salah arti.
@@ -199,6 +201,24 @@
               {%- continue -%}
             {%- endif -%}
             {%- assign v2_perk_parts = v2_perk_text | split: '|' -%}
+            {%- assign v2_perk_icon = v2_perk_parts[2] | default: 'gift' | strip | downcase -%}
+            {%- comment -%}
+              Gratis ongkir hanya berlaku untuk market Indonesia, jadi barisnya
+              TIDAK dirender sama sekali di market lain — bukan sekadar angkanya
+              yang disembunyikan. Menyisakan "Free Shipping included" tanpa nilai
+              untuk pembeli Eropa/Amerika sama saja menjanjikan sesuatu yang tidak
+              kita tanggung.
+
+              Penandanya ikon `ship`, bukan teksnya, sebab labelnya ikut
+              diterjemahkan per locale sedangkan ruas ikon tidak.
+
+              Dicocokkan ke handle market (`id`), bukan locale atau mata uang:
+              locale `id` bisa dibuka pembeli dari mana saja, dan satu market
+              bisa punya beberapa mata uang.
+            {%- endcomment -%}
+            {%- if v2_perk_icon == 'ship' and localization.market.handle != 'id' -%}
+              {%- continue -%}
+            {%- endif -%}
             <li class="v2-plan__perk">
               {%- comment -%}
                 Baris berhadiah ditandai ikon kado, bukan titik. Penandanya
@@ -208,7 +228,6 @@
                 tapi hanya untuk pembaca layar — ikon menyampaikan kategori,
                 bukan makna, jadi teksnya tidak boleh hilang sama sekali.
               {%- endcomment -%}
-              {%- assign v2_perk_icon = v2_perk_parts[2] | default: 'gift' | strip | downcase -%}
               <span class="v2-plan__marker" aria-hidden="true">
                 {%- if v2_perk_parts.size > 1 and v2_perk_icon == 'ship' -%}
                   <svg class="v2-plan__gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false">
