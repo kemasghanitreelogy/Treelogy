@@ -22,6 +22,46 @@
     {%- if request.page_type == 'product' and product.price_max == 0 and request.design_mode != true -%}
       <script>window.location.replace({{ routes.all_products_collection_url | json }});</script>
     {%- endif -%}
+    {%- comment -%}
+      Halaman /cart tidak pernah boleh terlihat pembeli — keranjang di toko ini
+      adalah drawer. Pengalihan ditaruh di sini, tetangga hotfix produk Rp 0 di
+      atas, karena alasannya sama: harus berjalan sebelum satu piksel dirender.
+
+      Tujuannya, berurutan: halaman terakhir yang dicatat sessionStorage →
+      referrer (kalau se-origin dan bukan /cart) → beranda locale ini. Referrer
+      dipakai sebagai cadangan karena tab baru atau sesi yang baru dibuka belum
+      punya catatan apa pun.
+
+      Bendera OPEN dititipkan supaya halaman tujuan membuka drawer sendiri;
+      tanpa itu pembeli mendarat di halaman biasa dan kehilangan konteks
+      keranjangnya.
+
+      /cart?view=mini TIDAK tersentuh: templatenya mematikan layout (lihat
+      templates/cart.mini.liquid) sehingga berkas ini tidak ikut dirender. Itu jalur AJAX isi drawer —
+      mengalihkannya akan mematikan drawer itu sendiri.
+
+      design_mode dikecualikan agar halaman cart tetap bisa dibuka dari theme
+      editor.
+    {%- endcomment -%}
+    {%- if request.page_type == 'cart' and request.design_mode != true -%}
+      <script>
+        (function () {
+          var back = null;
+          try { back = sessionStorage.getItem('treelogy:lastPage'); } catch (e) {}
+          if (!back && document.referrer) {
+            try {
+              var u = new URL(document.referrer);
+              if (u.origin === location.origin && u.pathname.indexOf('/cart') !== 0) {
+                back = u.pathname + u.search;
+              }
+            } catch (e) {}
+          }
+          if (!back) back = {{ routes.root_url | json }};
+          try { sessionStorage.setItem('treelogy:openCart', '1'); } catch (e) {}
+          location.replace(back);
+        })();
+      </script>
+    {%- endif -%}
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     {%- comment -%}
       interactive-widget=resizes-content lets the on-screen keyboard shrink the
@@ -1565,5 +1605,47 @@
       {% render 'gift-auto-add' %}
     {% endif %}
 
+    {%- comment -%}
+      Dua tugas kecil yang berpasangan dengan pengalihan /cart di <head>:
+
+      1. Mencatat halaman terakhir yang BUKAN /cart, supaya pengalihan punya
+         tujuan yang benar-benar relevan alih-alih selalu melempar ke beranda.
+      2. Membuka drawer begitu mendarat, kalau bendera OPEN ada.
+
+      Drawer dibuka dengan MENG-KLIK ikon keranjang, bukan memanggil API drawer
+      langsung: itu menjaga hanya ada satu jalur pembuka di seluruh tema. Ikon
+      itu baru bereaksi setelah app.bundle.js selesai mengikat listener-nya,
+      jadi klik diulang sampai `.mini-cart.active` muncul — bukan sekali lalu
+      berharap. Batas 4 detik supaya tidak ada loop abadi di halaman yang
+      kebetulan tidak memuat drawer.
+    {%- endcomment -%}
+    <script>
+      (function () {
+        if (window.__cartReturnInstalled) return;
+        window.__cartReturnInstalled = true;
+
+        try {
+          if (location.pathname.indexOf('/cart') !== 0) {
+            sessionStorage.setItem('treelogy:lastPage', location.pathname + location.search);
+          }
+        } catch (e) {}
+
+        var wants = false;
+        try {
+          wants = sessionStorage.getItem('treelogy:openCart') === '1';
+          if (wants) sessionStorage.removeItem('treelogy:openCart');
+        } catch (e) {}
+        if (!wants) return;
+
+        var stop = Date.now() + 4000;
+        (function tryOpen() {
+          if (document.querySelector('.mini-cart.active')) return;
+          if (Date.now() > stop) return;
+          var icon = document.querySelector('a.button.button-cart');
+          if (icon) icon.click();
+          setTimeout(tryOpen, 250);
+        })();
+      })();
+    </script>
   </body> 
 </html>
