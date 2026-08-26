@@ -1,6 +1,6 @@
 # QA Use Case — Setiap Halaman Baru
 
-Dua aturan yang wajib dipenuhi **sebelum** halaman custom apa pun dibuat/di-deploy:
+Tiga aturan yang wajib dipenuhi **sebelum** halaman custom apa pun dibuat/di-deploy:
 
 1. **Keputusan sign-up form harus DITANYAKAN lebih dulu, bukan ditebak.**
    Tiap halaman baru → tanya user: *"halaman ini include atau exclude sign-up form?"*
@@ -8,7 +8,6 @@ Dua aturan yang wajib dipenuhi **sebelum** halaman custom apa pun dibuat/di-depl
 2. **Semua teks & aksi tombol harus dinamis mengikuti translation.**
    Tidak ada string Inggris/Indonesia yang ditanam di `.liquid`, dan tidak ada
    `href` telanjang yang mengunci pengunjung ke satu bahasa.
-
 3. **Email konfirmasi harus tetap sesuai kalau offer per varian berubah.**
    Halaman yang menjual paket per varian wajib punya blok `offer` di `pages.json`;
    `--live` mengunci janji halaman ke data varian hidup.
