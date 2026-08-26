@@ -4,7 +4,7 @@
   </div>
 
   <div class="background parallax mobile">
-    {% render 'Image', image: section.settings.background_mobile | default:section.settings.background %}
+    {% render 'Image', image: section.settings.background_mobile, default: section.settings.background %}
   </div>
 
   <div class="content">
@@ -117,3 +117,15 @@
   ]
 }
 {% endschema %}
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: "{% render 'Image', image: section.settings.background_mobile | default:section.settings.background
+    %}"
+  to: "{% render 'Image', image: section.settings.background_mobile, default: section.settings.background
+    %}"
+  position: 270..371
+{% endcomment %}

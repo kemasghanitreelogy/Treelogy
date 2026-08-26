@@ -37,7 +37,16 @@
       <div class="product-excerpt mobile">
         {{ description | truncate: '68' }}
       </div>
-      <div class="price">From&nbsp;{% render 'PriceFormat' .product: block.settings.product %}</div>
+      <div class="price">From&nbsp;{% render 'PriceFormat', product: block.settings.product %}</div>
     </div>
   </a>
-{% endif %}
+{% endif %}{%- comment -%}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: "{% render 'PriceFormat' .product: block.settings.product %}"
+  to: "{% render 'PriceFormat', product: block.settings.product %}"
+  position: 1350..1409
+{%- endcomment -%}

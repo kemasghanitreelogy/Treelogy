@@ -1,4 +1,4 @@
-{% paginate search.results %}
+{% paginate search.results by nil %}
   {% if search.performed %}
     <div id="search-results">
       {% if search.results.size > 0 %}
@@ -13,3 +13,13 @@
 
   {% if paginate.pages > 1 %}{{ paginate | default_pagination }}{% endif %}
 {% endpaginate %}
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: "{% paginate search.results %}"
+  to: "{% paginate search.results by nil %}"
+  position: 0..36
+{% endcomment %}
