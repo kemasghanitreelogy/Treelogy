@@ -159,7 +159,11 @@
         this.innerHTML = originalText;
         this.style.opacity = '1';
         
-        const cartIcon = document.querySelector('a[href="/cart"]') || 
+        /* Lihat catatan di snippets/HeaderMenuIcon.liquid: ikon keranjang header
+           tidak lagi ber-href, jadi selektor berbasis href tidak pernah cocok.
+           `.button` membedakannya dari tombol quick-add kartu produk. */
+        const cartIcon = document.querySelector('a.button.button-cart') ||
+                         document.querySelector('a[href="/cart"]') || 
                          document.querySelector('.header__icon--cart') || 
                          document.querySelector('.mini-cart-toggle');
 

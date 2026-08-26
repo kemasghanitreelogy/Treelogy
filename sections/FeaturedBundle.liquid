@@ -564,7 +564,14 @@
             this.style.opacity = '1';
             setTimeout(() => { this.innerHTML = TEXT_ADD_TO_CART; }, 2000);
 
-            const cartIcon = document.querySelector('a[href="/cart"]') || document.querySelector('.header__icon--cart');
+            /* Ikon keranjang header sengaja TIDAK punya href (lihat
+               snippets/HeaderMenuIcon.liquid), jadi ia harus dicari lewat kelas.
+               `a.button.button-cart` hanya cocok dengan ikon header — tombol
+               quick-add di kartu produk memakai .button-cart TANPA .button, dan
+               meng-klik-nya di sini akan menambah produk lain ke keranjang. */
+            const cartIcon = document.querySelector('a.button.button-cart')
+              || document.querySelector('a[href="/cart"]')
+              || document.querySelector('.header__icon--cart');
             if (cartIcon) {
               cartIcon.click();
             } else {
