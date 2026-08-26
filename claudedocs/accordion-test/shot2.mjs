@@ -1,0 +1,13 @@
+import { launch, attach } from '../search-premium-test/cdp.mjs';
+import fs from 'node:fs';
+const proc = await launch(9395, '/tmp/cdp-shot2'); const cdp = await attach(9395);
+await cdp.send('Network.enable'); await cdp.send('Network.setCacheDisabled', { cacheDisabled: true });
+await cdp.goto('https://treelogy.com/id?cb=' + process.hrtime.bigint());
+await cdp.eval('new Promise(r=>setTimeout(r,3500))');
+await cdp.eval(`return (()=>{document.querySelectorAll('[class*="kl-private"],[data-testid="POPUP"]').forEach(n=>n.remove());return 1})()`);
+await cdp.eval(`return (()=>{const c=document.querySelector('.hero-card-v2'); c.scrollIntoView({block:'center',behavior:'instant'}); return 1})()`);
+await cdp.eval('new Promise(r=>setTimeout(r,700))');
+const { data } = await cdp.send('Page.captureScreenshot', { format: 'png' });
+fs.writeFileSync('kartu-id-sesudah.png', Buffer.from(data,'base64'));
+console.log('ok');
+cdp.close(); proc.kill();

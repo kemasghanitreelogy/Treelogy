@@ -72,6 +72,24 @@ terdaftar di `pages.json`, supaya pertanyaannya tidak bisa dilewati diam-diam.
 Nama diri (Instagram, WhatsApp, Treelogy, BPOM, Rp, …) dikecualikan lewat
 `PROPER_NOUNS` di `qa.mjs` — "Instagram" memang tetap "Instagram" di `/id`.
 
+## Batas yang diketahui (terbukti melewatkan bug nyata)
+
+Insiden kartu hero 26 Agu 2026 membuktikan dua celah — keduanya belum ditutup:
+
+1. **Hanya `sections/` yang dipindai, bukan `snippets/`.** String `From` yang
+   hardcoded ada di `snippets/HeroCardV2.liquid`, jadi lolos. Section yang
+   me-`render` snippet perlu ikut menarik snippet-nya ke dalam pemeriksaan.
+2. **Blok `{% schema %}` dibuang sebelum diperiksa**, jadi `"default"` berbahasa
+   Inggris tidak pernah dilihat. Ini bukan sekadar teks yang terlewat: **schema
+   default yang belum pernah tersimpan ke JSON template bukan translatable
+   resource sama sekali** — Translate & Adapt tidak bisa melihatnya, jadi ia
+   dirender sama di semua locale selamanya. Pemeriksaan yang benar: setiap
+   setting bertipe `text`/`textarea` yang punya `default` non-kosong harus
+   punya nilai tersimpan di template yang memakainya.
+
+Sampai keduanya ditutup, `LULUS` di sini berarti "section-nya bersih", bukan
+"halamannya bersih".
+
 ---
 
 ## Pola benar vs salah (dari repo ini)
