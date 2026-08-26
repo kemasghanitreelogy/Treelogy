@@ -2743,50 +2743,57 @@
      mendatar berisi label, pemisah, harga coret, harga bayar. Ukuran dan bobot
      hurufnya sengaja disamakan dengan .v2-atc__* supaya kedua tombol terbaca
      sebagai satu bahasa, bukan dua komponen berbeda yang kebetulan mirip. */
-  /* ---- Baris kepercayaan di atas tombol checkout ---- */
+  /* ---- Baris kepercayaan di atas tombol checkout ----
+     Dibuat sebagai SATU paragraf, bukan daftar flex. Ruasnya berbeda panjang dan
+     jumlahnya berubah (ED hanya muncul bila metafieldnya diisi); daftar flex akan
+     menyisakan satu ruas menggantung sendirian begitu tidak muat. Teks paragraf
+     membungkus sebagai kalimat, jadi bentuknya tidak pernah pecah — berapa pun
+     lebar drawer dan berapa pun ruas yang aktif. */
   .cart-assure {
-    list-style: none;
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    gap: 4px 14px;
-    margin: 0 0 10px;
-    padding: 10px 4px 0;
-    border-top: 1px solid rgba(43, 60, 53, 0.1);
-  }
-
-  .cart-assure__item {
-    display: inline-flex;
-    align-items: center;
     gap: 6px;
-    flex: 0 0 auto;
-    font-size: 0.6875rem;
-    font-weight: 500;
-    line-height: 1.4;
-    /* Kontras ~7:1 di atas latar drawer — sengaja lebih redup dari harga dan
-       tombol, tetap terbaca nyaman. */
-    color: #4a5b52;
-    white-space: nowrap;
+    margin: 0 0 10px;
+    padding: 10px 6px 0;
+    border-top: 1px solid rgba(43, 60, 53, 0.1);
+    text-align: center;
   }
 
   .cart-assure__icon {
     width: 13px;
     height: 13px;
     flex: 0 0 13px;
+    /* Sejajar dengan baris teks pertama, bukan dengan kotak teks keseluruhan —
+       tanpa ini ikon melayang di tengah saat teksnya membungkus dua baris. */
+    margin-top: 1px;
     color: #6f8a63;
   }
 
-  /* Drawer di layar pendek sudah berebut ruang tegak (lihat anggaran scroll
-     cart drawer); di sana baris ini merapat, bukan menambah tinggi furnitur. */
+  /* Kontras ~7:1 di atas latar drawer — sengaja lebih redup dari harga dan
+     tombol, tetap terbaca nyaman. */
+  .cart-assure__text {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    line-height: 1.45;
+    color: #4a5b52;
+    /* Pemisah tidak boleh terlempar ke awal baris berikutnya. */
+    text-wrap: pretty;
+  }
+
+  .cart-assure__sep {
+    opacity: 0.45;
+  }
+
+  /* Drawer di layar pendek sudah berebut ruang tegak (lihat anggaran scroll cart
+     drawer); di sana baris ini merapat, bukan menambah tinggi furnitur tetap. */
   @media screen and (max-height: 700px) {
     .cart-assure {
-      gap: 3px 10px;
       margin-bottom: 8px;
       padding-top: 8px;
     }
 
-    .cart-assure__item {
+    .cart-assure__text {
       font-size: 0.625rem;
     }
   }

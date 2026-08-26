@@ -354,45 +354,51 @@
 </div>
 
 <style>
-  /* ---- Tiga janji hasil di atas tombol beli ---- */
+  /* ---- Tiga janji hasil di atas tombol beli ----
+     Versi pertama memakai flex-wrap satu baris. Dengan tiga label yang panjangnya
+     berbeda, hasilnya selalu 2 + 1: dua butir di baris pertama, satu menggantung
+     sendirian di tengah baris kedua. Itu terbaca seperti layout rusak, bukan
+     pilihan desain — dan bentuknya berubah-ubah tiap kali salah satu teks
+     diterjemahkan ulang.
+
+     Sekarang satu kolom, rata kiri, sejajar dengan daftar manfaat di dalam kartu
+     paket tepat di atasnya. Bentuknya jadi mustahil pecah: berapa pun lebar layar
+     dan sepanjang apa pun terjemahannya, tetap tiga baris rapi. */
   .v2-benefits {
     list-style: none;
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 7px 9px;
     align-items: center;
-    justify-content: center;
-    gap: 8px 18px;
     margin: 14px 0 0;
-    padding: 14px 4px 0;
-    border-top: 1px solid rgba(43, 60, 53, 0.12);
+    padding: 13px 2px 0;
+    border-top: 1px solid rgba(43, 60, 53, 0.1);
   }
 
-  /* Tiap butir utuh saat baris membungkus; tanpa ini centang bisa tertinggal
-     sendirian di ujung baris dan terbaca seperti butir kosong. */
+  /* Butirnya sendiri "display: contents" supaya centang dan teks jatuh langsung
+     ke grid induk. Dengan begitu SEMUA teks rata di kolom yang sama walau lebar
+     centangnya berubah — trik yang tidak bisa dilakukan kalau tiap li jadi
+     kotak flex-nya sendiri. */
   .v2-benefit {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    flex: 0 0 auto;
+    display: contents;
   }
 
-  /* Centang duduk di cakram sage tipis — cukup untuk terbaca sebagai penanda
-     positif, tidak cukup untuk menyaingi tombol hijau pekat di bawahnya. */
+  /* Cakram sage tipis: cukup untuk terbaca sebagai penanda positif, tidak cukup
+     untuk menyaingi tombol hijau pekat di bawahnya. */
   .v2-benefit__tick {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 17px;
-    height: 17px;
-    flex: 0 0 17px;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
-    background: rgba(165, 187, 135, 0.28);
+    background: rgba(165, 187, 135, 0.3);
     color: #3d5140;
   }
 
   .v2-benefit__tick svg {
-    width: 11px;
-    height: 11px;
+    width: 10px;
+    height: 10px;
     display: block;
   }
 
@@ -401,22 +407,19 @@
   .v2-benefit__text {
     font-size: 0.8125rem;
     font-weight: 500;
-    line-height: 1.35;
+    line-height: 1.3;
     color: #4a5b52;
-    white-space: nowrap;
   }
 
-  /* Di layar sempit, memaksa satu baris memotong teks. Biarkan membungkus. */
   @media screen and (max-width: 419px) {
     .v2-benefits {
-      gap: 8px 14px;
+      gap: 6px 8px;
       margin-top: 12px;
-      padding-top: 12px;
+      padding-top: 11px;
     }
 
     .v2-benefit__text {
       font-size: 0.75rem;
-      white-space: normal;
     }
   }
 

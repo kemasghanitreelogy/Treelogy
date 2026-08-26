@@ -126,22 +126,23 @@
                 metafieldnya kosong, ruas ini tidak dirender.
               {%- endcomment -%}
               {%- assign cart_batch_expiry = shop.metafields.custom.batch_expiry | strip -%}
-              <ul class="cart-assure">
-                <li class="cart-assure__item">
-                  <svg class="cart-assure__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg>
-                  <span>{{ 'cart.trust_guarantee' | t }}</span>
-                </li>
-                <li class="cart-assure__item">
-                  <svg class="cart-assure__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="6"/><path d="m9 8 2 2 4-4"/><path d="M8.5 13.5 7 22l5-2.5L17 22l-1.5-8.5"/></svg>
-                  <span>{{ 'cart.trust_certified' | t }}</span>
-                </li>
+              {%- capture cart_assure_expiry -%}
                 {%- if cart_batch_expiry != blank -%}
-                  <li class="cart-assure__item">
-                    <svg class="cart-assure__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 11h18"/></svg>
-                    <span>{{ 'cart.trust_expiry' | t }} {{ cart_batch_expiry }}</span>
-                  </li>
+                  {{ 'cart.trust_expiry' | t }} {{ cart_batch_expiry }}
                 {%- endif -%}
-              </ul>
+              {%- endcapture -%}
+              <p class="cart-assure">
+                <svg class="cart-assure__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg>
+                <span class="cart-assure__text">
+                  {{- 'cart.trust_guarantee' | t -}}
+                  <span class="cart-assure__sep" aria-hidden="true"> · </span>
+                  {{- 'cart.trust_certified' | t -}}
+                  {%- if cart_assure_expiry != blank -%}
+                    <span class="cart-assure__sep" aria-hidden="true"> · </span>
+                    {{- cart_assure_expiry | strip -}}
+                  {%- endif -%}
+                </span>
+              </p>
               {%- comment -%}
                 Tombol checkout memakai susunan yang sama persis dengan tombol
                 Add to Cart di halaman produk: label | harga coret | harga bayar.
