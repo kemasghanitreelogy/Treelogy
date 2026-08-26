@@ -366,21 +366,22 @@
      dan sepanjang apa pun terjemahannya, tetap tiga baris rapi. */
   .v2-benefits {
     list-style: none;
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 7px 9px;
-    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
     margin: 14px 0 0;
     padding: 13px 2px 0;
     border-top: 1px solid rgba(43, 60, 53, 0.1);
   }
 
-  /* Butirnya sendiri "display: contents" supaya centang dan teks jatuh langsung
-     ke grid induk. Dengan begitu SEMUA teks rata di kolom yang sama walau lebar
-     centangnya berubah — trik yang tidak bisa dilakukan kalau tiap li jadi
-     kotak flex-nya sendiri. */
+  /* Kolom centang dikunci 16px, jadi teks tiap baris mulai di titik x yang sama
+     persis tanpa perlu display:contents — yang di sebagian browser menghapus
+     semantik <li> dari pohon aksesibilitas. */
   .v2-benefit {
-    display: contents;
+    display: grid;
+    grid-template-columns: 16px 1fr;
+    align-items: center;
+    gap: 9px;
   }
 
   /* Cakram sage tipis: cukup untuk terbaca sebagai penanda positif, tidak cukup
