@@ -355,72 +355,80 @@
 
 <style>
   /* ---- Tiga janji hasil di atas tombol beli ----
-     Versi pertama memakai flex-wrap satu baris. Dengan tiga label yang panjangnya
-     berbeda, hasilnya selalu 2 + 1: dua butir di baris pertama, satu menggantung
-     sendirian di tengah baris kedua. Itu terbaca seperti layout rusak, bukan
-     pilihan desain — dan bentuknya berubah-ubah tiap kali salah satu teks
-     diterjemahkan ulang.
 
-     Sekarang satu kolom, rata kiri, sejajar dengan daftar manfaat di dalam kartu
-     paket tepat di atasnya. Bentuknya jadi mustahil pecah: berapa pun lebar layar
-     dan sepanjang apa pun terjemahannya, tetap tiga baris rapi. */
+     Dua kali gagal sebelum ini, dan alasannya sama: BLOKNYA TIDAK PUNYA WADAH.
+
+     Versi 1 (flex-wrap satu baris) pecah jadi 2 + 1 — satu butir menggantung
+     sendirian di tengah baris kedua.
+
+     Versi 2 (tiga baris rata kiri, tanpa latar) rapi bentuknya tapi salah
+     pengelompokannya: jaraknya ke tombol jauh lebih rapat daripada ke kartu di
+     atasnya, sehingga terbaca sebagai bagian dari tombol. Di tengah halaman yang
+     seluruhnya tersusun dari kartu berbingkai, tiga baris teks telanjang tampak
+     seperti isi kartu yang kehilangan kartunya.
+
+     Versi ini memberinya wadah sendiri: pita bersudut lembut dengan latar sage
+     sangat tipis. Cukup untuk menyatakan "ini satu kelompok", jauh terlalu pucat
+     untuk menyaingi tombol hijau pekat di bawahnya. Jarak atas dan bawah dibuat
+     SAMA (16px) supaya pita ini berdiri sendiri, bukan menempel ke salah satu
+     tetangganya. */
   .v2-benefits {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 7px;
-    margin: 14px 0 0;
-    padding: 13px 2px 0;
-    border-top: 1px solid rgba(43, 60, 53, 0.1);
+    gap: 8px;
+    margin: 16px 0;
+    padding: 13px 14px;
+    border-radius: 12px;
+    background: rgba(165, 187, 135, 0.11);
+    border: 1px solid rgba(43, 60, 53, 0.06);
   }
 
-  /* Kolom centang dikunci 16px, jadi teks tiap baris mulai di titik x yang sama
+  /* Kolom centang dikunci 15px, jadi teks tiap baris mulai di titik x yang sama
      persis tanpa perlu display:contents — yang di sebagian browser menghapus
      semantik <li> dari pohon aksesibilitas. */
   .v2-benefit {
     display: grid;
-    grid-template-columns: 16px 1fr;
+    grid-template-columns: 15px 1fr;
     align-items: center;
-    gap: 9px;
+    gap: 10px;
   }
 
-  /* Cakram sage tipis: cukup untuk terbaca sebagai penanda positif, tidak cukup
-     untuk menyaingi tombol hijau pekat di bawahnya. */
+  /* Pita sudah menyatakan pengelompokan, jadi centangnya tidak lagi butuh cakram
+     latar — cukup garis sage tegas. Satu lapis penanda, bukan dua. */
   .v2-benefit__tick {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: rgba(165, 187, 135, 0.3);
-    color: #3d5140;
+    width: 15px;
+    height: 15px;
+    color: #5f7a55;
   }
 
   .v2-benefit__tick svg {
-    width: 10px;
-    height: 10px;
+    width: 15px;
+    height: 15px;
     display: block;
   }
 
-  /* Kontras ~7:1 di atas latar krem: lebih lembut dari teks kartu, tetap jauh
-     di atas ambang WCAG AA. */
+  /* Kontras ~7:1 di atas pita: lebih lembut dari teks kartu, tetap jauh di atas
+     ambang WCAG AA. */
   .v2-benefit__text {
     font-size: 0.8125rem;
     font-weight: 500;
     line-height: 1.3;
-    color: #4a5b52;
+    color: #445448;
   }
 
   @media screen and (max-width: 419px) {
     .v2-benefits {
-      gap: 6px 8px;
-      margin-top: 12px;
-      padding-top: 11px;
+      gap: 7px;
+      margin: 14px 0;
+      padding: 12px 12px;
     }
 
     .v2-benefit__text {
-      font-size: 0.75rem;
+      font-size: 0.78125rem;
     }
   }
 
