@@ -106,7 +106,7 @@
       "placeholder": "Masukkan kode kamu",
       "submit": "Pakai",
       "success": "Voucher berhasil dipakai",
-      "invalid": "Kode ini tidak berlaku untuk keranjang kamu",
+      "invalid": "Kode ini sudah tidak berlaku.",
       "no_longer_valid": "Voucher kamu sudah tidak berlaku untuk keranjang ini",
       "empty": "Masukkan kode voucher dulu",
       "error_generic": "Gagal memakai kode — coba lagi",

@@ -68,7 +68,14 @@
                 {% render 'CartVoucher' %}
                 <div class="cart-footer-row{% if total_savings > 0 %} visible{% endif %}" id="cart-saving-row">
                   <span>{{ 'cart.saving_label' | t }}</span>
-                  <span id="cart-saving-amount">{{ total_savings | money }}</span>
+                  {%- comment -%}
+                    Angkanya juga disimpan dalam sen di data-saving, bukan hanya
+                    sebagai teks terformat. Harga coret di tombol checkout adalah
+                    total + hemat, dan menghitungnya dari teks berarti mengurai
+                    kembali pemisah ribuan tiap market — sen mentah tidak punya
+                    masalah itu.
+                  {%- endcomment -%}
+                  <span id="cart-saving-amount" data-saving="{{ total_savings }}">{{ total_savings | money }}</span>
                 </div>
                 {%- comment -%}
                   Once the threshold is met the header block retracts and THIS is
@@ -99,8 +106,38 @@
                   </span>
                 </div>
               </div>
-              <button type="submit" name="checkout" id="cart-checkout-btn">
-                {{ 'cart.checkout_button_label' | t | upcase }}&nbsp; - &nbsp;<span id="sub-total-mini" data-total="{{ cart.total_price }}">{{ cart.total_price | money }}</span>
+              {%- comment -%}
+                Tombol checkout memakai susunan yang sama persis dengan tombol
+                Add to Cart di halaman produk: label | harga coret | harga bayar.
+                Dua tombol ini adalah dua ujung dari keputusan yang sama, jadi
+                menampilkan hemat hanya di salah satunya membuat drawer terasa
+                kehilangan angka yang tadi meyakinkan pembeli.
+
+                Harga coretnya BUKAN compare_at keranjang — Shopify tidak punya
+                total compare_at. Ia dihitung sebagai total + hemat, memakai
+                `total_savings` yang sudah dijumlahkan di atas untuk baris
+                "You're saving", sehingga kedua angka mustahil berbeda sumber.
+
+                Elemen coretnya dibiarkan ada walau hemat nol (disembunyikan
+                lewat [hidden]) supaya JavaScript keranjang punya simpul tetap
+                untuk diperbarui; membuatnya on-demand berarti setiap jalur
+                pembaruan harus tahu cara menyisipkan simpul di posisi benar.
+              {%- endcomment -%}
+              {%- assign cart_compare_total = cart.total_price | plus: total_savings -%}
+              <button type="submit" name="checkout" id="cart-checkout-btn" class="cart-checkout">
+                <span class="cart-checkout__label">{{ 'cart.checkout_button_label' | t | upcase }}</span>
+                <span class="cart-checkout__sep" aria-hidden="true">|</span>
+                <s
+                  class="cart-checkout__compare"
+                  id="cart-checkout-compare"
+                  data-compare="{{ cart_compare_total }}"
+                  {% if total_savings <= 0 %}hidden{% endif %}
+                >
+                  {{- cart_compare_total | money -}}
+                </s>
+                <span class="cart-checkout__price" id="sub-total-mini" data-total="{{ cart.total_price }}">
+                  {{- cart.total_price | money -}}
+                </span>
               </button>
               {%- comment -%}
                 Teksnya berasal dari terjemahan tema, dengan setting sebagai

@@ -179,6 +179,35 @@
     return 'Rp ' + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   };
 
+  /* ===== Harga coret di tombol checkout =====
+     Nilainya = total + hemat, dua angka yang SUDAH ada di DOM sebagai sen
+     mentah (#sub-total-mini[data-total] dan #cart-saving-amount[data-saving]).
+     Menghitung ulang dari sini, bukan menitipkan angka ke tiap pemanggil,
+     membuat fungsi ini benar dipanggil dari jalur mana pun — dan jalur yang
+     lupa memanggilnya hanya menghasilkan angka basi, bukan angka salah.
+     Hemat nol berarti tidak ada yang dicoret: menampilkan coretan yang sama
+     dengan harga bayar terbaca seperti bug. */
+  window.updateCheckoutCompare = function () {
+    var cartEl = document.getElementById('cart');
+    if (!cartEl) return;
+    var cmp = cartEl.querySelector('#cart-checkout-compare');
+    var te = cartEl.querySelector('#sub-total-mini');
+    if (!cmp || !te) return;
+
+    var totalCents = parseInt(te.dataset.total || '0', 10);
+    var sa = cartEl.querySelector('#cart-saving-amount');
+    var savingCents = sa ? parseInt(sa.dataset.saving || '0', 10) : 0;
+
+    if (!isFinite(totalCents) || !isFinite(savingCents) || savingCents <= 0) {
+      cmp.hidden = true;
+      return;
+    }
+    var compareCents = totalCents + savingCents;
+    cmp.dataset.compare = compareCents;
+    cmp.textContent = window.formatRp(compareCents / 100);
+    cmp.hidden = false;
+  };
+
   /* ===== Is this actually a cart? =====
      The Ajax cart endpoints answer 200 with a cart on success but return
      { status, message, description } on failure — no total_price, no items.
@@ -792,6 +821,7 @@
       te.dataset.total = totalCents;
       te.textContent = window.formatRp(total);
     }
+    window.updateCheckoutCompare();
 
     /* -- Shipping row stays visible; its value is written by
           setShippingProgress, which owns every free-shipping surface -- */
@@ -2041,6 +2071,7 @@
       var qty = qtyEl ? parseInt(qtyEl.value, 10) : parseInt(el.getAttribute('data-qty') || '1', 10);
       if (cap > 0 && cap > price) saved += (cap - price) * qty;
     });
+    sa.dataset.saving = saved;
     if (saved > 0) {
       sr.style.display = '';
       sr.classList.add('visible');
@@ -2048,6 +2079,7 @@
     } else {
       sr.classList.remove('visible');
     }
+    window.updateCheckoutCompare();
   };
 
   /* ===== Isolate scroll containers — kini murni CSS, TANPA kunci JS ===== */
@@ -2705,6 +2737,52 @@
     position: relative;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
+  }
+
+  /* Tombol checkout mengikuti tombol Add to Cart di halaman produk: satu baris
+     mendatar berisi label, pemisah, harga coret, harga bayar. Ukuran dan bobot
+     hurufnya sengaja disamakan dengan .v2-atc__* supaya kedua tombol terbaca
+     sebagai satu bahasa, bukan dua komponen berbeda yang kebetulan mirip. */
+  #cart-checkout-btn.cart-checkout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    row-gap: 2px;
+  }
+
+  .cart-checkout__label,
+  .cart-checkout__sep,
+  .cart-checkout__price {
+    font-size: 0.875rem;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .cart-checkout__sep {
+    opacity: 0.55;
+  }
+
+  /* Sama seperti di tombol ATC: coretan tidak diredupkan, hanya lebih tipis
+     dan lebih kecil, supaya harga bayar tetap yang paling menonjol. */
+  .cart-checkout__compare {
+    font-size: 0.75rem;
+    font-weight: 300;
+    line-height: 1.25;
+    color: #f8f8f2;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .cart-checkout__compare[hidden] {
+    display: none;
+  }
+
+  /* Tanpa ini, coretan yang kosong sesaat setelah pembaruan menyisakan celah
+     gap 8px yang menggeser harga bayar keluar dari tengah tombol. */
+  .cart-checkout__compare:empty {
+    display: none;
   }
 </style>
 <script>

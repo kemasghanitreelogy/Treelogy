@@ -106,7 +106,7 @@
       "placeholder": "Enter your code",
       "submit": "Apply",
       "success": "Voucher applied",
-      "invalid": "That code doesn't apply to this cart",
+      "invalid": "Kode ini sudah tidak berlaku.",
       "no_longer_valid": "Your voucher no longer applies to this cart",
       "empty": "Enter a voucher code first",
       "error_generic": "Couldn't apply the code — please try again",

@@ -7,7 +7,32 @@
   </svg>
 </div>
 
-<a href="{% if template != 'cart' %}/cart{% else %}#{% endif %}" class="button button-cart" aria-label="Cart">
+{%- comment -%}
+  Ikon keranjang TIDAK punya href di luar halaman /cart, dan itu disengaja.
+
+  Sebelumnya href-nya `/cart`, lalu app.bundle.js membatalkannya dengan
+  preventDefault() dan membuka drawer. Itu jalan hanya SETELAH bundle-nya
+  dieksekusi — klik sebelum itu, atau ⌘-klik / klik-tengah / "buka di tab
+  baru", tetap membawa pembeli ke halaman keranjang. Menghapus href membuat
+  navigasinya mustahil, bukan sekadar dibatalkan.
+
+  href tetap ada dan bernilai "#" HANYA di template cart. Handler bundle-nya
+  berbunyi `Z.href.includes("#") || ajaxCart()`, jadi "#" adalah penanda
+  "jangan buka drawer" — dipakai juga oleh tombol quick-add di kartu produk.
+  Anchor tanpa href mengembalikan href = "" yang tidak memuat "#", sehingga
+  drawer tetap terbuka seperti sebelumnya. Jangan ganti ini jadi href="#"
+  untuk semua template: drawer-nya akan berhenti terbuka.
+
+  Tanpa href, anchor kehilangan peran tombol dan fokus keyboard-nya, jadi
+  keduanya dikembalikan lewat role/tabindex + handler Enter/Space di bawah.
+{%- endcomment -%}
+<a
+  {% if template == 'cart' %}href="#"{% endif %}
+  class="button button-cart"
+  role="button"
+  tabindex="0"
+  aria-label="Cart"
+>
   <div id="cart-indicator" class="indicator {% if cart.item_count > 0 %}show{% endif %}">
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -110,7 +135,32 @@
   </div>
 </div>
 
+{% javascript %}
+  (function () {
+    if (window.__headerCartKeysInstalled) return;
+    window.__headerCartKeysInstalled = true;
+
+    /* Anchor tanpa href tidak lagi diaktifkan Enter oleh browser, dan
+       role="button" menjanjikan Space juga bekerja. Keduanya diteruskan ke
+       click() supaya hanya ada SATU jalur pembuka drawer — handler milik
+       app.bundle.js — bukan dua jalur yang bisa berbeda perilaku. */
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Spacebar') return;
+      var el = e.target && e.target.closest && e.target.closest('a.button-cart[role="button"]');
+      if (!el || el.hasAttribute('href')) return;
+      e.preventDefault();
+      el.click();
+    });
+  })();
+{% endjavascript %}
+
 {% stylesheet %}
+  /* Anchor tanpa href kehilangan cursor: pointer bawaan browser. Ikonnya masih
+     tombol bagi pembeli, jadi isyarat kursornya harus dikembalikan sendiri. */
+  a.button-cart:not([href]) {
+    cursor: pointer;
+  }
+
   /* Shopify auto-injects an empty <shopify-store> context element next to
      <shopify-account>; without this it becomes a flex item and doubles the gap */
   shopify-store {
