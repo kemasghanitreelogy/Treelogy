@@ -428,8 +428,6 @@
     color: #445448;
   }
 
-  /* Dua kolom di 360px menyisakan ~140px per kolom, jadi label memang membungkus
-     dua baris. Itu diterima; yang dijaga adalah bentuk gridnya tetap sama. */
   @media screen and (max-width: 419px) {
     .v2-benefits {
       gap: 9px 14px;
@@ -453,6 +451,23 @@
     .v2-benefit__text {
       font-size: 0.71875rem;
       line-height: 1.3;
+    }
+  }
+
+  /* Layar 360px adalah kasus tersempit yang nyata, dan label Indonesia
+     terpanjang ("Energi stabil seharian") hanya menyisakan ~10px di 11,5px.
+     Margin setipis itu bisa habis oleh varian metrik huruf, dan begitu habis
+     satu sel jadi dua baris sementara tetangganya satu — persis kerusakan yang
+     sedang diperbaiki. Di sini huruf dan jarak dirampingkan sedikit demi margin
+     ~22px, bukan ~10px. */
+  @media screen and (max-width: 380px) {
+    .v2-benefits {
+      gap: 8px 12px;
+      padding: 12px 10px;
+    }
+
+    .v2-benefit__text {
+      font-size: 0.6875rem;
     }
   }
 
