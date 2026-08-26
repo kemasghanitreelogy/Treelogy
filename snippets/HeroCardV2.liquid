@@ -16,11 +16,24 @@
     Alt gambar di toko ini memakai konvensi `LANG:<iso>|<teks>` (lihat
     snippets/ProductCard.liquid). Tanpa diurai, prefiksnya ikut terbaca pembaca
     layar dan mesin pencari sebagai "LANG:ID|Kaleng Treelogy ...".
+
+    Alt yang ditulis untuk bahasa LAIN tidak dipakai apa adanya: gambar unggulan
+    produk ini hanya punya alt berbahasa Indonesia, dan memakainya di storefront
+    EN membuat pembaca layar Inggris membacakan kalimat Indonesia. Untuk kasus
+    itu jatuh ke judul produk, yang memang sudah mengikuti locale.
+
+    Catatan: jangan pakai tag `comment` di dalam blok `{% liquid %}` di tema ini
+    — pernah hilang senyap saat import zip.
   {%- endcomment -%}
   {%- liquid
     assign card_alt = product.featured_image.alt
     if card_alt contains 'LANG:'
-      assign card_alt = card_alt | split: '|' | last
+      assign alt_lang = card_alt | split: '|' | first | remove: 'LANG:' | downcase
+      if alt_lang == request.locale.iso_code
+        assign card_alt = card_alt | split: '|' | last
+      else
+        assign card_alt = product.title
+      endif
     endif
     assign card_alt = card_alt | default: product.title
   -%}
