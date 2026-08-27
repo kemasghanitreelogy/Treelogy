@@ -15,7 +15,17 @@
           </svg>
         </div>
       </div>
-      {% render 'FreeShippingCartProgress' %}
+      {%- comment -%}
+        Ambang gratis ongkir adalah angka rupiah dari settings.min_shipping dan
+        promonya hanya berlaku di Indonesia. Di market lain seluruh bloknya
+        dihilangkan, bukan sekadar angkanya disembunyikan — menampilkan
+        "Spend Rp 699.912 more for free shipping" kepada pembeli Amerika
+        menjanjikan promo yang tidak kita tanggung, dalam mata uang yang bukan
+        miliknya. Sejalan dengan baris gratis ongkir di kartu paket PDP.
+      {%- endcomment -%}
+      {%- if localization.market.handle == 'id' -%}
+        {% render 'FreeShippingCartProgress' %}
+      {%- endif -%}
     </div>
 
     <div class="cart" data-mobile="true">
@@ -88,7 +98,9 @@
                   assign fsp_min = settings.min_shipping | default: 1000000
                   assign fsp_sub = cart.items_subtotal_price | divided_by: 100
                   assign fsp_earned = false
-                  if fsp_sub >= fsp_min
+                  # Gratis ongkir otomatis hanya ada di market Indonesia; di
+                  # market lain ongkos selalu dihitung di checkout.
+                  if fsp_sub >= fsp_min and localization.market.handle == 'id'
                     assign fsp_earned = true
                   endif
                 -%}

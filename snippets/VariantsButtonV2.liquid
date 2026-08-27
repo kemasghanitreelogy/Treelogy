@@ -191,6 +191,15 @@
         berikon = barang yang kamu terima, coretan di baris judul = harga yang
         batal kamu bayar. Jangan hilangkan ikonnya tanpa mengganti pembeda lain.
       {%- endcomment -%}
+      {%- comment -%}
+        Nilai hadiah diambil dari VARIAN HADIAHNYA, bukan dari teks metafield.
+        Teks itu ditulis manual dalam rupiah, jadi pembeli Amerika pun membaca
+        "Rp 120.000" di sebelah harga dolar. compare_at_price varian hadiah
+        sudah sadar market, sehingga filter `money` mengeluarkan mata uang yang
+        benar tanpa ada angka kedua yang harus dirawat manusia.
+      {%- endcomment -%}
+      {%- assign v2_gifts = variant.metafields.custom.eligible_gifts.value -%}
+      {%- assign v2_gift_index = 0 -%}
       {%- capture v2_perks_html -%}{{ variant.metafields.custom.description | metafield_tag }}{%- endcapture -%}
       {%- assign v2_perk_items = v2_perks_html | split: '<li>' -%}
       {%- if v2_perk_items.size > 1 -%}
@@ -218,6 +227,41 @@
             {%- endcomment -%}
             {%- if v2_perk_icon == 'ship' and localization.market.handle != 'id' -%}
               {%- continue -%}
+            {%- endif -%}
+            {%- comment -%}
+              Pencocokan hadiah: pertama lewat judul produk yang muncul di label
+              ("Free Travel Pouch" memuat "Travel Pouch"), baru jatuh ke urutan
+              kalau tidak ada yang cocok. Urutan saja rapuh — label bisa ditulis
+              ulang kapan pun — tapi ia jaring pengaman yang lebih baik daripada
+              tidak menampilkan nilai sama sekali.
+            {%- endcomment -%}
+            {%- assign v2_perk_money = blank -%}
+            {%- if v2_perk_parts.size > 1 and v2_perk_icon != 'ship' -%}
+              {%- assign v2_perk_label = v2_perk_parts[0] | strip -%}
+              {%- assign v2_gift_match = blank -%}
+              {%- for v2_g in v2_gifts -%}
+                {%- if v2_perk_label contains v2_g.product.title -%}
+                  {%- assign v2_gift_match = v2_g -%}
+                  {%- break -%}
+                {%- endif -%}
+              {%- endfor -%}
+              {%- if v2_gift_match == blank -%}
+                {%- assign v2_gift_match = v2_gifts[v2_gift_index] -%}
+              {%- endif -%}
+              {%- assign v2_gift_index = v2_gift_index | plus: 1 -%}
+              {%- if v2_gift_match.compare_at_price > 0 -%}
+                {%- assign v2_perk_money = v2_gift_match.compare_at_price | money -%}
+              {%- endif -%}
+            {%- endif -%}
+            {%- comment -%}
+              Di luar Indonesia, nilai yang tidak bisa diselesaikan lebih baik
+              TIDAK ditampilkan daripada ditampilkan dalam rupiah. Indonesia
+              tetap memakai teks metafield apa adanya supaya tampilannya tidak
+              berubah sedikit pun.
+            {%- endcomment -%}
+            {%- assign v2_perk_show_value = true -%}
+            {%- if v2_perk_money == blank and localization.market.handle != 'id' -%}
+              {%- assign v2_perk_show_value = false -%}
             {%- endif -%}
             <li class="v2-plan__perk">
               {%- comment -%}
@@ -249,8 +293,11 @@
                 {%- endif -%}
               </span>
               <span class="v2-plan__perk-text">{{ v2_perk_parts[0] | strip }}</span>
-              {%- if v2_perk_parts.size > 1 -%}
+              {%- if v2_perk_parts.size > 1 and v2_perk_show_value -%}
                 {%- assign v2_perk_value = v2_perk_parts[1] | strip -%}
+                {%- if v2_perk_money != blank -%}
+                  {%- assign v2_perk_value = v2_perk_money -%}
+                {%- endif -%}
                 <span class="v2-plan__perk-value">
                   {%- comment -%}
                     Label baris hadiah hanya menyebut barangnya ("Bamboo

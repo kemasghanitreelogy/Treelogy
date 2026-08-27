@@ -170,14 +170,44 @@
 
   const minShipping = {{ settings.min_shipping | default: 1000000 }};
 
-  /* ===== Rp formatter (dots, no decimals) ===== */
-  window.formatRp = function(amount) {
-    var n = Math.round(Math.abs(Number(amount)));
-    /* Last line of defence: a customer must never be shown "Rp NaN". Callers
-       are guarded too, but this is the single place every price passes through. */
+  /* ===== Money formatter — mengikuti mata uang market yang aktif =====
+     Dulu fungsi ini SELALU menulis "Rp ...". Render pertama dari Liquid sudah
+     benar (filter `money` sadar market), tapi setiap pembaruan JavaScript
+     menimpanya — jadi pembeli Amerika melihat "CHECK OUT | Rp 88" untuk
+     keranjang yang isinya dolar. Nama `formatRp` dipertahankan karena delapan
+     pemanggil sudah menempel padanya; yang berubah cuma isinya.
+
+     Mata uangnya dari `cart.currency.iso_code`, yang mengikuti market aktif.
+     Pecahan desimal: IDR tidak punya sen, mata uang lain dua digit — itu yang
+     membuat hasilnya sama persis dengan yang dirender Liquid di sisi server,
+     sehingga angka tidak "berkedip ganti bentuk" saat JS mengambil alih. */
+  window.__cartCurrency = {{ cart.currency.iso_code | default: 'IDR' | json }};
+
+  window.formatMoney = function (amount) {
+    var n = Number(amount);
     if (!isFinite(n)) return '';
-    return 'Rp ' + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    n = Math.abs(n);
+
+    /* Perayap kadang mendapat kode mata uang "XXX" dari Shopify. Intl melempar
+       untuk kode itu, dan pembeli tidak boleh melihat harga kosong. */
+    var cur = window.__cartCurrency;
+    if (!cur || cur === 'XXX') cur = 'IDR';
+    var frac = cur === 'IDR' ? 0 : 2;
+
+    try {
+      return new Intl.NumberFormat(cur === 'IDR' ? 'id-ID' : 'en-US', {
+        style: 'currency', currency: cur,
+        minimumFractionDigits: frac, maximumFractionDigits: frac
+      }).format(n);
+    } catch (e) {
+      /* Baris pertahanan terakhir: pembeli tidak boleh melihat "NaN". */
+      var r = frac ? n.toFixed(frac) : String(Math.round(n));
+      return (cur === 'IDR' ? 'Rp ' : cur + ' ') + r.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
   };
+
+  /* Alias lama — semua pemanggil kini melewati formatMoney. */
+  window.formatRp = window.formatMoney;
 
   /* ===== Harga coret di tombol checkout =====
      Nilainya = total + hemat, dua angka yang SUDAH ada di DOM sebagai sen
