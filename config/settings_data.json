@@ -37,7 +37,8 @@
             "type": "text",
             "settings": {
               "title": "Free Shipping Across Indonesia | from Rp 700.000",
-              "url": "shopify://collections/all"
+              "url": "shopify://collections/all",
+              "market_scope": "id_only"
             }
           },
           "text_UXYzxY": {
