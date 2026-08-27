@@ -347,51 +347,6 @@
   {%- endfor -%}
 </div>
 
-{%- comment -%}
-  Tiga janji hasil, di antara pemilih paket dan tombol beli.
-
-  Kartu paket menjelaskan APA yang didapat (isi, hadiah, ongkir); baris ini
-  menjawab pertanyaan yang tersisa tepat sebelum pembeli menekan tombol: APA
-  yang akan saya rasakan. Itu sebabnya letaknya di sini, bukan di atas kartu —
-  ia dibaca terakhir, saat keputusan sedang diambil.
-
-  Sengaja TIDAK bersaing dengan CTA: tanpa latar penuh, tanpa kotak, huruf
-  lebih kecil dan lebih ringan daripada tombol, hanya satu garis rambut sebagai
-  pemisah. Diberi warna solid, mata akan berhenti di sini alih-alih di tombol.
-
-  Teksnya dari berkas locale supaya versi /id ikut berubah tanpa menyentuh
-  snippet ini lagi.
-{%- endcomment -%}
-<ul class="v2-benefits">
-  {%- comment -%}
-    Kuncinya ditulis utuh, bukan dirakit `'products.general.' | append: key`.
-    Kunci rakitan lolos runtime tapi membuat theme-check tidak bisa memastikan
-    terjemahannya ada — dan kunci yang hilang baru ketahuan sebagai
-    "Translation missing" di halaman pembeli.
-  {%- endcomment -%}
-  {%- capture v2_benefits_raw -%}
-    {{- 'products.general.benefit_1' | t -}}|
-    {{- 'products.general.benefit_2' | t -}}|
-    {{- 'products.general.benefit_3' | t -}}
-  {%- endcapture -%}
-  {%- assign v2_benefit_list = v2_benefits_raw | split: '|' -%}
-  {%- for v2_benefit_raw in v2_benefit_list -%}
-    {%- assign v2_benefit_text = v2_benefit_raw | strip -%}
-    {%- comment -%}
-      Kunci yang belum diterjemahkan menghasilkan "Translation missing: ..." —
-      teks itu tidak boleh sampai ke pembeli, jadi barisnya dilewati.
-    {%- endcomment -%}
-    {%- if v2_benefit_text == blank or v2_benefit_text contains 'Translation missing' -%}
-      {%- continue -%}
-    {%- endif -%}
-    <li class="v2-benefit">
-      <span class="v2-benefit__tick" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M20 6 9 17l-5-5" /></svg>
-      </span>
-      <span class="v2-benefit__text">{{ v2_benefit_text }}</span>
-    </li>
-  {%- endfor -%}
-</ul>
 
 {%- comment -%}
   Bilah add-to-cart yang menempel di bawah layar. Ia hanya muncul saat tombol
