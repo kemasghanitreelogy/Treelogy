@@ -116,38 +116,6 @@
                     {%- endif -%}
                   </span>
                 </div>
-                {%- comment -%}
-                  Penegasan kepercayaan hidup DI DALAM kotak ringkasan, sebagai
-                  baris label-nilai yang sama bentuknya dengan "Pengiriman".
-                  Sebagai blok terpisah di bawah kotak, ia terbaca sebagai
-                  elemen asing yang ditempel; di dalam kotak ia jadi bagian dari
-                  daftar yang memang sedang dibaca pembeli untuk menghitung apa
-                  yang ia dapat.
-
-                  Tanpa kelas atau CSS baru — memakai .cart-footer-row apa
-                  adanya, jadi ukuran huruf, jarak, dan warnanya mustahil
-                  menyimpang dari baris di atasnya.
-
-                  Tanggal kedaluwarsa dibaca dari metafield toko; selama kosong
-                  barisnya tidak dirender sama sekali. ED adalah klaim faktual
-                  pada produk bersertifikat BPOM — tanggal yang salah jauh lebih
-                  berbahaya daripada tidak ada tanggal.
-                {%- endcomment -%}
-                {%- assign cart_batch_expiry = shop.metafields.custom.batch_expiry | strip -%}
-                <div class="cart-footer-row">
-                  <span>{{ 'cart.trust_guarantee' | t }}</span>
-                  <span>{{ 'cart.trust_guarantee_value' | t }}</span>
-                </div>
-                <div class="cart-footer-row">
-                  <span>{{ 'cart.trust_certified' | t }}</span>
-                  <span>{{ 'cart.trust_certified_value' | t }}</span>
-                </div>
-                {%- if cart_batch_expiry != blank -%}
-                  <div class="cart-footer-row">
-                    <span>{{ 'cart.trust_expiry' | t }}</span>
-                    <span>{{ cart_batch_expiry }}</span>
-                  </div>
-                {%- endif -%}
               </div>
               {%- comment -%}
                 Tombol checkout memakai susunan yang sama persis dengan tombol
