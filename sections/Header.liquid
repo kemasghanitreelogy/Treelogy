@@ -12,6 +12,25 @@
         <div class="slider-window">
           <div class="slider-track" id="slider-track">
             {% for block in section.blocks %}
+              {%- comment -%}
+                Sebagian pengumuman hanya benar untuk satu market — "Free Shipping
+                Across Indonesia | from Rp 700.000" menjanjikan promo rupiah yang
+                tidak berlaku bagi pembeli Amerika atau Eropa. Cakupannya dipilih
+                per slide di theme editor, bukan ditebak dari isi teksnya:
+                mencocokkan kata "Indonesia" akan gagal begitu kalimatnya ditulis
+                ulang atau diterjemahkan.
+              {%- endcomment -%}
+              {%- assign blk_scope = block.settings.market_scope | default: 'all' -%}
+              {%- assign blk_is_id = false -%}
+              {%- if localization.market.handle == 'id' -%}
+                {%- assign blk_is_id = true -%}
+              {%- endif -%}
+              {%- if blk_scope == 'id_only' and blk_is_id == false -%}
+                {%- continue -%}
+              {%- endif -%}
+              {%- if blk_scope == 'outside_id' and blk_is_id -%}
+                {%- continue -%}
+              {%- endif -%}
               {% if block.settings.title != blank %}
                 <div class="slide-text" data-index="{{ forloop.index0 }}">
                   <a href="{{ block.settings.url | default : "#" }}">
@@ -414,60 +433,83 @@
   , product: section.settings.header_product %}
 
 {% schema %}
-  {
-    "name": "Header",
-    "settings": [
-      {
-        "type": "image_picker",
-        "id": "logo",
-        "label": "Logo"
-      },
-
-      {
-        "type": "product",
-        "id": "header_product",
-        "label": "Featured Product"
-      },
-      {
-        "type": "link_list",
-        "id": "main_menu",
-        "label": "Main Menu"
-      },
-      {
-        "type": "link_list",
-        "id": "customer_account_menu",
-        "label": "Customer account menu",
-        "default": "customer-account-main-menu"
-      },
-      {
-        "type": "header",
-        "content": "Cart"
-      }, {
-        "type": "product_list",
-        "id": "up_selling_products",
-        "label": "Up Selling Products"
-      }, {
-        "type": "header",
-        "content": "Cart Sidebar Settings"
-      }
-    ],
-    "blocks": [
-      {
-        "limit": 5,
-        "type": "text",
-        "name": "Runing Text",
-        "settings": [
-          {
-            "type": "text",
-            "id": "title",
-            "label": "Title"
-          }, {
-            "type": "url",
-            "id": "url",
-            "label": "Link to"
-          }
-        ]
-      }
-    ]
-  }
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+    {
+      "type": "product",
+      "id": "header_product",
+      "label": "Featured Product"
+    },
+    {
+      "type": "link_list",
+      "id": "main_menu",
+      "label": "Main Menu"
+    },
+    {
+      "type": "link_list",
+      "id": "customer_account_menu",
+      "label": "Customer account menu",
+      "default": "customer-account-main-menu"
+    },
+    {
+      "type": "header",
+      "content": "Cart"
+    },
+    {
+      "type": "product_list",
+      "id": "up_selling_products",
+      "label": "Up Selling Products"
+    },
+    {
+      "type": "header",
+      "content": "Cart Sidebar Settings"
+    }
+  ],
+  "blocks": [
+    {
+      "limit": 5,
+      "type": "text",
+      "name": "Runing Text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Link to"
+        },
+        {
+          "type": "select",
+          "id": "market_scope",
+          "label": "Show in market",
+          "info": "Pilih 'Indonesia only' untuk pengumuman yang memuat harga rupiah atau promo lokal.",
+          "options": [
+            {
+              "value": "all",
+              "label": "All markets"
+            },
+            {
+              "value": "id_only",
+              "label": "Indonesia only"
+            },
+            {
+              "value": "outside_id",
+              "label": "Outside Indonesia only"
+            }
+          ],
+          "default": "all"
+        }
+      ]
+    }
+  ]
+}
 {% endschema %}
