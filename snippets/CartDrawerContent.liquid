@@ -75,7 +75,6 @@
           <div class="sub-total cart-footer">
             {% if cart.item_count > 0 %}
               <div class="cart-footer-summary">
-                {% render 'CartVoucher' %}
                 <div class="cart-footer-row{% if total_savings > 0 %} visible{% endif %}" id="cart-saving-row">
                   <span>{{ 'cart.saving_label' | t }}</span>
                   {%- comment -%}
@@ -117,44 +116,39 @@
                     {%- endif -%}
                   </span>
                 </div>
-              </div>
-              {%- comment -%}
-                Baris kepercayaan, tepat di atas tombol checkout.
+                {%- comment -%}
+                  Penegasan kepercayaan hidup DI DALAM kotak ringkasan, sebagai
+                  baris label-nilai yang sama bentuknya dengan "Pengiriman".
+                  Sebagai blok terpisah di bawah kotak, ia terbaca sebagai
+                  elemen asing yang ditempel; di dalam kotak ia jadi bagian dari
+                  daftar yang memang sedang dibaca pembeli untuk menghitung apa
+                  yang ia dapat.
 
-                Letaknya di sini karena keraguan terakhir muncul di detik
-                terakhir: pembeli sudah melihat harga, tinggal memastikan
-                barangnya aman dan uangnya bisa kembali. Menaruhnya di atas
-                daftar barang membuatnya terbaca terlalu dini dan terlupakan.
+                  Tanpa kelas atau CSS baru — memakai .cart-footer-row apa
+                  adanya, jadi ukuran huruf, jarak, dan warnanya mustahil
+                  menyimpang dari baris di atasnya.
 
-                Nilainya HANYA penegasan, bukan ajakan — huruf kecil, warna
-                lembut, tanpa latar. Kalau blok ini menonjol, ia mencuri
-                perhatian dari tombol yang justru harus ditekan.
-
-                Tanggal kedaluwarsa dibaca dari metafield toko
-                (custom.batch_expiry), TIDAK ditulis di markup. Alasannya keras:
-                ED adalah klaim faktual pada produk bersertifikat BPOM — ia
-                berubah tiap batch, dan tanggal yang salah di halaman jauh lebih
-                berbahaya daripada tidak ada tanggal sama sekali. Selama
-                metafieldnya kosong, ruas ini tidak dirender.
-              {%- endcomment -%}
-              {%- assign cart_batch_expiry = shop.metafields.custom.batch_expiry | strip -%}
-              {%- capture cart_assure_expiry -%}
+                  Tanggal kedaluwarsa dibaca dari metafield toko; selama kosong
+                  barisnya tidak dirender sama sekali. ED adalah klaim faktual
+                  pada produk bersertifikat BPOM — tanggal yang salah jauh lebih
+                  berbahaya daripada tidak ada tanggal.
+                {%- endcomment -%}
+                {%- assign cart_batch_expiry = shop.metafields.custom.batch_expiry | strip -%}
+                <div class="cart-footer-row">
+                  <span>{{ 'cart.trust_guarantee' | t }}</span>
+                  <span>{{ 'cart.trust_guarantee_value' | t }}</span>
+                </div>
+                <div class="cart-footer-row">
+                  <span>{{ 'cart.trust_certified' | t }}</span>
+                  <span>{{ 'cart.trust_certified_value' | t }}</span>
+                </div>
                 {%- if cart_batch_expiry != blank -%}
-                  {{ 'cart.trust_expiry' | t }} {{ cart_batch_expiry }}
+                  <div class="cart-footer-row">
+                    <span>{{ 'cart.trust_expiry' | t }}</span>
+                    <span>{{ cart_batch_expiry }}</span>
+                  </div>
                 {%- endif -%}
-              {%- endcapture -%}
-              <p class="cart-assure">
-                <svg class="cart-assure__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg>
-                <span class="cart-assure__text">
-                  {{- 'cart.trust_guarantee' | t -}}
-                  <span class="cart-assure__sep" aria-hidden="true"> · </span>
-                  {{- 'cart.trust_certified' | t -}}
-                  {%- if cart_assure_expiry != blank -%}
-                    <span class="cart-assure__sep" aria-hidden="true"> · </span>
-                    {{- cart_assure_expiry | strip -}}
-                  {%- endif -%}
-                </span>
-              </p>
+              </div>
               {%- comment -%}
                 Tombol checkout memakai susunan yang sama persis dengan tombol
                 Add to Cart di halaman produk: label | harga coret | harga bayar.
