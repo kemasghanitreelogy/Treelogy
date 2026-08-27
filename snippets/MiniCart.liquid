@@ -2773,6 +2773,54 @@
      mendatar berisi label, pemisah, harga coret, harga bayar. Ukuran dan bobot
      hurufnya sengaja disamakan dengan .v2-atc__* supaya kedua tombol terbaca
      sebagai satu bahasa, bukan dua komponen berbeda yang kebetulan mirip. */
+  /* ---- Ritme kotak ringkasan sesudah voucher dicabut ----
+     Tiga warisan dari susunan lama yang baru terlihat salah setelah blok
+     voucher — dulu anak PERTAMA kotak ini — dicabut:
+
+     1. Kotaknya ber-padding `0 14px 9px`: NOL di atas, 9px di bawah. Dulu
+        tidak terasa karena voucher membawa jarak atasnya sendiri. Sekarang
+        baris pertama (Shipping) menempel di garis tepi sementara baris
+        terakhir (Best before) punya 9px — timpang, dan itu yang terbaca.
+     2. Baris Pengiriman ber-padding `3px 0 0` — asimetris, dirancang saat ia
+        baris TERAKHIR. Kini ia yang pertama dari empat baris ber-padding
+        `8px 0`, jadi tingginya sendiri lebih pendek dari tetangganya.
+     3. Media query `max-height: 430px` di theme.css juga memakai pola
+        asimetris `0 12px 4px`. Aturan dasar di bawah datang BELAKANGAN dalam
+        urutan dokumen dengan specificity sama, jadi ia akan mengalahkan media
+        query itu — karena itu media query-nya harus ikut ditulis ulang di
+        sini, bukan dibiarkan. */
+  .cart-page.min-cart-template .cart-footer .cart-footer-summary {
+    padding: 9px 14px;
+  }
+
+  .cart-page.min-cart-template .cart-footer #cart-shipping-row.visible {
+    padding: 8px 0;
+  }
+
+  /* theme.css merapatkan `.cart-footer-row` jadi 5px di ambang 620px dan 3px di
+     430px. Selektor `#cart-shipping-row` di atas ber-specificity id, jadi ia
+     akan MENIMPA perapatan itu kalau tidak ikut diturunkan di ambang yang sama
+     — baris Pengiriman akan tetap 8px sementara tetangganya menyusut. */
+  @media (max-height: 620px) {
+    .cart-page.min-cart-template .cart-footer .cart-footer-summary {
+      padding: 6px 14px;
+    }
+
+    .cart-page.min-cart-template .cart-footer #cart-shipping-row.visible {
+      padding: 5px 0;
+    }
+  }
+
+  @media (max-height: 430px) {
+    .cart-page.min-cart-template .cart-footer .cart-footer-summary {
+      padding: 4px 12px;
+    }
+
+    .cart-page.min-cart-template .cart-footer #cart-shipping-row.visible {
+      padding: 3px 0;
+    }
+  }
+
   #cart-checkout-btn.cart-checkout {
     display: flex;
     align-items: center;
