@@ -263,6 +263,18 @@
             {%- if v2_perk_money == blank and localization.market.handle != 'id' -%}
               {%- assign v2_perk_show_value = false -%}
             {%- endif -%}
+            {%- comment -%}
+              Baris isi paket membawa harga harian di ekornya
+              ("270 capsules - Rp 11.000 / day"). Angkanya rupiah tulis-tangan,
+              jadi di luar Indonesia ekor itu dipotong dan hanya isinya yang
+              tersisa ("270 capsules"). Dipotong pada " - Rp" — penanda yang
+              hanya muncul di pola ini, bukan pada label lain.
+            {%- endcomment -%}
+            {%- if localization.market.handle != 'id' and v2_perk_parts[0] contains ' - Rp' -%}
+              {%- assign v2_perk_head = v2_perk_parts[0] | split: ' - Rp' | first | strip -%}
+              {%- assign v2_perk_parts = v2_perk_head -%}
+              {%- assign v2_perk_parts = v2_perk_parts | split: '|' -%}
+            {%- endif -%}
             <li class="v2-plan__perk">
               {%- comment -%}
                 Baris berhadiah ditandai ikon kado, bukan titik. Penandanya

@@ -397,7 +397,14 @@
                             {% if variant.metafields.custom.time_protocol != blank %}
                               <span class="pv-time">{{ variant.metafields.custom.time_protocol }}</span>
                             {% endif %}
-                            {% if variant.metafields.custom.value_per_day != blank %}
+{%- comment -%}
+                              `value_per_day` adalah teks rupiah yang ditulis
+                              manual di metafield ("Rp 11.000 / day"), tanpa
+                              sumber yang sadar market. Di luar Indonesia ia
+                              muncul persis apa adanya di sebelah harga dolar,
+                              jadi barisnya dihilangkan — bukan diterjemahkan.
+                            {%- endcomment -%}
+                            {% if variant.metafields.custom.value_per_day != blank and localization.market.handle == 'id' %}
                               <span class="pv-daily">{{ variant.metafields.custom.value_per_day }}</span>
                             {% endif %}
                           </div>

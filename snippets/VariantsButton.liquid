@@ -207,7 +207,13 @@
               <span class="pv-time">{{ v_time_protocol }}</span>
             {% endif %}
             {% if v_value_per_day != blank %}
-              <span class="pv-daily">{{ v_value_per_day }}</span>
+{%- comment -%}
+                Teks rupiah manual dari metafield `value_per_day`; di luar
+                market Indonesia barisnya dihilangkan, bukan diterjemahkan.
+              {%- endcomment -%}
+              {%- if localization.market.handle == 'id' -%}
+                <span class="pv-daily">{{ v_value_per_day }}</span>
+              {%- endif -%}
             {% endif %}
           </div>
         {% endif %}
