@@ -9,8 +9,6 @@
  */
 {
   "current": {
-    "variant_card_v2": true,
-    "show_staged_variants": true,
     "favicon_light_mode": "shopify://shop_images/favicon_-_picto_-_treelogy_1.png",
     "favicon_dark_mode": "shopify://shop_images/favicon_-_picto_-_treelogy_dark_mode_2.png",
     "tax_footer_setting": "",
@@ -27,8 +25,10 @@
     "free_product_selected_country": "ID",
     "bonus_2_icon": "shopify://shop_images/free_item.png",
     "complete_text": "All set!",
-    "favicon": "shopify://shop_images/favicon_-_picto_-_treelogy.png",
     "gtm_container_id": "GTM-5M855J4V",
+    "show_staged_variants": true,
+    "variant_card_v2": true,
+    "favicon": "shopify://shop_images/favicon_-_picto_-_treelogy.png",
     "sections": {
       "Header": {
         "type": "Header",
@@ -167,13 +167,6 @@
         "type": "shopify://apps/klaviyo-email-marketing-sms/blocks/klaviyo-onsite-embed/2632fe16-c075-4321-a88b-50b567f42507",
         "disabled": false,
         "settings": {}
-      },
-      "10605408327587305396": {
-        "type": "shopify://apps/eg-auto-add-to-cart/blocks/app-embed/0f7d4f74-1e89-4820-aec4-6564d7e535d2",
-        "disabled": false,
-        "settings": {
-          "version": "v3"
-        }
       },
       "14330190941940559546": {
         "type": "shopify://apps/apex-attribution/blocks/apex/019f0527-1ddd-78db-9b4c-8b9d95e007bf",
