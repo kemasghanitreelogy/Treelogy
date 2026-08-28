@@ -176,6 +176,12 @@
     }
   },
   "products": {
+    "rating": {
+      "average": "{{ rating }}/5",
+      "count": "({{ count }})",
+      "decimal_separator": ".",
+      "aria_summary": "Rated {{ rating }} out of 5 based on {{ count }} reviews"
+    },
     "general": {
       "from": "From",
       "about_product": "About this Product",

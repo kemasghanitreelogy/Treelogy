@@ -69,12 +69,19 @@
           if badge_html contains "data-number-of-reviews='"
             assign rating_cnt = badge_html | split: "data-number-of-reviews='" | last | split: "'" | first
           endif
+          assign rating_separator = 'products.rating.decimal_separator' | t
+          assign rating_avg_local = rating_avg
+          if rating_separator.size == 1
+            assign rating_avg_local = rating_avg | replace: '.', rating_separator
+          endif
         -%}
         <span class="rating" inert>
           {% render 'Rating', product: product %}
         </span>
         {%- if rating_avg != blank -%}
-          <span class="hero-card-v2__sr">{{ rating_avg }}/5 ({{ rating_cnt }})</span>
+          <span class="hero-card-v2__sr">
+            {{- 'products.rating.aria_summary' | t: rating: rating_avg_local, count: rating_cnt -}}
+          </span>
         {%- endif -%}
         <span class="product-title">{{ product.title }}</span>
         {%- if excerpt != blank -%}

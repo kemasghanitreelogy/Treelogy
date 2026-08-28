@@ -1,12 +1,73 @@
+{% doc %}
+  Merender bintang + ringkasan rating produk.
+
+  Angkanya dibaca SERVER-SIDE dari metafield `judgeme.badge` (atribut
+  `data-average-rating` dan `data-number-of-reviews`), bukan dari widget
+  Judge.me. Alasannya: markup yang dikirim Judge.me selalu berisi teks Inggris
+  "94 reviews" dan disembunyikan (`display:none`); yang membentuk teks akhir
+  adalah JS mereka, memakai template `badge_n_reviews_text` PER LOCALE.
+  Template itu hanya pernah diisi untuk `en`, sehingga storefront `id` jatuh ke
+  bawaan Judge.me ("94 ulasan") dan kehilangan angka rata-ratanya.
+
+  Konsekuensi yang disengaja: pembungkusnya TIDAK lagi memakai kelas
+  `jdgm-preview-badge`. Itu satu-satunya selektor yang dipakai loader Judge.me
+  untuk memuat `widget/main.js` (lihat peta selektor di loader.js mereka), jadi
+  tanpa kelas itu teks kita tidak akan ditimpa. Kelas `jdgm-widget`,
+  `jdgm-prev-badge`, `jdgm-prev-badge__text`, `average-rating`, dan
+  `total-review` sengaja DIPERTAHANKAN karena assets/theme.css sudah menata
+  semuanya — termasuk aturan yang menyembunyikan jumlah ulasan di PDP.
+
+  Bintangnya memakai snippet StarReview milik tema, bukan `.jdgm-star`, supaya
+  tidak bergantung pada CSS Judge.me yang hanya dimuat di halaman yang punya
+  widget ulasan.
+
+  @param {product} [product] - Produk yang ratingnya ditampilkan. Bila tidak
+    diisi, memakai objek `product` global pada template produk.
+
+  @example
+  {% render 'Rating', product: item %}
+{% enddoc %}
+
+{%- liquid
+  assign rating_manual = product.metafields.custom.rating
+  assign badge_html = product.metafields.judgeme.badge | default: ''
+  assign rating_avg = ''
+  assign rating_cnt = ''
+
+  if badge_html contains "data-average-rating='"
+    assign rating_avg = badge_html | split: "data-average-rating='" | last | split: "'" | first
+  endif
+
+  if badge_html contains "data-number-of-reviews='"
+    assign rating_cnt = badge_html | split: "data-number-of-reviews='" | last | split: "'" | first
+  endif
+
+  assign rating_separator = 'products.rating.decimal_separator' | t
+  assign rating_avg_local = rating_avg
+  if rating_separator.size == 1
+    assign rating_avg_local = rating_avg | replace: '.', rating_separator
+  endif
+-%}
+
 <div class="star-review">
-  {% if product.metafields.custom.rating != blank %}
+  {%- if rating_manual != blank -%}
     <div>
       {% render 'StarReview' %}
-      <span class="rating-text">{{ product.metafields.custom.rating }}</span>
+      <span class="rating-text">{{ rating_manual }}</span>
     </div>
-  {% else %}
-    <div class="jdgm-widget jdgm-preview-badge" data-id="{{ product.id }}">
-      {{ product.metafields.judgeme.badge | replace: 'schema.org/AggregateRating', 'schema.org/None' }}
+  {%- elsif rating_avg != blank and rating_cnt != blank and rating_cnt != '0' -%}
+    <div class="jdgm-widget">
+      <div class="jdgm-prev-badge">
+        {% render 'StarReview' %}
+        <span class="jdgm-prev-badge__text">
+          <span class="average-rating">
+            {{- 'products.rating.average' | t: rating: rating_avg_local -}}
+          </span>
+          <span class="total-review">
+            {{- 'products.rating.count' | t: count: rating_cnt -}}
+          </span>
+        </span>
+      </div>
     </div>
-  {% endif %}
+  {%- endif -%}
 </div>

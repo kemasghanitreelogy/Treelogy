@@ -176,6 +176,12 @@
     }
   },
   "products": {
+    "rating": {
+      "average": "{{ rating }}/5",
+      "count": "({{ count }})",
+      "decimal_separator": ",",
+      "aria_summary": "Dinilai {{ rating }} dari 5 berdasarkan {{ count }} ulasan"
+    },
     "general": {
       "from": "Dari",
       "about_product": "Tentang Produk Ini",
