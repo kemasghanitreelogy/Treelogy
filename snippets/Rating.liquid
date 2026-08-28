@@ -58,7 +58,7 @@
   {%- elsif rating_avg != blank and rating_cnt != blank and rating_cnt != '0' -%}
     <div class="jdgm-widget">
       <div class="jdgm-prev-badge">
-        {% render 'StarReview' %}
+        {% render 'StarReview', color: 'currentColor' %}
         <span class="jdgm-prev-badge__text">
           <span class="average-rating">
             {{- 'products.rating.average' | t: rating: rating_avg_local -}}
