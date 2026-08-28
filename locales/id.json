@@ -113,7 +113,25 @@
     "usp_heading_2": "Pengiriman Cepat",
     "usp_text_2": "pesan sebelum jam 3 sore, dikirim hari itu juga",
     "usp_heading_3": "Dilayani Orang Sungguhan",
-    "usp_text_3": "Bergabung dengan Pelanggan yang Lebih Sehat"
+    "usp_text_3": "Bergabung dengan Pelanggan yang Lebih Sehat",
+    "voucher": {
+      "trigger": "Punya kode voucher?",
+      "trigger_cta": "Pakai",
+      "label": "Kode voucher",
+      "placeholder": "Masukkan kode kamu",
+      "submit": "Pakai",
+      "success": "Voucher berhasil dipakai",
+      "invalid": "Kode ini sudah tidak berlaku.",
+      "no_longer_valid": "Voucher kamu sudah tidak berlaku untuk keranjang ini",
+      "empty": "Masukkan kode voucher dulu",
+      "error_generic": "Gagal memakai kode — coba lagi",
+      "applied_at_checkout": "Berlaku saat checkout",
+      "add_more": "kode lain",
+      "duplicate": "Kode itu sudah dipakai",
+      "conflict": "Kode ini tidak bisa digabung dengan __CODE__",
+      "cancel": "Batal",
+      "remove": "Hapus voucher"
+    }
   },
   "checkout": {
     "login": {

@@ -113,7 +113,25 @@
     "usp_heading_2": "Fast Dispatch Orders",
     "usp_text_2": "before 3pm ship same-day",
     "usp_heading_3": "Real Human Support",
-    "usp_text_3": "Join Healthier Customers"
+    "usp_text_3": "Join Healthier Customers",
+    "voucher": {
+      "trigger": "Have a voucher code?",
+      "trigger_cta": "Use it",
+      "label": "Voucher code",
+      "placeholder": "Enter your code",
+      "submit": "Apply",
+      "success": "Voucher applied",
+      "invalid": "Kode ini sudah tidak berlaku.",
+      "no_longer_valid": "Your voucher no longer applies to this cart",
+      "empty": "Enter a voucher code first",
+      "error_generic": "Couldn't apply the code — please try again",
+      "applied_at_checkout": "Applied at checkout",
+      "add_more": "another code",
+      "duplicate": "That code is already applied",
+      "conflict": "This code can't be combined with __CODE__",
+      "cancel": "Cancel",
+      "remove": "Remove voucher"
+    }
   },
   "checkout": {
     "login": {
