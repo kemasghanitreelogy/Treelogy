@@ -968,6 +968,21 @@
     justify-self: end;
     text-align: right;
   }
+  /* Paket termurah tidak punya harga coret, dan badge "save" hanya lahir kalau
+     ada penghematan — jadi tanpa coret, slot kanan-ATAS pasti kosong sementara
+     harga tetap duduk di kanan-BAWAH. Kartunya lalu terbaca menggantung: satu
+     baris judul, lalu harga sendirian jauh di bawahnya.
+
+     Harga dinaikkan ke slot badge yang kosong itu supaya sebaris dengan judul.
+     Syaratnya dibaca dari BADGE, bukan dari harga coret: keduanya selalu
+     muncul bersamaan, dan menguji badge sekaligus melindungi kasus badge
+     kustom dari metafield — kartu yang punya badge tanpa coret tetap memakai
+     tata empat sudut, tidak saling menimpa di satu slot. */
+  .v2-plan:has(> .v2-plan__head--flow):not(:has(.v2-plan__badge)) .v2-plan__prices {
+    grid-area: badge;
+    align-self: center;
+  }
+
   .v2-plan:has(> .v2-plan__head--flow) > .v2-plan__perks {
     grid-area: perks;
     align-self: end;
