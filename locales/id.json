@@ -12,6 +12,9 @@
     "checkout": {
       "general": {
         "errors": {
+          "discount": {
+            "additional_requested_discount_code_discarded": "Kode ini tidak dapat digunakan untuk pesanan ini."
+          },
           "payment": {
             "shop_cash_not_found": "Toko Uang Tunai tidak ditemukan."
           }
