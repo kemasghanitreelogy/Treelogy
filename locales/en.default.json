@@ -13,7 +13,7 @@
       "general": {
         "errors": {
           "discount": {
-            "additional_requested_discount_code_discarded": "This code cannot be used for this order."
+            "additional_requested_discount_code_discarded": "This code is personal or has expired."
           },
           "payment": {
             "shop_cash_not_found": "Shop Cash not found."
