@@ -1,0 +1,79 @@
+{%- comment -%}
+  Hari Terakhir — halaman placeholder (dummy). Semua teks lewat locale ns "hari_terakhir",
+  tujuan tombol lewat routes.* supaya prefix /id tidak hilang.
+{%- endcomment -%}
+<section class="ht-body og-section">
+  <div class="og-container ht-body__inner">
+    <p class="ht-body__eyebrow">{{ 'hari_terakhir.eyebrow' | t }}</p>
+
+    <h1 class="og-h2">{{ 'hari_terakhir.heading_html' | t }}</h1>
+
+    <p class="og-lead ht-body__lead">{{ 'hari_terakhir.body_html' | t }}</p>
+
+    <a class="ht-body__cta" href="{{ routes.all_products_collection_url }}">
+      {{- 'hari_terakhir.cta_label' | t -}}
+    </a>
+
+    <p class="ht-body__note">{{ 'hari_terakhir.note' | t }}</p>
+  </div>
+</section>
+
+{% style %}
+  .ht-body {
+    padding: calc(120 * var(--og-u)) 0 calc(140 * var(--og-u));
+    font-family: var(--og-font);
+  }
+
+  .ht-body__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(40 * var(--og-u));
+    text-align: center;
+  }
+
+  .ht-body__eyebrow {
+    margin: 0;
+    font-size: var(--og-fs-small);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--og-accent);
+  }
+
+  .ht-body__lead {
+    max-width: calc(820 * var(--og-u));
+  }
+
+  .ht-body__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: calc(28 * var(--og-u)) calc(70 * var(--og-u));
+    border-radius: 999px;
+    background: var(--og-ink);
+    color: var(--og-cream);
+    font-size: var(--og-fs-sub);
+    font-weight: 600;
+    line-height: 1;
+    text-decoration: none;
+  }
+
+  .ht-body__note {
+    margin: 0;
+    font-size: var(--og-fs-small);
+    opacity: 0.7;
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "HT Body",
+  "settings": [],
+  "presets": [
+    {
+      "name": "HT Body"
+    }
+  ]
+}
+{% endschema %}

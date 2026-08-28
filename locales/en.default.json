@@ -62,6 +62,7 @@
     "trust_certified": "Certification",
     "trust_certified_value": "BPOM & Halal",
     "trust_expiry": "Best before",
+    "trust_compact_guarantee": "60-day guarantee",
     "empty_cart_text": "Cart is empty",
     "empty_title": "Your cart is empty",
     "empty_subtitle": "Discover our best-selling products and start your wellness journey",
@@ -107,24 +108,6 @@
     "progress_away": "away",
     "shipping_free": "FREE",
     "shipping_calculated": "Calculated at checkout",
-    "voucher": {
-      "trigger": "Have a voucher code?",
-      "trigger_cta": "Use it",
-      "label": "Voucher code",
-      "placeholder": "Enter your code",
-      "submit": "Apply",
-      "success": "Voucher applied",
-      "invalid": "Kode ini sudah tidak berlaku.",
-      "no_longer_valid": "Your voucher no longer applies to this cart",
-      "empty": "Enter a voucher code first",
-      "error_generic": "Couldn't apply the code — please try again",
-      "applied_at_checkout": "Applied at checkout",
-      "add_more": "another code",
-      "duplicate": "That code is already applied",
-      "conflict": "This code can't be combined with __CODE__",
-      "cancel": "Cancel",
-      "remove": "Remove voucher"
-    },
     "usp_heading_1": "Secure Checkout",
     "usp_text_1": "QRIS • E-wallet • Debit Card",
     "usp_heading_2": "Fast Dispatch Orders",
@@ -296,17 +279,17 @@
   },
   "search": {
     "placeholder": "Search",
-    "hint": "Try \u201ccapsules\u201d, \u201coil\u201d or \u201cpowder\u201d",
+    "hint": "Try “capsules”, “oil” or “powder”",
     "eyebrow": "Search Treelogy",
     "popular": "Popular searches",
-    "featured": "While you\u2019re here",
+    "featured": "While you’re here",
     "result": "result for",
     "results": "results for",
     "view_all": "See all results",
     "no_results": "Nothing found for",
     "no_results_hint": "Check the spelling, or try one of the popular searches above.",
-    "error": "Search hit a snag \u2014 please try again.",
-    "searching": "Searching\u2026",
+    "error": "Search hit a snag — please try again.",
+    "searching": "Searching…",
     "clear": "Clear search",
     "close": "Close search"
   },
@@ -467,5 +450,19 @@
       "sub_html": "Our prices go up on September 1. Order before then to<br>lock in today's price.",
       "cta_letter": "Read the letter"
     }
+  },
+  "harga_lama": {
+    "eyebrow": "Placeholder",
+    "heading_html": "Old price",
+    "body_html": "This page is a draft placeholder. The real content is on its way.",
+    "cta_label": "See all products",
+    "note": "Draft — content is not final yet."
+  },
+  "hari_terakhir": {
+    "eyebrow": "Placeholder",
+    "heading_html": "Last day",
+    "body_html": "This page is a draft placeholder. The real content is on its way.",
+    "cta_label": "See all products",
+    "note": "Draft — content is not final yet."
   }
 }

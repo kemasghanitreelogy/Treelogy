@@ -1,0 +1,33 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "tokens": {
+      "type": "og-tokens",
+      "settings": {
+        "color_bg": "#fbfcf7",
+        "color_outer": "#ffffff",
+        "color_ink": "#2a3b34",
+        "color_card": "#bacba1",
+        "color_accent": "#a5bb86",
+        "color_cream": "#f8f8f2",
+        "container_width": 600
+      }
+    },
+    "body": {
+      "type": "ht-body",
+      "settings": {}
+    }
+  },
+  "order": [
+    "tokens",
+    "body"
+  ]
+}
