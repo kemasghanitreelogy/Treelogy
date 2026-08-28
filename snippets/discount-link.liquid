@@ -1,0 +1,74 @@
+{% doc %}
+  Menahan kode diskon dari tautan kampanye selama 1 hari.
+
+  Shopify sudah menyetel cookie `discount_code` sendiri saat pembeli membuka
+  /discount/<KODE>, tapi cookie itu **cookie sesi** — diverifikasi langsung ke
+  toko: `discount_code=HARGATETAP; path=/; SameSite=Lax`, tanpa Max-Age dan
+  tanpa HttpOnly. Begitu tab ditutup, kodenya hilang. Snippet ini menyalinnya
+  ke cookie kita sendiri berumur 24 jam lalu menuliskannya kembali ke cookie
+  Shopify di kunjungan berikutnya, sehingga checkout dari cart drawer tetap
+  membawa kodenya tanpa pembeli mengetik ulang.
+
+  SENGAJA TIDAK menyentuh tombol checkout. Shopify sendiri yang menerapkan
+  cookie `discount_code` di checkout, jadi tidak ada alasan mencegat klik —
+  dan tombol checkout drawer adalah titik paling rawan di tema ini (lihat
+  suite freeze di claudedocs/cart-freeze-test, 105 asersi).
+
+  Sumber kode, yang paling baru menang:
+  1. Parameter `?discount=KODE` di URL mana pun.
+  2. Cookie `discount_code` milik Shopify (dari tautan /discount/KODE).
+  3. Simpanan kita sendiri dari kunjungan sebelumnya.
+  Kode yang baru diletakkan Shopify tidak pernah ditimpa oleh simpanan lama.
+
+  BATAS YANG HARUS DIINGAT: snippet ini hanya MEMBAWA kodenya. Yang menentukan
+  sebuah diskon benar-benar berlaku tetap Shopify. Kode milik Shopify Function
+  dari custom app tidak akan pernah berlaku di toko non-Plus, berapa kali pun
+  cookienya dititipkan — itu masalah diskonnya, bukan masalah pengantarnya.
+
+  @example
+  {% render 'discount-link' %}
+{% enddoc %}
+
+<script>
+  (function () {
+    'use strict';
+
+    var OURS = 'tl_discount';
+    var SHOPIFY = 'discount_code';
+    var MAX_AGE = 86400;
+
+    function read(name) {
+      var m = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+      return m ? decodeURIComponent(m[1]) : '';
+    }
+
+    function write(name, value, maxAge) {
+      var bits = [name + '=' + encodeURIComponent(value), 'path=/', 'SameSite=Lax'];
+      if (maxAge) bits.push('max-age=' + maxAge);
+      if (location.protocol === 'https:') bits.push('Secure');
+      document.cookie = bits.join('; ');
+    }
+
+    /* Kode diskon Shopify hanya huruf, angka, tanda hubung, garis bawah. Apa
+       pun di luar itu datang dari URL yang dikarang orang, jadi dibuang alih-
+       alih diteruskan ke cookie. */
+    function clean(value) {
+      value = String(value || '').trim().toUpperCase();
+      return /^[A-Z0-9_-]{1,64}$/.test(value) ? value : '';
+    }
+
+    try {
+      var fromUrl = clean(new URLSearchParams(location.search).get('discount'));
+      var fromShopify = clean(read(SHOPIFY));
+      var saved = clean(read(OURS));
+
+      var code = fromUrl || fromShopify || saved;
+      if (!code) return;
+
+      if (code !== saved) write(OURS, code, MAX_AGE);
+      if (code !== fromShopify) write(SHOPIFY, code, 0);
+
+      window.__linkDiscountCode = code;
+    } catch (err) {}
+  })();
+</script>

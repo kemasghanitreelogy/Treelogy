@@ -1597,6 +1597,12 @@
     {% render 'rating-countup' %}
     {% render 'lp-only-guard' %}
     {%- comment -%}
+      Kode diskon dari tautan kampanye ditahan 1 hari. Cookie bawaan Shopify
+      hanya bertahan satu sesi, jadi tanpa ini pembeli yang menutup tab lalu
+      kembali besok kehilangan kodenya. Lihat snippets/discount-link.liquid.
+    {%- endcomment -%}
+    {% render 'discount-link' %}
+    {%- comment -%}
       Hadiah harus disinkronkan di setiap halaman, bukan hanya halaman produk —
       pembeli bisa mengubah isi keranjang dari mini cart atau halaman keranjang.
       Ikut saklar variant_card_v2 karena janji hadiahnya berasal dari kartu itu.
