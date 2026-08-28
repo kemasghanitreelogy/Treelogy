@@ -174,19 +174,6 @@
         <span class="v2-plan__prices">
           {%- if v2_compare_text != blank -%}
             <s class="v2-plan__compare">{{ v2_compare_text }}</s>
-          {%- else -%}
-            {%- comment -%}
-              Paket termurah tiap produk tidak punya harga coret. Tanpa penahan
-              ini, blok harganya hanya satu baris dan `align-items: center` di
-              .v2-plan__head mendudukkannya di tengah — sehingga harga tebalnya
-              tidak sebaris dengan harga tebal kartu di atasnya, dan tumpukan
-              kartunya terbaca miring.
-
-              Yang ditahan adalah SATU baris setinggi harga coret, bukan tinggi
-              kartu: menyamakan tinggi kartu lewat min-height akan patah begitu
-              ada paket yang judulnya membungkus dua baris.
-            {%- endcomment -%}
-            <span class="v2-plan__compare-gap" aria-hidden="true"></span>
           {%- endif -%}
           <span class="v2-plan__price">{{ v2_price_text }}</span>
           {%- unless variant.available -%}
@@ -715,19 +702,6 @@
     font-size: 0.625rem;
     font-weight: 500;
     color: #2b3c35;
-  }
-
-  /* Penahan sebaris untuk kartu tanpa harga coret. Tingginya diikat ke
-     font-size yang SAMA dengan .v2-plan__compare, jadi kalau ukuran harga
-     coret diubah, penahannya ikut — tidak ada angka piksel yang harus
-     diingat orang. Kosong tanpa `content` akan runtuh jadi nol tinggi. */
-  .v2-plan__compare-gap {
-    font-size: 0.625rem;
-    line-height: 1.2;
-  }
-
-  .v2-plan__compare-gap::before {
-    content: '\00a0';
   }
 
   .v2-plan__price {
