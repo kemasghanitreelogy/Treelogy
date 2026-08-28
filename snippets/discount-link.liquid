@@ -20,10 +20,23 @@
   3. Simpanan kita sendiri dari kunjungan sebelumnya.
   Kode yang baru diletakkan Shopify tidak pernah ditimpa oleh simpanan lama.
 
-  BATAS YANG HARUS DIINGAT: snippet ini hanya MEMBAWA kodenya. Yang menentukan
-  sebuah diskon benar-benar berlaku tetap Shopify. Kode milik Shopify Function
-  dari custom app tidak akan pernah berlaku di toko non-Plus, berapa kali pun
-  cookienya dititipkan — itu masalah diskonnya, bukan masalah pengantarnya.
+  Pengantar kedua: input tersembunyi `discount` di dalam form keranjang
+  (`<form action="/cart" method="post">` di snippets/CartDrawerContent.liquid).
+  Shopify menerima field itu saat form dikirim dengan tombol `name="checkout"`,
+  jadi kodenya ikut ke checkout lewat URL — bukan hanya lewat cookie. Ini
+  penting untuk peramban yang membuang cookie pihak pertama lebih agresif.
+
+  Injeksinya SENGAJA aditif: hanya menambah satu `<input type="hidden">` ke
+  dalam form, tanpa satu pun event listener di tombol checkout. Kalau Shopify
+  mengabaikan field itu, tidak ada yang rusak dan cookie tetap jalan. Tombol
+  checkout drawer adalah titik paling rapuh di tema ini — mencegat klik atau
+  submit di sana pernah membekukan checkout, jadi tidak dilakukan di sini.
+
+  BATAS YANG HARUS DIINGAT: snippet ini hanya MEMBAWA kodenya, lewat dua jalur
+  sekaligus. Yang menentukan sebuah diskon benar-benar berlaku tetap Shopify.
+  Kode milik Shopify Function dari custom app tidak akan pernah berlaku di toko
+  non-Plus, berapa kali pun cookienya dititipkan — itu masalah diskonnya, bukan
+  masalah pengantarnya.
 
   @example
   {% render 'discount-link' %}
@@ -69,6 +82,36 @@
       if (code !== fromShopify) write(SHOPIFY, code, 0);
 
       window.__linkDiscountCode = code;
+
+      /* Jalur kedua: titipkan kodenya di form keranjang. Drawer dirender ulang
+         setiap kali isinya berubah, jadi injeksinya diulang lewat observer —
+         murni operasi DOM, nol permintaan jaringan, nol listener di tombol. */
+      function seedForms() {
+        var forms = document.querySelectorAll('form[action^="/cart"][method="post"]');
+        for (var i = 0; i < forms.length; i++) {
+          var form = forms[i];
+          if (!form.querySelector('[name="checkout"]')) continue;
+          var input = form.querySelector('input[name="discount"][data-link-discount]');
+          if (!input) {
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'discount';
+            input.setAttribute('data-link-discount', '');
+            form.appendChild(input);
+          }
+          if (input.value !== code) input.value = code;
+        }
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', seedForms);
+      } else {
+        seedForms();
+      }
+      new MutationObserver(seedForms).observe(document.documentElement, {
+        childList: true,
+        subtree: true
+      });
     } catch (err) {}
   })();
 </script>
