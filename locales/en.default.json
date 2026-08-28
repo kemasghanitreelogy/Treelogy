@@ -12,9 +12,6 @@
     "checkout": {
       "general": {
         "errors": {
-          "discount": {
-            "additional_requested_discount_code_discarded": "This code is reserved for customers who ordered with us before September 1."
-          },
           "payment": {
             "shop_cash_not_found": "Shop Cash not found."
           }
