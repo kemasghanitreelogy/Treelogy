@@ -178,7 +178,9 @@
     transition: color 220ms ease;
   }
 
-  .og-copy__btn:hover .og-copy__glyph {
+  /* hover hanya menggelapkan ikon salin — jangan sentuh centang, kalau tidak
+     centang hijau ikut jadi gelap saat kursor masih di atas pil */
+  .og-copy__btn:hover .og-copy__face--idle .og-copy__glyph {
     color: var(--og-ink);
   }
 
