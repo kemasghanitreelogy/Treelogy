@@ -1,10 +1,14 @@
 {%- liquid
   assign cta_label = 'hari_terakhir.cta_label' | t
-  assign cta_url = section.settings.cta_url
-  if cta_url == blank
-    assign cta_url = routes.all_products_collection_url
+  assign cta_target = section.settings.cta_url
+  if cta_target == blank
+    assign cta_target = routes.all_products_collection_url
   endif
 -%}
+{%- comment -%}
+  Tombol halaman ini selalu mendarat di storefront /id — lihat snippets/og-id-url.
+{%- endcomment -%}
+{%- capture cta_url -%}{%- render 'og-id-url', url: cta_target -%}{%- endcapture -%}
 <section class="ht-lede og-section">
   <h1 class="ht-lede__heading">{{ 'hari_terakhir.lede.heading' | t }}</h1>
 

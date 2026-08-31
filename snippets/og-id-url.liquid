@@ -1,0 +1,36 @@
+{% doc %}
+  Mengembalikan versi Indonesia (`/id/...`) dari sebuah URL internal, apa pun
+  locale pengunjungnya.
+
+  Halaman kampanye harga (harga-lama, hari-terakhir) isinya Bahasa Indonesia
+  seluruhnya — copy-nya diklon 1:1 dari email IDN — jadi tombolnya harus
+  mendarat di storefront `/id`, bukan mengikuti locale pengunjung seperti
+  `routes.*` biasa.
+
+  Aman dipanggil dari kedua sisi: kalau pengunjung sudah di `/id`, prefix
+  locale-nya dilepas dulu supaya tidak jadi `/id/id/...`. URL absolut
+  (`https://...`) dan path yang memang sudah `/id/...` dikembalikan apa adanya.
+
+  @param {string} url - URL internal, biasanya dari `routes.*` atau setting
+
+  @example
+  {%- capture cta_url -%}
+    {%- render 'og-id-url', url: routes.all_products_collection_url -%}
+  {%- endcapture -%}
+{% enddoc %}
+
+{%- liquid
+  assign path = url | strip
+
+  # buang prefix locale pengunjung dulu (routes.root_url = '/id' di storefront ID)
+  if routes.root_url != '/'
+    assign path = path | remove_first: routes.root_url
+  endif
+
+  assign head = path | slice: 0, 4
+  if path contains '://' or head == '/id/'
+    echo path
+  else
+    echo '/id' | append: path
+  endif
+-%}
