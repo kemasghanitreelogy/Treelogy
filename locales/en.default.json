@@ -487,7 +487,8 @@
       "code_hint": "Ketuk untuk menyalin kode",
       "code_copied": "Kode tersalin",
       "code_manual": "Peramban menolak menyalin — salin manual dari kotak di atas",
-      "code_copy_aria": "Salin kode diskon {{ code }}"
+      "code_copy_aria": "Salin kode diskon {{ code }}",
+      "code_note": "Tempel di kolom Kode diskon saat checkout"
     },
     "cta_label": "Belanja dengan Harga Lama",
     "how": {

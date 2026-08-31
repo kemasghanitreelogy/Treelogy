@@ -32,6 +32,9 @@
   @param {string} hint - tooltip judul, mis. "Ketuk untuk menyalin"
   @param {string} copied - teks saat berhasil
   @param {string} manual - teks saat peramban menolak menyalin
+  @param {string} [note] - satu baris tipis di bawah pil, mis. di mana kodenya
+    dipakai. Sengaja statis (tidak ikut berubah saat tersalin) supaya tidak ada
+    teks yang memantul di bawah tombol.
 
   @example
   {% render 'og-copy-code', code: code, label: label, aria: aria, hint: hint, copied: copied, manual: manual %}
@@ -63,6 +66,16 @@
       <span class="og-copy__value og-copy__value--done">{{ copied }}</span>
     </span>
   </button>
+
+  {%- if note != blank -%}
+    <p class="og-copy__note">
+      <svg class="og-copy__note-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0l-7.2-7.2A2 2 0 0 1 2.8 12V4.8A2 2 0 0 1 4.8 2.8H12a2 2 0 0 1 1.4.6l7.2 7.2a2 2 0 0 1 0 2.8Z"></path>
+        <circle cx="7.6" cy="7.6" r="1.1" fill="currentColor" stroke="none"></circle>
+      </svg>
+      {{ note }}
+    </p>
+  {%- endif -%}
 
   <span class="og-copy__live og-visually-hidden" role="status" aria-live="polite"></span>
 </copy-code>
@@ -219,6 +232,25 @@
   @keyframes og-copy-ring {
     0% { opacity: 0.3; transform: scale(1); }
     100% { opacity: 0; transform: scale(1.18); }
+  }
+
+  .og-copy__note {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(12 * var(--og-u));
+    margin: calc(20 * var(--og-u)) 0 0;
+    font-size: calc(30 * var(--og-u));
+    font-weight: 400;
+    line-height: 1.35;
+    letter-spacing: 0.01em;
+    color: color-mix(in srgb, var(--og-ink) 55%, transparent);
+  }
+
+  .og-copy__note-icon {
+    width: calc(30 * var(--og-u));
+    height: calc(30 * var(--og-u));
+    flex: none;
+    color: var(--og-accent);
   }
 
   @media (prefers-reduced-motion: reduce) {

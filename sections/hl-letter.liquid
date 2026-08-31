@@ -6,6 +6,7 @@
   assign code_hint = 'harga_lama.letter.code_hint' | t
   assign code_copied = 'harga_lama.letter.code_copied' | t
   assign code_manual = 'harga_lama.letter.code_manual' | t
+  assign code_note = 'harga_lama.letter.code_note' | t
   assign cta_target = section.settings.cta_url
   if cta_target == blank
     assign cta_target = routes.all_products_collection_url
@@ -35,7 +36,8 @@
         aria: code_aria,
         hint: code_hint,
         copied: code_copied,
-        manual: code_manual
+        manual: code_manual,
+        note: code_note
       -%}
     {%- endif -%}
   </div>
