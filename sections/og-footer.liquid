@@ -1,13 +1,45 @@
+{%- liquid
+  # `force_id`: halaman kampanye Indonesia (harga-lama, hari-terakhir) memakai
+  # footer ini dengan seluruh isinya dikunci ke storefront /id — link maupun
+  # labelnya — karena copy halamannya Bahasa Indonesia di semua locale.
+  # Halaman lain (oil-guide, why-capsules) membiarkannya mati dan tetap
+  # mengikuti locale pengunjung.
+  assign force_id = section.settings.force_id
+  assign shop_href = routes.all_products_collection_url
+  assign tree_href = pages['moringa-tree'].url
+  assign benefit_href = pages['benefit'].url
+  assign farm_href = pages['farm'].url
+-%}
+{%- if force_id -%}
+  {%- capture shop_id %}{% render 'og-id-url', url: shop_href %}{% endcapture -%}
+  {%- capture tree_id %}{% render 'og-id-url', url: tree_href %}{% endcapture -%}
+  {%- capture benefit_id %}{% render 'og-id-url', url: benefit_href %}{% endcapture -%}
+  {%- capture farm_id %}{% render 'og-id-url', url: farm_href %}{% endcapture -%}
+  {%- liquid
+    assign shop_href = shop_id | strip
+    assign tree_href = tree_id | strip
+    assign benefit_href = benefit_id | strip
+    assign farm_href = farm_id | strip
+  -%}
+{%- endif -%}
 <footer class="og-footer-section og-section">
   <div
     class="og-footer"
     style="--og-footer-bg: {{ section.settings.background_color }}; --og-footer-ink: {{ section.settings.text_color }};"
   >
     <nav class="og-footer__nav" aria-label="{{ 'oil_guide.footer.aria_label' | t }}">
-      <a href="{{ routes.all_products_collection_url }}">{{ 'oil_guide.footer.shop' | t }}</a>
-      <a href="{{ pages['moringa-tree'].url }}">{{ 'oil_guide.footer.moringa_tree' | t }}</a>
-      <a href="{{ pages['benefit'].url }}">{{ 'oil_guide.footer.benefits' | t }}</a>
-      <a href="{{ pages['farm'].url }}">{{ 'oil_guide.footer.our_farm' | t }}</a>
+      <a href="{{ shop_href }}">
+        {%- if force_id -%}{{ 'oil_guide.footer.id_shop' | t }}{%- else -%}{{ 'oil_guide.footer.shop' | t }}{%- endif -%}
+      </a>
+      <a href="{{ tree_href }}">
+        {%- if force_id -%}{{ 'oil_guide.footer.id_moringa_tree' | t }}{%- else -%}{{ 'oil_guide.footer.moringa_tree' | t }}{%- endif -%}
+      </a>
+      <a href="{{ benefit_href }}">
+        {%- if force_id -%}{{ 'oil_guide.footer.id_benefits' | t }}{%- else -%}{{ 'oil_guide.footer.benefits' | t }}{%- endif -%}
+      </a>
+      <a href="{{ farm_href }}">
+        {%- if force_id -%}{{ 'oil_guide.footer.id_our_farm' | t }}{%- else -%}{{ 'oil_guide.footer.our_farm' | t }}{%- endif -%}
+      </a>
     </nav>
 
     <div class="og-footer__social">
@@ -146,6 +178,13 @@
 {
   "name": "OG Footer",
   "settings": [
+    {
+      "type": "checkbox",
+      "id": "force_id",
+      "label": "Kunci link & label ke versi Indonesia (/id)",
+      "info": "Untuk halaman kampanye berbahasa Indonesia. Halaman lain biarkan mati.",
+      "default": false
+    },
     {
       "type": "image_picker",
       "id": "logo",

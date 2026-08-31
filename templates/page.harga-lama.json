@@ -48,11 +48,30 @@
     "faq": {
       "type": "hl-faq",
       "blocks": {
-        "q1": { "type": "item", "settings": { "item_id": "q1" } },
-        "q2": { "type": "item", "settings": { "item_id": "q2" } },
-        "q3": { "type": "item", "settings": { "item_id": "q3" } }
+        "q1": {
+          "type": "item",
+          "settings": {
+            "item_id": "q1"
+          }
+        },
+        "q2": {
+          "type": "item",
+          "settings": {
+            "item_id": "q2"
+          }
+        },
+        "q3": {
+          "type": "item",
+          "settings": {
+            "item_id": "q3"
+          }
+        }
       },
-      "block_order": ["q1", "q2", "q3"],
+      "block_order": [
+        "q1",
+        "q2",
+        "q3"
+      ],
       "settings": {}
     },
     "closing": {

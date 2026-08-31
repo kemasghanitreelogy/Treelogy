@@ -411,7 +411,11 @@
       "moringa_tree": "Moringa Tree",
       "benefits": "Benefits",
       "our_farm": "Our Farm",
-      "aria_label": "Footer"
+      "aria_label": "Footer",
+      "id_shop": "Toko",
+      "id_moringa_tree": "Pohon Moringa",
+      "id_benefits": "Manfaat",
+      "id_our_farm": "Perkebunan Kami"
     }
   },
   "why_capsules": {
