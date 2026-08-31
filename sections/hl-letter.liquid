@@ -1,5 +1,10 @@
 {%- liquid
   assign cta_label = 'harga_lama.cta_label' | t
+  assign code = section.settings.discount_code | strip
+  assign code_aria = 'harga_lama.letter.code_copy_aria' | t: code: code
+  assign code_hint = 'harga_lama.letter.code_hint' | t
+  assign code_copied = 'harga_lama.letter.code_copied' | t
+  assign code_manual = 'harga_lama.letter.code_manual' | t
   assign cta_target = section.settings.cta_url
   if cta_target == blank
     assign cta_target = routes.all_products_collection_url
@@ -21,7 +26,18 @@
     <p>{{ 'harga_lama.letter.body2_html' | t }}</p>
   </div>
 
-  <p class="hl-letter__code">{{ 'harga_lama.letter.code_html' | t }}</p>
+  <div class="hl-letter__code">
+    <p class="hl-letter__code-label">{{ 'harga_lama.letter.code_label' | t }}</p>
+    {%- if code != blank -%}
+      {%- render 'og-copy-code',
+        code: code,
+        aria: code_aria,
+        hint: code_hint,
+        copied: code_copied,
+        manual: code_manual
+      -%}
+    {%- endif -%}
+  </div>
 
   <div class="hl-letter__cta">
     {%- render 'og-cta', label: cta_label, url: cta_url, width: 726 -%}
@@ -68,14 +84,13 @@
   .hl-letter__code {
     width: calc(920 * var(--og-u));
     margin: var(--og-gap-block) auto 0;
+  }
+
+  .hl-letter__code-label {
+    margin: 0 0 calc(36 * var(--og-u));
     font-size: var(--og-fs-lead);
     font-weight: 400;
     line-height: normal;
-  }
-
-  .hl-letter__code b,
-  .hl-letter__code strong {
-    font-weight: 700;
   }
 
   .hl-letter__cta {
@@ -92,6 +107,12 @@
   "name": "HL Letter",
   "tag": "div",
   "settings": [
+    {
+      "type": "text",
+      "id": "discount_code",
+      "label": "Kode diskon yang ditampilkan & disalin",
+      "default": "HARGATETAP"
+    },
     {
       "type": "url",
       "id": "cta_url",

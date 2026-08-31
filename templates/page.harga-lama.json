@@ -29,7 +29,9 @@
     },
     "letter": {
       "type": "hl-letter",
-      "settings": {}
+      "settings": {
+        "discount_code": "HARGATETAP"
+      }
     },
     "note_how": {
       "type": "hl-note",
