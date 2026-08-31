@@ -21,13 +21,67 @@
         "container_width": 600
       }
     },
-    "body": {
-      "type": "hl-body",
+    "hero": {
+      "type": "hl-hero",
+      "settings": {
+        "image": "shopify://shop_images/harga-lama-hero.jpg"
+      }
+    },
+    "letter": {
+      "type": "hl-letter",
       "settings": {}
+    },
+    "note_how": {
+      "type": "hl-note",
+      "settings": {
+        "content_key": "how",
+        "show_arrow": true
+      }
+    },
+    "note_best": {
+      "type": "hl-note",
+      "settings": {
+        "content_key": "best",
+        "show_arrow": true
+      }
+    },
+    "faq": {
+      "type": "hl-faq",
+      "blocks": {
+        "q1": { "type": "item", "settings": { "item_id": "q1" } },
+        "q2": { "type": "item", "settings": { "item_id": "q2" } },
+        "q3": { "type": "item", "settings": { "item_id": "q3" } }
+      },
+      "block_order": ["q1", "q2", "q3"],
+      "settings": {}
+    },
+    "closing": {
+      "type": "hl-closing",
+      "settings": {}
+    },
+    "footer": {
+      "type": "og-footer",
+      "settings": {
+        "logo": "shopify://shop_images/founder-letter-badge.png",
+        "social_instagram": "https://www.instagram.com/treelogy/",
+        "social_facebook": "https://www.facebook.com/treelogy.moringa",
+        "social_tiktok": "https://www.tiktok.com/@treelogy.moringa",
+        "social_pinterest": "https://www.pinterest.com/treelogymoringa/",
+        "social_whatsapp": "https://wa.me/6281139603993",
+        "copyright": "© Treelogy 2026. All Rights Reserved.",
+        "background_color": "#2A3B34",
+        "text_color": "#F8F8F2"
+      }
     }
   },
   "order": [
     "tokens",
-    "body"
+    "hero",
+    "letter",
+    "note_how",
+    "note_best",
+    "faq",
+    "closing",
+    "footer"
   ]
 }

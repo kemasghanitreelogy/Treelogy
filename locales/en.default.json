@@ -410,7 +410,8 @@
       "shop": "Shop",
       "moringa_tree": "Moringa Tree",
       "benefits": "Benefits",
-      "our_farm": "Our Farm"
+      "our_farm": "Our Farm",
+      "aria_label": "Footer"
     }
   },
   "why_capsules": {
@@ -470,17 +471,55 @@
     }
   },
   "harga_lama": {
-    "eyebrow": "Placeholder",
-    "heading_html": "Old price",
-    "body_html": "This page is a draft placeholder. The real content is on its way.",
-    "cta_label": "See all products",
-    "note": "Draft — content is not final yet."
+    "hero": {
+      "image_alt": "Sacha picking moringa leaves at the Treelogy farm in Bali"
+    },
+    "letter": {
+      "heading_html": "A letter from our <b>founder</b>.",
+      "greeting": "Hi,",
+      "greeting_named": "Hi {{ name }},",
+      "body_html": "Last August I wrote that our price would<br>change on 1 September, and that for you<br>who had already ordered before then,<br>we would hold your price.",
+      "body2_html": "Today the new price is live.<br>And this is what I promised.",
+      "code_html": "Your personal code: <b>HARGATETAP</b>"
+    },
+    "cta_label": "Shop at the Old Price",
+    "how": {
+      "title": "How It Works",
+      "body_html": "Valid for 3 orders, at the previous<br>price, whenever you like,<br>until 30 November. On every<br>product. No auto-billing, no<br>subscription. You decide<br>the timing."
+    },
+    "best": {
+      "title": "Best Use",
+      "body_html": "If you take moringa every day, the<br>Moringa Capsules 3 months with this<br>code come to Rp11.000 a day. The lowest<br>per-day price there will ever be, and<br>cheaper than the 1-month tin has<br>been all along."
+    },
+    "faq": {
+      "title": "FAQ",
+      "q1_q_html": "Do the 3 orders have to be<br>used all at once?",
+      "q1_a_html": "No. Use them any time, one by one<br>or together, until 30 November.",
+      "q2_q_html": "Does this code work<br>on every product?",
+      "q2_a_html": "Yes, on every product<br>on our website.",
+      "q3_q_html": "Can I share it with a friend?",
+      "q3_a_html": "The code is tied to your email address,<br>so it only works for you."
+    },
+    "closing": {
+      "body_html": "Thank you for being here before this<br>chapter began. Because of customers<br>like you, we can keep farming<br>the way we believe in.",
+      "sign_html": "Warm regards from Bali,<br>Sacha, Founder",
+      "ps_html": "PS. Every reply to this letter reaches me directly,<br>not the team. If there is anything you need help with<br>about an order or your daily routine, just write."
+    }
   },
   "hari_terakhir": {
-    "eyebrow": "Placeholder",
-    "heading_html": "Last day",
-    "body_html": "This page is a draft placeholder. The real content is on its way.",
-    "cta_label": "See all products",
-    "note": "Draft — content is not final yet."
+    "hero": {
+      "image_alt": "Treelogy moringa powder, capsules and oil side by side"
+    },
+    "lede": {
+      "heading": "Today, then it changes",
+      "body_html": "Today is the last day at the current price.<br>From tomorrow, 1 September, the new price<br>applies.<br><br>It is already live on our website<br>now, no code needed."
+    },
+    "cta_label": "Shop Today's Price",
+    "promise": {
+      "heading_html": "Tomorrow, your personal code arrives",
+      "body_html": "If you have ordered from us<br>before 1 September, including<br>today, your personal code is<br>sent by email tomorrow.",
+      "body2_html": "Today's price stays locked for up to<br>3 more orders, until 30 November.",
+      "body3_html": "If you have never ordered,<br>a first order today is enough."
+    }
   }
 }

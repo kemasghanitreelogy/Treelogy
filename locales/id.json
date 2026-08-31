@@ -411,7 +411,8 @@
       "shop": "Toko",
       "moringa_tree": "Pohon Moringa",
       "benefits": "Manfaat",
-      "our_farm": "Perkebunan Kami"
+      "our_farm": "Perkebunan Kami",
+      "aria_label": "Navigasi footer"
     }
   },
   "why_capsules": {
@@ -471,17 +472,55 @@
     }
   },
   "harga_lama": {
-    "eyebrow": "Placeholder",
-    "heading_html": "Harga lama",
-    "body_html": "Halaman ini masih placeholder. Isi sebenarnya menyusul.",
-    "cta_label": "Lihat semua produk",
-    "note": "Draf — isinya belum final."
+    "hero": {
+      "image_alt": "Sacha memetik daun moringa di kebun Treelogy di Bali"
+    },
+    "letter": {
+      "heading_html": "Surat dari <b>founder</b> kami.",
+      "greeting": "Hi,",
+      "greeting_named": "Hi {{ name }},",
+      "body_html": "Bulan Agustus lalu saya menulis bahwa harga<br>kami berubah mulai 1 September, dan bahwa<br>untuk kamu yang sudah lebih dulu memesan,<br>harganya akan kami jaga.",
+      "body2_html": "Hari ini harga baru sudah berlaku.<br>Dan ini yang saya janjikan.",
+      "code_html": "Kode pribadi untuk kamu: <b>HARGATETAP</b>"
+    },
+    "cta_label": "Belanja dengan Harga Lama",
+    "how": {
+      "title": "How It Works",
+      "body_html": "Berlaku untuk 3 pesanan, dengan harga<br>sebelumnya, kapan pun kamu mau,<br>sampai 30 November. Untuk semua<br>produk. Tanpa tagihan otomatis, tanpa<br>langganan. Kamu yang menentukan<br>waktunya."
+    },
+    "best": {
+      "title": "Best Use",
+      "body_html": "Kalau kamu mengonsumsi moringa setiap<br>hari, Moringa Capsules 3 months dengan<br>kode ini jadi Rp11.000 per hari. Harga per<br>hari terendah yang akan pernah ada, dan<br>lebih murah dibanding toples 1 bulan<br>selama ini."
+    },
+    "faq": {
+      "title": "FAQ",
+      "q1_q_html": "Apakah 3 pesanan harus<br>dipakai sekaligus?",
+      "q1_a_html": "Tidak. Pakai kapan saja, satu per satu<br>atau bersamaan, sampai 30 November.",
+      "q2_q_html": "Apakah kode ini berlaku<br>untuk semua produk?",
+      "q2_a_html": "Ya, untuk semua produk<br>di website kami.",
+      "q3_q_html": "Bisakah saya bagikan ke teman?",
+      "q3_a_html": "Kode ini terhubung ke alamat email<br>kamu, jadi hanya berlaku untuk kamu."
+    },
+    "closing": {
+      "body_html": "Terima kasih sudah ada di sini sebelum<br>babak ini dimulai. Karena pelanggan<br>seperti kamu, kami bisa terus bertani<br>dengan cara yang kami percaya.",
+      "sign_html": "Salam hangat dari Bali,<br>Sacha, Founder",
+      "ps_html": "PS. Setiap balasan surat ini langsung sampai ke<br>saya, bukan ke tim. Kalau ada yang perlu dibantu<br>soal pesanan atau rutinitas harian, tulis saja."
+    }
   },
   "hari_terakhir": {
-    "eyebrow": "Placeholder",
-    "heading_html": "Hari terakhir",
-    "body_html": "Halaman ini masih placeholder. Isi sebenarnya menyusul.",
-    "cta_label": "Lihat semua produk",
-    "note": "Draf — isinya belum final."
+    "hero": {
+      "image_alt": "Moringa powder, kapsul, dan minyak Treelogy berjajar"
+    },
+    "lede": {
+      "heading": "Hari ini, lalu berubah",
+      "body_html": "Hari ini adalah hari terakhir dengan harga<br>saat ini. Mulai besok, 1 September, harga<br>baru berlaku.<br><br>Harganya sudah aktif di website kami<br>sekarang, tanpa perlu kode."
+    },
+    "cta_label": "Belanja Harga Hari Ini",
+    "promise": {
+      "heading_html": "Besok, kode pribadi kamu tiba",
+      "body_html": "Kalau kamu sudah pernah pesan dari<br>kami sebelum 1 September, termasuk<br>hari ini, besok kode pribadi kamu<br>dikirim lewat email.",
+      "body2_html": "Harga hari ini terkunci untuk hingga<br>3 pesanan lagi, sampai 30 November.",
+      "body3_html": "Kalau kamu belum pernah pesan,<br>pesanan pertama hari ini sudah cukup."
+    }
   }
 }
