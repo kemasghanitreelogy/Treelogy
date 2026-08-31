@@ -481,8 +481,7 @@
     },
     "letter": {
       "heading_html": "Surat dari <b>founder</b> kami.",
-      "greeting": "Hi,",
-      "greeting_named": "Hi {{ name }},",
+      "greeting": "Halo, Para Customer Treelogy",
       "body_html": "Bulan Agustus lalu saya menulis bahwa harga<br>kami berubah mulai 1 September, dan bahwa<br>untuk kamu yang sudah lebih dulu memesan,<br>harganya akan kami jaga.",
       "body2_html": "Hari ini harga baru sudah berlaku.<br>Dan ini yang saya janjikan.",
       "code_html": "Kode pribadi untuk kamu: <b>HARGATETAP</b>"

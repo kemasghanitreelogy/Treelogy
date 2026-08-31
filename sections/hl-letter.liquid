@@ -1,12 +1,4 @@
 {%- liquid
-  # Sapaan: desain email memakai merge tag "[First name]". Di halaman web tag
-  # itu tidak bisa dirender, jadi namanya diambil dari pelanggan yang sedang
-  # login; kalau tidak ada, jatuh ke sapaan tanpa nama.
-  assign greeting = 'harga_lama.letter.greeting' | t
-  if customer and customer.first_name != blank
-    assign greeting = 'harga_lama.letter.greeting_named' | t: name: customer.first_name
-  endif
-
   assign cta_label = 'harga_lama.cta_label' | t
   assign cta_target = section.settings.cta_url
   if cta_target == blank
@@ -24,7 +16,7 @@
   {%- render 'og-arrow' -%}
 
   <div class="hl-letter__body">
-    <p>{{ greeting }}</p>
+    <p>{{ 'harga_lama.letter.greeting' | t }}</p>
     <p>{{ 'harga_lama.letter.body_html' | t }}</p>
     <p>{{ 'harga_lama.letter.body2_html' | t }}</p>
   </div>
