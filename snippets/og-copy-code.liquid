@@ -158,8 +158,12 @@
     transform: scale(1);
   }
 
+  /* Lantai ukuran font: seluruh halaman menskala proporsional dari kanvas
+     1200px, jadi di HP 390px teks pil bisa jatuh ke ~10px. Komponen ini bukan
+     bagian klon Figma, jadi boleh punya batas bawah sendiri supaya tetap
+     terbaca — teks surat di sekitarnya sengaja TIDAK diubah. */
   .og-copy__label {
-    font-size: calc(32 * var(--og-u));
+    font-size: max(11px, calc(32 * var(--og-u)));
     font-weight: 400;
     letter-spacing: 0.02em;
     color: color-mix(in srgb, var(--og-ink) 58%, transparent);
@@ -173,7 +177,7 @@
   }
 
   .og-copy__value {
-    font-size: calc(38 * var(--og-u));
+    font-size: max(14px, calc(38 * var(--og-u)));
     font-weight: 700;
     letter-spacing: 0.09em;
     white-space: nowrap;
@@ -184,8 +188,8 @@
   }
 
   .og-copy__glyph {
-    width: calc(34 * var(--og-u));
-    height: calc(34 * var(--og-u));
+    width: max(14px, calc(34 * var(--og-u)));
+    height: max(14px, calc(34 * var(--og-u)));
     flex: none;
     color: color-mix(in srgb, var(--og-ink) 45%, transparent);
     transition: color 220ms ease;
@@ -239,7 +243,7 @@
     align-items: center;
     gap: calc(12 * var(--og-u));
     margin: calc(20 * var(--og-u)) 0 0;
-    font-size: calc(30 * var(--og-u));
+    font-size: max(12px, calc(30 * var(--og-u)));
     font-weight: 400;
     line-height: 1.35;
     letter-spacing: 0.01em;
@@ -247,8 +251,8 @@
   }
 
   .og-copy__note-icon {
-    width: calc(30 * var(--og-u));
-    height: calc(30 * var(--og-u));
+    width: max(12px, calc(30 * var(--og-u)));
+    height: max(12px, calc(30 * var(--og-u)));
     flex: none;
     color: var(--og-accent);
   }
