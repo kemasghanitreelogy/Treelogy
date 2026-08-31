@@ -89,7 +89,8 @@
         "social_whatsapp": "https://wa.me/6281139603993",
         "copyright": "© Treelogy 2026. All Rights Reserved.",
         "background_color": "#2A3B34",
-        "text_color": "#F8F8F2"
+        "text_color": "#F8F8F2",
+        "force_id": true
       }
     }
   },
