@@ -9,6 +9,7 @@
   Tombol halaman ini selalu mendarat di storefront /id — lihat snippets/og-id-url.
 {%- endcomment -%}
 {%- capture cta_url -%}{%- render 'og-id-url', url: cta_target -%}{%- endcapture -%}
+{%- assign cta_url = cta_url | strip -%}
 <section class="ht-lede og-section">
   <h1 class="ht-lede__heading">{{ 'hari_terakhir.lede.heading' | t }}</h1>
 

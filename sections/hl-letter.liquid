@@ -17,6 +17,7 @@
   Tombol halaman ini selalu mendarat di storefront /id — lihat snippets/og-id-url.
 {%- endcomment -%}
 {%- capture cta_url -%}{%- render 'og-id-url', url: cta_target -%}{%- endcapture -%}
+{%- assign cta_url = cta_url | strip -%}
 <section class="hl-letter og-section">
   <h1 class="hl-letter__heading">{{ 'harga_lama.letter.heading_html' | t }}</h1>
 
