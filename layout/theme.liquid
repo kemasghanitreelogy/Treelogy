@@ -1084,6 +1084,14 @@
         assign is_chromeless = true
         assign chromeless_bg = '#ffffff'
       endif
+      if template == 'page.harga-lama'
+        assign is_chromeless = true
+        assign chromeless_bg = '#ffffff'
+      endif
+      if template == 'page.hari-terakhir'
+        assign is_chromeless = true
+        assign chromeless_bg = '#ffffff'
+      endif
     -%}
     {%- if is_chromeless -%}
       <style>

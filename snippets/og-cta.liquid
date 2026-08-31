@@ -1,0 +1,22 @@
+{% doc %}
+  Tombol pil hijau gelap dari desain email Treelogy (radius 150, padding 22/60,
+  teks 45px). Dipakai halaman harga-lama & hari-terakhir.
+
+  Label WAJIB sudah diterjemahkan oleh pemanggil (`... | t`), supaya kunci
+  locale-nya tetap terlihat statis oleh gerbang QA i18n.
+
+  @param {string} label - teks tombol yang sudah lewat filter `t`
+  @param {string} url - tujuan; pemanggil merakitnya dari `routes.*` atau setting
+  @param {number} [width] - lebar tetap dalam satuan desain 1200px; kosong = ikut isi
+
+  @example
+  {% render 'og-cta', label: 'harga_lama.cta_label' | t, url: shop_url, width: 726 %}
+{% enddoc %}
+
+<a
+  class="og-cta{% if width %} og-cta--fixed{% endif %}"
+  href="{{ url }}"
+  {% if width %}style="--og-cta-w: calc({{ width }} * var(--og-u));"{% endif %}
+>
+  {{- label -}}
+</a>

@@ -3,7 +3,7 @@
     class="og-footer"
     style="--og-footer-bg: {{ section.settings.background_color }}; --og-footer-ink: {{ section.settings.text_color }};"
   >
-    <nav class="og-footer__nav" aria-label="Footer">
+    <nav class="og-footer__nav" aria-label="{{ 'oil_guide.footer.aria_label' | t }}">
       <a href="{{ routes.all_products_collection_url }}">{{ 'oil_guide.footer.shop' | t }}</a>
       <a href="{{ pages['moringa-tree'].url }}">{{ 'oil_guide.footer.moringa_tree' | t }}</a>
       <a href="{{ pages['benefit'].url }}">{{ 'oil_guide.footer.benefits' | t }}</a>

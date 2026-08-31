@@ -1,0 +1,27 @@
+{% doc %}
+  Kartu hero desain email: gambar 1151x670 dengan sudut 30 (satuan desain
+  1200px). Gambarnya adalah hasil export utuh dari Figma, jadi tidak ada teks
+  yang ditanam di dalam markup.
+
+  @param {object} image - objek image dari `section.settings`
+  @param {string} alt - alt text yang sudah lewat filter `t`
+
+  @example
+  {% render 'og-hero-card', image: section.settings.image, alt: hero_alt %}
+{% enddoc %}
+
+<div class="og-hero-card">
+  {%- if image -%}
+    {{
+      image
+      | image_url: width: 2302
+      | image_tag:
+        widths: '575, 863, 1151, 1726, 2302',
+        sizes: '(min-width: 600px) 576px, 96vw',
+        loading: 'eager',
+        fetchpriority: 'high',
+        class: 'og-hero-card__img',
+        alt: alt
+    }}
+  {%- endif -%}
+</div>

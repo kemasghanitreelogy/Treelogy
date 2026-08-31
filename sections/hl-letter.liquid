@@ -1,0 +1,110 @@
+{%- liquid
+  # Sapaan: desain email memakai merge tag "[First name]". Di halaman web tag
+  # itu tidak bisa dirender, jadi namanya diambil dari pelanggan yang sedang
+  # login; kalau tidak ada, jatuh ke sapaan tanpa nama.
+  assign greeting = 'harga_lama.letter.greeting' | t
+  if customer and customer.first_name != blank
+    assign greeting = 'harga_lama.letter.greeting_named' | t: name: customer.first_name
+  endif
+
+  assign cta_label = 'harga_lama.cta_label' | t
+  assign cta_url = section.settings.cta_url
+  if cta_url == blank
+    assign cta_url = routes.all_products_collection_url
+  endif
+-%}
+<section class="hl-letter og-section">
+  <h1 class="hl-letter__heading">{{ 'harga_lama.letter.heading_html' | t }}</h1>
+
+  {%- render 'og-arrow' -%}
+
+  <div class="hl-letter__body">
+    <p>{{ greeting }}</p>
+    <p>{{ 'harga_lama.letter.body_html' | t }}</p>
+    <p>{{ 'harga_lama.letter.body2_html' | t }}</p>
+  </div>
+
+  <p class="hl-letter__code">{{ 'harga_lama.letter.code_html' | t }}</p>
+
+  <div class="hl-letter__cta">
+    {%- render 'og-cta', label: cta_label, url: cta_url, width: 726 -%}
+  </div>
+
+  {%- render 'og-arrow' -%}
+</section>
+
+{% style %}
+  .hl-letter {
+    padding-top: calc(122 * var(--og-u));
+    text-align: center;
+    color: var(--og-ink);
+  }
+
+  .hl-letter__heading {
+    width: calc(886 * var(--og-u));
+    margin: 0 auto;
+    font-size: calc(64 * var(--og-u));
+    font-weight: 400;
+    line-height: normal;
+  }
+
+  .hl-letter__heading b,
+  .hl-letter__heading strong {
+    font-weight: 700;
+  }
+
+  .hl-letter__body {
+    width: calc(990 * var(--og-u));
+    margin: var(--og-gap-block) auto 0;
+    font-size: var(--og-fs-lead);
+    line-height: normal;
+  }
+
+  .hl-letter__body p {
+    margin: 0 0 var(--og-gap-block);
+  }
+
+  .hl-letter__body p:last-child {
+    margin-bottom: 0;
+  }
+
+  .hl-letter__code {
+    width: calc(920 * var(--og-u));
+    margin: var(--og-gap-block) auto 0;
+    font-size: var(--og-fs-lead);
+    font-weight: 400;
+    line-height: normal;
+  }
+
+  .hl-letter__code b,
+  .hl-letter__code strong {
+    font-weight: 700;
+  }
+
+  .hl-letter__cta {
+    margin-top: var(--og-gap-block);
+  }
+
+  .hl-letter .og-arrow {
+    margin-top: var(--og-gap-block);
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "HL Letter",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Tujuan tombol (kosong = katalog semua produk)"
+    }
+  ],
+  "presets": [
+    {
+      "name": "HL Letter"
+    }
+  ]
+}
+{% endschema %}

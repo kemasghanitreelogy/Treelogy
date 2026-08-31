@@ -1,0 +1,84 @@
+{%- liquid
+  assign cta_label = 'hari_terakhir.cta_label' | t
+  assign cta_url = section.settings.cta_url
+  if cta_url == blank
+    assign cta_url = routes.all_products_collection_url
+  endif
+-%}
+<section class="ht-promise og-section">
+  <div class="ht-promise__card">
+    <h2 class="ht-promise__heading">{{ 'hari_terakhir.promise.heading_html' | t }}</h2>
+
+    <p class="ht-promise__body">{{ 'hari_terakhir.promise.body_html' | t }}</p>
+    <p class="ht-promise__body">{{ 'hari_terakhir.promise.body2_html' | t }}</p>
+    <p class="ht-promise__body">{{ 'hari_terakhir.promise.body3_html' | t }}</p>
+
+    <div class="ht-promise__cta">
+      {%- render 'og-cta', label: cta_label, url: cta_url -%}
+    </div>
+  </div>
+</section>
+
+{% style %}
+  .ht-promise {
+    padding-bottom: var(--og-gap-block);
+    padding-top: calc(65 * var(--og-u));
+  }
+
+  .ht-promise__card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    width: calc(1152 * var(--og-u));
+    min-height: calc(1141 * var(--og-u));
+    margin-inline: auto;
+    padding: calc(107 * var(--og-u)) calc(123 * var(--og-u)) calc(116 * var(--og-u));
+    border-radius: var(--og-radius-card);
+    /* rgba(165,187,134,0.39) di Figma — aksen yang sama dengan --og-accent,
+       ditulis lewat color-mix supaya ikut kalau paletnya diubah di editor. */
+    background: color-mix(in srgb, var(--og-accent) 39%, transparent);
+    text-align: center;
+    color: var(--og-ink);
+  }
+
+  .ht-promise__heading {
+    /* Di Figma judul dan paragraf pertama satu blok teks, dipisah dua <br>
+       yang masih memakai ukuran 60px — jadi jaraknya setinggi satu baris 60px,
+       bukan jarak antar-paragraf 85. */
+    margin: 0 0 calc(72 * var(--og-u));
+    font-size: var(--og-fs-title);
+    font-weight: 700;
+    line-height: normal;
+  }
+
+  .ht-promise__body {
+    margin: 0 0 calc(85 * var(--og-u));
+    font-size: var(--og-fs-lead);
+    font-weight: 400;
+    line-height: normal;
+  }
+
+  .ht-promise__cta {
+    margin-top: auto;
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "HT Promise",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Tujuan tombol (kosong = katalog semua produk)"
+    }
+  ],
+  "presets": [
+    {
+      "name": "HT Promise"
+    }
+  ]
+}
+{% endschema %}

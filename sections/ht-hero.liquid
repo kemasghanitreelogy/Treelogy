@@ -1,0 +1,31 @@
+{%- liquid
+  assign hero_alt = 'hari_terakhir.hero.image_alt' | t
+-%}
+<section class="ht-hero og-section">
+  {%- render 'og-hero-card', image: section.settings.image, alt: hero_alt -%}
+</section>
+
+{% style %}
+  .ht-hero {
+    padding-top: calc(36 * var(--og-u));
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "HT Hero",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Gambar hero (export Figma 1151x670)"
+    }
+  ],
+  "presets": [
+    {
+      "name": "HT Hero"
+    }
+  ]
+}
+{% endschema %}

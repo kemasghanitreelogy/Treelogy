@@ -73,6 +73,58 @@
     transform: rotate(90deg);
   }
 
+  /* --- Primitif desain email (harga-lama, hari-terakhir) -----------------
+     Kartu hero, pil CTA, dan panah pemisah dipakai lebih dari satu halaman,
+     jadi definisinya tinggal di sini — satu-satunya section yang PASTI ada di
+     setiap halaman keluarga og-*. Menaruhnya di section masing-masing berarti
+     CSS yang sama dikirim dua kali. */
+  .og-hero-card {
+    width: calc(1151 * var(--og-u));
+    margin-inline: auto;
+    aspect-ratio: 1151 / 670;
+    overflow: hidden;
+    border-radius: var(--og-radius-hero);
+    background: linear-gradient(180deg, #f9f9f9 0%, #f8f8fa 29.463%, #e6e1de 100%);
+  }
+
+  .og-hero-card__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .og-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: calc(22 * var(--og-u)) calc(60 * var(--og-u));
+    border-radius: calc(150 * var(--og-u));
+    background: var(--og-ink);
+    color: var(--og-bg);
+    font-family: var(--og-font);
+    font-size: var(--og-fs-lead);
+    font-weight: 400;
+    line-height: normal;
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .og-cta--fixed {
+    width: var(--og-cta-w);
+  }
+
+  .og-cta:hover,
+  .og-cta:focus-visible {
+    opacity: 0.9;
+  }
+
+  .og-arrow--flow {
+    margin-bottom: 0;
+  }
+
   .og-visually-hidden {
     position: absolute;
     width: 1px;

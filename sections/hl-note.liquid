@@ -1,0 +1,92 @@
+{%- liquid
+  # Satu section untuk dua blok berjudul yang bentuknya identik di Figma
+  # ("How It Works" dan "Best Use") — pola yang sama dipakai og-statement.
+  # Kunci locale-nya sengaja ditulis UTUH di dalam markup, bukan dirakit dari
+  # setting: kunci yang lahir saat runtime tidak bisa diperiksa statis oleh
+  # gerbang QA i18n, jadi terjemahan yang hilang baru ketahuan di storefront.
+  assign is_best = false
+  if section.settings.content_key == 'best'
+    assign is_best = true
+  endif
+-%}
+<section class="hl-note og-section">
+  <h2 class="hl-note__title">
+    {%- if is_best -%}
+      {{ 'harga_lama.best.title' | t }}
+    {%- else -%}
+      {{ 'harga_lama.how.title' | t }}
+    {%- endif -%}
+  </h2>
+
+  <p class="hl-note__body">
+    {%- if is_best -%}
+      {{ 'harga_lama.best.body_html' | t }}
+    {%- else -%}
+      {{ 'harga_lama.how.body_html' | t }}
+    {%- endif -%}
+  </p>
+
+  {%- if section.settings.show_arrow -%}
+    {%- render 'og-arrow' -%}
+  {%- endif -%}
+</section>
+
+{% style %}
+  .hl-note {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: var(--og-gap-block);
+    text-align: center;
+    color: var(--og-ink);
+  }
+
+  .hl-note__title {
+    margin: 0;
+    font-size: calc(72 * var(--og-u));
+    font-weight: 500;
+    line-height: 1.21;
+  }
+
+  .hl-note__body {
+    width: calc(887 * var(--og-u));
+    margin: calc(50 * var(--og-u)) 0 0;
+    font-size: var(--og-fs-lead);
+    font-weight: 400;
+    line-height: 1.25;
+  }
+
+  .hl-note .og-arrow {
+    margin-top: var(--og-gap-block);
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "HL Note",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "select",
+      "id": "content_key",
+      "label": "Konten",
+      "options": [
+        { "value": "how", "label": "How It Works" },
+        { "value": "best", "label": "Best Use" }
+      ],
+      "default": "how"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrow",
+      "label": "Panah di bawah blok",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "HL Note"
+    }
+  ]
+}
+{% endschema %}

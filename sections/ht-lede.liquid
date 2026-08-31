@@ -1,0 +1,69 @@
+{%- liquid
+  assign cta_label = 'hari_terakhir.cta_label' | t
+  assign cta_url = section.settings.cta_url
+  if cta_url == blank
+    assign cta_url = routes.all_products_collection_url
+  endif
+-%}
+<section class="ht-lede og-section">
+  <h1 class="ht-lede__heading">{{ 'hari_terakhir.lede.heading' | t }}</h1>
+
+  <p class="ht-lede__body">{{ 'hari_terakhir.lede.body_html' | t }}</p>
+
+  <div class="ht-lede__cta">
+    {%- render 'og-cta', label: cta_label, url: cta_url -%}
+  </div>
+
+  {%- render 'og-arrow' -%}
+</section>
+
+{% style %}
+  .ht-lede {
+    padding-top: calc(85 * var(--og-u));
+    text-align: center;
+  }
+
+  .ht-lede__heading {
+    margin: 0;
+    font-size: calc(70 * var(--og-u));
+    font-weight: 400;
+    line-height: normal;
+    color: var(--og-ink);
+  }
+
+  .ht-lede__body {
+    width: calc(888 * var(--og-u));
+    margin: calc(60 * var(--og-u)) auto 0;
+    font-size: calc(45 * var(--og-u));
+    font-weight: 400;
+    line-height: normal;
+    color: var(--og-ink);
+  }
+
+  .ht-lede__cta {
+    margin-top: calc(85 * var(--og-u));
+  }
+
+  .ht-lede .og-arrow {
+    margin-top: calc(65 * var(--og-u));
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "HT Lede",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Tujuan tombol (kosong = katalog semua produk)"
+    }
+  ],
+  "presets": [
+    {
+      "name": "HT Lede"
+    }
+  ]
+}
+{% endschema %}

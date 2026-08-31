@@ -1,0 +1,43 @@
+<section class="hl-closing og-section">
+  <p class="hl-closing__body">{{ 'harga_lama.closing.body_html' | t }}</p>
+  <p class="hl-closing__body">{{ 'harga_lama.closing.sign_html' | t }}</p>
+  <p class="hl-closing__ps">{{ 'harga_lama.closing.ps_html' | t }}</p>
+</section>
+
+{% style %}
+  .hl-closing {
+    padding-bottom: var(--og-gap-block);
+    width: calc(920 * var(--og-u));
+    margin-inline: auto;
+    padding-top: var(--og-gap-block);
+    text-align: center;
+    color: var(--og-ink);
+  }
+
+  .hl-closing__body {
+    margin: 0 0 var(--og-gap-block);
+    font-size: var(--og-fs-lead);
+    font-weight: 400;
+    line-height: normal;
+  }
+
+  .hl-closing__ps {
+    margin: 0;
+    font-size: var(--og-fs-sub);
+    font-weight: 400;
+    line-height: normal;
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "HL Closing",
+  "tag": "div",
+  "settings": [],
+  "presets": [
+    {
+      "name": "HL Closing"
+    }
+  ]
+}
+{% endschema %}

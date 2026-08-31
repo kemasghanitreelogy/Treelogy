@@ -1,0 +1,121 @@
+{%- liquid
+  assign cta_label = 'harga_lama.cta_label' | t
+  assign cta_url = section.settings.cta_url
+  if cta_url == blank
+    assign cta_url = routes.all_products_collection_url
+  endif
+-%}
+<section class="hl-faq og-section">
+  <div class="hl-faq__card">
+    <h2 class="hl-faq__title">{{ 'harga_lama.faq.title' | t }}</h2>
+
+    <div class="hl-faq__items">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign key_base = 'harga_lama.faq.' | append: block.settings.item_id
+          assign q_key = key_base | append: '_q_html'
+          assign a_key = key_base | append: '_a_html'
+        -%}
+        <p class="hl-faq__item" {{ block.shopify_attributes }}>
+          <b>{{ q_key | t }}</b><br>{{ a_key | t }}
+        </p>
+      {%- endfor -%}
+    </div>
+
+    <div class="hl-faq__cta">
+      {%- render 'og-cta', label: cta_label, url: cta_url, width: 714 -%}
+    </div>
+  </div>
+</section>
+
+{% style %}
+  .hl-faq {
+    padding-top: var(--og-gap-block);
+  }
+
+  .hl-faq__card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    width: calc(1037 * var(--og-u));
+    min-height: calc(1238 * var(--og-u));
+    margin-inline: auto;
+    padding: calc(65 * var(--og-u)) calc(52 * var(--og-u)) calc(87 * var(--og-u));
+    border-radius: calc(32 * var(--og-u));
+    background: #dae3cb;
+    text-align: center;
+    color: var(--og-ink);
+  }
+
+  .hl-faq__title {
+    margin: 0;
+    font-size: calc(72 * var(--og-u));
+    font-weight: 500;
+    line-height: 1.21;
+  }
+
+  .hl-faq__items {
+    width: calc(932 * var(--og-u));
+    margin-top: calc(32 * var(--og-u));
+  }
+
+  .hl-faq__item {
+    margin: 0 0 var(--og-gap-block);
+    font-size: var(--og-fs-lead);
+    font-weight: 400;
+    line-height: 1.25;
+  }
+
+  .hl-faq__item:last-child {
+    margin-bottom: 0;
+  }
+
+  .hl-faq__item b {
+    font-weight: 700;
+  }
+
+  .hl-faq__cta {
+    margin-top: auto;
+    padding-top: var(--og-gap-block);
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "HL FAQ",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Tujuan tombol (kosong = katalog semua produk)"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Pertanyaan",
+      "settings": [
+        {
+          "type": "text",
+          "id": "item_id",
+          "label": "Kunci locale (q1, q2, q3)",
+          "info": "Teksnya diambil dari harga_lama.faq.<kunci>_q_html dan _a_html",
+          "default": "q1"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "HL FAQ",
+      "blocks": [
+        { "type": "item", "settings": { "item_id": "q1" } },
+        { "type": "item", "settings": { "item_id": "q2" } },
+        { "type": "item", "settings": { "item_id": "q3" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
