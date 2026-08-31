@@ -22,15 +22,20 @@
 {%- liquid
   assign path = url | strip
 
-  # buang prefix locale pengunjung dulu (routes.root_url = '/id' di storefront ID)
-  if routes.root_url != '/'
-    assign path = path | remove_first: routes.root_url
-  endif
+  # URL absolut dibiarkan utuh — dan pemeriksaannya HARUS di depan. Kalau
+  # remove_first jalan lebih dulu, "https://treelogy.com/id/pages/x" kehilangan
+  # "/id" di tengahnya saat pengunjung sedang di storefront ID.
+  unless path contains '://'
+    # buang prefix locale pengunjung dulu (routes.root_url = '/id' di storefront ID)
+    if routes.root_url != '/'
+      assign path = path | remove_first: routes.root_url
+    endif
 
-  assign head = path | slice: 0, 4
-  if path contains '://' or head == '/id/'
-    echo path
-  else
-    echo '/id' | append: path
-  endif
+    assign head = path | slice: 0, 4
+    unless head == '/id/' or path == '/id'
+      assign path = '/id' | append: path
+    endunless
+  endunless
+
+  echo path
 -%}
