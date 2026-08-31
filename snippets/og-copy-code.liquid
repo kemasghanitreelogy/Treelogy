@@ -1,118 +1,206 @@
 {% doc %}
-  Kartu kode diskon yang bisa disalin sekali ketuk.
+  Pil kode diskon sekali-ketuk-salin. Ringkas: label, kode, dan ikon hidup di
+  SATU baris — bukan tiga baris bertumpuk — supaya tidak memakan ruang vertikal
+  di tengah surat.
 
   Semua teks diterima SUDAH diterjemahkan oleh pemanggil (`... | t`), supaya
   kunci locale-nya tetap terlihat statis oleh gerbang QA i18n.
 
-  Aksesibilitas (checklist ui-ux-pro-max):
-  - `<button>` beneran, bukan div — jadi bisa di-Tab dan ditekan Enter/Space.
-  - Target sentuh minimal 44px sungguhan, bukan hanya di kanvas desain.
-  - `:focus-visible` punya cincin fokus sendiri, tidak dihapus tanpa ganti.
-  - Status hasil salin diumumkan lewat `role="status"` (aria-live polite), dan
-    tingginya dikunci supaya teksnya berubah tanpa menggeser layout.
-  - Warna bukan satu-satunya penanda: ikon berubah jadi centang DAN teks status
-    berubah.
+  Hierarki visual: pil ini bergaris (sekunder), tombol belanja di bawahnya
+  terisi penuh (primer) — jadi keduanya tidak berebut perhatian.
 
-  Gerak: port dari rule `press-release-spring` (HyperFrames) ke CSS —
-  tekan = kompresi linear cepat, lepas = pegas `back.out` dengan overshoot,
-  ditambah burst ring di belakang chip saat berhasil. Hanya `transform` dan
-  `opacity` yang dianimasikan (tidak pernah width/height/top/left), dan semua
-  gerak mati di `prefers-reduced-motion`.
+  Trik lebar tetap: kedua "wajah" (idle & tersalin) ditumpuk di sel grid yang
+  sama, jadi lebar pil = wajah terlebar dan TIDAK PERNAH bergeser saat teksnya
+  berganti. Lebarnya ditentukan sekali oleh layout, bukan diukur ulang lewat JS.
+
+  Aksesibilitas (checklist ui-ux-pro-max):
+  - `<button>` beneran — bisa di-Tab, ditekan Enter/Space.
+  - Target sentuh nyata minimal 44px, walau kanvas desain menyusut di HP.
+  - `:focus-visible` punya cincin fokus sendiri.
+  - Hasil salin diumumkan lewat live region tersembunyi (wajah "tersalin"
+    sendiri `aria-hidden`, supaya tidak dibaca dobel).
+  - Warna bukan satu-satunya penanda: ikon DAN teks sama-sama berubah.
+
+  Gerak: port rule `press-release-spring` (HyperFrames) ke CSS — tekan =
+  kompresi linear cepat, lepas = pegas `back.out` dengan overshoot, plus satu
+  ring halus saat berhasil. Hanya `transform`/`opacity`, mati total di
+  `prefers-reduced-motion`.
 
   @param {string} code - kode diskon, mis. "HARGATETAP"
+  @param {string} label - label pendek di dalam pil, mis. "Kode pribadi"
   @param {string} aria - label tombol untuk screen reader
-  @param {string} hint - status awal, mis. "Ketuk untuk menyalin"
-  @param {string} copied - status setelah berhasil
-  @param {string} manual - status kalau clipboard ditolak peramban
+  @param {string} hint - tooltip judul, mis. "Ketuk untuk menyalin"
+  @param {string} copied - teks saat berhasil
+  @param {string} manual - teks saat peramban menolak menyalin
 
   @example
-  {% render 'og-copy-code', code: code, aria: aria, hint: hint, copied: copied, manual: manual %}
+  {% render 'og-copy-code', code: code, label: label, aria: aria, hint: hint, copied: copied, manual: manual %}
 {% enddoc %}
 
 <copy-code
   class="og-copy"
   data-code="{{ code | escape }}"
-  data-hint="{{ hint | escape }}"
   data-copied="{{ copied | escape }}"
   data-manual="{{ manual | escape }}"
 >
-  <button type="button" class="og-copy__btn" aria-label="{{ aria }}">
-    <span class="og-copy__burst" aria-hidden="true"></span>
-    <span class="og-copy__value">{{ code }}</span>
-    <span class="og-copy__icon" aria-hidden="true">
-      <svg class="og-copy__glyph og-copy__glyph--copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <button type="button" class="og-copy__btn" aria-label="{{ aria }}" title="{{ hint }}">
+    <span class="og-copy__ring" aria-hidden="true"></span>
+
+    <span class="og-copy__face og-copy__face--idle">
+      <span class="og-copy__label">{{ label }}</span>
+      <span class="og-copy__sep" aria-hidden="true"></span>
+      <span class="og-copy__value">{{ code }}</span>
+      <svg class="og-copy__glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <rect x="9" y="9" width="12" height="12" rx="2.5"></rect>
         <path d="M6 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V6"></path>
       </svg>
-      <svg class="og-copy__glyph og-copy__glyph--check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    </span>
+
+    <span class="og-copy__face og-copy__face--done" aria-hidden="true">
+      <svg class="og-copy__glyph og-copy__glyph--check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         <path class="og-copy__tick" d="M4.5 12.5 9.5 17.5 19.5 6.5"></path>
       </svg>
+      <span class="og-copy__value og-copy__value--done">{{ copied }}</span>
     </span>
   </button>
 
-  <p class="og-copy__status" role="status" aria-live="polite">{{ hint }}</p>
+  <span class="og-copy__live og-visually-hidden" role="status" aria-live="polite"></span>
 </copy-code>
 
 {% style %}
   .og-copy {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: block;
+    text-align: center;
   }
 
   .og-copy__btn {
     position: relative;
-    display: inline-flex;
+    display: inline-grid;
     align-items: center;
-    justify-content: center;
-    gap: calc(28 * var(--og-u));
     box-sizing: border-box;
-    /* target sentuh nyata >= 44px, bukan cuma 44 satuan kanvas */
-    min-height: max(44px, calc(104 * var(--og-u)));
-    padding: calc(22 * var(--og-u)) calc(48 * var(--og-u));
-    border: max(1.5px, calc(3 * var(--og-u))) solid var(--og-ink);
-    border-radius: calc(24 * var(--og-u));
+    min-height: max(44px, calc(84 * var(--og-u)));
+    padding: calc(16 * var(--og-u)) calc(40 * var(--og-u));
+    border: 1px solid color-mix(in srgb, var(--og-ink) 22%, transparent);
+    border-radius: 999px;
     background: #ffffff;
     color: var(--og-ink);
     font-family: var(--og-font);
-    font-size: var(--og-fs-lead);
-    font-weight: 700;
     line-height: 1;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     /* lepas = pegas back.out(1.7); ditimpa jadi kompresi linear saat :active */
     transition:
       transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1),
-      background-color 200ms ease,
-      border-color 200ms ease;
+      border-color 220ms ease,
+      background-color 220ms ease,
+      box-shadow 220ms ease;
   }
 
   .og-copy__btn:hover {
-    background: var(--og-cream);
+    border-color: color-mix(in srgb, var(--og-ink) 45%, transparent);
+    box-shadow: 0 calc(2 * var(--og-u)) calc(14 * var(--og-u)) rgba(42, 59, 52, 0.08);
   }
 
   .og-copy__btn:focus-visible {
-    outline: max(2px, calc(4 * var(--og-u))) solid var(--og-accent);
-    outline-offset: calc(6 * var(--og-u));
+    outline: max(2px, calc(3 * var(--og-u))) solid var(--og-accent);
+    outline-offset: calc(5 * var(--og-u));
   }
 
   .og-copy__btn:active {
-    transform: scale(0.965);
+    transform: scale(0.972);
     transition-duration: 90ms;
     transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
   }
 
   .og-copy.is-copied .og-copy__btn {
-    background: color-mix(in srgb, var(--og-accent) 26%, #ffffff);
     border-color: var(--og-accent);
+    background: color-mix(in srgb, var(--og-accent) 16%, #ffffff);
+  }
+
+  /* dua wajah menumpuk di satu sel: lebar pil = wajah terlebar, anti-geser */
+  .og-copy__face {
+    grid-area: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: calc(20 * var(--og-u));
+    transition:
+      opacity 200ms ease,
+      transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .og-copy__face--done {
+    opacity: 0;
+    transform: scale(0.86);
+    color: #2f6b3f;
+  }
+
+  .og-copy.is-copied .og-copy__face--idle {
+    opacity: 0;
+    transform: scale(0.86);
+  }
+
+  .og-copy.is-copied .og-copy__face--done {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .og-copy__label {
+    font-size: calc(32 * var(--og-u));
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    color: color-mix(in srgb, var(--og-ink) 58%, transparent);
+    white-space: nowrap;
+  }
+
+  .og-copy__sep {
+    width: 1px;
+    height: calc(34 * var(--og-u));
+    background: color-mix(in srgb, var(--og-ink) 20%, transparent);
   }
 
   .og-copy__value {
-    letter-spacing: 0.05em;
+    font-size: calc(38 * var(--og-u));
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    white-space: nowrap;
   }
 
-  /* burst ring di BELAKANG chip, footprint sama, hanya transform + opacity */
-  .og-copy__burst {
+  .og-copy__value--done {
+    letter-spacing: 0.02em;
+  }
+
+  .og-copy__glyph {
+    width: calc(34 * var(--og-u));
+    height: calc(34 * var(--og-u));
+    flex: none;
+    color: color-mix(in srgb, var(--og-ink) 45%, transparent);
+    transition: color 220ms ease;
+  }
+
+  .og-copy__btn:hover .og-copy__glyph {
+    color: var(--og-ink);
+  }
+
+  .og-copy__glyph--check {
+    color: #2f6b3f;
+  }
+
+  .og-copy__tick {
+    stroke-dasharray: 24;
+    stroke-dashoffset: 24;
+  }
+
+  .og-copy.is-copied .og-copy__tick {
+    animation: og-copy-tick 300ms cubic-bezier(0.65, 0, 0.35, 1) 80ms forwards;
+  }
+
+  @keyframes og-copy-tick {
+    to { stroke-dashoffset: 0; }
+  }
+
+  /* ring halus di belakang pil, hanya transform + opacity */
+  .og-copy__ring {
     position: absolute;
     inset: 0;
     z-index: -1;
@@ -122,90 +210,23 @@
     transform: scale(1);
   }
 
-  .og-copy.is-copied .og-copy__burst {
-    animation: og-copy-burst 560ms cubic-bezier(0.22, 1, 0.36, 1) 1;
+  .og-copy.is-copied .og-copy__ring {
+    animation: og-copy-ring 620ms cubic-bezier(0.22, 1, 0.36, 1) 1;
   }
 
-  @keyframes og-copy-burst {
-    0% { opacity: 0.45; transform: scale(1); }
-    100% { opacity: 0; transform: scale(1.22); }
-  }
-
-  .og-copy__icon {
-    position: relative;
-    display: inline-flex;
-    width: calc(44 * var(--og-u));
-    height: calc(44 * var(--og-u));
-    flex: none;
-  }
-
-  .og-copy__glyph {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    transition:
-      opacity 180ms ease,
-      transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  .og-copy__glyph--check {
-    opacity: 0;
-    transform: scale(0.4);
-    color: #2f6b3f;
-  }
-
-  .og-copy.is-copied .og-copy__glyph--copy {
-    opacity: 0;
-    transform: scale(0.6);
-  }
-
-  .og-copy.is-copied .og-copy__glyph--check {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  /* centang digambar, bukan muncul begitu saja */
-  .og-copy__tick {
-    stroke-dasharray: 24;
-    stroke-dashoffset: 24;
-  }
-
-  .og-copy.is-copied .og-copy__tick {
-    animation: og-copy-tick 320ms cubic-bezier(0.65, 0, 0.35, 1) 90ms forwards;
-  }
-
-  @keyframes og-copy-tick {
-    to { stroke-dashoffset: 0; }
-  }
-
-  /* tinggi dikunci: teks status berganti tanpa menggeser apa pun di bawahnya */
-  .og-copy__status {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: calc(64 * var(--og-u));
-    margin: 0;
-    font-size: var(--og-fs-small);
-    font-weight: 400;
-    line-height: 1.3;
-    color: color-mix(in srgb, var(--og-ink) 65%, transparent);
-    transition: color 200ms ease;
-  }
-
-  .og-copy.is-copied .og-copy__status {
-    color: #2f6b3f;
-    font-weight: 700;
+  @keyframes og-copy-ring {
+    0% { opacity: 0.3; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.18); }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .og-copy__btn,
-    .og-copy__glyph,
-    .og-copy__status {
+    .og-copy__face,
+    .og-copy__glyph {
       transition: none;
     }
 
-    .og-copy.is-copied .og-copy__burst,
+    .og-copy.is-copied .og-copy__ring,
     .og-copy.is-copied .og-copy__tick {
       animation: none;
     }
@@ -223,8 +244,8 @@
       class extends HTMLElement {
         connectedCallback() {
           this.btn = this.querySelector('.og-copy__btn');
-          this.status = this.querySelector('.og-copy__status');
-          if (!this.btn || !this.status) return;
+          this.live = this.querySelector('.og-copy__live');
+          if (!this.btn) return;
           this.btn.addEventListener('click', () => this.copy());
         }
 
@@ -267,16 +288,16 @@
         report(ok) {
           this.classList.remove('is-copied');
           if (ok) {
-            /* reflow sekali supaya animasi burst/centang bisa diputar ulang */
+            /* reflow sekali supaya ring & centang bisa diputar ulang */
             void this.offsetWidth;
             this.classList.add('is-copied');
           }
-          this.status.textContent = ok ? this.dataset.copied : this.dataset.manual;
+          if (this.live) this.live.textContent = ok ? this.dataset.copied : this.dataset.manual;
           clearTimeout(this.timer);
           this.timer = setTimeout(() => {
             this.classList.remove('is-copied');
-            this.status.textContent = this.dataset.hint;
-          }, 2800);
+            if (this.live) this.live.textContent = '';
+          }, 2600);
         }
       }
     );

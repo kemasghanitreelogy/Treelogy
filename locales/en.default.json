@@ -483,7 +483,11 @@
       "greeting": "Halo, Para Customer Treelogy",
       "body_html": "Bulan Agustus lalu saya menulis bahwa harga<br>kami berubah mulai 1 September, dan bahwa<br>untuk kamu yang sudah lebih dulu memesan,<br>harganya akan kami jaga.",
       "body2_html": "Hari ini harga baru sudah berlaku.<br>Dan ini yang saya janjikan.",
-      "code_html": "Kode pribadi untuk kamu: <b>HARGATETAP</b>"
+      "code_label": "Kode pribadi",
+      "code_hint": "Ketuk untuk menyalin kode",
+      "code_copied": "Kode tersalin",
+      "code_manual": "Peramban menolak menyalin — salin manual dari kotak di atas",
+      "code_copy_aria": "Salin kode diskon {{ code }}"
     },
     "cta_label": "Belanja dengan Harga Lama",
     "how": {
