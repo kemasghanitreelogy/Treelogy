@@ -305,14 +305,7 @@
                 {%- endif -%}
               </span>
               <span class="v2-plan__perk-text">{{ v2_perk_parts[0] | strip }}</span>
-              {%- comment -%}
-                Baris gratis ongkir tidak lagi memajang nilai tercoret. Ongkir
-                bukan barang yang pembeli terima, jadi angkanya membuat kartu
-                penuh angka coret tanpa menambah arti — beda dengan baris hadiah
-                yang nilainya memang barang. Datanya sengaja DIBIARKAN utuh di
-                metafield supaya bisa dihidupkan lagi tanpa menyunting 11 varian.
-              {%- endcomment -%}
-              {%- if v2_perk_parts.size > 1 and v2_perk_show_value and v2_perk_icon != 'ship' -%}
+              {%- if v2_perk_parts.size > 1 and v2_perk_show_value -%}
                 {%- assign v2_perk_value = v2_perk_parts[1] | strip -%}
                 {%- if v2_perk_money != blank -%}
                   {%- assign v2_perk_value = v2_perk_money -%}
@@ -1046,39 +1039,6 @@
 
     .v2-plan__main {
       gap: 6px;
-    }
-  }
-
-  /* ===== Kartu berlabel panjang di layar lebar (1 Sep) =====
-     Tata empat sudut lahir untuk 390px, tempat judul 18-26 karakter memang
-     tidak muat sebaris dengan badge. Di desktop ruangnya berlimpah, tapi
-     aturannya tetap berlaku sehingga badge terlempar ke pojok kanan dan kartu
-     bundel terlihat beda sendiri dari kartu Powder/Capsules. Di >=768px kepala
-     dikembalikan ke tiga kolom biasa: badge tepat di tengah, harga di kanan.
-     Di bawah itu tata empat sudut tetap dipakai apa adanya. */
-  @media screen and (min-width: 768px) {
-    .v2-plan.protocol-variant-card.checkbox-button:has(> .v2-plan__head--flow) {
-      display: block !important;
-    }
-    .v2-plan:has(> .v2-plan__head--flow) > .v2-plan__head--flow {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-      align-items: center;
-      gap: 8px;
-    }
-    .v2-plan:has(> .v2-plan__head--flow) .v2-plan__main,
-    .v2-plan:has(> .v2-plan__head--flow) .v2-plan__badge,
-    .v2-plan:has(> .v2-plan__head--flow) .v2-plan__prices {
-      grid-area: auto;
-    }
-    .v2-plan:has(> .v2-plan__head--flow) .v2-plan__badge {
-      justify-self: center;
-      align-self: center;
-    }
-    .v2-plan:has(> .v2-plan__head--flow) .v2-plan__prices {
-      justify-self: end;
-      align-self: center;
-      text-align: right;
     }
   }
 
