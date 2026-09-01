@@ -1095,7 +1095,7 @@
             "gift_2": "",
             "gift_2_label": "",
             "free_word": "GRATIS",
-            "show_free_shipping": false,
+            "show_free_shipping": true,
             "shipping_label": "Ongkos Kirim",
             "shipping_compare": "Rp 35.000",
             "promo_discount": 0,
