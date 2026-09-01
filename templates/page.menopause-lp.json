@@ -172,7 +172,7 @@
       "settings": {
         "show_save": true,
         "save_prefix": "Hemat hingga",
-        "save_amount": "Rp 170.000",
+        "save_amount": "Rp 220.000",
         "save_suffix": "Hari Ini",
         "badge": "Dukungan Menopause · Offer Terbatas",
         "pre_heading": "Jangan Lagi Pasrah Pada",
@@ -185,7 +185,7 @@
         "offer_perday": "Setara Rp 26.500 per hari",
         "offer_note": "Garansi 60 hari · Pengiriman ke seluruh Indonesia",
         "show_savings": false,
-        "savings_text": "Hemat Rp 170.000",
+        "savings_text": "Hemat Rp 220.000",
         "cta_label": "Mulai Protokol",
         "cta_url": "#pricing",
         "gallery_label": "Galeri produk"
@@ -979,7 +979,7 @@
             "show_free_shipping": true,
             "shipping_label": "Ongkos Kirim",
             "shipping_compare": "Rp 35.000",
-            "promo_discount": 170000,
+            "promo_discount": 220000,
             "days": 60,
             "per_day_label": "Setara",
             "gift_value_label": "Hadiah gratis senilai",
@@ -1013,7 +1013,7 @@
             "gift_2_icon": "gift",
             "shipping_icon": "truck",
             "per_day_suffix": "per hari",
-            "component_1_discounted": 590000,
+            "component_1_discounted": 645000,
             "component_2_discounted": 400000
           }
         },
@@ -1039,7 +1039,7 @@
             "show_free_shipping": true,
             "shipping_label": "Ongkos Kirim",
             "shipping_compare": "Rp 35.000",
-            "promo_discount": 125000,
+            "promo_discount": 115000,
             "days": 30,
             "per_day_label": "Setara",
             "gift_value_label": "Hadiah gratis senilai",
