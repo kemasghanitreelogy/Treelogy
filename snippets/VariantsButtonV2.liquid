@@ -305,7 +305,18 @@
                 {%- endif -%}
               </span>
               <span class="v2-plan__perk-text">{{ v2_perk_parts[0] | strip }}</span>
-              {%- if v2_perk_parts.size > 1 and v2_perk_show_value -%}
+              {%- comment -%}
+                Kartu berlabel panjang memakai tata "empat sudut": blok harga
+                duduk di pojok kanan-BAWAH, sebaris dengan manfaat terakhir.
+                Nilai perk juga rata kanan, jadi keduanya berebut sudut yang
+                sama dan angkanya bertabrakan — terlihat di "Free Shipping
+                included  ~ Rp 25.000" yang menempel pada "Rp 1.520.000".
+                Di kartu itu nilai perk tidak dirender sama sekali; labelnya
+                ("Gratis ongkir") sudah menyampaikan maksudnya tanpa angka.
+                Datanya tetap utuh di metafield, jadi kartu berlabel pendek
+                masih memajang nilainya seperti biasa.
+              {%- endcomment -%}
+              {%- if v2_perk_parts.size > 1 and v2_perk_show_value and v2_flow_head == false -%}
                 {%- assign v2_perk_value = v2_perk_parts[1] | strip -%}
                 {%- if v2_perk_money != blank -%}
                   {%- assign v2_perk_value = v2_perk_money -%}
