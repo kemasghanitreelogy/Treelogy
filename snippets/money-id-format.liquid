@@ -32,12 +32,31 @@
          pada pola ini pasti pemisah ribuan. Tanda kurung menangkap prefiks Rp
          supaya angka lain di halaman (mis. "4,96/5") tidak ikut tersentuh. */
       var RE = /(Rp\s?)(\d{1,3}(?:,\d{3})+)/g;
+      var BARE = /\d{1,3}(?:,\d{3})+/g;
       var SKIP = { SCRIPT: 1, STYLE: 1, TEXTAREA: 1, NOSCRIPT: 1 };
+
+      /* Badge penghematan mencetak angka TANPA awalan "Rp" ("save 180,000"),
+         karena Liquid membuangnya lewat `| remove: 'Rp'`. Di dalam badge, setiap
+         angka berkelompok tiga pasti rupiah, jadi di sana polanya boleh telanjang.
+         Di luar badge tetap wajib ber-"Rp" supaya angka lain aman — rating
+         "4,96/5" dan "17,233 customers" tidak ikut berubah. */
+      var BARE_SEL = '.v2-plan__badge';
+
+      function inBareZone(node) {
+        var p = node.parentElement;
+        return !!(p && p.closest && p.closest(BARE_SEL));
+      }
 
       function fixText(node) {
         var v = node.nodeValue;
-        if (!v || v.indexOf(',') === -1 || v.indexOf('Rp') === -1) return;
-        var out = v.replace(RE, function (_, rp, num) { return rp + num.replace(/,/g, '.'); });
+        if (!v || v.indexOf(',') === -1) return;
+        var out;
+        if (inBareZone(node)) {
+          out = v.replace(BARE, function (m) { return m.replace(/,/g, '.'); });
+        } else {
+          if (v.indexOf('Rp') === -1) return;
+          out = v.replace(RE, function (_, rp, num) { return rp + num.replace(/,/g, '.'); });
+        }
         if (out !== v) node.nodeValue = out;
       }
 
