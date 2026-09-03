@@ -1,0 +1,83 @@
+{% doc %}
+  Menyeragamkan pemisah ribuan rupiah menjadi TITIK di seluruh halaman.
+
+  Setelan mata uang toko memakai `{{amount_no_decimals}}`, yang menghasilkan
+  "Rp 1,145,000" — koma. Sementara angka yang dihitung JS tema (total keranjang,
+  hitung mundur hero) memakai Intl.NumberFormat('id-ID') sehingga bertitik.
+  Akibatnya satu kartu bisa memuat dua gaya sekaligus.
+
+  Perbaikan yang benar sebenarnya satu baris di Settings -> Store details ->
+  Currency formatting (`amount_no_decimals_with_comma_separator`), dan itu juga
+  merapikan halaman checkout serta email. User memilih TIDAK mengubah setelan,
+  jadi normalisasi dilakukan di tema.
+
+  BATASNYA: hanya menyentuh halaman yang dirender tema. Halaman checkout dan
+  email pesanan memakai format toko langsung, jadi di sana koma TETAP muncul.
+
+  Dijalankan hanya untuk market `id` — mata uang lain (USD di market
+  International) memang memakai koma sebagai pemisah ribuan dan titik sebagai
+  desimal, jadi mengubahnya justru merusak.
+
+  Aman dijalankan berkali-kali: setelah koma diganti titik, polanya tidak cocok
+  lagi. Tidak menyentuh node di dalam <script>, <style>, atau kolom isian.
+{% enddoc %}
+
+{%- if localization.market.handle == 'id' -%}
+  <script>
+    (function () {
+      'use strict';
+
+      /* Hanya menyasar angka rupiah berkelompok tiga: "Rp 1,145,000".
+         Desimal tidak ada di format toko (amount_no_decimals), jadi setiap koma
+         pada pola ini pasti pemisah ribuan. Tanda kurung menangkap prefiks Rp
+         supaya angka lain di halaman (mis. "4,96/5") tidak ikut tersentuh. */
+      var RE = /(Rp\s?)(\d{1,3}(?:,\d{3})+)/g;
+      var SKIP = { SCRIPT: 1, STYLE: 1, TEXTAREA: 1, NOSCRIPT: 1 };
+
+      function fixText(node) {
+        var v = node.nodeValue;
+        if (!v || v.indexOf(',') === -1 || v.indexOf('Rp') === -1) return;
+        var out = v.replace(RE, function (_, rp, num) { return rp + num.replace(/,/g, '.'); });
+        if (out !== v) node.nodeValue = out;
+      }
+
+      function walk(root) {
+        if (!root) return;
+        if (root.nodeType === 3) return fixText(root);
+        if (root.nodeType !== 1) return;
+        if (SKIP[root.tagName]) return;
+        var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+          acceptNode: function (n) {
+            var p = n.parentNode;
+            return p && SKIP[p.tagName] ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
+          }
+        });
+        var n;
+        while ((n = w.nextNode())) fixText(n);
+      }
+
+      /* Observer dipasang sebelum <body> selesai diurai, jadi teks diperbaiki
+         saat simpulnya lahir — bukan setelah halaman tampil. Tanpa ini, harga
+         berkoma sempat terlihat sekejap sebelum diganti. */
+      try {
+        new MutationObserver(function (muts) {
+          for (var i = 0; i < muts.length; i++) {
+            var m = muts[i];
+            if (m.type === 'characterData') { fixText(m.target); continue; }
+            for (var j = 0; j < m.addedNodes.length; j++) walk(m.addedNodes[j]);
+          }
+        }).observe(document.documentElement, {
+          childList: true, subtree: true, characterData: true
+        });
+      } catch (err) {}
+
+      function sweep() { walk(document.body); }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', sweep);
+      } else {
+        sweep();
+      }
+      window.addEventListener('load', sweep);
+    })();
+  </script>
+{%- endif -%}

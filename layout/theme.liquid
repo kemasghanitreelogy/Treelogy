@@ -1121,7 +1121,13 @@
         }
       </style>
     {%- endif -%}
-  </head>
+    {%- comment -%}
+    Menyeragamkan pemisah ribuan rupiah jadi titik. Dipasang di ujung <head>
+    supaya observer-nya hidup sebelum <body> diurai — kalau ditaruh di akhir
+    body, harga berkoma sempat terlihat sekejap. Lihat snippets/money-id-format.liquid.
+  {%- endcomment -%}
+  {% render 'money-id-format' %}
+</head>
 
   {%- comment -%}
     Contentsquare page masking is ON for the whole project (CS_CONF rule
