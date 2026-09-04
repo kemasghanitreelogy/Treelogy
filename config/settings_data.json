@@ -45,21 +45,24 @@
             "type": "text",
             "settings": {
               "title": "",
-              "url": ""
+              "url": "",
+              "market_scope": "all"
             }
           },
           "text_yxkYDz": {
             "type": "text",
             "settings": {
               "title": "",
-              "url": ""
+              "url": "",
+              "market_scope": "all"
             }
           },
           "text_wnH9BG": {
             "type": "text",
             "settings": {
               "title": "We accept credit cards · bank transfer · e-wallet · QRIS",
-              "url": "shopify://collections/all"
+              "url": "shopify://collections/all",
+              "market_scope": "all"
             }
           }
         },
@@ -73,6 +76,7 @@
           "logo": "shopify://shop_images/treelogy-header-logo.png",
           "header_product": "organic-moringa-powder",
           "main_menu": "main-menu",
+          "customer_account_menu": "customer-account-main-menu",
           "up_selling_products": [
             "organic-moringa-oil",
             "organic-moringa-capsules",
@@ -171,6 +175,11 @@
       },
       "14330190941940559546": {
         "type": "shopify://apps/apex-attribution/blocks/apex/019f0527-1ddd-78db-9b4c-8b9d95e007bf",
+        "disabled": false,
+        "settings": {}
+      },
+      "14765707872805527779": {
+        "type": "shopify://apps/a-b-test-treelogy/blocks/ab-test/01a06723-306f-7b5d-ab1e-b8435e719d91",
         "disabled": false,
         "settings": {}
       }
