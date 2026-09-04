@@ -1,0 +1,321 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "MainProductDetail",
+      "blocks": {
+        "usp_slider_zBdDDY": {
+          "type": "usp_slider",
+          "settings": {
+            "text_color": "#33423b",
+            "padding_top": 15,
+            "padding_bottom": 15,
+            "heading_1": "⁠Secure Checkout",
+            "text_1": "QRIS • E-wallet • Debit Card",
+            "heading_2": "Fast Dispatch Orders",
+            "text_2": "before 3pm ship same-day",
+            "heading_3": "Real Human Support",
+            "text_3": "Join thousands of healthier customers"
+          }
+        },
+        "logo_list_nNJ9tH": {
+          "type": "logo_list",
+          "settings": {
+            "heading": "",
+            "heading_color": "#333333",
+            "max_width": 1200,
+            "alignment": "center",
+            "logo_height": 60,
+            "logo_width": 150,
+            "opacity": 100,
+            "gap_desktop": 50,
+            "gap_mobile": 20,
+            "padding_top": 16,
+            "padding_bottom": 16,
+            "image_1": "shopify://shop_images/Layer_2.png",
+            "link_1": "",
+            "image_2": "shopify://shop_images/SNI_ORGANIK_Olive_-2_1.png",
+            "link_2": "",
+            "image_3": "shopify://shop_images/USDA_Olive_-2_1.png",
+            "link_3": "",
+            "image_4": "shopify://shop_images/Group_1.png",
+            "link_4": "",
+            "image_5": "shopify://shop_images/BPOM_3.png",
+            "link_5": ""
+          }
+        },
+        "text_list_HgjGwB": {
+          "type": "text_list",
+          "settings": {
+            "label": "Concerns:",
+            "bg_color": "rgba(0,0,0,0)",
+            "heading_color": "#5e6d55",
+            "text_color": "#757575",
+            "font_size": 14,
+            "text_align": "left",
+            "max_width": 800,
+            "padding_top": 15,
+            "padding_bottom": 15
+          }
+        },
+        "text_plain_block_AwyCGP": {
+          "type": "text_plain_block",
+          "settings": {
+            "title": "<p>Why Inside and Out</p>",
+            "title_weight": "500",
+            "font_size": 24,
+            "text_title_color": "#6c7256",
+            "block_content": "<p>Moringa works from two directions. </p><p>Capsules deliver dense micronutrition from within, supporting joint comfort, deeper sleep, steady energy, and hormonal balance.</p><p>Oil delivers a completely different compound profile from the surface — 70% oleic acid, sterols, and behenic acid that hydrate, protect, and restore your skin barrier and nourish hair from root to tip. </p><p>Same tree. Different biology. One protocol.</p>",
+            "font_size_content": 16,
+            "text_content_color": "#515e56",
+            "text_alignment": "left",
+            "padding_horizontal": 24,
+            "margin_top": 0,
+            "margin_bottom": 20
+          }
+        },
+        "testimonial_slider_R3dFeH": {
+          "type": "testimonial_slider",
+          "settings": {
+            "heading": "from our community",
+            "rating_score": "4.9/5",
+            "bg_color": "#f8f8f4",
+            "text_color": "#6c7256",
+            "padding_top": 15,
+            "padding_bottom": 15
+          }
+        },
+        "timeline_list_XdegX9": {
+          "type": "timeline_list",
+          "settings": {
+            "heading": "<h2>What to expect over time</h2>",
+            "timeline_desc": "Everyone starts from a different baseline.",
+            "mf_namespace": "custom",
+            "mf_key": "product_timeline",
+            "heading_color": "#6c7256",
+            "text_color": "#567350",
+            "padding_top": 16,
+            "padding_bottom": 16
+          }
+        },
+        "accordion_duplicate_4T8yjQ": {
+          "type": "accordion_duplicate",
+          "settings": {
+            "title": "Common Questions",
+            "description": "",
+            "heading_color": "#6c7256",
+            "accordion_text_color": "#567350",
+            "custom_icon": "<svg width=\"12\" height=\"7\" viewbox=\"0 0 12 7\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M-5.71428e-08 1.30727L1.26495 -4.69244e-07L6 4.9002L10.7351 -5.52926e-08L12 1.31098L7.26495 6.20747C6.92943 6.55485 6.47443 6.75 6 6.75C5.52557 6.75 5.07057 6.55485 4.73505 6.20747L-5.71428e-08 1.30727Z\" fill=\"#2B3C35\"></path>\n</svg>",
+            "padding_top": 56,
+            "padding_bottom": 16
+          }
+        },
+        "accordion_detail_Drw4y7": {
+          "type": "accordion_detail",
+          "settings": {
+            "limit_count": 6,
+            "see_more_text": "See More",
+            "see_less_text": "See Less",
+            "title": "More Information",
+            "heading_color": "#6c7256",
+            "accordion_text_color": "#567350",
+            "custom_icon": "",
+            "padding_top": 55,
+            "padding_bottom": 15
+          }
+        }
+      },
+      "block_order": [
+        "usp_slider_zBdDDY",
+        "logo_list_nNJ9tH",
+        "text_list_HgjGwB",
+        "text_plain_block_AwyCGP",
+        "testimonial_slider_R3dFeH",
+        "timeline_list_XdegX9",
+        "accordion_duplicate_4T8yjQ",
+        "accordion_detail_Drw4y7"
+      ],
+      "settings": {
+        "payment_title": "We accept:",
+        "payment_list": "shopify://shop_images/payment-desktop.png",
+        "note": "or 4 interest-free installments of IDR 135.000 by",
+        "story_title": "",
+        "story_cta_text": "Add to Cart",
+        "story_text_color": "#000000",
+        "story_btn_bg": "#526547",
+        "story_btn_text": "#ffffff"
+      }
+    },
+    "text_plain_product_AHGqWt": {
+      "type": "TextPlainProduct",
+      "disabled": true,
+      "name": "Text Plain Product",
+      "settings": {
+        "title": "<p>Awarded sustainable brand of the Year 2024 by the Punch Community </p>",
+        "title_award": "<p>Awarded sustainable brand (2024) & Sustainable product (2025)  by The Punch Community </p>",
+        "title_weight": "600",
+        "font_size": 24,
+        "font_size_desc": 14,
+        "block_content": "<p>We craft organic moringa nutrition and skincare that nourishes your vitality while enriching the land they come from. <br/><br/>Guided by People Care, Earth Care, and Future Care — our principles inspired by the Balinese philosophy of Tri Hita Karana — we control every step from soil to shelf to ensure purity, efficacy, and ethical impact.</p>",
+        "block_content_award": "<p>Our moringa capsules are the first and only pure moringa leaf powder approved in capsule form under Indonesia’s traditional medicine framework.<br/><br/>Guided by People Care, Earth Care, and Future Care — our principles inspired by the Balinese philosophy of Tri Hita Karana — we control every step from soil to shelf to ensure purity, efficacy, and ethical impact.</p>",
+        "text_alignment": "left",
+        "desktop_layout": "row",
+        "padding_horizontal": 24,
+        "margin_top": 10,
+        "margin_bottom": 0,
+        "text_title_color": "#6c7256",
+        "font_size_title_block": 14,
+        "font_size_content_block": 14
+      }
+    },
+    "featured_bundle_KcrzKt": {
+      "type": "FeaturedBundle",
+      "name": "Featured Bundle Set",
+      "settings": {
+        "feature_product": "moringa-ritual-set",
+        "heading": "Complete Your Ritual <br>\nwith our Moringa Set",
+        "padding_top": 36,
+        "padding_bottom": 72
+      }
+    },
+    "hero_baner_CX6VQR": {
+      "type": "HeroBaner",
+      "name": "Hero Image Only",
+      "settings": {
+        "image": "shopify://shop_images/MJR_4386_1_1__11zon.webp",
+        "image_mobile": "shopify://shop_images/MJR_4386_1_1__11zon.webp",
+        "alt": "Hero image",
+        "loading_priority": true,
+        "title": "",
+        "content": "",
+        "text_position": "center",
+        "show_countdown": false,
+        "day_label": "hari",
+        "hour_label": "jam",
+        "countdown_date": "2024-12-31 23:59",
+        "countdown_message": "Hanya menerima 100 pesanan",
+        "enable_sticky": true,
+        "sticky_top_offset": 0,
+        "margin_top": 0,
+        "margin_bottom": 0
+      }
+    },
+    "review_judge_me_aJGGPd": {
+      "type": "ReviewJudgeMe",
+      "name": "Review Judge.me",
+      "settings": {}
+    },
+    "side_image_video_content_hjYMcH": {
+      "type": "SideImageVideoContent",
+      "blocks": {
+        "text_BkhBMe": {
+          "type": "text",
+          "settings": {
+            "title": "Harvested at Dawn",
+            "description": "We begin the harvest of our moringa trees at the first light of sunrise. This timing is crucial as it ensures the leaves are at their peak moisture and nutrient content, capturing their full potential for health benefits."
+          }
+        },
+        "text_NgExer": {
+          "type": "text",
+          "settings": {
+            "title": "Stem-Free Purity",
+            "description": "After harvesting, our community meticulously separates each leaf from the stems by hand. This process is vital to ensure a consistent moisture content in the final product without over-dehydrating the leaves. It guarantees the purity and quality of our moringa."
+          }
+        },
+        "text_iMNB9D": {
+          "type": "text",
+          "settings": {
+            "title": "Low-Temperature Dehydration",
+            "description": "To maintain optimal nutrient retention, we process the leaves right on-site. After washing and wringing out excess water, we dehydrate the leaves at a controlled temperature of 38°C for 22 hours. This careful and precise method locks in the essential nutrients of the moringa leaves, ensuring a superior final product."
+          }
+        }
+      },
+      "block_order": [
+        "text_BkhBMe",
+        "text_NgExer",
+        "text_iMNB9D"
+      ],
+      "disabled": true,
+      "settings": {
+        "title": "How It's Produced",
+        "description": "Ethically grown with regenerative agriculture by dedicated farmers on our organically certified farm, our moringa products deliver unique nourishment and essence of care, setting them apart in both quality and impact.",
+        "button_label": "Discover the Farm",
+        "button_url": "shopify://pages/farm",
+        "button_pos": "bottom",
+        "fit_content": false,
+        "padding_top_dt": 96,
+        "padding_bottom_dt": 96,
+        "padding_top_mb": 48,
+        "padding_bottom_mb": 48
+      }
+    },
+    "section_how_to_9WPERG": {
+      "type": "SectionHowTo",
+      "disabled": true,
+      "name": "How to Use",
+      "settings": {
+        "title": "How to Use",
+        "bakground_color": "#dfe4d4"
+      }
+    },
+    "section_results_HDj6ei": {
+      "type": "SectionResults",
+      "disabled": true,
+      "name": "Results Timeline",
+      "settings": {
+        "title": "What to Expect Over Time",
+        "bakground_color": "#f8f8f2"
+      }
+    },
+    "section_review_eHhJ8D": {
+      "type": "SectionReview",
+      "disabled": true,
+      "settings": {}
+    },
+    "featured_blog_DYaUTY": {
+      "type": "FeaturedBlog",
+      "disabled": true,
+      "settings": {
+        "title": "Rooted in Wisdom, \nGrowing Through Knowledge.",
+        "description": "Explore the science of Moringa, discover recipes we love, and learn about our farm, factory, and well-being practices.",
+        "products": "news",
+        "button_label": "Discover All",
+        "button_url": "shopify://blogs/news",
+        "remove_button": false,
+        "filter_tags": "",
+        "remove_excerpt": false
+      }
+    },
+    "featured_products_iH7QUc": {
+      "type": "FeaturedProducts",
+      "settings": {
+        "title": "Different Forms of Moringa",
+        "description": "Discover what fits your routine and\nexperience the powerful benefits of \nmoringa with Treelogy's premium,\nhandcrafted products.",
+        "products": [],
+        "button_label": "All Products",
+        "button_url": "shopify://collections/all"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "text_plain_product_AHGqWt",
+    "featured_bundle_KcrzKt",
+    "hero_baner_CX6VQR",
+    "review_judge_me_aJGGPd",
+    "side_image_video_content_hjYMcH",
+    "section_how_to_9WPERG",
+    "section_results_HDj6ei",
+    "section_review_eHhJ8D",
+    "featured_blog_DYaUTY",
+    "featured_products_iH7QUc"
+  ]
+}
