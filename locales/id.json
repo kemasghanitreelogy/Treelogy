@@ -204,7 +204,9 @@
   },
   "reviews": {
     "title": "Ulasan",
-    "write_review": "Tulis Ulasan"
+    "write_review": "Tulis Ulasan",
+    "based_on": "Berdasarkan {{ count }} ulasan",
+    "based_on_singular": "Berdasarkan 1 ulasan"
   },
   "articles": {
     "read_full_article": "Baca Artikel Lengkap"
@@ -452,19 +454,19 @@
       "image_alt": "Jar Treelogy Moringa Capsules",
       "p3_name": "3 bulan",
       "p3_perks_html": "Garansi uang kembali 60 hari<br>Gratis Mystery Gift<br>Gratis Ongkir",
-      "p3_save": "Save 180.000",
-      "p3_price_old": "Rp 1.170.000",
-      "p3_price": "Rp 990.000",
+      "p3_save": "Save 220.000",
+      "p3_price_old": "Rp 1.365.000",
+      "p3_price": "Rp 1.145.000",
       "p2_name": "2 bulan",
       "p2_perks_html": "Garansi uang kembali 60 hari",
-      "p2_save": "Save 90.000",
-      "p2_price_old": "Rp 780.000",
-      "p2_price": "Rp 690.000",
+      "p2_save": "Save 115.000",
+      "p2_price_old": "Rp 910.000",
+      "p2_price": "Rp 795.000",
       "p1_name": "1 bulan",
       "p1_perks_html": "Garansi uang kembali 60 hari",
       "p1_save": "",
       "p1_price_old": "",
-      "p1_price": "Rp 390.000",
+      "p1_price": "Rp 455.000",
       "cta_cart": "Keranjang +",
       "cta_checkout": "Checkout",
       "choose_aria": "Pilih paketmu"
