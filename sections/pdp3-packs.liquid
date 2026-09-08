@@ -352,7 +352,7 @@
       `getElementById('AddToCartForm').querySelector('.button-quick-add-cart')`,
       dan di luar form pencarian itu mengembalikan null tanpa error apa pun.
     {%- endcomment -%}
-    <button type="button" class="p3-btn p3-rv button button-quick-add-cart" id="AddToCart" data-variant="{{ default_variant.id }}"><span>{{ t_atc }} · <span id="p3-atc-price">{% render 'pdp3-money', cents: default_variant.price %}</span></span></button>
+    <button type="button" class="p3-btn p3-rv button button-quick-add-cart" data-p3-rv-lead="0.45" id="AddToCart" data-variant="{{ default_variant.id }}"><span>{{ t_atc }} · <span id="p3-atc-price">{% render 'pdp3-money', cents: default_variant.price %}</span></span></button>
     {%- comment -%}
       Tiga janji berikon menggantikan satu paragraf abu. Ikonnya tetap di
       markup (bukan setting) karena ia yang membedakan ketiga barisnya:

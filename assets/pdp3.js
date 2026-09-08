@@ -1005,10 +1005,23 @@
       });
     });
 
+    /* Ambang buka: puncak elemen melewati 92% tinggi layar — praktis "baru
+       mengintip dari bawah". Untuk kebanyakan blok itu pas; untuk TOMBOL BELI
+       tidak. Tombol itu duduk di dasar kartu paket, jadi pada guliran biasa
+       ia menyeberangi ambang tepat ketika mulai terlihat, dan pembeli sempat
+       melihat kotak kosong selama transisinya berjalan.
+
+       `data-p3-rv-lead` memajukan ambangnya dalam satuan tinggi layar:
+       lead 0,45 berarti terbuka saat masih ~45% layar DI BAWAH lipatan,
+       sehingga sudah opak penuh ketika benar-benar masuk. Dipasang lewat
+       atribut, bukan dikeraskan ke selektor tombol, supaya blok lain yang
+       butuh perlakuan sama tinggal menambahkannya di Liquid. */
     function tick() {
       var vh = window.innerHeight;
       rvs.forEach(function (el) {
-        if (!el.classList.contains('p3-in') && el.getBoundingClientRect().top < vh * 0.92) {
+        if (el.classList.contains('p3-in')) return;
+        var lead = parseFloat(el.getAttribute('data-p3-rv-lead')) || 0;
+        if (el.getBoundingClientRect().top < vh * (0.92 + lead)) {
           el.classList.add('p3-in');
         }
       });
