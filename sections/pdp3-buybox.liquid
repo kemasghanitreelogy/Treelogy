@@ -139,21 +139,23 @@
               versi Inggris supaya slide tanpa teks cukup diisi sekali.
             {%- endcomment -%}
             {%- assign slide_img = block.settings.image_url -%}
+            {%- assign slide_video = block.settings.video_url -%}
             {%- assign slide_poster = block.settings.poster_url -%}
             {%- assign slide_thumb = block.settings.thumb_url -%}
             {%- if request.locale.iso_code == 'id' -%}
               {%- if block.settings.image_url_id != blank -%}{%- assign slide_img = block.settings.image_url_id -%}{%- endif -%}
+              {%- if block.settings.video_url_id != blank -%}{%- assign slide_video = block.settings.video_url_id -%}{%- endif -%}
               {%- if block.settings.poster_url_id != blank -%}{%- assign slide_poster = block.settings.poster_url_id -%}{%- endif -%}
               {%- if block.settings.thumb_url_id != blank -%}{%- assign slide_thumb = block.settings.thumb_url_id -%}{%- endif -%}
             {%- endif -%}
             <div class="p3-slide native-gallery__slide" data-index="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
-              {%- if block.settings.video_url != blank -%}
+              {%- if slide_video != blank -%}
                 {%- comment -%}
                   Atribut videonya disalin dari mockup apa adanya. `autoplay`
                   WAJIB berpasangan dengan `muted` — tanpa itu browser menolak
                   memutar dan slide-nya jadi kotak abu-abu diam.
                 {%- endcomment -%}
-                <video src="{{ block.settings.video_url }}" poster="{{ slide_poster }}" muted loop playsinline autoplay preload="metadata"></video>
+                <video src="{{ slide_video }}" poster="{{ slide_poster }}" muted loop playsinline autoplay preload="metadata"></video>
               {%- else -%}
                 <img src="{{ slide_img }}" alt="{{ block.settings.alt | escape }}" width="393" height="490"{% if forloop.first %} fetchpriority="high"{% else %} loading="lazy"{% endif %}>
               {%- endif -%}
@@ -509,6 +511,11 @@
           "type": "text",
           "id": "video_url",
           "label": "Video URL (mp4)"
+        },
+        {
+          "type": "text",
+          "id": "video_url_id",
+          "label": "Video URL mp4 (Bahasa Indonesia)"
         },
         {
           "type": "text",
