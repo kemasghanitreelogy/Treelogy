@@ -1,0 +1,792 @@
+/* ==========================================================================
+   pdp3 — Product page, a 1:1 port of `treelogy-capsules-pdp-single-file.html`.
+
+   Every value below is copied from that mockup's <style> block verbatim. The
+   only transformations applied are mechanical, and they exist so the mockup's
+   very generic class names cannot collide with the rest of the theme:
+
+     .foo          ->  .pdp3-page .p3-foo
+     #foo          ->  #p3-foo
+     :root / body  ->  .pdp3-page          (the mockup's `.page` wrapper)
+     --token       ->  --p3-token
+
+   Store chrome (announcement bar, nav, footer) is NOT ported: the theme
+   renders the real ones, and the mockup only drew stand-ins for them.
+
+   DO NOT "improve" numbers here. The brief for this theme is byte-for-byte
+   fidelity to the mockup, so a value that looks wrong is a question for the
+   mockup, not an edit to make in this file. The bridge block at the bottom is
+   the one place that is allowed to hold rules the mockup does not have, and
+   it only exists because Shopify splits the mockup's single `.page` column
+   into twelve separate section wrappers.
+   ========================================================================== */
+
+
+
+
+/* ===== tokens measured from Figma "PDP v3" (393 wide), second sync ===== */
+:root{  /* Token warna hidup di `:root`, bukan di `.pdp3-page`.
+   Mockup pun menaruhnya di `:root`; yang mengubahnya jadi `.pdp3-page` saat
+   diport adalah kekhawatiran tabrakan nama — dan kekhawatiran itu sudah
+   selesai sejak setiap token diberi awalan `--p3-`.
+
+   Alasan praktisnya: pita gelap harus dicat oleh PEMBUNGKUS section, yang
+   berada DI LUAR `.pdp3-page`. Selama tokennya hidup di dalam, pembungkus
+   itu tidak bisa membaca satu warna pun. */
+  --p3-canvas:#F8F8F2; --p3-forest:#2A3B34; --p3-forest-2:#2B3C35; --p3-olive:#6C7256; --p3-sage:#B0C197; --p3-sage-chip:#A5BB86; --p3-sage-2:#DCE5CF; --p3-sage-3:#C6D3B1; --p3-sel:#F3F6EE;
+  --p3-ink:#2A3B34; --p3-ink-2:#3E4A44; --p3-ink-3:#656C5D; --p3-line:#D9DBCF; --p3-line-nav:#E0E0DA; --p3-white:#FFFFFF; --p3-grey:#E9EAE1; --p3-card-grey:#EAE9DC;
+  --p3-row:rgba(188,188,185,.44); --p3-row-2:#DEDED9; --p3-on-dark:#F8F8F2; --p3-on-dark-2:#D9D9D4; --p3-on-dark-3:#C7CCC2; --p3-wa:#25D366; --p3-footer:#2B3C35; --p3-copyright:#33423B;
+  --p3-f:"Inter","Inter Fallback",system-ui,sans-serif;
+}
+.pdp3-page,.pdp3-page *{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+.pdp3-page section{scroll-margin-top:64px}
+.pdp3-page{font-family:var(--p3-f);font-weight:400;font-size:16px;line-height:1.5;color:var(--p3-ink);background:var(--p3-canvas);-webkit-font-smoothing:antialiased}
+.pdp3-page img{display:block;max-width:100%;height:auto}
+.pdp3-page button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+.pdp3-page a{color:inherit}
+.pdp3-page h1,.pdp3-page h2,.pdp3-page h3,.pdp3-page p{font-weight:400}
+.pdp3-page h1{font-size:30px;line-height:1.21;letter-spacing:0;color:var(--p3-ink)}
+.pdp3-page h2{font-size:30px;line-height:1.21;letter-spacing:0;color:var(--p3-ink)}
+.pdp3-page p.p3-eb,.pdp3-page span.p3-eb{font-size:14px !important;line-height:1.4 !important;letter-spacing:.06em !important;text-transform:uppercase;color:var(--p3-ink-3)}
+.pdp3-page{width:100%;max-width:393px;margin-inline:auto}
+@media(min-width:900px){.pdp3-page{max-width:720px}}
+.pdp3-page .p3-brm{display:inline}
+@media(min-width:900px){.pdp3-page .p3-brm{display:none}}
+.pdp3-page .p3-rv{opacity:1;transform:none;transition:opacity .35s ease,transform .35s ease}
+html.p3-js-reveal .pdp3-page .p3-rv:not(.p3-in){opacity:0;transform:translateY(12px)}
+@media(prefers-reduced-motion:reduce){html.p3-js-reveal .pdp3-page .p3-rv:not(.p3-in){opacity:1;transform:none}}
+.pdp3-page .p3-btn{display:flex;align-items:center;justify-content:center;gap:10px;height:56px;width:100%;border-radius:9999px;background:var(--p3-forest);color:var(--p3-canvas);font-weight:500;font-size:17px;line-height:1.5;letter-spacing:-.005em;text-decoration:none;transition:transform .15s ease}
+.pdp3-page .p3-btn:active{transform:scale(.985)}
+.pdp3-page .p3-pill{display:inline-flex;align-items:center;height:44px;padding:0 16px;border-radius:999px;background:rgba(165,187,134,.6);color:var(--p3-forest);font-size:14px;font-weight:500;line-height:1.5;white-space:nowrap}
+.pdp3-page .p3-pill[aria-checked="true"]{background:var(--p3-forest);color:var(--p3-canvas)}
+.pdp3-page .p3-stack{display:grid;gap:15px}
+
+/* ===== announcement + nav ===== */
+
+/* ===== hero ===== */
+@media(min-width:900px){.pdp3-page .p3-hero-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px;align-items:start;padding-top:24px}.pdp3-page .p3-hero-grid>div{min-width:0}}
+.pdp3-page .p3-gallery{position:relative;overflow:hidden;background:#C4C4C4}
+.pdp3-page .p3-gallery .p3-slides{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+.pdp3-page .p3-gallery .p3-slides::-webkit-scrollbar{display:none}
+.pdp3-page .p3-gallery .p3-slide{flex:0 0 100%;scroll-snap-align:start;aspect-ratio:393/490;position:relative}
+/* Deret sertifikasi di pojok kanan bawah foto hero (Figma frame PDP v3).
+   Semua ukuran persen terhadap slide: di mockup fotonya 393x490, jadi
+   inset kanan 37px = 9.415%, inset bawah 32px = 6.531%, tinggi deret 41px =
+   8.367%. Margin persen mengacu ke LEBAR wadah, jadi jarak 18px dan 16px
+   menjadi 4.580% dan 4.071%. Hasilnya deret ini ikut menyusut dan membesar
+   bersama fotonya, bukan mengambang dengan ukuran tetap di kolom desktop
+   yang jauh lebih lebar.
+   `pointer-events:none` supaya tanda ini tidak menelan usapan geser galeri. */
+/* Lebar deret dinyatakan eksplisit (140/393 di mockup) BUKAN dibiarkan
+   shrink-to-fit: margin persen pada anak mengacu ke lebar wadahnya, dan lebar
+   shrink-to-fit itu melingkar — dasarnya tidak bisa diandalkan. Dengan lebar
+   pasti, 18px dan 16px di mockup menjadi 12.857% dan 11.429% dari deret.
+   `justify-content:flex-end` menaruh sisa pembulatan di kiri, tempat yang
+   tidak terlihat; yang harus tepat adalah tepi kanannya. */
+.pdp3-page .p3-certs{position:absolute;right:9.415%;bottom:6.531%;width:35.623%;height:8.367%;display:flex;align-items:center;justify-content:flex-end;pointer-events:none}
+.pdp3-page .p3-certs .p3-cert{display:block}
+/* Selektornya sengaja melewati `.p3-gallery .p3-slide` walau tidak perlu
+   untuk mencocokkan: aturan galeri `.pdp3-page .p3-gallery .p3-slide img`
+   (0,3,1) mengalahkan `.pdp3-page .p3-certs .p3-cert` (0,3,0) dan memaksa
+   `height:100%` + `object-fit:cover` ke tanda-tanda ini — USDA jadi 41px
+   bukan 36px. Rantai di bawah (0,5,0) yang mengembalikannya.
+   USDA di Figma 36px pada deret setinggi 41px: lebih pendek, rata tengah. */
+.pdp3-page .p3-gallery .p3-slide .p3-certs .p3-cert{height:100%;width:auto;object-fit:contain}
+.pdp3-page .p3-gallery .p3-slide .p3-certs .p3-cert--usda{height:87.8%}
+.pdp3-page .p3-gallery .p3-slide .p3-certs .p3-cert--halal{margin-left:12.857%}
+.pdp3-page .p3-gallery .p3-slide .p3-certs .p3-cert--usda{margin-left:11.429%}
+@media(min-width:900px){.pdp3-page .p3-gallery .p3-slide{aspect-ratio:4/5}}
+.pdp3-page .p3-gallery .p3-slide img,.pdp3-page .p3-gallery .p3-slide video{width:100%;height:100%;object-fit:cover;display:block}
+.pdp3-page .p3-thumbs{display:flex;gap:6px;padding:9px 16px 0;overflow-x:auto;scrollbar-width:none}
+.pdp3-page .p3-thumbs::-webkit-scrollbar{display:none}
+.pdp3-page .p3-thumbs button{flex:0 0 78px;width:78px;height:78px;border-radius:3px;overflow:hidden}
+.pdp3-page .p3-thumbs button[aria-current="true"]{outline:1.5px solid var(--p3-forest);outline-offset:-1.5px}
+.pdp3-page .p3-thumbs img{width:100%;height:100%;object-fit:cover}
+.pdp3-page .p3-buy{padding:8px 16px 4px;display:grid;gap:12px;margin-top:15px}
+.pdp3-page .p3-buy p.p3-eb{font-size:12px !important;line-height:1.25 !important;color:var(--p3-forest)}
+.pdp3-page .p3-buy .p3-lede{font-size:16px;line-height:1.5;color:var(--p3-ink-2)}
+.pdp3-page .p3-buy .p3-proof{font-size:15px;line-height:1.5;color:var(--p3-ink-2);text-decoration:none;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.pdp3-page .p3-faces{display:flex;flex:none}
+.pdp3-page .p3-faces img{width:24px;height:24px;border-radius:50%;object-fit:cover;border:1.5px solid var(--p3-canvas);margin-left:-8px;display:block}
+.pdp3-page .p3-faces img:first-child{margin-left:0}
+.pdp3-page .p3-buy .p3-proof .p3-stars{color:var(--p3-forest)}
+.pdp3-page .p3-perday{display:flex;align-items:baseline;gap:8px}
+.pdp3-page .p3-perday b{font-size:32px;font-weight:500;line-height:1.12;letter-spacing:-.03em;color:var(--p3-ink)}
+.pdp3-page .p3-perday span{font-size:16px;color:var(--p3-ink-3);letter-spacing:-.005em}
+.pdp3-page .p3-buy .p3-btn{background:var(--p3-forest-2);font-size:16px}
+.pdp3-page .p3-wa-link{font-size:16px;color:var(--p3-ink-3);letter-spacing:-.005em;text-decoration:none}
+
+/* ===== testimonial strip ===== */
+/* `scroll-padding-left` MENAMBAH aturan mockup, tidak menyalinnya.
+
+   Di mockup deret ini punya `padding-left:16px`, tapi paddingnya tidak pernah
+   terlihat: `scroll-snap-align:start` menempelkan tepi kartu ke awal
+   scrollport, jadi browser menggulir 16px sendiri (scrollLeft berhenti di 16)
+   dan kartu pertama duduk rapat di x=0 — sementara lede, tombol dan tautan
+   WhatsApp di atasnya mulai di x=16. Di layar ponsel kartunya terlihat lepas
+   dari kolom teks.
+
+   `scroll-padding-left` menggeser titik hentinya, bukan tata letaknya: kartu
+   sekarang berhenti di x=16 dan sejajar dengan komponen lain, sedangkan
+   perilaku snap antar-kartu tetap sama. */
+.pdp3-page .p3-tstrip{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-left:16px;scrollbar-width:none;padding:8px 16px 24px;margin-top:15px}
+.pdp3-page .p3-tstrip::-webkit-scrollbar{display:none}
+.pdp3-page .p3-tcard{flex:0 0 300px;scroll-snap-align:start;background:var(--p3-white);border:1px solid var(--p3-line);border-radius:14px;padding:18px;display:grid;gap:12px;align-content:space-between}
+.pdp3-page .p3-tcard .p3-ph{float:left;width:72px;height:72px;border-radius:10px;object-fit:cover;display:block;margin:0 14px 6px 0;shape-outside:inset(0 round 10px)}
+.pdp3-page .p3-tcard q:has(.p3-ph)::before{left:86px}
+.pdp3-page .p3-tcard q::after{content:"";display:block;clear:both}
+.pdp3-page .p3-tcard q{quotes:none;display:block;font-size:16px;line-height:1.35;color:var(--p3-ink)}
+.pdp3-page .p3-tcard .p3-who{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--p3-ink-3)}
+.pdp3-page .p3-avatar{width:32px;height:32px;border-radius:50%;background:var(--p3-sage-2);display:grid;place-items:center;color:var(--p3-forest);font-weight:500;font-size:12px;flex:none;overflow:hidden}
+.pdp3-page .p3-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.pdp3-page .p3-who{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--p3-ink-3)}
+
+/* ===== router ===== */
+.pdp3-page .p3-router{padding:0 16px;display:grid;gap:20px}
+.pdp3-page .p3-router h2{letter-spacing:-.01em}
+.pdp3-page .p3-router .p3-sub{font-size:16px;line-height:1.5;color:var(--p3-ink-2);margin-top:-6px}
+.pdp3-page .p3-chips{display:flex;flex-wrap:wrap;gap:8px}
+.pdp3-page .p3-rcard{background:var(--p3-white);border:1px solid var(--p3-line);border-radius:14px;padding:22px 30px;display:grid;gap:22px;transition:opacity .2s ease}
+.pdp3-page .p3-rcard.p3-swap{opacity:0}
+.pdp3-page .p3-rcard .p3-ico{width:40px;height:40px;stroke:var(--p3-forest);fill:none;stroke-width:1.25;stroke-linecap:round;stroke-linejoin:round}
+.pdp3-page .p3-rcard h3{font-size:30px;line-height:1;color:var(--p3-ink)}
+.pdp3-page .p3-rcard p{font-size:16px;line-height:1.5;color:var(--p3-ink-2)}
+.pdp3-page .p3-rcard .p3-how{font-size:16px;color:var(--p3-ink-3)}
+.pdp3-page .p3-rcard blockquote{position:relative;font-style:italic;font-size:16px;line-height:1.5;color:var(--p3-ink);padding-top:26px;margin-left:-2px}
+.pdp3-page .p3-rcard blockquote::before{content:"\201C";position:absolute;left:0;top:0;font-family:Georgia,"Times New Roman",serif;font-style:normal;font-weight:700;font-size:48px;line-height:0;transform:translateY(20px);color:var(--p3-forest);opacity:.35}
+.pdp3-page .p3-tcard q{position:relative;padding-top:26px;margin-left:-2px}
+.pdp3-page .p3-tcard q::before{content:"\201C";position:absolute;left:0;top:0;font-family:Georgia,"Times New Roman",serif;font-style:normal;font-weight:700;font-size:48px;line-height:0;transform:translateY(20px);color:var(--p3-forest);opacity:.35}
+.pdp3-page .p3-rcard a{font-size:14px;font-weight:500;color:var(--p3-forest);text-decoration:underline;text-underline-offset:3px}
+.pdp3-page .p3-rcard .p3-who{margin-top:-10px}
+
+/* ===== packs ===== */
+.pdp3-page .p3-packs{padding:0 16px 20px;display:grid;gap:22px}
+.pdp3-page .p3-guar{display:flex;gap:10px;align-items:center;padding:14px 16px;border:1px solid var(--p3-line);border-radius:10px;background:var(--p3-sage-3);font-size:16px;line-height:1.5;color:var(--p3-forest-2)}
+.pdp3-page .p3-guar svg{width:22px;height:22px;flex:none;stroke:var(--p3-forest);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.pdp3-page .p3-pack{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 8px;align-items:center;background:var(--p3-white);border:1.5px solid var(--p3-line);border-radius:14px;padding:18px 18px 16px;cursor:pointer}
+.pdp3-page .p3-pack .p3-top{grid-column:1/-1}
+.pdp3-page .p3-pack .p3-txt{display:grid;gap:8px}
+.pdp3-page .p3-pack .p3-pi{display:block;justify-self:end;height:auto}
+.pdp3-page .p3-pack .p3-pi.p3-p3{width:124px}
+.pdp3-page .p3-pack .p3-pi.p3-p2{width:93px}
+.pdp3-page .p3-pack .p3-pi.p3-p1{width:62px}
+.pdp3-page .p3-pack .p3-vis{display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;align-self:stretch;gap:10px;width:104px}
+.pdp3-page .p3-pack .p3-vis .p3-pi{margin-left:-30px}
+.pdp3-page .p3-pack .p3-gift{display:flex;align-items:flex-end;gap:5px;font-size:10px;font-weight:600;line-height:1.25;letter-spacing:0;white-space:nowrap;text-transform:uppercase;text-align:right;color:var(--p3-ink)}
+.pdp3-page .p3-pack .p3-gift s{color:var(--p3-ink-3)}
+.pdp3-page .p3-pack .p3-oil{height:58px;width:auto;display:block}
+.pdp3-page .p3-pack input{position:absolute;opacity:0;pointer-events:none}
+.pdp3-page .p3-pack:has(input:checked){border-color:var(--p3-forest);background:var(--p3-sel)}
+.pdp3-page .p3-pack .p3-tag{position:absolute;top:-11px;left:16px;background:var(--p3-sage-3);color:var(--p3-forest);font-size:12px;font-weight:500;line-height:1.5;letter-spacing:-.005em;padding:4px 10px;border-radius:999px}
+.pdp3-page .p3-pack .p3-top{display:flex;justify-content:space-between;align-items:center;min-height:28px}
+.pdp3-page .p3-pack .p3-name{font-size:18px;font-weight:500;color:var(--p3-ink)}
+.pdp3-page .p3-pack .p3-save{font-size:16px;font-weight:500;color:var(--p3-canvas);background:var(--p3-forest-2);padding:2px 8px;border-radius:999px;line-height:1.5}
+.pdp3-page .p3-pack .p3-pd{display:flex;align-items:baseline;gap:6px}
+.pdp3-page .p3-pack .p3-pd b{font-size:30px;font-weight:500;line-height:1.12;letter-spacing:0;color:var(--p3-ink)}
+.pdp3-page .p3-pack .p3-pd span{font-size:16px;color:var(--p3-ink-3)}
+.pdp3-page .p3-pack .p3-price{font-size:16px;line-height:1.5;color:var(--p3-ink-2);white-space:nowrap}
+.pdp3-page .p3-pack s{color:var(--p3-ink-3)}
+.pdp3-page .p3-pack .p3-row{font-size:14px;line-height:25px;color:var(--p3-ink-2)}
+.pdp3-page .p3-assure{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.pdp3-page .p3-assure li{display:flex;align-items:center;gap:10px;font-size:14px;line-height:1.5;color:var(--p3-ink-2)}
+.pdp3-page .p3-assure svg{width:20px;height:20px;flex:none;stroke:var(--p3-forest);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+@media(min-width:900px){.pdp3-page .p3-assure{grid-template-columns:auto auto auto;justify-content:start;gap:28px}.pdp3-page .p3-assure li{align-items:flex-start}.pdp3-page .p3-assure svg{margin-top:1px}}
+
+/* ===== how to ===== */
+.pdp3-page .p3-howto{margin:0 16px;background:var(--p3-sage-2);border-radius:15px;padding:30px 20px;display:grid;gap:0}
+.pdp3-page .p3-howto .p3-hv{position:relative;border-radius:17px;overflow:hidden;aspect-ratio:1;background:#E6E6DE}
+.pdp3-page .p3-howto .p3-hv video{width:100%;height:100%;object-fit:cover;display:block}
+.pdp3-page .p3-howto .p3-hv .p3-eb2{position:absolute;left:20px;top:23px;margin:0;font-size:14px;line-height:1.4;letter-spacing:.06em;text-transform:uppercase;color:var(--p3-ink-3)}
+.pdp3-page .p3-howto h2{margin-top:30px;letter-spacing:-.02em}
+.pdp3-page .p3-howto .p3-med{margin-top:26px}
+.pdp3-page .p3-howto .p3-note2{margin-top:10px;font-size:12px;line-height:1.5;letter-spacing:-.005em;color:var(--p3-ink-2);text-align:center}
+@media(min-width:900px){.pdp3-page .p3-howto{grid-template-columns:320px 1fr;column-gap:30px;align-items:center}.pdp3-page .p3-howto .p3-hv{grid-row:1/span 3}.pdp3-page .p3-howto h2{margin-top:0}.pdp3-page .p3-howto .p3-note2{text-align:left}}
+.pdp3-page .p3-step{display:flex;gap:14px;align-items:flex-start}
+.pdp3-page .p3-step svg{width:40px;height:40px;flex:none;stroke:var(--p3-forest);fill:none;stroke-width:1.25;stroke-linecap:round;stroke-linejoin:round}
+.pdp3-page .p3-step b{display:block;font-size:18px;font-weight:500;line-height:1.5;letter-spacing:-.005em;color:var(--p3-ink);margin-bottom:2px}
+.pdp3-page .p3-step span{display:block;font-size:16px;line-height:1.5;letter-spacing:-.005em;color:var(--p3-ink-2);max-width:267px}
+.pdp3-page .p3-med{display:flex;gap:12px;align-items:flex-start;background:var(--p3-white);border-radius:10px;padding:16px;font-size:12px;line-height:1.5;letter-spacing:-.005em;color:var(--p3-ink)}
+.pdp3-page .p3-med svg{width:26px;height:26px;flex:none;stroke:var(--p3-forest);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+
+/* ===== why a leaf (dark) ===== */
+.pdp3-page .p3-leaf{background:var(--p3-forest);color:var(--p3-on-dark);padding:64px 20px;margin-top:15px;display:grid;gap:18px}
+.pdp3-page .p3-leaf img{width:100%;aspect-ratio:350/437;object-fit:cover;border-radius:14px}
+.pdp3-page .p3-leaf p.p3-eb{color:var(--p3-sage)}
+.pdp3-page .p3-leaf h2{color:var(--p3-on-dark)}
+.pdp3-page .p3-leaf p{font-size:16px;line-height:1.5;letter-spacing:-.005em;color:var(--p3-on-dark-2)}
+.pdp3-page .p3-leaf .p3-lead{font-size:30px;line-height:1.21;letter-spacing:0;color:var(--p3-on-dark)}
+.pdp3-page .p3-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,170px));gap:10px}
+.pdp3-page .p3-tile{border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:16px;display:grid;gap:6px}
+.pdp3-page .p3-tile b{font-size:30px;font-weight:500;line-height:1.5;letter-spacing:-.005em;color:var(--p3-sage-chip)}
+.pdp3-page .p3-tile span{font-size:14px;line-height:1.5;letter-spacing:-.005em;color:var(--p3-on-dark-3)}
+.pdp3-page .p3-leaf .p3-gram{font-size:14px;color:var(--p3-on-dark-2)}
+
+/* ===== why this one ===== */
+.pdp3-page .p3-why{padding:64px 20px;display:grid;gap:18px}
+.pdp3-page .p3-bpom{display:flex;align-items:center;gap:16px;text-align:left}
+.pdp3-page .p3-bpom img{width:88px;height:60px;object-fit:contain}
+.pdp3-page .p3-bpom .p3-l1{font-size:12px;line-height:1.4;letter-spacing:.06em;text-transform:uppercase;color:var(--p3-forest)}
+.pdp3-page .p3-bpom .p3-l2{font-size:14px;color:var(--p3-ink-3)}
+.pdp3-page .p3-why p{font-size:16px;line-height:1.5;letter-spacing:-.005em;color:var(--p3-ink-2)}
+.pdp3-page .p3-cmp{border:1px solid var(--p3-line);border-radius:10px;overflow:hidden}
+.pdp3-page .p3-cmp table{border-collapse:collapse;width:100%;table-layout:fixed}
+.pdp3-page .p3-cmp col.p3-c0{width:84px}
+.pdp3-page .p3-cmp th,.pdp3-page .p3-cmp td{padding:12px 10px;text-align:left;vertical-align:top;font-size:14px;line-height:1.35;letter-spacing:-.005em}
+.pdp3-page .p3-cmp thead tr{background:var(--p3-row)}
+.pdp3-page .p3-cmp th.p3-us{font-weight:700;font-size:16px;color:var(--p3-ink);background:var(--p3-sage-chip)}
+.pdp3-page .p3-cmp th.p3-ot{font-weight:500;font-size:13px;color:var(--p3-ink-3)}
+.pdp3-page .p3-cmp tbody tr{background:var(--p3-row)}
+.pdp3-page .p3-cmp tbody tr td{border-top:1px solid var(--p3-white)}
+.pdp3-page .p3-cmp tbody tr.p3-alt{background:var(--p3-row-2)}
+.pdp3-page .p3-cmp tbody tr.p3-alt td{border-top:1px solid var(--p3-line)}
+.pdp3-page .p3-cmp td.p3-us{background:var(--p3-sage-chip);color:var(--p3-ink)}
+.pdp3-page .p3-cmp td.p3-no{color:var(--p3-ink-3)}
+.pdp3-page .p3-cmp td.p3-k{color:var(--p3-ink)}
+.pdp3-page .p3-modal{position:fixed;inset:0;z-index:60;background:rgba(26,36,32,.55);display:none;place-items:center;padding:20px}
+.pdp3-page .p3-modal.p3-on{display:grid}
+.pdp3-page .p3-modal .p3-box{background:var(--p3-white);border-radius:14px;max-width:560px;width:100%;padding:24px;max-height:85vh;overflow:auto;display:grid;gap:10px}
+.pdp3-page .p3-modal .p3-box p{font-size:15px;color:var(--p3-ink-2)}
+
+/* ===== farm ===== */
+.pdp3-page .p3-farm{padding:0 20px 56px;display:grid;gap:18px}
+.pdp3-page .p3-farm h2{letter-spacing:-.02em}
+.pdp3-page .p3-frames{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+.pdp3-page .p3-frames::-webkit-scrollbar{display:none}
+.pdp3-page .p3-frame{flex:0 0 272px;scroll-snap-align:start;display:grid;gap:8px}
+.pdp3-page .p3-frame img{width:272px;height:340px;object-fit:cover;border-radius:10px}
+.pdp3-page .p3-frame span.p3-eb{font-size:12px !important;color:var(--p3-forest)}
+.pdp3-page .p3-farm p{font-size:16px;line-height:1.5;color:var(--p3-ink-2);letter-spacing:-.005em}
+
+/* ===== timeline card ===== */
+.pdp3-page .p3-days{margin:0 16px;background:var(--p3-card-grey);border-radius:10px;padding:48px 20px;display:grid;gap:18px}
+.pdp3-page .p3-days h2{letter-spacing:-.02em}
+.pdp3-page .p3-node{display:flex;gap:16px;align-items:flex-start}
+.pdp3-page .p3-node .p3-dot{flex:none;width:13px;height:13px;border-radius:50%;background:var(--p3-forest);margin-top:6px}
+.pdp3-page .p3-node>div{max-width:292px}
+.pdp3-page .p3-node b{display:block;font-size:16px;font-weight:500;line-height:1.5;letter-spacing:-.005em;color:var(--p3-ink);margin-bottom:4px}
+.pdp3-page .p3-node p{font-size:14px;line-height:1.5;letter-spacing:-.005em;color:var(--p3-ink-2)}
+
+/* ===== reviews ===== */
+.pdp3-page .p3-reviews{padding:0 20px 56px}
+.pdp3-page #klaviyo-product-reviews-wrapper{display:grid;gap:12px;font-family:var(--p3-f)}
+.pdp3-page .kl_reviews__summary{display:grid;gap:14px;padding:18px;border:1px solid var(--p3-line);border-radius:14px;background:var(--p3-white)}
+.pdp3-page .p3-kl-avg{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.pdp3-page .kl_reviews__summary__average_value{font-size:30px;font-weight:500;line-height:1.12;color:var(--p3-ink)}
+.pdp3-page .kl_reviews__summary__average_denominator{font-size:14px;color:var(--p3-ink-3);margin-right:4px}
+.pdp3-page .p3-kl-avg .p3-stars{font-size:14px;color:var(--p3-forest)}
+.pdp3-page .kl_reviews__summary__stars__count{font-size:14px;color:var(--p3-ink-3)}
+.pdp3-page .p3-kl-bars{display:grid;gap:6px}
+.pdp3-page .kl_reviews__histogram__row{display:grid;grid-template-columns:12px 1fr 28px;align-items:center;gap:10px;font-size:12px;color:var(--p3-ink-3)}
+.pdp3-page .kl_reviews__histogram__bar--background{display:block;height:6px;border-radius:3px;background:var(--p3-sage-2);overflow:hidden}
+.pdp3-page .kl_reviews__histogram__bar--foreground{display:block;width:0;height:100%;background:var(--p3-forest)}
+.pdp3-page .p3-kl-actions{display:flex;gap:8px;flex-wrap:wrap}
+.pdp3-page .kl_reviews__button{height:44px;padding:0 18px;border-radius:999px;background:var(--p3-forest);color:var(--p3-canvas);font-size:15px;font-weight:500}
+.pdp3-page .kl_reviews__button.p3-ghost{background:transparent;border:1px solid var(--p3-forest);color:var(--p3-forest)}
+.pdp3-page .p3-kl-list{display:grid;gap:12px}
+.pdp3-page .p3-kl-tabs{display:flex;gap:18px;border-bottom:1px solid var(--p3-line)}
+.pdp3-page .kl_reviews__list__tab{padding:10px 0;font-size:15px;color:var(--p3-ink-3)}
+.pdp3-page .kl_reviews__list__tab.p3-on{color:var(--p3-ink);font-weight:500;border-bottom:2px solid var(--p3-forest);margin-bottom:-1px}
+.pdp3-page .kl_reviews__search{height:44px;display:flex;align-items:center;padding:0 14px;border:1px solid var(--p3-line);border-radius:10px;background:var(--p3-white);font-size:14px;color:var(--p3-ink-3)}
+.pdp3-page .kl_reviews__filters__group{display:flex;gap:8px;flex-wrap:wrap}
+.pdp3-page .kl_reviews__filters__pill{font-size:14px;color:var(--p3-ink-2);border:1px solid var(--p3-line);border-radius:999px;padding:8px 14px;background:var(--p3-white)}
+.pdp3-page .kl_reviews__review__title{font-size:16px;font-weight:500;color:var(--p3-ink)}
+.pdp3-page .p3-kl-more{width:100%}
+.pdp3-page .p3-rev{background:var(--p3-white);border:1px solid var(--p3-line);border-radius:14px;padding:18px;display:grid;gap:8px}
+.pdp3-page .p3-rev .p3-stars{font-size:14px;color:var(--p3-forest)}
+.pdp3-page .p3-rev q{quotes:none;display:block;font-size:16px;line-height:1.5;letter-spacing:-.005em;color:var(--p3-ink)}
+.pdp3-page .p3-rev .p3-who{font-size:14px;color:var(--p3-ink-3)}
+.pdp3-page .p3-rev[hidden]{display:none}
+
+/* ===== founder ===== */
+.pdp3-page .p3-founder{padding:48px 20px 56px;display:grid;gap:14px}
+.pdp3-page .p3-founder img{width:100%;aspect-ratio:350/437;object-fit:cover;border-radius:14px}
+.pdp3-page .p3-founder p{font-size:16px;line-height:1.5;letter-spacing:-.01em;color:var(--p3-ink-2)}
+.pdp3-page .p3-founder .p3-sig{font-size:14px;color:var(--p3-ink-3);letter-spacing:-.005em}
+
+/* ===== faq ===== */
+.pdp3-page .p3-faq{padding:0 20px 56px}
+.pdp3-page .p3-faq h2{margin:0 0 18px;line-height:1.12}
+.pdp3-page .p3-faq details{border-top:1px solid var(--p3-line)}
+.pdp3-page .p3-faq details:last-of-type{border-bottom:1px solid var(--p3-line)}
+.pdp3-page .p3-faq summary{list-style:none;display:flex;justify-content:space-between;gap:16px;padding:18px 0;cursor:pointer;font-size:18px;line-height:1.5;letter-spacing:-.005em;color:var(--p3-ink)}
+.pdp3-page .p3-faq summary::-webkit-details-marker{display:none}
+.pdp3-page .p3-faq summary span{max-width:300px}
+.pdp3-page .p3-faq summary i{font-style:normal;color:var(--p3-ink-3)}
+.pdp3-page .p3-faq details[open] summary i::before{content:"⌃"}
+.pdp3-page .p3-faq details:not([open]) summary i::before{content:"⌄"}
+.pdp3-page .p3-faq .p3-a{padding:0 0 18px;font-size:16px;line-height:1.5;letter-spacing:-.005em;color:var(--p3-ink-2)}
+
+/* ===== close ===== */
+.pdp3-page .p3-close{background:var(--p3-forest);color:var(--p3-on-dark);padding:64px 20px;display:grid;gap:22px;text-align:center}
+.pdp3-page .p3-close .p3-cjoin{display:flex;justify-content:center;align-items:center;gap:10px;font-size:16px;color:var(--p3-on-dark)}
+.pdp3-page .p3-close .p3-faces img{border-color:var(--p3-forest)}
+.pdp3-page .p3-close h2{color:var(--p3-on-dark);line-height:1.12}
+.pdp3-page .p3-close .p3-btn.p3-canvas{background:var(--p3-canvas);color:var(--p3-forest)}
+.pdp3-page .p3-close .p3-btn.p3-wa{background:var(--p3-wa);color:#fff;height:auto;min-height:56px;padding:8px 20px}
+/* Isinya satu blok rata tengah; tingginya boleh tumbuh kalau labelnya dua
+   baris (label Indonesia "Tanya langsung ke tim kami di WhatsApp" tidak muat
+   satu baris di 393px), dan min-height menjaga tingginya tetap 56px seperti
+   tombol sebelahnya saat labelnya pendek. */
+.pdp3-page .p3-close .p3-btn.p3-wa .p3-btn__in{text-align:center;text-wrap:balance}
+.pdp3-page .p3-close .p3-btn.p3-wa svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;display:inline-block;vertical-align:-5px;margin-right:8px}
+.pdp3-page .p3-close .p3-note{font-size:14px;color:var(--p3-on-dark-3);letter-spacing:-.005em}
+
+/* ===== footer (store) ===== */
+
+/* ===== sticky ===== */
+.pdp3-page .p3-sticky{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--p3-canvas);border-top:1px solid var(--p3-line);transform:translateY(110%);transition:transform .25s ease}
+.pdp3-page .p3-sticky.p3-on{transform:none}
+.pdp3-page .p3-sticky .p3-in{max-width:393px;margin-inline:auto;height:74px;display:flex;align-items:center;gap:12px;padding:0 20px}
+.pdp3-page .p3-sticky .p3-pd b{display:block;font-size:20px;font-weight:500;line-height:1.5;letter-spacing:-.005em;color:var(--p3-ink);white-space:nowrap}
+.pdp3-page .p3-sticky .p3-pd b em{font-style:normal;font-weight:400;font-size:12px;color:var(--p3-ink-3)}
+.pdp3-page .p3-sticky .p3-pd>span{display:block;font-size:12px;color:var(--p3-ink-3)}
+.pdp3-page .p3-sticky .p3-pd b span{display:inline}
+.pdp3-page .p3-sticky .p3-btn{height:48px;font-size:16px;flex:1;width:auto}
+@media(min-width:900px){.pdp3-page .p3-sticky{display:none}}
+
+/* ==========================================================================
+   Bridge — the mockup is one document, this theme is twelve sections
+   ========================================================================== */
+
+/* The mockup wraps everything in a single `<main class="page">`. Here each
+   section prints its own `.pdp3-page`, which reproduces the same centred
+   column, but the gaps that came from `.stack{gap:15px}` and from siblings
+   sitting inside one grid are lost at the seams. These three rules put them
+   back, and they are the exact numbers the mockup produced. */
+.pdp3-page--stack{margin-bottom:15px}
+
+/* `body` in the mockup carries the canvas colour, so the strips either side of
+   the 393px column are canvas too, not white. */
+body:has(.pdp3-page){background:var(--p3-canvas,#F8F8F2)}
+body.pdp3-body{background:#F8F8F2}
+
+/* Shopify wraps every section in a div of its own; without this the wrappers
+   introduce their own line boxes between sections. */
+.shopify-section:has(>.pdp3-page){display:flow-root}
+
+/* Mockup memisahkan tiga nomor registrasi dengan `<br class="brm">` tanpa
+   spasi. Di >=900px `brm` mati dan ketiganya menempel jadi satu kata — itu
+   terjadi di mockup juga. Spasi pengganti ini HANYA hidup di lebar tempat
+   `brm` mati, sehingga tampilan 393px tetap identik. */
+.pdp3-page .p3-brm-sp{display:none}
+@media(min-width:900px){.pdp3-page .p3-brm-sp{display:inline}}
+
+/* ==========================================================================
+   Ulasan — dua aturan, dan hanya dua
+   --------------------------------------------------------------------------
+   Seluruh tampilan section ini sudah datang dari aturan `.kl_reviews__*`,
+   `.p3-rev`, `.p3-kl-*` di bagian atas berkas ini — port langsung dari mockup.
+   Yang tersisa cuma dua hal yang tidak mungkin ada di mockup, karena mockup
+   tidak punya widget:
+
+   1. Wadah Judge.me. Ia sumber datanya, jadi ia harus TETAP DIRENDER dan tetap
+      punya ukuran — widget yang di-`display:none` berhenti memuat halaman
+      berikutnya dan berhenti melaporkan tingginya. Jadi ia disingkirkan dari
+      pandangan, bukan dimatikan.
+   2. Kotak cari mockup adalah `<div>` berisi teks. Di sini isinya `<input>`
+      telanjang yang mewarisi seluruh gaya induknya, sehingga terlihat persis
+      sama tapi benar-benar mencari.
+   ========================================================================== */
+/* BUG yang pernah terjadi: sesudah menekan pil saring, semua kartu kehilangan
+   kutipannya — yang tersisa cuma bintang, nama, dan tautan "Read more".
+
+   Sebabnya UKURAN wadah ini. Muatan pertama datang sebagai HTML jadi dari
+   metafield `judgeme.widget`, teksnya utuh. Begitu diurutkan, widget
+   menggambar ulang di sisi klien dan memotong isi ulasan berdasarkan lebar
+   yang ia UKUR. Wadah 1px berarti setiap ulasan dianggap meluap, dan
+   potongannya menyisakan nol karakter.
+
+   Jadi wadahnya diberi lebar yang sungguhan lalu digeser keluar layar, bukan
+   diciutkan. `opacity` dan `position:fixed` tidak mengubah hasil pengukuran;
+   `width:1px` mengubahnya. 1200px dipilih supaya widget tidak pernah merasa
+   perlu memotong apa pun — yang dibaca halaman ini teks penuhnya. */
+/* Tab pertanyaan (Judge.me Q&A). Saat aktif, kontrol yang hanya milik
+   ulasan — kotak cari, pil urutan/rating/foto, tombol muat lagi — ikut
+   disembunyikan; Judge.me sendiri melakukan hal yang sama pada subtab-nya. */
+.pdp3-page .p3-kl-list[data-p3-view="questions"] > .kl_reviews__search,
+.pdp3-page .p3-kl-list[data-p3-view="questions"] > .kl_reviews__filters__group,
+.pdp3-page .p3-kl-list[data-p3-view="questions"] > [data-p3-rev-list],
+.pdp3-page .p3-kl-list[data-p3-view="questions"] > [data-p3-empty],
+.pdp3-page .p3-kl-list[data-p3-view="questions"] > [data-p3-more]{display:none}
+.pdp3-page .p3-kl-questions{display:grid;gap:12px}
+.pdp3-page .p3-quest .kl_reviews__review__title{margin-bottom:2px}
+.pdp3-page .p3-ans{margin-top:12px;padding:12px 14px;border-radius:10px;background:var(--p3-sage-2);font-size:14px;line-height:1.5;color:var(--p3-ink-2)}
+.pdp3-page .p3-ans b{display:block;font-weight:500;color:var(--p3-ink);margin-bottom:2px}
+.pdp3-page .p3-ans .p3-who{margin-top:8px}
+.pdp3-page .p3-jdgm-host{position:fixed;left:-10000px;top:0;width:1200px;max-width:none;opacity:0;pointer-events:none;z-index:-1}
+/* Saat formulir Judge.me dibuka (assets/pdp3.js): host masuk ke aliran dan
+   terlihat, dan hanya pembungkus formulir di header widget yang tampil.
+   `!important` karena Judge.me menulis display inline pada beberapa
+   bagiannya saat setup. `--qa` (modul Tanya-Jawab, mati di toko ini) hanya
+   menyembunyikan badan/paginasi dan membiarkan header apa adanya, karena
+   markup formulir pertanyaannya belum bisa diamati. */
+.pdp3-page .p3-jdgm-host.p3-jdgm-host--form,
+.pdp3-page .p3-jdgm-host.p3-jdgm-host--qa{position:static;left:auto;width:auto;max-width:none;opacity:1;pointer-events:auto;z-index:auto;margin-top:12px}
+.pdp3-page .p3-jdgm-host--form .jdgm-rev-widg > :not(.jdgm-rev-widg__header),
+.pdp3-page .p3-jdgm-host--qa .jdgm-rev-widg > :not(.jdgm-rev-widg__header){display:none!important}
+.pdp3-page .p3-jdgm-host--form .jdgm-rev-widg__header > :not(.jdgm-form-wrapper):not(.jdgm-form-dynamic-wrapper):not(.jdgm-question-form-wrapper){display:none!important}
+.pdp3-page .p3-jdgm-host--form .jdgm-rev-widg,.pdp3-page .p3-jdgm-host--qa .jdgm-rev-widg{display:block!important}
+.pdp3-page .kl_reviews__search input{all:unset;flex:1;min-width:0;font:inherit;color:inherit;cursor:text}
+.pdp3-page .kl_reviews__search input::placeholder{color:inherit;opacity:1}
+.pdp3-page .p3-kl-more[hidden]{display:none}
+
+/* Foto pembeli: tidak ada di mockup (keempat ulasannya kebetulan tanpa foto),
+   tapi ada di ulasan sungguhan. Dirender dengan bahasa yang sama seperti
+   thumbnail galeri — 78px, sudut 10px. */
+.pdp3-page .p3-rev__pics{display:flex;gap:6px;flex-wrap:wrap}
+.pdp3-page .p3-rev__pics img{width:78px;height:78px;object-fit:cover;border-radius:10px}
+
+/* Mockup menulis sel sudut tabel banding sebagai `<th></th>` kosong. Kosong
+   secara visual itu benar, kosong bagi pembaca layar tidak: kolom pertama
+   memang punya nama ("Criteria"), dan tanpa nama itu setiap baris dibacakan
+   tanpa tahu apa yang sedang dibandingkan. Teksnya ada, tapi tidak menempati
+   ruang, sehingga tampilannya tetap sama persis. */
+.pdp3-page .p3-sr{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
+
+/* theme.css:624 memberi SETIAP `<section>` di toko `width:100vw` dan
+   `overflow:hidden`. Keduanya merusak salinan ini dengan cara yang tidak
+   terlihat sampai diukur:
+
+     width:100vw      — `.p3-howto` dan `.p3-days` memakai `margin:0 16px`
+                        untuk menjadi kartu yang lebih sempit dari kolomnya.
+                        Dengan lebar dipatok selebar layar, marginnya tetap
+                        terpasang tapi tidak lagi menyempitkan apa pun, dan
+                        kedua kartu itu menempel ke tepi.
+     overflow:hidden  — pita "Most chosen" menggantung di `top:-11px`, di luar
+                        kotak kartunya. Section yang memotong luapan akan
+                        memenggalnya.
+
+   Dikembalikan ke nilai bawaan, bukan disetel ke angka baru: mockup tidak
+   pernah menyebut keduanya, jadi yang benar adalah tidak ada aturannya. */
+.pdp3-page section{width:auto;overflow:visible}
+
+/* `.native-gallery__slide` dipakai di sini MURNI sebagai titik-kait:
+   snippets/MiniCart.liquid membaca `.native-gallery__slide img` untuk
+   menggambar kartu optimistis saat barang ditambahkan. Tapi kelas itu juga
+   membawa gaya dari assets/section-product-single.css — latar #e8ede4, sudut
+   8px, dan `view-transition-name` pada gambar pertama — yang tidak ada di
+   mockup dan terlihat sebagai bingkai hijau tipis di tepi setiap slide.
+
+   Kaitnya dipertahankan, gayanya dikembalikan ke nilai mockup. Jangan buang
+   kelasnya: yang hilang bukan warna, melainkan gambar di kartu keranjang. */
+.pdp3-page .p3-slide{background-color:transparent;border-radius:0;overflow:visible}
+.pdp3-page .p3-slide img{border-radius:0;view-transition-name:none}
+
+/* Tabel banding: mockup HANYA memberi garis atas pada selnya
+   (`border-top: 1px`). Tema menambahkan garis bawah #526547 pada setiap `td`,
+   dan garis kedua itu menambah 1px per baris — enam baris, enam garis yang
+   meleset, dan tinggi tabel yang tidak pernah cocok dengan mockup.
+
+   Ditulis sebagai `border: 0` lalu garis atasnya dipasang ulang oleh aturan
+   mockup di atas, bukan sebagai `border-bottom: 0` saja: sisi kiri dan kanan
+   ikut diwarnai tema di sebagian tema anak. */
+.pdp3-page .p3-cmp th,.pdp3-page .p3-cmp td{border-right:0;border-bottom:0;border-left:0}
+
+/* Elemen sebaris di dalam section ulasan mewarisi `line-height` dari mockup
+   (`body{line-height:1.5}`) — mockup tidak pernah menyetelnya per elemen. Tema
+   menyetelnya: `span` di sini keluar 1.71 dan 1.07, `i` mendapat garis tepi
+   1px yang memakan 2px dari batang histogram setinggi 6px.
+
+   `:where()` menyumbang 0 pada spesifisitas, jadi aturan ini menang atas
+   aturan tema yang cuma menyebut elemen, tapi tetap kalah dari aturan kelas
+   mockup di atas — 4.96 tetap `line-height:1.12`, batangnya tetap 6px. */
+.p3-reviews :where(span, i, b, time, small, em){line-height:inherit;border:0;border-radius:0}
+
+/* Pil yang sedang aktif TIDAK berubah rupa: mockup menggambar ketiganya sama,
+   dan `p3-on` di sini murni penanda keadaan untuk assets/pdp3.js. */
+.pdp3-page .kl_reviews__filters__pill{cursor:pointer;font-family:inherit}
+
+/* Pil saring adalah `<span>` — tag mockup — dan span bisa disorot seperti teks
+   biasa. Sekali seret, yang terjadi bukan menyaring melainkan memblok tulisan,
+   dan pilnya terlihat rusak. Tombol sungguhan tidak punya masalah ini karena
+   browser sudah mematikan pemilihan teks padanya. */
+.pdp3-page .kl_reviews__filters__pill,
+.pdp3-page .kl_reviews__list__tab{-webkit-user-select:none;user-select:none}
+
+/* Pil yang sedang aktif.
+
+   Mockup menggambar ketiga pil SAMA, dan itu benar untuk keadaan awal: belum
+   ada yang dipilih. Tapi tanpa keadaan terpilih sama sekali, menekan pil tidak
+   pernah terlihat menghasilkan apa pun — dan pil yang bekerja tapi tidak
+   terbaca bekerja sama saja dengan pil yang rusak.
+
+   Jadi bentuk terpilihnya dipinjam dari tempat lain di mockup yang MEMANG
+   punya keadaan terpilih: chip pemilih alasan (`.p3-pill[aria-checked=true]`)
+   — isi forest, teks canvas. Halaman terbuka tanpa satu pun pil menyala,
+   sehingga cetakan pertamanya tetap sama persis dengan mockup; warnanya baru
+   muncul sesudah pembeli menekan. */
+.pdp3-page .kl_reviews__filters__pill.p3-on{background:var(--p3-forest);border-color:var(--p3-forest);color:var(--p3-canvas)}
+
+/* --- pil bertanda panah: daftar pilihannya --------------------------------
+   Mockup menggambar pilnya saja, tidak menggambar menunya — tapi tanda `⌄`
+   pada dua dari tiga pil itu MENJANJIKAN sebuah menu, dan janji itu yang
+   ditepati di sini. Bentuknya dipinjam dari benda yang sudah ada di mockup:
+   kotak putih bergaris `--p3-line` dan sudut 10px milik kotak cari, teks 14px
+   `--p3-ink-2` milik pilnya sendiri, dan bentuk terpilih forest/canvas milik
+   chip pemilih alasan.
+
+   Pembungkusnya tidak punya padding maupun garis: ia menempati ruang yang
+   sama persis dengan `<span>` yang digantikannya, jadi baris pil tetap sama
+   dengan mockup selama menunya tertutup. */
+.pdp3-page .p3-filter{position:relative;display:inline-flex}
+.pdp3-page .p3-menu{position:absolute;top:calc(100% + 6px);left:0;z-index:30;min-width:100%;background:var(--p3-white);border:1px solid var(--p3-line);border-radius:10px;padding:6px;display:grid;gap:2px;box-shadow:0 10px 28px rgba(26,36,32,.12)}
+.pdp3-page .p3-menu[hidden]{display:none}
+.pdp3-page .p3-menu button{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;padding:8px 10px;border-radius:8px;font-size:14px;line-height:1.5;color:var(--p3-ink-2);text-align:left;white-space:nowrap;font-family:inherit}
+.pdp3-page .p3-menu button:hover{background:var(--p3-sel)}
+.pdp3-page .p3-menu button[aria-selected="true"]{background:var(--p3-forest);color:var(--p3-canvas)}
+.pdp3-page .p3-menu__count{font-size:12px;color:var(--p3-ink-3);font-variant-numeric:tabular-nums}
+.pdp3-page .p3-menu button[aria-selected="true"] .p3-menu__count{color:var(--p3-on-dark-3)}
+
+/* Menyaring sampai kosong adalah hasil yang sah (2 dan 1 bintang di produk ini
+   memang nol). Yang tidak boleh terjadi adalah daftar yang lenyap tanpa
+   sepatah kata. */
+.pdp3-page .p3-rev-empty{font-size:14px;line-height:1.5;color:var(--p3-ink-3);padding:6px 0}
+.pdp3-page .p3-rev-empty[hidden]{display:none}
+
+/* Baris "siapa" di kartu ulasan dan kartu testimoni adalah SATU KALIMAT
+   ("Nama · Pembeli terverifikasi · 2 bulan yang lalu"), tapi mockup
+   menggambarnya dengan `display:flex` — aturan `.who` yang sama juga dipakai
+   kartu alasan, yang memang butuh flex untuk mendudukkan avatarnya.
+
+   Selama teksnya pendek, keduanya terlihat sama. Begitu kalimatnya memanjang —
+   dan versi Indonesianya memang lebih panjang — flex tanpa `wrap` menyempitkan
+   tiap potongan dan memecah nama orang jadi dua baris ("Aliano Hendrick /
+   lee"). Dengan `wrap`, potongannya turun utuh ke baris berikutnya.
+
+   Bahasa Inggris tidak berubah sedikit pun: di sana barisnya muat, dan
+   `flex-wrap` tidak melakukan apa-apa pada baris yang muat. */
+.pdp3-page .p3-who{flex-wrap:wrap}
+
+/* Pembungkus tombol penutup tidak ada di mockup; di bawah desktop ia dibuat
+   menghilang sepenuhnya, sehingga kedua tombol tetap anak grid `.p3-close`
+   langsung dan jaraknya tetap `gap:22px` milik section. */
+.pdp3-page .p3-close__cta{display:contents}
+
+/* ==========================================================================
+   Desktop >=1024px — tata letak dari "PDP v3 — Desktop/Tablet Revamp (4 Sep)"
+   --------------------------------------------------------------------------
+   Yang dipinjam dari tema itu HANYA SUSUNAN KOLOMNYA: rel thumbnail tegak di
+   kiri galeri, kolom beli yang menempel, kartu paket berjajar tiga, dan
+   section-section yang membelah diri jadi "judul di kiri, isi di kanan".
+
+   Yang TIDAK dipinjam: ukuran huruf, warna, radius, dan iramanya. Revamp itu
+   punya skala tipografi clamp()-nya sendiri, dan memakainya berarti mengubah
+   desain — sedangkan permintaannya justru sebaliknya: desain dan copy tetap
+   milik `treelogy-capsules-pdp-single-file.html`, hanya layoutnya yang
+   mengikuti desktop. Jadi setiap nilai di bawah adalah penempatan (kolom,
+   baris, jarak antar-kolom), bukan gaya.
+
+   Di bawah 1024px tidak ada satu pun aturan di sini yang berlaku, sehingga
+   tampilan 393px dan kolom 720px milik mockup tetap utuh.
+   ========================================================================== */
+/* (Level atas, BUKAN di dalam @media: versi pertama tersisip ke blok desktop
+   dan hanya menyembunyikannya di >=1024px.)
+   Section lama yang tergerbang untuk kapsul (excluded_handles) tetap
+   mengeluarkan WRAPPER-nya — dan schema FeaturedProducts memberi wrapper
+   itu kelas `featured-slider`, yang theme.css beri latar sage + tinggi
+   ~680px. Hasilnya blok hijau kosong di antara penutup dan footer (8 Sep,
+   pasca-live). Wrapper tanpa satu pun elemen anak = section yang mundur,
+   jadi disembunyikan; `:empty` tidak bisa dipakai karena wrapper itu masih
+   berisi spasi. */
+.shopify-section:not(:has(*)){display:none}
+/* Wrapper `.featured-slider` (FeaturedProducts/FeaturedBlog) tidak pernah
+   benar-benar kosong: skrip tema menyisipkan <div> setinggi 0 ke dalamnya
+   sesudah muat, jadi aturan di atas meleset. Isi sungguhannya selalu
+   `.main-grid`; tanpa itu wrapper-nya hanya latar sage 683px. */
+.shopify-section.featured-slider:not(:has(.main-grid)){display:none!important}
+
+@media (min-width: 1024px) {
+  .pdp3-page{max-width:1200px;padding-inline:24px}
+
+  /* --- hero ---------------------------------------------------------------
+     Proporsi, jarak kolom, dan padding kotak beli TIDAK ditulis ulang di sini:
+     berkas rujukan sudah menentukannya sendiri di `@media(min-width:900px)`
+     (dua kolom `1fr 1fr`, gap 32px), dan itulah susunan yang diminta. Yang
+     tersisa untuk desktop cuma satu hal yang tidak mungkin ada di berkas satu
+     halaman: kolom galeri yang menempel. */
+  /* Kolom galeri menempel: gambarnya tetap terlihat sementara kolom kanan
+     dibaca — itu perilaku PDP desktop yang hilang kalau layout ponsel sekadar
+     dilebarkan. */
+  /* Galeri kiri, kolom beli kanan — susunan berkas rujukan sendiri di layar
+     lebar (`.hero-grid{grid-template-columns:1fr 1fr}`), bukan rel thumbnail
+     tegak. Thumbnail tetap sebaris di bawah galerinya, seperti di mockup.
+
+     Kolomnya menempel, dan di sini menempelnya BERGUNA: kolom kanan memuat
+     kotak beli DAN strip testimoni, jadi ia lebih tinggi daripada galeri dan
+     ada ruang untuk menempel. Menindih tidak mungkin terjadi — keduanya kolom
+     bersebelahan, bukan baris beruntun. */
+  /* Ruang bawah hero.
+
+     Di berkas rujukan, jarak sebelum section berikutnya datang dari
+     `.tstrip{padding-bottom:24px}` — dan itu bekerja di sana karena pada kolom
+     720px KOLOM KANAN-lah yang paling tinggi, sehingga strip testimoni yang
+     menutup hero. Di kontainer 1200px galerinya jauh lebih besar dan kolom
+     KIRI yang menutup, sedangkan thumbnail tidak punya padding bawah sama
+     sekali — eyebrow section berikutnya lalu duduk 12px di bawah thumbnail.
+
+     Jadi padding yang sama diberikan ke kolom kiri: kolom mana pun yang
+     menang tinggi, hero selalu berakhir dengan 24px. */
+  .pdp3-page .p3-hero-grid > div:first-child{position:sticky;top:24px;align-self:start;padding-bottom:24px}
+  .pdp3-page .p3-hero-grid .p3-gallery{border-radius:14px}
+  /* Inset 16px pada deret thumbnail adalah SELOKAN HALAMAN versi mockup: di
+     bawah 900px galerinya membentang penuh dari tepi ke tepi (x=0), jadi
+     thumbnail perlu dimasukkan agar sejajar dengan teks. Di desktop galerinya
+     sudah berada di dalam kolom, sehingga inset yang sama justru membuat
+     thumbnail menjorok 16px dari tepi kiri gambar di atasnya. Kiri saja yang
+     dinolkan — sisi kanan hanya ruang akhir gulir dan tidak pernah terlihat
+     saat diam. */
+  .pdp3-page .p3-hero-grid .p3-thumbs{padding-left:0}
+  .pdp3-page .p3-hero-grid > div:nth-child(2){min-width:0}
+
+  /* --- router: kutipan pindah ke kolom kanan kartu ----------------------- */
+  .pdp3-page .p3-router{padding:0}
+  .pdp3-page .p3-rcard{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:48px;padding:34px 40px}
+  .pdp3-page .p3-rcard > *{grid-column:1}
+  /* Kartu digambar assets/pdp3.js dengan urutan tetap: ikon, judul, isi,
+     kutipan, penulis, tautan. Kutipannya anak keempat. */
+  .pdp3-page .p3-rcard > blockquote{grid-column:2;grid-row:1 / span 5;align-self:center;margin:0;padding-top:26px}
+
+  /* --- packs: tiga kartu berjajar ---------------------------------------- */
+  .pdp3-page .p3-packs{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:20px;align-items:start;padding:0 0 20px}
+  .pdp3-page .p3-guar{grid-column:1/-1}
+  .pdp3-page .p3-pack{align-content:start;height:100%}
+  .pdp3-page .p3-packs .p3-btn{grid-column:1/-1;max-width:520px;justify-self:center;margin-top:4px}
+  .pdp3-page .p3-assure{grid-column:1/-1;justify-content:center}
+
+  /* --- why a leaf: gambar kiri, teks + ubin kanan ------------------------ */
+  .pdp3-page .p3-leaf{grid-template-columns:minmax(0,430px) minmax(0,1fr);column-gap:56px;padding:80px 40px;align-content:start}
+  .pdp3-page .p3-leaf > img{grid-column:1;grid-row:1 / span 6;align-self:start}
+  .pdp3-page .p3-leaf > :not(img){grid-column:2}
+  .pdp3-page .p3-tiles{grid-template-columns:repeat(3,minmax(0,1fr))}
+
+  /* --- why this one: kartu izin kiri, judul kanan, tabel melintang ------- */
+  .pdp3-page .p3-why{grid-template-columns:minmax(0,300px) minmax(0,1fr);column-gap:56px;padding:80px 40px;align-content:start}
+  .pdp3-page .p3-why > .p3-bpom{grid-column:1;grid-row:1 / span 2;align-self:start}
+  .pdp3-page .p3-why > h2,.pdp3-page .p3-why > p{grid-column:2}
+  .pdp3-page .p3-why > .p3-cmp{grid-column:1/-1;margin-top:8px}
+  .pdp3-page .p3-cmp col.p3-c0{width:200px}
+
+  /* --- farm: judul kiri, paragraf kanan, bingkai melintang --------------- */
+  .pdp3-page .p3-farm{grid-template-columns:minmax(0,420px) minmax(0,1fr);column-gap:56px;padding:0 40px 72px;align-content:start}
+  .pdp3-page .p3-farm > .p3-eb,.pdp3-page .p3-farm > h2{grid-column:1}
+  .pdp3-page .p3-farm > p{grid-column:2;grid-row:1 / span 2;align-self:center}
+  .pdp3-page .p3-farm > .p3-frames{grid-column:1/-1}
+
+  /* --- linimasa: judul kiri, simpul kanan -------------------------------- */
+  .pdp3-page .p3-days{grid-template-columns:minmax(0,320px) minmax(0,1fr);column-gap:56px;padding:64px 40px;align-content:start}
+  .pdp3-page .p3-days > .p3-eb,.pdp3-page .p3-days > h2{grid-column:1}
+  .pdp3-page .p3-days > .p3-node{grid-column:2}
+  .pdp3-page .p3-node > div{max-width:none}
+
+  /* --- pendiri: potret kiri, surat kanan --------------------------------- */
+  .pdp3-page .p3-founder{grid-template-columns:minmax(0,400px) minmax(0,1fr);column-gap:56px;padding:64px 40px 72px;align-content:start}
+  .pdp3-page .p3-founder > img{grid-column:1;grid-row:1 / span 3;align-self:start}
+  .pdp3-page .p3-founder > :not(img){grid-column:2}
+
+  /* --- faq: judul kiri, akordeon kanan ----------------------------------- */
+  .pdp3-page .p3-faq{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);column-gap:56px;padding:0 40px 72px;align-content:start}
+  .pdp3-page .p3-faq > .p3-eb,.pdp3-page .p3-faq > h2{grid-column:1}
+  .pdp3-page .p3-faq > h2{margin:0}
+  .pdp3-page .p3-faq > details{grid-column:2}
+  .pdp3-page .p3-faq summary span{max-width:none}
+
+  /* --- ulasan: kartu ringkasan melebar ----------------------------------- */
+  .pdp3-page .p3-reviews{padding:0 40px 72px}
+  .pdp3-page .kl_reviews__summary{grid-template-columns:auto minmax(0,1fr) auto;align-items:center;column-gap:48px;padding:24px 28px}
+  .pdp3-page .p3-kl-actions{justify-content:flex-end}
+
+  /* --- penutup: dua tombol berdampingan ----------------------------------
+     Dua kolom, dan SEMUA anak lain merentang penuh — sehingga kedua tombol,
+     yang kebetulan bersebelahan di markup, jatuh sendiri ke kolom 1 dan 2.
+     Tidak ada pembungkus baru yang perlu ditambahkan ke markup mockup. */
+  /* Section-nya tetap SATU kolom, seperti mockup. Yang menjajarkan kedua tombol
+     adalah pembungkusnya sendiri — lihat catatan di sections/pdp3-close.liquid:
+     sebagai grid dua kolom, judul yang merentang keduanya ikut menentukan lebar
+     kolom tombol, dan tombolnya terpusat di dalam track yang kebesaran.
+
+     `nowrap` menjaga label WhatsApp berbahasa Indonesia ("Tanya orang sungguhan
+     di WhatsApp") tetap satu baris: terjemahan yang lebih panjang melebarkan
+     tombolnya, bukan memecahnya jadi dua baris. */
+  .pdp3-page .p3-close{padding:72px 40px;justify-items:center}
+  .pdp3-page .p3-close > *{max-width:760px}
+  .pdp3-page .p3-close__cta{display:flex;justify-content:center;align-items:center;gap:22px;max-width:none}
+  .pdp3-page .p3-close .p3-btn{width:auto;padding:0 36px;white-space:nowrap}
+  /* Aturan .p3-wa di atas lebih spesifik, jadi padding desktopnya harus
+     dinyatakan ulang di selektor yang sama spesifiknya. */
+  .pdp3-page .p3-close .p3-btn.p3-wa{padding:0 36px;min-height:56px}
+}
+
+/* --- panah dropdown -------------------------------------------------------
+   Mockup memakai karakter `⌄`/`⌃` yang saling bertukar lewat `content`. Dua
+   hal yang salah dengannya: bentuknya berbeda-beda antar sistem, dan pertukaran
+   karakter tidak bisa dianimasikan — panahnya berkedip, tidak berputar.
+
+   SVG-nya sama di semua mesin dan berputar 180° dengan transisi. Ukurannya
+   mengikuti kotak `<i>` yang sudah ada di markup mockup, jadi tata letaknya
+   tidak bergeser. */
+.pdp3-page .p3-chev{width:16px;height:16px;display:block;flex:none;fill:none;
+  stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;
+  transition:transform .28s cubic-bezier(.16,1,.3,1)}
+.pdp3-page .p3-faq summary i{display:flex;align-items:center;color:var(--p3-ink-3)}
+/* Karakter panah milik mockup dimatikan pada SELEKTOR YANG SAMA PERSIS
+   dengan yang menyalakannya. Versi sebelumnya menulis
+   `.p3-faq summary i::before` saja dan kalah spesifisitas dari
+   `.p3-faq details[open] summary i::before`, sehingga karakter DAN svg
+   tergambar berdampingan — dua panah di setiap baris. */
+.pdp3-page .p3-faq details[open] summary i::before,
+.pdp3-page .p3-faq details:not([open]) summary i::before{content:none}
+.pdp3-page .p3-faq details[open] summary i .p3-chev{transform:rotate(180deg)}
+.pdp3-page .kl_reviews__filters__pill{display:inline-flex;align-items:center;gap:6px}
+.pdp3-page .p3-filter.p3-open .p3-chev{transform:rotate(180deg)}
+
+/* Isi akordeon dianimasikan assets/pdp3.js; `details` butuh tinggi yang bisa
+   dianimasikan, dan browser tidak memberikannya kalau isinya bisa meluap. */
+.pdp3-page .p3-faq details{overflow:hidden}
+
+/* Cincin fokus bawaan browser adalah kotak biru tebal yang menabrak sudut
+   membulat pil dan garis tipis akordeon. Diganti bentuk yang mengikuti
+   komponennya, dan HANYA untuk fokus papan ketik (`:focus-visible`) — pengguna
+   tetikus tidak pernah melihatnya. */
+.pdp3-page .p3-faq summary:focus{outline:none}
+.pdp3-page .p3-faq summary:focus-visible{outline:2px solid var(--p3-forest);outline-offset:3px;border-radius:6px}
+.pdp3-page .kl_reviews__filters__pill:focus{outline:none}
+.pdp3-page .kl_reviews__filters__pill:focus-visible{outline:2px solid var(--p3-forest);outline-offset:2px}
+
+/* --- pita gelap melintang penuh (>=1024px) --------------------------------
+   Section "kenapa daun" dan penutup memakai latar gelap. Di dalam kolom
+   1200px, latar itu berhenti di tepi kolom dan menyisakan canvas di kiri-kanan
+   — pita yang mengambang, bukan pita yang memisah.
+
+   Yang dicat adalah PEMBUNGKUS section (`.shopify-section`), bukan sectionnya.
+   Alternatifnya `width:100vw` + margin negatif, dan itu ditolak: `100vw`
+   menghitung lebar scrollbar, sehingga di mesin dengan scrollbar klasik
+   halaman mendapat gulir mendatar yang tidak pernah diminta siapa pun.
+   Pembungkusnya sudah selebar layar sejak awal; ia cuma belum berwarna.
+
+   Isinya tetap terkurung 1200px, karena `.pdp3-page` di dalamnya tidak
+   berubah. */
+@media (min-width: 1024px) {
+  .shopify-section:has(> .pdp3-page > .p3-leaf),
+  .shopify-section:has(> .pdp3-page > .p3-close){background:var(--p3-forest)}
+  /* `.pdp3-page` membawa latar canvas (itu aturan `body` mockup). Di atas pita
+     gelap ia mengecat ulang selebar 1200px, menyisakan dua bilah canvas selebar
+     padding kontainer di dalam pita. Dibuat bening supaya pitanya utuh. */
+  .shopify-section:has(> .pdp3-page > .p3-leaf) > .pdp3-page,
+  .shopify-section:has(> .pdp3-page > .p3-close) > .pdp3-page{background:transparent}
+
+  /* Jarak 15px milik mockup (`.leaf{margin-top:15px}`) berada DI DALAM
+     pembungkus, dan sejak pembungkus itu yang dicat, jaraknya ikut tercat
+     gelap — pitanya menempel rapat ke kartu "cara meminumnya" di atasnya.
+
+     Jaraknya dipindah ke pembungkus, di luar cat. Nilainya tidak diubah: yang
+     salah bukan angkanya, melainkan sisi mana dari warna ia berada.
+
+     (Ia tidak bisa dibiarkan meluruh keluar sendiri: `display:flow-root` pada
+     pembungkus — dipasang agar section tidak saling menempelkan margin —
+     justru yang menahannya di dalam.) */
+  .shopify-section:has(> .pdp3-page > .p3-leaf){margin-top:15px}
+
+  .shopify-section:has(> .pdp3-page > .p3-leaf) > .pdp3-page > .p3-leaf{margin-top:0}
+}
