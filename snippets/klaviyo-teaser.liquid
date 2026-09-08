@@ -136,4 +136,57 @@
       transform: none !important;
     }
   }
+
+  /* ---- Teaser menyingkir saat keranjang terbuka ----
+
+     Teaser menempel `position: fixed` di kanan-bawah, dan drawer keranjang
+     menaruh tombol CHECK OUT persis di sana. Hasilnya teaser duduk DI ATAS
+     tombol beli — bukan cuma jelek, tapi menutupi jalur checkout: satu ketukan
+     meleset membuka formulir diskon alih-alih membayar.
+
+     Menaikkannya seperti perlakuan bilah sticky tidak cukup, sebab drawer
+     memenuhi layar; satu-satunya tempat aman adalah tidak tampil sama sekali.
+
+     Dua jalur, sengaja:
+     - `body:has(.mini-cart.active)` — murni CSS, berlaku seketika saat drawer
+       dibuka, tanpa menunggu JavaScript apa pun.
+     - `body.mini-cart-open` — kelas yang dipasang skrip di bawah, untuk mesin
+       tanpa dukungan `:has()`.
+
+     `visibility` + `opacity`, BUKAN `display: none`: Klaviyo mengukur ulang
+     teasernya sendiri dan elemen ber-`display:none` berukuran nol, yang
+     membuat posisinya kacau saat muncul lagi. Delay `visibility` disetel 0
+     saat menyembunyikan supaya hilangnya seketika, dan menunggu opasitas
+     selesai saat kembali. */
+  body:has(.mini-cart.active) div[class*='kl-teaser-'],
+  body.mini-cart-open div[class*='kl-teaser-'] {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    transition:
+      opacity 0.18s ease,
+      visibility 0s linear 0.18s !important;
+  }
 {% endstyle %}
+
+<script>
+  /* Penjaga untuk mesin tanpa `:has()` (Safari < 15.4, Chrome < 105).
+
+     Yang diamati HANYA atribut kelas pada `.mini-cart` — bukan subtree
+     dokumen. Halaman produk baru mengganti kelas pada puluhan simpul setiap
+     frame guliran (titik linimasa, reveal), jadi pengamat ber-subtree akan
+     terbangun ratusan kali per detik untuk sesuatu yang berubah dua kali per
+     kunjungan. Simpulnya sendiri sudah ada di DOM sejak muat pertama
+     (snippets/MiniCart.liquid merendernya di paling atas), jadi tidak perlu
+     menunggu apa pun. */
+  (function () {
+    if (CSS && CSS.supports && CSS.supports('selector(body:has(*))')) return;
+    var cart = document.querySelector('.mini-cart');
+    if (!cart || !('MutationObserver' in window)) return;
+    function sync() {
+      document.body.classList.toggle('mini-cart-open', cart.classList.contains('active'));
+    }
+    new MutationObserver(sync).observe(cart, { attributes: true, attributeFilter: ['class'] });
+    sync();
+  })();
+</script>
