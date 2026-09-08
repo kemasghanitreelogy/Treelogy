@@ -2804,12 +2804,31 @@
               document.body.style.top = `-${lockedAt}px`;
               document.body.style.width = '100%';
             } else {
-              // Unlock the body and restore scroll position
+              /* Membuka kunci body dan memulihkan posisi gulir.
+
+                 `html { scroll-behavior: smooth }` berlaku di tema ini
+                 (theme.css:26, pdp3.css:42), jadi `window.scrollTo(0, y)`
+                 biasa BUKAN lompatan — ia MENGANIMASI, dan titik awalnya
+                 adalah 0 karena dokumen baru saja runtuh selama body
+                 terkunci. Pembeli melihat puncak halaman — foto hero —
+                 berkelebat sepersekian detik sesudah menutup keranjang,
+                 lalu tersentak kembali saat pemulih Lenis di pdp3.js
+                 memaksanya. Terekam 8 Sep 2026: 4 frame pada 60fps.
+
+                 `behavior: 'instant'` memaksa lompatan. `scroll-behavior`
+                 juga dipasang sementara di elemen akar untuk mesin yang
+                 belum mengenal nilai itu — tanpa penjaga kedua ini
+                 perbaikannya diam-diam tidak berlaku di sana. */
               const scrollY = document.body.style.top;
               document.body.style.position = '';
               document.body.style.top = '';
               document.body.style.width = '';
-              window.scrollTo(0, parseInt(scrollY || '0') * -1);
+              const y = Math.abs(parseInt(scrollY || '0', 10) || 0);
+              const root = document.documentElement;
+              const prevBehavior = root.style.scrollBehavior;
+              root.style.scrollBehavior = 'auto';
+              window.scrollTo({ top: y, left: 0, behavior: 'instant' });
+              root.style.scrollBehavior = prevBehavior;
             }
           }
         });
