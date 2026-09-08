@@ -406,7 +406,24 @@ html.p3-js-reveal .pdp3-page .p3-rv:not(.p3-in){opacity:0;transform:translateY(1
 .pdp3-page .p3-sticky .p3-pd>span{display:block;font-size:clamp(10px,3.093vw,12px);color:var(--p3-ink-3)}
 .pdp3-page .p3-sticky .p3-pd b span{display:inline}
 .pdp3-page .p3-sticky .p3-btn{height:48px;font-size:clamp(13px,4.124vw,16px);padding-inline:clamp(10px,3.6vw,14px);flex:1;width:auto}
-@media(min-width:900px){.pdp3-page .p3-sticky{display:none}}
+/* Bilah beli menempel JUGA di layar lebar. Di berkas rujukan ia mobile-only
+   karena mockup-nya selebar 393px — tapi di desktop pembeli kehilangan tombol
+   beli begitu kotak paket tergulir lewat, dan sisa halaman yang panjang
+   (linimasa, kebun, ulasan, FAQ) tidak punya jalan beli sama sekali.
+
+   Yang berbeda hanya susunannya. Di ponsel harga dan tombol berbagi satu baris
+   sempit dengan tombol `flex:1`. Di sini isinya dilebarkan mengikuti kontainer
+   halaman (720px di tablet, 1200px di desktop — angka yang sama dengan
+   `.pdp3-page`), harga didorong ke kiri, dan tombolnya berhenti melar supaya
+   tidak menjadi pita selebar layar. */
+@media(min-width:900px){
+  .pdp3-page .p3-sticky .p3-in{max-width:720px;height:80px;gap:24px;padding-inline:24px}
+  .pdp3-page .p3-sticky .p3-pd{flex:1 1 auto}
+  .pdp3-page .p3-sticky .p3-btn{flex:0 0 auto;width:auto;min-width:260px;padding-inline:32px}
+}
+@media(min-width:1024px){
+  .pdp3-page .p3-sticky .p3-in{max-width:1200px}
+}
 
 /* ==========================================================================
    Bridge — the mockup is one document, this theme is twelve sections

@@ -904,7 +904,69 @@
       requestAnimationFrame(raf);
     }
 
-    /* Anchor dalam halaman meluncur, bukan melompat. Offsetnya tinggi nav. */
+    /* Anchor dalam halaman meluncur, bukan melompat.
+
+       Offsetnya dulu angka tetap 64px, dan itu salah dua kali. Pertama, nav
+       ini `position:fixed` setinggi 95px — 64px membuat puncak section
+       berhenti 31px DI BALIK nav. Kedua, dan ini yang dikeluhkan pembeli:
+       112px pertama `#p3-packs` adalah kotak garansi, jadi berhenti di puncak
+       section berarti kartu paket baru mulai di pertengahan layar dan tombol
+       "Tambah ke Keranjang" di bawah kartu tertinggal DI LUAR layar. Pembeli
+       mendarat di pemilih paket tanpa pernah melihat tombol belinya.
+
+       Sekarang tinggi nav DIUKUR saat diklik (nav bisa mengecil saat
+       tergulir), dan sebuah section boleh menunjuk elemen mana yang harus
+       berada di puncak lewat `data-p3-scroll-to` — untuk paket itu kartu
+       pertama, sehingga tombol belinya ikut masuk layar. */
+    function navH() {
+      var h = document.querySelector('header.header-nav') || document.querySelector('header');
+      if (!h) return 64;
+      var pos = getComputedStyle(h).position;
+      if (pos !== 'fixed' && pos !== 'sticky') return 64;
+      return Math.round(h.getBoundingClientRect().height);
+    }
+    function anchorTop(t) {
+      var sel = t.getAttribute('data-p3-scroll-to');
+      var aim = (sel && t.querySelector(sel)) || t;
+      var nav = navH();
+      var gap = 8;
+      /* `data-p3-scroll-keep` menyebut elemen yang HARUS ikut terlihat setelah
+         mendarat — untuk paket itu tombol belinya. Kalau kartu pertama sampai
+         tombol beli tidak muat di bawah nav, jaraknya dipersempit sampai
+         tombolnya masuk; nol adalah batasnya, kartu tidak pernah didorong ke
+         balik nav. Di layar yang terlalu pendek untuk keduanya (blok 746px,
+         iPhone SE hanya punya 572px) tidak ada yang bisa diperbuat — kartu
+         tetap menang. */
+      var keepSel = t.getAttribute('data-p3-scroll-keep');
+      var keep = keepSel && t.querySelector(keepSel);
+      if (keep) {
+        var blockH = keep.getBoundingClientRect().bottom - aim.getBoundingClientRect().top;
+        if (blockH > window.innerHeight - nav - gap) {
+          gap = Math.max(0, window.innerHeight - blockH - nav);
+        }
+      }
+      return Math.round(aim.getBoundingClientRect().top + window.scrollY - nav - gap);
+    }
+    /* Menghitung sasaran SEKALI di awal tidak cukup. Sepanjang guliran, blok
+       `.p3-rv` yang dilewati berubah dari keadaan tersembunyi ke terlihat dan
+       tinggi halaman ikut bergeser — diukur 8 Sep 2026: posisi absolut kartu
+       paket naik 12px antara saat diklik dan saat berhenti. Guliran mendarat
+       persis di angka yang diminta, tapi angka itu sudah basi, dan kartunya
+       berakhir 4px DI BALIK nav.
+
+       Jadi sasarannya dihitung ulang setelah berhenti dan dikoreksi kalau
+       melesetnya lebih dari 2px. Koreksinya diberi durasi pendek, bukan
+       lompatan seketika, supaya tidak terbaca sebagai sentakan. */
+    function glideTo(t, dur, then) {
+      var top = Math.max(0, anchorTop(t));
+      if (lenis) {
+        lenis.resize();
+        lenis.scrollTo(top, { duration: dur, easing: function (x) { return 1 - Math.pow(1 - x, 3); }, onComplete: then });
+      } else {
+        window.scrollTo({ top: top, behavior: 'smooth' });
+        if (then) window.setTimeout(then, dur * 1000 + 120);
+      }
+    }
     document.addEventListener('click', function (e) {
       var a = e.target.closest('a[href^="#"]');
       if (!a) return;
@@ -913,13 +975,9 @@
       var t = document.querySelector(href);
       if (!t) return;
       e.preventDefault();
-      var top = Math.round(t.getBoundingClientRect().top + window.scrollY - 64);
-      if (lenis) {
-        lenis.resize();
-        lenis.scrollTo(top, { duration: 1.1, easing: function (x) { return 1 - Math.pow(1 - x, 3); } });
-      } else {
-        window.scrollTo({ top: top, behavior: 'smooth' });
-      }
+      glideTo(t, 1.1, function () {
+        if (Math.abs(Math.max(0, anchorTop(t)) - window.scrollY) > 2) glideTo(t, 0.3, null);
+      });
     });
 
     function tick() {

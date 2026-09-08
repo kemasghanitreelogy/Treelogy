@@ -103,7 +103,13 @@
 {%- endcomment -%}
 {%- assign t_save = 'pdp3.packs.save' | t -%}
 <div class="pdp3-page pdp3-page--stack">
-<section class="p3-packs" id="p3-packs">
+{%- comment -%}
+  `data-p3-scroll-to` memberi tahu penggulir anchor di pdp3.js elemen mana
+  yang harus mendarat di puncak layar. Tanpa itu ia berhenti di puncak
+  SECTION — dan 112px pertamanya adalah kotak garansi, sehingga tombol
+  beli di bawah kartu jatuh ke luar layar.
+{%- endcomment -%}
+<section class="p3-packs" id="p3-packs" data-p3-scroll-to=".p3-pack" data-p3-scroll-keep="#AddToCart">
   {%- if t_guarantee != blank -%}
     <div class="p3-guar p3-rv"><svg><use href="#i-shield"/></svg><div>{% render 'pdp3-sentence-lines', text: t_guarantee %}</div></div>
   {%- endif -%}
