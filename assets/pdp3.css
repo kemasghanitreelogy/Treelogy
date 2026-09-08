@@ -749,8 +749,15 @@ body.pdp3-body{background:#F8F8F2}
 
   /* --- farm: judul kiri, paragraf kanan, bingkai melintang --------------- */
   .pdp3-page .p3-farm{grid-template-columns:minmax(0,420px) minmax(0,1fr);column-gap:56px;padding:0 40px 72px;align-content:start}
-  .pdp3-page .p3-farm > .p3-eb,.pdp3-page .p3-farm > h2{grid-column:1}
-  .pdp3-page .p3-farm > p{grid-column:2;grid-row:1 / span 2;align-self:center}
+  /* Eyebrow bagian ini adalah `<p class="p3-eb">`, jadi selektor `> p` di
+     bawah IKUT MENANGKAPNYA: eyebrow ikut mewarisi `grid-row:1/span 2` dan
+     `align-self:center`, lalu mengambang di tengah dua baris kosong
+     sementara judulnya terlempar ke baris 3. Itu sebabnya di desktop
+     paragraf kanan mulai jauh DI ATAS eyebrow dan judulnya menggantung.
+     Barisnya sekarang ditulis eksplisit dan paragrafnya dikecualikan. */
+  .pdp3-page .p3-farm > .p3-eb{grid-column:1;grid-row:1}
+  .pdp3-page .p3-farm > h2{grid-column:1;grid-row:2}
+  .pdp3-page .p3-farm > p:not(.p3-eb){grid-column:2;grid-row:1 / span 2;align-self:start}
   .pdp3-page .p3-farm > .p3-frames{grid-column:1/-1}
 
   /* --- linimasa: judul kiri, simpul kanan -------------------------------- */
