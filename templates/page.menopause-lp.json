@@ -101,8 +101,8 @@
         "bonus_1": {
           "type": "bonus",
           "settings": {
-            "icon": "gift",
-            "text": "Mystery Gift",
+            "icon": "dropper",
+            "text": "Moringa Seed Oil 3ml",
             "free_word": "gratis"
           }
         },
@@ -973,7 +973,7 @@
             "gift_1": "travel-pouch",
             "gift_1_label": "Travel Pouch",
             "gift_2": "mystery-gift",
-            "gift_2_label": "Mystery Gift",
+            "gift_2_label": "Moringa Seed Oil 3ml",
             "gift_2_qty": 2,
             "free_word": "GRATIS",
             "show_free_shipping": true,
@@ -1034,7 +1034,7 @@
             "gift_1": "travel-pouch",
             "gift_1_label": "Travel Pouch",
             "gift_2": "mystery-gift",
-            "gift_2_label": "Mystery Gift",
+            "gift_2_label": "Moringa Seed Oil 3ml",
             "free_word": "GRATIS",
             "show_free_shipping": true,
             "shipping_label": "Ongkos Kirim",
@@ -1090,7 +1090,7 @@
             "component_2_variant": 0,
             "component_2_label": "",
             "gift_1": "mystery-gift",
-            "gift_1_label": "Mystery Gift",
+            "gift_1_label": "Moringa Seed Oil 3ml",
             "gift_1_qty": 1,
             "gift_2": "",
             "gift_2_label": "",
