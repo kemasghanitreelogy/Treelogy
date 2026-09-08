@@ -954,6 +954,12 @@
        persis di angka yang diminta, tapi angka itu sudah basi, dan kartunya
        berakhir 4px DI BALIK nav.
 
+       Pergeserannya BUKAN perubahan tata letak: `.p3-rv` menahan
+       `translateY(12px)` sampai terbuka, dan getBoundingClientRect ikut
+       membaca transform. `revealInside` di bawah menghapus sebagian besar
+       sebabnya, tapi koreksi ini dipertahankan sebagai jaring pengaman —
+       gambar yang dimuat malas di sepanjang jalan bisa menggeser sungguhan.
+
        Jadi sasarannya dihitung ulang setelah berhenti dan dikoreksi kalau
        melesetnya lebih dari 2px. Koreksinya diberi durasi pendek, bukan
        lompatan seketika, supaya tidak terbaca sebagai sentakan. */
@@ -967,6 +973,24 @@
         if (then) window.setTimeout(then, dur * 1000 + 120);
       }
     }
+    /* Tujuan guliran harus SUDAH terlihat begitu sampai.
+
+       Blok `.p3-rv` baru membuka diri ketika puncaknya melewati 92% tinggi
+       layar (lihat tick()). Tombol beli duduk di dasar kartu paket, dan di
+       layar 844px ia mendarat TEPAT di bawah ambang itu — puncak 788 vs
+       ambang 776 — sehingga pembeli tiba di pemilih paket dengan tombolnya
+       masih `opacity:0`. Secara geometri sudah di layar, tapi tak terlihat.
+       Di layar 852px kebetulan lolos (760 vs 784), jadi cacat ini bergantung
+       tinggi perangkat dan mudah lolos dari uji satu ukuran.
+
+       Karena pembeli MEMINTA pergi ke sana, seluruh isi tujuan dibuka saat
+       tautannya diklik — transisinya berjalan selama guliran dan sudah
+       selesai ketika sampai. */
+    function revealInside(t) {
+      if (t.classList && t.classList.contains('p3-rv')) t.classList.add('p3-in');
+      var list = t.querySelectorAll('.p3-rv');
+      for (var i = 0; i < list.length; i++) list[i].classList.add('p3-in');
+    }
     document.addEventListener('click', function (e) {
       var a = e.target.closest('a[href^="#"]');
       if (!a) return;
@@ -975,6 +999,7 @@
       var t = document.querySelector(href);
       if (!t) return;
       e.preventDefault();
+      revealInside(t);
       glideTo(t, 1.1, function () {
         if (Math.abs(Math.max(0, anchorTop(t)) - window.scrollY) > 2) glideTo(t, 0.3, null);
       });
