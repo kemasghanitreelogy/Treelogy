@@ -169,6 +169,39 @@
 <div id="country-code"></div>
 
 {% stylesheet %}
+  /* --- header di layar sangat sempit -----------------------------------
+     Baris header pada <=900px adalah grid `40px 40px 1fr 80px` dengan
+     padding 0 10px. Kolom logo `1fr` TIDAK bisa menyusut: gambar logonya
+     punya lebar intrinsik 172px (akibat `height:22px`), dan item grid tidak
+     pernah turun di bawah min-content-nya tanpa diberi izin. Di 320px
+     totalnya jadi 342px — 22px menyembul dan pemilih bahasa "ID" di ujung
+     kanan terpotong. Terukur sama persis di beranda, koleksi, dan semua PDP,
+     jadi ini masalah tema, bukan bawaan satu halaman.
+
+     `minmax(0,1fr)` + `min-width:0` memberi izin menyusut itu, dan logonya
+     dibatasi `max-width:100%` dengan tinggi OTOMATIS supaya ia mengecil
+     proporsional, bukan gepeng — `height:22px` yang tetap akan merusak rasio
+     begitu lebarnya dipotong.
+
+     Hanya bekerja saat ruang memang kurang: di 360px ke atas kolom logonya
+     (180px) masih lebih lebar dari logonya (172px), jadi tidak ada satu
+     piksel pun yang berubah. Selektornya sengaja memakai `header.header-nav`
+     agar spesifisitasnya melebihi aturan di assets/theme.css yang urutan
+     muatnya tidak dijamin. */
+  @media only screen and (max-width: 900px) {
+    header.header-nav .header-menu .main-grid {
+      grid-template-columns: 40px 40px minmax(0, 1fr) 80px;
+    }
+    header.header-nav .header-menu .logo {
+      min-width: 0;
+    }
+    header.header-nav .header-menu .logo img,
+    header.header-nav .header-menu .logo svg {
+      height: auto;
+      max-height: 22px;
+      max-width: 100%;
+    }
+  }
   #country-code {
     position: fixed;
     top: 10px;
