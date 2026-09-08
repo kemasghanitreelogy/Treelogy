@@ -7917,6 +7917,50 @@ select.jdgm-sort-dropdown:focus {
   right: 15px !important;
 }
 
+/* ===== Judge.me: pemilih format nama di dalam formulir ulasan ==============
+   Judge.me memakai kelas `.jdgm-sort-dropdown` DUA KALI: untuk dropdown
+   urutan di daftar ulasan, dan untuk pemilih format nama yang duduk di
+   TENGAH KALIMAT pada formulir "tulis ulasan" —
+   "Nama tampilan (ditampilkan secara publik seperti [John Smith])".
+
+   Gaya pil berbingkai di atas hanya dimaksudkan untuk yang pertama. Terbawa
+   ke dalam formulir ia jadi kotak setinggi 41px di tengah baris teks 22px,
+   sehingga kalimatnya patah jadi tiga baris di ponsel, dan
+   `.jdgm-sort-dropdown-arrow{right:15px}` mendarat DI ATAS huruf terakhir
+   "Smith". Di sini pil itu dilucuti supaya kembali mengalir sebagai teks. */
+.jdgm-form__reviewer-name-format-container .jdgm-sort-dropdown-wrapper {
+  border: 0;
+  padding: 0;
+  border-radius: 0;
+  vertical-align: baseline;
+}
+.jdgm-form__reviewer-name-format-container .jdgm-sort-dropdown {
+  display: inline;
+  height: auto;
+  /* Ruang kanan ini yang ditempati panah. 15px membuat kotak panah
+     menyerempet 6px ke ekor huruf "Smith"; 24px memberi jarak bersih. */
+  padding: 0 24px 0 0;
+  border: 0;
+  border-radius: 0;
+  font-size: inherit;
+  line-height: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.jdgm-form__reviewer-name-format-container .jdgm-sort-dropdown-arrow {
+  right: 0 !important;
+  top: 50%;
+  /* Panah Judge.me adalah karakter "›" yang DIPUTAR 90° agar menunjuk ke
+     bawah. Menulis transform tanpa menyertakan rotasinya membuat panahnya
+     kembali menunjuk ke kanan. */
+  transform: translateY(-50%) rotate(90deg);
+}
+/* Label bagian ini `inline-block` bawaan Judge.me, jadi kalimatnya tak bisa
+   patah di antara kata dan memaksa dropdown-nya turun ke baris sendiri. */
+.jdgm-form .jdgm-form__reviewer-name-format-container label.jdgm-form__inline-label {
+  display: inline;
+}
+
 .jdgm-rev-widg {
   padding: 0 !important;
 }
