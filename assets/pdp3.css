@@ -174,26 +174,45 @@ html.p3-js-reveal .pdp3-page .p3-rv:not(.p3-in){opacity:0;transform:translateY(1
 .pdp3-page .p3-guar svg{width:22px;height:22px;flex:none;stroke:var(--p3-forest);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .pdp3-page .p3-pack{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 8px;align-items:center;background:var(--p3-white);border:1.5px solid var(--p3-line);border-radius:14px;padding:18px 18px 16px;cursor:pointer}
 .pdp3-page .p3-pack .p3-top{grid-column:1/-1}
-.pdp3-page .p3-pack .p3-txt{display:grid;gap:8px}
+/* Item grid tidak boleh menyusut di bawah min-content-nya kecuali diberi
+   `min-width:0`. Tanpa ini, di 320px kolom teks selebar 156px tetapi baris
+   harga dan baris perk di dalamnya memaksa 159px — 3px menyembul ke kolom
+   gambar. `flex-wrap` pada baris harga membuat "per hari" turun ke baris
+   berikutnya hanya kalau memang tidak muat; di 360px ke atas ia tetap satu
+   baris seperti mockup. */
+.pdp3-page .p3-pack .p3-txt{display:grid;gap:8px;min-width:0}
+.pdp3-page .p3-pack .p3-txt>*{min-width:0}
+.pdp3-page .p3-pack .p3-pd{flex-wrap:wrap}
 .pdp3-page .p3-pack .p3-pi{display:block;justify-self:end;height:auto}
-.pdp3-page .p3-pack .p3-pi.p3-p3{width:124px}
-.pdp3-page .p3-pack .p3-pi.p3-p2{width:93px}
-.pdp3-page .p3-pack .p3-pi.p3-p1{width:62px}
-.pdp3-page .p3-pack .p3-vis{display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;align-self:stretch;gap:10px;width:104px}
-.pdp3-page .p3-pack .p3-vis .p3-pi{margin-left:-30px}
-.pdp3-page .p3-pack .p3-gift{display:flex;align-items:flex-end;gap:5px;font-size:10px;font-weight:600;line-height:1.25;letter-spacing:0;white-space:nowrap;text-transform:uppercase;text-align:right;color:var(--p3-ink)}
+/* Kartu paket dirancang tepat pada 393px: kolom visual 104px, gambar produk
+   124px yang DITARIK -30px agar menindih kolom teks (efek kaleng menyembul,
+   disengaja di mockup). Di bawah 393px kolom teks kehabisan ruang dan
+   tindihannya berhenti jadi efek — terukur 8 Sep: 0 tumpang tindih di 393px,
+   10 di 360px, 11 di 320px ("Rp12.700 per hari" menabrak botol hadiah,
+   "Gratis ongkir" masuk ke bawah foto kaleng).
+
+   Semua metriknya dibuat cair dengan patokan yang sama seperti bilah sticky:
+   nilai vw dihitung dari 388px sehingga pada 393px ke atas selalu menabrak
+   batas maksimum — identik mockup — dan hanya menyusut di bawahnya. Termasuk
+   tarikan negatifnya, supaya tindihan ikut mengecil bersama gambarnya. */
+.pdp3-page .p3-pack .p3-pi.p3-p3{width:clamp(92px,31.959vw,124px)}
+.pdp3-page .p3-pack .p3-pi.p3-p2{width:clamp(69px,23.969vw,93px)}
+.pdp3-page .p3-pack .p3-pi.p3-p1{width:clamp(46px,15.979vw,62px)}
+.pdp3-page .p3-pack .p3-vis{display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;align-self:stretch;gap:clamp(6px,2.577vw,10px);width:clamp(76px,26.804vw,104px)}
+.pdp3-page .p3-pack .p3-vis .p3-pi{margin-left:clamp(-30px,-7.732vw,-18px)}
+.pdp3-page .p3-pack .p3-gift{display:flex;align-items:flex-end;gap:clamp(3px,1.289vw,5px);font-size:clamp(9px,2.577vw,10px);font-weight:600;line-height:1.25;letter-spacing:0;white-space:nowrap;text-transform:uppercase;text-align:right;color:var(--p3-ink)}
 .pdp3-page .p3-pack .p3-gift s{color:var(--p3-ink-3)}
-.pdp3-page .p3-pack .p3-oil{height:58px;width:auto;display:block}
+.pdp3-page .p3-pack .p3-oil{height:clamp(44px,14.948vw,58px);width:auto;display:block}
 .pdp3-page .p3-pack input{position:absolute;opacity:0;pointer-events:none}
 .pdp3-page .p3-pack:has(input:checked){border-color:var(--p3-forest);background:var(--p3-sel)}
-.pdp3-page .p3-pack .p3-tag{position:absolute;top:-11px;left:16px;background:var(--p3-sage-3);color:var(--p3-forest);font-size:12px;font-weight:500;line-height:1.5;letter-spacing:-.005em;padding:4px 10px;border-radius:999px}
+.pdp3-page .p3-pack .p3-tag{position:absolute;top:-11px;left:clamp(10px,4.124vw,16px);background:var(--p3-sage-3);color:var(--p3-forest);font-size:clamp(10px,3.093vw,12px);font-weight:500;line-height:1.5;letter-spacing:-.005em;padding:4px 10px;border-radius:999px}
 .pdp3-page .p3-pack .p3-top{display:flex;justify-content:space-between;align-items:center;min-height:28px}
-.pdp3-page .p3-pack .p3-name{font-size:18px;font-weight:500;color:var(--p3-ink)}
-.pdp3-page .p3-pack .p3-save{font-size:16px;font-weight:500;color:var(--p3-canvas);background:var(--p3-forest-2);padding:2px 8px;border-radius:999px;line-height:1.5}
+.pdp3-page .p3-pack .p3-name{font-size:clamp(15px,4.639vw,18px);font-weight:500;color:var(--p3-ink)}
+.pdp3-page .p3-pack .p3-save{font-size:clamp(13px,4.124vw,16px);font-weight:500;color:var(--p3-canvas);background:var(--p3-forest-2);padding:2px 8px;border-radius:999px;line-height:1.5}
 .pdp3-page .p3-pack .p3-pd{display:flex;align-items:baseline;gap:6px}
-.pdp3-page .p3-pack .p3-pd b{font-size:30px;font-weight:500;line-height:1.12;letter-spacing:0;color:var(--p3-ink)}
-.pdp3-page .p3-pack .p3-pd span{font-size:16px;color:var(--p3-ink-3)}
-.pdp3-page .p3-pack .p3-price{font-size:16px;line-height:1.5;color:var(--p3-ink-2);white-space:nowrap}
+.pdp3-page .p3-pack .p3-pd b{font-size:clamp(24px,7.732vw,30px);font-weight:500;line-height:1.12;letter-spacing:0;color:var(--p3-ink)}
+.pdp3-page .p3-pack .p3-pd span{font-size:clamp(13px,4.124vw,16px);color:var(--p3-ink-3)}
+.pdp3-page .p3-pack .p3-price{font-size:clamp(13px,4.124vw,16px);line-height:1.5;color:var(--p3-ink-2);white-space:nowrap}
 .pdp3-page .p3-pack s{color:var(--p3-ink-3)}
 .pdp3-page .p3-pack .p3-row{font-size:14px;line-height:25px;color:var(--p3-ink-2)}
 .pdp3-page .p3-assure{list-style:none;margin:0;padding:0;display:grid;gap:10px}
