@@ -616,7 +616,7 @@
       "guarantee": "Coba 60 hari. Tidak cocok?|Uang kembali penuh, tanpa ditanya.",
       "atc_label": "Tambah ke Keranjang",
       "assure_1": "Dikirim hari ini kalau pesan sebelum jam 3 sore",
-      "assure_2": "60 hari untuk mencoba. Uang kembali penuh kalau tidak cocok.",
+      "assure_2": "60 hari untuk mencoba. Uang kembali|penuh kalau tidak cocok.",
       "assure_3": "Harga terendah, hanya di treelogy.com",
       "per_day_suffix": "per hari",
       "sticky_note": "Garansi 60 hari",
@@ -626,7 +626,7 @@
     "howto": {
       "eyebrow": "Cara minum",
       "heading": "Tiga kapsul sehari.|Pagi hari.|Bersama makanan.",
-      "starter_note": "Baru pertama kali minum moringa? Mulai dengan 2 kapsul selama tiga hari.",
+      "starter_note": "Baru pertama kali minum moringa?|Mulai dengan 2 kapsul selama tiga hari.",
       "medical_note": "Tekanan darah tinggi, gula darah, atau kolesterol? Moringa secara tradisional dipakai untuk mendukung ketiganya. Sedang minum obat? Tanya dokter dulu."
     },
     "leaf": {

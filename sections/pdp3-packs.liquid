@@ -354,9 +354,9 @@
     {%- endcomment -%}
     {%- if t_a1 != blank or t_a2 != blank or t_a3 != blank -%}
       <ul class="p3-assure p3-rv">
-        {%- if t_a1 != blank -%}<li><svg><use href="#i-truck"/></svg>{{ t_a1 }}</li>{%- endif -%}
-        {%- if t_a2 != blank -%}<li><svg><use href="#i-shield"/></svg>{{ t_a2 }}</li>{%- endif -%}
-        {%- if t_a3 != blank -%}<li><svg><use href="#i-tag"/></svg>{{ t_a3 }}</li>{%- endif -%}
+        {%- if t_a1 != blank -%}<li><svg><use href="#i-truck"/></svg>{% render 'pdp3-sentence-lines', text: t_a1 %}</li>{%- endif -%}
+        {%- if t_a2 != blank -%}<li><svg><use href="#i-shield"/></svg>{% render 'pdp3-sentence-lines', text: t_a2 %}</li>{%- endif -%}
+        {%- if t_a3 != blank -%}<li><svg><use href="#i-tag"/></svg>{% render 'pdp3-sentence-lines', text: t_a3 %}</li>{%- endif -%}
       </ul>
     {%- endif -%}
   </form>

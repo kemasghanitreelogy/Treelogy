@@ -245,6 +245,26 @@
   function initStickyHost() {
     var host = $('[data-p3-sticky-host]');
     if (host && host.parentElement !== document.body) document.body.appendChild(host);
+
+    /* Tombol bilah sticky di mockup hanya tautan `#p3-packs` (menggulir ke
+       pemilih paket). Permintaan user 8 Sep: langsung menambah ke keranjang.
+       Yang diklik adalah `#AddToCart` yang asli — sudah membawa varian paket
+       yang sedang dipilih — sehingga seluruh koreografi MiniCart (kartu
+       optimistis, drawer terbuka, pelacakan add_to_cart) berjalan persis
+       seperti dari tombol utama. Penangan dipasang pada elemennya sendiri:
+       ia berjalan SEBELUM penangan anchor di document (yang menggulir halus
+       ke `#p3-packs`), dan stopImmediatePropagation menahan gulirannya.
+       href tetap dipertahankan sebagai cadangan tanpa JavaScript. */
+    var stickyBtn = host && host.querySelector('.p3-sticky .p3-btn');
+    if (stickyBtn) {
+      stickyBtn.addEventListener('click', function (e) {
+        var atc = $('#AddToCart');
+        if (!atc) return; /* tanpa tombol utama, biarkan tautannya bekerja */
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        atc.click();
+      });
+    }
   }
 
   /* --- ulasan: markup mockup, data Judge.me, kendali milik sendiri ----------
@@ -424,8 +444,18 @@
         if (q && (r.title + ' ' + r.body + ' ' + r.author).toLowerCase().indexOf(q) < 0) return false;
         return true;
       }).slice();
+      /* Permintaan user 8 Sep: ulasan berfoto dan dari pembeli terverifikasi
+         didahulukan. Peringkatnya bertingkat — foto+terverifikasi, lalu foto,
+         lalu terverifikasi, lalu sisanya — dan di dalam tiap tingkat urutan
+         waktu yang dipilih (terbaru/terlama) tetap berlaku. Saringan bintang,
+         foto, dan pencarian tidak berubah. */
       var oldest = state.order === 'oldest';
-      out.sort(function (a, b) { return oldest ? a.time - b.time : b.time - a.time; });
+      function rank(r) { return (r.pics.length ? 2 : 0) + (r.verified ? 1 : 0); }
+      out.sort(function (a, b) {
+        var d = rank(b) - rank(a);
+        if (d) return d;
+        return oldest ? a.time - b.time : b.time - a.time;
+      });
       return out;
     }
 
@@ -833,6 +863,43 @@
         smoothWheel: true,
         prevent: function (node) { return !!(node && node.closest && node.closest(LENIS_PREVENT)); }
       });
+      /* Drawer keranjang mengunci body (position:fixed) — dokumen runtuh ke
+         tinggi layar dan Lenis memangkas posisi internalnya ke batas baru.
+         Saat drawer ditutup MiniCart memulihkan window.scrollTo(y), lalu Lenis
+         menariknya lagi ke nilai yang sudah terpangkas: pembeli mendarat
+         ratusan piksel di atas tempatnya menekan tombol sticky. Jadi Lenis
+         dihentikan selama drawer terbuka dan diposisikan ulang seketika
+         sesudahnya. */
+      var cartEl = $('.mini-cart');
+      if (cartEl && 'MutationObserver' in window) {
+        var lockedY = null;
+        new MutationObserver(function () {
+          var open = cartEl.classList.contains('active');
+          if (open && lockedY === null) { lockedY = window.scrollY; lenis.stop(); }
+          else if (!open && lockedY !== null) {
+            var y = lockedY; lockedY = null;
+            /* Pengamat ini terdaftar LEBIH DULU dari pengamat MiniCart yang
+               membuka kunci body — saat callback ini berjalan, body masih
+               position:fixed dan dokumen masih setinggi layar. Memulihkan di
+               sini sia-sia: scrollTo terpangkas ke 0 dan Lenis mengunci 0 itu
+               lalu melayang ke y selama ~1,6 detik (diukur). Jadi tunggu
+               sampai kuncinya benar-benar lepas, baru Lenis dihidupkan dan
+               diposisikan seketika. */
+            (function restore(tries) {
+              if (document.body.style.position === 'fixed' && tries < 30) {
+                return window.setTimeout(function () { restore(tries + 1); }, 16);
+              }
+              /* Batas gulir Lenis masih terhitung saat dokumen setinggi layar
+                 (body terkunci) — tanpa resize(), scrollTo(y) terpangkas ke
+                 ~10px (diukur: 12024 → 10). */
+              lenis.resize();
+              lenis.start();
+              lenis.scrollTo(y, { immediate: true, force: true });
+              window.scrollTo(0, y);
+            })(0);
+          }
+        }).observe(cartEl, { attributes: true, attributeFilter: ['class'] });
+      }
       var raf = function (t) { lenis.raf(t); requestAnimationFrame(raf); };
       requestAnimationFrame(raf);
     }

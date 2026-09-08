@@ -2793,9 +2793,15 @@
         mutations.forEach((mutation) => {
           if (mutation.attributeName === 'class') {
             if (miniCart.classList.contains('active')) {
-              // Lock the body
+              /* Posisi gulir dibaca SEBELUM body dikunci. Urutan lama menyetel
+                 position:fixed dulu — dokumen langsung runtuh, window.scrollY
+                 sudah 0 saat dibaca — sehingga `top` selalu "-0px" dan saat
+                 drawer ditutup halaman melompat ke paling atas. Terukur 8 Sep
+                 2026 di kapsul maupun powder (3600 → 0). Paling terasa dari
+                 tombol sticky "Add to cart" yang ditekan jauh di bawah. */
+              const lockedAt = window.scrollY;
               document.body.style.position = 'fixed';
-              document.body.style.top = `-${window.scrollY}px`;
+              document.body.style.top = `-${lockedAt}px`;
               document.body.style.width = '100%';
             } else {
               // Unlock the body and restore scroll position

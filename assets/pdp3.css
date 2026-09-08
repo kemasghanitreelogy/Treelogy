@@ -224,7 +224,9 @@ html.p3-js-reveal .pdp3-page .p3-rv:not(.p3-in){opacity:0;transform:translateY(1
 .pdp3-page .p3-leaf h2{color:var(--p3-on-dark)}
 .pdp3-page .p3-leaf p{font-size:16px;line-height:1.5;letter-spacing:-.005em;color:var(--p3-on-dark-2)}
 .pdp3-page .p3-leaf .p3-lead{font-size:30px;line-height:1.21;letter-spacing:0;color:var(--p3-on-dark)}
-.pdp3-page .p3-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,170px));gap:10px}
+/* Mockup mengunci dua kolom 170px (pas untuk 393px). Di ponsel lebih lebar
+   kolomnya tidak mengisi wadah — user 8 Sep: "stretch it to full size". */
+.pdp3-page .p3-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .pdp3-page .p3-tile{border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:16px;display:grid;gap:6px}
 .pdp3-page .p3-tile b{font-size:30px;font-weight:500;line-height:1.5;letter-spacing:-.005em;color:var(--p3-sage-chip)}
 .pdp3-page .p3-tile span{font-size:14px;line-height:1.5;letter-spacing:-.005em;color:var(--p3-on-dark-3)}

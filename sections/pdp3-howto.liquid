@@ -52,7 +52,7 @@
   {%- if t_med != blank -%}
     <div class="p3-med p3-rv"><svg><use href="#i-steth"/></svg><div>{{ t_med }}</div></div>
   {%- endif -%}
-  {%- if t_note2 != blank -%}<p class="p3-note2 p3-rv">{{ t_note2 }}</p>{%- endif -%}
+  {%- if t_note2 != blank -%}<p class="p3-note2 p3-rv">{% render 'pdp3-sentence-lines', text: t_note2 %}</p>{%- endif -%}
 </section>
 </div>
 {%- endif -%}
