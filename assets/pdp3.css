@@ -50,7 +50,14 @@ html{scroll-behavior:smooth}
 .pdp3-page h1{font-size:30px;line-height:1.21;letter-spacing:0;color:var(--p3-ink)}
 .pdp3-page h2{font-size:30px;line-height:1.21;letter-spacing:0;color:var(--p3-ink)}
 .pdp3-page p.p3-eb,.pdp3-page span.p3-eb{font-size:14px !important;line-height:1.4 !important;letter-spacing:.06em !important;text-transform:uppercase;color:var(--p3-ink-3)}
-.pdp3-page{width:100%;max-width:393px;margin-inline:auto}
+/* Mockup mengunci kolomnya 393px (`.page{max-width:393px}`), lebar iPhone
+   tempat ia diukur. Di ponsel yang lebih lebar (412, 428, 430px) kolom itu
+   duduk di tengah dan menyisakan selokan 9–19px di kiri-kanan — hero, pita
+   daun, dan penutup yang seharusnya menyentuh tepi jadi mengambang (laporan
+   user 8 Sep, /id di 430px). Di bawah 900px halamannya selebar layar; semua
+   ukuran di dalamnya sudah fluid (margin 16px, persen), jadi 393px tetap
+   identik piksel demi piksel dengan mockup. */
+.pdp3-page{width:100%;max-width:none;margin-inline:auto}
 @media(min-width:900px){.pdp3-page{max-width:720px}}
 .pdp3-page .p3-brm{display:inline}
 @media(min-width:900px){.pdp3-page .p3-brm{display:none}}
