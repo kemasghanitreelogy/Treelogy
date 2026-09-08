@@ -240,8 +240,23 @@ html.p3-js-reveal .pdp3-page .p3-rv:not(.p3-in){opacity:0;transform:translateY(1
 .pdp3-page .p3-bpom .p3-l2{font-size:14px;color:var(--p3-ink-3)}
 .pdp3-page .p3-why p{font-size:16px;line-height:1.5;letter-spacing:-.005em;color:var(--p3-ink-2)}
 .pdp3-page .p3-cmp{border:1px solid var(--p3-line);border-radius:10px;overflow:hidden}
-.pdp3-page .p3-cmp table{border-collapse:collapse;width:100%;table-layout:fixed}
+/* Kolom kriteria: 84px itu ukuran BAHASA INGGRIS. Mockup mengunci
+   `table-layout:fixed` + 84px, dan label Inggris terpanjang ("Certified")
+   memang muat. Label Indonesia tidak: "Pengeringan" selebar 83px sedangkan
+   ruang isinya 64px, dan karena satu kata tidak punya titik patah ia MENEMBUS
+   ke kolom sebelahnya — 19px keluar, terlihat menempel pada "38°C dalam 4 jam"
+   (laporan user 8 Sep 2026).
+
+   `table-layout:auto` membuat 84px menjadi lantai, bukan kunci: kolomnya
+   melebar seperlunya (ID 103px, "Pengeringan" jadi satu baris) dan menyusut
+   kembali kalau labelnya pendek. Lebar 38% pada dua kolom nilai menjaga
+   keduanya tetap SAMA — tanpa itu auto membagi menurut isi dan kolom
+   "Treelogy" jadi lebih lebar dari "Lainnya" (144/123 terukur), yang merusak
+   keseimbangan mockup. Hasil di 393px Inggris: 84/133/133 lawan 84/134/134
+   sebelumnya — selisih pembulatan 1px. */
+.pdp3-page .p3-cmp table{border-collapse:collapse;width:100%;table-layout:auto}
 .pdp3-page .p3-cmp col.p3-c0{width:84px}
+.pdp3-page .p3-cmp colgroup col:not(.p3-c0){width:38%}
 .pdp3-page .p3-cmp th,.pdp3-page .p3-cmp td{padding:12px 10px;text-align:left;vertical-align:top;font-size:14px;line-height:1.35;letter-spacing:-.005em}
 .pdp3-page .p3-cmp thead tr{background:var(--p3-row)}
 .pdp3-page .p3-cmp th.p3-us{font-weight:700;font-size:16px;color:var(--p3-ink);background:var(--p3-sage-chip)}
