@@ -270,6 +270,28 @@
      #cart menyisipkannya di luar scope .cart-page, sehingga seluruh gaya
      .cart-item yang discope hilang dan kartunya render sebagai kotak rusak
      (persis glitch "skeleton ngaco" pada add pertama dari cart kosong). */
+  /* Hadiah SELALU di bawah produk.
+
+     Dulu kedua penyisipan memakai `parent.firstChild` — paling atas — jadi
+     pembeli membuka drawer dan yang pertama terlihat adalah hadiah, bukan
+     barang yang baru saja ia pilih. HTML server sudah mengurutkannya
+     produk-dulu (snippets/CartDrawerContent.liquid), tapi baris yang digambar
+     mesin ini muncul SEBELUM server menjawab, dan `cartReconcileRows`
+     mempertahankan simpul yang identitasnya sama — jadi urutan salah itu ikut
+     bertahan setelah rekonsiliasi.
+
+     Disisipkan setelah baris TERAKHIR, bukan sekadar appendChild, supaya ia
+     tetap berada di atas elemen non-baris di dalam wadah yang sama (mis.
+     keadaan kosong). Untuk beberapa hadiah sekaligus urutannya tetap terjaga:
+     hadiah pertama menjadi baris terakhir, hadiah berikutnya menyusul di
+     bawahnya. */
+  function appendRow(parent, node) {
+    var items = parent.querySelectorAll('.cart-item');
+    var last = items.length ? items[items.length - 1] : null;
+    if (last) last.insertAdjacentElement('afterend', node);
+    else parent.appendChild(node);
+  }
+
   function itemsParent(root) {
     var wrap = root.querySelector('.cart-items');
     if (wrap) return wrap;
@@ -336,7 +358,7 @@
         return;
       }
       if (!c.querySelector('[data-skeleton-for="' + v + '"]:not([data-dying])')) {
-        parent.insertBefore(skeletonCard(v), parent.firstChild);
+        appendRow(parent, skeletonCard(v));
       }
     });
   }
@@ -513,7 +535,7 @@
         real.classList.remove('cart-item--gift-in');
         real.removeEventListener('animationend', handler);
       });
-      parent.insertBefore(real, parent.firstChild);
+      appendRow(parent, real);
     });
   }
 
