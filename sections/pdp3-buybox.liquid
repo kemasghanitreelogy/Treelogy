@@ -132,6 +132,20 @@
       <div class="p3-gallery"><div class="p3-slides" id="p3-slides">
         {%- if slide_blocks.size > 0 -%}
           {%- for block in slide_blocks -%}
+            {%- comment -%}
+              Grafis galeri ada DUA versi: teksnya dibakar ke dalam gambar,
+              jadi tidak bisa diterjemahkan lewat berkas locale. Setelan
+              `*_url_id` menyimpan versi Indonesia; kalau kosong, jatuh ke
+              versi Inggris supaya slide tanpa teks cukup diisi sekali.
+            {%- endcomment -%}
+            {%- assign slide_img = block.settings.image_url -%}
+            {%- assign slide_poster = block.settings.poster_url -%}
+            {%- assign slide_thumb = block.settings.thumb_url -%}
+            {%- if request.locale.iso_code == 'id' -%}
+              {%- if block.settings.image_url_id != blank -%}{%- assign slide_img = block.settings.image_url_id -%}{%- endif -%}
+              {%- if block.settings.poster_url_id != blank -%}{%- assign slide_poster = block.settings.poster_url_id -%}{%- endif -%}
+              {%- if block.settings.thumb_url_id != blank -%}{%- assign slide_thumb = block.settings.thumb_url_id -%}{%- endif -%}
+            {%- endif -%}
             <div class="p3-slide native-gallery__slide" data-index="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
               {%- if block.settings.video_url != blank -%}
                 {%- comment -%}
@@ -139,19 +153,18 @@
                   WAJIB berpasangan dengan `muted` — tanpa itu browser menolak
                   memutar dan slide-nya jadi kotak abu-abu diam.
                 {%- endcomment -%}
-                <video src="{{ block.settings.video_url }}" poster="{{ block.settings.poster_url }}" muted loop playsinline autoplay preload="metadata"></video>
+                <video src="{{ block.settings.video_url }}" poster="{{ slide_poster }}" muted loop playsinline autoplay preload="metadata"></video>
               {%- else -%}
-                <img src="{{ block.settings.image_url }}" alt="{{ block.settings.alt | escape }}" width="393" height="490"{% if forloop.first %} fetchpriority="high"{% else %} loading="lazy"{% endif %}>
+                <img src="{{ slide_img }}" alt="{{ block.settings.alt | escape }}" width="393" height="490"{% if forloop.first %} fetchpriority="high"{% else %} loading="lazy"{% endif %}>
               {%- endif -%}
               {%- comment -%}
-                Tanda sertifikasi menempel pada SLIDE PERTAMA, bukan pada
-                galerinya. Kalau dipasang di galeri ia akan bertahan di layar
-                saat pemakai menggeser ke slide berikutnya — dan slide 3
-                sampai 8 adalah kartu infografis berlatar terang, tempat tanda
-                putih hilang sama sekali. Menempel di slide pertama membuatnya
-                ikut tergeser keluar bersama fotonya.
+                Tanda sertifikasi TIDAK dipasang sebagai overlay di jalur blok:
+                sejak galeri v4 lambangnya sudah dibakar ke dalam berkas slide
+                pertama (kanan-bawah) oleh desainer. Menyalakan `pdp3-certs`
+                di sini membuat lambangnya tampil DUA KALI. Jalur cadangan
+                `product.media` di bawah tetap memakai overlay karena gambar
+                produk biasa tidak membawa lambang.
               {%- endcomment -%}
-              {%- if forloop.first -%}{% render 'pdp3-certs' %}{%- endif -%}
             </div>
           {%- endfor -%}
         {%- else -%}
@@ -192,8 +205,13 @@
       <div class="p3-thumbs" id="p3-thumbs">
         {%- if slide_blocks.size > 0 -%}
           {%- for block in slide_blocks -%}
+            {%- assign thumb_src = block.settings.thumb_url | default: block.settings.poster_url | default: block.settings.image_url -%}
+            {%- if request.locale.iso_code == 'id' -%}
+              {%- assign thumb_src_id = block.settings.thumb_url_id | default: block.settings.poster_url_id | default: block.settings.image_url_id -%}
+              {%- if thumb_src_id != blank -%}{%- assign thumb_src = thumb_src_id -%}{%- endif -%}
+            {%- endif -%}
             <button type="button" aria-current="{% if forloop.first %}true{% else %}false{% endif %}" aria-label="{{ t_thumb | escape }} {{ forloop.index }}">
-              <img src="{{ block.settings.thumb_url | default: block.settings.poster_url | default: block.settings.image_url }}" alt="" width="78" height="78" loading="lazy">
+              <img src="{{ thumb_src }}" alt="" width="78" height="78" loading="lazy">
             </button>
           {%- endfor -%}
         {%- else -%}
@@ -484,6 +502,11 @@
         },
         {
           "type": "text",
+          "id": "image_url_id",
+          "label": "Image URL (Bahasa Indonesia)"
+        },
+        {
+          "type": "text",
           "id": "video_url",
           "label": "Video URL (mp4)"
         },
@@ -494,8 +517,18 @@
         },
         {
           "type": "text",
+          "id": "poster_url_id",
+          "label": "Video poster URL (Bahasa Indonesia)"
+        },
+        {
+          "type": "text",
           "id": "thumb_url",
           "label": "Thumbnail URL"
+        },
+        {
+          "type": "text",
+          "id": "thumb_url_id",
+          "label": "Thumbnail URL (Bahasa Indonesia)"
         },
         {
           "type": "text",
