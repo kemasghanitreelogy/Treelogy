@@ -44,6 +44,28 @@
     }
   {%- endif %}
 
+  /* PDP v3 punya bilah beli menempel di dasar layar (`position:fixed;
+     bottom:0`). Teaser ini juga fixed di bawah, dengan z-index 90000 milik
+     Klaviyo — jadi ia duduk PERSIS di atas tombol "Tambah ke Keranjang" dan
+     menutupinya.
+
+     Diangkat hanya SELAMA bilahnya tampil: `body.p3-sticky-on` dan
+     `--p3-sticky-h` dipasang oleh assets/pdp3.js dari tinggi bilah yang
+     sebenarnya (74px di ponsel, 80px sejak 900px), sehingga angka itu tidak
+     perlu dijaga di dua berkas. Margin bawah teaser 20px sudah terhitung —
+     karena itu geserannya `8px - tinggi`, bukan tinggi penuh: hasilnya 12px
+     jarak bersih di atas bilah.
+
+     Klaviyo tidak memasang `transform` inline pada pembungkus luar (hanya
+     `filter`), jadi properti ini aman dipakai; transform milik Klaviyo ada di
+     elemen anak. */
+  div[class*='kl-teaser-'] {
+    transition: transform 0.25s ease !important;
+  }
+  body.p3-sticky-on div[class*='kl-teaser-'] {
+    transform: translateY(calc(8px - var(--p3-sticky-h, 74px))) !important;
+  }
+
   [data-testid='animated-teaser'] > span[role='button'] {
     display: flex !important;
     box-sizing: border-box !important;

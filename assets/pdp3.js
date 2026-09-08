@@ -845,8 +845,6 @@
     document.documentElement.classList.add('p3-js-reveal');
 
     var rvs = $$('.p3-rv');
-    var sticky = $('#p3-sticky');
-    var packs = $('#p3-packs');
     var lenis = null;
 
     if (window.Lenis) {
@@ -1025,15 +1023,42 @@
           el.classList.add('p3-in');
         }
       });
-      if (sticky && packs) {
-        sticky.classList.toggle('p3-on', packs.getBoundingClientRect().bottom < 0);
-      }
     }
 
     window.addEventListener('scroll', tick, { passive: true });
     window.addEventListener('resize', tick);
     tick();
     window.setTimeout(tick, 300);
+  }
+
+  /* --- bilah beli menempel --------------------------------------------------
+     Dulu bagian ini menumpang di dalam initMotion, dan initMotion berhenti
+     lebih awal ketika pembaca meminta gerakan dikurangi — artinya bagi mereka
+     bilah belinya TIDAK PERNAH muncul sama sekali. Ia bukan dekorasi, jadi
+     sekarang berdiri sendiri dan selalu berjalan.
+
+     Selain menyalakan bilahnya, ia mengumumkan tinggi bilah ke CSS lewat
+     `--p3-sticky-h` dan menandai `body.p3-sticky-on`. Teaser Klaviyo juga
+     `position:fixed; bottom:0` dengan z-index 90000 — tanpa penanda ini ia
+     duduk PERSIS di atas tombol beli dan menutupinya. Tingginya diumumkan,
+     bukan ditulis ulang sebagai angka di berkas lain, supaya 74px ponsel /
+     80px desktop tidak perlu dijaga di dua tempat. */
+  function initSticky() {
+    var sticky = $('#p3-sticky');
+    var packs = $('#p3-packs');
+    if (!sticky || !packs) return;
+    var root = document.documentElement;
+    function sync() {
+      var on = packs.getBoundingClientRect().bottom < 0;
+      sticky.classList.toggle('p3-on', on);
+      document.body.classList.toggle('p3-sticky-on', on);
+      var h = Math.round(sticky.getBoundingClientRect().height);
+      if (h) root.style.setProperty('--p3-sticky-h', h + 'px');
+    }
+    window.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', sync);
+    sync();
+    window.setTimeout(sync, 300);
   }
 
   /* --- video "cara meminumnya" ---------------------------------------------
@@ -1113,6 +1138,7 @@
   function boot() {
     /* Paling dulu: bilahnya harus sudah di <body> sebelum apa pun mengukurnya. */
     initStickyHost();
+    initSticky();
     initRouter();
     initPacks();
     initGallery();
