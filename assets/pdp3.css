@@ -362,12 +362,31 @@ html.p3-js-reveal .pdp3-page .p3-rv:not(.p3-in){opacity:0;transform:translateY(1
 /* ===== sticky ===== */
 .pdp3-page .p3-sticky{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--p3-canvas);border-top:1px solid var(--p3-line);transform:translateY(110%);transition:transform .25s ease}
 .pdp3-page .p3-sticky.p3-on{transform:none}
-.pdp3-page .p3-sticky .p3-in{max-width:393px;margin-inline:auto;height:74px;display:flex;align-items:center;gap:12px;padding:0 20px}
-.pdp3-page .p3-sticky .p3-pd b{display:block;font-size:20px;font-weight:500;line-height:1.5;letter-spacing:-.005em;color:var(--p3-ink);white-space:nowrap}
-.pdp3-page .p3-sticky .p3-pd b em{font-style:normal;font-weight:400;font-size:12px;color:var(--p3-ink-3)}
-.pdp3-page .p3-sticky .p3-pd>span{display:block;font-size:12px;color:var(--p3-ink-3)}
+/* --- ponsel sempit: tipografi menyusut, bukan meluber -------------------
+   Mockup diukur pada 393px, dan di bawah itu dua tempat kehabisan ruang
+   (terukur 8 Sep di /id): tombol "Tambah ke Keranjang" pada bilah sticky
+   MELIPAT jadi dua baris di dalam pil setinggi 48px pada 320px, dan baris
+   bukti hero — yang `white-space:nowrap` mengikuti mockup — meluber 45px
+   keluar layar.
+
+   Ukurannya dijadikan cair dengan clamp() yang DIPATOK pada lebar mockup:
+   nilai vw dihitung dari 388px, sedikit di bawah 393, sehingga pada 393px ke
+   atas ia selalu menabrak batas maksimum dan nilainya SAMA PERSIS dengan
+   mockup — paritas tidak bergeser sedikit pun — sedangkan di bawahnya ia
+   menyusut mulus alih-alih memaksa teks keluar.
+
+   Batas minimumnya bukan angka sembarang: 13px untuk label tombol dan 12px
+   untuk teks sekunder adalah dasar yang masih nyaman dibaca, dan tinggi
+   tombol tetap 48px supaya sasaran sentuhnya tidak pernah turun di bawah
+   44px yang disyaratkan pedoman aksesibilitas. */
+.pdp3-page .p3-sticky .p3-in{max-width:393px;margin-inline:auto;height:74px;display:flex;align-items:center;gap:clamp(8px,3.093vw,12px);padding:0 clamp(12px,5.155vw,20px)}
+.pdp3-page .p3-sticky .p3-pd{min-width:0}
+.pdp3-page .p3-buy .p3-proof{font-size:clamp(12px,3.866vw,15px);gap:clamp(6px,2.062vw,8px)}
+.pdp3-page .p3-sticky .p3-pd b{display:block;font-size:clamp(16px,5.155vw,20px);font-weight:500;line-height:1.5;letter-spacing:-.005em;color:var(--p3-ink);white-space:nowrap}
+.pdp3-page .p3-sticky .p3-pd b em{font-style:normal;font-weight:400;font-size:clamp(10px,3.093vw,12px);color:var(--p3-ink-3)}
+.pdp3-page .p3-sticky .p3-pd>span{display:block;font-size:clamp(10px,3.093vw,12px);color:var(--p3-ink-3)}
 .pdp3-page .p3-sticky .p3-pd b span{display:inline}
-.pdp3-page .p3-sticky .p3-btn{height:48px;font-size:16px;flex:1;width:auto}
+.pdp3-page .p3-sticky .p3-btn{height:48px;font-size:clamp(13px,4.124vw,16px);padding-inline:clamp(10px,3.6vw,14px);flex:1;width:auto}
 @media(min-width:900px){.pdp3-page .p3-sticky{display:none}}
 
 /* ==========================================================================
