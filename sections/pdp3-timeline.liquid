@@ -1,0 +1,95 @@
+{%- comment -%}
+  pdp3 — apa yang terjadi dari waktu ke waktu. Salinan DOM
+  `<section class="days">` dari mockup: kartu abu berisi eyebrow, judul, dan
+  lima simpul bertitik.
+{%- endcomment -%}
+
+{%- liquid
+  comment
+    Template produk hanya ada satu per tema, sedangkan desain ini ditulis untuk
+    satu produk saja. Section JSON tidak bisa dipasang bersyarat, jadi
+    gerbangnya ada di sini. Kosongkan setting `handles` untuk semua produk.
+  endcomment
+  assign pdp3_on = false
+  if section.settings.handles == blank
+    assign pdp3_on = true
+  else
+    assign pdp3_needle = product.handle | prepend: ',' | append: ','
+    assign pdp3_hay = section.settings.handles | remove: ' ' | prepend: ',' | append: ','
+    if pdp3_hay contains pdp3_needle
+      assign pdp3_on = true
+    endif
+  endif
+-%}
+{%- if pdp3_on -%}
+{%- capture t_eyebrow %}{% render 'pdp3-copy', value: section.settings.eyebrow, key: 'pdp3.timeline.eyebrow' %}{% endcapture -%}
+{%- capture t_heading %}{% render 'pdp3-copy', value: section.settings.heading, key: 'pdp3.timeline.heading' %}{% endcapture -%}
+<div class="pdp3-page">
+<section class="p3-days" id="p3-days">
+  {%- if t_eyebrow != blank -%}<p class="p3-eb p3-rv">{{ t_eyebrow }}</p>{%- endif -%}
+  <h2 class="p3-rv">{% render 'pdp3-sentence-lines', text: t_heading %}</h2>
+  {%- comment -%}
+    Isi menempel pada PRODUKNYA — alasan yang sama seperti FAQ. `pdp3.timeline`
+    (JSON dummy tema draft) didahulukan; `custom.product_timeline` adalah
+    daftar metaobject `timeline_benefit` yang dibaca tema live. Blok template
+    hanya cadangan.
+  {%- endcomment -%}
+  {%- assign tl_nodes = product.metafields.pdp3.timeline.value -%}
+  {%- if tl_nodes == blank or tl_nodes.size == 0 -%}
+    {%- assign tl_nodes = product.metafields.custom.product_timeline.value -%}
+  {%- endif -%}
+  {%- if tl_nodes != blank and tl_nodes.size > 0 -%}
+    {%- for node in tl_nodes -%}
+      <div class="p3-node p3-rv"><span class="p3-dot"></span><div><b>{{ node.period }}</b><p>{{ node.description }}</p></div></div>
+    {%- endfor -%}
+  {%- else -%}
+    {%- for block in section.blocks -%}
+      <div class="p3-node p3-rv" {{ block.shopify_attributes }}><span class="p3-dot"></span><div><b>{{ block.settings.title }}</b><p>{{ block.settings.body }}</p></div></div>
+    {%- endfor -%}
+  {%- endif -%}
+</section>
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "PDP3 Timeline",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "handles",
+      "label": "Only show for these product handles (comma separated)",
+      "default": "organic-moringa-capsules"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "node",
+      "name": "Milestone",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "textarea",
+          "id": "body",
+          "label": "Body"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

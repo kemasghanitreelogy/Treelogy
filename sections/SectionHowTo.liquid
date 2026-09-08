@@ -1,3 +1,22 @@
+{%- liquid
+  comment
+    Gerbang yang sama dengan sections/MainProductDetail.liquid: di template
+    yang memuat section PDP v3 dan section lama berdampingan, section lama
+    harus mundur untuk produk yang sudah dipegang desain baru. Setting-nya
+    kosong secara bawaan, jadi di tema mana pun yang tidak mengisinya section
+    ini berperilaku persis seperti sebelumnya — termasuk di luar halaman
+    produk, tempat product.handle kosong dan gerbangnya tidak pernah menutup.
+  endcomment
+  assign pdp3_skip = false
+  if section.settings.excluded_handles != blank
+    assign pdp3_needle = product.handle | prepend: ',' | append: ','
+    assign pdp3_hay = section.settings.excluded_handles | remove: ' ' | prepend: ',' | append: ','
+    if pdp3_hay contains pdp3_needle
+      assign pdp3_skip = true
+    endif
+  endif
+-%}
+{%- unless pdp3_skip -%}
 {% assign card_detail = product.metafields.custom.how_to_use %}
 {% if card_detail != blank %}
   <div class="inner">
@@ -33,6 +52,7 @@
     background: {{ section.settings.bakground_color | default: '#FFFFFF' }}
   }
 </style>
+{%- endunless -%}
 
 {% schema %}
 {
@@ -40,6 +60,11 @@
   "tag": "section",
   "class": "section how-to-use main-grid",
   "settings": [
+      {
+        "type": "text",
+        "id": "excluded_handles",
+        "label": "Hide this section for these product handles (comma separated)"
+      },
     {
       "type": "text",
       "id": "title",

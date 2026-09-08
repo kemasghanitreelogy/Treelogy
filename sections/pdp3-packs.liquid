@@ -1,0 +1,441 @@
+{%- comment -%}
+  pdp3 — pemilih paket + tambah ke keranjang.
+
+  Salinan DOM `<section class="packs">` dari mockup. Kartunya TIDAK dirender
+  snippets/VariantsButtonV2: snippet itu menggambar bentuk lain (lingkaran
+  radio, ikon per baris, nilai hadiah rata kanan) yang memang bukan bentuk
+  mockup ini. Yang disalin dari sana adalah ATURANNYA, dan hanya tiga:
+
+    1. Baris berikon `ship` tidak dirender sama sekali di luar market `id`.
+       Penandanya ruas ikon, bukan teksnya — teksnya ikut diterjemahkan.
+    2. Nilai hadiah di luar Indonesia dibaca dari compare_at VARIAN HADIAHNYA
+       (sadar-market), bukan dari teks rupiah di metafield. Kalau tidak bisa
+       diselesaikan, nilainya tidak ditampilkan sama sekali.
+    3. Ekor "- Rp ... / day" pada label dipotong di luar market `id`.
+
+  Kalau salah satu aturan itu berubah di snippets/VariantsButtonV2.liquid, ia
+  harus ikut berubah di sini. Keduanya sengaja tidak digabung: bentuknya beda,
+  dan menyatukan dua bentuk lewat percabangan di file 1.500 baris yang dipakai
+  seluruh katalog jauh lebih mahal daripada tiga aturan yang ditulis dua kali.
+
+  Form-nya memakai kontrak DOM tema: `#AddToCartForm`, `#productSelect`, dan
+  tombol `#AddToCart.button-quick-add-cart`. Lewat kontrak itulah hadiah
+  otomatis, penanganan 429, dan penjaga freeze checkout di
+  snippets/MiniCart.liquid ikut berlaku di halaman ini.
+{%- endcomment -%}
+
+{%- liquid
+  assign show_staged = settings.show_staged_variants
+  assign is_id_market = false
+  if localization.market.handle == 'id'
+    assign is_id_market = true
+  endif
+
+  comment
+    Mockup menyusun paket terbesar di atas, kebalikan dari urutan varian di
+    admin, jadi urutkan menurun berdasarkan harga.
+  endcomment
+  assign v_sorted = product.variants | sort: 'price' | reverse
+
+  comment
+    Urutan penentuan paket awal, dan alasannya:
+    1. `?variant=` — pernah ada insiden di mana tautan yang menunjuk satu paket
+       tetap membuka paket lain, jadi parameter ini menang atas apa pun.
+    2. metafield `pdp3.set_default`, lalu `custom.set_default`.
+    3. varian pertama, sekadar jaring pengaman.
+    sections/pdp3-buybox.liquid menyalin urutan ini supaya harga per hari di
+    hero membuka pada paket yang sama dengan kartu yang tersorot.
+  endcomment
+  assign default_variant = null
+  if product.selected_variant
+    assign default_variant = product.selected_variant
+  endif
+  unless default_variant
+    for v in product.variants
+      if v.metafields.pdp3.set_default.value == true
+        assign default_variant = v
+        break
+      endif
+    endfor
+  endunless
+  unless default_variant
+    for v in product.variants
+      if v.metafields.custom.set_default
+        assign default_variant = v
+        break
+      endif
+    endfor
+  endunless
+  unless default_variant
+    assign default_variant = product.selected_or_first_available_variant
+  endunless
+-%}
+
+{%- liquid
+  comment
+    Template produk hanya ada satu per tema, sedangkan desain ini ditulis untuk
+    satu produk saja. Section JSON tidak bisa dipasang bersyarat, jadi
+    gerbangnya ada di sini. Kosongkan setting `handles` untuk semua produk.
+  endcomment
+  assign pdp3_on = false
+  if section.settings.handles == blank
+    assign pdp3_on = true
+  else
+    assign pdp3_needle = product.handle | prepend: ',' | append: ','
+    assign pdp3_hay = section.settings.handles | remove: ' ' | prepend: ',' | append: ','
+    if pdp3_hay contains pdp3_needle
+      assign pdp3_on = true
+    endif
+  endif
+-%}
+{%- if pdp3_on -%}
+{%- capture t_guarantee %}{% render 'pdp3-copy', value: section.settings.guarantee, key: 'pdp3.packs.guarantee' %}{% endcapture -%}
+{%- capture t_atc %}{% render 'pdp3-copy', value: section.settings.atc_label, key: 'pdp3.packs.atc_label' %}{% endcapture -%}
+{%- capture t_a1 %}{% render 'pdp3-copy', value: section.settings.assure_1, key: 'pdp3.packs.assure_1' %}{% endcapture -%}
+{%- capture t_a2 %}{% render 'pdp3-copy', value: section.settings.assure_2, key: 'pdp3.packs.assure_2' %}{% endcapture -%}
+{%- capture t_a3 %}{% render 'pdp3-copy', value: section.settings.assure_3, key: 'pdp3.packs.assure_3' %}{% endcapture -%}
+{%- capture t_perday %}{% render 'pdp3-copy', value: section.settings.per_day_suffix, key: 'pdp3.packs.per_day_suffix' %}{% endcapture -%}
+{%- capture t_sticky %}{% render 'pdp3-copy', value: section.settings.sticky_note, key: 'pdp3.packs.sticky_note' %}{% endcapture -%}
+{%- capture t_select %}{% render 'pdp3-copy', value: section.settings.select_label, key: 'pdp3.packs.select_label' %}{% endcapture -%}
+{%- comment -%}
+  "Hemat"/"Save" tidak punya setting section — ia kata di dalam kalimat, bukan
+  isi yang diatur editor — jadi ia datang langsung dari locale.
+{%- endcomment -%}
+{%- assign t_save = 'pdp3.packs.save' | t -%}
+<div class="pdp3-page pdp3-page--stack">
+<section class="p3-packs" id="p3-packs">
+  {%- if t_guarantee != blank -%}
+    <div class="p3-guar p3-rv"><svg><use href="#i-shield"/></svg><div>{% render 'pdp3-sentence-lines', text: t_guarantee %}</div></div>
+  {%- endif -%}
+
+  <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data" id="AddToCartForm" style="display:contents">
+    {%- assign card_no = 0 -%}
+    {%- for variant in v_sorted -%}
+      {%- if variant.metafields.custom.staged_hidden == true and show_staged != true -%}
+        {%- continue -%}
+      {%- endif -%}
+      {%- assign card_no = card_no | plus: 1 -%}
+
+      {%- liquid
+        assign v_label = variant.metafields.custom.staged_plan_label
+        if v_label == blank
+          assign v_label = variant.metafields.custom.time_protocol
+        endif
+        comment
+          Produk tanpa opsi memakai varian bernama "Default Title" — placeholder
+          Shopify yang tidak pernah boleh terbaca pembeli. Pengecekannya lewat
+          has_only_default_variant, bukan mencocokkan teks, karena nama itu
+          tidak diterjemahkan dan mudah meleset antar-locale.
+        endcomment
+        if v_label == blank
+          if product.has_only_default_variant
+            assign v_label = product.title
+          else
+            assign v_label = variant.title
+          endif
+        endif
+
+        comment
+          staged_compare_at_price disimpan dalam rupiah penuh (mengikuti
+          custom.original_price), sedangkan variant.price dalam satuan terkecil.
+          Tanpa dikalikan 100 perbandingannya selalu kalah dan harga coretnya
+          tidak pernah muncul.
+        endcomment
+        assign v_compare = 0
+        assign v_compare_meta = variant.metafields.custom.staged_compare_at_price.value | plus: 0
+        if v_compare_meta > 0
+          assign v_compare = v_compare_meta | times: 100
+        elsif variant.compare_at_price > variant.price
+          assign v_compare = variant.compare_at_price
+        endif
+        assign v_saving = 0
+        if v_compare > variant.price
+          assign v_saving = v_compare | minus: variant.price
+        endif
+
+        comment
+          Mode dummy pdp3 menyala untuk produk yang sudah punya data di
+          namespace `pdp3`, dan di dalamnya pita kartu HANYA datang dari
+          `pdp3.badge`. Tanpa gerbang ini `custom.custom_badge_text` ikut
+          terbaca dan kartu 2 bulan memakai pita "most ordered" yang tidak
+          ada di mockup — pita itu milik desain kartu yang lama.
+        endcomment
+        if product.metafields.pdp3.hero_heading != blank
+          assign v_badge = variant.metafields.pdp3.badge
+        else
+          assign v_badge = variant.metafields.custom.custom_badge_text
+        endif
+        assign v_active = false
+        if variant.id == default_variant.id
+          assign v_active = true
+        endif
+      -%}
+      {%- capture v_price_text %}{% render 'pdp3-money', cents: variant.price %}{% endcapture -%}
+      {%- comment -%}
+        Dikosongkan tiap putaran: `assign` di Liquid bertahan melewati batas
+        iterasi, jadi tanpa ini kartu 2 bulan mewarisi blok hadiah kartu 3
+        bulan — hadiah yang tidak pernah dijanjikan kepada pembelinya.
+      {%- endcomment -%}
+      {%- assign gift_label = '' -%}
+      {%- assign gift_value = '' -%}
+      {%- assign v_per_day_raw = variant.metafields.custom.value_per_day | split: '/' | first | strip -%}
+      {%- capture v_per_day %}{% render 'pdp3-money', text: v_per_day_raw %}{% endcapture -%}
+
+      <label class="p3-pack p3-rv"><input type="radio" name="pack" value="{{ variant.id }}"{% if v_active %} checked{% endif %} data-pd="{{ v_per_day | escape }}" data-price="{{ v_price_text | escape }}" data-available="{{ variant.available }}">
+        {%- if v_badge != blank %}<span class="p3-tag">{{ v_badge }}</span>{% endif -%}
+        <div class="p3-top"><span class="p3-name">{{ v_label }}</span>
+          {%- if v_saving > 0 -%}
+            {%- capture v_saving_text %}{% render 'pdp3-money', cents: v_saving %}{% endcapture -%}
+            {%- comment -%}
+              Kata "Hemat"/"Save" dulu bercabang pada locale di sini. Sekarang
+              ia satu kunci locale seperti teks lain di halaman ini — satu
+              tempat, dan penerjemah bisa mengubahnya tanpa menyentuh Liquid.
+            {%- endcomment -%}
+            <span class="p3-save">{{ t_save }} {{ v_saving_text }}</span>
+          {%- endif -%}
+        </div>
+        {%- comment -%}
+          Mulai di sini kartunya dua kolom: teks di kiri, barang di kanan.
+          `.p3-txt` membungkus kolom kirinya, dan pembungkus itu WAJIB —
+          `.p3-pack` adalah grid dua kolom, jadi tanpa pembungkus setiap
+          baris harga dan setiap butir manfaat menjadi sel grid tersendiri.
+        {%- endcomment -%}
+        <div class="p3-txt">
+        {%- if v_per_day != blank -%}
+          <div class="p3-pd"><b>{{ v_per_day }}</b><span>{{ t_perday }}</span></div>
+        {%- endif -%}
+        {%- comment -%}
+          Mockup memisahkan harga coret dari harga jual dengan `&nbsp;` + spasi
+          di kartu PERTAMA dan hanya satu spasi biasa di kartu berikutnya —
+          ganjil, dan disalin apa adanya bersama `line-height` sebaris di bawah.
+          Keduanya ketidakkonsistenan yang sama dan diperbaiki di tempat yang
+          sama: mockupnya.
+        {%- endcomment -%}
+        <div class="p3-price">{% if v_saving > 0 %}<s>{% render 'pdp3-money', cents: v_compare %}</s>{% if card_no == 1 %}&nbsp; {% else %} {% endif %}{% endif %}{{ v_price_text }}</div>
+
+        {%- comment -%}
+          Baris manfaat. `pdp3.description` menyimpannya satu baris per manfaat
+          dalam bentuk `label|nilai|ikon`, dan ruas `ikon` di sini hanya dipakai
+          sebagai PENANDA JENIS (mis. `ship`) — mockup menggambar semua baris
+          dengan titik-tengah yang sama, tidak ada ikon per baris.
+
+          `line-height` sebaris pada kartu kedua dan seterusnya adalah salinan
+          apa adanya dari mockup: di sana kartu pertama memakai 25px dari CSS
+          sementara dua kartu lain menimpanya dengan 1.5. Tidak masuk akal, dan
+          justru karena itu ia disalin — brief tema ini kesamaan, bukan
+          perbaikan. Ubah mockupnya dulu kalau ini mau diseragamkan.
+        {%- endcomment -%}
+        {%- assign perk_src = variant.metafields.pdp3.description -%}
+        {%- if perk_src != blank -%}
+          {%- assign gift_list = variant.metafields.custom.eligible_gifts.value -%}
+          {%- assign gift_index = 0 -%}
+          {%- assign perk_lines = perk_src | strip | newline_to_br | split: '<br />' -%}
+          {%- for perk_line in perk_lines -%}
+            {%- assign perk_text = perk_line | strip_html | strip -%}
+            {%- if perk_text == blank -%}{%- continue -%}{%- endif -%}
+            {%- assign perk_parts = perk_text | split: '|' -%}
+            {%- assign perk_icon = perk_parts[2] | default: '' | strip | downcase -%}
+
+            {%- comment -%}
+              Aturan 1 — gratis ongkir hanya berlaku untuk market Indonesia,
+              jadi barisnya TIDAK dirender sama sekali di market lain, bukan
+              sekadar angkanya yang disembunyikan.
+            {%- endcomment -%}
+            {%- if perk_icon == 'ship' and is_id_market == false -%}{%- continue -%}{%- endif -%}
+
+            {%- assign perk_label = perk_parts[0] | strip -%}
+            {%- comment -%} Aturan 3 — ekor harga harian dipotong di luar market id. {%- endcomment -%}
+            {%- if is_id_market == false and perk_label contains ' - Rp' -%}
+              {%- assign perk_label = perk_label | split: ' - Rp' | first | strip -%}
+            {%- endif -%}
+
+            {%- comment -%}
+              Aturan 2 — nilai hadiah. Di Indonesia teks metafield dipakai apa
+              adanya supaya tampilannya tidak bergeser sedikit pun; di market
+              lain ia diselesaikan dari compare_at varian hadiahnya, dan kalau
+              gagal, nilainya tidak ditampilkan.
+            {%- endcomment -%}
+            {%- assign perk_value = blank -%}
+            {%- if perk_parts.size > 1 and perk_icon != 'ship' -%}
+              {%- assign perk_value = perk_parts[1] | strip -%}
+              {%- unless is_id_market -%}
+                {%- assign gift_match = blank -%}
+                {%- for g in gift_list -%}
+                  {%- if perk_label contains g.product.title -%}{%- assign gift_match = g -%}{%- break -%}{%- endif -%}
+                {%- endfor -%}
+                {%- if gift_match == blank -%}{%- assign gift_match = gift_list[gift_index] -%}{%- endif -%}
+                {%- assign gift_index = gift_index | plus: 1 -%}
+                {%- if gift_match.compare_at_price > 0 -%}
+                  {%- assign perk_value = gift_match.compare_at_price | money -%}
+                {%- else -%}
+                  {%- assign perk_value = blank -%}
+                {%- endif -%}
+              {%- endunless -%}
+            {%- endif -%}
+
+            {%- comment -%}
+              Baris hadiah TIDAK lagi ikut daftar butir: ia pindah ke kolom
+              kanan sebagai blok bergambar. Ditangkap di sini lalu dicetak di
+              bawah, supaya aturan pasar (nilai hadiah, gerbang market) tetap
+              dihitung di satu tempat.
+            {%- endcomment -%}
+            {%- if perk_value != blank and perk_icon != 'ship' -%}
+              {%- capture gift_label %}{{ perk_label }}{% endcapture -%}
+              {%- capture gift_value %}{% render 'pdp3-money', text: perk_value %}{% endcapture -%}
+              {%- continue -%}
+            {%- endif -%}
+            <div class="p3-row"{% unless card_no == 1 %} style="line-height:1.5"{% endunless %}>·&nbsp; {{ perk_label }}</div>
+          {%- endfor -%}
+        {%- endif -%}
+        </div>
+
+        {%- comment -%}
+          Kolom kanan. Kartu berhadiah memakai `.p3-vis` — blok hadiah di atas,
+          foto paket di bawah; kartu tanpa hadiah cuma fotonya.
+
+          Lebar fotonya mengikuti URUTAN kartu, bukan isi metafield: mockup
+          memberi kartu pertama 124px, kedua 93px, ketiga 62px, dan urutan itu
+          sudah menurun mengikuti harga (`v_sorted`). Jadi ukurannya ikut
+          besarnya paket tanpa satu pun angka yang harus dirawat manusia.
+        {%- endcomment -%}
+        {%- assign pack_img = variant.metafields.pdp3.pack_image -%}
+        {%- comment -%}
+          Kelasnya `p3-p3`/`p3-p2`/`p3-p1`, bukan `p3`/`p2`/`p1`: seluruh kelas
+          mockup diberi awalan `p3-` saat diport, termasuk kelas ukuran ini.
+          Menuliskannya tanpa awalan tidak memicu error apa pun — gambarnya
+          cuma keluar seukuran aslinya.
+        {%- endcomment -%}
+        {%- if card_no == 1 -%}{%- assign pi_class = 'p3-p3' -%}
+        {%- elsif card_no == 2 -%}{%- assign pi_class = 'p3-p2' -%}
+        {%- else -%}{%- assign pi_class = 'p3-p1' -%}{%- endif -%}
+        {%- if gift_label != blank -%}
+          <div class="p3-vis">
+            <div class="p3-gift"><span>{{ gift_label | replace: ' 3ml', '<br>3ml' }} <s>{{ gift_value | strip }}</s></span>
+              {%- if section.settings.gift_image != blank -%}<img class="p3-oil" src="{{ section.settings.gift_image }}" alt="" loading="lazy" width="40" height="58">{%- endif -%}
+            </div>
+            {%- if pack_img != blank -%}<img class="p3-pi {{ pi_class }}" src="{{ pack_img }}" alt="" loading="lazy" width="124" height="90">{%- endif -%}
+          </div>
+        {%- elsif pack_img != blank -%}
+          <img class="p3-pi {{ pi_class }}" src="{{ pack_img }}" alt="" loading="lazy" width="93" height="70">
+        {%- endif -%}
+      </label>
+    {%- endfor -%}
+
+    {%- comment -%}
+      `#productSelect` adalah tempat tema membaca varian terpilih. Ia tidak
+      pernah terlihat, tapi ia yang dibaca handler quick-add, harga langganan,
+      dan event select_variant GTM — jadi assets/pdp3.js menyiarkan `change`
+      ke sini setiap kali kartu ditekan, bukan menyetelnya diam-diam.
+    {%- endcomment -%}
+    <select name="id" id="productSelect" aria-label="{{ t_select | escape }}" tabindex="-1" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none">
+      {%- for variant in v_sorted -%}
+        {%- if variant.metafields.custom.staged_hidden == true and show_staged != true -%}{%- continue -%}{%- endif -%}
+        {%- if variant.available -%}
+          <option value="{{ variant.id }}"{% if variant.id == default_variant.id %} selected{% endif %}>{{ variant.title }} - {{ variant.price | money }}</option>
+        {%- else -%}
+          <option value="{{ variant.id }}" disabled>{{ variant.title }}</option>
+        {%- endif -%}
+      {%- endfor -%}
+    </select>
+
+    {%- comment -%}
+      Tombolnya duduk DI DALAM form, sementara mockup menaruhnya sebagai
+      saudara. Bentuk yang terlihat tetap sama persis karena `display:contents`
+      pada form membuat anak-anaknya ikut jadi item grid `.p3-packs` langsung —
+      tapi assets/app.bundle.js mencari tombolnya dengan
+      `getElementById('AddToCartForm').querySelector('.button-quick-add-cart')`,
+      dan di luar form pencarian itu mengembalikan null tanpa error apa pun.
+    {%- endcomment -%}
+    <button type="button" class="p3-btn p3-rv button button-quick-add-cart" id="AddToCart" data-variant="{{ default_variant.id }}"><span>{{ t_atc }} · <span id="p3-atc-price">{% render 'pdp3-money', cents: default_variant.price %}</span></span></button>
+    {%- comment -%}
+      Tiga janji berikon menggantikan satu paragraf abu. Ikonnya tetap di
+      markup (bukan setting) karena ia yang membedakan ketiga barisnya:
+      pengiriman, jaminan, harga.
+    {%- endcomment -%}
+    {%- if t_a1 != blank or t_a2 != blank or t_a3 != blank -%}
+      <ul class="p3-assure p3-rv">
+        {%- if t_a1 != blank -%}<li><svg><use href="#i-truck"/></svg>{{ t_a1 }}</li>{%- endif -%}
+        {%- if t_a2 != blank -%}<li><svg><use href="#i-shield"/></svg>{{ t_a2 }}</li>{%- endif -%}
+        {%- if t_a3 != blank -%}<li><svg><use href="#i-tag"/></svg>{{ t_a3 }}</li>{%- endif -%}
+      </ul>
+    {%- endif -%}
+  </form>
+</section>
+</div>
+
+{%- comment -%}
+  Bilah menempel. Di mockup ia anak langsung <body>, di luar `.page`, dan itu
+  bukan kebetulan: ia `position:fixed`, dan leluhur ber-`transform` (setiap
+  `.p3-rv` yang belum tergulir masuk) akan menjadi containing block-nya
+  sehingga ia berhenti mengukur diri dari viewport. assets/pdp3.js
+  memindahkannya ke <body> pada boot; markupnya tetap di sini supaya Liquid
+  bisa mengisinya.
+{%- endcomment -%}
+{%- assign sticky_per_day = default_variant.metafields.custom.value_per_day | split: '/' | first | strip -%}
+<div class="pdp3-page" data-p3-sticky-host><div class="p3-sticky" id="p3-sticky"><div class="p3-in"><div class="p3-pd"><b><span id="p3-pd-sticky">{% render 'pdp3-money', text: sticky_per_day %}</span> <em>{{ t_perday }}</em></b><span>{{ t_sticky }}</span></div><a class="p3-btn" href="#p3-packs">{{ t_atc }}</a></div></div></div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "PDP3 Packs",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "text",
+      "id": "guarantee",
+      "label": "Guarantee bar"
+    },
+    {
+      "type": "text",
+      "id": "atc_label",
+      "label": "Add to cart label"
+    },
+    {
+      "type": "text",
+      "id": "assure_1",
+      "label": "Assurance 1 (truck icon)"
+    },
+    {
+      "type": "text",
+      "id": "assure_2",
+      "label": "Assurance 2 (shield icon)"
+    },
+    {
+      "type": "text",
+      "id": "assure_3",
+      "label": "Assurance 3 (tag icon)"
+    },
+    {
+      "type": "text",
+      "id": "gift_image",
+      "label": "Gift image (image URL)",
+      "info": "Shown beside the free-gift block on the pack that carries one."
+    },
+    {
+      "type": "text",
+      "id": "select_label",
+      "label": "Variant select label (screen readers)"
+    },
+    {
+      "type": "header",
+      "content": "Sticky buy bar"
+    },
+    {
+      "type": "text",
+      "id": "per_day_suffix",
+      "label": "Per-day suffix"
+    },
+    {
+      "type": "text",
+      "id": "sticky_note",
+      "label": "Sticky bar note"
+    },
+    {
+      "type": "text",
+      "id": "handles",
+      "label": "Only show for these product handles (comma separated)",
+      "default": "organic-moringa-capsules"
+    }
+  ]
+}
+{% endschema %}

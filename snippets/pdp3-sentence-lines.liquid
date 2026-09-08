@@ -1,0 +1,55 @@
+{% doc %}
+  Memasang pemenggalan baris mockup ke dalam teks yang datang dari setting.
+
+  Mockup memenggal judul dengan `<br class="brm">` — sebuah baris baru yang
+  HANYA berlaku di bawah 900px, karena di lebar itulah kolomnya 393px dan
+  penggalannya diukur. Tag itu tidak bisa diketik ke dalam setting: judulnya
+  ikut Translate & Adapt, dan penerjemah tidak akan menyalin markup.
+
+  Jadi penandanya sebuah karakter — `|` — dan snippet ini yang menerjemahkannya
+  menjadi tag. Penerjemah tinggal memindahkan tandanya ke kata yang benar untuk
+  bahasanya sendiri.
+
+  Yang TIDAK dilakukan snippet ini: menebak penggalan dari tanda baca. Versi
+  sebelumnya memecah pada "titik + spasi", dan itu menambahkan baris baru di
+  judul yang di mockup memang mengalir sebagai satu paragraf ("Three with
+  breakfast. Always with food."). Satu-satunya sumber penggalan adalah tanda
+  yang ditulis manusia.
+
+  Ada DUA jenis penggalan, dan bedanya nyata:
+
+    `|`  — penggalan responsif. Menjadi `<br class="p3-brm">`, yang mati di
+           >=900px karena di lebar itu kolomnya sudah cukup lebar sendiri.
+    hard — penggalan yang berlaku di SEMUA lebar. Mockup memakainya di judul
+           "Three capsules daily. / In the morning. / With food." — di sana
+           tiga barisnya bagian dari bentuk judulnya, bukan akibat sempitnya
+           kolom, jadi ia tidak boleh hilang di desktop.
+
+  @param {string} text - Teks dari setting, boleh memuat `|`
+  @param {boolean} [hard] - true = `<br>` biasa, tidak mati di layar lebar
+
+  @example
+  <h2>{% render 'pdp3-sentence-lines', text: section.settings.heading %}</h2>
+  <h2>{% render 'pdp3-sentence-lines', text: t_heading, hard: true %}</h2>
+{% enddoc %}
+{%- liquid
+  assign sl_parts = text | strip | split: '|'
+  for sl_part in sl_parts
+    assign sl_line = sl_part | strip
+    if sl_line == blank
+      continue
+    endif
+    unless forloop.first
+      comment
+        `<br>` diikuti SATU spasi, persis seperti mockup: di >=900px tag-nya
+        mati dan spasi itulah yang menahan dua penggalan agar tidak menempel.
+      endcomment
+      if hard
+        echo '<br>'
+      else
+        echo '<br class="p3-brm"> '
+      endif
+    endunless
+    echo sl_line
+  endfor
+-%}

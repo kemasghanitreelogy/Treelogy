@@ -1,0 +1,34 @@
+{% doc %}
+  Mengeluarkan SATUAN dari harga per hari — "day", "hari" — supaya pemanggilnya
+  bisa merangkainya sendiri sebagai "Rp 12.700 / day".
+
+  Kenapa ini sebuah snippet dan bukan satu baris di tempatnya masing-masing:
+  angka per hari muncul di DUA permukaan yang dirender file berbeda — kolom beli
+  di sections/pdp3-buybox dan bilah menempel di snippets/VariantsButtonV2 — dan
+  keduanya harus membaca kata yang sama. Ketika aturannya disalin, salah satu
+  salinan akan tertinggal dan halaman menampilkan "Rp 12.700 / day" di atas dan
+  "Rp 12.700 a day" di bawah.
+
+  Setting-nya tetap kalimat utuh ("a day", "per hari") karena ITULAH yang
+  diterjemahkan editor lewat Translate & Adapt — mengubahnya jadi kata tunggal
+  akan membuang terjemahan yang sudah ada. Jadi awalannya dilucuti di sini.
+  Nilai yang tidak dikenali dikembalikan apa adanya: teks yang ditulis editor
+  tidak boleh hilang diam-diam hanya karena bentuknya tak terduga.
+
+  @param {string} [suffix] - Teks setting per-day, mis. "a day" / "per hari"
+
+  @example
+  {%- capture unit -%}{%- render 'pdp3-per-day-unit', suffix: 'a day' -%}{%- endcapture -%}
+{% enddoc %}
+{%- liquid
+  assign pd_unit = suffix | default: 'day' | strip | remove_first: '/' | strip
+  assign pd_probe = pd_unit | downcase
+
+  if pd_probe == 'a day' or pd_probe == 'per day'
+    assign pd_unit = 'day'
+  elsif pd_probe == 'per hari' or pd_probe == 'sehari'
+    assign pd_unit = 'hari'
+  endif
+
+  echo pd_unit
+-%}

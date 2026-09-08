@@ -1,0 +1,132 @@
+{%- comment -%}
+  pdp3 — penutup. Salinan DOM `<section class="close">` dari mockup: pita
+  gelap, judul, dua tombol, satu catatan.
+{%- endcomment -%}
+
+{%- liquid
+  comment
+    Template produk hanya ada satu per tema, sedangkan desain ini ditulis untuk
+    satu produk saja. Section JSON tidak bisa dipasang bersyarat, jadi
+    gerbangnya ada di sini. Kosongkan setting `handles` untuk semua produk.
+  endcomment
+  assign pdp3_on = false
+  if section.settings.handles == blank
+    assign pdp3_on = true
+  else
+    assign pdp3_needle = product.handle | prepend: ',' | append: ','
+    assign pdp3_hay = section.settings.handles | remove: ' ' | prepend: ',' | append: ','
+    if pdp3_hay contains pdp3_needle
+      assign pdp3_on = true
+    endif
+  endif
+-%}
+{%- if pdp3_on -%}
+{%- capture t_heading %}{% render 'pdp3-copy', value: section.settings.heading, key: 'pdp3.close.heading' %}{% endcapture -%}
+{%- capture t_join %}{% render 'pdp3-copy', value: section.settings.join_label, key: 'pdp3.close.join_label' %}{% endcapture -%}
+{%- capture t_cta %}{% render 'pdp3-copy', value: section.settings.cta_label, key: 'pdp3.close.cta_label' %}{% endcapture -%}
+{%- capture t_wa %}{% render 'pdp3-copy', value: section.settings.wa_label, key: 'pdp3.close.wa_label' %}{% endcapture -%}
+{%- capture t_note %}{% render 'pdp3-copy', value: section.settings.note, key: 'pdp3.close.note' %}{% endcapture -%}
+<div class="pdp3-page">
+<section class="p3-close" id="p3-close">
+  <h2 class="p3-rv">{% render 'pdp3-sentence-lines', text: t_heading %}</h2>
+  {%- if t_join != blank -%}
+    <div class="p3-cjoin p3-rv">{% render 'pdp3-faces', a: section.settings.face_1, b: section.settings.face_2, c: section.settings.face_3 %}{{ t_join }}</div>
+  {%- endif -%}
+  {%- comment -%}
+    Kedua tombol dibungkus, dan pembungkusnya `display:contents` di bawah
+    1024px — artinya ia HILANG dari tata letak dan kedua tombol tetap menjadi
+    anak grid `.p3-close` langsung, persis seperti mockup. Tidak ada satu
+    piksel pun yang berubah di ponsel.
+
+    Pembungkusnya baru berwujud di desktop, sebagai satu baris flex. Alasannya
+    ada di CSS: saat `.p3-close` dijadikan grid dua kolom, judul dan catatan
+    yang merentang KEDUA kolom ikut menentukan lebar kolomnya — grid
+    membagikan lebar item yang merentang ke track-track yang dilewatinya.
+    Judul selebar 760px itulah yang melebarkan kolom tombol menjadi 300px dan
+    438px, sehingga tiap tombol terpusat di dalam kolomnya sendiri yang
+    kebesaran dan jaraknya melar jadi 103px.
+  {%- endcomment -%}
+  <div class="p3-close__cta">
+    <a class="p3-btn p3-canvas p3-rv" href="#p3-packs">{{ t_cta }}</a>
+    {%- if section.settings.wa_url != blank -%}
+      {%- comment -%}
+        Ikon dan label dibungkus SATU span, bukan dua anak flex langsung.
+
+        Sebagai dua anak flex, labelnya menjadi item flex anonim. Lebar
+        max-content-nya (satu baris penuh) lebih besar dari pil, jadi item itu
+        mengembang memenuhi sisa baris — tidak ada ruang bebas tersisa,
+        `justify-content:center` tak punya apa pun untuk dibagi, dan ikonnya
+        terdorong menempel ke tepi kiri. Terlihat di label Indonesia yang
+        panjang: sisa kiri 0px lawan sisa kanan 40px.
+
+        Dengan satu span, ikonnya menjadi elemen inline di dalam aliran teks:
+        ia ikut membungkus bersama kata-katanya dan seluruh isinya rata tengah
+        sebagai satu blok, berapa pun jumlah barisnya.
+      {%- endcomment -%}
+      <a class="p3-btn p3-wa p3-rv" href="{{ section.settings.wa_url }}" rel="noopener"><span class="p3-btn__in"><svg aria-hidden="true" focusable="false"><use href="#i-wa"/></svg>{{ t_wa }}</span></a>
+    {%- endif -%}
+  </div>
+  {%- if t_note != blank -%}<p class="p3-note p3-rv">{{ t_note }}</p>{%- endif -%}
+</section>
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "PDP3 Closing CTA",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "join_label",
+      "label": "Join line"
+    },
+    {
+      "type": "text",
+      "id": "face_1",
+      "label": "Join face 1 (image URL)"
+    },
+    {
+      "type": "text",
+      "id": "face_2",
+      "label": "Join face 2 (image URL)"
+    },
+    {
+      "type": "text",
+      "id": "face_3",
+      "label": "Join face 3 (image URL)"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Primary button"
+    },
+    {
+      "type": "text",
+      "id": "wa_label",
+      "label": "WhatsApp button"
+    },
+    {
+      "type": "url",
+      "id": "wa_url",
+      "label": "WhatsApp link"
+    },
+    {
+      "type": "text",
+      "id": "note",
+      "label": "Note"
+    },
+    {
+      "type": "text",
+      "id": "handles",
+      "label": "Only show for these product handles (comma separated)",
+      "default": "organic-moringa-capsules"
+    }
+  ]
+}
+{% endschema %}

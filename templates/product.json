@@ -151,7 +151,8 @@
         "story_cta_text": "Add to Cart",
         "story_text_color": "#000000",
         "story_btn_bg": "#526547",
-        "story_btn_text": "#ffffff"
+        "story_btn_text": "#ffffff",
+        "excluded_handles": "organic-moringa-capsules"
       }
     },
     "text_plain_product_AHGqWt": {
@@ -173,7 +174,8 @@
         "margin_bottom": 0,
         "text_title_color": "#6c7256",
         "font_size_title_block": 14,
-        "font_size_content_block": 14
+        "font_size_content_block": 14,
+        "excluded_handles": "organic-moringa-capsules"
       }
     },
     "featured_bundle_KcrzKt": {
@@ -183,7 +185,8 @@
         "feature_product": "moringa-ritual-set",
         "heading": "Complete Your Ritual <br>\nwith our Moringa Set",
         "padding_top": 36,
-        "padding_bottom": 72
+        "padding_bottom": 72,
+        "excluded_handles": "organic-moringa-capsules"
       }
     },
     "hero_baner_CX6VQR": {
@@ -205,13 +208,16 @@
         "enable_sticky": true,
         "sticky_top_offset": 0,
         "margin_top": 0,
-        "margin_bottom": 0
+        "margin_bottom": 0,
+        "excluded_handles": "organic-moringa-capsules"
       }
     },
     "review_judge_me_aJGGPd": {
       "type": "ReviewJudgeMe",
       "name": "Review Judge.me",
-      "settings": {}
+      "settings": {
+        "excluded_handles": "organic-moringa-capsules"
+      }
     },
     "side_image_video_content_hjYMcH": {
       "type": "SideImageVideoContent",
@@ -254,7 +260,8 @@
         "padding_top_dt": 96,
         "padding_bottom_dt": 96,
         "padding_top_mb": 48,
-        "padding_bottom_mb": 48
+        "padding_bottom_mb": 48,
+        "excluded_handles": "organic-moringa-capsules"
       }
     },
     "section_how_to_9WPERG": {
@@ -263,7 +270,8 @@
       "name": "How to Use",
       "settings": {
         "title": "How to Use",
-        "bakground_color": "#dfe4d4"
+        "bakground_color": "#dfe4d4",
+        "excluded_handles": "organic-moringa-capsules"
       }
     },
     "section_results_HDj6ei": {
@@ -272,13 +280,16 @@
       "name": "Results Timeline",
       "settings": {
         "title": "What to Expect Over Time",
-        "bakground_color": "#f8f8f2"
+        "bakground_color": "#f8f8f2",
+        "excluded_handles": "organic-moringa-capsules"
       }
     },
     "section_review_eHhJ8D": {
       "type": "SectionReview",
       "disabled": true,
-      "settings": {}
+      "settings": {
+        "excluded_handles": "organic-moringa-capsules"
+      }
     },
     "featured_blog_DYaUTY": {
       "type": "FeaturedBlog",
@@ -291,7 +302,8 @@
         "button_url": "shopify://blogs/news",
         "remove_button": false,
         "filter_tags": "",
-        "remove_excerpt": false
+        "remove_excerpt": false,
+        "excluded_handles": "organic-moringa-capsules"
       }
     },
     "featured_products_iH7QUc": {
@@ -301,12 +313,558 @@
         "description": "Discover what fits your routine and\nexperience the powerful benefits of \nmoringa with Treelogy's premium,\nhandcrafted products.",
         "products": [],
         "button_label": "All Products",
-        "button_url": "shopify://collections/all"
+        "button_url": "shopify://collections/all",
+        "excluded_handles": "organic-moringa-capsules"
+      }
+    },
+    "pdp3_buybox": {
+      "type": "pdp3-buybox",
+      "settings": {
+        "handles": "organic-moringa-capsules",
+        "certs": "",
+        "heading": "",
+        "lede": "",
+        "proof_text": "",
+        "per_day_suffix": "",
+        "cta_label": "",
+        "wa_label": "",
+        "wa_url": "https://wa.me/6281138116811",
+        "face_1": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-v2-face1.webp?v=1788759524",
+        "face_2": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-v2-face2.webp?v=1788759524",
+        "face_3": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-v2-face3.webp?v=1788759524"
+      },
+      "blocks": {
+        "slide_01": {
+          "type": "slide",
+          "settings": {
+            "image_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-slide01.webp?v=1788751312",
+            "thumb_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-thumb01.jpg?v=1788751312",
+            "alt": ""
+          }
+        },
+        "slide_02": {
+          "type": "slide",
+          "settings": {
+            "image_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-slide02.webp?v=1788751312",
+            "thumb_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-thumb02.jpg?v=1788751312",
+            "alt": ""
+          }
+        },
+        "slide_03": {
+          "type": "slide",
+          "settings": {
+            "image_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-slide03.webp?v=1788751312",
+            "thumb_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-thumb03.jpg?v=1788751312",
+            "alt": ""
+          }
+        },
+        "slide_04": {
+          "type": "slide",
+          "settings": {
+            "image_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-slide04.webp?v=1788751312",
+            "thumb_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-thumb04.jpg?v=1788751312",
+            "alt": ""
+          }
+        },
+        "slide_05": {
+          "type": "slide",
+          "settings": {
+            "image_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-slide05.webp?v=1788751312",
+            "thumb_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-thumb05.jpg?v=1788751312",
+            "alt": ""
+          }
+        },
+        "slide_06": {
+          "type": "slide",
+          "settings": {
+            "video_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-slide06-video.mp4?v=1788751312",
+            "poster_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-slide06-poster.jpg?v=1788751312",
+            "thumb_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-slide06-poster.jpg?v=1788751312",
+            "alt": ""
+          }
+        },
+        "slide_07": {
+          "type": "slide",
+          "settings": {
+            "video_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-slide07-video.mp4?v=1788751312",
+            "poster_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-slide07-poster.jpg?v=1788751312",
+            "thumb_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-slide07-poster.jpg?v=1788751312",
+            "alt": ""
+          }
+        },
+        "slide_08": {
+          "type": "slide",
+          "settings": {
+            "video_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-slide08-video.mp4?v=1788751312",
+            "poster_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-slide08-poster.jpg?v=1788751312",
+            "thumb_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-slide08-poster.jpg?v=1788751312",
+            "alt": ""
+          }
+        }
+      },
+      "block_order": [
+        "slide_01",
+        "slide_02",
+        "slide_03",
+        "slide_04",
+        "slide_05",
+        "slide_06",
+        "slide_07",
+        "slide_08"
+      ]
+    },
+    "pdp3_router": {
+      "type": "pdp3-router",
+      "settings": {
+        "handles": "organic-moringa-capsules",
+        "eyebrow": "",
+        "heading": "",
+        "cta_label": "",
+        "subheading": "",
+        "review_meta": ""
+      },
+      "blocks": {
+        "route_1": {
+          "type": "route",
+          "settings": {
+            "route_id": "stiff",
+            "icon": "i-sun",
+            "chip": "",
+            "title": "",
+            "body": "",
+            "how": "",
+            "quote": "",
+            "who": "Wulan, 44",
+            "photo_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-v2-ugc-wulan.webp?v=1788759524"
+          }
+        },
+        "route_2": {
+          "type": "route",
+          "settings": {
+            "route_id": "tired",
+            "icon": "i-battery",
+            "chip": "",
+            "title": "",
+            "body": "",
+            "how": "",
+            "quote": "",
+            "who": "Lestari, 41",
+            "photo_url": ""
+          }
+        },
+        "route_3": {
+          "type": "route",
+          "settings": {
+            "route_id": "sleep",
+            "icon": "i-moon",
+            "chip": "",
+            "title": "",
+            "body": "",
+            "how": "",
+            "quote": "",
+            "who": "Bambang, 49",
+            "photo_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-v2-ugc-bambang.webp?v=1788759524"
+          }
+        },
+        "route_4": {
+          "type": "route",
+          "settings": {
+            "route_id": "meno",
+            "icon": "i-thermo",
+            "chip": "",
+            "title": "",
+            "body": "",
+            "how": "",
+            "quote": "",
+            "who": "Yanti, 47",
+            "photo_url": ""
+          }
+        },
+        "route_5": {
+          "type": "route",
+          "settings": {
+            "route_id": "cycle",
+            "icon": "i-cal",
+            "chip": "",
+            "title": "",
+            "body": "",
+            "how": "",
+            "quote": "",
+            "who": "Nadia, 29",
+            "photo_url": ""
+          }
+        },
+        "route_6": {
+          "type": "route",
+          "settings": {
+            "route_id": "asi",
+            "icon": "i-mother",
+            "chip": "",
+            "title": "",
+            "body": "",
+            "how": "",
+            "quote": "",
+            "who": "Fitri, 31",
+            "photo_url": ""
+          }
+        },
+        "route_7": {
+          "type": "route",
+          "settings": {
+            "route_id": "sugar",
+            "icon": "i-drop",
+            "chip": "",
+            "title": "",
+            "body": "",
+            "how": "",
+            "quote": "",
+            "who": "Agus, 43",
+            "photo_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-v2-ugc-agus.webp?v=1788759524"
+          }
+        },
+        "route_8": {
+          "type": "route",
+          "settings": {
+            "route_id": "husband",
+            "icon": "i-man",
+            "chip": "",
+            "title": "",
+            "body": "",
+            "how": "",
+            "quote": "",
+            "who": "Rina, 53",
+            "photo_url": ""
+          }
+        },
+        "route_9": {
+          "type": "route",
+          "settings": {
+            "route_id": "parents",
+            "icon": "i-parents",
+            "chip": "",
+            "title": "",
+            "body": "",
+            "how": "",
+            "quote": "",
+            "who": "Dian, 52",
+            "photo_url": ""
+          }
+        }
+      },
+      "block_order": [
+        "route_1",
+        "route_2",
+        "route_3",
+        "route_4",
+        "route_5",
+        "route_6",
+        "route_7",
+        "route_8",
+        "route_9"
+      ]
+    },
+    "pdp3_packs": {
+      "type": "pdp3-packs",
+      "settings": {
+        "handles": "organic-moringa-capsules",
+        "guarantee": "",
+        "atc_label": "",
+        "assure_1": "",
+        "assure_2": "",
+        "assure_3": "",
+        "gift_image": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-v2-pack-oil.webp?v=1788759523"
+      }
+    },
+    "pdp3_howto": {
+      "type": "pdp3-howto",
+      "settings": {
+        "handles": "organic-moringa-capsules",
+        "eyebrow": "",
+        "heading": "",
+        "medical_note": "",
+        "video_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-v3-howto-video.mp4?v=1788762669",
+        "poster_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-v3-howto-poster.jpg?v=1788762669"
+      }
+    },
+    "pdp3_leaf": {
+      "type": "pdp3-leaf",
+      "settings": {
+        "handles": "organic-moringa-capsules",
+        "image": "shopify://shop_images/pdp3-leaf-basket.webp",
+        "image_alt": "Fresh moringa leaves in a basket",
+        "eyebrow": "",
+        "heading": "",
+        "body": "",
+        "lead": "",
+        "footnote": ""
+      },
+      "blocks": {
+        "tile_1": {
+          "type": "tile",
+          "settings": {
+            "value": "",
+            "label": ""
+          }
+        },
+        "tile_2": {
+          "type": "tile",
+          "settings": {
+            "value": "",
+            "label": ""
+          }
+        },
+        "tile_3": {
+          "type": "tile",
+          "settings": {
+            "value": "",
+            "label": ""
+          }
+        },
+        "tile_4": {
+          "type": "tile",
+          "settings": {
+            "value": "",
+            "label": ""
+          }
+        },
+        "tile_5": {
+          "type": "tile",
+          "settings": {
+            "value": "",
+            "label": ""
+          }
+        },
+        "tile_6": {
+          "type": "tile",
+          "settings": {
+            "value": "",
+            "label": ""
+          }
+        }
+      },
+      "block_order": [
+        "tile_1",
+        "tile_2",
+        "tile_3",
+        "tile_4",
+        "tile_5",
+        "tile_6"
+      ]
+    },
+    "pdp3_why": {
+      "type": "pdp3-why",
+      "settings": {
+        "handles": "organic-moringa-capsules",
+        "badge_image": "shopify://shop_images/pdp3-bpom-badge.png",
+        "badge_line_1": "",
+        "badge_line_2": "",
+        "heading": "",
+        "body": "",
+        "col_criteria": "",
+        "col_us": "",
+        "col_them": "",
+        "modal_heading": "",
+        "modal_body": "",
+        "modal_close": ""
+      },
+      "blocks": {
+        "row_1": {
+          "type": "row",
+          "settings": {
+            "criteria": "",
+            "ours": "",
+            "theirs": "",
+            "tint_alt": false
+          }
+        },
+        "row_2": {
+          "type": "row",
+          "settings": {
+            "criteria": "",
+            "ours": "",
+            "theirs": "",
+            "tint_alt": false
+          }
+        },
+        "row_3": {
+          "type": "row",
+          "settings": {
+            "criteria": "",
+            "ours": "",
+            "theirs": "",
+            "tint_alt": false
+          }
+        },
+        "row_4": {
+          "type": "row",
+          "settings": {
+            "criteria": "",
+            "ours": "",
+            "theirs": "",
+            "tint_alt": false
+          }
+        },
+        "row_5": {
+          "type": "row",
+          "settings": {
+            "criteria": "",
+            "ours": "",
+            "theirs": "",
+            "tint_alt": true
+          }
+        },
+        "row_6": {
+          "type": "row",
+          "settings": {
+            "criteria": "",
+            "ours": "",
+            "theirs": "",
+            "tint_alt": true
+          }
+        }
+      },
+      "block_order": [
+        "row_1",
+        "row_2",
+        "row_3",
+        "row_4",
+        "row_5",
+        "row_6"
+      ]
+    },
+    "pdp3_farm": {
+      "type": "pdp3-farm",
+      "settings": {
+        "handles": "organic-moringa-capsules",
+        "eyebrow": "",
+        "heading": "",
+        "body": "",
+        "prev_label": "",
+        "next_label": ""
+      },
+      "blocks": {
+        "frame_1": {
+          "type": "frame",
+          "settings": {
+            "image": "shopify://shop_images/pdp3-farm-1-harvest.webp",
+            "caption": ""
+          }
+        },
+        "frame_2": {
+          "type": "frame",
+          "settings": {
+            "image": "shopify://shop_images/pdp3-farm-2-destem.webp",
+            "caption": ""
+          }
+        },
+        "frame_3": {
+          "type": "frame",
+          "settings": {
+            "image": "shopify://shop_images/pdp3-farm-3-drying.webp",
+            "caption": ""
+          }
+        },
+        "frame_4": {
+          "type": "frame",
+          "settings": {
+            "image": "shopify://shop_images/pdp3-farm-4-milling.webp",
+            "caption": ""
+          }
+        },
+        "frame_5": {
+          "type": "frame",
+          "settings": {
+            "image": "shopify://shop_images/pdp3-farm-5-encapsulation.webp",
+            "caption": ""
+          }
+        }
+      },
+      "block_order": [
+        "frame_1",
+        "frame_2",
+        "frame_3",
+        "frame_4",
+        "frame_5"
+      ]
+    },
+    "pdp3_timeline": {
+      "type": "pdp3-timeline",
+      "settings": {
+        "handles": "organic-moringa-capsules",
+        "eyebrow": "",
+        "heading": ""
+      }
+    },
+    "pdp3_founder": {
+      "type": "pdp3-founder",
+      "settings": {
+        "handles": "organic-moringa-capsules",
+        "image": "shopify://shop_images/pdp3-founder-sacha.webp",
+        "image_alt": "Sacha, founder of Treelogy",
+        "eyebrow": "",
+        "body": "",
+        "signature": ""
+      }
+    },
+    "pdp3_faq": {
+      "type": "pdp3-faq",
+      "settings": {
+        "handles": "organic-moringa-capsules",
+        "eyebrow": "",
+        "heading": "",
+        "open_first": true
+      }
+    },
+    "pdp3_reviews": {
+      "type": "pdp3-reviews",
+      "settings": {
+        "handles": "organic-moringa-capsules",
+        "eyebrow": "",
+        "heading": "",
+        "ratings_word": "",
+        "verified_label": "",
+        "write_label": "",
+        "ask_label": "",
+        "ask_url": "https://wa.me/6281138116811",
+        "tab_reviews": "",
+        "tab_questions": "",
+        "search_label": "",
+        "filter_recent": "",
+        "filter_rating": "",
+        "filter_photos": "",
+        "load_more_label": ""
+      }
+    },
+    "pdp3_close": {
+      "type": "pdp3-close",
+      "settings": {
+        "handles": "organic-moringa-capsules",
+        "heading": "",
+        "cta_label": "",
+        "wa_label": "",
+        "wa_url": "https://wa.me/6281138116811",
+        "note": "",
+        "face_1": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-v2-face1.webp?v=1788759524",
+        "face_2": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-v2-face2.webp?v=1788759524",
+        "face_3": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-v2-face3.webp?v=1788759524",
+        "join_label": ""
       }
     }
   },
   "order": [
     "main",
+    "pdp3_buybox",
+    "pdp3_router",
+    "pdp3_packs",
+    "pdp3_howto",
+    "pdp3_leaf",
+    "pdp3_why",
+    "pdp3_farm",
+    "pdp3_timeline",
+    "pdp3_founder",
+    "pdp3_faq",
+    "pdp3_reviews",
+    "pdp3_close",
     "text_plain_product_AHGqWt",
     "featured_bundle_KcrzKt",
     "hero_baner_CX6VQR",

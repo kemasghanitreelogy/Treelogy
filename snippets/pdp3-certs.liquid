@@ -1,0 +1,32 @@
+{% doc %}
+  Tiga tanda sertifikasi putih di pojok kanan bawah foto hero.
+
+  Diekspor dari Figma "Treelogy Developement 2026" → frame `PDP v3`
+  (BPOM white 2 `2218:636`, Layer 2 / HALAL `2218:613`, USDA ORGANIC (White) 1
+  `2218:603`). Ekspor PNG langsung dari simpulnya IKUT membawa warna kanvas
+  sebagai latar opak; yang dipakai di sini gambar sumbernya (BPOM) dan hasil
+  raster dari vektornya (HALAL, USDA) — ketiganya putih murni dengan alfa
+  sungguhan, supaya fotonya tembus di belakang tanda.
+
+  URL-nya konstan di sini, bukan setting section: ini tanda sertifikasi resmi,
+  bukan konten yang diedit per halaman. Kalau berkasnya diganti, satu tempat
+  ini yang disunting.
+
+  Ukuran dan jaraknya persen, bukan piksel, supaya deretnya ikut mengecil dan
+  membesar bersama fotonya — di mockup fotonya 393x490, di desktop kolomnya
+  jauh lebih lebar.
+
+  Tandanya DEKORATIF (`alt=""`): nomor registrasinya sudah tertulis sebagai
+  teks tepat di bawah galeri, jadi membacakannya dua kali hanya menambah
+  kebisingan bagi pemakai pembaca layar.
+{% enddoc %}
+{%- liquid
+  assign cert_bpom = 'https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-cert-bpom.png?v=1788770325'
+  assign cert_halal = 'https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-cert-halal.png?v=1788770325'
+  assign cert_usda = 'https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-cert-usda.png?v=1788770325'
+-%}
+<div class="p3-certs" aria-hidden="true">
+  <img class="p3-cert p3-cert--bpom" src="{{ cert_bpom }}" alt="" width="188" height="164" loading="lazy" decoding="async">
+  <img class="p3-cert p3-cert--halal" src="{{ cert_halal }}" alt="" width="92" height="164" loading="lazy" decoding="async">
+  <img class="p3-cert p3-cert--usda" src="{{ cert_usda }}" alt="" width="144" height="144" loading="lazy" decoding="async">
+</div>

@@ -1609,6 +1609,40 @@
   }
 </style>
 
+{%- comment -%}
+  Peta varian → isi baris keranjang, dipakai kartu optimistis di bawah supaya
+  yang tampil saat memuat sama persis dengan yang nanti dirender server.
+
+  Setiap ruas mengikuti snippets/CartItemCard.liquid:
+    img     = item.image | default: product.featured_image, 240x240 crop center
+    title   = product.title
+    variant = custom.staged_plan_label → custom.time_protocol → variant.title,
+              dan kosong untuk produk bervarian tunggal (baris itu memang
+              tidak dicetak)
+
+  `capture` dipakai untuk labelnya supaya hasilnya selalu STRING: metafield
+  yang dilewatkan langsung ke filter `json` akan terserialisasi sebagai objek
+  metafield, bukan sebagai teksnya.
+
+  Hanya varian produk yang sedang dibuka. Di halaman non-produk hasilnya `{}`
+  dan kartu optimistis kembali memakai jalur keruk DOM yang lama.
+{%- endcomment -%}
+{%- capture atc_lines_json -%}
+{
+{%- if product != blank -%}
+  {%- for v in product.variants -%}
+    {%- assign v_img = v.image | default: product.featured_image -%}
+    {%- capture v_label %}{{ v.metafields.custom.staged_plan_label }}{% endcapture -%}
+    {%- if v_label == blank -%}{%- capture v_label %}{{ v.metafields.custom.time_protocol }}{% endcapture -%}{%- endif -%}
+    {%- if v_label == blank -%}{%- assign v_label = v.title -%}{%- endif -%}
+    {%- if product.has_only_default_variant -%}{%- assign v_label = '' -%}{%- endif -%}
+    {%- unless forloop.first -%},{%- endunless -%}
+    "{{ v.id }}":{"img":{{ v_img | image_url: width: 240, height: 240, crop: 'center' | json }},"title":{{ product.title | json }},"variant":{{ v_label | strip | json }}}
+  {%- endfor -%}
+{%- endif -%}
+}
+{%- endcapture -%}
+
 <script>
   /* ===== Premium Add-to-Cart choreography — all quick-add surfaces ======== */
   /* Optimistic UI (Shopify Hydrogen guidance): drawer opens with the item    */
@@ -1619,6 +1653,26 @@
   /* FeaturedBundle keeps its own stateful flow.                              */
   (function () {
     var SELECTOR = '#AddToCart, #popup-variants-button-bag, .button-direct-add';
+    /* Kartu optimistis dulu MENGERUK halaman: gambarnya diambil dari slide
+       galeri pertama, judulnya dari `.product-detail-wrapper h1`, label
+       paketnya dari `.v2-plan`. Ketiganya milik markup PDP lama.
+
+       Di PDP v3 tidak satu pun cocok: slide pertama adalah foto hero (wanita
+       menelan kapsul) sedangkan baris keranjang sungguhan memakai gambar
+       VARIAN (foto kaleng), dan wadah judul/paketnya bernama lain. Akibatnya
+       kartu yang muncul saat memuat memperlihatkan gambar dan teks yang
+       berbeda dari baris hasil server, lalu keduanya bertukar di depan mata.
+
+       Peta di bawah dibangun dari sumber yang persis sama dengan
+       snippets/CartItemCard.liquid — `item.image | default:
+       product.featured_image` pada ukuran yang sama, `product.title`, dan
+       rantai label custom.staged_plan_label → custom.time_protocol →
+       variant.title. Jadi kartu optimistis dan baris server memuat isi yang
+       identik, dan pertukarannya tidak terlihat lagi.
+
+       Hanya varian produk yang sedang dibuka yang ikut, dan hanya di halaman
+       produk; halaman lain mengirim `{}` dan tetap memakai jalur keruk lama. */
+    var ATC_LINES = {{ atc_lines_json }};
     var MIN_STATE = 350;
     var L = window.cartDecodeMap({
       adding: {{ 'cart.atc_adding' | t | json }},
@@ -1639,8 +1693,12 @@
     }
 
     /* Image + title for the optimistic card, resolved per surface */
-    function cardContext(btn) {
+    function cardContext(btn, variantId) {
       if (btn.id === 'AddToCart') {
+        var mapped = ATC_LINES[String(variantId)];
+        if (mapped && mapped.img) {
+          return { imgSrc: mapped.img, title: mapped.title, variant: mapped.variant };
+        }
         var h1 = document.querySelector('.product-detail-wrapper h1');
         var sel = document.getElementById('productSelect');
         var variantText = '';
@@ -1721,9 +1779,10 @@
         +     '</div>'
         +   '</div>'
         + '</div>';
-      if (ctx.img) {
+      var thumbSrc = ctx.imgSrc || (ctx.img && (ctx.img.currentSrc || ctx.img.src));
+      if (thumbSrc) {
         var im = document.createElement('img');
-        im.src = ctx.img.currentSrc || ctx.img.src;
+        im.src = thumbSrc;
         im.alt = '';
         el.querySelector('.thumb').appendChild(im);
       }
@@ -1821,7 +1880,7 @@
         if (plan && plan.value) item.selling_plan = parseInt(plan.value, 10);
       }
 
-      var ctx = cardContext(btn);
+      var ctx = cardContext(btn, variantId);
       var priceText = optimisticPrice(variantId, item.selling_plan);
 
       var t0 = Date.now();

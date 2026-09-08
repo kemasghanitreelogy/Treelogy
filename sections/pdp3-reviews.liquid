@@ -1,0 +1,405 @@
+{%- comment -%}
+  pdp3 — ulasan. Salinan DOM `<section class="reviews">` dari mockup.
+
+  Bagian ini sempat ditulis dengan cara lain — merender widget Judge.me apa
+  adanya lalu MENATANYA agar menyerupai mockup — dan cara itu tidak akan pernah
+  sampai 1:1. Widget membawa susunannya sendiri (baris kendali di tengah,
+  tanpa tab, tanpa kotak cari, tanpa pil saring), dan CSS hanya bisa mengecat
+  ulang susunan itu, tidak bisa menggantinya.
+
+  Jadi yang dirender halaman ini adalah MARKUP MOCKUP, kelas demi kelas,
+  termasuk nama-nama `.kl_reviews__*` milik widget Klaviyo yang ditiru mockup.
+  Datanya tetap data sungguhan: widget Judge.me dirender di wadah tersembunyi
+  di bawah, dan assets/pdp3.js membaca isinya — bintang, judul, kutipan, nama,
+  lencana pembeli, cap waktu ISO, foto — lalu menuangkannya ke kartu `.p3-rev`.
+
+  Dua akibat yang harus dipahami sebelum menyentuh berkas ini:
+
+  1. Wadah Judge.me TIDAK boleh dibuang. Ia sumber datanya. Ia disembunyikan
+     lewat CSS, bukan `display:none` di markup, supaya widgetnya tetap
+     menghitung tinggi dan memuat halaman berikutnya saat "Load more" ditekan.
+  2. Tanpa JavaScript, yang tampil adalah ringkasan dari metafield (angka rata
+     rata dan jumlah rating, keduanya dirender Liquid) tanpa daftar kartunya.
+     Itu penurunan yang disengaja: lebih baik ringkasan yang benar daripada
+     kerangka kosong.
+
+  Setting `source` = `klaviyo` mematikan seluruh jalur Judge.me dan menyerahkan
+  wadah `#klaviyo-product-reviews-wrapper` kepada widget Klaviyo yang asli —
+  yang memang ditiru mockup ini. Saat modul itu aktif, section ini tidak butuh
+  satu baris CSS pun yang baru.
+{%- endcomment -%}
+
+{%- liquid
+  comment
+    Template produk hanya ada satu per tema, sedangkan desain ini ditulis untuk
+    satu produk saja. Section JSON tidak bisa dipasang bersyarat, jadi
+    gerbangnya ada di sini. Kosongkan setting `handles` untuk semua produk.
+  endcomment
+  assign pdp3_on = false
+  if section.settings.handles == blank
+    assign pdp3_on = true
+  else
+    assign pdp3_needle = product.handle | prepend: ',' | append: ','
+    assign pdp3_hay = section.settings.handles | remove: ' ' | prepend: ',' | append: ','
+    if pdp3_hay contains pdp3_needle
+      assign pdp3_on = true
+    endif
+  endif
+-%}
+{%- if pdp3_on -%}
+{%- liquid
+  comment
+    Angka rata-rata dan jumlah rating datang dari metafield `reviews.*` yang
+    diisi Judge.me sendiri, bukan dari DOM widget: keduanya sudah ada saat HTML
+    dikirim, jadi bagian teratas section tidak pernah berkedip menunggu skrip.
+  endcomment
+  assign r_rating = product.metafields.reviews.rating.value
+  assign r_count = product.metafields.reviews.rating_count
+  assign r_avg = r_rating.rating | times: 100 | round | divided_by: 100.0
+  assign r_scale = r_rating.scale_max | round | default: 5
+-%}
+{%- capture t_ratings %}{% render 'pdp3-copy', value: section.settings.ratings_word, key: 'pdp3.reviews.ratings_word' %}{% endcapture -%}
+{%- capture t_verified %}{% render 'pdp3-copy', value: section.settings.verified_label, key: 'pdp3.reviews.verified_label' %}{% endcapture -%}
+{%- capture t_write %}{% render 'pdp3-copy', value: section.settings.write_label, key: 'pdp3.reviews.write_label' %}{% endcapture -%}
+{%- capture t_ask %}{% render 'pdp3-copy', value: section.settings.ask_label, key: 'pdp3.reviews.ask_label' %}{% endcapture -%}
+{%- capture t_tabr %}{% render 'pdp3-copy', value: section.settings.tab_reviews, key: 'pdp3.reviews.tab_reviews' %}{% endcapture -%}
+{%- capture t_tabq %}{% render 'pdp3-copy', value: section.settings.tab_questions, key: 'pdp3.reviews.tab_questions' %}{% endcapture -%}
+{%- capture t_qempty %}{% render 'pdp3-copy', value: section.settings.questions_empty, key: 'pdp3.reviews.questions_empty' %}{% endcapture -%}
+{%- capture t_anslabel %}{% render 'pdp3-copy', value: section.settings.answer_label, key: 'pdp3.reviews.answer_label' %}{% endcapture -%}
+{%- capture t_search %}{% render 'pdp3-copy', value: section.settings.search_label, key: 'pdp3.reviews.search_label' %}{% endcapture -%}
+{%- capture t_frecent %}{% render 'pdp3-copy', value: section.settings.filter_recent, key: 'pdp3.reviews.filter_recent' %}{% endcapture -%}
+{%- capture t_frating %}{% render 'pdp3-copy', value: section.settings.filter_rating, key: 'pdp3.reviews.filter_rating' %}{% endcapture -%}
+{%- capture t_fphotos %}{% render 'pdp3-copy', value: section.settings.filter_photos, key: 'pdp3.reviews.filter_photos' %}{% endcapture -%}
+{%- capture t_more %}{% render 'pdp3-copy', value: section.settings.load_more_label, key: 'pdp3.reviews.load_more_label' %}{% endcapture -%}
+{%- capture t_onew %}{% render 'pdp3-copy', value: section.settings.order_newest, key: 'pdp3.reviews.order_newest' %}{% endcapture -%}
+{%- capture t_oold %}{% render 'pdp3-copy', value: section.settings.order_oldest, key: 'pdp3.reviews.order_oldest' %}{% endcapture -%}
+{%- capture t_rall %}{% render 'pdp3-copy', value: section.settings.rating_all, key: 'pdp3.reviews.rating_all' %}{% endcapture -%}
+{%- capture t_empty %}{% render 'pdp3-copy', value: section.settings.empty_label, key: 'pdp3.reviews.empty_label' %}{% endcapture -%}
+<div class="pdp3-page">
+{%- comment -%}
+  Ruas-ruas di bawah adalah yang dibutuhkan assets/pdp3.js untuk memanggil
+  endpoint widget Judge.me sendiri saat pembeli mencari:
+
+    https://cdn.judge.me/reviews/reviews_for_widget?shop_domain=…&product_id=…
+
+  Endpoint itu publik dan mengirim `access-control-allow-origin: *`, jadi bisa
+  dibaca dari halaman ini tanpa kunci apa pun — dan memang begitulah widgetnya
+  sendiri memuat halaman berikutnya. Domainnya `shop.permanent_domain`, BUKAN
+  treelogy.com: Judge.me menyimpan tokonya dengan nama myshopify-nya.
+{%- endcomment -%}
+<section class="p3-reviews" id="p3-reviews" data-p3-reviews
+  data-verified-label="{{ t_verified | escape }}"
+  data-locale="{{ request.locale.iso_code }}"
+  data-shop="{{ shop.permanent_domain }}"
+  data-product-id="{{ product.id }}"
+  data-total="{{ product.metafields.reviews.rating_count | default: 0 }}"
+  data-per-page="{{ section.settings.per_page | default: 4 }}"
+  {%- comment -%}
+    Penanda tempat angkanya `%n%`, BUKAN `{n}`: kurung kurawal di dalam string
+    Liquid mematahkan lexer-nya — `{{ ... default: '{n} ★' }}` ditolak sebagai
+    "variable was not properly terminated".
+  {%- endcomment -%}
+  data-rating-label="{{ section.settings.rating_pill_label | default: '%n% ★' | escape }}">
+  {%- if section.settings.eyebrow != blank -%}<p class="p3-eb p3-rv">{{ section.settings.eyebrow }}</p>{%- endif -%}
+  {%- if section.settings.heading != blank -%}<h2 class="p3-rv">{% render 'pdp3-sentence-lines', text: section.settings.heading %}</h2>{%- endif -%}
+
+  <div id="klaviyo-product-reviews-wrapper"{% if section.settings.source == 'klaviyo' %} data-product-id="{{ product.id }}"{% endif %}>
+    {%- if section.settings.source != 'klaviyo' -%}
+    <div class="kl_reviews__summary p3-rv">
+      <div class="p3-kl-avg">
+        <span class="kl_reviews__summary__average_value">{{ r_avg | default: '' }}</span>
+        <span class="kl_reviews__summary__average_denominator">/{{ r_scale }}</span>
+        <span class="p3-stars" aria-hidden="true">★★★★★</span>
+        <span class="kl_reviews__summary__stars__count">{{ r_count }} {{ t_ratings }}</span>
+      </div>
+
+      {%- comment -%}
+        Lima baris histogram dirender kosong di sini dan diisi assets/pdp3.js
+        dari frekuensi milik widget. Kerangkanya tetap ada di HTML supaya
+        tingginya sudah benar sebelum skrip jalan — kalau tidak, kartu
+        ringkasan melompat 100px saat widget selesai memuat.
+      {%- endcomment -%}
+      <div class="p3-kl-bars" data-p3-bars>
+        {%- for i in (1..5) -%}
+          {%- assign star_no = 6 | minus: i -%}
+          <div class="kl_reviews__histogram__row"><span>{{ star_no }}</span><i class="kl_reviews__histogram__bar--background"><b class="kl_reviews__histogram__bar--foreground"></b></i><span data-p3-bar-count></span></div>
+        {%- endfor -%}
+      </div>
+
+      <div class="p3-kl-actions">
+        <button class="kl_reviews__button" type="button" data-p3-write>{{ t_write }}</button>
+        {%- comment -%}
+          Tombol kedua ada di mockup. Judge.me tidak punya modul tanya-jawab,
+          jadi tujuannya diarahkan ke tempat pertanyaan benar-benar dijawab —
+          WhatsApp yang sama dengan tombol di hero dan penutup. Kalau
+          `ask_url` dikosongkan, tombolnya tidak dirender sama sekali; lebih
+          baik hilang daripada ada tapi tidak menuju ke mana-mana.
+        {%- endcomment -%}
+        {%- comment -%}
+          Tag-nya `<button>`, sama seperti mockup, bukan `<a>`. Bedanya
+          terukur: tombol memusatkan teksnya sendiri dan menghitung
+          `display`-nya sebagai block, tautan tidak — dan dua selisih itu
+          muncul di audit sebagai perbedaan tampilan. Tujuannya dibuka
+          assets/pdp3.js dari `data-href`.
+        {%- endcomment -%}
+        {%- if section.settings.ask_url != blank -%}
+          <button class="kl_reviews__button p3-ghost" type="button" data-p3-ask data-href="{{ section.settings.ask_url | escape }}">{{ t_ask }}</button>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="p3-kl-list p3-rv">
+      <div class="p3-kl-tabs">
+        {%- comment -%}
+          Dua tab di mockup adalah dua gambar; di sini keduanya kontrol.
+          Hitungan pertanyaan diisi assets/pdp3.js dari `data-number-of-questions`
+          pada widget Judge.me (modul Tanya-Jawab dinyalakan 8 Sep 2026), jadi
+          "0" di bawah hanya nilai sebelum skrip berjalan.
+        {%- endcomment -%}
+        <span class="kl_reviews__list__tab p3-on" role="tab" tabindex="0" aria-selected="true" data-p3-tab="reviews">{{ t_tabr }} (<span data-p3-tab-count>{{ r_count }}</span>)</span>
+        <span class="kl_reviews__list__tab" role="tab" tabindex="0" aria-selected="false" data-p3-tab="questions">{{ t_tabq }} (<span data-p3-qcount>0</span>)</span>
+      </div>
+
+      {%- comment -%}
+        Mockup menggambar kotak cari sebagai `<div>` berisi teks — sebuah
+        gambar, bukan kontrol. Di sini isinya `<input>` telanjang yang mewarisi
+        seluruh gaya induknya dan memakai `placeholder` dengan teks yang sama
+        persis, sehingga tampilannya identik piksel demi piksel tapi kotaknya
+        benar-benar mencari.
+      {%- endcomment -%}
+      <div class="kl_reviews__search">
+        <input type="search" data-p3-search placeholder="{{ t_search | escape }}" aria-label="{{ t_search | escape }}">
+      </div>
+
+      <div class="kl_reviews__filters__group">
+        {%- comment -%}
+          Tiga pil, dan tanda panahnya yang membedakan perannya — itu bahasa
+          mockup, bukan tambahan: dua pil bertanda `⌄` adalah DAFTAR PILIHAN,
+          satu pil tanpa tanda adalah saklar. Jadi:
+
+            "Most recent ⌄"  → urutan: terbaru / terlama
+            "Rating ⌄"       → saring bintang: semua / 5 / 4 / 3 / 2 / 1
+            "With photos"    → saklar, berdiri sendiri dan bisa digabung
+
+          Pilnya tetap `<span>` seperti mockup — tombol memusatkan teksnya
+          sendiri sedangkan span mewarisi perataan induknya, dan selisih itu
+          terlihat. Perilakunya dipasang lewat `role`/`tabindex` + penangan
+          tekan di assets/pdp3.js.
+
+          Pembungkus `.p3-filter` ada supaya menunya bisa digantung relatif
+          terhadap pilnya. Ia `display:inline-flex` tanpa padding, jadi ia
+          menempati ruang yang sama persis dengan span yang digantikannya.
+        {%- endcomment -%}
+        <span class="p3-filter" data-p3-filter>
+          <span class="kl_reviews__filters__pill" role="button" tabindex="0" aria-haspopup="listbox" aria-expanded="false" data-p3-pill="order" data-p3-base="{{ t_frecent | escape }}"><span data-p3-label>{{ t_frecent }}</span>{% render 'pdp3-chevron' %}</span>
+          <span class="p3-menu" role="listbox" hidden data-p3-menu="order">
+            <button type="button" role="option" aria-selected="true" data-p3-value="newest">{{ t_onew }}</button>
+            <button type="button" role="option" aria-selected="false" data-p3-value="oldest">{{ t_oold }}</button>
+          </span>
+        </span>
+
+        <span class="p3-filter" data-p3-filter>
+          <span class="kl_reviews__filters__pill" role="button" tabindex="0" aria-haspopup="listbox" aria-expanded="false" data-p3-pill="score" data-p3-base="{{ t_frating | escape }}"><span data-p3-label>{{ t_frating }}</span>{% render 'pdp3-chevron' %}</span>
+          <span class="p3-menu" role="listbox" hidden data-p3-menu="score">
+            <button type="button" role="option" aria-selected="true" data-p3-value="">{{ t_rall }}</button>
+            {%- comment -%}
+              Jumlah per bintang diisi assets/pdp3.js dari histogram, supaya
+              pilihan yang kosong (2 dan 1 bintang di produk ini) terlihat
+              kosong SEBELUM ditekan, bukan sesudah daftarnya jadi hampa.
+            {%- endcomment -%}
+            {%- for i in (1..5) -%}
+              {%- assign star_no = 6 | minus: i -%}
+              <button type="button" role="option" aria-selected="false" data-p3-value="{{ star_no }}">
+                <span>{{ star_no }} ★</span><span class="p3-menu__count" data-p3-score-count="{{ star_no }}"></span>
+              </button>
+            {%- endfor -%}
+          </span>
+        </span>
+
+        <span class="kl_reviews__filters__pill" role="button" tabindex="0" aria-pressed="false" data-p3-toggle="photos">{{ t_fphotos }}</span>
+      </div>
+
+      <div data-p3-rev-list></div>
+      <p class="p3-rev-empty" data-p3-empty hidden>{{ t_empty }}</p>
+
+      {%- comment -%}
+        Daftar tanya-jawab: diisi assets/pdp3.js dari kartu `.jdgm-quest` di
+        widget Judge.me (host tersembunyi), digambar ulang dengan bahasa kartu
+        yang sama seperti ulasan. Keadaan kosong punya kalimatnya sendiri —
+        tab yang menampilkan daftar lenyap tanpa penjelasan bukan hasil yang
+        sah.
+      {%- endcomment -%}
+      <div class="p3-kl-questions" data-p3-quest-list hidden data-answer-label="{{ t_anslabel | escape }}"></div>
+      <div class="p3-ghost p3-quest-empty" data-p3-quest-empty hidden>{{ t_qempty }}</div>
+      <button class="kl_reviews__button p3-ghost p3-kl-more" type="button" data-p3-more hidden>{{ t_more }}</button>
+    </div>
+
+    {%- comment -%}
+      Sumber datanya. Disembunyikan lewat CSS (`.p3-jdgm-host`), BUKAN dibuang:
+      widgetnya yang memegang paginasi, pengurutan, dan formulir tulis ulasan,
+      dan ketiganya berhenti bekerja kalau simpulnya dilepas dari dokumen.
+    {%- endcomment -%}
+    <div class="p3-jdgm-host" data-p3-jdgm-host aria-hidden="true">
+      <div
+        id="judgeme_product_reviews"
+        class="jdgm-widget jdgm-review-widget"
+        data-product-title="{{ product.title | escape }}"
+        data-id="{{ product.id }}"
+        data-auto-install="false"
+      >
+        {{ product.metafields.judgeme.widget | replace: 'schema.org/AggregateRating', 'schema.org/None' }}
+      </div>
+    </div>
+    {%- endif -%}
+  </div>
+</section>
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "PDP3 Reviews",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "select",
+      "id": "source",
+      "label": "Review source",
+      "info": "Klaviyo Reviews is not populated yet — Judge.me holds the review history.",
+      "default": "judgeme",
+      "options": [
+        {
+          "value": "judgeme",
+          "label": "Judge.me"
+        },
+        {
+          "value": "klaviyo",
+          "label": "Klaviyo Reviews"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "ratings_word",
+      "label": "Word after the rating count"
+    },
+    {
+      "type": "text",
+      "id": "verified_label",
+      "label": "Verified buyer label"
+    },
+    {
+      "type": "header",
+      "content": "Summary card"
+    },
+    {
+      "type": "text",
+      "id": "write_label",
+      "label": "Write a review button"
+    },
+    {
+      "type": "text",
+      "id": "ask_label",
+      "label": "Ask a question button"
+    },
+    {
+      "type": "url",
+      "id": "ask_url",
+      "label": "Ask a question link",
+      "info": "Judge.me has no Q&A module. Leave blank to drop the button rather than show one that goes nowhere."
+    },
+    {
+      "type": "header",
+      "content": "List controls"
+    },
+    {
+      "type": "text",
+      "id": "tab_reviews",
+      "label": "Reviews tab"
+    },
+    {
+      "type": "text",
+      "id": "tab_questions",
+      "label": "Questions tab"
+    },
+    {
+      "type": "text",
+      "id": "search_label",
+      "label": "Search placeholder"
+    },
+    {
+      "type": "text",
+      "id": "filter_recent",
+      "label": "Sort pill: newest"
+    },
+    {
+      "type": "text",
+      "id": "filter_rating",
+      "label": "Sort pill: rating"
+    },
+    {
+      "type": "text",
+      "id": "filter_photos",
+      "label": "Sort pill: photos"
+    },
+    {
+      "type": "text",
+      "id": "order_newest",
+      "label": "Order menu: newest"
+    },
+    {
+      "type": "text",
+      "id": "order_oldest",
+      "label": "Order menu: oldest"
+    },
+    {
+      "type": "text",
+      "id": "rating_all",
+      "label": "Rating menu: no filter"
+    },
+    {
+      "type": "text",
+      "id": "rating_pill_label",
+      "label": "Rating pill when filtered",
+      "info": "%n% is replaced by the star count.",
+      "default": "%n% ★"
+    },
+    {
+      "type": "text",
+      "id": "empty_label",
+      "label": "No matching reviews"
+    },
+    {
+      "type": "text",
+      "id": "load_more_label",
+      "label": "Load more button"
+    },
+    {
+      "type": "range",
+      "id": "per_page",
+      "label": "Reviews per page",
+      "info": "The mockup shows four cards before Load more.",
+      "min": 2,
+      "max": 20,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "text",
+      "id": "handles",
+      "label": "Only show for these product handles (comma separated)",
+      "default": "organic-moringa-capsules"
+    }
+  ]
+}
+{% endschema %}

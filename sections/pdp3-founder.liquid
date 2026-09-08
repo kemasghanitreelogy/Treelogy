@@ -1,0 +1,78 @@
+{%- comment -%}
+  pdp3 — surat pendiri. Salinan DOM `<section class="founder">` dari mockup:
+  potret, sapaan, surat, tanda tangan.
+{%- endcomment -%}
+
+{%- liquid
+  comment
+    Template produk hanya ada satu per tema, sedangkan desain ini ditulis untuk
+    satu produk saja. Section JSON tidak bisa dipasang bersyarat, jadi
+    gerbangnya ada di sini. Kosongkan setting `handles` untuk semua produk.
+  endcomment
+  assign pdp3_on = false
+  if section.settings.handles == blank
+    assign pdp3_on = true
+  else
+    assign pdp3_needle = product.handle | prepend: ',' | append: ','
+    assign pdp3_hay = section.settings.handles | remove: ' ' | prepend: ',' | append: ','
+    if pdp3_hay contains pdp3_needle
+      assign pdp3_on = true
+    endif
+  endif
+-%}
+{%- if pdp3_on -%}
+{%- capture t_eyebrow %}{% render 'pdp3-copy', value: section.settings.eyebrow, key: 'pdp3.founder.eyebrow' %}{% endcapture -%}
+{%- capture t_body %}{% render 'pdp3-copy', value: section.settings.body, key: 'pdp3.founder.body' %}{% endcapture -%}
+{%- capture t_sig %}{% render 'pdp3-copy', value: section.settings.signature, key: 'pdp3.founder.signature' %}{% endcapture -%}
+<div class="pdp3-page">
+<section class="p3-founder" id="p3-founder">
+  {%- if section.settings.image != blank -%}
+    {{ section.settings.image | image_url: width: 900 | image_tag: class: 'p3-rv', widths: '400, 600, 900', sizes: '(max-width: 899px) 100vw, 680px', loading: 'lazy', alt: section.settings.image_alt }}
+  {%- endif -%}
+  {%- if t_eyebrow != blank -%}<p class="p3-eb p3-rv">{{ t_eyebrow }}</p>{%- endif -%}
+  {%- if t_body != blank -%}<p class="p3-rv">{{ t_body }}</p>{%- endif -%}
+  {%- if t_sig != blank -%}<p class="p3-sig p3-rv">{{ t_sig }}</p>{%- endif -%}
+</section>
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "PDP3 Founder",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Portrait"
+    },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Portrait alt text",
+      "default": "Sacha, founder of Treelogy"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Letter"
+    },
+    {
+      "type": "text",
+      "id": "signature",
+      "label": "Signature"
+    },
+    {
+      "type": "text",
+      "id": "handles",
+      "label": "Only show for these product handles (comma separated)",
+      "default": "organic-moringa-capsules"
+    }
+  ]
+}
+{% endschema %}

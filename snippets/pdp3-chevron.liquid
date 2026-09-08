@@ -1,0 +1,14 @@
+{% doc %}
+  Panah dropdown. Satu bentuk, dipakai akordeon FAQ dan pil saring ulasan.
+
+  Mockup menggambarnya dengan KARAKTER — `content:"⌄"` dan `content:"⌃"` yang
+  bertukar saat terbuka. Dua alasan itu diganti: bentuk glifnya berbeda-beda
+  antar sistem (di macOS ia tipis dan duduk terlalu tinggi), dan mengganti
+  karakter tidak bisa dianimasikan — panahnya berkedip dari satu bentuk ke
+  bentuk lain, bukan berputar.
+
+  Sebagai SVG ia sama di semua mesin dan bisa diputar 180° dengan transisi.
+
+  @example
+  <i>{% render 'pdp3-chevron' %}</i>
+{% enddoc %}<svg class="p3-chev" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 6.5 8 10.5 12 6.5"/></svg>

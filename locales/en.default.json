@@ -531,5 +531,240 @@
       "body2_html": "Harga hari ini terkunci untuk hingga<br>3 pesanan lagi, sampai 30 November.",
       "body3_html": "Kalau kamu belum pernah pesan,<br>pesanan pertama hari ini sudah cukup."
     }
+  },
+  "pdp3": {
+    "buybox": {
+      "proof_text": "4.96 / 5 · 17,000+ customers",
+      "per_day_suffix": "a day",
+      "cta_label": "Choose your pack",
+      "wa_label": "Ask us on WhatsApp",
+      "thumb_label": "View image",
+      "review_meta": "Verified buyer"
+    },
+    "router": {
+      "eyebrow": "Pick what brought you here",
+      "heading": "Why 17,000+ customers|chose this leaf.",
+      "subheading": "Choose your reason. The capsule is the same.",
+      "cta_label": "Choose your pack",
+      "review_meta": "Verified buyer",
+      "route_1": {
+        "chip": "Stiff mornings",
+        "title": "Get out of bed without holding|the wall.",
+        "body": "Knees, hips, and backs that loosen up inside two weeks. The calcium, magnesium, and plant compounds in the leaf support the body's inflammatory balance.",
+        "how": "3 capsules with breakfast.",
+        "quote": "Two weeks. Getting off the motorbike used to feel stiff and old. Now I just get off."
+      },
+      "route_2": {
+        "chip": "Tired by 3pm",
+        "title": "An afternoon that does not need the 3pm coffee.",
+        "body": "Energy that holds flat through the afternoon instead of dropping at three. Iron and B vitamins are what the afternoon runs on, and moringa leaf is one of the richest plant sources of iron.",
+        "how": "3 with breakfast. Skip the 3pm coffee for a week to notice the difference.",
+        "quote": "Felt it from day one. Deeper sleep, more energy, and no mood swings."
+      },
+      "route_3": {
+        "chip": "Sleep",
+        "title": "Asleep by ten. Still asleep at three.",
+        "body": "Falling asleep faster and staying asleep through the night. The leaf carries tryptophan, which the body turns into melatonin by evening, and the magnesium that lets muscles let go.",
+        "how": "3 with breakfast. Sleep improves at night from what you take in the morning.",
+        "quote": "After a month I sleep straight through the night and tire less easily."
+      },
+      "route_4": {
+        "chip": "Menopause",
+        "title": "Steadier through the change, without hormones.",
+        "body": "Less stiffness, fewer night wakings, a temperature that stops surprising you. Falling estrogen raises the need for calcium, magnesium, and iron while the body absorbs them less. The leaf closes that gap. It is not a hormone.",
+        "how": "3 with breakfast, every day.",
+        "quote": "Second tin. I sleep better and I am far less moody through perimenopause."
+      },
+      "route_5": {
+        "chip": "Cycle and PMS",
+        "title": "A week before your period that is not a write-off.",
+        "body": "Steadier energy and mood across the month. The week before a period burns through iron and magnesium, and daily moringa over two to three cycles is where customers say the difference shows.",
+        "how": "3 capsules daily, every day, not only that week.",
+        "quote": "Every month after my period I got headaches and my reflux flared. A month on this and it is gone."
+      },
+      "route_6": {
+        "chip": "Breastfeeding",
+        "title": "Feeding two, without running on empty.",
+        "body": "Iron, protein, and calcium back in the body while you feed someone else. Kelor is what Indonesian mothers were given for milk supply long before supplements existed.",
+        "how": "Check with your midwife, then take 3 with breakfast.",
+        "quote": "Since I started taking it every day my body is not tired, digestion is easy, and I sleep deeply."
+      },
+      "route_7": {
+        "chip": "Blood sugar & cholesterol",
+        "title": "Daily nutrition that sits alongside your medication.",
+        "body": "Steadier energy through the day, with the leaf that Indonesians have long used to support blood sugar, pressure, and cholesterol. Start with two capsules with breakfast, then three. On medication? Ask your doctor first. In most cases they are compatible.",
+        "how": "Start with 2 with meals, then 3. Keep your medication.",
+        "quote": "Second order. Since I started, my body feels fitter, my blood pressure is always normal, and I sleep deeper."
+      },
+      "route_8": {
+        "chip": "For my husband",
+        "title": "The same knees, the same sleep, the same three capsules.",
+        "body": "Looser knees, quieter nights, and fewer gout flares. Men take the same three capsules, and our best-reviewed customers over 55 include a lot of husbands who started because their wife did.",
+        "how": "Same dose. 3 with breakfast.",
+        "quote": "Third order. My husband and I both take it now."
+      },
+      "route_9": {
+        "chip": "For my parents",
+        "title": "More energy for the person who raised you.",
+        "body": "More energy and easier movement for a parent who has stopped expecting either. Most of our customers over 70 were handed a tin by a daughter. Start them on two capsules with breakfast for a week, then three, and tell their doctor.",
+        "how": "2 for a week, then 3, always with food.",
+        "quote": "My mother is 83 and in a wheelchair. I shared mine and she says she has more energy. Second order."
+      }
+    },
+    "packs": {
+      "guarantee": "Try it for 60 days. Not for you?|Full refund, no questions.",
+      "atc_label": "Add to cart",
+      "assure_1": "Ships today if you order before 3pm",
+      "assure_2": "60 days to try it. Full refund if not for you.",
+      "assure_3": "Lowest price, only at treelogy.com",
+      "per_day_suffix": "a day",
+      "sticky_note": "60-day guarantee",
+      "select_label": "Choose a pack",
+      "save": "Save"
+    },
+    "howto": {
+      "eyebrow": "How to take it",
+      "heading": "Three capsules daily.|In the morning.|With food.",
+      "starter_note": "New to moringa? Start with 2 capsules for three days.",
+      "medical_note": "High blood pressure, blood sugar, or cholesterol? Moringa is traditionally used to support all three. Already on medication? Ask your doctor first."
+    },
+    "leaf": {
+      "eyebrow": "Why a leaf",
+      "heading": "Eaten by hundreds|of millions of people|for one reason.",
+      "body": "Moringa leaf is the densest common leaf on earth for the nutrients people run short of. India eats it for strength and anemia. The Philippines gives it to nursing mothers. Indonesia has called it kelor for centuries. None of that is new. What is new is a version you can trust every morning.",
+      "lead": "Over 90 nutrients.|In a single leaf.",
+      "footnote": "When compared gram per gram.",
+      "tile_1": {
+        "value": "13 times",
+        "label": "more vitamin E|than matcha"
+      },
+      "tile_2": {
+        "value": "7 times",
+        "label": "more vitamin C|than oranges"
+      },
+      "tile_3": {
+        "value": "4 times",
+        "label": "more calcium|than oats"
+      },
+      "tile_4": {
+        "value": "3 times",
+        "label": "more potassium|than banana"
+      },
+      "tile_5": {
+        "value": "2 times",
+        "label": "more protein|than yogurt"
+      },
+      "tile_6": {
+        "value": "3 times",
+        "label": "more iron|than almond"
+      }
+    },
+    "why": {
+      "badge_line_1": "POM TR253017851 · valid to 2030",
+      "badge_line_2": "Tap to see the registration",
+      "heading": "The only moringa capsule BPOM registers as traditional medicine.",
+      "body": "Most moringa capsules are registered as food, or not at all. Ours carries the traditional-medicine category, which requires proof of safety, quality, and consistency batch after batch.",
+      "col_criteria": "Criteria",
+      "col_us": "Treelogy",
+      "col_them": "Others",
+      "modal_heading": "BPOM registration",
+      "modal_close": "Close",
+      "modal_row_1": "Product|Treelogy Organic Moringa Capsules, 400 mg, tins of 90 and 180.",
+      "modal_row_2": "Number|POM TR253017851, category Obat Tradisional.",
+      "modal_row_3": "Decision|SK 0316/Reg/TR/2025, 15 March 2025, valid to 15 March 2030.",
+      "modal_row_4": "Halal|BPJPH ID51210022336550525, 20 May 2025.",
+      "modal_row_5": "USDA Organic|NOP 4080207676, certifier CERES.",
+      "row_1": {
+        "criteria": "BPOM",
+        "ours": "Traditional medicine",
+        "theirs": "Food, or none"
+      },
+      "row_2": {
+        "criteria": "Leaf",
+        "ours": "Leaves only, stems off by hand",
+        "theirs": "Leaves and stems milled"
+      },
+      "row_3": {
+        "criteria": "Drying",
+        "ours": "38°C within 4 hours",
+        "theirs": "Sun or oven, days later"
+      },
+      "row_4": {
+        "criteria": "Origin",
+        "ours": "Own farm and factory, Bali",
+        "theirs": "Traders, unknown"
+      },
+      "row_5": {
+        "criteria": "Certified",
+        "ours": "USDA organic, Halal",
+        "theirs": "Usually neither"
+      },
+      "row_6": {
+        "criteria": "Refund",
+        "ours": "60-day refund",
+        "theirs": "None"
+      }
+    },
+    "farm": {
+      "eyebrow": "Where it comes from",
+      "heading": "From Seed to you.|No middleman.",
+      "body": "Two farms in Datah, Karangasem, on volcanic soil above the sea. USDA and EU organic. Workers paid 30% above the regional minimum. We can trace every tin to the row it was picked from.",
+      "prev_label": "Previous step",
+      "next_label": "Next step",
+      "frame_1": {
+        "caption": "05:40 · Harvest"
+      },
+      "frame_2": {
+        "caption": "09:10 · Stems off by hand"
+      },
+      "frame_3": {
+        "caption": "10:00 · Drying, 38°C, 22 h"
+      },
+      "frame_4": {
+        "caption": "Day 2 · Milling"
+      },
+      "frame_5": {
+        "caption": "Day 2 · Encapsulation"
+      }
+    },
+    "timeline": {
+      "eyebrow": "What to expect",
+      "heading": "Over 3 months|and beyond"
+    },
+    "founder": {
+      "eyebrow": "From Sacha, founder",
+      "body": "Moringa has been in my family for three generations. We eat it from the garden every day. When I moved to Europe to study, I could not find one I trusted. So I came back to Bali and built Treelogy to grow it, process it, and hand it to you directly, so you can see how it is made and by whom.",
+      "signature": "Sacha Aguila · Datah, Karangasem"
+    },
+    "faq": {
+      "eyebrow": "Questions",
+      "heading": "The ten questions|we get asked most."
+    },
+    "reviews": {
+      "ratings_word": "ratings",
+      "verified_label": "Verified buyer",
+      "write_label": "Write a review",
+      "ask_label": "Ask a question",
+      "tab_reviews": "Reviews",
+      "tab_questions": "Questions",
+      "search_label": "Search reviews",
+      "filter_recent": "Most recent",
+      "filter_rating": "Rating",
+      "filter_photos": "With photos",
+      "load_more_label": "Load more",
+      "order_newest": "Most recent",
+      "order_oldest": "Oldest first",
+      "rating_all": "All ratings",
+      "empty_label": "No reviews match these filters.",
+      "questions_empty": "No questions yet. Ask the first one.",
+      "answer_label": "Answer"
+    },
+    "close": {
+      "heading": "Try it for 60 days with breakfast. Keep the tin either way.",
+      "join_label": "Join 17,000+ customers",
+      "cta_label": "Choose your pack",
+      "wa_label": "Ask a real person on WhatsApp",
+      "note": "A real person answers seven days a week."
+    }
   }
 }

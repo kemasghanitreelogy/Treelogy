@@ -1,0 +1,123 @@
+{%- comment -%}
+  pdp3 — "kenapa daun". Salinan DOM `<section class="leaf">` dari mockup:
+  pita gelap berisi gambar, judul, paragraf, satu baris besar, enam ubin angka,
+  dan catatan kaki.
+{%- endcomment -%}
+
+{%- liquid
+  comment
+    Template produk hanya ada satu per tema, sedangkan desain ini ditulis untuk
+    satu produk saja. Section JSON tidak bisa dipasang bersyarat, jadi
+    gerbangnya ada di sini. Kosongkan setting `handles` untuk semua produk.
+  endcomment
+  assign pdp3_on = false
+  if section.settings.handles == blank
+    assign pdp3_on = true
+  else
+    assign pdp3_needle = product.handle | prepend: ',' | append: ','
+    assign pdp3_hay = section.settings.handles | remove: ' ' | prepend: ',' | append: ','
+    if pdp3_hay contains pdp3_needle
+      assign pdp3_on = true
+    endif
+  endif
+-%}
+{%- if pdp3_on -%}
+{%- capture t_eyebrow %}{% render 'pdp3-copy', value: section.settings.eyebrow, key: 'pdp3.leaf.eyebrow' %}{% endcapture -%}
+{%- capture t_heading %}{% render 'pdp3-copy', value: section.settings.heading, key: 'pdp3.leaf.heading' %}{% endcapture -%}
+{%- capture t_body %}{% render 'pdp3-copy', value: section.settings.body, key: 'pdp3.leaf.body' %}{% endcapture -%}
+{%- capture t_lead %}{% render 'pdp3-copy', value: section.settings.lead, key: 'pdp3.leaf.lead' %}{% endcapture -%}
+{%- capture t_foot %}{% render 'pdp3-copy', value: section.settings.footnote, key: 'pdp3.leaf.footnote' %}{% endcapture -%}
+<div class="pdp3-page">
+<section class="p3-leaf" id="p3-leaf">
+  {%- if section.settings.image != blank -%}
+    {{ section.settings.image | image_url: width: 900 | image_tag: class: 'p3-rv', widths: '400, 600, 900', sizes: '(max-width: 899px) 100vw, 680px', loading: 'lazy', alt: section.settings.image_alt }}
+  {%- endif -%}
+  {%- if t_eyebrow != blank -%}<p class="p3-eb p3-rv">{{ t_eyebrow }}</p>{%- endif -%}
+  <h2 class="p3-rv">{% render 'pdp3-sentence-lines', text: t_heading %}</h2>
+  {%- if t_body != blank -%}<p class="p3-rv">{{ t_body }}</p>{%- endif -%}
+  {%- if t_lead != blank -%}<p class="p3-lead p3-rv">{% render 'pdp3-sentence-lines', text: t_lead %}</p>{%- endif -%}
+  {%- if section.blocks.size > 0 -%}
+    <div class="p3-tiles">
+      {%- for block in section.blocks -%}
+        {%- capture k %}pdp3.leaf.{{ block.id }}{% endcapture -%}
+        {%- assign k_value = k | append: '.value' -%}
+        {%- assign k_label = k | append: '.label' -%}
+        {%- capture t_value %}{% render 'pdp3-copy', value: block.settings.value, key: k_value %}{% endcapture -%}
+        {%- capture t_label %}{% render 'pdp3-copy', value: block.settings.label, key: k_label %}{% endcapture -%}
+        <div class="p3-tile p3-rv" {{ block.shopify_attributes }}><b>{{ t_value }}</b><span>{% render 'pdp3-sentence-lines', text: t_label %}</span></div>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+  {%- if t_foot != blank -%}<p class="p3-gram p3-rv">{{ t_foot }}</p>{%- endif -%}
+</section>
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "PDP3 Why a leaf",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Image alt text",
+      "default": "Fresh moringa leaves in a basket"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Body"
+    },
+    {
+      "type": "text",
+      "id": "lead",
+      "label": "Lead line"
+    },
+    {
+      "type": "text",
+      "id": "footnote",
+      "label": "Footnote"
+    },
+    {
+      "type": "text",
+      "id": "handles",
+      "label": "Only show for these product handles (comma separated)",
+      "default": "organic-moringa-capsules"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "tile",
+      "name": "Nutrient tile",
+      "settings": [
+        {
+          "type": "text",
+          "id": "value",
+          "label": "Value"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

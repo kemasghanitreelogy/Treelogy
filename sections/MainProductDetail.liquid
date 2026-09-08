@@ -6,6 +6,23 @@
 {% assign product_detail = blank %}
 {% assign accordion_assets_loaded = false %}
 
+{%- liquid
+  comment
+    Halaman produk versi pdp3 memakai section-nya sendiri, dan di template yang
+    memuat keduanya section ini harus mundur untuk produk yang sudah dipegang
+    desain baru. Setting-nya kosong secara bawaan, jadi tema mana pun yang
+    tidak mengisinya berperilaku persis seperti sebelumnya.
+  endcomment
+  assign pdp3_skip = false
+  if section.settings.excluded_handles != blank
+    assign pdp3_needle = product.handle | prepend: ',' | append: ','
+    assign pdp3_hay = section.settings.excluded_handles | remove: ' ' | prepend: ',' | append: ','
+    if pdp3_hay contains pdp3_needle
+      assign pdp3_skip = true
+    endif
+  endif
+-%}
+{%- unless pdp3_skip -%}
 <div class="main-grid product-detail-wrapper">
   <div class="gallery-wrapper">
     <div id="product-geallery-wrapper" class="native-gallery">
@@ -1201,12 +1218,19 @@
   })();
 </script>
 
+{%- endunless -%}
+
 {% schema %}
   {
     "name": "Product single",
     "tag": "section",
     "class": "section",
     "settings": [
+      {
+        "type": "text",
+        "id": "excluded_handles",
+        "label": "Hide this section for these product handles (comma separated)"
+      },
       {
         "type": "text",
         "id": "payment_title",

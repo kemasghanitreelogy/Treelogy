@@ -1,0 +1,103 @@
+{%- comment -%}
+  pdp3 — cara memakainya. Salinan DOM `<section class="howto">` dari mockup:
+  kartu hijau berisi eyebrow, judul, dua langkah berikon, dan catatan medis.
+{%- endcomment -%}
+
+{%- liquid
+  comment
+    Template produk hanya ada satu per tema, sedangkan desain ini ditulis untuk
+    satu produk saja. Section JSON tidak bisa dipasang bersyarat, jadi
+    gerbangnya ada di sini. Kosongkan setting `handles` untuk semua produk.
+  endcomment
+  assign pdp3_on = false
+  if section.settings.handles == blank
+    assign pdp3_on = true
+  else
+    assign pdp3_needle = product.handle | prepend: ',' | append: ','
+    assign pdp3_hay = section.settings.handles | remove: ' ' | prepend: ',' | append: ','
+    if pdp3_hay contains pdp3_needle
+      assign pdp3_on = true
+    endif
+  endif
+-%}
+{%- if pdp3_on -%}
+{%- capture t_eyebrow %}{% render 'pdp3-copy', value: section.settings.eyebrow, key: 'pdp3.howto.eyebrow' %}{% endcapture -%}
+{%- capture t_heading %}{% render 'pdp3-copy', value: section.settings.heading, key: 'pdp3.howto.heading' %}{% endcapture -%}
+{%- capture t_med %}{% render 'pdp3-copy', value: section.settings.medical_note, key: 'pdp3.howto.medical_note' %}{% endcapture -%}
+{%- capture t_note2 %}{% render 'pdp3-copy', value: section.settings.starter_note, key: 'pdp3.howto.starter_note' %}{% endcapture -%}
+<div class="pdp3-page">
+<section class="p3-howto" id="p3-howto">
+  {%- comment -%}
+    Video persegi dengan eyebrow yang duduk DI ATAS gambarnya. Videonya baru
+    diputar saat terlihat (assets/pdp3.js) — sebuah video yang berputar di luar
+    layar hanya memanaskan ponsel orang.
+
+    `muted` wajib berpasangan dengan `autoplay`: tanpa itu browser menolak
+    memutar dan yang tersisa cuma poster diam.
+  {%- endcomment -%}
+  {%- if section.settings.video_url != blank -%}
+    <div class="p3-hv p3-rv">
+      <video id="p3-howto-video" src="{{ section.settings.video_url }}" poster="{{ section.settings.poster_url }}" muted loop playsinline autoplay preload="metadata"></video>
+      {%- if t_eyebrow != blank -%}<p class="p3-eb2">{{ t_eyebrow }}</p>{%- endif -%}
+    </div>
+  {%- elsif t_eyebrow != blank -%}
+    <p class="p3-eb p3-rv">{{ t_eyebrow }}</p>
+  {%- endif -%}
+  {%- comment -%}
+    `hard: true` — tiga baris judul ini bagian dari bentuknya, bukan akibat
+    kolom sempit, jadi penggalannya bertahan sampai desktop.
+  {%- endcomment -%}
+  <h2 class="p3-rv">{% render 'pdp3-sentence-lines', text: t_heading, hard: true %}</h2>
+
+  {%- if t_med != blank -%}
+    <div class="p3-med p3-rv"><svg><use href="#i-steth"/></svg><div>{{ t_med }}</div></div>
+  {%- endif -%}
+  {%- if t_note2 != blank -%}<p class="p3-note2 p3-rv">{{ t_note2 }}</p>{%- endif -%}
+</section>
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "PDP3 How to take it",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "textarea",
+      "id": "medical_note",
+      "label": "Medical note"
+    },
+    {
+      "type": "text",
+      "id": "starter_note",
+      "label": "Starter note under the medical note"
+    },
+    {
+      "type": "text",
+      "id": "video_url",
+      "label": "How-to video URL (mp4)"
+    },
+    {
+      "type": "text",
+      "id": "poster_url",
+      "label": "How-to video poster URL"
+    },
+    {
+      "type": "text",
+      "id": "handles",
+      "label": "Only show for these product handles (comma separated)",
+      "default": "organic-moringa-capsules"
+    }
+  ]
+}
+{% endschema %}

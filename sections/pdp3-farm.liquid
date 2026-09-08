@@ -1,0 +1,106 @@
+{%- comment -%}
+  pdp3 — asal-usul. Salinan DOM `<section class="farm">` dari mockup: eyebrow,
+  judul, deret bingkai proses yang menggulir mendatar, lalu satu paragraf.
+{%- endcomment -%}
+
+{%- liquid
+  comment
+    Template produk hanya ada satu per tema, sedangkan desain ini ditulis untuk
+    satu produk saja. Section JSON tidak bisa dipasang bersyarat, jadi
+    gerbangnya ada di sini. Kosongkan setting `handles` untuk semua produk.
+  endcomment
+  assign pdp3_on = false
+  if section.settings.handles == blank
+    assign pdp3_on = true
+  else
+    assign pdp3_needle = product.handle | prepend: ',' | append: ','
+    assign pdp3_hay = section.settings.handles | remove: ' ' | prepend: ',' | append: ','
+    if pdp3_hay contains pdp3_needle
+      assign pdp3_on = true
+    endif
+  endif
+-%}
+{%- if pdp3_on -%}
+{%- capture t_eyebrow %}{% render 'pdp3-copy', value: section.settings.eyebrow, key: 'pdp3.farm.eyebrow' %}{% endcapture -%}
+{%- capture t_heading %}{% render 'pdp3-copy', value: section.settings.heading, key: 'pdp3.farm.heading' %}{% endcapture -%}
+{%- capture t_body %}{% render 'pdp3-copy', value: section.settings.body, key: 'pdp3.farm.body' %}{% endcapture -%}
+<div class="pdp3-page">
+<section class="p3-farm" id="p3-farm">
+  {%- if t_eyebrow != blank -%}<p class="p3-eb p3-rv">{{ t_eyebrow }}</p>{%- endif -%}
+  <h2 class="p3-rv">{% render 'pdp3-sentence-lines', text: t_heading %}</h2>
+  {%- if section.blocks.size > 0 -%}
+    <div class="p3-frames">
+      {%- for block in section.blocks -%}
+        <div class="p3-frame p3-rv" {{ block.shopify_attributes }}>
+          {%- if block.settings.image != blank -%}
+            {{ block.settings.image | image_url: width: 816 | image_tag: widths: '272, 544, 816', sizes: '272px', loading: 'lazy', alt: '' }}
+          {%- endif -%}
+          {%- capture k_cap %}pdp3.farm.{{ block.id }}.caption{% endcapture -%}
+          {%- capture t_cap %}{% render 'pdp3-copy', value: block.settings.caption, key: k_cap %}{% endcapture -%}
+          <span class="p3-eb">{{ t_cap }}</span>
+        </div>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+  {%- if t_body != blank -%}<p class="p3-rv">{{ t_body }}</p>{%- endif -%}
+</section>
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "PDP3 Farm",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Body"
+    },
+    {
+      "type": "text",
+      "id": "prev_label",
+      "label": "Previous button label"
+    },
+    {
+      "type": "text",
+      "id": "next_label",
+      "label": "Next button label"
+    },
+    {
+      "type": "text",
+      "id": "handles",
+      "label": "Only show for these product handles (comma separated)",
+      "default": "organic-moringa-capsules"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "frame",
+      "name": "Step",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "Caption"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

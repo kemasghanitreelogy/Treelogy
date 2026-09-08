@@ -1,0 +1,23 @@
+{% doc %}
+  Tiga wajah pelanggan yang saling menumpuk, dipakai di dua tempat: baris bukti
+  di hero dan baris "Join 17,000+ customers" di penutup. Satu snippet karena
+  dua salinan markup yang sama pasti berpisah suatu hari — dan yang berpisah
+  di sini adalah jumlah gambarnya, yang menentukan lebar tumpukannya.
+
+  Wajah yang kosong dilewati, bukan dirender sebagai kotak kosong: deret dua
+  wajah tetap benar, deret satu kotak abu tidak.
+
+  @param {string} [a] - URL wajah pertama
+  @param {string} [b] - URL wajah kedua
+  @param {string} [c] - URL wajah ketiga
+
+  @example
+  {% render 'pdp3-faces', a: section.settings.face_1, b: section.settings.face_2, c: section.settings.face_3 %}
+{% enddoc %}
+{%- if a != blank or b != blank or c != blank -%}
+  <span class="p3-faces" aria-hidden="true">
+    {%- if a != blank -%}<img src="{{ a }}" alt="" width="24" height="24" loading="lazy">{%- endif -%}
+    {%- if b != blank -%}<img src="{{ b }}" alt="" width="24" height="24" loading="lazy">{%- endif -%}
+    {%- if c != blank -%}<img src="{{ c }}" alt="" width="24" height="24" loading="lazy">{%- endif -%}
+  </span>
+{%- endif -%}

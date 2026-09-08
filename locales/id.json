@@ -532,5 +532,240 @@
       "body2_html": "Harga hari ini terkunci untuk hingga<br>3 pesanan lagi, sampai 30 November.",
       "body3_html": "Kalau kamu belum pernah pesan,<br>pesanan pertama hari ini sudah cukup."
     }
+  },
+  "pdp3": {
+    "buybox": {
+      "proof_text": "4,96 / 5 · 17.000+ pelanggan",
+      "per_day_suffix": "per hari",
+      "cta_label": "Pilih Paket",
+      "wa_label": "Tanya kami di WhatsApp",
+      "thumb_label": "Lihat gambar",
+      "review_meta": "Pembeli terverifikasi"
+    },
+    "router": {
+      "eyebrow": "Pilih yang membawamu ke sini",
+      "heading": "Kenapa 17.000+ pelanggan|memilih daun ini.",
+      "subheading": "Pilih alasan yang paling dekat. Kapsulnya tetap sama.",
+      "cta_label": "Pilih Paket",
+      "review_meta": "Pembeli terverifikasi",
+      "route_1": {
+        "chip": "Kaku saat bangun",
+        "title": "Bangun pagi tanpa berpegangan|ke dinding.",
+        "body": "Lutut, pinggul, dan punggung terasa lebih luwes dalam dua minggu. Kalsium, magnesium, dan senyawa alami dalam daun ini mendukung keseimbangan peradangan tubuh.",
+        "how": "3 kapsul saat sarapan.",
+        "quote": "Saya sudah minum 2 minggu, biasanya turun dari motor berasa kaku dan jompo, tapi setelah minum ini bisa turun motor tanpa rasa kaku dan sakit."
+      },
+      "route_2": {
+        "chip": "Lemas jam 3 sore",
+        "title": "Sore hari tanpa perlu kopi jam 3.",
+        "body": "Energi bertahan rata sepanjang sore, bukan anjlok jam tiga. Zat besi dan vitamin B adalah bahan bakar sore hari, dan daun moringa termasuk sumber zat besi nabati paling kaya.",
+        "how": "3 saat sarapan. Lewati kopi jam 3 selama seminggu untuk merasakan bedanya.",
+        "quote": "Manfaat sudah terasa dari mulai day 1, tidur lelap, lebih berenergi dan tidak mood swing."
+      },
+      "route_3": {
+        "chip": "Tidur",
+        "title": "Terlelap jam sepuluh. Masih nyenyak jam tiga.",
+        "body": "Lebih cepat terlelap dan tidak terbangun tengah malam. Daun ini mengandung triptofan, yang tubuh ubah menjadi melatonin menjelang malam, plus magnesium yang membantu otot mengendur.",
+        "how": "3 saat sarapan. Tidur malammu membaik dari yang kamu minum pagi hari.",
+        "quote": "Stlh 1 bln mengonsumsi moringa kapsul, tidur pulas gk terbangun di mlm hari, lbh gk gampang cape."
+      },
+      "route_4": {
+        "chip": "Menopause",
+        "title": "Lebih stabil melewati masa perubahan, tanpa hormon.",
+        "body": "Kaku berkurang, lebih jarang terbangun malam, suhu tubuh tidak lagi mengejutkan. Saat estrogen turun, kebutuhan kalsium, magnesium, dan zat besi naik sementara penyerapannya menurun. Daun ini membantu menutup celah itu. Ini bukan hormon.",
+        "how": "3 saat sarapan, setiap hari.",
+        "quote": "Sekarang botol kedua uda naik ke 3 caps per hari. Tidur lbh nyenyak, lbh less moody karena perimenopause."
+      },
+      "route_5": {
+        "chip": "Haid dan PMS",
+        "title": "Seminggu sebelum haid yang tidak lagi terbuang.",
+        "body": "Energi dan mood lebih stabil sepanjang bulan. Minggu sebelum haid menguras zat besi dan magnesium, dan moringa harian selama dua sampai tiga siklus adalah saat pelanggan bilang bedanya mulai terasa.",
+        "how": "3 kapsul sehari, setiap hari, bukan cuma minggu itu.",
+        "quote": "Sebelumnya aq tiap sesudah haid itu sakit kepala smp asam lambung kumat.. trs minum ini alhamdulillah hilang ka.."
+      },
+      "route_6": {
+        "chip": "Menyusui",
+        "title": "Memberi makan dua orang, tanpa kehabisan tenaga.",
+        "body": "Zat besi, protein, dan kalsium kembali ke tubuh saat kamu menyusui. Kelor sudah diberikan kepada ibu-ibu di Indonesia untuk ASI jauh sebelum ada suplemen.",
+        "how": "Konsultasikan dengan bidanmu, lalu minum 3 saat sarapan.",
+        "quote": "Sejak rutin minum tiap hari badan tidak gampang capek, pencernaan lancar, dan tidur nyenyak."
+      },
+      "route_7": {
+        "chip": "Gula darah & kolesterol",
+        "title": "Nutrisi harian yang berjalan berdampingan dengan obat.",
+        "body": "Energi lebih stabil sepanjang hari, dengan daun yang sejak lama dipakai orang Indonesia untuk mendukung gula darah, tekanan darah, dan kolesterol. Mulai dari dua kapsul saat sarapan, lalu tiga. Sedang minum obat? Tanya dokter dulu. Umumnya bisa berjalan bersama.",
+        "how": "Mulai 2 bersama makan, lalu 3. Obatmu tetap diteruskan.",
+        "quote": "Ini pembelian ke dua kali, sejak mengkonsumsi produk ini, badan lebih bugar, tensi darah selalu normal, dan tidur lebih nyenyak."
+      },
+      "route_8": {
+        "chip": "Untuk suami",
+        "title": "Lutut yang sama, tidur yang sama, tiga kapsul yang sama.",
+        "body": "Lutut lebih luwes, malam lebih tenang, asam urat lebih jarang kambuh. Pria minum tiga kapsul yang sama, dan banyak pelanggan kami di atas 55 adalah suami yang mulai karena istrinya lebih dulu.",
+        "how": "Takaran sama. 3 saat sarapan.",
+        "quote": "Pembelian ke3. Semoga hasilnya bagus ya karena saya dan suami juga mengkonsumsinya."
+      },
+      "route_9": {
+        "chip": "Untuk orang tua",
+        "title": "Lebih bertenaga untuk orang yang membesarkanmu.",
+        "body": "Lebih bertenaga dan lebih mudah bergerak untuk orang tua yang sudah berhenti mengharapkan keduanya. Sebagian besar pelanggan kami di atas 70 menerima kalengnya dari anak perempuannya. Mulai dua kapsul saat sarapan selama seminggu, lalu tiga, dan beri tahu dokternya.",
+        "how": "2 selama seminggu, lalu 3, selalu bersama makanan.",
+        "quote": "Ibu saya 83 tahun dan pakai kursi roda. Saya bagi punya saya, katanya jadi lebih bertenaga. Pembelian kedua."
+      }
+    },
+    "packs": {
+      "guarantee": "Coba 60 hari. Tidak cocok?|Uang kembali penuh, tanpa ditanya.",
+      "atc_label": "Tambah ke Keranjang",
+      "assure_1": "Dikirim hari ini kalau pesan sebelum jam 3 sore",
+      "assure_2": "60 hari untuk mencoba. Uang kembali penuh kalau tidak cocok.",
+      "assure_3": "Harga terendah, hanya di treelogy.com",
+      "per_day_suffix": "per hari",
+      "sticky_note": "Garansi 60 hari",
+      "select_label": "Pilih paket",
+      "save": "Hemat"
+    },
+    "howto": {
+      "eyebrow": "Cara minum",
+      "heading": "Tiga kapsul sehari.|Pagi hari.|Bersama makanan.",
+      "starter_note": "Baru pertama kali minum moringa? Mulai dengan 2 kapsul selama tiga hari.",
+      "medical_note": "Tekanan darah tinggi, gula darah, atau kolesterol? Moringa secara tradisional dipakai untuk mendukung ketiganya. Sedang minum obat? Tanya dokter dulu."
+    },
+    "leaf": {
+      "eyebrow": "Kenapa daun",
+      "heading": "Dimakan ratusan|juta orang|karena satu alasan.",
+      "body": "Daun moringa adalah daun paling padat nutrisi di bumi untuk zat-zat yang paling sering kurang. India memakannya untuk tenaga dan anemia. Filipina memberikannya kepada ibu menyusui. Di Indonesia namanya kelor, sudah berabad-abad. Tidak ada yang baru di situ. Yang baru adalah versi yang bisa kamu percaya setiap pagi.",
+      "lead": "Lebih dari 90 nutrisi.|Dalam satu daun.",
+      "footnote": "Dibandingkan gram per gram.",
+      "tile_1": {
+        "value": "13 kali",
+        "label": "vitamin E lebih banyak|daripada matcha"
+      },
+      "tile_2": {
+        "value": "7 kali",
+        "label": "vitamin C lebih banyak|daripada jeruk"
+      },
+      "tile_3": {
+        "value": "4 kali",
+        "label": "kalsium lebih banyak|daripada oat"
+      },
+      "tile_4": {
+        "value": "3 kali",
+        "label": "kalium lebih banyak|daripada pisang"
+      },
+      "tile_5": {
+        "value": "2 kali",
+        "label": "protein lebih banyak|daripada yogurt"
+      },
+      "tile_6": {
+        "value": "3 kali",
+        "label": "zat besi lebih banyak|daripada almond"
+      }
+    },
+    "why": {
+      "badge_line_1": "POM TR253017851 · berlaku sampai 2030",
+      "badge_line_2": "Ketuk untuk lihat registrasinya",
+      "heading": "Satu-satunya kapsul moringa yang terdaftar di BPOM sebagai obat tradisional.",
+      "body": "Kebanyakan kapsul moringa terdaftar sebagai pangan, atau tidak terdaftar sama sekali. Punya kami masuk kategori obat tradisional, yang mensyaratkan bukti keamanan, mutu, dan konsistensi dari batch ke batch.",
+      "col_criteria": "Kriteria",
+      "col_us": "Treelogy",
+      "col_them": "Lainnya",
+      "modal_heading": "Registrasi BPOM",
+      "modal_close": "Tutup",
+      "modal_row_1": "Produk|Treelogy Organic Moringa Capsules, 400 mg, tins of 90 and 180.",
+      "modal_row_2": "Nomor|POM TR253017851, category Obat Tradisional.",
+      "modal_row_3": "Keputusan|SK 0316/Reg/TR/2025, 15 March 2025, valid to 15 March 2030.",
+      "modal_row_4": "Halal|BPJPH ID51210022336550525, 20 May 2025.",
+      "modal_row_5": "USDA Organic|NOP 4080207676, certifier CERES.",
+      "row_1": {
+        "criteria": "BPOM",
+        "ours": "Obat tradisional",
+        "theirs": "Pangan, atau tidak ada"
+      },
+      "row_2": {
+        "criteria": "Daun",
+        "ours": "Daun saja, batang dibuang dengan tangan",
+        "theirs": "Daun dan batang digiling"
+      },
+      "row_3": {
+        "criteria": "Pengeringan",
+        "ours": "38°C dalam 4 jam",
+        "theirs": "Dijemur atau dioven, berhari-hari kemudian"
+      },
+      "row_4": {
+        "criteria": "Asal",
+        "ours": "Kebun dan pabrik sendiri, Bali",
+        "theirs": "Pengepul, tidak jelas"
+      },
+      "row_5": {
+        "criteria": "Sertifikasi",
+        "ours": "USDA organic, Halal",
+        "theirs": "Biasanya tidak keduanya"
+      },
+      "row_6": {
+        "criteria": "Uang kembali",
+        "ours": "Uang kembali 60 hari",
+        "theirs": "Tidak ada"
+      }
+    },
+    "farm": {
+      "eyebrow": "Dari mana asalnya",
+      "heading": "Dari benih sampai ke tanganmu.|Tanpa perantara.",
+      "body": "Dua kebun di Datah, Karangasem, di tanah vulkanik di atas laut. Organik USDA dan Uni Eropa. Pekerja dibayar 30% di atas UMR. Setiap kaleng bisa kami lacak sampai ke baris tempat daunnya dipetik.",
+      "prev_label": "Langkah sebelumnya",
+      "next_label": "Langkah berikutnya",
+      "frame_1": {
+        "caption": "05.40 · Panen"
+      },
+      "frame_2": {
+        "caption": "09.10 · Batang dibuang dengan tangan"
+      },
+      "frame_3": {
+        "caption": "10.00 · Pengeringan, 38°C, 22 jam"
+      },
+      "frame_4": {
+        "caption": "Hari 2 · Penggilingan"
+      },
+      "frame_5": {
+        "caption": "Hari 2 · Pengisian kapsul"
+      }
+    },
+    "timeline": {
+      "eyebrow": "Yang akan terasa",
+      "heading": "Selama 3 bulan|dan seterusnya"
+    },
+    "founder": {
+      "eyebrow": "Dari Sacha, pendiri Treelogy",
+      "body": "Moringa sudah tiga generasi ada di keluarga saya. Kami memakannya dari kebun setiap hari. Saat pindah ke Eropa untuk kuliah, saya tidak menemukan satu pun yang bisa saya percaya. Jadi saya kembali ke Bali dan membangun Treelogy untuk menanamnya, mengolahnya, dan menyerahkannya langsung ke tanganmu, supaya kamu tahu bagaimana dan oleh siapa ini dibuat.",
+      "signature": "Sacha Aguila · Datah, Karangasem"
+    },
+    "faq": {
+      "eyebrow": "Pertanyaan",
+      "heading": "Sepuluh pertanyaan|yang paling sering ditanyakan."
+    },
+    "reviews": {
+      "ratings_word": "penilaian",
+      "verified_label": "Pembeli terverifikasi",
+      "write_label": "Tulis ulasan",
+      "ask_label": "Ajukan pertanyaan",
+      "tab_reviews": "Ulasan",
+      "tab_questions": "Pertanyaan",
+      "search_label": "Cari ulasan",
+      "filter_recent": "Terbaru",
+      "filter_rating": "Rating",
+      "filter_photos": "Dengan foto",
+      "load_more_label": "Muat lebih banyak",
+      "order_newest": "Terbaru",
+      "order_oldest": "Terlama dulu",
+      "rating_all": "Semua bintang",
+      "empty_label": "Tidak ada ulasan yang cocok dengan saringan ini.",
+      "questions_empty": "Belum ada pertanyaan. Jadilah yang pertama bertanya.",
+      "answer_label": "Jawaban"
+    },
+    "close": {
+      "heading": "Coba 60 hari saat sarapan. Kalengnya tetap untuk kamu.",
+      "join_label": "Gabung bersama 17.000+ pelanggan",
+      "cta_label": "Pilih Paket",
+      "wa_label": "Tanya langsung ke tim kami di WhatsApp",
+      "note": "Yang menjawab orang sungguhan, tujuh hari seminggu."
+    }
   }
 }

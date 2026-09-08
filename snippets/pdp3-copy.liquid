@@ -1,0 +1,33 @@
+{% doc %}
+  Satu teks halaman produk v3, dengan dua sumber dan urutan yang tetap:
+
+    1. setting section — kalau editor mengisinya, itu yang menang;
+    2. berkas locale   — `locales/id.json` dan `locales/en.default.json`.
+
+  Kenapa locale dan bukan Translate & Adapt seperti bagian tema yang lain:
+  sumber daya terjemahan untuk setting section HANYA ada untuk tema yang
+  sedang terbit. Tema draft tidak punya, jadi setting-nya mustahil
+  diterjemahkan sampai ia dipublikasikan — dan halaman ini harus sudah
+  berbahasa Indonesia sebelum itu. Berkas locale ikut di dalam tema, jadi ia
+  bekerja sejak menit pertama dan tetap bekerja sesudah terbit.
+
+  Kunci yang belum ada TIDAK dicetak sebagai "Translation missing" di halaman
+  toko: ia dikembalikan kosong, dan pemanggil yang memutuskan apakah blok itu
+  masih dirender. Sebuah judul yang hilang lebih baik daripada judul yang
+  berbunyi "Translation missing: id.pdp3.leaf.heading".
+
+  @param {string} [value] - Nilai setting section, kalau ada
+  @param {string} key - Kunci locale, mis. 'pdp3.leaf.heading'
+
+  @example
+  {%- capture heading %}{% render 'pdp3-copy', value: section.settings.heading, key: 'pdp3.leaf.heading' %}{% endcapture -%}
+{% enddoc %}{%- liquid
+  assign pc_out = value | strip
+  if pc_out == blank
+    assign pc_out = key | t
+    if pc_out contains 'Translation missing'
+      assign pc_out = ''
+    endif
+  endif
+  echo pc_out
+-%}

@@ -1,0 +1,211 @@
+{%- comment -%}
+  pdp3 — "pilih alasanmu": deret pemicu + satu kartu yang berganti isi.
+
+  Salinan DOM `<section class="router">` dari mockup. Kartunya digambar di sisi
+  klien dari JSON di bawah, sama seperti mockup, bukan dirender sembilan kali
+  lalu disembunyikan: hanya satu yang pernah terlihat, dan sembilan salinan
+  akan ikut terbaca pembaca layar serta mesin pencari sebagai isi ganda.
+
+  Ruas `how` ikut dibawa di JSON tapi TIDAK dicetak kartunya — mockup pun tidak
+  mencetaknya. Datanya dibiarkan supaya editor tidak kehilangan teks yang sudah
+  diketik kalau kartunya nanti menampilkannya lagi.
+{%- endcomment -%}
+
+{%- liquid
+  comment
+    Template produk hanya ada satu per tema, sedangkan desain ini ditulis untuk
+    satu produk saja. Section JSON tidak bisa dipasang bersyarat, jadi
+    gerbangnya ada di sini. Kosongkan setting `handles` untuk semua produk.
+  endcomment
+  assign pdp3_on = false
+  if section.settings.handles == blank
+    assign pdp3_on = true
+  else
+    assign pdp3_needle = product.handle | prepend: ',' | append: ','
+    assign pdp3_hay = section.settings.handles | remove: ' ' | prepend: ',' | append: ','
+    if pdp3_hay contains pdp3_needle
+      assign pdp3_on = true
+    endif
+  endif
+-%}
+{%- if pdp3_on -%}
+{%- capture t_eyebrow %}{% render 'pdp3-copy', value: section.settings.eyebrow, key: 'pdp3.router.eyebrow' %}{% endcapture -%}
+{%- capture t_heading %}{% render 'pdp3-copy', value: section.settings.heading, key: 'pdp3.router.heading' %}{% endcapture -%}
+{%- capture t_sub %}{% render 'pdp3-copy', value: section.settings.subheading, key: 'pdp3.router.subheading' %}{% endcapture -%}
+{%- capture t_cta %}{% render 'pdp3-copy', value: section.settings.cta_label, key: 'pdp3.router.cta_label' %}{% endcapture -%}
+{%- capture t_meta %}{% render 'pdp3-copy', value: section.settings.review_meta, key: 'pdp3.router.review_meta' %}{% endcapture -%}
+<div class="pdp3-page pdp3-page--stack">
+<section class="p3-router" id="p3-router">
+  <p class="p3-eb p3-rv">{{ t_eyebrow }}</p>
+  <h2 class="p3-rv">{% render 'pdp3-sentence-lines', text: t_heading %}</h2>
+  {%- if t_sub != blank -%}<p class="p3-sub p3-rv">{{ t_sub }}</p>{%- endif -%}
+  <div class="p3-chips p3-rv" role="radiogroup" aria-label="{{ t_eyebrow | escape }}" id="p3-chips"></div>
+  <div class="p3-rcard p3-rv" id="p3-rcard"></div>
+
+  {%- capture routes_json -%}
+    [
+    {%- for block in section.blocks -%}
+      {%- capture k %}pdp3.router.{{ block.id }}{% endcapture -%}
+      {%- assign k_chip = k | append: '.chip' -%}
+      {%- assign k_title = k | append: '.title' -%}
+      {%- assign k_body = k | append: '.body' -%}
+      {%- assign k_how = k | append: '.how' -%}
+      {%- assign k_quote = k | append: '.quote' -%}
+      {%- capture t_chip %}{% render 'pdp3-copy', value: block.settings.chip, key: k_chip %}{% endcapture -%}
+      {%- capture t_title %}{% render 'pdp3-copy', value: block.settings.title, key: k_title %}{% endcapture -%}
+      {%- capture t_body %}{% render 'pdp3-copy', value: block.settings.body, key: k_body %}{% endcapture -%}
+      {%- capture t_how %}{% render 'pdp3-copy', value: block.settings.how, key: k_how %}{% endcapture -%}
+      {%- capture t_quote %}{% render 'pdp3-copy', value: block.settings.quote, key: k_quote %}{% endcapture -%}
+      {
+        "id": {{ block.settings.route_id | default: block.id | json }},
+        "icon": {{ block.settings.icon | json }},
+        "chip": {{ t_chip | json }},
+        "title": {{ t_title | json }},
+        "body": {{ t_body | json }},
+        "how": {{ t_how | json }},
+        "quote": {{ t_quote | json }},
+        "who": {{ block.settings.who | json }},
+        "photo": {{ block.settings.photo_url | json }}
+      }{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+    ]
+  {%- endcapture -%}
+  <script type="application/json" data-pdp3-routes>{{ routes_json }}</script>
+  <script type="application/json" data-pdp3-router-cta>{{ t_cta | json }}</script>
+  <script type="application/json" data-pdp3-router-meta>{{ t_meta | json }}</script>
+</section>
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "PDP3 Reason router",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Card link label"
+    },
+    {
+      "type": "text",
+      "id": "review_meta",
+      "label": "Reviewer suffix"
+    },
+    {
+      "type": "text",
+      "id": "handles",
+      "label": "Only show for these product handles (comma separated)",
+      "default": "organic-moringa-capsules"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "route",
+      "name": "Reason",
+      "settings": [
+        {
+          "type": "text",
+          "id": "route_id",
+          "label": "URL key (?r=)"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "default": "i-sun",
+          "options": [
+            {
+              "value": "i-sun",
+              "label": "Sunrise"
+            },
+            {
+              "value": "i-battery",
+              "label": "Battery"
+            },
+            {
+              "value": "i-moon",
+              "label": "Moon"
+            },
+            {
+              "value": "i-thermo",
+              "label": "Thermometer"
+            },
+            {
+              "value": "i-cal",
+              "label": "Calendar"
+            },
+            {
+              "value": "i-mother",
+              "label": "Mother"
+            },
+            {
+              "value": "i-drop",
+              "label": "Drop"
+            },
+            {
+              "value": "i-man",
+              "label": "Man"
+            },
+            {
+              "value": "i-parents",
+              "label": "Parents"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "chip",
+          "label": "Chip label"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Card heading"
+        },
+        {
+          "type": "textarea",
+          "id": "body",
+          "label": "Card body"
+        },
+        {
+          "type": "text",
+          "id": "how",
+          "label": "How to take it"
+        },
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Customer quote"
+        },
+        {
+          "type": "text",
+          "id": "who",
+          "label": "Reviewer name and age"
+        },
+        {
+          "type": "text",
+          "id": "photo_url",
+          "label": "Reviewer photo (image URL)",
+          "info": "Leave blank to fall back to the first letter of the name."
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
