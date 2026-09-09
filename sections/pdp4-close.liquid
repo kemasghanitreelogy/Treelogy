@@ -1,0 +1,109 @@
+{%- comment -%}
+  pdp4 — penutup. Salinan DOM `<section id="close">` dari berkas rujukan: pita
+  gelap rata tengah, judul, baris wajah, dua tombol penuh, satu catatan.
+
+  `.pdp-foot-space` menandai section ini sebagai yang terakhir sebelum footer:
+  blok BRIDGE di pdp4.css memakai penanda itu untuk memesan ruang di bawah
+  bilah menempel (rujukan memakainya di `.pdp-root`, yang tidak ada di sini
+  karena halaman ini terpecah jadi dua belas pembungkus).
+{%- endcomment -%}
+
+{%- liquid
+  comment
+    Template produk hanya ada satu per tema, sedangkan desain ini ditulis untuk
+    satu produk saja. Section JSON tidak bisa dipasang bersyarat, jadi
+    gerbangnya ada di sini. Kosongkan setting `handles` untuk semua produk.
+  endcomment
+  assign pdp4_on = false
+  if section.settings.handles == blank
+    assign pdp4_on = true
+  else
+    assign pdp4_needle = product.handle | prepend: ',' | append: ','
+    assign pdp4_hay = section.settings.handles | remove: ' ' | prepend: ',' | append: ','
+    if pdp4_hay contains pdp4_needle
+      assign pdp4_on = true
+    endif
+  endif
+-%}
+{%- if pdp4_on -%}
+{%- capture t_heading %}{% render 'pdp4-copy', value: section.settings.heading, key: 'pdp3.close.heading' %}{% endcapture -%}
+{%- capture t_join %}{% render 'pdp4-copy', value: section.settings.join_label, key: 'pdp3.close.join_label' %}{% endcapture -%}
+{%- capture t_cta %}{% render 'pdp4-copy', value: section.settings.cta_label, key: 'pdp3.close.cta_label' %}{% endcapture -%}
+{%- capture t_wa %}{% render 'pdp4-copy', value: section.settings.wa_label, key: 'pdp3.close.wa_label' %}{% endcapture -%}
+{%- capture t_note %}{% render 'pdp4-copy', value: section.settings.note, key: 'pdp3.close.note' %}{% endcapture -%}
+<div class="pdp4-page sk-root">
+<section class="sk-inverse sk-py-64 pdp-center pdp-foot-space" id="pdp4-close"><div class="sk-container">
+  <div class="pdp-wrap sk-stack" style="gap:var(--sk-space-24);align-items:center">
+    <h2 class="sk-h1">{% render 'pdp4-sentence-lines', text: t_heading %}</h2>
+    {%- if t_join != blank -%}
+      <p class="pdp-join sk-body">{% render 'pdp4-faces', a: section.settings.face_1, b: section.settings.face_2, c: section.settings.face_3 %}{{ t_join }}</p>
+    {%- endif -%}
+    <a class="sk-btn sk-btn--lg" href="#pdp4-packs">{{ t_cta }}</a>
+    {%- if section.settings.wa_url != blank -%}
+      <a class="sk-btn sk-btn--outline sk-btn--lg" href="{{ section.settings.wa_url }}" rel="noopener"><svg class="sk-btn__icon pdp-ico" aria-hidden="true"><use href="#i-wa"/></svg>{{ t_wa }}</a>
+    {%- endif -%}
+    {%- if t_note != blank -%}<p class="sk-small sk-text-secondary">{{ t_note }}</p>{%- endif -%}
+  </div>
+</div></section>
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "PDP4 Closing CTA",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "join_label",
+      "label": "Join line"
+    },
+    {
+      "type": "text",
+      "id": "face_1",
+      "label": "Join face 1 (image URL)"
+    },
+    {
+      "type": "text",
+      "id": "face_2",
+      "label": "Join face 2 (image URL)"
+    },
+    {
+      "type": "text",
+      "id": "face_3",
+      "label": "Join face 3 (image URL)"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Primary button"
+    },
+    {
+      "type": "text",
+      "id": "wa_label",
+      "label": "WhatsApp button"
+    },
+    {
+      "type": "url",
+      "id": "wa_url",
+      "label": "WhatsApp link"
+    },
+    {
+      "type": "text",
+      "id": "note",
+      "label": "Note"
+    },
+    {
+      "type": "text",
+      "id": "handles",
+      "label": "Only show for these product handles (comma separated)",
+      "default": "organic-moringa-capsules"
+    }
+  ]
+}
+{% endschema %}

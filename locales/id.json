@@ -766,6 +766,14 @@
       "cta_label": "Pilih Paket",
       "wa_label": "Tanya langsung ke tim kami di WhatsApp",
       "note": "Yang menjawab orang sungguhan, tujuh hari seminggu."
+    },
+    "footer": {
+      "heading": "Kabar dari kami, lebih dulu.",
+      "body": "Penawaran khusus, bundel dan produk baru sebelum diluncurkan, kabar dari kebun dan pabrik kami, serta panduan memaksimalkan Moringa.",
+      "email_label": "Email",
+      "cta_label": "Daftarkan saya",
+      "consent_label": "Saya menyetujui kebijakan privasi",
+      "thanks": "Terima kasih. Cek email kamu untuk konfirmasi."
     }
   }
 }

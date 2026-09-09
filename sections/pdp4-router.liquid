@@ -1,0 +1,221 @@
+{%- comment -%}
+  pdp4 — "pilih alasanmu": deret chip pemicu + satu kartu yang berganti isi.
+
+  Salinan DOM `<section id="router">` dari berkas rujukan. Kartunya digambar di
+  sisi klien dari JSON di bawah, sama seperti rujukan, bukan dirender sembilan
+  kali lalu disembunyikan: hanya satu yang pernah terlihat, dan sembilan
+  salinan akan ikut terbaca pembaca layar serta mesin pencari sebagai isi
+  ganda.
+
+  Ruas `how` ikut dibawa di JSON tapi TIDAK dicetak kartunya — rujukan pun
+  tidak mencetaknya. Datanya dibiarkan supaya editor tidak kehilangan teks yang
+  sudah diketik kalau kartunya nanti menampilkannya lagi.
+
+  DI RUJUKAN section ini berada di dalam kolom kanan hero. Section Shopify
+  tidak bisa bersarang, jadi ia dirender sebagai saudara dan assets/pdp4.js
+  memindahkannya ke `[data-pdp4-router-slot]` di sections/pdp4-buybox saat
+  boot. Urutan DOM di ponsel identik sebelum dan sesudah pemindahan, jadi
+  halaman tetap benar kalau skripnya gagal muat — yang hilang cuma susunan dua
+  kolom di desktop.
+{%- endcomment -%}
+
+{%- liquid
+  comment
+    Template produk hanya ada satu per tema, sedangkan desain ini ditulis untuk
+    satu produk saja. Section JSON tidak bisa dipasang bersyarat, jadi
+    gerbangnya ada di sini. Kosongkan setting `handles` untuk semua produk.
+  endcomment
+  assign pdp4_on = false
+  if section.settings.handles == blank
+    assign pdp4_on = true
+  else
+    assign pdp4_needle = product.handle | prepend: ',' | append: ','
+    assign pdp4_hay = section.settings.handles | remove: ' ' | prepend: ',' | append: ','
+    if pdp4_hay contains pdp4_needle
+      assign pdp4_on = true
+    endif
+  endif
+-%}
+{%- if pdp4_on -%}
+{%- capture t_eyebrow %}{% render 'pdp4-copy', value: section.settings.eyebrow, key: 'pdp3.router.eyebrow' %}{% endcapture -%}
+{%- capture t_heading %}{% render 'pdp4-copy', value: section.settings.heading, key: 'pdp3.router.heading' %}{% endcapture -%}
+{%- capture t_sub %}{% render 'pdp4-copy', value: section.settings.subheading, key: 'pdp3.router.subheading' %}{% endcapture -%}
+{%- capture t_cta %}{% render 'pdp4-copy', value: section.settings.cta_label, key: 'pdp3.router.cta_label' %}{% endcapture -%}
+{%- capture t_meta %}{% render 'pdp4-copy', value: section.settings.review_meta, key: 'pdp3.router.review_meta' %}{% endcapture -%}
+<div class="pdp4-page sk-root">
+<section class="sk-container sk-pt-24 sk-pb-24" id="pdp4-router"><div class="sk-stack" style="gap:var(--sk-space-24)">
+  <div class="sk-stack" style="gap:var(--sk-space-12)">
+    {%- if t_eyebrow != blank -%}<p class="sk-eyebrow sk-text-secondary">{{ t_eyebrow }}</p>{%- endif -%}
+    <h2 class="sk-h2">{% render 'pdp4-sentence-lines', text: t_heading %}</h2>
+    {%- if t_sub != blank -%}<p class="sk-body sk-text-secondary">{{ t_sub }}</p>{%- endif -%}
+  </div>
+  <div class="sk-chip-group" id="pdp4-chips" role="radiogroup" aria-label="{{ t_eyebrow | escape }}"></div>
+  <div class="sk-card sk-card--mist sk-card--pad-lg sk-stack" id="pdp4-rcard" style="gap:var(--sk-space-16)"></div>
+
+  {%- capture routes_json -%}
+    [
+    {%- for block in section.blocks -%}
+      {%- capture k %}pdp3.router.{{ block.id }}{% endcapture -%}
+      {%- assign k_chip = k | append: '.chip' -%}
+      {%- assign k_title = k | append: '.title' -%}
+      {%- assign k_body = k | append: '.body' -%}
+      {%- assign k_how = k | append: '.how' -%}
+      {%- assign k_quote = k | append: '.quote' -%}
+      {%- capture t_chip %}{% render 'pdp4-copy', value: block.settings.chip, key: k_chip %}{% endcapture -%}
+      {%- capture t_title %}{% render 'pdp4-copy', value: block.settings.title, key: k_title %}{% endcapture -%}
+      {%- capture t_body %}{% render 'pdp4-copy', value: block.settings.body, key: k_body %}{% endcapture -%}
+      {%- capture t_how %}{% render 'pdp4-copy', value: block.settings.how, key: k_how %}{% endcapture -%}
+      {%- capture t_quote %}{% render 'pdp4-copy', value: block.settings.quote, key: k_quote %}{% endcapture -%}
+      {
+        "id": {{ block.settings.route_id | default: block.id | json }},
+        "icon": {{ block.settings.icon | json }},
+        "chip": {{ t_chip | json }},
+        "title": {{ t_title | json }},
+        "body": {{ t_body | json }},
+        "how": {{ t_how | json }},
+        "quote": {{ t_quote | json }},
+        "who": {{ block.settings.who | json }},
+        "photo": {{ block.settings.photo_url | json }}
+      }{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+    ]
+  {%- endcapture -%}
+  <script type="application/json" data-pdp4-routes>{{ routes_json }}</script>
+  <script type="application/json" data-pdp4-router-cta>{{ t_cta | json }}</script>
+  <script type="application/json" data-pdp4-router-meta>{{ t_meta | json }}</script>
+</div></section>
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "PDP4 Reason router",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Card link label"
+    },
+    {
+      "type": "text",
+      "id": "review_meta",
+      "label": "Reviewer suffix"
+    },
+    {
+      "type": "text",
+      "id": "handles",
+      "label": "Only show for these product handles (comma separated)",
+      "default": "organic-moringa-capsules"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "route",
+      "name": "Reason",
+      "settings": [
+        {
+          "type": "text",
+          "id": "route_id",
+          "label": "URL key (?r=)"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "default": "i-sun",
+          "options": [
+            {
+              "value": "i-sun",
+              "label": "Sunrise"
+            },
+            {
+              "value": "i-battery",
+              "label": "Battery"
+            },
+            {
+              "value": "i-moon",
+              "label": "Moon"
+            },
+            {
+              "value": "i-thermo",
+              "label": "Thermometer"
+            },
+            {
+              "value": "i-cal",
+              "label": "Calendar"
+            },
+            {
+              "value": "i-mother",
+              "label": "Mother"
+            },
+            {
+              "value": "i-drop",
+              "label": "Drop"
+            },
+            {
+              "value": "i-man",
+              "label": "Man"
+            },
+            {
+              "value": "i-parents",
+              "label": "Parents"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "chip",
+          "label": "Chip label"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Card heading"
+        },
+        {
+          "type": "textarea",
+          "id": "body",
+          "label": "Card body"
+        },
+        {
+          "type": "text",
+          "id": "how",
+          "label": "How to take it"
+        },
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Customer quote"
+        },
+        {
+          "type": "text",
+          "id": "who",
+          "label": "Reviewer name and age"
+        },
+        {
+          "type": "text",
+          "id": "photo_url",
+          "label": "Reviewer photo (image URL)",
+          "info": "Leave blank to fall back to the first letter of the name."
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

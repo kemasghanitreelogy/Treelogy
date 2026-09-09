@@ -1121,6 +1121,29 @@
         }
       </style>
     {%- endif -%}
+  {%- comment -%}
+    PDP kapsul (pdp4) memuat CSS-nya dari SINI, bukan hanya dari sectionnya.
+
+    sections/pdp4-buybox merender `pdp4.css` di dalam <body>, sesudah header
+    tergambar — dan sepanjang jeda itu bilah pengumuman tampil olive dan header
+    krem bergaris, yaitu warna BAWAAN TEMA, sebelum berkedip ke warna halaman
+    ini. Diukur 9 Sep dengan mencatat warna tiap frame sejak muat: olive selalu
+    muncul lebih dulu, di mode terang maupun gelap. Alasannya sama persis
+    dengan `money-id-format` tepat di bawah blok ini.
+
+    Gerbangnya HANDLE, bukan template: memuat berkas ini di semua halaman
+    produk berarti ikut menarik Inter dari Google di halaman yang tidak
+    memakainya, dan itu menggeser judul produk lain. Handle di sini harus sama
+    dengan setting `handles` di section pdp4-*; kalau produknya berganti,
+    keduanya ikut berganti.
+
+    Tag di section TIDAK dibuang: ia jaring pengaman kalau layout ini pernah
+    dipulihkan dari tema lain. Dua <link> ke URL yang sama diambil sekali.
+  {%- endcomment -%}
+  {%- if request.page_type == 'product' and product.handle == 'organic-moringa-capsules' -%}
+    {{ 'pdp4.css' | asset_url | stylesheet_tag }}
+  {%- endif -%}
+
     {%- comment -%}
     Menyeragamkan pemisah ribuan rupiah jadi titik. Dipasang di ujung <head>
     supaya observer-nya hidup sebelum <body> diurai — kalau ditaruh di akhir

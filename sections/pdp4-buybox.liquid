@@ -1,0 +1,562 @@
+{%- comment -%}
+  pdp4 — hero: galeri + kolom beli + strip testimoni.
+
+  Markup di bawah adalah salinan DOM `<section id="hero">` dari berkas rujukan
+  `treelogy-capsules-pdp-single-file.html` (folder PDP_OMC_2026), kelas demi
+  kelas. Kelasnya TIDAK diberi awalan seperti generasi sebelumnya: `sk-*` dan
+  `pdp-*` sudah unik di tema ini (diperiksa terhadap theme.css, app.css,
+  application.css, lugus-custom.css dan section-product-single.css — nol
+  kecocokan), jadi mengganti namanya hanya akan membuat berkas ini berbeda dari
+  rujukannya tanpa menghindari apa pun.
+
+  Yang boleh berubah dari rujukan hanyalah SUMBER isinya — rujukan menuliskan
+  teks dan gambar langsung, halaman ini mengambilnya dari produk.
+
+  Tiga kait ke sisa tema, jangan dilepas tanpa penggantinya:
+
+  1. `.native-gallery__slide` pada tiap slide. snippets/MiniCart.liquid membaca
+     `.native-gallery__slide img` untuk menggambar kartu optimistis saat barang
+     ditambahkan.
+  2. `.pdp4-page h1` adalah judul yang dibaca kartu optimistis itu.
+  3. `#pdp4-pd-hero` diisi assets/pdp4.js dari kartu paket yang sedang terpilih,
+     bukan dari harga varian pertama.
+
+  Kait keempat khusus generasi ini: `[data-pdp4-router-slot]`. Di rujukan,
+  bagian "pilih alasanmu" berada DI DALAM kolom kanan hero — di situlah kolom
+  itu menjadi cukup tinggi sehingga galerinya bisa menempel sementara teksnya
+  bergulir. Section Shopify tidak bisa bersarang, jadi sections/pdp4-router
+  dirender sebagai saudara dan assets/pdp4.js memindahkannya ke slot ini saat
+  boot. Urutan DOM di ponsel sama persis dengan rujukan baik sebelum maupun
+  sesudah pemindahan, jadi tidak ada yang bergeser kalau skripnya gagal muat.
+{%- endcomment -%}
+
+{%- liquid
+  comment
+    Varian awal ditentukan dengan urutan yang sama seperti pemilih paket di
+    sections/pdp4-packs.liquid: `?variant=` lebih dulu, lalu metafield
+    `pdp3.set_default`, lalu `custom.set_default`, baru varian pertama. Kalau
+    kedua section memakai aturan berbeda, harga per hari di hero membuka dengan
+    angka satu paket sementara kartu yang tersorot adalah paket lain.
+  endcomment
+  assign fallback_variant = null
+  if product.selected_variant
+    assign fallback_variant = product.selected_variant
+  endif
+  unless fallback_variant
+    for v in product.variants
+      if v.metafields.pdp3.set_default.value == true
+        assign fallback_variant = v
+        break
+      endif
+    endfor
+  endunless
+  unless fallback_variant
+    for v in product.variants
+      if v.metafields.custom.set_default
+        assign fallback_variant = v
+        break
+      endif
+    endfor
+  endunless
+  unless fallback_variant
+    assign fallback_variant = product.selected_or_first_available_variant
+  endunless
+  assign per_day = fallback_variant.metafields.custom.value_per_day
+-%}
+
+{%- liquid
+  comment
+    Template produk hanya ada satu per tema, sedangkan desain ini ditulis untuk
+    satu produk saja. Section JSON tidak bisa dipasang bersyarat, jadi
+    gerbangnya ada di sini. Kosongkan setting `handles` untuk semua produk.
+  endcomment
+  assign pdp4_on = false
+  if section.settings.handles == blank
+    assign pdp4_on = true
+  else
+    assign pdp4_needle = product.handle | prepend: ',' | append: ','
+    assign pdp4_hay = section.settings.handles | remove: ' ' | prepend: ',' | append: ','
+    if pdp4_hay contains pdp4_needle
+      assign pdp4_on = true
+    endif
+  endif
+-%}
+{%- if pdp4_on -%}
+{%- comment -%}
+  Aset (CSS, pdp4.js, font Inter, sprite ikon) dimuat DI DALAM gerbang handle,
+  bukan di atasnya. Kalau ia berada di luar, setiap halaman produk di template
+  ini ikut memuat pdp4.css dan Inter dari Google — dan karena tema juga memakai
+  keluarga bernama "Inter" (berkas berbeda, metrik berbeda), judul produk lain
+  ikut bergeser padahal section ini tidak merender apa pun di sana.
+{%- endcomment -%}
+{{ 'pdp4.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'pdp4.js' | asset_url }}" defer></script>
+
+{%- comment -%}
+  Rujukan memuat Inter dari Google Fonts dan seluruh skala tipografi UI Kit
+  diukur pada huruf itu. Tema memakai keluarga lain, jadi tanpa baris ini tidak
+  ada satu pun ukuran di pdp4.css yang jatuh di tempat yang sama.
+{%- endcomment -%}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..500&display=swap" rel="stylesheet">
+
+{% render 'pdp4-icons' %}
+
+{%- capture t_proof %}{% render 'pdp4-copy', value: section.settings.proof_text, key: 'pdp3.buybox.proof_text' %}{% endcapture -%}
+{%- capture t_perday %}{% render 'pdp4-copy', value: section.settings.per_day_suffix, key: 'pdp3.buybox.per_day_suffix' %}{% endcapture -%}
+{%- capture t_cta %}{% render 'pdp4-copy', value: section.settings.cta_label, key: 'pdp3.buybox.cta_label' %}{% endcapture -%}
+{%- capture t_wa %}{% render 'pdp4-copy', value: section.settings.wa_label, key: 'pdp3.buybox.wa_label' %}{% endcapture -%}
+{%- capture t_thumb %}{% render 'pdp4-copy', value: section.settings.thumb_label, key: 'pdp3.buybox.thumb_label' %}{% endcapture -%}
+{%- capture t_meta %}{% render 'pdp4-copy', value: section.settings.review_meta, key: 'pdp3.buybox.review_meta' %}{% endcapture -%}
+{%- comment -%}
+  Rujukan menulis satuan per-hari sebagai kata terpisah ("/ day"), sementara
+  setting menyimpan kalimat utuh ("a day") karena ITU yang sudah diterjemahkan.
+  Satuannya dilucuti di satu tempat supaya hero, kartu paket, dan bilah
+  menempel tidak pernah menampilkan tiga bentuk berbeda.
+{%- endcomment -%}
+{%- capture t_perday_unit %}{% render 'pdp4-per-day-unit', suffix: t_perday %}{% endcapture -%}
+
+<div class="pdp4-page sk-root">
+<section class="sk-container sk-pt-16 sk-pb-48" id="pdp4-hero"><div class="pdp-hero">
+  <div class="pdp-hero__media">
+    {%- comment -%}
+      Galeri.
+
+      Rujukan menggambar delapan slide TERTENTU dalam urutan tertentu: lima foto
+      lalu tiga video. Urutan itu bagian dari desainnya — slide pertama adalah
+      wajah yang menelan kapsul, dan itulah gambar yang menahan orang di halaman.
+
+      Sumbernya blok `slide`, bukan `product.media`, dan itu keputusan yang
+      disengaja: `product.media` dibagi SEMUA tema di toko ini. Menyusun ulang
+      media produk demi tema draft berarti mengubah galeri di tema live pada
+      saat yang sama, untuk semua orang yang sedang membuka halaman itu. Blok
+      section hidup di templates/product.json milik tema ini saja.
+
+      Kalau tidak ada satu pun blok slide, section jatuh ke `product.media`
+      seperti halaman produk lain — jadi tema ini tetap berguna untuk produk
+      yang belum punya galeri versi rujukan.
+    {%- endcomment -%}
+    {%- assign slide_blocks = section.blocks | where: 'type', 'slide' -%}
+    <div class="pdp-gallery" id="pdp4-slides">
+      {%- if slide_blocks.size > 0 -%}
+        {%- for block in slide_blocks -%}
+          {%- comment -%}
+            Grafis galeri ada DUA versi: teksnya dibakar ke dalam gambar, jadi
+            tidak bisa diterjemahkan lewat berkas locale. Setelan `*_url_id`
+            menyimpan versi Indonesia; kalau kosong, jatuh ke versi Inggris
+            supaya slide tanpa teks cukup diisi sekali.
+          {%- endcomment -%}
+          {%- assign slide_img = block.settings.image_url -%}
+          {%- assign slide_video = block.settings.video_url -%}
+          {%- assign slide_poster = block.settings.poster_url -%}
+          {%- if request.locale.iso_code == 'id' -%}
+            {%- if block.settings.image_url_id != blank -%}{%- assign slide_img = block.settings.image_url_id -%}{%- endif -%}
+            {%- if block.settings.video_url_id != blank -%}{%- assign slide_video = block.settings.video_url_id -%}{%- endif -%}
+            {%- if block.settings.poster_url_id != blank -%}{%- assign slide_poster = block.settings.poster_url_id -%}{%- endif -%}
+          {%- endif -%}
+          <div class="pdp-slide native-gallery__slide" data-index="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
+            {%- if slide_video != blank -%}
+              {%- comment -%}
+                Atribut videonya disalin dari rujukan apa adanya. `autoplay`
+                WAJIB berpasangan dengan `muted` — tanpa itu browser menolak
+                memutar dan slide-nya jadi kotak abu-abu diam.
+              {%- endcomment -%}
+              <video src="{{ slide_video }}" poster="{{ slide_poster }}" muted loop playsinline autoplay preload="metadata"></video>
+            {%- else -%}
+              <img src="{{ slide_img }}" alt="{{ block.settings.alt | escape }}" width="800" height="1000"{% if forloop.first %} fetchpriority="high"{% else %} loading="lazy"{% endif %}>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      {%- else -%}
+        {%- assign slide_no = 0 -%}
+        {%- for media in product.media -%}
+          {%- comment -%}
+            Katalog produk ini menyimpan sebagian grafis DUA KALI, satu versi
+            Inggris dan satu Indonesia, ditandai di awal alt sebagai `LANG:EN|`
+            / `LANG:ID|`. Aturan saringannya sama persis dengan
+            sections/MainProductDetail.liquid.
+          {%- endcomment -%}
+          {%- assign media_alt = media.alt -%}
+          {%- if media.alt contains 'LANG:' -%}
+            {%- assign media_lang = media.alt | split: '|' | first | remove: 'LANG:' | downcase -%}
+            {%- unless media_lang == request.locale.iso_code -%}{%- continue -%}{%- endunless -%}
+            {%- assign media_alt = media.alt | split: '|' | last -%}
+          {%- endif -%}
+          {%- if media.alt == 'variant_image' -%}{%- continue -%}{%- endif -%}
+          {%- assign slide_no = slide_no | plus: 1 -%}
+          <div class="pdp-slide native-gallery__slide" data-index="{{ slide_no | minus: 1 }}">
+            {%- case media.media_type -%}
+              {%- when 'video' -%}
+                {{ media | video_tag: image_size: '1200x', muted: true, loop: true, playsinline: true, controls: false, preload: 'metadata' }}
+              {%- when 'external_video' -%}
+                {{ media | external_video_tag }}
+              {%- else -%}
+                {%- if slide_no == 1 -%}
+                  {{ media | image_url: width: 1600 | image_tag: widths: '400, 600, 800, 1000, 1200, 1600', sizes: '(max-width: 959px) 100vw, 480px', fetchpriority: 'high', alt: media_alt }}
+                {%- else -%}
+                  {{ media | image_url: width: 1600 | image_tag: widths: '400, 600, 800, 1000, 1200, 1600', sizes: '(max-width: 959px) 100vw, 480px', loading: 'lazy', alt: media_alt }}
+                {%- endif -%}
+            {%- endcase -%}
+          </div>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+    <div class="pdp-thumbs" id="pdp4-thumbs">
+      {%- if slide_blocks.size > 0 -%}
+        {%- for block in slide_blocks -%}
+          {%- assign thumb_src = block.settings.thumb_url | default: block.settings.poster_url | default: block.settings.image_url -%}
+          {%- if request.locale.iso_code == 'id' -%}
+            {%- assign thumb_src_id = block.settings.thumb_url_id | default: block.settings.poster_url_id | default: block.settings.image_url_id -%}
+            {%- if thumb_src_id != blank -%}{%- assign thumb_src = thumb_src_id -%}{%- endif -%}
+          {%- endif -%}
+          <button type="button" aria-current="{% if forloop.first %}true{% else %}false{% endif %}" aria-label="{{ t_thumb | escape }} {{ forloop.index }}">
+            <img src="{{ thumb_src }}" alt="" width="64" height="64" loading="lazy">
+          </button>
+        {%- endfor -%}
+      {%- else -%}
+        {%- assign thumb_no = 0 -%}
+        {%- for media in product.media -%}
+          {%- if media.alt contains 'LANG:' -%}
+            {%- assign media_lang = media.alt | split: '|' | first | remove: 'LANG:' | downcase -%}
+            {%- unless media_lang == request.locale.iso_code -%}{%- continue -%}{%- endunless -%}
+          {%- endif -%}
+          {%- if media.alt == 'variant_image' -%}{%- continue -%}{%- endif -%}
+          {%- assign thumb_no = thumb_no | plus: 1 -%}
+          <button type="button" aria-current="{% if thumb_no == 1 %}true{% else %}false{% endif %}" aria-label="{{ t_thumb | escape }} {{ thumb_no }}">
+            {{ media.preview_image | image_url: width: 192 | image_tag: widths: '64, 128, 192', sizes: '64px', loading: 'lazy', alt: '' }}
+          </button>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+  </div>
+
+  <div class="sk-stack" style="gap:var(--sk-space-24)">
+    <div class="sk-stack" style="gap:var(--sk-space-16)">
+      {%- comment -%}
+        Nomor izin edar BERBEDA per produk, jadi sumbernya metafield produk
+        (`custom.pdp_certifications`), bukan setting section yang dipakai
+        bersama seluruh katalog. Kalau metafieldnya kosong stripnya tidak
+        dirender sama sekali — menampilkan nomor milik produk lain jauh lebih
+        buruk daripada tidak menampilkan apa pun.
+      {%- endcomment -%}
+      {%- assign certs_src = product.metafields.custom.pdp_certifications | default: section.settings.certs -%}
+      {%- if certs_src != blank -%}
+        <p class="sk-eyebrow sk-text-secondary">
+          {%- assign cert_lines = certs_src | strip | newline_to_br | split: '<br />' -%}
+          {%- assign cert_printed = 0 -%}
+          {%- for line in cert_lines -%}
+            {%- assign line_text = line | strip_html | strip -%}
+            {%- if line_text == blank -%}{%- continue -%}{%- endif -%}
+            {%- comment -%}
+              Rujukan memenggal ketiga nomor dengan `<br>` biasa — di semua
+              lebar, bukan hanya di ponsel. Tiga baris pendek itu bagian dari
+              bentuk eyebrow-nya, jadi ia tidak boleh menyatu di desktop.
+            {%- endcomment -%}
+            {%- if cert_printed > 0 -%}<br>{%- endif -%}
+            {%- assign parts = line_text | split: '|' -%}
+            {{- parts[0] | strip -}}
+            {%- if parts.size > 1 %} {{ parts[1] | strip }}{% endif -%}
+            {%- assign cert_printed = cert_printed | plus: 1 -%}
+          {%- endfor -%}
+        </p>
+      {%- endif -%}
+
+      <h1 class="sk-h1" id="pdp4-h1">{{ product.metafields.pdp3.hero_heading | default: section.settings.heading | default: product.title }}</h1>
+
+      {%- liquid
+        comment
+          Urutan sumber lede, dari yang paling disengaja ke yang paling umum:
+          1. `custom.pdp_lede` — kalimat pembuka khusus halaman ini.
+          2. Deskripsi produk, di-strip dari HTML dan dipotong.
+          3. `custom.excerpt` — tagline pendek, jaring pengaman terakhir.
+        endcomment
+        assign buy_lede = product.metafields.custom.pdp_lede
+        if buy_lede == blank and product.description != blank
+          assign buy_lede = product.description | strip_html | strip | truncatewords: 60
+        endif
+        if buy_lede == blank
+          assign buy_lede = product.metafields.custom.excerpt
+        endif
+        if buy_lede == blank
+          assign buy_lede = section.settings.lede
+        endif
+      -%}
+      {%- if buy_lede != blank -%}
+        <p class="sk-body sk-text-secondary">{{ buy_lede }}</p>
+      {%- endif -%}
+
+      {%- if t_proof != blank -%}
+        {%- comment -%}
+          Tiga wajah pelanggan di depan bintang. Sumbernya snippet bersama:
+          deret yang sama muncul lagi di section penutup, dan dua salinan markup
+          yang sama pasti berpisah suatu hari.
+        {%- endcomment -%}
+        <a class="sk-rating sk-link sk-link--quiet" href="#pdp4-reviews">{% render 'pdp4-faces', a: section.settings.face_1, b: section.settings.face_2, c: section.settings.face_3 %}<span class="pdp-stars" aria-hidden="true">★★★★★</span><span class="sk-num">{{ t_proof }}</span></a>
+      {%- endif -%}
+
+      {%- if per_day != blank -%}
+        {%- comment -%}
+          Metafieldnya berbentuk "Rp 12.700 / day". Rujukan mencetak angkanya
+          saja lalu satuannya sebagai kata terpisah ("/ day"), jadi ekor
+          "/ day" dibuang di sini dan kata satuannya diambil dari setting — di
+          situlah berkas locale bisa menerjemahkannya.
+        {%- endcomment -%}
+        {%- capture per_day_amount -%}{{ per_day | split: '/' | first | strip }}{%- endcapture -%}
+        <p class="pdp-price"><span class="sk-h3 sk-num" id="pdp4-pd-hero">{% render 'pdp4-money', text: per_day_amount %}</span><span class="sk-small sk-text-secondary">/ {{ t_perday_unit }}</span></p>
+      {%- endif -%}
+
+      <a class="sk-btn sk-btn--lg sk-btn--full" href="#pdp4-packs">{{ t_cta }}</a>
+      {%- if section.settings.wa_url != blank -%}
+        <a class="sk-btn sk-btn--text" href="{{ section.settings.wa_url }}" rel="noopener">{{ t_wa }}</a>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%}
+      Strip testimoni berada DI DALAM kolom kanan, di bawah kotak beli — itu
+      susunan rujukan sendiri di layar lebar. Ia satu KOLOM lain dari galeri,
+      bukan satu baris lain, sehingga kolom kanan menjadi lebih tinggi dan
+      galeri bisa menempel sambil kolom kanan bergulir di sebelahnya.
+    {%- endcomment -%}
+    {%- assign quote_list = product.metafields.pdp3.reviews.value -%}
+    {%- if quote_list == blank or quote_list.size == 0 -%}
+      {%- assign quote_list = product.metafields.custom.reviews.value -%}
+    {%- endif -%}
+    {%- if quote_list == blank or quote_list.size == 0 -%}
+      {%- assign quote_list = product.metafields.custom.featured_reviews.value -%}
+    {%- endif -%}
+    {%- if quote_list != blank and quote_list.size > 0 -%}
+      <div class="pdp-strip" id="pdp4-tstrip">
+        {%- for review in quote_list -%}
+          {%- assign r_name = review.name | default: review.reviewer_name | default: review.author -%}
+          {%- assign r_body = review.quote | default: review.review_content | default: review.body -%}
+          {%- if r_body == blank -%}{%- continue -%}{%- endif -%}
+          {%- comment -%}
+            Rujukan memasangkan foto dan kutipan sebagai DUA KOLOM grid
+            (`.pdp-tcard__row`), bukan teks yang mengalir mengelilingi foto
+            seperti generasi sebelumnya. Karena itu `<img>` berada di luar
+            paragrafnya, sebagai saudara — di dalamnya tidak ada sel grid untuk
+            ditempati.
+          {%- endcomment -%}
+          <div class="sk-card pdp-tcard">
+            <div class="pdp-tcard__row">
+              {%- if review.photo != blank -%}<img src="{{ review.photo }}" alt="" loading="lazy" width="72" height="72">{%- endif -%}
+              <p class="sk-body">{{ r_body }}</p>
+            </div>
+            <p class="sk-small sk-text-secondary">{{ r_name }}{% if t_meta != blank %} · {{ t_meta }}{% endif %}</p>
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- elsif section.blocks.size > 0 -%}
+      {%- assign quote_blocks = section.blocks | where: 'type', 'testimonial' -%}
+      {%- if quote_blocks.size > 0 -%}
+        <div class="pdp-strip" id="pdp4-tstrip">
+          {%- for block in quote_blocks -%}
+            <div class="sk-card pdp-tcard" {{ block.shopify_attributes }}>
+              <div class="pdp-tcard__row">
+                {%- if block.settings.photo_url != blank -%}<img src="{{ block.settings.photo_url }}" alt="" loading="lazy" width="72" height="72">{%- endif -%}
+                <p class="sk-body">{{ block.settings.quote }}</p>
+              </div>
+              <p class="sk-small sk-text-secondary">{{ block.settings.name }}{% if block.settings.meta != blank %} · {{ block.settings.meta }}{% endif %}</p>
+            </div>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    {%- endif -%}
+
+    {%- comment -%}
+      Slot tujuan sections/pdp4-router. Kosong di HTML: kalau pdp4.js tidak
+      pernah jalan, section itu tetap berada di tempat aslinya (tepat di bawah
+      hero) dan halamannya tetap lengkap — hanya susunan desktopnya yang jadi
+      satu kolom penuh, bukan kolom kanan.
+    {%- endcomment -%}
+    <div data-pdp4-router-slot hidden></div>
+  </div>
+</div></section>
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "PDP4 Hero / Buy box",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "certs",
+      "label": "Certifications (one per line, \"authority|number\")",
+      "info": "Fallback only. Each product should carry its own custom.pdp_certifications metafield — registration numbers differ per product."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "The nutrients your body stopped getting from food.",
+      "info": "Fallback only — leave blank to use the product title."
+    },
+    {
+      "type": "textarea",
+      "id": "lede",
+      "label": "Intro paragraph",
+      "default": "Stiff joints ease. Energy holds until evening. Deeper sleep. That is what most customers notice first, inside two weeks. Other benefits build with time. One organic leaf, eaten in Indonesia for generations, with the nutrients most meals no longer cover.",
+      "info": "Fallback only — a product’s own custom.excerpt is used when present."
+    },
+    {
+      "type": "text",
+      "id": "proof_text",
+      "label": "Rating line"
+    },
+    {
+      "type": "text",
+      "id": "face_1",
+      "label": "Proof face 1 (image URL)"
+    },
+    {
+      "type": "text",
+      "id": "face_2",
+      "label": "Proof face 2 (image URL)"
+    },
+    {
+      "type": "text",
+      "id": "face_3",
+      "label": "Proof face 3 (image URL)"
+    },
+    {
+      "type": "text",
+      "id": "per_day_suffix",
+      "label": "Per-day suffix"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Primary button"
+    },
+    {
+      "type": "text",
+      "id": "wa_label",
+      "label": "WhatsApp link label"
+    },
+    {
+      "type": "url",
+      "id": "wa_url",
+      "label": "WhatsApp link"
+    },
+    {
+      "type": "header",
+      "content": "Gallery labels"
+    },
+    {
+      "type": "text",
+      "id": "prev_label",
+      "label": "Previous image button label",
+      "default": "Previous image"
+    },
+    {
+      "type": "text",
+      "id": "next_label",
+      "label": "Next image button label",
+      "default": "Next image"
+    },
+    {
+      "type": "text",
+      "id": "thumb_label",
+      "label": "Thumbnail button label"
+    },
+    {
+      "type": "text",
+      "id": "review_meta",
+      "label": "Reviewer suffix"
+    },
+    {
+      "type": "text",
+      "id": "handles",
+      "label": "Only show for these product handles (comma separated)",
+      "default": "organic-moringa-capsules"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Quote"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Name"
+        },
+        {
+          "type": "text",
+          "id": "meta",
+          "label": "Meta",
+          "default": "Verified buyer"
+        },
+        {
+          "type": "text",
+          "id": "photo_url",
+          "label": "Customer photo (image URL)"
+        }
+      ]
+    },
+    {
+      "type": "slide",
+      "name": "Gallery slide",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Slide galeri hero. Isi URL video untuk slide video; kalau kosong, slide ini gambar. URL diambil dari Content → Files."
+        },
+        {
+          "type": "text",
+          "id": "image_url",
+          "label": "Image URL"
+        },
+        {
+          "type": "text",
+          "id": "image_url_id",
+          "label": "Image URL (Bahasa Indonesia)"
+        },
+        {
+          "type": "text",
+          "id": "video_url",
+          "label": "Video URL (mp4)"
+        },
+        {
+          "type": "text",
+          "id": "video_url_id",
+          "label": "Video URL mp4 (Bahasa Indonesia)"
+        },
+        {
+          "type": "text",
+          "id": "poster_url",
+          "label": "Video poster URL"
+        },
+        {
+          "type": "text",
+          "id": "poster_url_id",
+          "label": "Video poster URL (Bahasa Indonesia)"
+        },
+        {
+          "type": "text",
+          "id": "thumb_url",
+          "label": "Thumbnail URL"
+        },
+        {
+          "type": "text",
+          "id": "thumb_url_id",
+          "label": "Thumbnail URL (Bahasa Indonesia)"
+        },
+        {
+          "type": "text",
+          "id": "alt",
+          "label": "Alt text"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

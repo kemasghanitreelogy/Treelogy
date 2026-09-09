@@ -1,0 +1,119 @@
+{%- comment -%}
+  pdp4 — pertanyaan. Salinan DOM `<section id="faq">` dari berkas rujukan.
+
+  Tetap `<details>`/`<summary>` asli, bukan tombol + div: itu satu-satunya
+  bentuk yang bisa dibuka tanpa JavaScript, bisa dicari Ctrl+F saat tertutup,
+  dan sudah dimengerti pembaca layar tanpa satu pun atribut aria.
+
+  Panah dan garisnya milik `.sk-accordion` di UI Kit; rujukan tidak menulis
+  satu pun elemen tambahan di dalam `<summary>`, jadi di sini pun tidak ada.
+{%- endcomment -%}
+
+{%- liquid
+  comment
+    Template produk hanya ada satu per tema, sedangkan desain ini ditulis untuk
+    satu produk saja. Section JSON tidak bisa dipasang bersyarat, jadi
+    gerbangnya ada di sini. Kosongkan setting `handles` untuk semua produk.
+  endcomment
+  assign pdp4_on = false
+  if section.settings.handles == blank
+    assign pdp4_on = true
+  else
+    assign pdp4_needle = product.handle | prepend: ',' | append: ','
+    assign pdp4_hay = section.settings.handles | remove: ' ' | prepend: ',' | append: ','
+    if pdp4_hay contains pdp4_needle
+      assign pdp4_on = true
+    endif
+  endif
+-%}
+{%- if pdp4_on -%}
+{%- capture t_eyebrow %}{% render 'pdp4-copy', value: section.settings.eyebrow, key: 'pdp3.faq.eyebrow' %}{% endcapture -%}
+{%- capture t_heading %}{% render 'pdp4-copy', value: section.settings.heading, key: 'pdp3.faq.heading' %}{% endcapture -%}
+<div class="pdp4-page sk-root">
+<section class="sk-container sk-pb-64" id="pdp4-faq"><div class="pdp-wrap sk-stack" style="gap:var(--sk-space-24)">
+  <div class="sk-stack" style="gap:var(--sk-space-12)">
+    {%- if t_eyebrow != blank -%}<p class="sk-eyebrow sk-text-secondary">{{ t_eyebrow }}</p>{%- endif -%}
+    <h2 class="sk-h2">{% render 'pdp4-sentence-lines', text: t_heading %}</h2>
+  </div>
+  {%- comment -%}
+    Pertanyaan menempel pada PRODUKNYA, bukan pada template: satu tema hanya
+    punya satu templates/product.json, jadi apa pun yang ditulis di setting
+    akan sama untuk semua produk — dan halaman powder akan menjawab pertanyaan
+    kapsul. Urutan sumbernya:
+
+      1. `pdp3.faq`   — JSON dummy tema draft (title + answer teks polos).
+      2. `product.faq` — metaobject `faq_group` yang dibaca tema live; `answer`
+         bertipe rich_text, jadi harus lewat `metafield_tag`. Dicetak langsung
+         ia keluar sebagai JSON mentah di halaman.
+      3. blok template — cadangan untuk produk yang belum punya grup FAQ.
+  {%- endcomment -%}
+  {%- assign faq_json = product.metafields.pdp3.faq.value -%}
+  {%- assign faq_group = product.metafields.product.faq.value -%}
+  {%- assign faq_items = faq_group.faq_items.value -%}
+  <div class="sk-accordion">
+    {%- if faq_json != blank and faq_json.size > 0 -%}
+      {%- for item in faq_json -%}
+        <details{% if forloop.first and section.settings.open_first %} open{% endif %}><summary>{{ item.title }}</summary><div class="sk-accordion__body sk-body">{{ item.answer }}</div></details>
+      {%- endfor -%}
+    {%- elsif faq_items != blank and faq_items.size > 0 -%}
+      {%- for item in faq_items -%}
+        <details{% if forloop.first and section.settings.open_first %} open{% endif %}><summary>{{ item.title }}</summary><div class="sk-accordion__body sk-body rte">{{ item.answer | metafield_tag }}</div></details>
+      {%- endfor -%}
+    {%- else -%}
+      {%- for block in section.blocks -%}
+        <details{% if forloop.first and section.settings.open_first %} open{% endif %} {{ block.shopify_attributes }}><summary>{{ block.settings.question }}</summary><div class="sk-accordion__body sk-body">{{ block.settings.answer }}</div></details>
+      {%- endfor -%}
+    {%- endif -%}
+  </div>
+</div></section>
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "PDP4 FAQ",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_first",
+      "label": "Open the first question",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "handles",
+      "label": "Only show for these product handles (comma separated)",
+      "default": "organic-moringa-capsules"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "qa",
+      "name": "Question",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question"
+        },
+        {
+          "type": "textarea",
+          "id": "answer",
+          "label": "Answer"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

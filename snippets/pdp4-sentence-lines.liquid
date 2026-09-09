@@ -1,0 +1,52 @@
+{% doc %}
+  Memasang pemenggalan baris berkas rujukan ke dalam teks yang datang dari
+  setting.
+
+  Rujukan memenggal judul dengan `<br class="brm">` — baris baru yang HANYA
+  berlaku di bawah 900px, karena di lebar itulah kolomnya diukur. Tag itu tidak
+  bisa diketik ke dalam setting: judulnya ikut berkas locale, dan penerjemah
+  tidak akan menyalin markup.
+
+  Jadi penandanya sebuah karakter — `|` — dan snippet ini yang menerjemahkannya
+  menjadi tag. Penerjemah tinggal memindahkan tandanya ke kata yang benar untuk
+  bahasanya sendiri.
+
+  Yang TIDAK dilakukan snippet ini: menebak penggalan dari tanda baca. Satu-
+  satunya sumber penggalan adalah tanda yang ditulis manusia.
+
+  Ada DUA jenis penggalan, dan bedanya nyata:
+
+    `|`  — penggalan responsif. Menjadi `<br class="brm">`, yang mati di
+           >=900px karena di lebar itu kolomnya sudah cukup lebar sendiri.
+    hard — penggalan yang berlaku di SEMUA lebar. Rujukan memakainya di judul
+           "Three capsules daily. / In the morning. / With food." — di sana
+           tiga barisnya bagian dari bentuk judulnya, bukan akibat sempitnya
+           kolom, jadi ia tidak boleh hilang di desktop.
+
+  @param {string} text - Teks dari setting, boleh memuat `|`
+  @param {boolean} [hard] - true = `<br>` biasa, tidak mati di layar lebar
+
+  @example
+  <h2 class="sk-h2">{% render 'pdp4-sentence-lines', text: t_heading %}</h2>
+{% enddoc %}
+{%- liquid
+  assign sl_parts = text | strip | split: '|'
+  for sl_part in sl_parts
+    assign sl_line = sl_part | strip
+    if sl_line == blank
+      continue
+    endif
+    unless forloop.first
+      comment
+        `<br>` diikuti SATU spasi, persis seperti rujukan: di >=900px tag-nya
+        mati dan spasi itulah yang menahan dua penggalan agar tidak menempel.
+      endcomment
+      if hard
+        echo '<br>'
+      else
+        echo '<br class="brm"> '
+      endif
+    endunless
+    echo sl_line
+  endfor
+-%}

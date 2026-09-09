@@ -1,0 +1,30 @@
+{% doc %}
+  Harga dalam bentuk yang dipakai berkas rujukan: "Rp1.145.000", bukan
+  "Rp 1.145.000".
+
+  Toko menyimpan format uangnya sendiri dan format itu menyisipkan spasi
+  sesudah "Rp". Rujukan tidak punya spasi itu, dan karena brief halaman ini
+  kesamaan 1:1, spasinya dibuang DI SINI — satu tempat — bukan di sepuluh
+  pemanggil yang masing-masing bisa tertinggal.
+
+  Yang dibuang hanya "Rp " persis. Market lain mengeluarkan "$84.00" atau
+  "€72,00" yang tidak memuat pola itu, jadi mereka lewat tanpa disentuh: aturan
+  ini tidak boleh menjadi cara baru harga mata uang lain bocor.
+
+  Dua jalur masuk, dan tepat SATU yang dipakai tiap panggilan — keduanya
+  opsional supaya pemanggil yang hanya membawa `text` tidak dianggap kurang
+  argumen oleh theme-check.
+
+  @param {number} [cents] - Harga dalam satuan terkecil (variant.price)
+  @param {string} [text] - Alternatif: string harga yang sudah jadi
+
+  @example
+  {% render 'pdp4-money', cents: variant.price %}
+{% enddoc %}{%- liquid
+  if text != blank
+    assign pm_out = text
+  else
+    assign pm_out = cents | money_without_trailing_zeros
+  endif
+  echo pm_out | replace: 'Rp ', 'Rp'
+-%}

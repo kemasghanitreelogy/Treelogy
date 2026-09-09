@@ -1,0 +1,101 @@
+{%- comment -%}
+  pdp4 — apa yang terjadi dari waktu ke waktu. Salinan DOM
+  `<section id="days">` dari berkas rujukan: satu kartu berisi eyebrow, judul,
+  dan lima simpul bertitik.
+{%- endcomment -%}
+
+{%- liquid
+  comment
+    Template produk hanya ada satu per tema, sedangkan desain ini ditulis untuk
+    satu produk saja. Section JSON tidak bisa dipasang bersyarat, jadi
+    gerbangnya ada di sini. Kosongkan setting `handles` untuk semua produk.
+  endcomment
+  assign pdp4_on = false
+  if section.settings.handles == blank
+    assign pdp4_on = true
+  else
+    assign pdp4_needle = product.handle | prepend: ',' | append: ','
+    assign pdp4_hay = section.settings.handles | remove: ' ' | prepend: ',' | append: ','
+    if pdp4_hay contains pdp4_needle
+      assign pdp4_on = true
+    endif
+  endif
+-%}
+{%- if pdp4_on -%}
+{%- capture t_eyebrow %}{% render 'pdp4-copy', value: section.settings.eyebrow, key: 'pdp3.timeline.eyebrow' %}{% endcapture -%}
+{%- capture t_heading %}{% render 'pdp4-copy', value: section.settings.heading, key: 'pdp3.timeline.heading' %}{% endcapture -%}
+<div class="pdp4-page sk-root">
+<section class="sk-container sk-pb-64" id="pdp4-days"><div class="pdp-wrap">
+  <div class="sk-card sk-card--pad-lg sk-stack" style="gap:var(--sk-space-16)">
+    <div class="sk-stack" style="gap:var(--sk-space-12)">
+      {%- if t_eyebrow != blank -%}<p class="sk-eyebrow sk-text-secondary">{{ t_eyebrow }}</p>{%- endif -%}
+      <h2 class="sk-h2">{% render 'pdp4-sentence-lines', text: t_heading %}</h2>
+    </div>
+    {%- comment -%}
+      Isi menempel pada PRODUKNYA — alasan yang sama seperti FAQ. `pdp3.timeline`
+      (JSON dummy tema draft) didahulukan; `custom.product_timeline` adalah
+      daftar metaobject `timeline_benefit` yang dibaca tema live. Blok template
+      hanya cadangan.
+    {%- endcomment -%}
+    {%- assign tl_nodes = product.metafields.pdp3.timeline.value -%}
+    {%- if tl_nodes == blank or tl_nodes.size == 0 -%}
+      {%- assign tl_nodes = product.metafields.custom.product_timeline.value -%}
+    {%- endif -%}
+    <div>
+      {%- if tl_nodes != blank and tl_nodes.size > 0 -%}
+        {%- for node in tl_nodes -%}
+          <div class="pdp-node"><i></i><div class="sk-stack" style="gap:var(--sk-space-4)"><p class="sk-title">{{ node.period }}</p><p class="sk-small sk-text-secondary">{{ node.description }}</p></div></div>
+        {%- endfor -%}
+      {%- else -%}
+        {%- for block in section.blocks -%}
+          <div class="pdp-node" {{ block.shopify_attributes }}><i></i><div class="sk-stack" style="gap:var(--sk-space-4)"><p class="sk-title">{{ block.settings.title }}</p><p class="sk-small sk-text-secondary">{{ block.settings.body }}</p></div></div>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+  </div>
+</div></section>
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "PDP4 Timeline",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "handles",
+      "label": "Only show for these product handles (comma separated)",
+      "default": "organic-moringa-capsules"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "node",
+      "name": "Milestone",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "textarea",
+          "id": "body",
+          "label": "Body"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

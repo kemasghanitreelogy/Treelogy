@@ -1,0 +1,109 @@
+{%- comment -%}
+  pdp4 — asal-usul. Salinan DOM `<section id="farm">` dari berkas rujukan:
+  eyebrow, judul, deret bingkai proses yang menggulir mendatar, lalu satu
+  paragraf.
+{%- endcomment -%}
+
+{%- liquid
+  comment
+    Template produk hanya ada satu per tema, sedangkan desain ini ditulis untuk
+    satu produk saja. Section JSON tidak bisa dipasang bersyarat, jadi
+    gerbangnya ada di sini. Kosongkan setting `handles` untuk semua produk.
+  endcomment
+  assign pdp4_on = false
+  if section.settings.handles == blank
+    assign pdp4_on = true
+  else
+    assign pdp4_needle = product.handle | prepend: ',' | append: ','
+    assign pdp4_hay = section.settings.handles | remove: ' ' | prepend: ',' | append: ','
+    if pdp4_hay contains pdp4_needle
+      assign pdp4_on = true
+    endif
+  endif
+-%}
+{%- if pdp4_on -%}
+{%- capture t_eyebrow %}{% render 'pdp4-copy', value: section.settings.eyebrow, key: 'pdp3.farm.eyebrow' %}{% endcapture -%}
+{%- capture t_heading %}{% render 'pdp4-copy', value: section.settings.heading, key: 'pdp3.farm.heading' %}{% endcapture -%}
+{%- capture t_body %}{% render 'pdp4-copy', value: section.settings.body, key: 'pdp3.farm.body' %}{% endcapture -%}
+<div class="pdp4-page sk-root">
+<section class="sk-container sk-pb-64" id="pdp4-farm"><div class="pdp-wrap sk-stack" style="gap:var(--sk-space-24)">
+  <div class="sk-stack" style="gap:var(--sk-space-12)">
+    {%- if t_eyebrow != blank -%}<p class="sk-eyebrow sk-text-secondary">{{ t_eyebrow }}</p>{%- endif -%}
+    <h2 class="sk-h2">{% render 'pdp4-sentence-lines', text: t_heading %}</h2>
+  </div>
+  {%- if section.blocks.size > 0 -%}
+    <div class="pdp-frames">
+      {%- for block in section.blocks -%}
+        <div class="pdp-frame" {{ block.shopify_attributes }}>
+          {%- if block.settings.image != blank -%}
+            {{ block.settings.image | image_url: width: 600 | image_tag: widths: '200, 400, 600', sizes: '200px', loading: 'lazy', alt: '' }}
+          {%- endif -%}
+          {%- capture k_cap %}pdp3.farm.{{ block.id }}.caption{% endcapture -%}
+          {%- capture t_cap %}{% render 'pdp4-copy', value: block.settings.caption, key: k_cap %}{% endcapture -%}
+          <span class="sk-small sk-text-secondary">{{ t_cap }}</span>
+        </div>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+  {%- if t_body != blank -%}<p class="sk-body sk-text-secondary">{{ t_body }}</p>{%- endif -%}
+</div></section>
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "PDP4 Farm",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Body"
+    },
+    {
+      "type": "text",
+      "id": "prev_label",
+      "label": "Previous button label"
+    },
+    {
+      "type": "text",
+      "id": "next_label",
+      "label": "Next button label"
+    },
+    {
+      "type": "text",
+      "id": "handles",
+      "label": "Only show for these product handles (comma separated)",
+      "default": "organic-moringa-capsules"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "frame",
+      "name": "Step",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "Caption"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

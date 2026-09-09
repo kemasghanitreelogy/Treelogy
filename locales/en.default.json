@@ -765,6 +765,14 @@
       "cta_label": "Choose your pack",
       "wa_label": "Ask a real person on WhatsApp",
       "note": "A real person answers seven days a week."
+    },
+    "footer": {
+      "heading": "Receive our news first.",
+      "body": "Exclusive offers, bundles and new products before launch, updates from our farms and factory, and the how-to guides on getting more from Moringa.",
+      "email_label": "Email",
+      "cta_label": "Count me in",
+      "consent_label": "I accept the privacy policy",
+      "thanks": "Thank you. Check your inbox to confirm."
     }
   }
 }

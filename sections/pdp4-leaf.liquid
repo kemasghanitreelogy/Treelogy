@@ -1,0 +1,140 @@
+{%- comment -%}
+  pdp4 — "kenapa daun". Salinan DOM `<section id="leaf">` dari berkas rujukan:
+  pita gelap (`sk-inverse`) berisi potret + teks berdampingan, enam ubin angka,
+  dan catatan kaki.
+
+  Pita gelapnya dicat oleh PEMBUNGKUS section, bukan oleh section-nya — lihat
+  blok BRIDGE di assets/pdp4.css. Di rujukan `<section class="sk-inverse">`
+  adalah anak langsung `<main>` sehingga latarnya sampai ke tepi layar sendiri;
+  di sini ia satu tingkat lebih dalam.
+{%- endcomment -%}
+
+{%- liquid
+  comment
+    Template produk hanya ada satu per tema, sedangkan desain ini ditulis untuk
+    satu produk saja. Section JSON tidak bisa dipasang bersyarat, jadi
+    gerbangnya ada di sini. Kosongkan setting `handles` untuk semua produk.
+  endcomment
+  assign pdp4_on = false
+  if section.settings.handles == blank
+    assign pdp4_on = true
+  else
+    assign pdp4_needle = product.handle | prepend: ',' | append: ','
+    assign pdp4_hay = section.settings.handles | remove: ' ' | prepend: ',' | append: ','
+    if pdp4_hay contains pdp4_needle
+      assign pdp4_on = true
+    endif
+  endif
+-%}
+{%- if pdp4_on -%}
+{%- capture t_eyebrow %}{% render 'pdp4-copy', value: section.settings.eyebrow, key: 'pdp3.leaf.eyebrow' %}{% endcapture -%}
+{%- capture t_heading %}{% render 'pdp4-copy', value: section.settings.heading, key: 'pdp3.leaf.heading' %}{% endcapture -%}
+{%- capture t_body %}{% render 'pdp4-copy', value: section.settings.body, key: 'pdp3.leaf.body' %}{% endcapture -%}
+{%- capture t_lead %}{% render 'pdp4-copy', value: section.settings.lead, key: 'pdp3.leaf.lead' %}{% endcapture -%}
+{%- capture t_foot %}{% render 'pdp4-copy', value: section.settings.footnote, key: 'pdp3.leaf.footnote' %}{% endcapture -%}
+<div class="pdp4-page sk-root">
+<section class="sk-inverse sk-py-64" id="pdp4-leaf"><div class="sk-container">
+  <div class="pdp-wrap sk-stack" style="gap:var(--sk-space-24)">
+    <div class="pdp-split">
+      {%- if section.settings.image != blank -%}
+        <div class="pdp-media">
+          {{ section.settings.image | image_url: width: 900 | image_tag: widths: '400, 600, 900', sizes: '(max-width: 959px) 100vw, 320px', loading: 'lazy', alt: section.settings.image_alt }}
+        </div>
+      {%- endif -%}
+      <div class="sk-stack" style="gap:var(--sk-space-16)">
+        {%- if t_eyebrow != blank -%}<p class="sk-eyebrow sk-text-secondary">{{ t_eyebrow }}</p>{%- endif -%}
+        <h2 class="sk-h1">{% render 'pdp4-sentence-lines', text: t_heading %}</h2>
+        {%- if t_body != blank -%}<p class="sk-body sk-text-secondary">{{ t_body }}</p>{%- endif -%}
+        {%- if t_lead != blank -%}<p class="sk-lead">{% render 'pdp4-sentence-lines', text: t_lead %}</p>{%- endif -%}
+      </div>
+    </div>
+    {%- if section.blocks.size > 0 -%}
+      <div class="pdp-tiles">
+        {%- for block in section.blocks -%}
+          {%- capture k %}pdp3.leaf.{{ block.id }}{% endcapture -%}
+          {%- assign k_value = k | append: '.value' -%}
+          {%- assign k_label = k | append: '.label' -%}
+          {%- capture t_value %}{% render 'pdp4-copy', value: block.settings.value, key: k_value %}{% endcapture -%}
+          {%- capture t_label %}{% render 'pdp4-copy', value: block.settings.label, key: k_label %}{% endcapture -%}
+          {%- comment -%}
+            `sk-light` mengembalikan ubin ke ground terang di dalam pita gelap —
+            itu peran kelas ini di UI Kit, dan itulah yang rujukan pakai.
+          {%- endcomment -%}
+          <div class="pdp-tile sk-light" {{ block.shopify_attributes }}><b>{{ t_value }}</b><span class="sk-small">{% render 'pdp4-sentence-lines', text: t_label, hard: true %}</span></div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+    {%- if t_foot != blank -%}<p class="sk-small sk-text-secondary">{{ t_foot }}</p>{%- endif -%}
+  </div>
+</div></section>
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "PDP4 Why a leaf",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Image alt text",
+      "default": "Fresh moringa leaves in a basket"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Body"
+    },
+    {
+      "type": "text",
+      "id": "lead",
+      "label": "Lead line"
+    },
+    {
+      "type": "text",
+      "id": "footnote",
+      "label": "Footnote"
+    },
+    {
+      "type": "text",
+      "id": "handles",
+      "label": "Only show for these product handles (comma separated)",
+      "default": "organic-moringa-capsules"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "tile",
+      "name": "Nutrient tile",
+      "settings": [
+        {
+          "type": "text",
+          "id": "value",
+          "label": "Value"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
