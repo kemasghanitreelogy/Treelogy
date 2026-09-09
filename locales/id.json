@@ -774,6 +774,7 @@
       "cta_label": "Daftarkan saya",
       "consent_label": "Saya menyetujui kebijakan privasi",
       "thanks": "Terima kasih. Cek email kamu untuk konfirmasi."
-    }
+    },
+    "wa_message": "Halo Treelogy, saya ingin bertanya tentang %product%."
   }
 }

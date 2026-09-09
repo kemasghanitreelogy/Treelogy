@@ -773,6 +773,7 @@
       "cta_label": "Count me in",
       "consent_label": "I accept the privacy policy",
       "thanks": "Thank you. Check your inbox to confirm."
-    }
+    },
+    "wa_message": "Hi Treelogy, I would like to ask about %product%."
   }
 }

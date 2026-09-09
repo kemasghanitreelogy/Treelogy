@@ -31,6 +31,8 @@
 {%- capture t_cta %}{% render 'pdp4-copy', value: section.settings.cta_label, key: 'pdp3.close.cta_label' %}{% endcapture -%}
 {%- capture t_wa %}{% render 'pdp4-copy', value: section.settings.wa_label, key: 'pdp3.close.wa_label' %}{% endcapture -%}
 {%- capture t_note %}{% render 'pdp4-copy', value: section.settings.note, key: 'pdp3.close.note' %}{% endcapture -%}
+{%- capture t_wa_msg %}{% render 'pdp4-copy', value: section.settings.wa_message, key: 'pdp3.wa_message' %}{% endcapture -%}
+{%- assign t_wa_msg = t_wa_msg | replace: '%product%', product.title -%}
 <div class="pdp4-page sk-root">
 <section class="sk-inverse sk-py-64 pdp-center pdp-foot-space" id="pdp4-close"><div class="sk-container">
   <div class="pdp-wrap sk-stack" style="gap:var(--sk-space-24);align-items:center">
@@ -40,7 +42,7 @@
     {%- endif -%}
     <a class="sk-btn sk-btn--lg" href="#pdp4-packs">{{ t_cta }}</a>
     {%- if section.settings.wa_url != blank -%}
-      <a class="sk-btn sk-btn--outline sk-btn--lg" href="{{ section.settings.wa_url }}" rel="noopener"><svg class="sk-btn__icon pdp-ico" aria-hidden="true"><use href="#i-wa"/></svg>{{ t_wa }}</a>
+      <a class="sk-btn sk-btn--outline sk-btn--lg" href="{% render 'pdp4-wa-url', url: section.settings.wa_url, message: t_wa_msg %}" rel="noopener"><svg class="sk-btn__icon pdp-ico" aria-hidden="true"><use href="#i-wa"/></svg>{{ t_wa }}</a>
     {%- endif -%}
     {%- if t_note != blank -%}<p class="sk-small sk-text-secondary">{{ t_note }}</p>{%- endif -%}
   </div>
@@ -92,6 +94,12 @@
       "type": "url",
       "id": "wa_url",
       "label": "WhatsApp link"
+    },
+    {
+      "type": "text",
+      "id": "wa_message",
+      "label": "WhatsApp opening message",
+      "info": "%product% is replaced by the product title. Leave blank to use the locale files."
     },
     {
       "type": "text",

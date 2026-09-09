@@ -75,6 +75,9 @@
 {%- capture t_oold %}{% render 'pdp4-copy', value: section.settings.order_oldest, key: 'pdp3.reviews.order_oldest' %}{% endcapture -%}
 {%- capture t_rall %}{% render 'pdp4-copy', value: section.settings.rating_all, key: 'pdp3.reviews.rating_all' %}{% endcapture -%}
 {%- capture t_empty %}{% render 'pdp4-copy', value: section.settings.empty_label, key: 'pdp3.reviews.empty_label' %}{% endcapture -%}
+{%- capture t_wa_msg %}{% render 'pdp4-copy', value: section.settings.wa_message, key: 'pdp3.wa_message' %}{% endcapture -%}
+{%- assign t_wa_msg = t_wa_msg | replace: '%product%', product.title -%}
+{%- capture t_ask_href %}{% render 'pdp4-wa-url', url: section.settings.ask_url, message: t_wa_msg %}{% endcapture -%}
 <div class="pdp4-page sk-root">
 {%- comment -%}
   Ruas-ruas di bawah adalah yang dibutuhkan assets/pdp4.js untuk memanggil
@@ -140,7 +143,7 @@
           dirender sama sekali; lebih baik hilang daripada tidak menuju ke
           mana-mana.
         {%- endcomment -%}
-        <button class="sk-btn sk-btn--outline sk-btn--sm" type="button" data-pdp4-ask{% if section.settings.ask_url != blank %} data-href="{{ section.settings.ask_url | escape }}"{% endif %}>{{ t_ask }}</button>
+        <button class="sk-btn sk-btn--outline sk-btn--sm" type="button" data-pdp4-ask{% if section.settings.ask_url != blank %} data-href="{{ t_ask_href | strip | escape }}"{% endif %}>{{ t_ask }}</button>
       </div>
     </div>
 
@@ -293,6 +296,12 @@
       "type": "text",
       "id": "ask_label",
       "label": "Ask a question button"
+    },
+    {
+      "type": "text",
+      "id": "wa_message",
+      "label": "WhatsApp opening message",
+      "info": "%product% is replaced by the product title. Leave blank to use the locale files."
     },
     {
       "type": "url",

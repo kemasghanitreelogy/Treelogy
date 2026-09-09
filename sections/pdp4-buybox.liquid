@@ -107,6 +107,17 @@
 {%- capture t_perday %}{% render 'pdp4-copy', value: section.settings.per_day_suffix, key: 'pdp3.buybox.per_day_suffix' %}{% endcapture -%}
 {%- capture t_cta %}{% render 'pdp4-copy', value: section.settings.cta_label, key: 'pdp3.buybox.cta_label' %}{% endcapture -%}
 {%- capture t_wa %}{% render 'pdp4-copy', value: section.settings.wa_label, key: 'pdp3.buybox.wa_label' %}{% endcapture -%}
+{%- comment -%}
+  Pesan pembuka WhatsApp. Nama produknya DISISIPKAN dari `product.title`, bukan
+  dituliskan di locale: gerbang handle bisa dipindah ke produk lain, dan pesan
+  yang menyebut produk yang salah lebih buruk daripada pesan kosong.
+
+  Penandanya `%product%`, bukan `{{ product }}` — kurung kurawal di dalam nilai
+  locale dieksekusi ulang oleh Liquid dan mematahkan lexernya. Pola yang sama
+  sudah dipakai `rating_pill_label` di section ulasan.
+{%- endcomment -%}
+{%- capture t_wa_msg %}{% render 'pdp4-copy', value: section.settings.wa_message, key: 'pdp3.wa_message' %}{% endcapture -%}
+{%- assign t_wa_msg = t_wa_msg | replace: '%product%', product.title -%}
 {%- capture t_thumb %}{% render 'pdp4-copy', value: section.settings.thumb_label, key: 'pdp3.buybox.thumb_label' %}{% endcapture -%}
 {%- capture t_meta %}{% render 'pdp4-copy', value: section.settings.review_meta, key: 'pdp3.buybox.review_meta' %}{% endcapture -%}
 {%- comment -%}
@@ -308,7 +319,7 @@
 
       <a class="sk-btn sk-btn--lg sk-btn--full" href="#pdp4-packs">{{ t_cta }}</a>
       {%- if section.settings.wa_url != blank -%}
-        <a class="sk-btn sk-btn--text" href="{{ section.settings.wa_url }}" rel="noopener">{{ t_wa }}</a>
+        <a class="sk-btn sk-btn--text" href="{% render 'pdp4-wa-url', url: section.settings.wa_url, message: t_wa_msg %}" rel="noopener">{{ t_wa }}</a>
       {%- endif -%}
     </div>
 
@@ -440,6 +451,12 @@
       "type": "url",
       "id": "wa_url",
       "label": "WhatsApp link"
+    },
+    {
+      "type": "text",
+      "id": "wa_message",
+      "label": "WhatsApp opening message",
+      "info": "%product% is replaced by the product title. Leave blank to use the locale files."
     },
     {
       "type": "header",

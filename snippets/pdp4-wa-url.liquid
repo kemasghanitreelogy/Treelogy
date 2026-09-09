@@ -1,0 +1,40 @@
+{% doc %}
+  Menempelkan pesan pembuka ke tautan WhatsApp.
+
+  Tema sudah punya pola ini di sections/io-sticky-cta dan lp-floating-cta
+  (`?text={{ ... | url_encode }}`), tapi keduanya membawa pesan milik landing
+  page Inside Out — "saya ingin bertanya tentang Inside Out Protocol". Halaman
+  kapsul sebelumnya tidak membawa pesan sama sekali, jadi WhatsApp terbuka
+  dengan kolom kosong dan pembeli harus mengarang sendiri kalimat pembukanya.
+
+  Dipisah jadi snippet karena tautannya ada di TIGA tempat (hero, penutup,
+  tombol tanya di ulasan). Kalau perakitannya disalin tiga kali, satu salinan
+  akan tertinggal saat nomornya atau pesannya berubah.
+
+  `url_encode` HANYA dikenakan pada pesannya. Mengenakannya pada seluruh URL
+  ikut mengubah `://` dan `?` menjadi persen dan tautannya mati.
+
+  @param {string} [url] - Tautan WhatsApp dasar, mis. https://wa.me/62811...
+  @param {string} [message] - Pesan pembuka; kosong = tautan dikembalikan apa adanya
+
+  @example
+  <a href="{% render 'pdp4-wa-url', url: section.settings.wa_url, message: t_wa_msg %}">
+{% enddoc %}{%- liquid
+  assign wa_base = url | strip
+  assign wa_msg = message | strip
+  if wa_base != blank and wa_msg != blank
+    comment
+      Sebagian tautan sudah membawa query sendiri (`api.whatsapp.com/send?phone=`),
+      jadi pemisahnya ditentukan, bukan diasumsikan `?`.
+    endcomment
+    if wa_base contains '?'
+      assign wa_join = '&'
+    else
+      assign wa_join = '?'
+    endif
+    assign wa_enc = wa_msg | url_encode
+    echo wa_base | append: wa_join | append: 'text=' | append: wa_enc
+  else
+    echo wa_base
+  endif
+-%}
