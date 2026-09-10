@@ -1092,6 +1092,10 @@
         assign is_chromeless = true
         assign chromeless_bg = '#ffffff'
       endif
+      if template == 'page.kabar-dari-kebun'
+        assign is_chromeless = true
+        assign chromeless_bg = '#ffffff'
+      endif
     -%}
     {%- if is_chromeless -%}
       <style>

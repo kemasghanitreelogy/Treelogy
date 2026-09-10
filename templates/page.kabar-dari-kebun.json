@@ -1,0 +1,44 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "tokens": {
+      "type": "og-tokens",
+      "settings": {
+        "color_bg": "#fbfcf7",
+        "color_outer": "#ffffff",
+        "color_ink": "#2a3b34",
+        "color_card": "#bacba1",
+        "color_accent": "#a5bb86",
+        "color_cream": "#f8f8f2",
+        "container_width": 600
+      }
+    },
+    "footer": {
+      "type": "og-footer",
+      "settings": {
+        "logo": "shopify://shop_images/founder-letter-badge.png",
+        "social_instagram": "https://www.instagram.com/treelogy/",
+        "social_facebook": "https://www.facebook.com/treelogy.moringa",
+        "social_tiktok": "https://www.tiktok.com/@treelogy.moringa",
+        "social_pinterest": "https://www.pinterest.com/treelogymoringa/",
+        "social_whatsapp": "https://wa.me/6281139603993",
+        "copyright": "© Treelogy 2026. All Rights Reserved.",
+        "background_color": "#2A3B34",
+        "text_color": "#F8F8F2",
+        "force_id": true
+      }
+    }
+  },
+  "order": [
+    "tokens",
+    "footer"
+  ]
+}
