@@ -148,20 +148,69 @@
         .replace(/\s+/g, ' ')
         .trim();
     }
+    /* Kunci LONGGAR: kata sambung dibuang dan seluruh spasi dirapatkan, jadi
+       "blood sugar & cholesterol", "blood_sugar_and_cholesterol" dan
+       "blood_sugar_cholesterol" sama-sama menjadi "bloodsugarcholesterol".
+       Dipakai sesudah pencocokan persis gagal. */
+    function looseKey(v) {
+      return normKey(v).replace(/\band\b/g, ' ').replace(/\s+/g, '');
+    }
     var qs = new URLSearchParams(location.search);
+
+    /* `&` YANG TIDAK DI-ENCODE MEMOTONG NILAINYA.
+
+       `?utm_content=blood_sugar_&_cholesterol` bukan satu parameter: browser
+       membacanya sebagai `utm_content=blood_sugar_` DITAMBAH parameter kosong
+       bernama `_cholesterol`. Router lama hanya melihat separuh depannya, tidak
+       menemukan chip yang cocok, lalu jatuh ke chip pertama — persis yang
+       dilaporkan user 10 Sep (satu-satunya chip ber-`&` di daftar).
+
+       Nilainya dirangkai kembali di sini: setiap parameter SESUDAH utm_content
+       yang bernilai kosong dan bukan parameter yang kita kenali adalah pecahan
+       yang terpotong, jadi ia disambung lagi. Nilai yang sudah benar (memakai
+       `%26`) tidak tersentuh karena tidak meninggalkan pecahan apa pun. */
+    var DIKENAL = /^(r|cb|variant|utm_[a-z_]+|gclid|fbclid|ttclid|msclkid|_kx|srsltid|gad_source|gbraid|wbraid)$/i;
+    function utmContentUtuh() {
+      var utm = qs.get('utm_content');
+      if (!utm) return '';
+      var keys = [];
+      qs.forEach(function (v, k) { keys.push([k, v]); });
+      var i = keys.map(function (kv) { return kv[0]; }).indexOf('utm_content');
+      if (i < 0) return utm;
+      var out = utm;
+      for (var j = i + 1; j < keys.length; j++) {
+        if (keys[j][1] !== '' || DIKENAL.test(keys[j][0])) break;
+        out += ' and ' + keys[j][0];
+      }
+      return out;
+    }
+
+    function cariRute(key, fn) {
+      if (!key) return null;
+      var hit = routes.filter(function (x) { return fn(x.id) === key; })[0]
+             || routes.filter(function (x) { return fn(x.chip) === key; })[0];
+      return hit ? hit.id : null;
+    }
+    function cariAwalan(key) {
+      if (!key || key.length < 4) return null;
+      var hit = routes.filter(function (x) {
+        return looseKey(x.id).indexOf(key) === 0 || looseKey(x.chip).indexOf(key) === 0;
+      });
+      /* Hanya kalau SATU-SATUNYA. "for my ..." cocok ke dua chip sekaligus,
+         dan menebak di antaranya lebih buruk daripada memakai chip pertama. */
+      return hit.length === 1 ? hit[0].id : null;
+    }
+
     function pick() {
       var r = qs.get('r');
       if (r && routes.some(function (x) { return x.id === r; })) return r;
 
-      var utm = qs.get('utm_content');
+      var utm = utmContentUtuh();
       if (utm) {
-        var key = normKey(utm);
-        if (key) {
-          var byId = routes.filter(function (x) { return normKey(x.id) === key; })[0];
-          if (byId) return byId.id;
-          var byChip = routes.filter(function (x) { return normKey(x.chip) === key; })[0];
-          if (byChip) return byChip.id;
-        }
+        return cariRute(normKey(utm), normKey)
+            || cariRute(looseKey(utm), looseKey)
+            || cariAwalan(looseKey(utm))
+            || routes[0].id;
       }
       return routes[0].id;
     }
