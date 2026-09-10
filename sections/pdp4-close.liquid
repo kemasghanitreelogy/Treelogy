@@ -2,10 +2,11 @@
   pdp4 — penutup. Salinan DOM `<section id="close">` dari berkas rujukan: pita
   gelap rata tengah, judul, baris wajah, dua tombol penuh, satu catatan.
 
-  `.pdp-foot-space` menandai section ini sebagai yang terakhir sebelum footer:
-  blok BRIDGE di pdp4.css memakai penanda itu untuk memesan ruang di bawah
-  bilah menempel (rujukan memakainya di `.pdp-root`, yang tidak ada di sini
-  karena halaman ini terpecah jadi dua belas pembungkus).
+  Penanda `pdp-foot-space` DULU ada di sini, waktu penutup masih elemen
+  terakhir halaman. Sejak sections/pdp4-footer ada, ia pindah ke sana — kalau
+  tetap di sini, 88px ruang untuk bilah menempel menganga di TENGAH halaman
+  (penutup ke footer jadi 216px, rujukan 128px) sementara footer yang benar-
+  benar terakhir tidak punya ruang sama sekali.
 {%- endcomment -%}
 
 {%- liquid
@@ -34,7 +35,7 @@
 {%- capture t_wa_msg %}{% render 'pdp4-copy', value: section.settings.wa_message, key: 'pdp3.wa_message' %}{% endcapture -%}
 {%- assign t_wa_msg = t_wa_msg | replace: '%product%', product.title -%}
 <div class="pdp4-page sk-root">
-<section class="sk-inverse sk-py-64 pdp-center pdp-foot-space" id="pdp4-close"><div class="sk-container">
+<section class="sk-inverse sk-py-64 pdp-center" id="pdp4-close"><div class="sk-container">
   <div class="pdp-wrap sk-stack" style="gap:var(--sk-space-24);align-items:center">
     <h2 class="sk-h1">{% render 'pdp4-sentence-lines', text: t_heading %}</h2>
     {%- if t_join != blank -%}

@@ -1242,9 +1242,14 @@ html{scroll-behavior:smooth}
    has to survive margin collapsing between wrappers. */
 .pdp4-page{display:flow-root}
 
-/* The reference's `.pdp-root` reserves room for the sticky bar with
-   `padding-bottom:88px`. There is no single root here — the last section pays
-   for it instead. */
+/* Rujukan memesan ruang untuk bilah menempel lewat `.pdp-root
+   { padding-bottom:88px }`. Di sini tidak ada satu root — section TERAKHIR
+   yang membayarnya, ditandai `pdp-foot-space`.
+
+   Penanda itu harus ikut berpindah ketika elemen terakhirnya berganti. Sempat
+   tertinggal di section penutup sesudah pdp4-footer lahir, dan akibatnya 88px
+   kosong menganga di tengah halaman (penutup ke footer 216px, rujukan 128px)
+   sementara footer yang sebenarnya terakhir tidak punya ruang sama sekali. */
 @media(max-width:959px){
   .shopify-section:has(> .pdp4-page > .pdp-foot-space){padding-bottom:88px}
 }

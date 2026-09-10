@@ -9,6 +9,11 @@
   dipertahankan demi tautan internal, section ini tempatnya menambahkannya
   kembali, bukan dengan menghidupkan lagi footer tema.
 
+  `pdp-foot-space` memesan ruang di bawah untuk bilah beli yang menempel
+  (`position:fixed`, hanya di bawah 960px). Ia harus menempel pada elemen
+  TERAKHIR halaman; sebelumnya ia ada di section penutup, dan sejak footer ini
+  lahir penanda itu memaku 88px kosong di tengah halaman.
+
   Formulirnya BUKAN salinan mati seperti di rujukan (`onsubmit="return false"`).
   Ia `{% form 'customer' %}` milik Shopify, endpoint yang sama dengan formulir
   di footer tema, jadi pendaftar sungguhan tetap masuk. Kotak centang
@@ -41,8 +46,18 @@
 {%- capture t_cta %}{% render 'pdp4-copy', value: section.settings.cta_label, key: 'pdp3.footer.cta_label' %}{% endcapture -%}
 {%- capture t_consent %}{% render 'pdp4-copy', value: section.settings.consent_label, key: 'pdp3.footer.consent_label' %}{% endcapture -%}
 {%- capture t_thanks %}{% render 'pdp4-copy', value: section.settings.thanks, key: 'pdp3.footer.thanks' %}{% endcapture -%}
+{%- capture t_copyright %}{% render 'pdp4-copy', value: section.settings.copyright, key: 'pdp3.footer.copyright' %}{% endcapture -%}
+{%- comment -%}
+  Tahunnya dihitung ke variabel SENDIRI dulu. Ditulis sebagai satu rantai
+  (`replace: '%year%', 'now' | date: '%Y'`), `date` mengenai hasil `replace`
+  — sebuah kalimat, bukan tanggal — dan Liquid mengembalikannya apa adanya.
+  Hasilnya "© Treelogy Premium Organic Moringa now. All rights reserved."
+  (terlihat di tangkapan layar 10 Sep).
+{%- endcomment -%}
+{%- assign pdp4_year = 'now' | date: '%Y' -%}
+{%- assign t_copyright = t_copyright | replace: '%year%', pdp4_year | replace: '%shop%', shop.name -%}
 <div class="pdp4-page sk-root">
-<footer class="sk-inverse sk-py-64 pdp-foot" id="pdp4-footer"><div class="sk-container">
+<footer class="sk-inverse sk-py-64 pdp-foot pdp-foot-space" id="pdp4-footer"><div class="sk-container">
   <div class="pdp-wrap pdp-foot__grid">
     <div class="sk-stack" style="gap:var(--sk-space-12)">
       {%- if t_heading != blank -%}<h2 class="sk-h2">{% render 'pdp4-sentence-lines', text: t_heading %}</h2>{%- endif -%}
@@ -101,6 +116,15 @@
           {%- endfor -%}
         </div>
       {%- endif -%}
+      {%- comment -%}
+        Rujukan menutup baris legal dengan "© Treelogy 2024. All rights
+        reserved." — tahunnya dituliskan keras di sana, dan sudah basi dua
+        tahun. Di sini tahunnya diambil dari jam server dan nama tokonya dari
+        `shop.name`, jadi ia tidak pernah perlu disentuh lagi.
+      {%- endcomment -%}
+      {%- if t_copyright != blank -%}
+        <p class="sk-caption sk-text-secondary">{{ t_copyright }}</p>
+      {%- endif -%}
     </div>
   </div>
 </div></footer>
@@ -141,6 +165,12 @@
       "type": "text",
       "id": "thanks",
       "label": "Thank-you line"
+    },
+    {
+      "type": "text",
+      "id": "copyright",
+      "label": "Copyright line",
+      "info": "%year% and %shop% are replaced automatically. Leave blank to use the locale files."
     },
     {
       "type": "text",

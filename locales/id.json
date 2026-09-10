@@ -773,7 +773,8 @@
       "email_label": "Email",
       "cta_label": "Daftarkan saya",
       "consent_label": "Saya menyetujui kebijakan privasi",
-      "thanks": "Terima kasih. Cek email kamu untuk konfirmasi."
+      "thanks": "Terima kasih. Cek email kamu untuk konfirmasi.",
+      "copyright": "© %shop% %year%. Seluruh hak cipta dilindungi."
     },
     "wa_message": "Halo Treelogy, saya ingin bertanya tentang %product%."
   }
