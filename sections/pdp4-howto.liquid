@@ -34,12 +34,19 @@
       diputar saat terlihat (assets/pdp4.js) — sebuah video yang berputar di
       luar layar hanya memanaskan ponsel orang.
 
-      `muted` wajib berpasangan dengan `autoplay`: tanpa itu browser menolak
-      memutar dan yang tersisa cuma poster diam.
+      `muted` wajib ada: `play()` pada video bersuara ditolak browser tanpa
+      isyarat pengguna, dan yang tersisa cuma poster diam.
     {%- endcomment -%}
     {%- if section.settings.video_url != blank -%}
       <div class="pdp-video">
-        <video id="pdp4-howto-video" src="{{ section.settings.video_url }}" poster="{{ section.settings.poster_url }}" muted loop playsinline autoplay preload="metadata"></video>
+        {%- comment -%}
+          `src` diparkir di `data-src` dan `autoplay` tidak ditulis: dengan
+          keduanya Chrome mengunduh video utuh (155 KB) saat halaman lahir,
+          jauh sebelum bagian ini terlihat. pdp4.js memasang sumbernya saat
+          bagian ini mendekati viewport, lalu memutarnya. Poster ikut
+          diparkir di `data-poster` — atribut `poster` diunduh seketika.
+        {%- endcomment -%}
+        <video id="pdp4-howto-video" data-src="{{ section.settings.video_url }}" data-poster="{{ section.settings.poster_url }}" muted loop playsinline preload="none"></video>
         {%- if t_eyebrow != blank -%}<p class="sk-eyebrow sk-text-secondary">{{ t_eyebrow }}</p>{%- endif -%}
       </div>
     {%- elsif t_eyebrow != blank -%}

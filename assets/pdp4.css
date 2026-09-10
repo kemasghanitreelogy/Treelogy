@@ -1651,3 +1651,9 @@ header.header-nav .header-menu{
    memberi `[hidden]` aturan sendiri, dan `display:flex`/`grid` dari kelas
    komponen mengalahkan `display:none` bawaan browser. */
 .pdp4-page [hidden]{display:none!important}
+
+/* content-visibility:auto pada bagian di bawah lipatan pernah DICOBA (10 Sep
+   2026) dan DIBUANG: penampung `contain-intrinsic-size` tidak pernah sama
+   dengan tinggi aslinya, jadi begitu bagian di atasnya dirender, sasaran
+   chip router meleset (-141 px, bukan +63) dan CLS saat gulir naik dari
+   0,006 ke 0,49. Jangan dipasang lagi tanpa tinggi per-bagian yang diukur. */

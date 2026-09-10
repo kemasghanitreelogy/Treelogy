@@ -1,0 +1,35 @@
+{% doc %}
+  Merakit atribut `srcset` dari satu URL Files lewat transformasi CDN Shopify.
+
+  Pasangan dari snippet pdp4-cdn-src: satu entri per lebar, dipisah koma,
+  masing-masing ber-deskriptor `w` supaya browser memilih sendiri menurut
+  lebar tampilan dan kerapatan layar (`sizes` ditulis di markup pemanggil).
+  Untuk URL di luar CDN Shopify hasilnya kosong — pemanggil wajib memeriksa
+  `!= blank` sebelum menulis atributnya, karena srcset berisi URL yang sama
+  berulang hanya menyesatkan browser.
+
+  @param {string} url - URL gambar dari setelan section
+  @param {string} widths - daftar lebar dipisah koma, mis. '480,800,1200'
+
+  @example
+  {% capture set %}{% render 'pdp4-cdn-srcset', url: slide_img, widths: '480,640,800,1000,1200,1600' %}{% endcapture %}
+{% enddoc %}
+{%- liquid
+  if url contains 'cdn.shopify.com' or url contains '/cdn/shop/'
+    assign list = widths | remove: ' ' | split: ','
+    for w in list
+      unless forloop.first
+        echo ', '
+      endunless
+      # Hasil render dibungkus capture + strip: tag doc di kepala snippet
+      # menyisakan satu baris kosong yang ikut masuk ke atribut.
+      capture one
+        render 'pdp4-cdn-src', url: url, width: w
+      endcapture
+      echo one | strip
+      echo ' '
+      echo w
+      echo 'w'
+    endfor
+  endif
+-%}

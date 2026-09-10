@@ -1,0 +1,29 @@
+{% doc %}
+  Meminta ukuran tertentu dari CDN Shopify untuk gambar galeri PDP kapsul.
+
+  Grafis galeri disimpan di Files (bukan media produk), jadi filter `image_url`
+  tidak bisa dipakai — setelannya berupa URL polos. CDN Shopify tetap
+  mentransformasi URL `files/` lewat parameter `width=` dan otomatis
+  menyajikan WebP bila browser menerimanya: slide 1 yang aslinya 213 KB
+  menjadi 57 KB pada lebar 800. Tanpa ini setiap slide dikirim utuh 1600 px
+  ke layar 393 px — itu penyebab LCP 15 detik di audit 10 Sep 2026.
+
+  URL di luar CDN Shopify dikembalikan apa adanya.
+
+  @param {string} url - URL gambar dari setelan section
+  @param {number} width - lebar piksel yang diminta
+
+  @example
+  {% render 'pdp4-cdn-src', url: block.settings.image_url, width: 800 %}
+{% enddoc %}
+{%- liquid
+  assign out = url
+  if url contains 'cdn.shopify.com' or url contains '/cdn/shop/'
+    if url contains '?'
+      assign out = url | append: '&width=' | append: width
+    else
+      assign out = url | append: '?width=' | append: width
+    endif
+  endif
+  echo out
+-%}

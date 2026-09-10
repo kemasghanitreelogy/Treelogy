@@ -1142,6 +1142,16 @@
   {%- endcomment -%}
   {%- if request.page_type == 'product' and product.handle == 'organic-moringa-capsules' -%}
     {{ 'pdp4.css' | asset_url | stylesheet_tag }}
+    {%- comment -%}
+      Inter dari Google (dipakai seluruh skala tipografi pdp4.css) dulu hanya
+      di-link dari sections/pdp4-buybox — di <body>, sesudah ±480 KB HTML
+      header, jadi hurufnya baru diminta jauh sesudah CSS. Di sini pemindai
+      pramuat menemukannya sejak awal; tag di buybox tetap ada dan tidak
+      diunduh dua kali (URL sama).
+    {%- endcomment -%}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..500&display=swap" rel="stylesheet">
   {%- endif -%}
 
     {%- comment -%}
@@ -1601,7 +1611,20 @@
       {{ content_for_layout }}
     </main>
 
-    {%- unless is_chromeless -%}
+    {%- comment -%}
+      PDP kapsul (pdp4) membawa footer-nya sendiri (sections/pdp4-footer).
+      Sebelumnya footer tema hanya DISEMBUNYIKAN CSS — 28 KB HTML, ±300 simpul
+      DOM, dan 15 <img> tetap terkirim dan dihitung tata letaknya di halaman
+      yang tidak pernah menampilkannya. Handle-nya harus sama dengan gerbang
+      pdp4.css di <head> dan setting `handles` di section pdp4-*.
+    {%- endcomment -%}
+    {%- liquid
+      assign pdp4_own_footer = false
+      if request.page_type == 'product' and product.handle == 'organic-moringa-capsules'
+        assign pdp4_own_footer = true
+      endif
+    -%}
+    {%- unless is_chromeless or pdp4_own_footer -%}
       {% section 'Footer' %}
     {%- endunless -%}
     {% comment %} {% section 'CookieBannerCustom' %} {% endcomment %}

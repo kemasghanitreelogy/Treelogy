@@ -169,13 +169,36 @@
           <div class="pdp-slide native-gallery__slide" data-index="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
             {%- if slide_video != blank -%}
               {%- comment -%}
-                Atribut videonya disalin dari rujukan apa adanya. `autoplay`
-                WAJIB berpasangan dengan `muted` — tanpa itu browser menolak
-                memutar dan slide-nya jadi kotak abu-abu diam.
+                Videonya TIDAK membawa `src` maupun `autoplay` di markup.
+                Chrome mengunduh utuh setiap <video autoplay muted> begitu
+                halaman lahir — tiga video slide (825 KB) ikut berebut pita
+                dengan gambar hero padahal letaknya di slide 6–8. Sumbernya
+                diparkir di `data-src`; pdp4.js memasangnya saat slide itu
+                mendekat, dan `muted` tetap ada karena `play()` tanpa
+                `muted` ditolak browser. Poster ikut diparkir (`data-poster`):
+                atribut `poster` diunduh seketika oleh browser, dan tiga
+                poster (91 KB) ikut berebut jendela LCP padahal slide-nya
+                belum pernah dilihat.
               {%- endcomment -%}
-              <video src="{{ slide_video }}" poster="{{ slide_poster }}" muted loop playsinline autoplay preload="metadata"></video>
+              <video data-src="{{ slide_video }}" data-poster="{{ slide_poster }}" muted loop playsinline preload="none"></video>
             {%- else -%}
-              <img src="{{ slide_img }}" alt="{{ block.settings.alt | escape }}" width="800" height="1000"{% if forloop.first %} fetchpriority="high"{% else %} loading="lazy"{% endif %}>
+              {%- comment -%}
+                Slide pertama = elemen LCP: `src` + `srcset` langsung, prioritas
+                tinggi. Slide berikutnya diparkir di `data-src`/`data-srcset`
+                dan dipasang pdp4.js saat slide tetangganya aktif —
+                `loading="lazy"` saja tidak cukup karena ambang lazy Chrome
+                (hingga 2500 px pada jaringan lambat) menjangkau 2–3 slide di
+                kanan viewport, dan semuanya ikut terunduh saat muat.
+              {%- endcomment -%}
+              {%- capture slide_set %}{% render 'pdp4-cdn-srcset', url: slide_img, widths: '480,640,800,1000,1200,1600' %}{% endcapture -%}
+              {%- capture slide_800 %}{% render 'pdp4-cdn-src', url: slide_img, width: 800 %}{% endcapture -%}
+              {%- assign slide_set = slide_set | strip -%}
+              {%- assign slide_800 = slide_800 | strip -%}
+              {%- if forloop.first -%}
+                <img src="{{ slide_800 }}"{% if slide_set != blank %} srcset="{{ slide_set }}" sizes="(max-width: 959px) 100vw, min(58vw, 720px)"{% endif %} alt="{{ block.settings.alt | escape }}" width="800" height="1000" fetchpriority="high">
+              {%- else -%}
+                <img data-src="{{ slide_800 }}"{% if slide_set != blank %} data-srcset="{{ slide_set }}" sizes="(max-width: 959px) 100vw, min(58vw, 720px)"{% endif %} alt="{{ block.settings.alt | escape }}" width="800" height="1000" loading="lazy" decoding="async">
+              {%- endif -%}
             {%- endif -%}
           </div>
         {%- endfor -%}
@@ -221,8 +244,16 @@
             {%- assign thumb_src_id = block.settings.thumb_url_id | default: block.settings.poster_url_id | default: block.settings.image_url_id -%}
             {%- if thumb_src_id != blank -%}{%- assign thumb_src = thumb_src_id -%}{%- endif -%}
           {%- endif -%}
+          {%- comment -%}
+            Kotak 64 px, tapi berkas thumb-nya 52 KB per buah (8 buah = 420 KB
+            saat muat). Diminta 128/192/256 px dari CDN — 7 KB per buah.
+          {%- endcomment -%}
+          {%- capture thumb_set %}{% render 'pdp4-cdn-srcset', url: thumb_src, widths: '128,192,256' %}{% endcapture -%}
+          {%- capture thumb_128 %}{% render 'pdp4-cdn-src', url: thumb_src, width: 128 %}{% endcapture -%}
+          {%- assign thumb_set = thumb_set | strip -%}
+          {%- assign thumb_128 = thumb_128 | strip -%}
           <button type="button" aria-current="{% if forloop.first %}true{% else %}false{% endif %}" aria-label="{{ t_thumb | escape }} {{ forloop.index }}">
-            <img src="{{ thumb_src }}" alt="" width="64" height="64" loading="lazy">
+            <img src="{{ thumb_128 }}"{% if thumb_set != blank %} srcset="{{ thumb_set }}" sizes="64px"{% endif %} alt="" width="64" height="64" loading="lazy" decoding="async">
           </button>
         {%- endfor -%}
       {%- else -%}
