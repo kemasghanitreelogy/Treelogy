@@ -30,7 +30,14 @@
 </section>
 
 {% style %}
+  /* Inter di tema ini font VARIABEL dengan sumbu optical size, dan Chrome
+     menaikkan opsz sendiri di ukuran besar: pada 72px glyph-nya jadi ~8% lebih
+     sempit daripada Inter statis yang dipakai Figma (terukur — baris judul 853
+     lawan 937 piksel desain). `none` mengunci opsz ke 14, nilai teks Inter,
+     dan lebar barisnya kembali cocok dalam 0,8%.
+     Tanpa ini setiap baris yang dikunci <br> berhenti di tempat yang salah. */
   .kk-hero {
+    font-optical-sizing: none;
     padding-top: calc(37 * var(--og-u));
   }
 
