@@ -1,0 +1,54 @@
+{%- comment -%}
+  Pernyataan tujuan + panah pemisah menuju kartu kode.
+
+  Jarak atasnya cuma 13: kartu Ritual Set di atasnya MELUAP dari kotak
+  auto-layout-nya sendiri sejauh ~67 di Figma, dan luapan itu ikut memakan
+  jarak. Angka 13 adalah sisanya, bukan salah ketik.
+{%- endcomment -%}
+<section class="kk-goal og-section">
+  <p class="kk-goal__body">{{ 'kabar_kebun.goal_html' | t }}</p>
+
+  <img
+    class="kk-arrow kk-goal__arrow"
+    src="{{ 'oil-guide-arrow.svg' | asset_url }}"
+    alt=""
+    width="66"
+    height="66"
+    loading="lazy"
+    decoding="async"
+  >
+</section>
+
+{% style %}
+  .kk-goal {
+    padding-top: calc(13 * var(--og-u));
+    text-align: center;
+    color: var(--og-ink);
+  }
+
+  .kk-goal__body {
+    box-sizing: border-box;
+    width: calc(939 * var(--og-u));
+    min-height: calc(162 * var(--og-u));
+    margin: 0 auto;
+    font-size: var(--og-fs-lead);
+    font-weight: 400;
+    line-height: normal;
+  }
+
+  .kk-goal__arrow {
+    margin-top: calc(80 * var(--og-u));
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "KK Goal",
+  "tag": "div",
+  "presets": [
+    {
+      "name": "KK Goal"
+    }
+  ]
+}
+{% endschema %}

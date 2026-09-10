@@ -1,0 +1,150 @@
+{%- assign closer_alt = 'kabar_kebun.closer.image_alt' | t -%}
+{%- comment -%}
+  Kartu "Selangkah Lebih Dekat" — kabar sertifikasi Regenerative Organic.
+
+  Semua jarak di sini adalah angka desain Figma pada kanvas 1200px, dikalikan
+  var(--og-u) (= lebar kanvas / 1200). Kartu 1077x1801 di y=1501; isinya mulai
+  96 dari atas dan berhenti 64 dari bawah — asimetri itu ADA di desain, jangan
+  "dirapikan" jadi padding simetris.
+{%- endcomment -%}
+<section class="kk-closer og-section">
+  <div class="kk-closer__card" style="--kk-card: {{ section.settings.card_color }};">
+    <div class="kk-closer__inner">
+      <h2 class="kk-closer__title">{{ 'kabar_kebun.closer.heading' | t }}</h2>
+
+      {%- comment -%}
+        Di Figma ini SATU text node dengan dua paragraf: paragraf pertama
+        ditutup baris kosong, lalu ada jarak paragraf 15px di atas paragraf
+        kedua. Kalau ditulis sebagai satu <p> ber-<br><br>, yang didapat hanya
+        baris kosongnya — 15px itu hilang dan seluruh sisa blok naik. Jadi
+        dipisah dua <p>, dengan jarak = satu baris kosong + 15.
+      {%- endcomment -%}
+      <div class="kk-closer__body">
+        <p class="kk-closer__para">{{ 'kabar_kebun.closer.body_1_html' | t }}</p>
+        <p class="kk-closer__para kk-closer__para--last">{{ 'kabar_kebun.closer.body_2_html' | t }}</p>
+      </div>
+
+      <div class="kk-closer__figure">
+        {%- if section.settings.image -%}
+          {{
+            section.settings.image
+            | image_url: width: 1878
+            | image_tag:
+              widths: '470, 939, 1409, 1878',
+              sizes: '(min-width: 600px) 470px, 78vw',
+              loading: 'lazy',
+              class: 'kk-closer__img',
+              alt: closer_alt
+          }}
+        {%- endif -%}
+      </div>
+
+      <p class="kk-closer__body kk-closer__body--wide">{{ 'kabar_kebun.closer.body3_html' | t }}</p>
+    </div>
+  </div>
+</section>
+
+{% style %}
+  .kk-closer {
+    padding-top: calc(80 * var(--og-u));
+  }
+
+  .kk-closer__card {
+    box-sizing: border-box;
+    width: calc(1077 * var(--og-u));
+    min-height: calc(1801 * var(--og-u));
+    margin-inline: auto;
+    padding: calc(96 * var(--og-u)) 0 calc(64 * var(--og-u));
+    border-radius: var(--og-radius-card);
+    background: var(--kk-card);
+  }
+
+  .kk-closer__inner {
+    width: calc(939 * var(--og-u));
+    margin-inline: auto;
+    text-align: center;
+    color: var(--og-ink);
+  }
+
+  .kk-closer__title {
+    box-sizing: border-box;
+    min-height: calc(85 * var(--og-u));
+    margin: 0;
+    font-size: calc(70 * var(--og-u));
+    font-weight: 400;
+    line-height: 1.21;
+  }
+
+  .kk-closer__body {
+    box-sizing: border-box;
+    /* Lebarnya 877 di desain; diberi kelonggaran ke 939 supaya baris yang
+       sudah dikunci <br> tidak pernah patah dua kali kalau metrik Inter
+       peramban sedikit lebih lebar. Teksnya rata tengah, jadi kelonggaran
+       ini tidak terlihat. */
+    width: 100%;
+    min-height: calc(447 * var(--og-u));
+    margin: calc(80 * var(--og-u)) 0 0;
+    font-size: var(--og-fs-lead);
+    font-weight: 400;
+    line-height: normal;
+  }
+
+  .kk-closer__body--wide {
+    min-height: calc(378 * var(--og-u));
+    margin-top: calc(61 * var(--og-u));
+  }
+
+  .kk-closer__para {
+    margin: 0;
+  }
+
+  .kk-closer__para--last {
+    /* satu baris kosong (45px * line-height normal Inter) + jarak paragraf 15 */
+    margin-top: calc(69.5 * var(--og-u));
+  }
+
+  .kk-closer__body b,
+  .kk-closer__body strong {
+    font-weight: 700;
+  }
+
+  .kk-closer__figure {
+    width: 100%;
+    margin-top: calc(61 * var(--og-u));
+    aspect-ratio: 939 / 529;
+    overflow: hidden;
+    border-radius: var(--og-radius-hero);
+  }
+
+  .kk-closer__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "KK Closer",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Foto udara kebun (export Figma 939x529)"
+    },
+    {
+      "type": "color",
+      "id": "card_color",
+      "label": "Latar kartu",
+      "default": "#f6f7ed"
+    }
+  ],
+  "presets": [
+    {
+      "name": "KK Closer"
+    }
+  ]
+}
+{% endschema %}

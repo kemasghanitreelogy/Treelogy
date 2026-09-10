@@ -1,0 +1,41 @@
+{%- comment -%}
+  Tanda tangan penutup. 80 di atas dan 80 di bawah — yang bawah yang memisahkan
+  dari og-footer, jadi jangan dipindah ke section footer.
+{%- endcomment -%}
+<section class="kk-signoff og-section">
+  <p class="kk-signoff__text">{{ 'kabar_kebun.signoff_html' | t }}</p>
+</section>
+
+{% style %}
+  .kk-signoff {
+    padding: calc(80 * var(--og-u)) 0;
+    text-align: center;
+    color: var(--og-ink);
+  }
+
+  .kk-signoff__text {
+    box-sizing: border-box;
+    min-height: calc(112 * var(--og-u));
+    margin: 0;
+    font-size: var(--og-fs-lead);
+    font-weight: 400;
+    line-height: 1.25;
+  }
+
+  .kk-signoff__text b,
+  .kk-signoff__text strong {
+    font-weight: 700;
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "KK Signoff",
+  "tag": "div",
+  "presets": [
+    {
+      "name": "KK Signoff"
+    }
+  ]
+}
+{% endschema %}

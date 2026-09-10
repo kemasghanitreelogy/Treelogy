@@ -1,0 +1,105 @@
+{%- liquid
+  assign cta_label = 'kabar_kebun.daily.cta_label' | t
+  assign cta_target = section.settings.cta_url
+  if cta_target == blank
+    assign cta_target = routes.all_products_collection_url
+  endif
+-%}
+{%- capture cta_url %}{% render 'og-id-url', url: cta_target %}{% endcapture -%}
+{%- assign cta_url = cta_url | strip -%}
+{%- comment -%}
+  Kartu biaya harian. Judulnya dua baris di desain (tinggi 174), jadi jarak ke
+  paragraf 70 — bukan 78 seperti kartu kode yang judulnya satu baris.
+{%- endcomment -%}
+<section class="kk-daily og-section">
+  <div class="kk-card kk-card--daily" style="--kk-card: {{ section.settings.card_color }};">
+    <div class="kk-card__inner">
+      <h2 class="kk-card__heading kk-card__heading--two">{{ 'kabar_kebun.daily.heading_html' | t }}</h2>
+      <p class="kk-card__body kk-card__body--daily">{{ 'kabar_kebun.daily.body_html' | t }}</p>
+      <div class="kk-card__cta">
+        {%- render 'og-cta', label: cta_label, url: cta_url -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% style %}
+  .kk-daily {
+    padding-top: calc(80 * var(--og-u));
+  }
+
+  /* Aturan .kk-card di bawah sengaja diulang dari sections/kk-code: dua kartu
+     ini kembar di desain, dan menyandarkan yang satu pada blok style yang lain
+     berarti menghapus satu section diam-diam merusak section lainnya.
+     Deklarasinya identik, jadi urutan mana pun menang hasilnya sama. */
+  .kk-card {
+    box-sizing: border-box;
+    width: calc(1078 * var(--og-u));
+    margin-inline: auto;
+    padding: calc(80 * var(--og-u)) calc(10 * var(--og-u));
+    border-radius: var(--og-radius-card);
+    background: var(--kk-card);
+    text-align: center;
+    color: var(--og-ink);
+  }
+
+  .kk-card__inner {
+    width: calc(922 * var(--og-u));
+    margin-inline: auto;
+  }
+
+  .kk-card__heading {
+    box-sizing: border-box;
+    min-height: calc(87 * var(--og-u));
+    margin: 0;
+    font-size: calc(72 * var(--og-u));
+    font-weight: 400;
+    line-height: normal;
+  }
+
+  .kk-card__body {
+    box-sizing: border-box;
+    min-height: calc(162 * var(--og-u));
+    margin: calc(78 * var(--og-u)) 0 0;
+    font-size: var(--og-fs-lead);
+    font-weight: 400;
+    line-height: normal;
+  }
+
+  .kk-card__cta {
+    margin-top: calc(80 * var(--og-u));
+  }
+
+  .kk-card__heading--two {
+    min-height: calc(174 * var(--og-u));
+  }
+
+  .kk-card__body--daily {
+    margin-top: calc(70 * var(--og-u));
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "KK Daily",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Tujuan tombol (kosong = katalog semua produk)"
+    },
+    {
+      "type": "color",
+      "id": "card_color",
+      "label": "Latar kartu",
+      "default": "#d0d9c4"
+    }
+  ],
+  "presets": [
+    {
+      "name": "KK Daily"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,71 @@
+{%- assign hero_alt = 'kabar_kebun.hero.image_alt' | t -%}
+{%- comment -%}
+  Hero halaman kampanye "Kabar dari Kebun" (email Figma #09 September).
+
+  Gambarnya export UTUH dari Figma 1151x860 — judul "From Bali with care" dan
+  logo Treelogy ikut terbakar di dalamnya, persis seperti di email. Jadi tidak
+  ada teks di markup: menuliskannya ulang di HTML berarti dua sumber kebenaran
+  untuk satu kalimat, dan hurufnya tidak akan pernah sama dengan yang di foto.
+
+  Rasio 1151:860 berbeda dari og-hero-card (1151:670) milik
+  hari-terakhir/harga-lama, jadi kartunya digambar sendiri di sini dan snippet
+  bersama itu sengaja TIDAK disentuh.
+{%- endcomment -%}
+<section class="kk-hero og-section">
+  <div class="kk-hero__card">
+    {%- if section.settings.image -%}
+      {{
+        section.settings.image
+        | image_url: width: 2302
+        | image_tag:
+          widths: '575, 863, 1151, 1726, 2302',
+          sizes: '(min-width: 600px) 576px, 96vw',
+          loading: 'eager',
+          fetchpriority: 'high',
+          class: 'kk-hero__img',
+          alt: hero_alt
+      }}
+    {%- endif -%}
+  </div>
+</section>
+
+{% style %}
+  .kk-hero {
+    padding-top: calc(37 * var(--og-u));
+  }
+
+  .kk-hero__card {
+    width: calc(1151 * var(--og-u));
+    margin-inline: auto;
+    aspect-ratio: 1151 / 860;
+    overflow: hidden;
+    border-radius: var(--og-radius-hero);
+    background: #dfe3e6;
+  }
+
+  .kk-hero__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "KK Hero",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Gambar hero (export Figma 1151x860)"
+    }
+  ],
+  "presets": [
+    {
+      "name": "KK Hero"
+    }
+  ]
+}
+{% endschema %}

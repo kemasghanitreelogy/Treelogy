@@ -1,0 +1,63 @@
+{%- liquid
+  assign cta_label = 'kabar_kebun.lede.cta_label' | t
+  assign cta_target = section.settings.cta_url
+  if cta_target == blank
+    assign cta_target = routes.all_products_collection_url
+  endif
+-%}
+{%- comment -%}
+  Tombol halaman ini selalu mendarat di storefront /id — lihat snippets/og-id-url.
+{%- endcomment -%}
+{%- capture cta_url -%}{%- render 'og-id-url', url: cta_target -%}{%- endcapture -%}
+{%- assign cta_url = cta_url | strip -%}
+<section class="kk-lede og-section">
+  <h1 class="kk-lede__heading">{{ 'kabar_kebun.lede.heading_html' | t }}</h1>
+
+  <div class="kk-lede__cta">
+    {%- render 'og-cta', label: cta_label, url: cta_url -%}
+  </div>
+</section>
+
+{% style %}
+  .kk-lede {
+    /* Hero berhenti di y=897, judul mulai di y=975 pada kanvas desain 1200. */
+    padding-top: calc(78 * var(--og-u));
+    text-align: center;
+  }
+
+  .kk-lede__heading {
+    /* min-height, bukan height: kalau metrik huruf peramban meleset sedikit,
+       teksnya boleh mendorong — yang tidak boleh adalah terpotong. */
+    box-sizing: border-box;
+    min-height: calc(261 * var(--og-u));
+    width: calc(987 * var(--og-u));
+    margin: 0 auto;
+    font-size: calc(72 * var(--og-u));
+    font-weight: 400;
+    line-height: normal;
+    color: var(--og-ink);
+  }
+
+  .kk-lede__cta {
+    margin-top: calc(87 * var(--og-u));
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "KK Lede",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Tujuan tombol (kosong = katalog semua produk)"
+    }
+  ],
+  "presets": [
+    {
+      "name": "KK Lede"
+    }
+  ]
+}
+{% endschema %}

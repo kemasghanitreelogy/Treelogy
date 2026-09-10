@@ -1,0 +1,108 @@
+{%- liquid
+  assign cta_label = 'kabar_kebun.code.cta_label' | t
+  assign code = section.settings.discount_code | strip
+  assign fallback = routes.all_products_collection_url
+  assign target = section.settings.cta_url
+  if target == blank
+    assign target = fallback
+  endif
+-%}
+{%- capture target_id %}{% render 'og-id-url', url: target %}{% endcapture -%}
+{%- assign target_id = target_id | strip -%}
+{%- liquid
+  # "Use My Code" memang memasang kodenya, bukan cuma membuka katalog:
+  # /discount/<KODE>?redirect=<tujuan> menaruh cookie diskon lalu meneruskan.
+  # snippets/discount-link kemudian menahannya 1 hari supaya checkout dari
+  # cart drawer tetap membawanya. Kalau kode dikosongkan di editor, tombolnya
+  # turun jadi tautan biasa — tidak pernah mengarah ke /discount/ kosong.
+  assign cta_url = target_id
+  if code != blank
+    assign cta_url = '/discount/' | append: code | append: '?redirect=' | append: target_id
+  endif
+-%}
+<section class="kk-code og-section">
+  <div class="kk-card" style="--kk-card: {{ section.settings.card_color }};">
+    <div class="kk-card__inner">
+      <h2 class="kk-card__heading">{{ 'kabar_kebun.code.heading' | t }}</h2>
+      <p class="kk-card__body">{{ 'kabar_kebun.code.body_html' | t }}</p>
+      <div class="kk-card__cta">
+        {%- render 'og-cta', label: cta_label, url: cta_url -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% style %}
+  .kk-code {
+    padding-top: calc(80 * var(--og-u));
+  }
+
+  .kk-card {
+    box-sizing: border-box;
+    width: calc(1078 * var(--og-u));
+    margin-inline: auto;
+    padding: calc(80 * var(--og-u)) calc(10 * var(--og-u));
+    border-radius: var(--og-radius-card);
+    background: var(--kk-card);
+    text-align: center;
+    color: var(--og-ink);
+  }
+
+  .kk-card__inner {
+    width: calc(922 * var(--og-u));
+    margin-inline: auto;
+  }
+
+  .kk-card__heading {
+    box-sizing: border-box;
+    min-height: calc(87 * var(--og-u));
+    margin: 0;
+    font-size: calc(72 * var(--og-u));
+    font-weight: 400;
+    line-height: normal;
+  }
+
+  .kk-card__body {
+    box-sizing: border-box;
+    min-height: calc(162 * var(--og-u));
+    margin: calc(78 * var(--og-u)) 0 0;
+    font-size: var(--og-fs-lead);
+    font-weight: 400;
+    line-height: normal;
+  }
+
+  .kk-card__cta {
+    margin-top: calc(80 * var(--og-u));
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "KK Code",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "text",
+      "id": "discount_code",
+      "label": "Kode diskon yang dipasang tombol (kosong = tombol biasa)",
+      "default": "HARGATETAP"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Tujuan sesudah kode dipasang (kosong = katalog semua produk)"
+    },
+    {
+      "type": "color",
+      "id": "card_color",
+      "label": "Latar kartu",
+      "default": "#d0d9c4"
+    }
+  ],
+  "presets": [
+    {
+      "name": "KK Code"
+    }
+  ]
+}
+{% endschema %}

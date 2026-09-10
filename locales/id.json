@@ -535,29 +535,30 @@
   },
   "kabar_kebun": {
     "hero": {
-      "image_alt": "Kebun moringa Treelogy di Bali dari udara"
+      "image_alt": "Dua tangan berjabat di depan gunung di Bali, dengan tulisan From Bali with care"
     },
     "lede": {
-      "heading_html": "Sudah 10 hari. Terima kasih, satu kabar<br>dari kebun, dan apa yang tetap sama.",
+      "heading_html": "Sudah 10 hari. Terima kasih,<br>satu kabar dari kebun, dan<br>apa yang tetap sama.",
       "cta_label": "Belanja Panen Kami"
     },
     "closer": {
       "heading": "Selangkah Lebih Dekat",
-      "body_html": "Kami sudah mengirim pengajuan ke Regenerative Organic Alliance. Sekarang kami menunggu jadwal audit.<br><br>Kalau lolos, moringa kami jadi yang pertama di dunia dengan sertifikasi regeneratif. Itu tujuan kami sejak hari pertama.",
-      "image_alt": "Foto udara kebun moringa Treelogy",
-      "body2_html": "Organik itu baik, dan kami organik. Tapi organik melihat apa yang masuk. Regeneratif melihat apa yang dihasilkan.<br><br>Apakah tanahnya lebih sehat? Apakah hewan dan orang-orangnya jadi lebih baik? Itu pertanyaan yang lebih sulit, dan itu yang ingin kami jawab."
+      "body_1_html": "Kami sudah mengirim pengajuan ke<br>Regenerative Organic Alliance. Sekarang<br>kami menunggu jadwal audit.",
+      "body_2_html": "Kalau lolos, moringa kami jadi yang<br>pertama di dunia dengan sertifikasi<br>regeneratif. Itu tujuan kami sejak hari<br>pertama.",
+      "image_alt": "Foto udara kebun moringa Treelogy di antara pohon kelapa",
+      "body3_html": "<b>Organik itu baik, dan kami organik. Tapi<br>organik melihat apa yang masuk.<br>Regeneratif melihat apa yang dihasilkan.</b><br>Apakah tanahnya lebih sehat? Apakah<br>hewan dan orang-orangnya jadi lebih baik?<br>Itu pertanyaan yang lebih sulit, dan itu yang<br>ingin kami jawab."
     },
     "same": {
       "heading": "Apa yang Tetap Sama",
-      "body_html": "Dengan Moringa Capsules paket 3 bulan yang baru, kami bisa menaikkan harga tapi tetap memberi biaya harian terendah untuk yang berkomitmen.<br><br>Untuk Moringa Seed Oil, itu tidak bisa kami lakukan. Jadi harganya kami biarkan tetap.",
+      "body_html": "Dengan Moringa Capsules paket 3 bulan<br>yang baru, kami bisa menaikkan harga tapi<br>tetap memberi biaya harian terendah untuk<br>yang berkomitmen. Untuk Moringa Seed Oil,<br>itu tidak bisa kami lakukan. Jadi harganya<br>kami biarkan tetap.",
       "oil": {
-        "image_alt": "Moringa Seed Oil Treelogy 30ml dan 60ml",
-        "title_html": "Moringa Seed Oil",
+        "image_alt": "Organic Moringa Cold-Pressed Seed Oil ukuran 30ml dan 60ml",
+        "name": "Moringa Seed Oil",
         "price_html": "Rp470,000 untuk 30ml<br>Rp790,000 untuk 60ml",
         "cta_label": "Tetap"
       },
       "ritual": {
-        "image_alt": "Moringa Ritual Set dengan bamboo whisk",
+        "image_alt": "Moringa Ritual Set: kotak bambu, mangkuk kaca, whisk bambu, dan tabung",
         "item_1_name": "Moringa Ritual Set",
         "item_1_price": "Rp760,000",
         "item_1_cta": "Tetap",
@@ -570,10 +571,10 @@
         "item_3_cta": "Lebih Murah"
       }
     },
-    "goal_html": "Tujuan kami masih sama. Moringa premium,<br>dibuat dengan cara yang benar, untuk<br>sebanyak mungkin orang.",
+    "goal_html": "Tujuan kami masih sama. Moringa<br>premium, dibuat dengan cara yang<br>benar, untuk sebanyak mungkin orang.",
     "code": {
       "heading": "Kode kamu masih aktif.",
-      "body_html": "3 pesanan, kapan saja sampai 30 November,<br>dengan harga lama. Hari ini waktu yang pas<br>untuk memakainya.",
+      "body_html": "3 pesanan, kapan saja sampai 30<br>November, dengan harga lama. Hari ini<br>waktu yang pas untuk memakainya.",
       "cta_label": "Use My Code"
     },
     "daily": {
@@ -581,7 +582,7 @@
       "body_html": "Lebih murah dari harga lama paket 1 bulan.<br>Dan dengan garansi 60 hari, risikonya<br>di kami, bukan di kamu.",
       "cta_label": "Start With 3 Months"
     },
-    "signoff_html": "From Bali with care,<br>Sacha, Founder"
+    "signoff_html": "From Bali with care,<br><b>Sacha, Founder</b>"
   },
   "pdp3": {
     "buybox": {

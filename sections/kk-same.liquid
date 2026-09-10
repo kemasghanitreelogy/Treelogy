@@ -1,0 +1,375 @@
+{%- liquid
+  assign oil_alt = 'kabar_kebun.same.oil.image_alt' | t
+  assign ritual_alt = 'kabar_kebun.same.ritual.image_alt' | t
+  assign oil_href = section.settings.oil_url
+  if oil_href == blank
+    assign oil_href = routes.all_products_collection_url
+  endif
+  assign ritual_href = section.settings.ritual_url
+  if ritual_href == blank
+    assign ritual_href = routes.all_products_collection_url
+  endif
+  assign whisk_href = section.settings.whisk_url
+  if whisk_href == blank
+    assign whisk_href = routes.all_products_collection_url
+  endif
+  assign spoon_href = section.settings.spoon_url
+  if spoon_href == blank
+    assign spoon_href = routes.all_products_collection_url
+  endif
+-%}
+{%- comment -%}
+  Semua tombol halaman ini mendarat di storefront /id — lihat snippets/og-id-url.
+{%- endcomment -%}
+{%- capture oil_url %}{% render 'og-id-url', url: oil_href %}{% endcapture -%}
+{%- capture ritual_url %}{% render 'og-id-url', url: ritual_href %}{% endcapture -%}
+{%- capture whisk_url %}{% render 'og-id-url', url: whisk_href %}{% endcapture -%}
+{%- capture spoon_url %}{% render 'og-id-url', url: spoon_href %}{% endcapture -%}
+{%- liquid
+  assign oil_url = oil_url | strip
+  assign ritual_url = ritual_url | strip
+  assign whisk_url = whisk_url | strip
+  assign spoon_url = spoon_url | strip
+-%}
+<section class="kk-same og-section" style="--kk-card: {{ section.settings.card_color }};">
+  <img
+    class="kk-arrow kk-same__arrow"
+    src="{{ 'oil-guide-arrow.svg' | asset_url }}"
+    alt=""
+    width="66"
+    height="66"
+    loading="lazy"
+    decoding="async"
+  >
+
+  <h2 class="kk-same__heading">{{ 'kabar_kebun.same.heading' | t }}</h2>
+
+  <p class="kk-same__body">{{ 'kabar_kebun.same.body_html' | t }}</p>
+
+  {%- comment -%}
+    Kartu Seed Oil: gambar botolnya menumpang DI ATAS kartu, bukan di dalam
+    kotak terpisah. Cropnya sudah dibakar ke berkas gambar (transparan) supaya
+    Liquid tidak perlu meniru transform Figma — satu-satunya cara crop itu
+    tetap sama setelah Shopify me-resize ulang gambarnya.
+  {%- endcomment -%}
+  <div class="kk-same__oil">
+    <div class="kk-same__oil-card"></div>
+    {%- if section.settings.oil_image -%}
+      {{
+        section.settings.oil_image
+        | image_url: width: 836
+        | image_tag:
+          widths: '209, 418, 627, 836',
+          sizes: '(min-width: 600px) 209px, 35vw',
+          loading: 'lazy',
+          class: 'kk-same__oil-img',
+          alt: oil_alt
+      }}
+    {%- endif -%}
+    <p class="kk-same__oil-text">
+      <b>{{ 'kabar_kebun.same.oil.name' | t }}</b><br><br>{{ 'kabar_kebun.same.oil.price_html' | t }}
+    </p>
+    <a class="kk-ghost kk-same__oil-cta" href="{{ oil_url }}">
+      {{- 'kabar_kebun.same.oil.cta_label' | t -}}
+    </a>
+  </div>
+
+  <div class="kk-same__arrow-box">
+    <img
+      class="kk-arrow"
+      src="{{ 'oil-guide-arrow.svg' | asset_url }}"
+      alt=""
+      width="66"
+      height="66"
+      loading="lazy"
+      decoding="async"
+    >
+  </div>
+
+  {%- comment -%}
+    Kartu Ritual Set: foto set-nya menonjol 39px di ATAS tepi kartu, jadi
+    pembungkusnya dimulai dari tepi atas foto — bukan dari tepi kartu — dan
+    kartunya diturunkan 39. Tiga baris produknya berjarak tetap 162 (tiga baris
+    teks 45px), itu yang menyamakan tinggi baris dengan posisi tombolnya.
+  {%- endcomment -%}
+  <div class="kk-same__ritual">
+    <div class="kk-same__ritual-card"></div>
+    {%- if section.settings.ritual_image -%}
+      {{
+        section.settings.ritual_image
+        | image_url: width: 1526
+        | image_tag:
+          widths: '382, 763, 1145, 1526',
+          sizes: '(min-width: 600px) 382px, 64vw',
+          loading: 'lazy',
+          class: 'kk-same__ritual-img',
+          alt: ritual_alt
+      }}
+    {%- endif -%}
+
+    <p class="kk-same__row" style="--kk-i: 0;">
+      <b>{{ 'kabar_kebun.same.ritual.item_1_name' | t }}</b><br>{{ 'kabar_kebun.same.ritual.item_1_price' | t }}
+    </p>
+    <a class="kk-ghost kk-same__row-cta" style="--kk-i: 0;" href="{{ ritual_url }}">
+      {{- 'kabar_kebun.same.ritual.item_1_cta' | t -}}
+    </a>
+
+    <p class="kk-same__row" style="--kk-i: 1;">
+      <b>{{ 'kabar_kebun.same.ritual.item_2_name' | t }}</b><br>{{ 'kabar_kebun.same.ritual.item_2_price' | t }}
+    </p>
+    <a class="kk-ghost kk-same__row-cta" style="--kk-i: 1;" href="{{ whisk_url }}">
+      {{- 'kabar_kebun.same.ritual.item_2_cta' | t -}}
+    </a>
+
+    <p class="kk-same__row" style="--kk-i: 2;">
+      <b>{{ 'kabar_kebun.same.ritual.item_3_name' | t }}</b><br>{{ 'kabar_kebun.same.ritual.item_3_price' | t }}
+      <s>{{ 'kabar_kebun.same.ritual.item_3_price_old' | t }}</s>
+    </p>
+    <a class="kk-ghost kk-same__row-cta" style="--kk-i: 2;" href="{{ spoon_url }}">
+      {{- 'kabar_kebun.same.ritual.item_3_cta' | t -}}
+    </a>
+  </div>
+</section>
+
+{% style %}
+  .kk-same {
+    text-align: center;
+    color: var(--og-ink);
+  }
+
+  /* Aset panahnya digambar menghadap KANAN (65.76x65.75) dan diputar 90 derajat
+     jadi menghadap bawah — sama seperti snippets/og-arrow. Ukurannya dipakai
+     apa adanya, bukan dibulatkan ke 70, karena posisi blok sesudahnya dihitung
+     dari tepi bawah panah. */
+  .kk-arrow {
+    display: block;
+    width: calc(65.76 * var(--og-u));
+    height: calc(65.76 * var(--og-u));
+    margin-inline: auto;
+    transform: rotate(90deg);
+  }
+
+  .kk-same__arrow {
+    margin-top: calc(80 * var(--og-u));
+  }
+
+  .kk-same__heading {
+    box-sizing: border-box;
+    min-height: calc(87 * var(--og-u));
+    margin: calc(121 * var(--og-u)) 0 0;
+    font-size: calc(72 * var(--og-u));
+    font-weight: 400;
+    line-height: normal;
+  }
+
+  .kk-same__body {
+    box-sizing: border-box;
+    width: calc(988 * var(--og-u));
+    min-height: calc(324 * var(--og-u));
+    margin: calc(80 * var(--og-u)) auto 0;
+    font-size: var(--og-fs-lead);
+    font-weight: 400;
+    line-height: normal;
+  }
+
+  /* ---- kartu Seed Oil ------------------------------------------------- */
+
+  .kk-same__oil {
+    position: relative;
+    width: calc(1151 * var(--og-u));
+    height: calc(564 * var(--og-u));
+    margin: calc(80 * var(--og-u)) auto 0;
+  }
+
+  .kk-same__oil-card {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--og-radius-card);
+    background: var(--kk-card);
+  }
+
+  .kk-same__oil-img {
+    position: absolute;
+    top: 0;
+    left: calc(76 * var(--og-u));
+    display: block;
+    width: calc(418 * var(--og-u));
+    height: calc(492 * var(--og-u));
+  }
+
+  .kk-same__oil-text {
+    position: absolute;
+    top: calc(92 * var(--og-u));
+    left: calc(604.75 * var(--og-u));
+    width: calc(520 * var(--og-u));
+    margin: 0;
+    font-size: var(--og-fs-lead);
+    font-weight: 400;
+    line-height: 1.25;
+    text-align: left;
+  }
+
+  .kk-same__oil-cta {
+    position: absolute;
+    top: calc(394 * var(--og-u));
+    left: calc(605 * var(--og-u));
+    width: calc(353 * var(--og-u));
+    height: calc(90 * var(--og-u));
+  }
+
+  /* ---- panah kedua ---------------------------------------------------- */
+
+  .kk-same__arrow-box {
+    /* Di Figma panah ini duduk dalam kotak setinggi 92; kotaknya yang
+       menentukan jarak ke blok berikutnya, bukan panahnya. */
+    display: flex;
+    align-items: center;
+    height: calc(92 * var(--og-u));
+    margin-top: calc(80 * var(--og-u));
+  }
+
+  .kk-same__arrow-box .kk-arrow {
+    margin-inline: auto;
+  }
+
+  /* ---- kartu Ritual Set ----------------------------------------------- */
+
+  .kk-same__ritual {
+    position: relative;
+    width: calc(1151 * var(--og-u));
+    height: calc(1024 * var(--og-u));
+    margin: calc(80 * var(--og-u)) auto 0;
+  }
+
+  .kk-same__ritual-card {
+    position: absolute;
+    top: calc(39 * var(--og-u));
+    right: 0;
+    left: 0;
+    height: calc(985 * var(--og-u));
+    border-radius: var(--og-radius-card);
+    background: var(--kk-card);
+  }
+
+  .kk-same__ritual-img {
+    position: absolute;
+    top: 0;
+    left: calc(213.5 * var(--og-u));
+    display: block;
+    width: calc(763 * var(--og-u));
+    height: calc(480 * var(--og-u));
+  }
+
+  .kk-same__row {
+    position: absolute;
+    top: calc((480 + 162 * var(--kk-i)) * var(--og-u));
+    left: calc(114 * var(--og-u));
+    width: calc(520 * var(--og-u));
+    margin: 0;
+    font-size: var(--og-fs-lead);
+    font-weight: 400;
+    line-height: normal;
+    text-align: left;
+  }
+
+  .kk-same__row s {
+    font-size: var(--og-fs-sub);
+    text-decoration-thickness: from-font;
+    text-decoration-skip-ink: none;
+  }
+
+  .kk-same__row-cta {
+    position: absolute;
+    top: calc((487 + 162 * var(--kk-i)) * var(--og-u));
+    left: calc(662.5 * var(--og-u));
+    width: calc(373 * var(--og-u));
+    height: calc(90 * var(--og-u));
+  }
+
+  .kk-same b {
+    font-weight: 700;
+  }
+
+  /* ---- tombol garis (outline) ----------------------------------------- */
+
+  .kk-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    border: calc(1 * var(--og-u)) solid var(--og-ink);
+    border-radius: calc(150 * var(--og-u));
+    background: transparent;
+    color: var(--og-ink);
+    font-family: var(--og-font);
+    font-size: var(--og-fs-lead);
+    font-weight: 700;
+    line-height: normal;
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .kk-ghost:hover,
+  .kk-ghost:focus-visible {
+    opacity: 0.7;
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "KK Same",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "color",
+      "id": "card_color",
+      "label": "Latar kartu produk",
+      "default": "#f6f7ed"
+    },
+    {
+      "type": "header",
+      "content": "Moringa Seed Oil"
+    },
+    {
+      "type": "image_picker",
+      "id": "oil_image",
+      "label": "Foto Seed Oil (export Figma 418x492, transparan)"
+    },
+    {
+      "type": "url",
+      "id": "oil_url",
+      "label": "Tujuan tombol Seed Oil (kosong = katalog)"
+    },
+    {
+      "type": "header",
+      "content": "Ritual Set, Whisk, Spoon"
+    },
+    {
+      "type": "image_picker",
+      "id": "ritual_image",
+      "label": "Foto Ritual Set (export Figma 763x480, transparan)"
+    },
+    {
+      "type": "url",
+      "id": "ritual_url",
+      "label": "Tujuan tombol Moringa Ritual Set (kosong = katalog)"
+    },
+    {
+      "type": "url",
+      "id": "whisk_url",
+      "label": "Tujuan tombol Bamboo Whisk (kosong = katalog)"
+    },
+    {
+      "type": "url",
+      "id": "spoon_url",
+      "label": "Tujuan tombol Bamboo Spoon (kosong = katalog)"
+    }
+  ],
+  "presets": [
+    {
+      "name": "KK Same"
+    }
+  ]
+}
+{% endschema %}
