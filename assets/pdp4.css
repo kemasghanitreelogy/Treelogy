@@ -1571,6 +1571,22 @@ header.header-nav .header-menu{
    sections/pdp4-footer, bukan dengan menghapus aturan ini. */
 #shopify-section-Footer{display:none}
 
+/* --- jarak atas hero di desktop -------------------------------------------
+   Rujukan membuka hero dengan `sk-pt-16` (16px). Di berkas satu-halaman itu
+   pas: bilah pengumuman dan nav-nya ikut menggulir, jadi hero benar-benar
+   dimulai dari puncak dokumen.
+
+   Di toko ini header `position:fixed` setinggi 95px, dan halaman produk LAIN
+   membuka isinya 64px di bawah header (`.main-grid.product-detail-wrapper`,
+   padding 64px). Dengan 16px, halaman kapsul terlihat menempel ke header
+   sementara semua PDP lain punya napas — permintaan user 10 Sep.
+
+   Hanya di desktop. Di ponsel 16px milik rujukan tetap benar: layarnya pendek
+   dan 64px di sana membuang seperempat lipatan pertama. */
+@media(min-width:960px){
+  .pdp4-page #pdp4-hero{padding-top:var(--sk-space-64)}
+}
+
 /* --- kelas `kl_reviews__*` adalah KAIT, bukan gaya -------------------------
    Berkas rujukan meminjam nama-nama kelas widget Klaviyo Reviews karena ia
    memang meniru widget itu, dan nama-nama itu dipertahankan di sini sebagai
