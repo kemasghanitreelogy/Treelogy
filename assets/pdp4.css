@@ -1,0 +1,1632 @@
+/* ==========================================================================
+   pdp4 — Product page (capsules), a port of the "PDP_OMC_2026" reference
+   folder: `treelogy-capsules-pdp-single-file.html` (EN) and its `-id` twin.
+
+   Two blocks, both copied from the reference verbatim:
+
+     1. TREELOGY UI KIT v2.0  — tokens + components. Already namespaced `--sk-`
+        and `.sk-*` at source, so nothing had to be renamed. The only two rules
+        that were not class-scoped (`html` and `body`) are rewritten onto
+        `.pdp4-page`, the wrapper every section renders inside.
+     2. PAGE STYLES           — `.pdp-*`, the rules that belong to this page
+        alone. Its single bare selector (`main section`) is scoped the same way.
+
+   Store chrome (announcement bar, nav, footer) is NOT ported: the theme draws
+   the real ones and the reference only drew stand-ins.
+
+   The BRIDGE block at the bottom is the one place allowed to hold rules the
+   reference does not have. It exists because Shopify splits the reference's
+   one `<main>` column into twelve section wrappers, and because theme.css
+   paints rules over every `<section>` and `<p>` in the store.
+   ========================================================================== */
+
+html{scroll-behavior:smooth}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+.pdp4-page{margin:0;background:var(--sk-surface-page)}
+/* ==========================================================================
+   TREELOGY UI KIT — DESIGN TOKENS  v2.0  (2026-09-08)
+   Rules and scales measured from seed.com (16 routes, 2026-09-08).
+   Colours sampled from Treelogy's own moringa photography; ink #213d29 locked
+   by Sacha. Sources: capsule shell, mature leaf DSC03732, dried leaf MJR_4525,
+   canopy DSC03789, flower macro (petal, pollen, throat), seed pod K4P7198.
+   Three tiers, never skip one:
+     1. PRIMITIVES  raw values, named by what they are. Never used in components.
+     2. SEMANTIC    role names (text-primary, fill-brand…). Used in components.
+     3. COMPONENT   per-component knobs (button-primary-bg…). Used in CSS only.
+   Prefix: --sk-
+   ========================================================================== */
+
+:root {
+  /* ------------------------------------------------------------------ 1. PRIMITIVES */
+
+  /* Greens: capsule → leaf. Every hue between 120° and 160°. */
+  --sk-green-900: #213d29;   /* ink — capsule shell lifted one step. Text, action, focus, outline (11.2:1 on canvas) */
+  --sk-green-800: #335123;   /* mature leaf — panels, hero blocks (canvas text 8.3:1) */
+  --sk-green-700: #12241a;   /* capsule — footer bar, pressed panel */
+  --sk-green-300: #536c3c;   /* dried leaf — secondary text (5.5:1 on canvas) */
+  --sk-green-200: #7da04b;   /* fresh leaf — icons, illustration, highlights. Never text on light (2.8:1) */
+  --sk-green-100: #d0d7c6;   /* dried-leaf tint — the neutral outline */
+  --sk-mist:      #d7e6c6;   /* fresh-leaf tint — how-to cards, router, soft surface (ink 9.1:1) */
+  --sk-mist-deep: #bed4a2;   /* fresh-leaf tint — success fill, selected-soft (ink 7.4:1) */
+  --sk-powder:    #7d925c;   /* powder — powder product colour */
+  --sk-pod:       #836e4c;   /* seed-pod bark — photo captions, seed-oil family (4.6:1) */
+
+  /* Flower */
+  --sk-lime-500: #f5d053;    /* pollen = brand yellow — merchandising accent, announcement bar, warning (ink 7.9:1) */
+  --sk-lime-100: #e7eab0;    /* throat — soft accent, guarantee tag (ink 9.5:1) */
+  --sk-snow:  #f8f8f2;       /* petal = canvas — page ground */
+  --sk-ivory: #eef2e6;       /* petal shadow, light — cards */
+  --sk-foam:  #e2e8d3;       /* petal shadow — tertiary surface, stripes */
+  --sk-white: #ffffff;
+  --sk-black: #000000;
+
+  /* Brand-sheet colours kept for photography grading and packaging reference. Not UI. */
+  --sk-olive: #6c7257;
+  --sk-sand:  #eae9dc;
+
+  /* Cool neutrals (utility only: disabled fills) */
+  --sk-grey-20: #f9f9f9;
+  --sk-grey-40: #efefef;
+  --sk-grey-60: #e6e6e6;
+
+  /* Guidance */
+  --sk-red-500:     #b8433a; /* error: borders, icons, stripes (5.0:1 on canvas) */
+  --sk-red-700:     #9c372f; /* error text on light (6.6:1 on canvas, 5.8:1 on the error notice fill) */
+  --sk-red-200:     #f5c2bc; /* error text on ink (6.9:1 on the inverse error fill) */
+  --sk-amber-500:   #f5d053; /* warning fill = pollen */
+  --sk-success-500: #bed4a2; /* success fill = mist-deep */
+
+  /* Product families: capsules · seed oil · powder */
+  --sk-product-caps-primary: #213d29; --sk-product-caps-light: #d7e6c6; --sk-product-caps-dark: #12241a; --sk-product-caps-highlight: #7da04b;
+  --sk-product-oil-primary:  #f5d053; --sk-product-oil-light:  #e7eab0; --sk-product-oil-dark:  #836e4c; --sk-product-oil-highlight:  #f8d13f;
+  --sk-product-pow-primary:  #7d925c; --sk-product-pow-light:  #d7e6c6; --sk-product-pow-dark:  #536c3c; --sk-product-pow-highlight:  #7da04b;
+
+  /* Alpha ramps */
+  --sk-green-900-a05: rgba(33,61,41,.05);
+  --sk-green-900-a10: rgba(33,61,41,.10);
+  --sk-green-900-a15: rgba(33,61,41,.15);
+  --sk-green-900-a20: rgba(33,61,41,.20);
+  --sk-green-900-a50: rgba(33,61,41,.50);
+  --sk-green-900-a70: rgba(33,61,41,.70);
+  --sk-snow-a10: rgba(248,248,242,.10);
+  --sk-snow-a20: rgba(248,248,242,.20);
+  --sk-snow-a50: rgba(248,248,242,.50);
+  --sk-snow-a70: rgba(248,248,242,.70);
+  --sk-black-a08: rgba(0,0,0,.08);
+  --sk-black-a12: rgba(0,0,0,.12);
+  --sk-black-a20: rgba(0,0,0,.20);
+  --sk-black-a30: rgba(0,0,0,.30);
+  --sk-black-a40: rgba(0,0,0,.40);
+  --sk-black-a50: rgba(0,0,0,.50);
+  --sk-black-a60: rgba(0,0,0,.60);
+  --sk-white-a08: rgba(255,255,255,.08);
+  --sk-white-a12: rgba(255,255,255,.12);
+  --sk-white-a25: rgba(255,255,255,.25);
+  --sk-white-a60: rgba(255,255,255,.60);
+  --sk-glass-08: rgba(83,108,60,.08);   /* frosted glass, light context */
+  --sk-glass-35: rgba(83,108,60,.35);   /* frosted glass, over media */
+
+  /* Size scale (rem, 4px base). Name = value in px at 16px root. */
+  --sk-size-0:   0;
+  --sk-size-1:   0.0625rem;
+  --sk-size-1_5: 0.09375rem;
+  --sk-size-2:   0.125rem;
+  --sk-size-4:   0.25rem;
+  --sk-size-8:   0.5rem;
+  --sk-size-12:  0.75rem;
+  --sk-size-16:  1rem;
+  --sk-size-20:  1.25rem;
+  --sk-size-24:  1.5rem;
+  --sk-size-32:  2rem;
+  --sk-size-40:  2.5rem;
+  --sk-size-48:  3rem;
+  --sk-size-56:  3.5rem;
+  --sk-size-64:  4rem;
+  --sk-size-72:  4.5rem;
+  --sk-size-80:  5rem;
+  --sk-size-100: 6.25rem;
+  --sk-size-max: 62.5rem;    /* 1000px — the pill radius */
+
+  /* Spacing (alias of size; the only values allowed for padding/margin/gap) */
+  --sk-space-4:  var(--sk-size-4);
+  --sk-space-8:  var(--sk-size-8);
+  --sk-space-12: var(--sk-size-12);
+  --sk-space-16: var(--sk-size-16);
+  --sk-space-24: var(--sk-size-24);
+  --sk-space-32: var(--sk-size-32);
+  --sk-space-40: var(--sk-size-40);
+  --sk-space-48: var(--sk-size-48);
+  --sk-space-56: var(--sk-size-56);
+  --sk-space-64: var(--sk-size-64);
+  --sk-space-72: var(--sk-size-72);
+  --sk-space-80: var(--sk-size-80);
+  --sk-space-100: var(--sk-size-100);
+
+  /* Radius: 4 chips/accent CTA · 8 inputs · 16 cards · 24 · 32 panels · pill */
+  --sk-radius-xs:   var(--sk-size-4);
+  --sk-radius-sm:   var(--sk-size-8);
+  --sk-radius-md:   var(--sk-size-16);
+  --sk-radius-lg:   var(--sk-size-24);
+  --sk-radius-xl:   var(--sk-size-32);
+  --sk-radius-full: var(--sk-size-max);
+
+  /* Stroke */
+  --sk-stroke-default: var(--sk-size-1);
+  --sk-stroke-active:  var(--sk-size-1_5);
+  --sk-stroke-strong:  var(--sk-size-2);
+
+  /* Opacity */
+  --sk-opacity-disabled: .4;
+  --sk-opacity-hover:    .8;
+  --sk-opacity-pressed:  .7;
+  --sk-opacity-muted:    .3;
+
+  /* Typography — Inter is the brand face. Load as a variable font (wght 300..500) or 350 snaps to 400. No mono face. */
+  --sk-font-sans: "Inter", system-ui, -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --sk-font-mono: "Inter", system-ui, sans-serif;
+  --sk-weight-light:   300;
+  --sk-weight-book:    350;   /* the default for headings and body */
+  --sk-weight-regular: 400;
+  --sk-weight-medium:  500;   /* the heaviest weight in the system */
+
+  --sk-text-10: 0.625rem;
+  --sk-text-12: 0.75rem;
+  --sk-text-14: 0.875rem;
+  --sk-text-16: 1rem;
+  --sk-text-18: 1.125rem;
+  --sk-text-20: 1.25rem;
+  --sk-text-24: 1.5rem;
+  --sk-text-32: 2rem;
+  --sk-text-40: 2.5rem;
+  --sk-text-48: 3rem;
+  --sk-text-64: 4rem;
+
+  --sk-leading-none:  1;
+  --sk-leading-tight: 1.1;    /* display, h1, h2 */
+  --sk-leading-snug:  1.2;    /* h3, titles */
+  --sk-leading-body:  1.4;    /* body */
+  --sk-leading-loose: 1.5;    /* long-form prose */
+
+  /* Tracking is size-specific */
+  --sk-tracking-display: -0.025em;
+  --sk-tracking-heading: -0.02em;
+  --sk-tracking-title:   -0.015em;
+  --sk-tracking-body:    -0.01em;
+  --sk-tracking-small:   -0.005em;
+  --sk-tracking-caption: 0;
+  --sk-tracking-eyebrow: 0.02em;
+
+  /* Motion */
+  --sk-duration-instant: 100ms;
+  --sk-duration-fast:    200ms;
+  --sk-duration-base:    300ms;
+  --sk-duration-slow:    600ms;
+  --sk-ease-standard: ease-in-out;
+  --sk-ease-out:      cubic-bezier(.165,.84,.44,1);
+  --sk-ease-reveal:   cubic-bezier(.75,0,.25,1);
+
+  /* Elevation: one soft shadow + hairline rings */
+  --sk-shadow-float: 0 4px 30px rgba(0,0,0,.08);
+  --sk-ring-brand:   0 0 0 .5px var(--sk-green-900);
+  --sk-ring-light:   0 0 0 .5px var(--sk-snow-a50);
+
+  /* Layout */
+  --sk-container-max: 1440px;
+  --sk-gutter-sm: var(--sk-space-16);   /* < 600px  */
+  --sk-gutter-md: var(--sk-space-24);   /* 600–959  */
+  --sk-gutter-lg: var(--sk-space-32);   /* >= 960   */
+  --sk-grid-gap:  20px;                 /* the only 20 in the system */
+  --sk-measure:   65ch;
+  --sk-header-h:  48px;
+  --sk-touch-min: 44px;
+
+  /* Z-index scale */
+  --sk-z-base: 0; --sk-z-raised: 1; --sk-z-sticky: 10; --sk-z-overlay: 100; --sk-z-modal: 1000; --sk-z-toast: 1100;
+
+  /* ------------------------------------------------------------------ 2. SEMANTIC (light / "on paper") */
+  --sk-text-primary:   var(--sk-green-900);
+  --sk-text-secondary: var(--sk-green-300);      /* solid dried leaf, not alpha */
+  --sk-text-disabled:  var(--sk-green-900-a50);
+  --sk-text-error:     var(--sk-red-700);
+  --sk-text-warning:   var(--sk-green-900);
+  --sk-text-success:   var(--sk-green-900);
+  --sk-text-on-brand:  var(--sk-snow);
+  --sk-text-on-accent: var(--sk-green-900);
+
+  --sk-surface-page:      var(--sk-snow);
+  --sk-surface-secondary: var(--sk-ivory);
+  --sk-surface-tertiary:  var(--sk-foam);
+  --sk-surface-bright:    var(--sk-white);
+  --sk-surface-brand:     var(--sk-green-900);
+  --sk-surface-brand-subtle: var(--sk-green-800);
+  --sk-surface-accent:    var(--sk-lime-500);
+  --sk-surface-accent-soft: var(--sk-lime-100);
+  --sk-surface-mist:      var(--sk-mist);
+  --sk-surface-glass:     var(--sk-glass-08);
+  --sk-surface-raised:    var(--sk-green-900-a05);
+  --sk-surface-success:   var(--sk-success-500);
+  --sk-surface-warning:   var(--sk-amber-500);
+  --sk-surface-error:     rgba(184,67,58,.10);
+
+  --sk-action-primary:       var(--sk-green-900);
+  --sk-action-primary-hover: var(--sk-green-800);   /* one lightness step: canvas text stays 8.4:1 */
+  --sk-action-primary-text:  var(--sk-snow);
+  --sk-action-inverse:       var(--sk-snow);
+  --sk-action-inverse-hover: var(--sk-foam);        /* ink text stays 9.5:1 */
+  --sk-action-inverse-text:  var(--sk-green-900);
+  --sk-action-accent:        var(--sk-lime-500);
+  --sk-action-accent-hover:  #edc63f;               /* pollen one step deeper, ink 7.2:1 */
+  --sk-action-accent-text:   var(--sk-green-900);
+  --sk-action-scrim:         var(--sk-black-a30);
+  --sk-action-glass:         var(--sk-glass-35);
+
+  --sk-outline-primary: var(--sk-green-900);
+  --sk-outline-subtle:  var(--sk-green-900-a10);
+  --sk-outline-neutral: var(--sk-green-100);
+  --sk-outline-error:   var(--sk-red-500);
+
+  --sk-state-hover:    var(--sk-black-a08);
+  --sk-state-pressed:  var(--sk-black-a12);
+  --sk-state-focus:    var(--sk-black-a12);
+  --sk-state-selected: var(--sk-green-900);
+
+  --sk-scrim-20: var(--sk-black-a20);
+  --sk-scrim-50: var(--sk-black-a50);
+  --sk-focus-ring: var(--sk-green-900);
+  --sk-focus-offset: 2px;
+
+  /* ------------------------------------------------------------------ 3. COMPONENT */
+  --sk-button-radius:  var(--sk-radius-full);
+  --sk-button-h-xs: 32px; --sk-button-h-sm: 36px; --sk-button-h-md: 48px; --sk-button-h-lg: 56px;
+  --sk-button-px-xs: var(--sk-space-16); --sk-button-px-sm: var(--sk-space-16); --sk-button-px-md: var(--sk-space-24); --sk-button-px-lg: var(--sk-space-32);
+  --sk-button-weight: var(--sk-weight-book);
+  --sk-button-text-weight: var(--sk-weight-medium);
+
+  --sk-input-h:  48px;
+  --sk-input-h-lg: 52px;
+  --sk-input-px: var(--sk-space-16);
+  --sk-input-radius: var(--sk-radius-sm);
+  --sk-input-bg: transparent;
+  --sk-input-border: var(--sk-outline-neutral);
+  --sk-input-border-hover: var(--sk-green-900-a50);
+  --sk-input-border-focus: var(--sk-outline-primary);
+  --sk-input-placeholder: var(--sk-text-secondary);
+
+  --sk-control-size: 20px;
+  --sk-chip-h: 50px;
+  --sk-badge-h: 24px;
+  --sk-card-radius: var(--sk-radius-md);
+  --sk-card-pad: var(--sk-space-16);
+  --sk-panel-radius: var(--sk-radius-xl);
+
+  color-scheme: light;
+}
+
+/* --------------------------------------------------------------------------
+   INVERSE CONTEXT ("on ink"). Apply .sk-inverse to any region on the ink
+   green; the same mapping doubles as the page-level dark theme.
+   -------------------------------------------------------------------------- */
+.sk-inverse,
+:root[data-theme="dark"] {
+  --sk-text-primary:   var(--sk-snow);
+  --sk-text-secondary: var(--sk-snow-a70);
+  --sk-text-disabled:  var(--sk-snow-a50);
+  --sk-text-on-brand:  var(--sk-snow);
+
+  --sk-surface-page:      var(--sk-green-900);
+  --sk-surface-secondary: var(--sk-snow-a10);
+  --sk-surface-tertiary:  var(--sk-snow-a20);
+  --sk-surface-bright:    var(--sk-green-800);
+  --sk-surface-mist:      var(--sk-green-800);
+  --sk-surface-glass:     var(--sk-snow-a10);
+  --sk-surface-raised:    var(--sk-snow-a10);
+  --sk-surface-error:     rgba(184,67,58,.20);
+  --sk-text-error:        var(--sk-red-200);
+  --sk-outline-error:     var(--sk-red-200);
+
+  --sk-action-primary:       var(--sk-snow);
+  --sk-action-primary-hover: var(--sk-foam);
+  --sk-action-primary-text:  var(--sk-green-900);
+  --sk-action-inverse:       var(--sk-green-900);
+  --sk-action-inverse-hover: var(--sk-green-800);
+  --sk-action-inverse-text:  var(--sk-snow);
+
+  --sk-outline-primary: var(--sk-snow);
+  --sk-outline-subtle:  var(--sk-snow-a20);
+  --sk-outline-neutral: var(--sk-snow-a50);
+
+  --sk-state-hover:   var(--sk-white-a08);
+  --sk-state-pressed: var(--sk-white-a12);
+  --sk-state-focus:   var(--sk-white-a12);
+  --sk-state-selected: var(--sk-snow);
+
+  --sk-input-border: var(--sk-snow);
+  --sk-input-border-hover: var(--sk-snow);
+  --sk-input-border-focus: var(--sk-snow);
+  --sk-input-placeholder: var(--sk-snow-a70);
+  --sk-focus-ring: var(--sk-snow);
+  --sk-shadow-float: 0 4px 30px rgba(0,0,0,.3);
+  --sk-ring-brand: 0 0 0 .5px var(--sk-snow-a50);
+  color-scheme: dark;
+}
+
+/* Palet gelap mengikuti mode sistem pembaca — keputusan user 9 Sep, sama
+   seperti berkas rujukan. Konsekuensinya header dan footer tema (yang tidak
+   punya mode gelap) harus ikut dicat di halaman ini saja; lihat blok
+   "chrome tema ikut gelap" di bawah. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --sk-text-primary:   var(--sk-snow);
+    --sk-text-secondary: var(--sk-snow-a70);
+    --sk-text-disabled:  var(--sk-snow-a50);
+    --sk-surface-page:      var(--sk-green-900);
+    --sk-surface-secondary: var(--sk-snow-a10);
+    --sk-surface-tertiary:  var(--sk-snow-a20);
+    --sk-surface-bright:    var(--sk-green-800);
+    --sk-surface-mist:      var(--sk-green-800);
+    --sk-surface-glass:     var(--sk-snow-a10);
+    --sk-surface-raised:    var(--sk-snow-a10);
+    --sk-surface-error:     rgba(184,67,58,.20);
+    --sk-text-error:        var(--sk-red-200);
+    --sk-outline-error:     var(--sk-red-200);
+    --sk-action-primary:       var(--sk-snow);
+    --sk-action-primary-hover: var(--sk-foam);
+    --sk-action-primary-text:  var(--sk-green-900);
+    --sk-action-inverse:       var(--sk-green-900);
+    --sk-action-inverse-hover: var(--sk-green-800);
+    --sk-action-inverse-text:  var(--sk-snow);
+    --sk-outline-primary: var(--sk-snow);
+    --sk-outline-subtle:  var(--sk-snow-a20);
+    --sk-outline-neutral: var(--sk-snow-a50);
+    --sk-state-hover:   var(--sk-white-a08);
+    --sk-state-pressed: var(--sk-white-a12);
+    --sk-state-focus:   var(--sk-white-a12);
+    --sk-state-selected: var(--sk-snow);
+    --sk-input-border: var(--sk-snow);
+    --sk-input-border-hover: var(--sk-snow);
+    --sk-input-border-focus: var(--sk-snow);
+    --sk-input-placeholder: var(--sk-snow-a70);
+    --sk-focus-ring: var(--sk-snow);
+    --sk-shadow-float: 0 4px 30px rgba(0,0,0,.3);
+    --sk-ring-brand: 0 0 0 .5px var(--sk-snow-a50);
+    color-scheme: dark;
+  }
+}
+
+/* A paper island inside an inverse region (e.g. a canvas card on ink) */
+.sk-inverse .sk-light,
+:root[data-theme="dark"] .sk-light {
+  --sk-text-primary:   var(--sk-green-900);
+  --sk-text-secondary: var(--sk-green-300);
+  --sk-text-disabled:  var(--sk-green-900-a50);
+  --sk-surface-page:      var(--sk-snow);
+  --sk-surface-secondary: var(--sk-ivory);
+  --sk-surface-tertiary:  var(--sk-foam);
+  --sk-surface-bright:    var(--sk-white);
+  --sk-surface-mist:      var(--sk-mist);
+  --sk-surface-error:     rgba(184,67,58,.10);
+  --sk-text-error:        var(--sk-red-700);
+  --sk-outline-error:     var(--sk-red-500);
+  --sk-action-primary:       var(--sk-green-900);
+  --sk-action-primary-hover: var(--sk-green-800);
+  --sk-action-primary-text:  var(--sk-snow);
+  --sk-action-inverse:       var(--sk-snow);
+  --sk-action-inverse-hover: var(--sk-foam);
+  --sk-action-inverse-text:  var(--sk-green-900);
+  --sk-outline-primary: var(--sk-green-900);
+  --sk-outline-subtle:  var(--sk-green-900-a10);
+  --sk-outline-neutral: var(--sk-green-100);
+  --sk-state-hover:   var(--sk-black-a08);
+  --sk-state-pressed: var(--sk-black-a12);
+  --sk-state-selected: var(--sk-green-900);
+  --sk-input-border: var(--sk-green-100);
+  --sk-input-border-hover: var(--sk-green-900-a50);
+  --sk-input-border-focus: var(--sk-green-900);
+  --sk-input-placeholder: var(--sk-green-300);
+  --sk-focus-ring: var(--sk-green-900);
+  color-scheme: light;
+}
+
+/* micro labels: Inter caps with tabular figures stand in for a mono face */
+.sk-mono, .sk-code { font-variant-numeric: tabular-nums; letter-spacing: .04em; }
+
+/* ==========================================================================
+   TREELOGY UI KIT — COMPONENTS  v2.0
+   Requires tokens.css. Every value below is a token; no raw colours or px
+   except the 1px hairline maths that CSS forces on us.
+   Naming: .sk-<block>  .sk-<block>--<modifier>  .sk-<block>__<element>
+   States are real states (:hover, :focus-visible, :disabled, [aria-*]),
+   never extra classes, so the DOM and the CSS can't disagree.
+   ========================================================================== */
+
+/* ------------------------------------------------------------- 0. BASE */
+.sk-root, .sk-root * , .sk-root *::before, .sk-root *::after { box-sizing: border-box; }
+.sk-root {
+  font-family: var(--sk-font-sans);
+  font-weight: var(--sk-weight-book);
+  font-size: var(--sk-text-16);
+  line-height: var(--sk-leading-body);
+  letter-spacing: var(--sk-tracking-body);
+  color: var(--sk-text-primary);
+  background: var(--sk-surface-page);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-optical-sizing: auto;
+}
+.sk-root :focus-visible {
+  outline: var(--sk-stroke-active) solid var(--sk-focus-ring);
+  outline-offset: var(--sk-focus-offset);
+}
+.sk-root ::selection { background: var(--sk-lime-500); color: var(--sk-green-900); }
+/* Theme regions paint their own ground so a section on green needs only the one class */
+.sk-inverse, .sk-light { background: var(--sk-surface-page); color: var(--sk-text-primary); }
+
+/* ------------------------------------------------------------- 1. TYPOGRAPHY */
+/* Scale: display 48/64 · h1 40 · h2 32 · h3 24 · title 20 · body 16 · small 14 · caption 12 · micro 10 */
+.sk-display, .sk-h1, .sk-h2, .sk-h3, .sk-title {
+  font-weight: var(--sk-weight-book);
+  margin: 0;
+  text-wrap: balance;
+}
+.sk-display     { font-size: var(--sk-text-48); line-height: var(--sk-leading-tight); letter-spacing: var(--sk-tracking-display); }
+.sk-display--xl { font-size: clamp(var(--sk-text-48), 3.2vw + 1rem, var(--sk-text-64)); }
+.sk-h1  { font-size: var(--sk-text-40); line-height: var(--sk-leading-tight); letter-spacing: var(--sk-tracking-heading); }
+.sk-h2  { font-size: var(--sk-text-32); line-height: var(--sk-leading-tight); letter-spacing: var(--sk-tracking-heading); }
+.sk-h3  { font-size: var(--sk-text-24); line-height: var(--sk-leading-snug);  letter-spacing: var(--sk-tracking-title); }
+.sk-title { font-size: var(--sk-text-20); line-height: var(--sk-leading-body); letter-spacing: var(--sk-tracking-body); }
+.sk-lead  { font-size: var(--sk-text-18); line-height: 1.3; letter-spacing: var(--sk-tracking-body); margin: 0; }
+.sk-body  { font-size: var(--sk-text-16); line-height: var(--sk-leading-body); letter-spacing: var(--sk-tracking-body); margin: 0; }
+.sk-small { font-size: var(--sk-text-14); line-height: var(--sk-leading-body); letter-spacing: var(--sk-tracking-small); margin: 0; }
+.sk-caption { font-size: var(--sk-text-12); line-height: var(--sk-leading-body); letter-spacing: var(--sk-tracking-caption); margin: 0; }
+.sk-eyebrow {
+  font-size: var(--sk-text-12); line-height: 1.1; letter-spacing: var(--sk-tracking-eyebrow);
+  font-weight: var(--sk-weight-medium); text-transform: uppercase; margin: 0;
+}
+.sk-mono {
+  font-family: var(--sk-font-mono); font-weight: var(--sk-weight-regular);
+  font-size: var(--sk-text-12); letter-spacing: 0; text-transform: uppercase;
+}
+.sk-prose { max-width: var(--sk-measure); line-height: var(--sk-leading-loose); }
+.sk-prose > * + * { margin-top: var(--sk-space-12); }
+.sk-text-light   { font-weight: var(--sk-weight-light); }
+.sk-text-medium  { font-weight: var(--sk-weight-medium); }
+.sk-text-secondary { color: var(--sk-text-secondary); }
+.sk-text-disabled  { color: var(--sk-text-disabled); }
+.sk-text-error     { color: var(--sk-text-error); }
+.sk-num { font-variant-numeric: tabular-nums; }
+.sk-strike { text-decoration: line-through; color: var(--sk-text-disabled); }
+
+/* Mobile: display and h1 step down 48→32 */
+@media (max-width: 599px) {
+  .sk-display, .sk-display--xl { font-size: var(--sk-text-32); letter-spacing: var(--sk-tracking-heading); }
+  .sk-h1 { font-size: var(--sk-text-32); }
+  .sk-h2 { font-size: var(--sk-text-24); letter-spacing: var(--sk-tracking-title); }
+}
+
+/* Links */
+.sk-link {
+  color: inherit; text-decoration: underline; text-underline-offset: .15em; text-decoration-thickness: 1px;
+  font-weight: var(--sk-weight-book); transition: opacity var(--sk-duration-fast) var(--sk-ease-standard);
+}
+.sk-link:hover { opacity: var(--sk-opacity-hover); }
+.sk-link--quiet { text-decoration: none; }
+.sk-link--quiet:hover { text-decoration: underline; }
+
+/* ------------------------------------------------------------- 2. BUTTONS */
+.sk-btn {
+  --_bg: var(--sk-action-primary);
+  --_bg-hover: var(--sk-action-primary-hover);
+  --_fg: var(--sk-action-primary-text);
+  --_border: transparent;
+  --_layer: 0;   /* state-layer strength on hover; filled variants use --_bg-hover instead */
+  --_h: var(--sk-button-h-md);
+  --_px: var(--sk-button-px-md);
+  --_fs: var(--sk-text-16);
+  --_ls: var(--sk-tracking-body);
+
+  position: relative; isolation: isolate;
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--sk-space-8);
+  min-height: var(--_h); padding: 0 var(--_px);
+  border-radius: var(--sk-button-radius);
+  border: var(--sk-stroke-default) solid var(--_border);
+  background: var(--_bg); color: var(--_fg);
+  font: inherit; font-size: var(--_fs); font-weight: var(--sk-button-weight); letter-spacing: var(--_ls); line-height: 1;
+  text-decoration: none; white-space: nowrap; cursor: pointer; user-select: none;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  transition: background-color var(--sk-duration-fast) var(--sk-ease-standard),
+              color var(--sk-duration-fast) var(--sk-ease-standard),
+              opacity var(--sk-duration-fast) var(--sk-ease-standard),
+              transform var(--sk-duration-instant) ease-out;
+}
+/* state layer drawn over the fill: transparent variants use it on hover (10%), everything uses it on press (12%) */
+.sk-btn::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; z-index: -1;
+  background: currentColor; opacity: 0; transition: opacity var(--sk-duration-fast) var(--sk-ease-standard);
+}
+/* Hover must be visible on every ground: filled variants change fill (one lightness step),
+   transparent variants draw a 10% state layer. Pressed adds 12% on top of either. */
+@media (hover: hover) {
+  .sk-btn:hover { background: var(--_bg-hover); }
+  .sk-btn:hover::after { opacity: var(--_layer); }
+}
+.sk-btn:active { transform: scale(.98); }
+.sk-btn:active::after { opacity: .12; }
+.sk-btn:disabled, .sk-btn[aria-disabled="true"] { opacity: var(--sk-opacity-disabled); cursor: not-allowed; pointer-events: none; }
+.sk-btn:focus-visible { outline: var(--sk-stroke-active) solid var(--sk-focus-ring); outline-offset: var(--sk-focus-offset); }
+
+/* Variants */
+.sk-btn--primary { /* default */ }
+.sk-btn--inverse  { --_bg: var(--sk-action-inverse); --_bg-hover: var(--sk-action-inverse-hover); --_fg: var(--sk-action-inverse-text); }
+.sk-btn--outline  { --_bg: transparent; --_bg-hover: transparent; --_layer: .10; --_fg: var(--sk-text-primary); --_border: var(--sk-outline-primary); }
+.sk-btn--ghost    { --_bg: transparent; --_bg-hover: transparent; --_layer: .10; --_fg: var(--sk-text-primary); }
+.sk-btn--accent   { --_bg: var(--sk-action-accent); --_bg-hover: var(--sk-action-accent-hover); --_fg: var(--sk-action-accent-text); border-radius: var(--sk-radius-xs); }
+.sk-btn--scrim    { --_bg: var(--sk-action-scrim); --_bg-hover: var(--sk-black-a50); --_fg: var(--sk-snow); }
+.sk-btn--glass    { --_bg: var(--sk-action-glass); --_bg-hover: var(--sk-action-glass); --_layer: .12; --_fg: var(--sk-snow); backdrop-filter: blur(12px) saturate(160%); -webkit-backdrop-filter: blur(12px) saturate(160%); }
+.sk-btn--text {
+  --_bg: transparent; --_bg-hover: transparent; --_fg: var(--sk-text-primary); --_px: 0;
+  font-weight: var(--sk-button-text-weight); border-radius: var(--sk-radius-xs);
+}
+.sk-btn--text::after { display: none; }
+.sk-btn--text:hover { text-decoration: underline; text-underline-offset: .2em; }
+
+/* Sizes: xs 32 card CTA · sm 36 nav · md 48 default · lg 56 hero */
+.sk-btn--xs { --_h: var(--sk-button-h-xs); --_px: var(--sk-button-px-xs); --_fs: var(--sk-text-14); --_ls: var(--sk-tracking-small); }
+.sk-btn--sm { --_h: var(--sk-button-h-sm); --_px: var(--sk-button-px-sm); --_fs: var(--sk-text-14); --_ls: var(--sk-tracking-small); }
+.sk-btn--lg { --_h: var(--sk-button-h-lg); --_px: var(--sk-button-px-lg); }
+.sk-btn--full { width: 100%; }
+/* Small buttons still need a 44px hit area on touch */
+@media (pointer: coarse) { .sk-btn--xs::before, .sk-btn--sm::before { content: ""; position: absolute; inset: calc((var(--_h) - var(--sk-touch-min)) / 2) 0; } }
+
+/* Icon-only */
+.sk-btn--icon { --_px: 0; width: var(--_h); aspect-ratio: 1; }
+.sk-btn__icon { width: 1.25em; height: 1.25em; flex: none; }
+.sk-btn__icon--trailing { margin-right: calc(var(--_px) * -.25); }
+
+/* Loading */
+.sk-btn[data-loading="true"] { color: transparent; pointer-events: none; }
+.sk-btn[data-loading="true"]::before {
+  content: ""; position: absolute; width: 1.1em; height: 1.1em; border-radius: 50%;
+  border: 2px solid var(--_fg); border-right-color: transparent; animation: sk-spin .8s linear infinite;
+}
+@keyframes sk-spin { to { transform: rotate(360deg); } }
+
+/* Button group */
+.sk-btn-group { display: inline-flex; flex-wrap: wrap; gap: var(--sk-space-8); align-items: center; }
+
+/* ------------------------------------------------------------- 3. FORMS */
+.sk-field { display: flex; flex-direction: column; gap: var(--sk-space-8); }
+.sk-label {
+  font-size: var(--sk-text-14); font-weight: var(--sk-weight-medium); letter-spacing: var(--sk-tracking-small); line-height: 1.2;
+}
+.sk-label__req { color: var(--sk-text-error); margin-left: 2px; }
+.sk-hint { font-size: var(--sk-text-12); color: var(--sk-text-secondary); margin: 0; }
+.sk-error { font-size: var(--sk-text-12); color: var(--sk-text-error); margin: 0; display: flex; gap: var(--sk-space-4); align-items: center; }
+
+.sk-input, .sk-select, .sk-textarea {
+  width: 100%; min-height: var(--sk-input-h); padding: 0 var(--sk-input-px);
+  border-radius: var(--sk-input-radius);
+  border: var(--sk-stroke-default) solid var(--sk-input-border);
+  background: var(--sk-input-bg); color: var(--sk-text-primary);
+  font: inherit; font-size: var(--sk-text-16); line-height: 1.4; letter-spacing: var(--sk-tracking-body);
+  transition: border-color var(--sk-duration-fast) var(--sk-ease-standard), box-shadow var(--sk-duration-fast) var(--sk-ease-standard);
+  -webkit-appearance: none; appearance: none;
+}
+.sk-input::placeholder, .sk-textarea::placeholder { color: var(--sk-input-placeholder); opacity: 1; }
+.sk-input:hover, .sk-select:hover, .sk-textarea:hover { border-color: var(--sk-input-border-hover); }
+.sk-input:focus, .sk-select:focus, .sk-textarea:focus {
+  outline: none; border-color: var(--sk-input-border-focus);
+  box-shadow: inset 0 0 0 .5px var(--sk-input-border-focus); /* 1px → 1.5px without layout shift */
+}
+.sk-input:disabled, .sk-select:disabled, .sk-textarea:disabled { opacity: var(--sk-opacity-disabled); cursor: not-allowed; }
+.sk-input:read-only:not(:disabled) { background: var(--sk-surface-secondary); border-color: transparent; }
+.sk-input[aria-invalid="true"], .sk-select[aria-invalid="true"], .sk-textarea[aria-invalid="true"] { border-color: var(--sk-outline-error); box-shadow: inset 0 0 0 .5px var(--sk-outline-error); }
+.sk-input--lg { min-height: var(--sk-input-h-lg); padding: 0 var(--sk-space-20); }
+.sk-input--strong { border-width: var(--sk-stroke-strong); }   /* newsletter field on ink: 2px canvas */
+.sk-textarea { min-height: 120px; padding: var(--sk-space-12) var(--sk-input-px); resize: vertical; }
+
+/* Underline field (sign-in) */
+.sk-input--underline {
+  border-radius: 0; border-width: 0 0 var(--sk-stroke-default); padding: 0 var(--sk-space-8); min-height: 40px;
+  border-color: var(--sk-outline-primary); background: transparent;
+}
+.sk-input--underline:focus { box-shadow: inset 0 -0.5px 0 0 var(--sk-input-border-focus); }
+
+/* Field with leading icon (review search) */
+.sk-input-wrap { position: relative; display: flex; align-items: center; }
+.sk-input-wrap > .sk-input { padding-left: calc(var(--sk-input-px) + 24px); }
+.sk-input-wrap > .sk-input-wrap__icon { position: absolute; left: var(--sk-input-px); width: 16px; height: 16px; pointer-events: none; color: var(--sk-text-secondary); }
+.sk-input-wrap--trailing > .sk-input { padding-left: var(--sk-input-px); padding-right: calc(var(--sk-input-px) + 24px); }
+.sk-input-wrap--trailing > .sk-input-wrap__icon { left: auto; right: var(--sk-input-px); }
+
+/* Select */
+.sk-select {
+  padding-right: calc(var(--sk-input-px) + 24px); cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='%231c3a13' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right var(--sk-input-px) center; background-size: 16px;
+}
+.sk-inverse .sk-select, :root[data-theme="dark"] .sk-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='%23fcfcf7' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
+}
+
+/* Checkbox & radio (custom-drawn, keyboard-native) */
+.sk-check, .sk-radio { display: inline-flex; align-items: flex-start; gap: var(--sk-space-12); cursor: pointer; font-size: var(--sk-text-16); line-height: 1.4; min-height: var(--sk-touch-min); padding-block: calc((var(--sk-touch-min) - 1.4em) / 2); }
+.sk-check__box, .sk-radio__dot {
+  flex: none; width: var(--sk-control-size); height: var(--sk-control-size); margin-top: calc((1.4em - var(--sk-control-size)) / 2);
+  border: var(--sk-stroke-active) solid var(--sk-outline-primary); background: transparent;
+  display: grid; place-items: center;
+  transition: background-color var(--sk-duration-fast) var(--sk-ease-standard), border-color var(--sk-duration-fast) var(--sk-ease-standard);
+}
+.sk-check__box { border-radius: var(--sk-radius-xs); }
+.sk-radio__dot { border-radius: 50%; }
+.sk-check__box::after {
+  content: ""; width: 10px; height: 6px; border: 0 solid var(--sk-action-primary-text); border-width: 0 0 2px 2px;
+  transform: translateY(-1px) rotate(-45deg) scale(0); transition: transform var(--sk-duration-instant) ease-out;
+}
+.sk-radio__dot::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--sk-action-primary-text); transform: scale(0); transition: transform var(--sk-duration-instant) ease-out; }
+.sk-check > input, .sk-radio > input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; }
+.sk-check > input:checked + .sk-check__box, .sk-radio > input:checked + .sk-radio__dot { background: var(--sk-state-selected); border-color: var(--sk-state-selected); }
+.sk-check > input:checked + .sk-check__box::after { transform: translateY(-1px) rotate(-45deg) scale(1); }
+.sk-radio > input:checked + .sk-radio__dot::after { transform: scale(1); }
+.sk-check > input:focus-visible + .sk-check__box, .sk-radio > input:focus-visible + .sk-radio__dot { outline: var(--sk-stroke-active) solid var(--sk-focus-ring); outline-offset: var(--sk-focus-offset); }
+.sk-check > input:disabled ~ *, .sk-radio > input:disabled ~ * { opacity: var(--sk-opacity-disabled); cursor: not-allowed; }
+.sk-check__text, .sk-radio__text { display: flex; flex-direction: column; gap: 2px; }
+
+/* Switch */
+.sk-switch { display: inline-flex; align-items: center; gap: var(--sk-space-12); cursor: pointer; min-height: var(--sk-touch-min); }
+.sk-switch > input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; }
+.sk-switch__track {
+  width: 44px; height: 24px; border-radius: var(--sk-radius-full); flex: none; position: relative;
+  border: var(--sk-stroke-active) solid var(--sk-outline-primary); background: transparent;
+  transition: background-color var(--sk-duration-fast) var(--sk-ease-standard);
+}
+.sk-switch__track::after {
+  content: ""; position: absolute; top: 3px; left: 3px; width: 15px; height: 15px; border-radius: 50%;
+  background: var(--sk-outline-primary); transition: transform var(--sk-duration-fast) var(--sk-ease-out), background-color var(--sk-duration-fast);
+}
+.sk-switch > input:checked + .sk-switch__track { background: var(--sk-state-selected); }
+.sk-switch > input:checked + .sk-switch__track::after { transform: translateX(20px); background: var(--sk-action-primary-text); }
+.sk-switch > input:focus-visible + .sk-switch__track { outline: var(--sk-stroke-active) solid var(--sk-focus-ring); outline-offset: var(--sk-focus-offset); }
+
+/* Choice chip (quiz answers, filters). Selection is a real input inside. */
+.sk-chip {
+  position: relative; display: inline-flex; align-items: center; gap: var(--sk-space-8);
+  min-height: var(--sk-chip-h); padding: 0 var(--sk-space-24);
+  border-radius: var(--sk-radius-full); border: var(--sk-stroke-default) solid var(--sk-outline-neutral);
+  background: transparent; color: var(--sk-text-primary);
+  font-size: var(--sk-text-16); font-weight: var(--sk-weight-medium); letter-spacing: var(--sk-tracking-body); line-height: 1.3;
+  cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent;
+  transition: transform var(--sk-duration-instant) ease-out, border-color var(--sk-duration-base) var(--sk-ease-standard), background-color var(--sk-duration-fast) var(--sk-ease-standard), color var(--sk-duration-fast) var(--sk-ease-standard);
+}
+.sk-chip > input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; }
+@media (hover: hover) { .sk-chip:hover { border-color: var(--sk-outline-primary); } }
+.sk-chip:active { transform: scale(.98); }
+.sk-chip:has(> input:checked), .sk-chip[aria-pressed="true"] { background: var(--sk-state-selected); border-color: var(--sk-state-selected); color: var(--sk-action-primary-text); }
+.sk-chip:has(> input:focus-visible) { outline: var(--sk-stroke-active) solid var(--sk-focus-ring); outline-offset: var(--sk-focus-offset); }
+.sk-chip--sm { min-height: 36px; padding: 0 var(--sk-space-16); font-size: var(--sk-text-14); }
+.sk-chip-group { display: flex; flex-wrap: wrap; gap: var(--sk-space-12); }
+
+/* Quantity stepper */
+.sk-stepper { display: inline-flex; align-items: center; border: var(--sk-stroke-default) solid var(--sk-outline-primary); border-radius: var(--sk-radius-full); height: var(--sk-button-h-sm); }
+.sk-stepper > button { all: unset; width: var(--sk-button-h-sm); height: 100%; display: grid; place-items: center; cursor: pointer; border-radius: inherit; }
+.sk-stepper > button:focus-visible { outline: var(--sk-stroke-active) solid var(--sk-focus-ring); outline-offset: -2px; }
+.sk-stepper > output { min-width: 2ch; text-align: center; font-variant-numeric: tabular-nums; font-size: var(--sk-text-14); }
+
+/* ------------------------------------------------------------- 4. BADGES & PILLS */
+.sk-badge {
+  display: inline-flex; align-items: center; gap: var(--sk-space-4);
+  height: var(--sk-badge-h); padding: 0 var(--sk-space-8); border-radius: var(--sk-radius-full);
+  background: var(--sk-surface-accent); color: var(--sk-text-on-accent);
+  font-size: var(--sk-text-12); font-weight: var(--sk-weight-medium); letter-spacing: var(--sk-tracking-small); line-height: 1; white-space: nowrap;
+}
+.sk-badge--brand   { background: var(--sk-action-primary); color: var(--sk-action-primary-text); }   /* flips on ink so it never vanishes */
+.sk-badge--soft    { background: var(--sk-surface-accent-soft); color: var(--sk-green-900); }
+.sk-badge--neutral { background: var(--sk-surface-tertiary); color: var(--sk-text-primary); }
+.sk-badge--outline { background: transparent; border: var(--sk-stroke-default) solid var(--sk-outline-primary); color: var(--sk-text-primary); }
+.sk-badge--product { background: var(--_pc, var(--sk-product-dm-dark)); color: var(--sk-snow); }
+/* Product code pill "DS-01®" — 10px, hairline outline */
+.sk-code {
+  display: inline-flex; align-items: center; height: 18px; padding: 0 var(--sk-space-8);
+  border: var(--sk-stroke-default) solid var(--sk-outline-primary); border-radius: var(--sk-radius-full);
+  font-size: var(--sk-text-10); font-weight: var(--sk-weight-book); letter-spacing: var(--sk-tracking-heading); line-height: 1; white-space: nowrap;
+}
+
+/* Notice (inline feedback: status, success, warning, error) */
+.sk-notice {
+  display: flex; gap: var(--sk-space-12); align-items: flex-start;
+  padding: var(--sk-space-12) var(--sk-space-16); border-radius: var(--sk-radius-sm);
+  background: var(--sk-surface-secondary); color: var(--sk-text-primary);
+  font-size: var(--sk-text-14); letter-spacing: var(--sk-tracking-small); line-height: 1.4;
+}
+.sk-notice__icon { width: 16px; height: 16px; flex: none; margin-top: 2px; }
+.sk-notice--success { background: var(--sk-surface-success); color: var(--sk-text-success); }
+.sk-notice--warning { background: var(--sk-surface-warning); color: var(--sk-green-900); }
+.sk-notice--error   { background: var(--sk-surface-error); color: var(--sk-text-error); box-shadow: inset 3px 0 0 var(--sk-outline-error); }
+.sk-badge--success  { background: var(--sk-success-500); color: var(--sk-green-900); }
+.sk-badge--warning  { background: var(--sk-amber-500); color: var(--sk-green-900); }
+
+/* Rating */
+.sk-rating { display: inline-flex; align-items: center; gap: var(--sk-space-8); font-size: var(--sk-text-14); letter-spacing: var(--sk-tracking-small); }
+.sk-rating__stars { display: inline-flex; gap: 2px; color: var(--sk-text-primary); }
+.sk-rating__stars svg { width: 14px; height: 14px; fill: currentColor; }
+
+/* ------------------------------------------------------------- 5. SURFACES */
+.sk-card {
+  background: var(--sk-surface-secondary); color: var(--sk-text-primary);
+  border-radius: var(--sk-card-radius); padding: var(--sk-card-pad);
+}
+.sk-card--bright  { background: var(--sk-surface-bright); }
+.sk-card--glass   { background: var(--sk-surface-glass); }
+.sk-card--outline { background: transparent; border: var(--sk-stroke-default) solid var(--sk-outline-neutral); }
+.sk-card--float   { background: var(--sk-surface-bright); box-shadow: var(--sk-shadow-float); }
+.sk-card--mist    { background: var(--sk-surface-mist); }
+.sk-card--pad-lg  { padding: var(--sk-space-24); }
+.sk-panel {
+  background: var(--sk-surface-brand-subtle); color: var(--sk-snow);
+  border-radius: var(--sk-panel-radius); padding: var(--sk-space-16);
+}
+.sk-panel--brand  { background: var(--sk-surface-brand); }
+.sk-panel--lg     { padding: var(--sk-space-32); }
+.sk-divider { border: 0; border-top: var(--sk-stroke-default) solid var(--sk-outline-subtle); margin: 0; }
+.sk-divider--dashed { border-top-style: dashed; border-color: var(--sk-outline-primary); }
+
+/* Translucent bar (nav) — content scrolls under it */
+.sk-bar {
+  position: sticky; top: 0; z-index: var(--sk-z-sticky);
+  display: flex; align-items: center; gap: var(--sk-space-8); min-height: var(--sk-header-h); padding: 0 var(--sk-space-8) 0 var(--sk-space-16);
+  background: color-mix(in srgb, var(--sk-surface-page) 72%, transparent);
+  backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+@media (prefers-reduced-transparency: reduce) { .sk-bar { background: var(--sk-surface-page); backdrop-filter: none; } }
+
+/* Accordion (FAQ) */
+.sk-accordion { border-top: var(--sk-stroke-default) solid var(--sk-outline-subtle); }
+.sk-accordion > details { border-bottom: var(--sk-stroke-default) solid var(--sk-outline-subtle); }
+.sk-accordion summary {
+  list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: var(--sk-space-16);
+  padding: var(--sk-space-16) 0; font-size: var(--sk-text-16); font-weight: var(--sk-weight-medium); letter-spacing: var(--sk-tracking-body);
+}
+.sk-accordion summary::-webkit-details-marker { display: none; }
+.sk-accordion summary::after { content: "+"; font-weight: var(--sk-weight-light); font-size: var(--sk-text-24); line-height: 1; transition: transform var(--sk-duration-fast) var(--sk-ease-standard); }
+.sk-accordion details[open] summary::after { transform: rotate(45deg); }
+.sk-accordion .sk-accordion__body { padding: 0 0 var(--sk-space-16); color: var(--sk-text-secondary); max-width: var(--sk-measure); }
+
+/* ------------------------------------------------------------- 6. LAYOUT */
+.sk-container { width: 100%; max-width: var(--sk-container-max); margin-inline: auto; padding-inline: var(--sk-gutter-sm); }
+@media (min-width: 600px) { .sk-container { padding-inline: var(--sk-gutter-md); } }
+@media (min-width: 960px) { .sk-container { padding-inline: var(--sk-gutter-lg); } }
+.sk-grid { display: grid; gap: var(--sk-grid-gap); grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (min-width: 600px) { .sk-grid { grid-template-columns: repeat(8, minmax(0, 1fr)); } }
+@media (min-width: 960px) { .sk-grid { grid-template-columns: repeat(12, minmax(0, 1fr)); } }
+.sk-stack   { display: flex; flex-direction: column; gap: var(--sk-space-16); }
+.sk-cluster { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sk-space-8); }
+.sk-section { padding-block: var(--sk-space-64); }
+@media (min-width: 960px) { .sk-section { padding-block: var(--sk-space-100); } }
+.sk-scroll-x { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* ------------------------------------------------------------- 7. MOTION */
+@media (prefers-reduced-motion: reduce) {
+  .sk-root *, .sk-root *::before, .sk-root *::after { transition-duration: 1ms !important; animation-duration: 1ms !important; animation-iteration-count: 1 !important; }
+  .sk-btn:active, .sk-chip:active { transform: none; }
+}
+
+/* Treelogy UI Kit — generated spacing utilities. Do not edit; run build.py. */
+.sk-p-0 { padding: 0; }
+.sk-p-4 { padding: var(--sk-space-4); }
+.sk-p-8 { padding: var(--sk-space-8); }
+.sk-p-12 { padding: var(--sk-space-12); }
+.sk-p-16 { padding: var(--sk-space-16); }
+.sk-p-24 { padding: var(--sk-space-24); }
+.sk-p-32 { padding: var(--sk-space-32); }
+.sk-p-40 { padding: var(--sk-space-40); }
+.sk-p-48 { padding: var(--sk-space-48); }
+.sk-p-56 { padding: var(--sk-space-56); }
+.sk-p-64 { padding: var(--sk-space-64); }
+.sk-p-72 { padding: var(--sk-space-72); }
+.sk-p-80 { padding: var(--sk-space-80); }
+.sk-p-100 { padding: var(--sk-space-100); }
+.sk-px-0 { padding-inline: 0; }
+.sk-px-4 { padding-inline: var(--sk-space-4); }
+.sk-px-8 { padding-inline: var(--sk-space-8); }
+.sk-px-12 { padding-inline: var(--sk-space-12); }
+.sk-px-16 { padding-inline: var(--sk-space-16); }
+.sk-px-24 { padding-inline: var(--sk-space-24); }
+.sk-px-32 { padding-inline: var(--sk-space-32); }
+.sk-px-40 { padding-inline: var(--sk-space-40); }
+.sk-px-48 { padding-inline: var(--sk-space-48); }
+.sk-px-56 { padding-inline: var(--sk-space-56); }
+.sk-px-64 { padding-inline: var(--sk-space-64); }
+.sk-px-72 { padding-inline: var(--sk-space-72); }
+.sk-px-80 { padding-inline: var(--sk-space-80); }
+.sk-px-100 { padding-inline: var(--sk-space-100); }
+.sk-py-0 { padding-block: 0; }
+.sk-py-4 { padding-block: var(--sk-space-4); }
+.sk-py-8 { padding-block: var(--sk-space-8); }
+.sk-py-12 { padding-block: var(--sk-space-12); }
+.sk-py-16 { padding-block: var(--sk-space-16); }
+.sk-py-24 { padding-block: var(--sk-space-24); }
+.sk-py-32 { padding-block: var(--sk-space-32); }
+.sk-py-40 { padding-block: var(--sk-space-40); }
+.sk-py-48 { padding-block: var(--sk-space-48); }
+.sk-py-56 { padding-block: var(--sk-space-56); }
+.sk-py-64 { padding-block: var(--sk-space-64); }
+.sk-py-72 { padding-block: var(--sk-space-72); }
+.sk-py-80 { padding-block: var(--sk-space-80); }
+.sk-py-100 { padding-block: var(--sk-space-100); }
+.sk-pt-0 { padding-top: 0; }
+.sk-pt-4 { padding-top: var(--sk-space-4); }
+.sk-pt-8 { padding-top: var(--sk-space-8); }
+.sk-pt-12 { padding-top: var(--sk-space-12); }
+.sk-pt-16 { padding-top: var(--sk-space-16); }
+.sk-pt-24 { padding-top: var(--sk-space-24); }
+.sk-pt-32 { padding-top: var(--sk-space-32); }
+.sk-pt-40 { padding-top: var(--sk-space-40); }
+.sk-pt-48 { padding-top: var(--sk-space-48); }
+.sk-pt-56 { padding-top: var(--sk-space-56); }
+.sk-pt-64 { padding-top: var(--sk-space-64); }
+.sk-pt-72 { padding-top: var(--sk-space-72); }
+.sk-pt-80 { padding-top: var(--sk-space-80); }
+.sk-pt-100 { padding-top: var(--sk-space-100); }
+.sk-pb-0 { padding-bottom: 0; }
+.sk-pb-4 { padding-bottom: var(--sk-space-4); }
+.sk-pb-8 { padding-bottom: var(--sk-space-8); }
+.sk-pb-12 { padding-bottom: var(--sk-space-12); }
+.sk-pb-16 { padding-bottom: var(--sk-space-16); }
+.sk-pb-24 { padding-bottom: var(--sk-space-24); }
+.sk-pb-32 { padding-bottom: var(--sk-space-32); }
+.sk-pb-40 { padding-bottom: var(--sk-space-40); }
+.sk-pb-48 { padding-bottom: var(--sk-space-48); }
+.sk-pb-56 { padding-bottom: var(--sk-space-56); }
+.sk-pb-64 { padding-bottom: var(--sk-space-64); }
+.sk-pb-72 { padding-bottom: var(--sk-space-72); }
+.sk-pb-80 { padding-bottom: var(--sk-space-80); }
+.sk-pb-100 { padding-bottom: var(--sk-space-100); }
+.sk-pl-0 { padding-left: 0; }
+.sk-pl-4 { padding-left: var(--sk-space-4); }
+.sk-pl-8 { padding-left: var(--sk-space-8); }
+.sk-pl-12 { padding-left: var(--sk-space-12); }
+.sk-pl-16 { padding-left: var(--sk-space-16); }
+.sk-pl-24 { padding-left: var(--sk-space-24); }
+.sk-pl-32 { padding-left: var(--sk-space-32); }
+.sk-pl-40 { padding-left: var(--sk-space-40); }
+.sk-pl-48 { padding-left: var(--sk-space-48); }
+.sk-pl-56 { padding-left: var(--sk-space-56); }
+.sk-pl-64 { padding-left: var(--sk-space-64); }
+.sk-pl-72 { padding-left: var(--sk-space-72); }
+.sk-pl-80 { padding-left: var(--sk-space-80); }
+.sk-pl-100 { padding-left: var(--sk-space-100); }
+.sk-pr-0 { padding-right: 0; }
+.sk-pr-4 { padding-right: var(--sk-space-4); }
+.sk-pr-8 { padding-right: var(--sk-space-8); }
+.sk-pr-12 { padding-right: var(--sk-space-12); }
+.sk-pr-16 { padding-right: var(--sk-space-16); }
+.sk-pr-24 { padding-right: var(--sk-space-24); }
+.sk-pr-32 { padding-right: var(--sk-space-32); }
+.sk-pr-40 { padding-right: var(--sk-space-40); }
+.sk-pr-48 { padding-right: var(--sk-space-48); }
+.sk-pr-56 { padding-right: var(--sk-space-56); }
+.sk-pr-64 { padding-right: var(--sk-space-64); }
+.sk-pr-72 { padding-right: var(--sk-space-72); }
+.sk-pr-80 { padding-right: var(--sk-space-80); }
+.sk-pr-100 { padding-right: var(--sk-space-100); }
+.sk-m-0 { margin: 0; }
+.sk-m-4 { margin: var(--sk-space-4); }
+.sk-m-8 { margin: var(--sk-space-8); }
+.sk-m-12 { margin: var(--sk-space-12); }
+.sk-m-16 { margin: var(--sk-space-16); }
+.sk-m-24 { margin: var(--sk-space-24); }
+.sk-m-32 { margin: var(--sk-space-32); }
+.sk-m-40 { margin: var(--sk-space-40); }
+.sk-m-48 { margin: var(--sk-space-48); }
+.sk-m-56 { margin: var(--sk-space-56); }
+.sk-m-64 { margin: var(--sk-space-64); }
+.sk-m-72 { margin: var(--sk-space-72); }
+.sk-m-80 { margin: var(--sk-space-80); }
+.sk-m-100 { margin: var(--sk-space-100); }
+.sk-mx-0 { margin-inline: 0; }
+.sk-mx-4 { margin-inline: var(--sk-space-4); }
+.sk-mx-8 { margin-inline: var(--sk-space-8); }
+.sk-mx-12 { margin-inline: var(--sk-space-12); }
+.sk-mx-16 { margin-inline: var(--sk-space-16); }
+.sk-mx-24 { margin-inline: var(--sk-space-24); }
+.sk-mx-32 { margin-inline: var(--sk-space-32); }
+.sk-mx-40 { margin-inline: var(--sk-space-40); }
+.sk-mx-48 { margin-inline: var(--sk-space-48); }
+.sk-mx-56 { margin-inline: var(--sk-space-56); }
+.sk-mx-64 { margin-inline: var(--sk-space-64); }
+.sk-mx-72 { margin-inline: var(--sk-space-72); }
+.sk-mx-80 { margin-inline: var(--sk-space-80); }
+.sk-mx-100 { margin-inline: var(--sk-space-100); }
+.sk-my-0 { margin-block: 0; }
+.sk-my-4 { margin-block: var(--sk-space-4); }
+.sk-my-8 { margin-block: var(--sk-space-8); }
+.sk-my-12 { margin-block: var(--sk-space-12); }
+.sk-my-16 { margin-block: var(--sk-space-16); }
+.sk-my-24 { margin-block: var(--sk-space-24); }
+.sk-my-32 { margin-block: var(--sk-space-32); }
+.sk-my-40 { margin-block: var(--sk-space-40); }
+.sk-my-48 { margin-block: var(--sk-space-48); }
+.sk-my-56 { margin-block: var(--sk-space-56); }
+.sk-my-64 { margin-block: var(--sk-space-64); }
+.sk-my-72 { margin-block: var(--sk-space-72); }
+.sk-my-80 { margin-block: var(--sk-space-80); }
+.sk-my-100 { margin-block: var(--sk-space-100); }
+.sk-mt-0 { margin-top: 0; }
+.sk-mt-4 { margin-top: var(--sk-space-4); }
+.sk-mt-8 { margin-top: var(--sk-space-8); }
+.sk-mt-12 { margin-top: var(--sk-space-12); }
+.sk-mt-16 { margin-top: var(--sk-space-16); }
+.sk-mt-24 { margin-top: var(--sk-space-24); }
+.sk-mt-32 { margin-top: var(--sk-space-32); }
+.sk-mt-40 { margin-top: var(--sk-space-40); }
+.sk-mt-48 { margin-top: var(--sk-space-48); }
+.sk-mt-56 { margin-top: var(--sk-space-56); }
+.sk-mt-64 { margin-top: var(--sk-space-64); }
+.sk-mt-72 { margin-top: var(--sk-space-72); }
+.sk-mt-80 { margin-top: var(--sk-space-80); }
+.sk-mt-100 { margin-top: var(--sk-space-100); }
+.sk-mb-0 { margin-bottom: 0; }
+.sk-mb-4 { margin-bottom: var(--sk-space-4); }
+.sk-mb-8 { margin-bottom: var(--sk-space-8); }
+.sk-mb-12 { margin-bottom: var(--sk-space-12); }
+.sk-mb-16 { margin-bottom: var(--sk-space-16); }
+.sk-mb-24 { margin-bottom: var(--sk-space-24); }
+.sk-mb-32 { margin-bottom: var(--sk-space-32); }
+.sk-mb-40 { margin-bottom: var(--sk-space-40); }
+.sk-mb-48 { margin-bottom: var(--sk-space-48); }
+.sk-mb-56 { margin-bottom: var(--sk-space-56); }
+.sk-mb-64 { margin-bottom: var(--sk-space-64); }
+.sk-mb-72 { margin-bottom: var(--sk-space-72); }
+.sk-mb-80 { margin-bottom: var(--sk-space-80); }
+.sk-mb-100 { margin-bottom: var(--sk-space-100); }
+.sk-ml-0 { margin-left: 0; }
+.sk-ml-4 { margin-left: var(--sk-space-4); }
+.sk-ml-8 { margin-left: var(--sk-space-8); }
+.sk-ml-12 { margin-left: var(--sk-space-12); }
+.sk-ml-16 { margin-left: var(--sk-space-16); }
+.sk-ml-24 { margin-left: var(--sk-space-24); }
+.sk-ml-32 { margin-left: var(--sk-space-32); }
+.sk-ml-40 { margin-left: var(--sk-space-40); }
+.sk-ml-48 { margin-left: var(--sk-space-48); }
+.sk-ml-56 { margin-left: var(--sk-space-56); }
+.sk-ml-64 { margin-left: var(--sk-space-64); }
+.sk-ml-72 { margin-left: var(--sk-space-72); }
+.sk-ml-80 { margin-left: var(--sk-space-80); }
+.sk-ml-100 { margin-left: var(--sk-space-100); }
+.sk-mr-0 { margin-right: 0; }
+.sk-mr-4 { margin-right: var(--sk-space-4); }
+.sk-mr-8 { margin-right: var(--sk-space-8); }
+.sk-mr-12 { margin-right: var(--sk-space-12); }
+.sk-mr-16 { margin-right: var(--sk-space-16); }
+.sk-mr-24 { margin-right: var(--sk-space-24); }
+.sk-mr-32 { margin-right: var(--sk-space-32); }
+.sk-mr-40 { margin-right: var(--sk-space-40); }
+.sk-mr-48 { margin-right: var(--sk-space-48); }
+.sk-mr-56 { margin-right: var(--sk-space-56); }
+.sk-mr-64 { margin-right: var(--sk-space-64); }
+.sk-mr-72 { margin-right: var(--sk-space-72); }
+.sk-mr-80 { margin-right: var(--sk-space-80); }
+.sk-mr-100 { margin-right: var(--sk-space-100); }
+.sk-gap-0 { gap: 0; }
+.sk-gap-4 { gap: var(--sk-space-4); }
+.sk-gap-8 { gap: var(--sk-space-8); }
+.sk-gap-12 { gap: var(--sk-space-12); }
+.sk-gap-16 { gap: var(--sk-space-16); }
+.sk-gap-24 { gap: var(--sk-space-24); }
+.sk-gap-32 { gap: var(--sk-space-32); }
+.sk-gap-40 { gap: var(--sk-space-40); }
+.sk-gap-48 { gap: var(--sk-space-48); }
+.sk-gap-56 { gap: var(--sk-space-56); }
+.sk-gap-64 { gap: var(--sk-space-64); }
+.sk-gap-72 { gap: var(--sk-space-72); }
+.sk-gap-80 { gap: var(--sk-space-80); }
+.sk-gap-100 { gap: var(--sk-space-100); }
+.sk-gap-x-0 { column-gap: 0; }
+.sk-gap-x-4 { column-gap: var(--sk-space-4); }
+.sk-gap-x-8 { column-gap: var(--sk-space-8); }
+.sk-gap-x-12 { column-gap: var(--sk-space-12); }
+.sk-gap-x-16 { column-gap: var(--sk-space-16); }
+.sk-gap-x-24 { column-gap: var(--sk-space-24); }
+.sk-gap-x-32 { column-gap: var(--sk-space-32); }
+.sk-gap-x-40 { column-gap: var(--sk-space-40); }
+.sk-gap-x-48 { column-gap: var(--sk-space-48); }
+.sk-gap-x-56 { column-gap: var(--sk-space-56); }
+.sk-gap-x-64 { column-gap: var(--sk-space-64); }
+.sk-gap-x-72 { column-gap: var(--sk-space-72); }
+.sk-gap-x-80 { column-gap: var(--sk-space-80); }
+.sk-gap-x-100 { column-gap: var(--sk-space-100); }
+.sk-gap-y-0 { row-gap: 0; }
+.sk-gap-y-4 { row-gap: var(--sk-space-4); }
+.sk-gap-y-8 { row-gap: var(--sk-space-8); }
+.sk-gap-y-12 { row-gap: var(--sk-space-12); }
+.sk-gap-y-16 { row-gap: var(--sk-space-16); }
+.sk-gap-y-24 { row-gap: var(--sk-space-24); }
+.sk-gap-y-32 { row-gap: var(--sk-space-32); }
+.sk-gap-y-40 { row-gap: var(--sk-space-40); }
+.sk-gap-y-48 { row-gap: var(--sk-space-48); }
+.sk-gap-y-56 { row-gap: var(--sk-space-56); }
+.sk-gap-y-64 { row-gap: var(--sk-space-64); }
+.sk-gap-y-72 { row-gap: var(--sk-space-72); }
+.sk-gap-y-80 { row-gap: var(--sk-space-80); }
+.sk-gap-y-100 { row-gap: var(--sk-space-100); }
+.sk-mx-auto { margin-inline: auto; }
+.sk-flow-4 > * + * { margin-top: var(--sk-space-4); }
+.sk-flow-8 > * + * { margin-top: var(--sk-space-8); }
+.sk-flow-12 > * + * { margin-top: var(--sk-space-12); }
+.sk-flow-16 > * + * { margin-top: var(--sk-space-16); }
+.sk-flow-24 > * + * { margin-top: var(--sk-space-24); }
+.sk-flow-32 > * + * { margin-top: var(--sk-space-32); }
+.sk-flow-40 > * + * { margin-top: var(--sk-space-40); }
+.sk-flow-48 > * + * { margin-top: var(--sk-space-48); }
+.sk-flow-56 > * + * { margin-top: var(--sk-space-56); }
+.sk-flow-64 > * + * { margin-top: var(--sk-space-64); }
+.sk-flow-72 > * + * { margin-top: var(--sk-space-72); }
+.sk-flow-80 > * + * { margin-top: var(--sk-space-80); }
+.sk-flow-100 > * + * { margin-top: var(--sk-space-100); }
+
+/* page-only styles, tokens only */
+.pdp-announce{background:var(--sk-surface-accent);color:var(--sk-text-on-accent);text-align:center;font-size:var(--sk-text-14);letter-spacing:var(--sk-tracking-small);padding:var(--sk-space-8) var(--sk-space-16)}
+.pdp-nav{display:flex;align-items:center;justify-content:space-between;gap:var(--sk-space-16);min-height:var(--sk-header-h);width:100%}
+.pdp-nav img{height:16px;display:block}
+.pdp-wrap{max-width:720px;margin-inline:auto}
+.pdp4-page section{scroll-margin-top:calc(var(--pdp4-nav, var(--sk-header-h)) + var(--sk-space-8))}
+.pdp-ico{width:24px;height:24px;flex:none;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.pdp-ico--lg{width:40px;height:40px;stroke-width:1.25}
+/* hero */
+.pdp-hero{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--sk-space-24)}
+.pdp-hero > *{min-width:0}
+.pdp-strip{min-width:0}
+.pdp-nav a[aria-label="Treelogy home"]{display:flex;align-items:center;min-height:var(--sk-touch-min)}
+.sk-rating.sk-link{min-height:var(--sk-touch-min)}
+@media(min-width:960px){.pdp-hero{grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:var(--sk-space-48);align-items:start}.pdp-hero__media{position:sticky;top:calc(var(--sk-header-h) + var(--sk-space-16));width:min(100%,calc((100vh - var(--sk-header-h) - 120px) * .8));justify-self:end}}
+.pdp-split{display:grid;gap:var(--sk-space-24)}
+@media(min-width:960px){.pdp-split{grid-template-columns:320px minmax(0,1fr);gap:var(--sk-space-40);align-items:start}.pdp-split .pdp-media{position:sticky;top:calc(var(--sk-header-h) + var(--sk-space-16))}}
+.pdp-gallery{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;border-radius:var(--sk-radius-xl);background:var(--sk-surface-tertiary)}
+.pdp-gallery::-webkit-scrollbar{display:none}
+.pdp-slide{flex:0 0 100%;scroll-snap-align:start;aspect-ratio:4/5}
+.pdp-slide img,.pdp-slide video{width:100%;height:100%;object-fit:cover;display:block}
+.pdp-thumbs{display:flex;gap:var(--sk-space-8);overflow-x:auto;scrollbar-width:none;margin-top:var(--sk-space-8)}
+.pdp-thumbs::-webkit-scrollbar{display:none}
+.pdp-thumbs button{flex:0 0 64px;width:64px;height:64px;padding:0;border:0;border-radius:var(--sk-radius-xs);overflow:hidden;background:var(--sk-surface-tertiary);cursor:pointer;opacity:var(--sk-opacity-hover)}
+.pdp-thumbs button[aria-current="true"]{opacity:1;outline:var(--sk-stroke-active) solid var(--sk-outline-primary);outline-offset:-1.5px}
+.pdp-thumbs img{width:100%;height:100%;object-fit:cover;display:block}
+.pdp-faces{display:inline-flex;flex:none}
+.pdp-faces img{width:24px;height:24px;border-radius:50%;object-fit:cover;display:block;margin-left:calc(var(--sk-space-8) * -1);border:var(--sk-stroke-active) solid var(--sk-surface-page)}
+.pdp-faces img:first-child{margin-left:0}
+.pdp-price{display:flex;align-items:baseline;gap:var(--sk-space-8)}
+/* testimonial strip */
+.pdp-strip{display:flex;gap:var(--sk-space-12);overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin-inline:calc(var(--sk-gutter-sm) * -1);padding-inline:var(--sk-gutter-sm);scroll-padding-inline:var(--sk-gutter-sm)}
+@media(min-width:600px){.pdp-strip{margin-inline:0;padding-inline:0}}
+.pdp-strip::-webkit-scrollbar{display:none}
+.pdp-tcard{flex:0 0 300px;scroll-snap-align:start;display:grid;gap:var(--sk-space-12);align-content:space-between}
+.pdp-tcard__row{display:grid;grid-template-columns:72px 1fr;gap:var(--sk-space-12);align-items:start}
+.pdp-tcard__row img{width:72px;height:72px;border-radius:var(--sk-radius-sm);object-fit:cover;display:block}
+.pdp-who{display:flex;align-items:center;gap:var(--sk-space-8)}
+.pdp-avatar{width:32px;height:32px;border-radius:50%;background:var(--sk-surface-mist);display:grid;place-items:center;font-size:var(--sk-text-12);font-weight:var(--sk-weight-medium);overflow:hidden;flex:none}
+.pdp-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+/* packs */
+.pdp-pack{position:relative;display:grid;gap:var(--sk-space-8);cursor:pointer;border-width:var(--sk-stroke-default);transition:border-color var(--sk-duration-fast) var(--sk-ease-standard),background-color var(--sk-duration-fast) var(--sk-ease-standard)}
+.pdp-pack > input{position:absolute;opacity:0;width:1px;height:1px;margin:0}
+.pdp-pack:has(> input:checked){border-color:var(--sk-outline-primary);box-shadow:inset 0 0 0 .5px var(--sk-outline-primary);background:var(--sk-surface-secondary)}
+.pdp-pack:has(> input:focus-visible){outline:var(--sk-stroke-active) solid var(--sk-focus-ring);outline-offset:var(--sk-focus-offset)}
+.pdp-pack:active{transform:scale(.99)}
+.pdp-pack__tag{position:absolute;top:-12px;left:var(--sk-space-16)}
+.pdp-pack__top{display:flex;justify-content:space-between;align-items:center;gap:var(--sk-space-8)}
+.pdp-pack__body{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:var(--sk-space-8);align-items:center}
+.pdp-pack__vis{display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;align-self:stretch;width:112px;padding:var(--sk-space-4) var(--sk-space-8) 0 0;gap:var(--sk-space-12)}
+.pdp-pack__vis .pdp-tins{margin-left:-30px;margin-right:0}
+.pdp-tins{display:block;height:auto;justify-self:end;margin-right:var(--sk-space-8)}
+.pdp-tins--3{width:124px}.pdp-tins--2{width:93px}.pdp-tins--1{width:62px}
+.pdp-gift{display:flex;align-items:center;gap:var(--sk-space-8);text-align:right;white-space:nowrap;line-height:1.25}
+.pdp-gift img{height:56px;width:auto;display:block}
+.pdp-assure{list-style:none;margin:0;padding:0;display:grid;gap:var(--sk-space-8)}
+.pdp-assure li{display:flex;align-items:center;gap:var(--sk-space-12)}
+.pdp-assure .pdp-ico{width:20px;height:20px}
+@media(min-width:600px){.pdp-assure{grid-template-columns:auto auto auto;justify-content:start;gap:var(--sk-space-24)}}
+/* how to */
+.pdp-video{position:relative;aspect-ratio:1;border-radius:var(--sk-radius-md);overflow:hidden;background:var(--sk-surface-tertiary)}
+.pdp-video video{width:100%;height:100%;object-fit:cover;display:block}
+.pdp-video .sk-eyebrow{position:absolute;left:var(--sk-space-16);top:var(--sk-space-16)}
+@media(min-width:600px){.pdp-howto{display:grid;grid-template-columns:320px 1fr;gap:var(--sk-space-24);align-items:center}.pdp-howto .pdp-video{grid-row:1/span 3}}
+/* leaf tiles */
+.pdp-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sk-grid-gap)}
+@media(min-width:600px){.pdp-tiles{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.pdp-tile{display:grid;gap:var(--sk-space-4);padding:var(--sk-space-16);border-radius:var(--sk-radius-md);background:var(--sk-surface-bright)}
+.pdp-tile b{font-size:var(--sk-text-32);font-weight:var(--sk-weight-book);letter-spacing:var(--sk-tracking-heading);line-height:1.1}
+.pdp-media{border-radius:var(--sk-radius-md);overflow:hidden;background:var(--sk-surface-tertiary)}
+.pdp-media img{width:100%;display:block;aspect-ratio:4/5;object-fit:cover}
+/* comparison */
+.pdp-cmp{width:100%;border-collapse:separate;border-spacing:0;font-size:var(--sk-text-14);letter-spacing:var(--sk-tracking-small)}
+.pdp-cmp th,.pdp-cmp td{padding:var(--sk-space-12) var(--sk-space-8);text-align:left;vertical-align:top;border-bottom:var(--sk-stroke-default) solid var(--sk-outline-subtle)}
+.pdp-cmp th{font-weight:var(--sk-weight-medium)}
+.pdp-cmp .us{background:var(--sk-surface-mist)}
+.pdp-cmp thead .us{border-radius:var(--sk-radius-sm) var(--sk-radius-sm) 0 0}
+.pdp-cmp tbody tr:last-child .us{border-radius:0 0 var(--sk-radius-sm) var(--sk-radius-sm)}
+.pdp-cmp .k{color:var(--sk-text-secondary);width:22%}
+.pdp-cmp .no{color:var(--sk-text-secondary)}
+.pdp-seal{display:grid;gap:var(--sk-space-16);align-items:start}
+.pdp-seal__mark{width:56px;height:56px;padding:var(--sk-space-8);display:grid;place-items:center;border-radius:var(--sk-radius-sm)}
+.pdp-seal__mark img{width:100%;height:100%;object-fit:contain;display:block}
+.pdp-seal__link{justify-self:start;white-space:normal;text-align:left;line-height:1.3}
+@media(min-width:600px){.pdp-seal{grid-template-columns:64px minmax(0,1fr);gap:var(--sk-space-24)}.pdp-seal__mark{width:64px;height:64px}}
+.pdp-modal{position:fixed;inset:0;z-index:var(--sk-z-modal);display:none;place-items:center;padding:var(--sk-space-16);background:var(--sk-action-scrim)}
+.pdp-modal[open]{display:grid}
+.pdp-modal .sk-card{max-width:420px;width:100%}
+/* farm */
+.pdp-frames{display:flex;gap:var(--sk-space-12);overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity}
+.pdp-frames::-webkit-scrollbar{display:none}
+.pdp-frame{flex:0 0 200px;scroll-snap-align:start;display:grid;gap:var(--sk-space-8)}
+.pdp-frame img{width:200px;height:250px;object-fit:cover;border-radius:var(--sk-radius-md);display:block}
+/* timeline */
+.pdp-node{display:grid;grid-template-columns:12px 1fr;gap:var(--sk-space-12);padding-block:var(--sk-space-12);border-top:var(--sk-stroke-default) solid var(--sk-outline-subtle)}
+.pdp-node:first-of-type{border-top:0}
+.pdp-node i{width:12px;height:12px;border-radius:50%;background:var(--sk-action-primary);margin-top:6px}
+/* reviews */
+.pdp-hist{display:grid;gap:var(--sk-space-4)}
+.pdp-hist div{display:grid;grid-template-columns:12px 1fr 32px;align-items:center;gap:var(--sk-space-8)}
+.pdp-hist i{height:8px;border-radius:var(--sk-radius-full);background:var(--sk-outline-subtle);overflow:hidden;display:block}
+.pdp-hist b{display:block;height:100%;background:var(--sk-action-primary);width:0}
+.pdp-tabs{display:flex;gap:var(--sk-space-24);border-bottom:var(--sk-stroke-default) solid var(--sk-outline-subtle)}
+.pdp-tabs span{padding-block:var(--sk-space-12);font-weight:var(--sk-weight-medium)}
+.pdp-tabs span[aria-selected="true"]{box-shadow:inset 0 -2px 0 var(--sk-action-primary)}
+.pdp-stars{color:var(--sk-text-primary);letter-spacing:.05em}
+/* close + sticky */
+.pdp-center{text-align:center}
+.pdp-center .sk-btn{width:100%}
+.pdp-join{display:inline-flex;align-items:center;gap:var(--sk-space-8)}
+.pdp-sticky{position:fixed;inset:auto 0 0 0;z-index:var(--sk-z-sticky);display:flex;align-items:center;justify-content:space-between;gap:var(--sk-space-12);padding:var(--sk-space-12) var(--sk-space-16);padding-bottom:max(var(--sk-space-12),env(safe-area-inset-bottom));border-radius:0;transform:translateY(110%);transition:transform var(--sk-duration-fast) var(--sk-ease-standard)}
+.pdp-sticky[data-on="true"]{transform:none}
+@media(min-width:960px){.pdp-sticky{display:none}}
+.pdp-root{padding-bottom:88px}
+@media(min-width:960px){.pdp-root{padding-bottom:0}}
+.pdp-foot__grid{display:grid;gap:var(--sk-space-32)}
+@media(min-width:960px){.pdp-foot__grid{grid-template-columns:minmax(0,1fr) 360px;gap:var(--sk-space-48);align-items:start}.pdp-foot__legal{grid-column:1/-1}}
+.pdp-foot__legal{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--sk-space-16);padding-top:var(--sk-space-24);border-top:var(--sk-stroke-default) solid var(--sk-outline-subtle)}
+.pdp-foot__legal img{height:20px;width:auto;max-width:100%;display:block;object-fit:contain}
+.pdp-foot__social{gap:var(--sk-space-4)}
+.pdp-foot__social .sk-btn__icon{width:20px;height:20px}
+@media(max-width:599px){.pdp-foot__legal{flex-direction:column;align-items:flex-start}}
+.pdp-inline-quote{font-style:italic}
+
+
+/* ==========================================================================
+   BRIDGE — rules the reference cannot contain
+   ========================================================================== */
+
+/* theme.css:624 gives EVERY <section> in the store `width:100vw` and
+   `overflow:hidden`. Both break this copy invisibly: 100vw defeats the
+   container gutters (and counts the scrollbar, adding a horizontal scroll),
+   and overflow:hidden decapitates `.pdp-pack__tag`, which deliberately hangs
+   at `top:-12px` outside its card. Returned to the initial values rather than
+   set to new ones — the reference never mentions either property. */
+.pdp4-page section{width:auto;overflow:visible}
+
+/* theme.css sets `p{line-height:20px}` store-wide, which overrides nothing in
+   the kit (the kit sets line-height on the class, and the class wins on
+   specificity) EXCEPT bare paragraphs. Every paragraph in this page carries a
+   kit class, so this is a safety net for text that comes out of a metafield
+   as raw HTML. */
+.pdp4-page p:not([class]){line-height:var(--sk-leading-body)}
+
+/* `.native-gallery__slide` is kept on each slide PURELY as a hook:
+   snippets/MiniCart.liquid reads `.native-gallery__slide img` to draw the
+   optimistic card when a line is added. The class also drags styling in from
+   assets/section-product-single.css — a #e8ede4 ground, an 8px radius and a
+   `view-transition-name` on the first image — none of which the reference has.
+   Keep the hook, drop the paint. */
+.pdp4-page .pdp-slide{background-color:transparent;border-radius:0;overflow:visible}
+.pdp4-page .pdp-slide img{border-radius:0;view-transition-name:none}
+
+/* The theme paints a bottom border on every `td`. The comparison table draws
+   its own, so the theme's adds a second line per row. */
+.pdp4-page .pdp-cmp td,.pdp4-page .pdp-cmp th{border-left:0;border-right:0;border-top:0}
+
+/* Sections that this template gates off for the capsules product still emit
+   their WRAPPER, and the FeaturedProducts/FeaturedBlog schema gives that
+   wrapper the class `featured-slider`, which theme.css paints sage and 683px
+   tall. A wrapper with no child element is a section that stood down.
+   `:empty` cannot be used — the wrapper still holds whitespace. */
+.shopify-section:not(:has(*)){display:none}
+.shopify-section.featured-slider:not(:has(.main-grid)){display:none!important}
+
+/* Full-bleed dark bands. The reference writes `<section class="sk-inverse">`
+   as a direct child of `<main>`, so its ground runs the whole width. Here the
+   section sits inside `.pdp4-page`, which is itself full width, so the band
+   already reaches both edges — but `.pdp4-page` paints canvas, and canvas
+   painted on top of the band would show through the section's own padding
+   box. Handing the band to the wrapper and clearing the canvas keeps one
+   uninterrupted colour. */
+.shopify-section:has(> .pdp4-page > .sk-inverse){background:var(--sk-green-900)}
+.shopify-section:has(> .pdp4-page > .sk-inverse) > .pdp4-page{background:transparent}
+
+/* Sections are siblings here, not rows of one flow, so their vertical rhythm
+   has to survive margin collapsing between wrappers. */
+.pdp4-page{display:flow-root}
+
+/* The reference's `.pdp-root` reserves room for the sticky bar with
+   `padding-bottom:88px`. There is no single root here — the last section pays
+   for it instead. */
+@media(max-width:959px){
+  .shopify-section:has(> .pdp4-page > .pdp-foot-space){padding-bottom:88px}
+}
+
+/* Judge.me's own widget is the DATA source for the reviews section, never the
+   visible one: assets/pdp4.js reads it and redraws the rows in the reference's
+   markup. It has to stay in the DOM (Judge.me only initialises what it can
+   measure) and it has to stay out of sight. `.pdp-jdgm-host` is that box.
+   `!important` because Judge.me writes inline display on several of these. */
+.pdp4-page .pdp-jdgm-host{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+.pdp4-page .pdp-jdgm-host--form,.pdp4-page .pdp-jdgm-host--qa{position:static;width:auto;height:auto;overflow:visible;clip:auto;clip-path:none;white-space:normal}
+.pdp4-page .pdp-jdgm-host--qa .jdgm-rev-widg > :not(.jdgm-rev-widg__header){display:none!important}
+.pdp4-page .pdp-jdgm-host--form .jdgm-rev-widg__header > :not(.jdgm-form-wrapper):not(.jdgm-form-dynamic-wrapper):not(.jdgm-question-form-wrapper){display:none!important}
+.pdp4-page .pdp-jdgm-host--form .jdgm-rev-widg,.pdp4-page .pdp-jdgm-host--qa .jdgm-rev-widg{display:block!important}
+
+/* Screen-reader-only. The reference writes the comparison table's corner cell
+   as an empty `<th>`; visually empty is right, empty to a screen reader is
+   not — the first column does have a name. */
+.pdp4-page .pdp-sr{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
+
+/* `<br class="brm">` is the reference's own marker for "break here on a phone,
+   run on from 900px". It is written into headline copy, so it has to keep
+   working from a locale string. */
+.pdp4-page .brm{display:inline}
+@media(min-width:900px){.pdp4-page .brm{display:none}}
+
+/* Rujukan menulis `<img>` tanpa atribut `width`/`height`; `image_tag` Shopify
+   selalu menambahkannya (dan itu benar — ia yang mencegah lompatan tata letak).
+   Tapi atribut itu adalah PRESENTATIONAL HINT: ia menyetel `height` ke nilai
+   piksel yang sesungguhnya, dan `aspect-ratio` hanya berlaku ketika `height`
+   masih `auto`. Hasilnya potret daun dan potret pendiri dirender 320x1125,
+   bukan 320x400 — diukur di Chrome 1440px, 9 Sep.
+
+   `height:auto` mengembalikan kendali kepada `aspect-ratio` TANPA membuang
+   pemesanan ruangnya: rasio 4/5 dari CSS tetap menahan tingginya sebelum
+   gambar tiba. Hanya `.pdp-media` yang butuh ini — semua gambar lain di
+   halaman ini sudah punya `height` sendiri di CSS rujukan. */
+.pdp4-page .pdp-media img{height:auto}
+
+/* --- hero: tinggi header sungguhan, dan kolom yang seimbang ----------------
+
+   `--sk-header-h` adalah knob kit untuk tinggi bilah atas, dan nilainya (48px)
+   menggambarkan bilah RUJUKAN, bukan header toko ini — yang `position:fixed`
+   setinggi 95px. Dua akibatnya terukur:
+
+     • galeri menempel di `top: 48+16 = 64px`, sehingga 31px teratasnya
+       tersembunyi di balik header selama ia menempel (diukur pada scrollY
+       400 dan 600, 1728x1000);
+     • lebar galeri dihitung dari `100vh - var(--sk-header-h) - 120px`, jadi
+       ia memakai tinggi bilah yang salah.
+
+   Knob-nya diarahkan ke tinggi yang sungguhan, bukan angkanya yang ditambal di
+   dua tempat. `--pdp4-nav` diukur assets/pdp4.js tiap gulir dan resize;
+   95px hanyalah nilai sebelum skripnya jalan, dan itu tinggi header hari ini.
+
+   Kolomnya: rujukan memberi galeri track `7fr` lalu menempelkan gambarnya ke
+   KANAN track itu (`justify-self:end`) sementara lebarnya diturunkan dari
+   TINGGI viewport. Kedua angka itu tidak pernah bertemu, dan selisihnya jadi
+   lubang di sebelah kiri gambar: 141px pada 1728x1000, melebar di jendela yang
+   lebih pendek — gambar melayang menjauh dari margin kiri sementara kolom
+   kanan menempel rapat ke margin kanan.
+
+   Yang diperbaiki bukan lebar gambarnya (aturan tinggi-viewport itu yang
+   menahan galeri tetap muat di layar saat menempel), melainkan TRACK-nya:
+   track kiri diberi lebar yang sama dengan gambarnya, track kanan memakai
+   PROPORSI RUJUKAN, dan sisanya dibagi rata oleh `justify-content:center`.
+
+   Track kanan sempat dibatasi `--sk-measure` dengan asumsi 65ch ≈ 546px,
+   dekat dengan 553px milik rujukan. Asumsi itu SALAH: pada Inter 16px satu
+   `ch` ≈ 9,95px, jadi 65ch = 647px — kolom teksnya 94px lebih lebar dari
+   rujukan, dan itulah yang terbaca "terlalu lebar di desktop" (laporan user
+   10 Sep). Sekarang angkanya diturunkan dari pembagian rujukan sendiri:
+   `7fr 5fr` dengan gap 48px berarti kolom kanan = 5/12 dari (lebar - gap).
+   Pada 1440px hasilnya 553px, sama persis dengan rujukan, dan ia menskala
+   dengan cara yang sama di lebar lain.
+
+   Hasilnya jarak kiri dan kanan selalu sama di setiap lebar jendela, dan tidak
+   satu pun angka baru diperkenalkan: semuanya token kit. */
+.pdp4-page{--sk-header-h:var(--pdp4-nav, 95px)}
+@media(min-width:960px){
+  .pdp4-page .pdp-hero{
+    grid-template-columns:
+      min(58.333%, calc((100vh - var(--sk-header-h) - 120px) * .8))
+      minmax(0, calc((100% - var(--sk-space-48)) * 5 / 12));
+    justify-content:center;
+  }
+  .pdp4-page .pdp-hero__media{width:100%;justify-self:stretch}
+}
+
+/* --- bilah pengumuman menyusut, header jadi kaca ---------------------------
+   Permintaan user 9 Sep, dan HANYA untuk halaman ini: bilah pengumuman hilang
+   begitu pembaca menggulir, header naik mengisi tempatnya, dan latarnya menjadi
+   kaca.
+
+   Header dan bilah pengumuman hidup di sections/Header.liquid — berkas yang
+   dipakai SELURUH toko dan tema live. Tidak satu byte pun di sana disentuh:
+   aturan di bawah ikut berkas ini, dan berkas ini hanya dimuat oleh
+   sections/pdp4-buybox yang sudah tergerbang ke handle kapsul. Halaman lain
+   tidak pernah melihatnya.
+
+   Yang disusutkan TINGGINYA, bukan `transform` pada header. Elemen ber-transform
+   menjadi containing block bagi keturunan `position:fixed`-nya, dan header ini
+   memuat panel cari serta menu yang mengandalkannya — menggesernya akan
+   memindahkan panel-panel itu ke tempat yang salah tanpa satu pun error.
+
+   `--pdp4-announce-h` diukur assets/pdp4.js: transisi tinggi butuh DUA nilai
+   pasti, dan `auto` bukan salah satunya. */
+.pdp4-nav-sized header.header-nav .running-text{
+  overflow:hidden;
+  height:var(--pdp4-announce-h, 40px);
+  transition:height var(--sk-duration-base) var(--sk-ease-standard),
+             opacity var(--sk-duration-fast) var(--sk-ease-standard);
+}
+.pdp4-nav-sized.pdp4-nav-slim header.header-nav .running-text{height:0;opacity:0}
+
+/* theme.css:8207 mengunci `.header-nav` pada `height:95px` dengan
+   `overflow:hidden`. Tanpa baris di bawah, menyusutkan bilah pengumuman hanya
+   MENGOSONGKAN 40px teratas: bilah kacanya naik ke puncak (benar) tapi kotak
+   headernya tetap 95px, menyisakan pita bening 34px yang menggantung di
+   bawahnya dan menahan offset anchor tetap di 95px. Jadi kotaknya ikut
+   menyusut, dan angkanya diturunkan dari dua ukuran yang sama — bukan 55px
+   yang dituliskan tangan dan basi begitu header berubah. */
+.pdp4-nav-sized header.header-nav{
+  height:var(--pdp4-nav-full, 95px);
+  transition:height var(--sk-duration-base) var(--sk-ease-standard);
+}
+.pdp4-nav-sized.pdp4-nav-slim header.header-nav{
+  height:calc(var(--pdp4-nav-full, 95px) - var(--pdp4-announce-h, 40px));
+}
+
+/* --- kenapa aturan di bawah TIDAK menunggu kelas dari JS -------------------
+   Sebelumnya semuanya digerbangi `.pdp4-nav-glass`, kelas yang dipasang
+   assets/pdp4.js. Skrip itu `defer`, jadi ia baru jalan sesudah HTML selesai
+   diurai — dan sepanjang jeda itu pembeli melihat warna BAWAAN TEMA lebih
+   dulu (bilah pengumuman olive, header krem bergaris) sebelum berkedip ke
+   warna halaman ini. Dilaporkan user 9 Sep.
+
+   Gerbangnya memang tidak pernah dibutuhkan untuk membatasi cakupan: berkas
+   ini hanya dimuat oleh sections/pdp4-buybox, yang sudah tergerbang ke handle
+   kapsul. Halaman lain tidak pernah punya aturan ini sama sekali.
+
+   Yang MASIH digerbangi hanya urusan tinggi (`.pdp4-nav-sized`), karena
+   angkanya memang harus diukur dulu — dan `measure()` perlu bisa mematikannya
+   sejenak untuk membaca tinggi apa adanya. Warna tidak butuh satu pun
+   pengukuran, jadi ia berlaku sejak CSS-nya terurai. */
+/* Warna bilah pengumuman diambil dari berkas rujukan, bukan dari tema.
+
+   Rujukan mengecatnya `--sk-surface-accent` (pollen #f5d053) dengan tulisan
+   `--sk-text-on-accent` (ink #213d29), dan itu SAMA di mode terang maupun
+   gelap — ia warna aksen tetap, bukan bagian dari palet yang berbalik. Tema
+   memakai olive #6c7256 dengan tulisan putih.
+
+   `!important` pada warna tulisannya bukan kemalasan: `assets/styles.css`
+   (berkas aplikasi, bukan tema) menulis
+   `.announcement-slider-section{color:#fff !important}` — dan selektor apa pun
+   yang tidak ber-!important kalah berapa pun spesifisitasnya. Sudah dibuktikan
+   sekali: latarnya berubah kuning, tulisannya tetap putih di atasnya.
+   Latarnya sendiri tidak butuh `!important`. */
+header.header-nav .running-text{
+  background:var(--sk-surface-accent);
+  color:var(--sk-text-on-accent)!important;
+}
+header.header-nav .running-text *{color:inherit!important}
+
+/* Resep kacanya disalin dari `.sk-bar` milik kit, bukan dikarang: nilai yang
+   sama (72% kanvas, blur 20px, saturate 180%) dan pengecualian yang sama untuk
+   pembaca yang meminta transparansi dikurangi. */
+/* Kacanya dipasang pada HEADER-nya, bukan pada `.header-menu` di dalamnya.
+
+   `backdrop-filter` hanya memburamkan isi yang berada di dalam "backdrop root"
+   elemennya. `header.header-nav` itu `position:fixed` dengan `z-index:999`,
+   jadi ia MEMBENTUK stacking context — dan stacking context itulah yang jadi
+   backdrop root bagi anak-anaknya. Isi halaman berada DI LUAR-nya, sehingga
+   `.header-menu` memburamkan sesuatu yang kosong: latar tembusnya tetap
+   terlihat, tapi tidak ada yang pernah kabur.
+
+   Diukur, bukan diduga: tangkapan layar dengan `backdrop-filter:blur(20px)`
+   dan dengan `backdrop-filter:none` keluar IDENTIK byte demi byte — di Chrome
+   headless maupun bermata. Sesudah dipindah ke headernya, keduanya berbeda.
+
+   Di rujukan hal ini tidak muncul karena `.sk-bar` sendiri yang `position:
+   sticky` — elemen ber-backdrop-filter itu juga elemen yang diposisikan, jadi
+   backdrop root-nya halaman. */
+header.header-nav{
+  background:color-mix(in srgb, var(--sk-surface-page) 72%, transparent);
+  backdrop-filter:blur(20px) saturate(180%);
+  -webkit-backdrop-filter:blur(20px) saturate(180%);
+}
+header.header-nav .header-menu{
+  background:transparent;
+  transition:background-color var(--sk-duration-base) var(--sk-ease-standard);
+  /* theme.css memberi `.header-nav .header-menu` garis bawah 1px #e0e0da.
+     `.sk-bar` rujukan tidak punya garis apa pun (`border:0`, `box-shadow:none`)
+     — dan garis itulah yang membuat bilahnya terbaca sebagai palang padat,
+     bukan kaca yang mengambang di atas isi halaman. Dibuang di sini saja. */
+  border-bottom:0;
+}
+@media (prefers-reduced-transparency: reduce){
+  header.header-nav .header-menu{
+    background:var(--sk-surface-page);
+    backdrop-filter:none;-webkit-backdrop-filter:none;
+  }
+}
+/* Dipakai assets/pdp4.js selama ia mengukur header dalam keadaan tanpa gaya
+   ini — lihat komentar di `measure()`. */
+.pdp4-nav-measuring header.header-nav,
+.pdp4-nav-measuring header.header-nav .running-text,
+.pdp4-nav-measuring header.header-nav .header-menu{transition:none!important}
+
+@media (prefers-reduced-motion: reduce){
+  header.header-nav,
+  header.header-nav .running-text,
+  header.header-nav .header-menu{transition:none}
+}
+
+/* --- chrome tema ikut gelap ------------------------------------------------
+   Keputusan user 9 Sep: palet halaman ini MENGIKUTI mode sistem pembaca,
+   seperti berkas rujukan. Footer tema kebetulan sudah hijau tua di kedua mode,
+   jadi ia tidak perlu apa-apa. Header tidak: latarnya sudah ikut gelap sendiri
+   (kaca `.header-menu` memakai `--sk-surface-page`), tapi logo dan ikonnya
+   digambar tema dengan tinta hijau tua yang dituliskan keras — di atas kaca
+   hijau tua keduanya nyaris tak terbaca (terukur: fill #2b3c35 dan #2a3b34 di
+   atas ground #213d29).
+
+   Ikonnya dibalik dengan `brightness(0) invert(1)`, bukan diwarnai ulang satu
+   per satu: bentuk-bentuk itu memakai fill yang ditulis di CSS tema, bukan
+   `currentColor`, jadi tidak ada satu properti yang bisa diwarisi. Filter
+   memutihkan gambar monokrom apa pun tanpa perlu tahu selektornya, dan itu
+   tepat karena semuanya memang monokrom.
+
+   Titik notifikasi keranjang DIKECUALIKAN — ia satu-satunya bagian berwarna di
+   sana, dan memutihkannya menghapus penanda "ada isi di keranjang". */
+@media (prefers-color-scheme: dark) {
+  header.header-nav .header-menu{color:var(--sk-text-primary)}
+  header.header-nav .header-menu img,
+  header.header-nav .header-menu svg{filter:brightness(0) invert(1)}
+  /* Pemilih bahasa mencetak "EN" sebagai teks langsung di dalam
+     `.language-picker`, dan warnanya ditulis pada elemen itu sendiri — bukan
+     diwarisi — jadi `color` pada `.header-menu` tidak pernah sampai.
+
+     Selektornya sengaja menyertakan `.right-menu.item`: aturan tema di
+     assets/styles.css berbunyi
+     `.header-nav .header-menu .right-menu.item .language-picker`, dan itu LIMA
+     kelas (0,5,0). Versi tanpa `.right-menu.item` hanya (0,4,1) dan kalah —
+     sudah dicoba, warnanya tidak bergerak sedikit pun. */
+  header.header-nav .header-menu .right-menu.item .language-picker,
+  header.header-nav .header-menu .language-picker{color:var(--sk-text-primary)}
+  /* Daftar bahasanya TIDAK ikut dibalik: panelnya punya ground terang sendiri
+     (#f8f8f2), jadi tinta gelap di sana memang yang benar. */
+  header.header-nav .header-menu .language-picker__list{color:var(--sk-green-900)}
+  header.header-nav .header-menu .language-picker__list img,
+  header.header-nav .header-menu .language-picker__list svg{filter:none}
+  header.header-nav .header-menu [class*="count"],
+  header.header-nav .header-menu [class*="badge"],
+  header.header-nav .header-menu [class*="dot"]{filter:none}
+}
+
+/* --- `.sk-light` juga harus bekerja di mode gelap SISTEM -------------------
+   Kit menyalakan "pulau kertas di atas tinta" lewat dua selektor saja:
+   `.sk-inverse .sk-light` dan `:root[data-theme="dark"] .sk-light`. Keduanya
+   meleset ketika yang menggelapkan halaman adalah MODE SISTEM, karena di jalur
+   itu tidak ada `data-theme` yang dipasang dan section-nya bukan `.sk-inverse`
+   — token `:root` yang berbalik sendiri.
+
+   Akibatnya terlihat: lambang BPOM (hijau tua di atas transparan) duduk di
+   kartu yang ikut menghijau, jadi ia hilang; ubin nutrisi di pita daun juga
+   kehilangan ground terangnya. Dilaporkan user 9 Sep sebagai "ikon BPOM-nya
+   tidak ada".
+
+   Yang ditambahkan cuma cabang selektor yang hilang, dengan isi yang sama
+   persis seperti aturan kit di atas — bukan nilai baru. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .sk-light {
+  --sk-text-primary:   var(--sk-green-900);
+  --sk-text-secondary: var(--sk-green-300);
+  --sk-text-disabled:  var(--sk-green-900-a50);
+  --sk-surface-page:      var(--sk-snow);
+  --sk-surface-secondary: var(--sk-ivory);
+  --sk-surface-tertiary:  var(--sk-foam);
+  --sk-surface-bright:    var(--sk-white);
+  --sk-surface-mist:      var(--sk-mist);
+  --sk-surface-error:     rgba(184,67,58,.10);
+  --sk-text-error:        var(--sk-red-700);
+  --sk-outline-error:     var(--sk-red-500);
+  --sk-action-primary:       var(--sk-green-900);
+  --sk-action-primary-hover: var(--sk-green-800);
+  --sk-action-primary-text:  var(--sk-snow);
+  --sk-action-inverse:       var(--sk-snow);
+  --sk-action-inverse-hover: var(--sk-foam);
+  --sk-action-inverse-text:  var(--sk-green-900);
+  --sk-outline-primary: var(--sk-green-900);
+  --sk-outline-subtle:  var(--sk-green-900-a10);
+  --sk-outline-neutral: var(--sk-green-100);
+  --sk-state-hover:   var(--sk-black-a08);
+  --sk-state-pressed: var(--sk-black-a12);
+  --sk-state-selected: var(--sk-green-900);
+  --sk-input-border: var(--sk-green-100);
+  --sk-input-border-hover: var(--sk-green-900-a50);
+  --sk-input-border-focus: var(--sk-green-900);
+  --sk-input-placeholder: var(--sk-green-300);
+  --sk-focus-ring: var(--sk-green-900);
+  color-scheme: light;
+}
+}
+
+/* `.sk-card--outline` sengaja tidak punya latar — di rujukan ia mengandalkan
+   ground halaman yang selalu kanvas. Di sini ground itu bisa gelap, jadi
+   pulau kertasnya harus mengecat sendiri. `sk-light` pada elemennya membuat
+   `--sk-surface-page` di dalam sini selalu bernilai snow, di kedua mode. */
+.pdp4-page .pdp-seal__mark{background:var(--sk-surface-page)}
+
+/* --- footer tema disembunyikan, footer rujukan yang dipakai ----------------
+   sections/pdp4-footer merender footer versi berkas rujukan; footer tema
+   tetap dirender Shopify di bawahnya dan harus disembunyikan, kalau tidak
+   halaman ini punya DUA footer.
+
+   Disembunyikan dari sini, bukan dengan menyentuh sections/Footer.liquid:
+   berkas itu dipakai seluruh toko, dan berkas ini hanya dimuat halaman kapsul.
+
+   Yang ikut hilang bersamanya adalah empat kolom tautan (Shop, Blog, FAQ,
+   Contact Us, dan seterusnya). Rujukan memang tidak punya kolom itu — tapi
+   artinya halaman ini kehilangan tautan internal yang dipunyai halaman lain.
+   Kalau itu tidak diinginkan, kolomnya ditambahkan kembali di
+   sections/pdp4-footer, bukan dengan menghapus aturan ini. */
+#shopify-section-Footer{display:none}
+
+/* --- kelas `kl_reviews__*` adalah KAIT, bukan gaya -------------------------
+   Berkas rujukan meminjam nama-nama kelas widget Klaviyo Reviews karena ia
+   memang meniru widget itu, dan nama-nama itu dipertahankan di sini sebagai
+   kait untuk migrasi Klaviyo yang sedang berjalan.
+
+   Tapi skrip onsite Klaviyo menyuntikkan stylesheet-nya sendiri ke SETIAP
+   halaman toko (dihitung 9 Sep: 257 aturan yang menyentuh `kl_reviews__*`),
+   dan aturan itu ikut mengenai markup di sini. Yang terukur:
+
+     .kl_reviews__review__author        display:flex + gap 8px + margin-bottom
+       -> nama penulis pindah ke barisnya sendiri dan baris berikutnya dibuka
+          oleh titik-tengah yang menggantung: "Ninuk" / "· 3 bulan lalu".
+     .kl_reviews__histogram__bar-*      height 6px, display:inline-block, dan
+       `border:1px solid transparent` — dengan `box-sizing:border-box` milik kit,
+       border itu memakan 2px dari trek 8px sehingga batang `height:100%`
+       berhenti di 6px. Border-nya yang harus dibuang, bukan tingginya yang
+       dinaikkan.
+
+   Ditutup di sini, BUKAN dengan membuang nama kelasnya: kaitnya masih
+   dibutuhkan, dan yang salah bukan namanya melainkan gaya pihak ketiga yang
+   menempel padanya. Hanya properti yang memang dirusak yang dikembalikan —
+   `font-size` dan `color` sengaja TIDAK disebut, karena kelas kit
+   (`sk-title`, `sk-h2`, `sk-text-secondary`) yang harus tetap memegangnya dan
+   selektor di sini akan mengalahkannya. */
+.pdp4-page .kl_reviews__review__author,
+.pdp4-page .kl_reviews__review__timestamp,
+.pdp4-page .kl_reviews__summary__average_value,
+.pdp4-page .kl_reviews__summary__average_denominator,
+.pdp4-page .kl_reviews__summary__stars__count{display:inline;margin:0;padding:0;gap:0}
+.pdp4-page .pdp-hist .kl_reviews__histogram__row{display:grid;grid-template-columns:12px 1fr 32px;align-items:center;gap:var(--sk-space-8);margin:0}
+.pdp4-page .pdp-hist .kl_reviews__histogram__bar--background{height:8px;border:0;border-radius:var(--sk-radius-full);background:var(--sk-outline-subtle);overflow:hidden;display:block;margin:0}
+.pdp4-page .pdp-hist .kl_reviews__histogram__bar--foreground{display:block;height:100%;background:var(--sk-action-primary);margin:0}
+
+/* --- kendali daftar ulasan -------------------------------------------------
+   Dua pil saring membuka daftar pilihan. Kit tidak punya komponen menu — ia
+   tidak ada di rujukan sebagai gambar, hanya sebagai perilaku — jadi bentuknya
+   dirakit di sini dari token yang sama seperti komponen kit lainnya. */
+.pdp4-page .pdp-filter{position:relative;display:inline-flex}
+.pdp4-page .pdp-menu{position:absolute;top:calc(100% + var(--sk-space-4));left:0;z-index:var(--sk-z-overlay);min-width:100%;display:grid;gap:2px;padding:var(--sk-space-4);border-radius:var(--sk-radius-sm);border:var(--sk-stroke-default) solid var(--sk-outline-subtle);background:var(--sk-surface-bright);box-shadow:var(--sk-shadow-float, 0 10px 28px rgba(33,61,41,.12))}
+.pdp4-page .pdp-menu[hidden]{display:none}
+.pdp4-page .pdp-menu button{display:flex;align-items:center;justify-content:space-between;gap:var(--sk-space-16);width:100%;padding:var(--sk-space-8) var(--sk-space-12);border:0;border-radius:var(--sk-radius-xs);background:transparent;color:var(--sk-text-primary);font:inherit;font-size:var(--sk-text-14);text-align:left;white-space:nowrap;cursor:pointer}
+.pdp4-page .pdp-menu button:hover{background:var(--sk-surface-secondary)}
+.pdp4-page .pdp-menu button[aria-selected="true"]{background:var(--sk-state-selected);color:var(--sk-action-primary-text)}
+.pdp4-page .pdp-menu__count{font-size:var(--sk-text-12);color:var(--sk-text-secondary);font-variant-numeric:tabular-nums}
+.pdp4-page .pdp-menu button[aria-selected="true"] .pdp-menu__count{color:inherit;opacity:.72}
+
+/* Foto pembeli tidak ada di rujukan — keempat ulasan contohnya kebetulan tanpa
+   foto. Membuangnya berarti membuang isi yang nyata, jadi ia dirender dengan
+   bahasa kartu yang sama. */
+.pdp4-page .pdp-rev-pics{display:flex;flex-wrap:wrap;gap:var(--sk-space-8)}
+.pdp4-page .pdp-rev-pics img{width:78px;height:78px;object-fit:cover;border-radius:var(--sk-radius-xs);display:block}
+
+/* Jawaban Judge.me menjorok ke dalam pertanyaannya, bukan berdiri sejajar. */
+.pdp4-page .pdp-ans{padding-left:var(--sk-space-16);border-left:var(--sk-stroke-default) solid var(--sk-outline-subtle)}
+
+/* Elemen yang disembunyikan lewat properti `hidden` di pdp4.js. Kit tidak
+   memberi `[hidden]` aturan sendiri, dan `display:flex`/`grid` dari kelas
+   komponen mengalahkan `display:none` bawaan browser. */
+.pdp4-page [hidden]{display:none!important}
