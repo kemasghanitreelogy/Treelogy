@@ -1,36 +1,17 @@
 {%- liquid
   assign oil_alt = 'kabar_kebun.same.oil.image_alt' | t
   assign ritual_alt = 'kabar_kebun.same.ritual.image_alt' | t
-  assign oil_href = section.settings.oil_url
-  if oil_href == blank
-    assign oil_href = routes.all_products_collection_url
-  endif
-  assign ritual_href = section.settings.ritual_url
-  if ritual_href == blank
-    assign ritual_href = routes.all_products_collection_url
-  endif
-  assign whisk_href = section.settings.whisk_url
-  if whisk_href == blank
-    assign whisk_href = routes.all_products_collection_url
-  endif
-  assign spoon_href = section.settings.spoon_url
-  if spoon_href == blank
-    assign spoon_href = routes.all_products_collection_url
-  endif
 -%}
 {%- comment -%}
-  Semua tombol halaman ini mendarat di storefront /id — lihat snippets/og-id-url.
+  "Tetap" dan "Lebih Murah" adalah LABEL STATUS, bukan tombol: keduanya
+  menerangkan bahwa harga barang itu tidak naik (atau justru turun) per
+  1 September. Di Figma bentuknya memang pil bergaris seperti CTA, dan itu
+  sempat membuatnya dibuat sebagai <a> ke masing-masing PDP — keliru, karena
+  pil yang bisa diklik menjanjikan aksi yang tidak ada di desain.
+
+  Jadi elemennya <span>: tanpa href, tanpa fokus keyboard, tanpa kursor
+  pointer. Jangan kembalikan jadi <a> tanpa perubahan desain yang memintanya.
 {%- endcomment -%}
-{%- capture oil_url %}{% render 'og-id-url', url: oil_href %}{% endcapture -%}
-{%- capture ritual_url %}{% render 'og-id-url', url: ritual_href %}{% endcapture -%}
-{%- capture whisk_url %}{% render 'og-id-url', url: whisk_href %}{% endcapture -%}
-{%- capture spoon_url %}{% render 'og-id-url', url: spoon_href %}{% endcapture -%}
-{%- liquid
-  assign oil_url = oil_url | strip
-  assign ritual_url = ritual_url | strip
-  assign whisk_url = whisk_url | strip
-  assign spoon_url = spoon_url | strip
--%}
 <section class="kk-same og-section" style="--kk-card: {{ section.settings.card_color }};">
   <img
     class="kk-arrow kk-same__arrow"
@@ -69,9 +50,9 @@
     <p class="kk-same__oil-text">
       <b>{{ 'kabar_kebun.same.oil.name' | t }}</b><br><br>{{ 'kabar_kebun.same.oil.price_html' | t }}
     </p>
-    <a class="kk-ghost kk-same__oil-cta" href="{{ oil_url }}">
+    <span class="kk-ghost kk-same__oil-cta">
       {{- 'kabar_kebun.same.oil.cta_label' | t -}}
-    </a>
+    </span>
   </div>
 
   <div class="kk-same__arrow-box">
@@ -110,24 +91,24 @@
     <p class="kk-same__row" style="--kk-i: 0;">
       <b>{{ 'kabar_kebun.same.ritual.item_1_name' | t }}</b><br>{{ 'kabar_kebun.same.ritual.item_1_price' | t }}
     </p>
-    <a class="kk-ghost kk-same__row-cta" style="--kk-i: 0;" href="{{ ritual_url }}">
+    <span class="kk-ghost kk-same__row-cta" style="--kk-i: 0;">
       {{- 'kabar_kebun.same.ritual.item_1_cta' | t -}}
-    </a>
+    </span>
 
     <p class="kk-same__row" style="--kk-i: 1;">
       <b>{{ 'kabar_kebun.same.ritual.item_2_name' | t }}</b><br>{{ 'kabar_kebun.same.ritual.item_2_price' | t }}
     </p>
-    <a class="kk-ghost kk-same__row-cta" style="--kk-i: 1;" href="{{ whisk_url }}">
+    <span class="kk-ghost kk-same__row-cta" style="--kk-i: 1;">
       {{- 'kabar_kebun.same.ritual.item_2_cta' | t -}}
-    </a>
+    </span>
 
     <p class="kk-same__row" style="--kk-i: 2;">
       <b>{{ 'kabar_kebun.same.ritual.item_3_name' | t }}</b><br>{{ 'kabar_kebun.same.ritual.item_3_price' | t }}
       <s>{{ 'kabar_kebun.same.ritual.item_3_price_old' | t }}</s>
     </p>
-    <a class="kk-ghost kk-same__row-cta" style="--kk-i: 2;" href="{{ spoon_url }}">
+    <span class="kk-ghost kk-same__row-cta" style="--kk-i: 2;">
       {{- 'kabar_kebun.same.ritual.item_3_cta' | t -}}
-    </a>
+    </span>
   </div>
 </section>
 
@@ -313,13 +294,10 @@
     font-weight: 700;
     line-height: normal;
     text-align: center;
-    text-decoration: none;
     white-space: nowrap;
-  }
-
-  .kk-ghost:hover,
-  .kk-ghost:focus-visible {
-    opacity: 0.7;
+    /* Bukan kontrol: tidak ada pointer, tidak ada sorotan seret. */
+    cursor: default;
+    user-select: none;
   }
 {% endstyle %}
 
@@ -344,11 +322,6 @@
       "label": "Foto Seed Oil (export Figma 418x492, transparan)"
     },
     {
-      "type": "url",
-      "id": "oil_url",
-      "label": "Tujuan tombol Seed Oil (kosong = katalog)"
-    },
-    {
       "type": "header",
       "content": "Ritual Set, Whisk, Spoon"
     },
@@ -356,21 +329,6 @@
       "type": "image_picker",
       "id": "ritual_image",
       "label": "Foto Ritual Set (export Figma 763x480, transparan)"
-    },
-    {
-      "type": "url",
-      "id": "ritual_url",
-      "label": "Tujuan tombol Moringa Ritual Set (kosong = katalog)"
-    },
-    {
-      "type": "url",
-      "id": "whisk_url",
-      "label": "Tujuan tombol Bamboo Whisk (kosong = katalog)"
-    },
-    {
-      "type": "url",
-      "id": "spoon_url",
-      "label": "Tujuan tombol Bamboo Spoon (kosong = katalog)"
     }
   ],
   "presets": [

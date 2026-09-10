@@ -45,24 +45,12 @@
       "settings": {
         "card_color": "#f6f7ed",
         "oil_image": "shopify://shop_images/kabar-kebun-oil.png",
-        "oil_url": "/products/organic-moringa-oil",
-        "ritual_image": "shopify://shop_images/kabar-kebun-whisk.png",
-        "ritual_url": "/products/moringa-ritual-set",
-        "whisk_url": "/products/bamboo-whisk",
-        "spoon_url": "/products/bamboo-scoop"
+        "ritual_image": "shopify://shop_images/kabar-kebun-whisk.png"
       }
     },
     "goal": {
       "type": "kk-goal",
       "settings": {}
-    },
-    "code": {
-      "type": "kk-code",
-      "settings": {
-        "discount_code": "HARGATETAP",
-        "cta_url": "",
-        "card_color": "#d0d9c4"
-      }
     },
     "daily": {
       "type": "kk-daily",
@@ -98,7 +86,6 @@
     "closer",
     "same",
     "goal",
-    "code",
     "daily",
     "signoff",
     "footer"
