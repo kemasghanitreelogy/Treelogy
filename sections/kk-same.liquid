@@ -238,7 +238,12 @@
     position: relative;
     width: calc(1151 * var(--og-u));
     height: calc(1024 * var(--og-u));
-    margin: calc(80 * var(--og-u)) auto 0;
+    /* 80 - 33.18. Di Figma jarak antar-blok memang 80, tapi diukur ke tepi
+       KOTAK auto-layout kartu ini — dan fotonya menyembul 33.18 di atas kotak
+       itu. Karena pembungkus di sini dimulai dari tepi atas foto (supaya tidak
+       perlu posisi negatif), 33.18 yang sama harus dipotong dari margin, atau
+       seluruh sisa halaman turun 33 piksel. */
+    margin: calc(46.82 * var(--og-u)) auto 0;
   }
 
   .kk-same__ritual-card {
