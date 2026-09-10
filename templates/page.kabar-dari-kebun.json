@@ -21,6 +21,60 @@
         "container_width": 600
       }
     },
+    "hero": {
+      "type": "kk-hero",
+      "settings": {
+        "image": "shopify://shop_images/kabar-kebun-hero.jpg"
+      }
+    },
+    "lede": {
+      "type": "kk-lede",
+      "settings": {
+        "cta_url": ""
+      }
+    },
+    "closer": {
+      "type": "kk-closer",
+      "settings": {
+        "image": "shopify://shop_images/kabar-kebun-aerial.jpg",
+        "card_color": "#f6f7ed"
+      }
+    },
+    "same": {
+      "type": "kk-same",
+      "settings": {
+        "card_color": "#f6f7ed",
+        "oil_image": "shopify://shop_images/kabar-kebun-oil.png",
+        "oil_url": "/products/organic-moringa-oil",
+        "ritual_image": "shopify://shop_images/kabar-kebun-whisk.png",
+        "ritual_url": "/products/moringa-ritual-set",
+        "whisk_url": "/products/bamboo-whisk",
+        "spoon_url": "/products/bamboo-scoop"
+      }
+    },
+    "goal": {
+      "type": "kk-goal",
+      "settings": {}
+    },
+    "code": {
+      "type": "kk-code",
+      "settings": {
+        "discount_code": "HARGATETAP",
+        "cta_url": "",
+        "card_color": "#d0d9c4"
+      }
+    },
+    "daily": {
+      "type": "kk-daily",
+      "settings": {
+        "cta_url": "/products/organic-moringa-capsules?variant=47255408378044",
+        "card_color": "#d0d9c4"
+      }
+    },
+    "signoff": {
+      "type": "kk-signoff",
+      "settings": {}
+    },
     "footer": {
       "type": "og-footer",
       "settings": {
@@ -39,6 +93,14 @@
   },
   "order": [
     "tokens",
+    "hero",
+    "lede",
+    "closer",
+    "same",
+    "goal",
+    "code",
+    "daily",
+    "signoff",
     "footer"
   ]
 }
