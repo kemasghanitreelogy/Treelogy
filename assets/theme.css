@@ -670,6 +670,25 @@ section {
   display: flex !important;
 }
 
+/* Judge.me menyuntik <style class="jdgm-settings-style"> ke setiap halaman,
+   berisi satu baris: `.jdgm-prev-badge__text{visibility:hidden}`. Itu bagian
+   dari alurnya sendiri — teksnya disembunyikan lebih dulu, lalu DIBUKA lagi
+   oleh JS mereka saat memproses `.jdgm-preview-badge`.
+
+   snippets/Rating.liquid sengaja TIDAK memakai kelas `jdgm-preview-badge`
+   (lihat doc di sana: itu satu-satunya selektor yang dipakai loader Judge.me,
+   dan tanpa membuangnya teks Indonesia kita ditimpa jadi "94 ulasan" tanpa
+   angka rata-rata). Konsekuensinya: tidak ada lagi yang membuka kembali
+   `visibility`, sehingga "4,96/5 (200)" ada di DOM tapi tak pernah terlihat
+   di kartu produk.
+
+   Spesifisitas 0,3,0 di sini menang atas 0,1,0 milik Judge.me tanpa perlu
+   !important. Sengaja dibatasi ke .card-detail — jumlah ulasan di PDP tetap
+   disembunyikan oleh aturan #product-detail-content di awal berkas ini. */
+.card-detail .star-review .jdgm-prev-badge__text {
+  visibility: visible;
+}
+
 @media only screen and (max-width: 900px) {
   .star-review .jdgm-prev-badge__text {
     font-size: 12px;
