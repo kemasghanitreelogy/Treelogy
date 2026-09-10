@@ -3282,7 +3282,20 @@
       if (b && b.parentNode) b.parentNode.removeChild(b);
     }
 
-    var raf = 0;
+    /* Kekosongan SESAAT bukan alasan memasang kerangka.
+
+       Saat kartu optimistis ditukar dengan baris asli, `cartReconcileRows`
+       dan jalur cadangan `innerHTML` membuat daftar kosong satu-dua frame.
+       Versi pertama menjawab setiap frame kosong, jadi kerangka terpasang
+       lalu dicabut dalam ~50ms — terbaca sebagai kedipan tepat sesudah
+       menekan "Add to cart" (dilaporkan user 10 Sep).
+
+       Maka: MEMASANG ditahan `MOUNT_DELAY`, MENCABUT tetap seketika. Jeda
+       yang benar-benar perlu dijawab lamanya detik, bukan milidetik, jadi
+       tidak ada yang hilang; sementara pertukaran yang mulus tidak pernah
+       sempat memicunya. */
+    var MOUNT_DELAY = 260;
+    var raf = 0, mountTimer = null;
     function evaluate() {
       if (raf) return;
       raf = requestAnimationFrame(function () {
@@ -3291,7 +3304,19 @@
         if (!root) return;
         var n = realRows(root);
         if (n > 0) lastRows = n;
-        if (drawerOpen() && blank(root)) mount(root); else unmount();
+        var perlu = drawerOpen() && blank(root);
+        if (!perlu) {
+          if (mountTimer) { clearTimeout(mountTimer); mountTimer = null; }
+          unmount();
+          return;
+        }
+        if (document.getElementById('cart-skel') || mountTimer) return;
+        mountTimer = setTimeout(function () {
+          mountTimer = null;
+          var r2 = cartEl();
+          /* Diperiksa SEKALI LAGI: keadaan bisa sudah pulih selama menunggu. */
+          if (r2 && drawerOpen() && blank(r2)) mount(r2);
+        }, MOUNT_DELAY);
       });
     }
 
