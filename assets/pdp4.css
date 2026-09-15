@@ -1380,6 +1380,33 @@ html{scroll-behavior:smooth}
   height:calc(var(--pdp4-nav-full, 95px) - var(--pdp4-announce-h, 40px));
 }
 
+/* Popup menu ikut menyusut bersama headernya.
+
+   theme.css:8386 mematok `.header-popup{top:40px}` — angka itu mengasumsikan
+   pita pengumuman SELALU setinggi 40px, dan di tema bawaan asumsi itu benar.
+   Mode slim membatalkannya: `.running-text` diciutkan ke 0 dan bilah header
+   naik ke puncak, tapi popup tetap tertinggal di 40px. Terukur pada halaman
+   kapsul, scrollY=700: bilah header [0,61] sementara bilah DI DALAM popup
+   tetap [40,101]. Yang dilihat pembeli dua baris logo berjarak 40px, dan
+   sisa header lama menyembul di atasnya. Pada scrollY=0 keduanya menumpuk
+   sempurna — itu sebabnya cacat ini tidak pernah terlihat tanpa menggulir
+   lebih dulu.
+
+   Angkanya diturunkan dari ukuran YANG SAMA dengan header (bukan 40px yang
+   ditulis tangan), supaya keduanya tidak bisa berpisah lagi kalau tinggi
+   pengumuman berubah.
+
+   Dibatasi `min-width:901px`: di bawah itu theme.css sudah menyetel `top:0`
+   sendiri, dan aturan ini lebih spesifik — tanpa gerbang, mobile justru
+   didorong turun 40px. */
+@media only screen and (min-width:901px){
+  .pdp4-nav-sized .header-popup{
+    top:var(--pdp4-announce-h, 40px);
+    transition:top var(--sk-duration-base) var(--sk-ease-standard);
+  }
+  .pdp4-nav-sized.pdp4-nav-slim .header-popup{top:0}
+}
+
 /* --- kenapa aturan di bawah TIDAK menunggu kelas dari JS -------------------
    Sebelumnya semuanya digerbangi `.pdp4-nav-glass`, kelas yang dipasang
    assets/pdp4.js. Skrip itu `defer`, jadi ia baru jalan sesudah HTML selesai
