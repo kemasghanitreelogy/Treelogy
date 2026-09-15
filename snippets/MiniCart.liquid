@@ -843,6 +843,9 @@
 
     /* -- Keranjang kosong: tutup drawer dengan hormat (hanya bila BARU
           menjadi kosong — lihat cartMaybeCloseOnEmpty) -- */
+    /* Satu-satunya penulis hitungan ini. Dipakai blank() di blok kerangka
+       untuk membedakan "menunggu isi" dari "memang kosong". */
+    window.cartLastItemCount = cart.item_count;
     window.cartMaybeCloseOnEmpty(cart.item_count);
 
     /* -- Checkout total -- */
@@ -935,7 +938,16 @@
     _emptyCloseTimer = setTimeout(function () {
       _emptyCloseTimer = null;
       var c = document.getElementById('cart');
-      if (c && c.querySelector('.cart-item')) return; /* sudah terisi lagi */
+      /* `:not(.cart-item--skel)` WAJIB. Kerangka "drawer tidak pernah kosong"
+         memakai kelas `.cart-item` juga, dan ia terpasang pada 260ms —
+         sebelum penutup ini menyala pada 650ms. Tanpa pengecualian ini
+         penjaganya melihat kerangka hias (aria-hidden, tanpa data-key, tanpa
+         data-variant) sebagai "keranjang terisi lagi", lalu membatalkan
+         penutupan. Drawer tinggal terbuka dalam keadaan kosong, kerangkanya
+         dipertahankan karena drawer masih terbuka, dan keduanya saling
+         mengunci: itulah dua kotak abu-abu yang tidak pernah hilang.
+         Selektor yang sama sudah dipakai realRows() di blok kerangka. */
+      if (c && c.querySelector('.cart-item:not(.cart-item--skel)')) return;
       window.cartPremiumClose();
     }, 650);
   };
@@ -3180,6 +3192,13 @@
     }
     function blank(root) {
       if (!root) return false;
+      /* Kerangka ini janji "isinya sedang datang". Kalau keranjang di server
+         MEMANG kosong, tidak ada yang datang — memasangnya di situ berbohong
+         kepada pembeli dan (lihat penjaga di cartScheduleEmptyClose) menahan
+         drawer tetap terbuka. Dibaca dari hitungan terakhir yang diketahui
+         refreshCartUI; `undefined` (belum pernah ada render) sengaja TIDAK
+         dihitung nol, supaya muat-pertama tetap memakai kerangka. */
+      if (window.cartLastItemCount === 0) return false;
       if (realRows(root) > 0) return false;
       var empty = root.querySelector('.cart-empty-state');
       if (empty && visible(empty)) return false;
