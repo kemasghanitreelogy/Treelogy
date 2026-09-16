@@ -374,16 +374,6 @@
             "thumb_url_id": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-v4-thumb04-id.jpg?v=1788844884"
           }
         },
-        "slide_05": {
-          "type": "slide",
-          "settings": {
-            "image_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-v4-slide05-en.webp?v=1788844874",
-            "thumb_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-v4-thumb05-en.jpg?v=1788844884",
-            "alt": "",
-            "image_url_id": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-v4-slide05-id.webp?v=1788844874",
-            "thumb_url_id": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-v4-thumb05-id.jpg?v=1788844887"
-          }
-        },
         "slide_06": {
           "type": "slide",
           "settings": {
@@ -419,14 +409,26 @@
             "poster_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-v4-slide08-en.jpg?v=1788844877",
             "poster_url_id": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-v4-slide08-id.jpg?v=1788844881"
           }
+        },
+        "slide_05v": {
+          "type": "slide",
+          "settings": {
+            "alt": "",
+            "video_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp5b-slide05-video-en.mp4?v=1789547487",
+            "video_url_id": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp5b-slide05-video-id.mp4?v=1789547487",
+            "poster_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp5b-slide05-en.jpg?v=1789547495",
+            "poster_url_id": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp5b-slide05-id.jpg?v=1789547495",
+            "thumb_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp5b-slide05-en.jpg?v=1789547495",
+            "thumb_url_id": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp5b-slide05-id.jpg?v=1789547495"
+          }
         }
       },
       "block_order": [
         "slide_01",
+        "slide_04",
         "slide_02",
         "slide_03",
-        "slide_04",
-        "slide_05",
+        "slide_05v",
         "slide_06",
         "slide_07",
         "slide_08"
@@ -440,7 +442,10 @@
         "heading": "",
         "cta_label": "",
         "subheading": "",
-        "review_meta": ""
+        "review_meta": "",
+        "wa_url": "https://wa.me/6281139603993",
+        "wa_label": "",
+        "wa_message": ""
       },
       "blocks": {
         "route_1": {
@@ -592,17 +597,6 @@
         "assure_2": "",
         "assure_3": "",
         "gift_image": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-v2-pack-oil.webp?v=1788759523"
-      }
-    },
-    "pdp4_howto": {
-      "type": "pdp4-howto",
-      "settings": {
-        "handles": "organic-moringa-capsules",
-        "eyebrow": "",
-        "heading": "",
-        "medical_note": "",
-        "video_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-v3-howto-video.mp4?v=1788762669",
-        "poster_url": "https://cdn.shopify.com/s/files/1/0668/4776/8764/files/pdp3-v3-howto-poster.jpg?v=1788762669"
       }
     },
     "pdp4_leaf": {
@@ -814,17 +808,6 @@
         "heading": ""
       }
     },
-    "pdp4_founder": {
-      "type": "pdp4-founder",
-      "settings": {
-        "handles": "organic-moringa-capsules",
-        "image": "shopify://shop_images/pdp3-founder-sacha.webp",
-        "image_alt": "Sacha, founder of Treelogy",
-        "eyebrow": "",
-        "body": "",
-        "signature": ""
-      }
-    },
     "pdp4_faq": {
       "type": "pdp4-faq",
       "settings": {
@@ -940,19 +923,25 @@
         "handles": "organic-moringa-capsules",
         "copyright": ""
       }
+    },
+    "pdp4_stories": {
+      "type": "pdp4-stories",
+      "settings": {
+        "handles": "organic-moringa-capsules",
+        "review_meta": ""
+      }
     }
   },
   "order": [
     "main",
     "pdp4_buybox",
-    "pdp4_router",
     "pdp4_packs",
-    "pdp4_howto",
-    "pdp4_leaf",
+    "pdp4_stories",
     "pdp4_why",
-    "pdp4_farm",
     "pdp4_timeline",
-    "pdp4_founder",
+    "pdp4_farm",
+    "pdp4_leaf",
+    "pdp4_router",
     "pdp4_faq",
     "pdp4_reviews",
     "pdp4_close",
