@@ -102,13 +102,18 @@
   "Hemat"/"Save" tidak punya setting section — ia kata di dalam kalimat, bukan
   isi yang diatur editor — jadi ia datang langsung dari locale.
 {%- endcomment -%}
+{%- capture t_channels %}{% render 'pdp4-copy', value: section.settings.channels_note, key: 'pdp3.packs.channels_note' %}{% endcapture -%}
 {%- assign t_save = 'pdp3.packs.save' | t -%}
 <div class="pdp4-page sk-root">
-<section class="sk-container sk-py-48" id="pdp4-packs"><div class="pdp-wrap sk-stack" style="gap:var(--sk-space-24)">
-  {%- if t_guarantee != blank -%}
-    <div class="sk-notice sk-notice--success"><svg class="sk-notice__icon pdp-ico" aria-hidden="true"><use href="#i-shield"/></svg><span>{% render 'pdp4-sentence-lines', text: t_guarantee %}</span></div>
-  {%- endif -%}
-
+{%- comment -%}
+  Pembungkusnya mengikuti sections/pdp4-router: `sk-container` + `.sk-stack`,
+  TANPA `.pdp-wrap`. Sejak generasi ini pemilih paket dipindahkan ke kolom
+  kanan hero oleh assets/pdp4.js, dan `.pdp-wrap` (max-width 720px, margin
+  auto) di dalam kolom selebar 5fr hanya menyempitkan kartu tanpa alasan.
+  `sk-container` dipertahankan supaya section ini tetap punya gutter yang
+  benar kalau skripnya gagal muat dan ia tinggal di tempat aslinya.
+{%- endcomment -%}
+<section class="sk-container sk-pt-16" id="pdp4-packs"><div class="sk-stack" style="gap:var(--sk-space-24)">
   <form action="{{ routes.cart_add_url }}" method="post" enctype="multipart/form-data" id="AddToCartForm" class="sk-stack" style="gap:var(--sk-space-24)">
     <div class="sk-stack" id="pdp4-packform" style="gap:var(--sk-space-16)">
     {%- assign card_no = 0 -%}
@@ -328,6 +333,14 @@
       dan di luar form pencarian itu mengembalikan null tanpa error apa pun.
     {%- endcomment -%}
     <button type="button" class="sk-btn sk-btn--lg sk-btn--full button button-quick-add-cart" id="AddToCart" data-variant="{{ default_variant.id }}"><span>{{ t_atc }} · <span id="pdp4-atc-price" class="sk-num">{% render 'pdp4-money', cents: default_variant.price %}</span></span></button>
+    {%- if t_channels != blank -%}
+      {%- comment -%}
+        Baris ini menjawab pertanyaan yang muncul justru SESUDAH harga terlihat:
+        "kalau di Tokopedia lebih murah bagaimana". Karena itu tempatnya tepat
+        di bawah tombol, bukan di daftar janji berikon di bawahnya.
+      {%- endcomment -%}
+      <p class="sk-small sk-text-secondary">{% render 'pdp4-sentence-lines', text: t_channels %}</p>
+    {%- endif -%}
     {%- comment -%}
       Tiga janji berikon menggantikan satu paragraf abu. Ikonnya tetap di markup
       (bukan setting) karena ia yang membedakan ketiga barisnya: pengiriman,
@@ -339,6 +352,15 @@
         {%- if t_a2 != blank -%}<li><svg class="pdp-ico" aria-hidden="true"><use href="#i-shield"/></svg>{% render 'pdp4-sentence-lines', text: t_a2 %}</li>{%- endif -%}
         {%- if t_a3 != blank -%}<li><svg class="pdp-ico" aria-hidden="true"><use href="#i-tag"/></svg>{% render 'pdp4-sentence-lines', text: t_a3 %}</li>{%- endif -%}
       </ul>
+    {%- endif -%}
+    {%- comment -%}
+      Janji 60 hari duduk di BAWAH tiga baris berikon, bukan di atas kartu
+      paket seperti generasi sebelumnya. Di atas ia dibaca sebelum ada harga
+      untuk dijamin; di bawah ia menutup blok belinya, tepat di tempat pembeli
+      berhenti sebelum menekan tombol.
+    {%- endcomment -%}
+    {%- if t_guarantee != blank -%}
+      <div class="sk-notice sk-notice--success"><svg class="sk-notice__icon pdp-ico" aria-hidden="true"><use href="#i-shield"/></svg><span>{% render 'pdp4-sentence-lines', text: t_guarantee %}</span></div>
     {%- endif -%}
   </form>
 </div></section>
@@ -375,6 +397,12 @@
       "type": "text",
       "id": "atc_label",
       "label": "Add to cart label"
+    },
+    {
+      "type": "text",
+      "id": "channels_note",
+      "label": "Marketplace note (under the buy button)",
+      "info": "Fallback only — the locale key pdp3.packs.channels_note is used when this is blank."
     },
     {
       "type": "text",

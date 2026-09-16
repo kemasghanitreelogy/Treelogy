@@ -39,19 +39,33 @@
     Pertanyaan menempel pada PRODUKNYA, bukan pada template: satu tema hanya
     punya satu templates/product.json, jadi apa pun yang ditulis di setting
     akan sama untuk semua produk — dan halaman powder akan menjawab pertanyaan
-    kapsul. Urutan sumbernya:
+    kapsul.
 
-      1. `pdp3.faq`   — JSON dummy tema draft (title + answer teks polos).
-      2. `product.faq` — metaobject `faq_group` yang dibaca tema live; `answer`
+    Kecualinya berkas locale, dan itu yang didahulukan sejak generasi ini.
+    Rujukan baru MENYUSUN ULANG kesepuluh pertanyaan dan menambah satu
+    ("apakah produknya sama dengan yang di Tokopedia dan Shopee"), sementara
+    sumber lamanya — metafield `pdp3.faq` — dipakai bersama tema live: menulis
+    ulang metafieldnya berarti mengganti FAQ di halaman yang sedang terbit.
+    Berkas locale ikut di dalam tema, jadi ia hanya berlaku di sini.
+
+    Urutan sumbernya sekarang:
+
+      1. berkas locale `pdp3.faq.q1..q12` — urutan rujukan generasi ini.
+      2. `pdp3.faq`   — JSON dummy tema draft (title + answer teks polos).
+      3. `product.faq` — metaobject `faq_group` yang dibaca tema live; `answer`
          bertipe rich_text, jadi harus lewat `metafield_tag`. Dicetak langsung
          ia keluar sebagai JSON mentah di halaman.
-      3. blok template — cadangan untuk produk yang belum punya grup FAQ.
+      4. blok template — cadangan untuk produk yang belum punya grup FAQ.
   {%- endcomment -%}
   {%- assign faq_json = product.metafields.pdp3.faq.value -%}
   {%- assign faq_group = product.metafields.product.faq.value -%}
   {%- assign faq_items = faq_group.faq_items.value -%}
+  {%- capture faq_from_locale %}{% render 'pdp4-faq-items', open_first: section.settings.open_first %}{% endcapture -%}
+  {%- assign faq_from_locale = faq_from_locale | strip -%}
   <div class="sk-accordion">
-    {%- if faq_json != blank and faq_json.size > 0 -%}
+    {%- if faq_from_locale != blank -%}
+      {{ faq_from_locale }}
+    {%- elsif faq_json != blank and faq_json.size > 0 -%}
       {%- for item in faq_json -%}
         <details{% if forloop.first and section.settings.open_first %} open{% endif %}><summary>{{ item.title }}</summary><div class="sk-accordion__body sk-body">{{ item.answer }}</div></details>
       {%- endfor -%}

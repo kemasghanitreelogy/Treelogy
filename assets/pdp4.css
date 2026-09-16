@@ -1068,6 +1068,15 @@ html{scroll-behavior:smooth}
 .pdp-nav{display:flex;align-items:center;justify-content:space-between;gap:var(--sk-space-16);min-height:var(--sk-header-h);width:100%}
 .pdp-nav img{height:16px;display:block}
 .pdp-wrap{max-width:720px;margin-inline:auto}
+/* Section alasan yang DIANGKAT ke kolom kanan hero oleh assets/pdp4.js.
+   Di dalam kolom ia bukan lagi bagian halaman yang berdiri sendiri: lebar
+   bacanya dicabut, jaraknya menyusut jadi satu ruang di atas, eyebrow-nya
+   hilang (judul hero sudah dua baris di atasnya), dan judulnya turun ke
+   ukuran judul kartu supaya tidak bersaing dengan <h1>. */
+.pdp-router--lifted{padding:var(--sk-space-16) 0 0!important}
+.pdp-router--lifted > .pdp-wrap{max-width:none;padding-inline:0;margin-inline:0}
+.pdp-router--lifted .sk-eyebrow{display:none}
+.pdp-router--lifted .sk-h2{font-size:var(--sk-text-20);line-height:var(--sk-leading-body);letter-spacing:var(--sk-tracking-body)}
 .pdp4-page section{scroll-margin-top:calc(var(--pdp4-nav, var(--sk-header-h)) + var(--sk-space-8))}
 .pdp-ico{width:24px;height:24px;flex:none;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .pdp-ico--lg{width:40px;height:40px;stroke-width:1.25}
@@ -1089,6 +1098,15 @@ html{scroll-behavior:smooth}
 .pdp-thumbs button{flex:0 0 64px;width:64px;height:64px;padding:0;border:0;border-radius:var(--sk-radius-xs);overflow:hidden;background:var(--sk-surface-tertiary);cursor:pointer;opacity:var(--sk-opacity-hover)}
 .pdp-thumbs button[aria-current="true"]{opacity:1;outline:var(--sk-stroke-active) solid var(--sk-outline-primary);outline-offset:-1.5px}
 .pdp-thumbs img{width:100%;height:100%;object-fit:cover;display:block}
+/* Ponsel: kolom kanan hero sekarang membawa pemilih paket juga, jadi setiap
+   piksel di atasnya menunda kartu harga. Rujukan merapatkannya di tiga tempat
+   — thumbnail 48px, jarak hero, dan jarak blok judul. */
+@media(max-width:599px){
+  .pdp-thumbs button{flex:0 0 48px;width:48px;height:48px}
+  .pdp4-page #pdp4-hero{padding-top:var(--sk-space-8)}
+  .pdp-hero{gap:var(--sk-space-16)}
+  .pdp-hero > div:nth-child(2) > .sk-stack:first-child{gap:var(--sk-space-12)}
+}
 .pdp-faces{display:inline-flex;flex:none}
 .pdp-faces img{width:24px;height:24px;border-radius:50%;object-fit:cover;display:block;margin-left:calc(var(--sk-space-8) * -1);border:var(--sk-stroke-active) solid var(--sk-surface-page)}
 .pdp-faces img:first-child{margin-left:0}
@@ -1156,6 +1174,9 @@ html{scroll-behavior:smooth}
 .pdp-frames::-webkit-scrollbar{display:none}
 .pdp-frame{flex:0 0 200px;scroll-snap-align:start;display:grid;gap:var(--sk-space-8)}
 .pdp-frame img{width:200px;height:250px;object-fit:cover;border-radius:var(--sk-radius-md);display:block}
+/* kartu alasan: dua tombol berdampingan */
+.pdp-rcta{display:flex;flex-wrap:wrap;gap:var(--sk-space-12)}
+.pdp-rcta .sk-btn{flex:1 1 200px}
 /* timeline */
 .pdp-node{display:grid;grid-template-columns:12px 1fr;gap:var(--sk-space-12);padding-block:var(--sk-space-12);border-top:var(--sk-stroke-default) solid var(--sk-outline-subtle)}
 .pdp-node:first-of-type{border-top:0}

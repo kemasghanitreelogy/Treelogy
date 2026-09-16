@@ -1,0 +1,26 @@
+{% doc %}
+  Daftar pertanyaan FAQ dari berkas locale.
+
+  Kuncinya `pdp3.faq.q1.q` / `pdp3.faq.q1.a` sampai `q12`. Kunci yang belum ada
+  dikembalikan kosong oleh `pdp4-copy`, dan pertanyaan yang kosong dilewati —
+  jadi jumlah pertanyaan ditentukan berkas locale, bukan angka di sini.
+
+  Snippet ini tidak mencetak apa pun kalau tak satu pun kunci terisi. Itu yang
+  dibaca sections/pdp4-faq sebagai "pakai sumber lama".
+
+  @param {boolean} [open_first] - Buka jawaban pertama saat halaman dibuka
+{% enddoc %}{%- liquid
+  assign faq_n = 'q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,q11,q12' | split: ','
+  assign faq_printed = 0
+-%}
+{%- for n in faq_n -%}
+  {%- capture k_q %}pdp3.faq.{{ n }}.q{% endcapture -%}
+  {%- capture k_a %}pdp3.faq.{{ n }}.a{% endcapture -%}
+  {%- capture f_q %}{% render 'pdp4-copy', key: k_q %}{% endcapture -%}
+  {%- capture f_a %}{% render 'pdp4-copy', key: k_a %}{% endcapture -%}
+  {%- assign f_q = f_q | strip -%}
+  {%- assign f_a = f_a | strip -%}
+  {%- if f_q == blank -%}{%- continue -%}{%- endif -%}
+  {%- assign faq_printed = faq_printed | plus: 1 -%}
+  <details{% if faq_printed == 1 and open_first %} open{% endif %}><summary>{{ f_q }}</summary><div class="sk-accordion__body sk-body">{{ f_a }}</div></details>
+{%- endfor -%}

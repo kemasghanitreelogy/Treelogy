@@ -76,27 +76,49 @@
     });
   }
 
-  /* --- section "pilih alasanmu" pindah ke kolom hero -------------------------
-     Di rujukan ia berada DI DALAM kolom kanan hero: di situlah kolom itu
-     menjadi cukup tinggi sehingga galerinya bisa menempel sementara teksnya
-     bergulir. Section Shopify tidak bisa bersarang, jadi pemindahannya di
-     sini.
+  /* --- dua section pindah ke kolom hero -------------------------------------
+     Di rujukan, pemilih paket berada DI DALAM kolom kanan hero, dan bagian
+     "pilih alasanmu" IKUT NAIK ke sana hanya kalau URL membawa `?r=<alasan>`.
+     Section Shopify tidak bisa bersarang, jadi keduanya dirender sebagai
+     saudara dan dipindahkan di sini.
 
      Yang dipindahkan adalah PEMBUNGKUS `.shopify-section`-nya, bukan
      section-nya sendiri: theme editor mengganti isi pembungkus itu utuh saat
      merender ulang, dan simpul yang dipindah dari dalamnya akan hilang pada
      penyuntingan pertama.
 
-     Urutan DOM di ponsel sama sebelum dan sesudah pemindahan (hero, lalu
-     alasan), jadi halaman tetap benar kalau skrip ini gagal muat. */
-  function initRouterSlot() {
-    var slot = $('[data-pdp4-router-slot]');
-    var sec = $('#pdp4-router');
-    if (!slot || !sec) return;
+     Urutan DOM di ponsel sama sebelum dan sesudah pemindahan, jadi halaman
+     tetap benar — dan tetap bisa dibeli — kalau berkas ini gagal muat. */
+  function moveInto(slotSel, secSel) {
+    var slot = $(slotSel);
+    var sec = $(secSel);
+    if (!slot || !sec) return null;
     var wrap = sec.closest('.shopify-section') || sec.parentElement;
-    if (!wrap || wrap === slot.parentElement) return;
+    if (!wrap || wrap === slot.parentElement) return sec;
     slot.hidden = false;
     slot.appendChild(wrap);
+    return sec;
+  }
+
+  /* Pemilih paket SELALU naik: di rujukan ia tidak punya tempat lain. */
+  function initPacksSlot() {
+    moveInto('[data-pdp4-packs-slot]', '#pdp4-packs');
+  }
+
+  /* Bagian alasan hanya naik kalau pembeli datang lewat satu alasan tertentu
+     (`?r=<id>`). Tanpa parameter itu ia tinggal di tempatnya sendiri, di
+     antara "daun" dan FAQ, seperti rujukan.
+
+     Yang diperiksa hanya KEBERADAAN parameternya, bukan kecocokannya dengan
+     salah satu rute: initRouter() yang tahu daftar rutenya, dan ia berjalan
+     sesudah ini. Sebuah `?r=` yang salah ketik menaikkan kartu berisi alasan
+     pertama — itu tetap jawaban yang masuk akal untuk tautan kampanye yang
+     rusak, jauh lebih baik daripada kolom hero yang berlubang. */
+  function initRouterSlot() {
+    var r = new URLSearchParams(location.search).get('r');
+    if (!r) return;
+    var sec = moveInto('[data-pdp4-router-slot]', '#pdp4-router');
+    if (sec) sec.classList.add('pdp-router--lifted');
   }
 
   /* --- kartu alasan ---------------------------------------------------------
@@ -120,7 +142,7 @@
       try { return JSON.parse(el.textContent) || fallback; } catch (e) { return fallback; }
     }
     var cta = jsonFrom('[data-pdp4-router-cta]', '');
-    var meta = jsonFrom('[data-pdp4-router-meta]', '');
+    var wa = jsonFrom('[data-pdp4-router-wa]', null);
 
     /* Chip mana yang terpilih saat halaman dibuka, dan dari mana asalnya.
 
@@ -237,18 +259,30 @@
       if (!r) return;
       var html = '<h3 class="sk-h3">' + brm(r.title) + '</h3>';
       if (r.body) html += '<p class="sk-body sk-text-secondary">' + esc(r.body) + '</p>';
-      if (r.quote) html += '<blockquote class="sk-body pdp-inline-quote" style="margin:0">' + esc(r.quote) + '</blockquote>';
-      if (r.who) {
-        /* Kartu ditutup penulisnya. Yang punya foto memakai fotonya; sisanya
-           jatuh ke huruf pertama namanya — bulatan yang sama, isi yang
-           berbeda, jadi barisnya tidak pernah kosong. */
-        var face = r.photo
-          ? '<img src="' + esc(r.photo) + '" alt="" width="32" height="32" loading="lazy">'
-          : esc(r.who.charAt(0));
-        html += '<div class="pdp-who sk-small sk-text-secondary"><span class="pdp-avatar">' + face + '</span>' +
-          esc(r.who) + (meta ? ' · ' + esc(meta) : '') + '</div>';
+      /* Kutipan dan barisnya penulis TIDAK lagi digambar di kartu ini.
+         Rujukan generasi ini membuangnya: strip testimoni sekarang berdiri
+         sendiri tepat di bawah hero, dan kartu alasan yang mengulang satu
+         kutipan lagi membuat pembeli membaca ulasan dua kali sebelum sampai
+         ke tombolnya.
+
+         Datanya sengaja TETAP dikirim section (`quote`, `who`, `photo`) dan
+         kunci locale-nya tetap ada, jadi mengembalikannya cukup di berkas ini
+         dan tidak perlu menulis ulang sembilan blok di templates/product.json. */
+      /* Rujukan menutup kartu dengan DUA tombol berdampingan, bukan satu
+         tautan teks: "pilih paketmu" yang menggulirkan ke pemilih paket, dan
+         WhatsApp untuk yang alasannya belum terjawab kartu ini. Keduanya
+         berbagi satu baris `.pdp-rcta` yang melipat sendiri saat kolomnya
+         sempit. Barisnya hanya digambar kalau ada isinya. */
+      if (cta || (wa && wa.href)) {
+        var row = '';
+        if (cta) row += '<a class="sk-btn" href="#pdp4-packs">' + esc(cta) + '</a>';
+        if (wa && wa.href) {
+          row += '<a class="sk-btn sk-btn--outline" href="' + esc(wa.href) + '" rel="noopener">' +
+            '<svg class="sk-btn__icon pdp-ico" aria-hidden="true"><use href="#i-wa"/></svg>' +
+            esc(wa.label || '') + '</a>';
+        }
+        html += '<div class="pdp-rcta">' + row + '</div>';
       }
-      if (cta) html += '<a class="sk-btn sk-btn--text" href="#pdp4-packs">' + esc(cta) + '</a>';
       rcard.innerHTML = html;
     }
 
@@ -1355,6 +1389,7 @@
   function boot() {
     /* Paling dulu: kolom hero harus sudah lengkap dan bilahnya harus sudah di
        <body> sebelum apa pun mengukurnya. */
+    initPacksSlot();
     initRouterSlot();
     initStickyHost();
     initSticky();
@@ -1378,6 +1413,7 @@
   /* Theme editor merender ulang satu section utuh saat disunting, dan
      pemindahan yang dilakukan boot() ikut hilang bersamanya. */
   document.addEventListener('shopify:section:load', function () {
+    initPacksSlot();
     initRouterSlot();
     initStickyHost();
     initSticky();

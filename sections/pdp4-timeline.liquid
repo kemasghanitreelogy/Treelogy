@@ -32,17 +32,30 @@
       <h2 class="sk-h2">{% render 'pdp4-sentence-lines', text: t_heading %}</h2>
     </div>
     {%- comment -%}
-      Isi menempel pada PRODUKNYA — alasan yang sama seperti FAQ. `pdp3.timeline`
-      (JSON dummy tema draft) didahulukan; `custom.product_timeline` adalah
-      daftar metaobject `timeline_benefit` yang dibaca tema live. Blok template
-      hanya cadangan.
+      Isi simpulnya punya TIGA sumber, dan urutannya berubah pada generasi ini.
+
+      Yang didahulukan sekarang berkas locale (`pdp3.timeline.n1..n5`). Kelima
+      kalimatnya ditulis ulang untuk rujukan baru — sebelumnya tiap simpul
+      bercerita tentang apa yang DIRASAKAN, sekarang tentang zat apa yang
+      bekerja — dan sumber lamanya, metafield `pdp3.timeline`, DIPAKAI BERSAMA
+      TEMA LIVE. Menulis ulang metafieldnya berarti mengganti linimasa di
+      halaman yang sedang terbit, bukan hanya di tema ini. Berkas locale ikut
+      di dalam tema, jadi ia hanya berlaku di sini.
+
+      Kalau kunci locale-nya kosong, urutan lama tetap berlaku: `pdp3.timeline`
+      lalu `custom.product_timeline` (daftar metaobject `timeline_benefit` yang
+      dibaca tema live), lalu blok template sebagai cadangan.
     {%- endcomment -%}
     {%- assign tl_nodes = product.metafields.pdp3.timeline.value -%}
     {%- if tl_nodes == blank or tl_nodes.size == 0 -%}
       {%- assign tl_nodes = product.metafields.custom.product_timeline.value -%}
     {%- endif -%}
     <div>
-      {%- if tl_nodes != blank and tl_nodes.size > 0 -%}
+      {%- capture tl_from_locale %}{% render 'pdp4-timeline-nodes' %}{% endcapture -%}
+      {%- assign tl_from_locale = tl_from_locale | strip -%}
+      {%- if tl_from_locale != blank -%}
+        {{ tl_from_locale }}
+      {%- elsif tl_nodes != blank and tl_nodes.size > 0 -%}
         {%- for node in tl_nodes -%}
           <div class="pdp-node"><i></i><div class="sk-stack" style="gap:var(--sk-space-4)"><p class="sk-title">{{ node.period }}</p><p class="sk-small sk-text-secondary">{{ node.description }}</p></div></div>
         {%- endfor -%}

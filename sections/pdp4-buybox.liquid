@@ -1,5 +1,5 @@
 {%- comment -%}
-  pdp4 — hero: galeri + kolom beli + strip testimoni.
+  pdp4 — hero: galeri + kolom beli.
 
   Markup di bawah adalah salinan DOM `<section id="hero">` dari berkas rujukan
   `treelogy-capsules-pdp-single-file.html` (folder PDP_OMC_2026), kelas demi
@@ -18,16 +18,14 @@
      `.native-gallery__slide img` untuk menggambar kartu optimistis saat barang
      ditambahkan.
   2. `.pdp4-page h1` adalah judul yang dibaca kartu optimistis itu.
-  3. `#pdp4-pd-hero` diisi assets/pdp4.js dari kartu paket yang sedang terpilih,
-     bukan dari harga varian pertama.
-
-  Kait keempat khusus generasi ini: `[data-pdp4-router-slot]`. Di rujukan,
-  bagian "pilih alasanmu" berada DI DALAM kolom kanan hero — di situlah kolom
-  itu menjadi cukup tinggi sehingga galerinya bisa menempel sementara teksnya
-  bergulir. Section Shopify tidak bisa bersarang, jadi sections/pdp4-router
-  dirender sebagai saudara dan assets/pdp4.js memindahkannya ke slot ini saat
-  boot. Urutan DOM di ponsel sama persis dengan rujukan baik sebelum maupun
-  sesudah pemindahan, jadi tidak ada yang bergeser kalau skripnya gagal muat.
+  3. `[data-pdp4-router-slot]` dan `[data-pdp4-packs-slot]`. Di rujukan, baik
+     bagian "pilih alasanmu" maupun pemilih paket berada DI DALAM kolom kanan
+     hero — di situlah kolom itu menjadi cukup tinggi sehingga galerinya bisa
+     menempel sementara teksnya bergulir. Section Shopify tidak bisa bersarang,
+     jadi sections/pdp4-router dan sections/pdp4-packs dirender sebagai saudara
+     dan assets/pdp4.js memindahkannya ke kedua slot ini saat boot. Urutan DOM
+     di ponsel sama persis dengan rujukan baik sebelum maupun sesudah
+     pemindahan, jadi tidak ada yang bergeser kalau skripnya gagal muat.
 {%- endcomment -%}
 
 {%- liquid
@@ -61,7 +59,6 @@
   unless fallback_variant
     assign fallback_variant = product.selected_or_first_available_variant
   endunless
-  assign per_day = fallback_variant.metafields.custom.value_per_day
 -%}
 
 {%- liquid
@@ -104,39 +101,18 @@
 {% render 'pdp4-icons' %}
 
 {%- capture t_proof %}{% render 'pdp4-copy', value: section.settings.proof_text, key: 'pdp3.buybox.proof_text' %}{% endcapture -%}
-{%- capture t_perday %}{% render 'pdp4-copy', value: section.settings.per_day_suffix, key: 'pdp3.buybox.per_day_suffix' %}{% endcapture -%}
-{%- capture t_cta %}{% render 'pdp4-copy', value: section.settings.cta_label, key: 'pdp3.buybox.cta_label' %}{% endcapture -%}
-{%- capture t_wa %}{% render 'pdp4-copy', value: section.settings.wa_label, key: 'pdp3.buybox.wa_label' %}{% endcapture -%}
-{%- comment -%}
-  Pesan pembuka WhatsApp. Nama produknya DISISIPKAN dari `product.title`, bukan
-  dituliskan di locale: gerbang handle bisa dipindah ke produk lain, dan pesan
-  yang menyebut produk yang salah lebih buruk daripada pesan kosong.
-
-  Penandanya `%product%`, bukan `{{ product }}` — kurung kurawal di dalam nilai
-  locale dieksekusi ulang oleh Liquid dan mematahkan lexernya. Pola yang sama
-  sudah dipakai `rating_pill_label` di section ulasan.
-{%- endcomment -%}
-{%- capture t_wa_msg %}{% render 'pdp4-copy', value: section.settings.wa_message, key: 'pdp3.wa_message' %}{% endcapture -%}
-{%- assign t_wa_msg = t_wa_msg | replace: '%product%', product.title -%}
+{%- capture t_lede %}{% render 'pdp4-copy', value: section.settings.lede, key: 'pdp3.buybox.lede' %}{% endcapture -%}
 {%- capture t_thumb %}{% render 'pdp4-copy', value: section.settings.thumb_label, key: 'pdp3.buybox.thumb_label' %}{% endcapture -%}
-{%- capture t_meta %}{% render 'pdp4-copy', value: section.settings.review_meta, key: 'pdp3.buybox.review_meta' %}{% endcapture -%}
-{%- comment -%}
-  Rujukan menulis satuan per-hari sebagai kata terpisah ("/ day"), sementara
-  setting menyimpan kalimat utuh ("a day") karena ITU yang sudah diterjemahkan.
-  Satuannya dilucuti di satu tempat supaya hero, kartu paket, dan bilah
-  menempel tidak pernah menampilkan tiga bentuk berbeda.
-{%- endcomment -%}
-{%- capture t_perday_unit %}{% render 'pdp4-per-day-unit', suffix: t_perday %}{% endcapture -%}
-
 <div class="pdp4-page sk-root">
 <section class="sk-container sk-pt-16 sk-pb-48" id="pdp4-hero"><div class="pdp-hero">
   <div class="pdp-hero__media">
     {%- comment -%}
       Galeri.
 
-      Rujukan menggambar delapan slide TERTENTU dalam urutan tertentu: lima foto
-      lalu tiga video. Urutan itu bagian dari desainnya — slide pertama adalah
-      wajah yang menelan kapsul, dan itulah gambar yang menahan orang di halaman.
+      Rujukan menggambar delapan slide TERTENTU dalam urutan tertentu: empat
+      foto lalu empat video. Urutan itu bagian dari desainnya — slide pertama
+      adalah wajah yang menelan kapsul, dan itulah gambar yang menahan orang di
+      halaman.
 
       Sumbernya blok `slide`, bukan `product.media`, dan itu keputusan yang
       disengaja: `product.media` dibagi SEMUA tema di toko ini. Menyusun ulang
@@ -276,56 +252,45 @@
   <div class="sk-stack" style="gap:var(--sk-space-24)">
     <div class="sk-stack" style="gap:var(--sk-space-16)">
       {%- comment -%}
-        Nomor izin edar BERBEDA per produk, jadi sumbernya metafield produk
-        (`custom.pdp_certifications`), bukan setting section yang dipakai
-        bersama seluruh katalog. Kalau metafieldnya kosong stripnya tidak
-        dirender sama sekali — menampilkan nomor milik produk lain jauh lebih
-        buruk daripada tidak menampilkan apa pun.
-      {%- endcomment -%}
-      {%- assign certs_src = product.metafields.custom.pdp_certifications | default: section.settings.certs -%}
-      {%- if certs_src != blank -%}
-        <p class="sk-eyebrow sk-text-secondary">
-          {%- assign cert_lines = certs_src | strip | newline_to_br | split: '<br />' -%}
-          {%- assign cert_printed = 0 -%}
-          {%- for line in cert_lines -%}
-            {%- assign line_text = line | strip_html | strip -%}
-            {%- if line_text == blank -%}{%- continue -%}{%- endif -%}
-            {%- comment -%}
-              Rujukan memenggal ketiga nomor dengan `<br>` biasa — di semua
-              lebar, bukan hanya di ponsel. Tiga baris pendek itu bagian dari
-              bentuk eyebrow-nya, jadi ia tidak boleh menyatu di desktop.
-            {%- endcomment -%}
-            {%- if cert_printed > 0 -%}<br>{%- endif -%}
-            {%- assign parts = line_text | split: '|' -%}
-            {{- parts[0] | strip -}}
-            {%- if parts.size > 1 %} {{ parts[1] | strip }}{% endif -%}
-            {%- assign cert_printed = cert_printed | plus: 1 -%}
-          {%- endfor -%}
-        </p>
-      {%- endif -%}
+        Baris nomor izin edar (BPOM / HALAL / USDA) DIHAPUS dari hero pada
+        generasi ini: rujukan memindahkan lambang sertifikasinya ke dalam
+        grafis galeri, dan mencetak nomornya lagi di atas judul membuat
+        pembeli membaca tiga baris kode sebelum satu kalimat pun tentang
+        produknya.
 
+        Metafield `custom.pdp_certifications` sengaja TIDAK ikut dihapus —
+        ia dibaca section lain dan tema live, dan menghapusnya di sini berarti
+        menghapusnya di sana juga.
+      {%- endcomment -%}
       <h1 class="sk-h1" id="pdp4-h1">{{ product.metafields.pdp3.hero_heading | default: section.settings.heading | default: product.title }}</h1>
 
       {%- liquid
         comment
           Urutan sumber lede, dari yang paling disengaja ke yang paling umum:
-          1. `custom.pdp_lede` — kalimat pembuka khusus halaman ini.
-          2. Deskripsi produk, di-strip dari HTML dan dipotong.
-          3. `custom.excerpt` — tagline pendek, jaring pengaman terakhir.
+
+            1. setting section / berkas locale (lewat `pdp4-copy`) — kalimat
+               pembuka versi desain INI. Ia didahulukan karena kalimatnya
+               berubah antara dua generasi sementara `custom.pdp_lede` masih
+               menyimpan kalimat generasi lama dan dipakai bersama tema live:
+               menulis ulang metafieldnya akan mengganti lede di halaman yang
+               sedang terbit, bukan hanya di sini.
+            2. `custom.pdp_lede` — lede milik produk.
+            3. Deskripsi produk, di-strip dari HTML dan dipotong.
+            4. `custom.excerpt` — tagline pendek, jaring pengaman terakhir.
         endcomment
-        assign buy_lede = product.metafields.custom.pdp_lede
+        assign buy_lede = t_lede
+        if buy_lede == blank
+          assign buy_lede = product.metafields.custom.pdp_lede
+        endif
         if buy_lede == blank and product.description != blank
           assign buy_lede = product.description | strip_html | strip | truncatewords: 60
         endif
         if buy_lede == blank
           assign buy_lede = product.metafields.custom.excerpt
         endif
-        if buy_lede == blank
-          assign buy_lede = section.settings.lede
-        endif
       -%}
       {%- if buy_lede != blank -%}
-        <p class="sk-body sk-text-secondary">{{ buy_lede }}</p>
+        <p class="sk-lead sk-text-secondary">{{ buy_lede }}</p>
       {%- endif -%}
 
       {%- if t_proof != blank -%}
@@ -337,74 +302,24 @@
         <a class="sk-rating sk-link sk-link--quiet" href="#pdp4-reviews">{% render 'pdp4-faces', a: section.settings.face_1, b: section.settings.face_2, c: section.settings.face_3 %}<span class="pdp-stars" aria-hidden="true">★★★★★</span><span class="sk-num">{{ t_proof }}</span></a>
       {%- endif -%}
 
-      {%- if per_day != blank -%}
-        {%- comment -%}
-          Metafieldnya berbentuk "Rp 12.700 / day". Rujukan mencetak angkanya
-          saja lalu satuannya sebagai kata terpisah ("/ day"), jadi ekor
-          "/ day" dibuang di sini dan kata satuannya diambil dari setting — di
-          situlah berkas locale bisa menerjemahkannya.
-        {%- endcomment -%}
-        {%- capture per_day_amount -%}{{ per_day | split: '/' | first | strip }}{%- endcapture -%}
-        <p class="pdp-price"><span class="sk-h3 sk-num" id="pdp4-pd-hero">{% render 'pdp4-money', text: per_day_amount %}</span><span class="sk-small sk-text-secondary">/ {{ t_perday_unit }}</span></p>
-      {%- endif -%}
+      {%- comment -%}
+        Harga per hari, tombol "Pilih paketmu", dan tautan WhatsApp DIHAPUS
+        dari hero pada generasi ini. Alasannya satu: pemilih paketnya sendiri
+        sekarang duduk di kolom ini, beberapa ratus piksel di bawah — sebuah
+        tombol yang menggulirkan halaman ke kartu yang sudah terlihat, dan
+        sebuah harga yang diulang kartu itu persis di bawahnya.
 
-      <a class="sk-btn sk-btn--lg sk-btn--full" href="#pdp4-packs">{{ t_cta }}</a>
-      {%- if section.settings.wa_url != blank -%}
-        <a class="sk-btn sk-btn--text" href="{% render 'pdp4-wa-url', url: section.settings.wa_url, message: t_wa_msg %}" rel="noopener">{{ t_wa }}</a>
-      {%- endif -%}
+        `#pdp4-pd-hero` ikut hilang bersamanya. assets/pdp4.js menulis angka
+        itu lewat pencarian opsional, jadi ketiadaannya bukan galat — lihat
+        catatan di initPacks().
+      {%- endcomment -%}
     </div>
 
     {%- comment -%}
-      Strip testimoni berada DI DALAM kolom kanan, di bawah kotak beli — itu
-      susunan rujukan sendiri di layar lebar. Ia satu KOLOM lain dari galeri,
-      bukan satu baris lain, sehingga kolom kanan menjadi lebih tinggi dan
-      galeri bisa menempel sambil kolom kanan bergulir di sebelahnya.
+      Strip testimoni pindah ke sections/pdp4-stories: rujukan baru
+      mengeluarkannya dari kolom kanan hero menjadi section selebar halaman
+      tepat di bawahnya, karena kolom ini sekarang ditempati pemilih paket.
     {%- endcomment -%}
-    {%- assign quote_list = product.metafields.pdp3.reviews.value -%}
-    {%- if quote_list == blank or quote_list.size == 0 -%}
-      {%- assign quote_list = product.metafields.custom.reviews.value -%}
-    {%- endif -%}
-    {%- if quote_list == blank or quote_list.size == 0 -%}
-      {%- assign quote_list = product.metafields.custom.featured_reviews.value -%}
-    {%- endif -%}
-    {%- if quote_list != blank and quote_list.size > 0 -%}
-      <div class="pdp-strip" id="pdp4-tstrip">
-        {%- for review in quote_list -%}
-          {%- assign r_name = review.name | default: review.reviewer_name | default: review.author -%}
-          {%- assign r_body = review.quote | default: review.review_content | default: review.body -%}
-          {%- if r_body == blank -%}{%- continue -%}{%- endif -%}
-          {%- comment -%}
-            Rujukan memasangkan foto dan kutipan sebagai DUA KOLOM grid
-            (`.pdp-tcard__row`), bukan teks yang mengalir mengelilingi foto
-            seperti generasi sebelumnya. Karena itu `<img>` berada di luar
-            paragrafnya, sebagai saudara — di dalamnya tidak ada sel grid untuk
-            ditempati.
-          {%- endcomment -%}
-          <div class="sk-card pdp-tcard">
-            <div class="pdp-tcard__row">
-              {%- if review.photo != blank -%}<img src="{{ review.photo }}" alt="" loading="lazy" width="72" height="72">{%- endif -%}
-              <p class="sk-body">{{ r_body }}</p>
-            </div>
-            <p class="sk-small sk-text-secondary">{{ r_name }}{% if t_meta != blank %} · {{ t_meta }}{% endif %}</p>
-          </div>
-        {%- endfor -%}
-      </div>
-    {%- elsif section.blocks.size > 0 -%}
-      {%- assign quote_blocks = section.blocks | where: 'type', 'testimonial' -%}
-      {%- if quote_blocks.size > 0 -%}
-        <div class="pdp-strip" id="pdp4-tstrip">
-          {%- for block in quote_blocks -%}
-            <div class="sk-card pdp-tcard" {{ block.shopify_attributes }}>
-              <div class="pdp-tcard__row">
-                {%- if block.settings.photo_url != blank -%}<img src="{{ block.settings.photo_url }}" alt="" loading="lazy" width="72" height="72">{%- endif -%}
-                <p class="sk-body">{{ block.settings.quote }}</p>
-              </div>
-              <p class="sk-small sk-text-secondary">{{ block.settings.name }}{% if block.settings.meta != blank %} · {{ block.settings.meta }}{% endif %}</p>
-            </div>
-          {%- endfor -%}
-        </div>
-      {%- endif -%}
-    {%- endif -%}
 
     {%- comment -%}
       Slot tujuan sections/pdp4-router. Kosong di HTML: kalau pdp4.js tidak
@@ -413,6 +328,18 @@
       satu kolom penuh, bukan kolom kanan.
     {%- endcomment -%}
     <div data-pdp4-router-slot hidden></div>
+
+    {%- comment -%}
+      Slot tujuan sections/pdp4-packs. Di rujukan pemilih paket berada DI DALAM
+      kolom kanan hero, tepat di bawah kartu alasan — section Shopify tidak
+      bisa bersarang, jadi assets/pdp4.js memindahkannya ke sini saat boot,
+      persis seperti yang sudah dilakukannya untuk section alasan.
+
+      Urutan DOM di ponsel sama sebelum dan sesudah pemindahan (hero, alasan,
+      paket), jadi halaman tetap benar dan tetap bisa dibeli kalau skripnya
+      gagal muat — hanya susunan desktopnya yang jadi satu kolom penuh.
+    {%- endcomment -%}
+    <div data-pdp4-packs-slot hidden></div>
   </div>
 </div></section>
 </div>

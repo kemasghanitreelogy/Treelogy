@@ -26,7 +26,7 @@
 {%- capture t_heading %}{% render 'pdp4-copy', value: section.settings.heading, key: 'pdp3.farm.heading' %}{% endcapture -%}
 {%- capture t_body %}{% render 'pdp4-copy', value: section.settings.body, key: 'pdp3.farm.body' %}{% endcapture -%}
 <div class="pdp4-page sk-root">
-<section class="sk-container sk-pb-64" id="pdp4-farm"><div class="pdp-wrap sk-stack" style="gap:var(--sk-space-24)">
+<section class="sk-container sk-py-64" id="pdp4-farm"><div class="pdp-wrap sk-stack" style="gap:var(--sk-space-24)">
   <div class="sk-stack" style="gap:var(--sk-space-12)">
     {%- if t_eyebrow != blank -%}<p class="sk-eyebrow sk-text-secondary">{{ t_eyebrow }}</p>{%- endif -%}
     <h2 class="sk-h2">{% render 'pdp4-sentence-lines', text: t_heading %}</h2>

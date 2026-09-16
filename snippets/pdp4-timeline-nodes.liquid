@@ -1,0 +1,24 @@
+{% doc %}
+  Lima simpul linimasa dari berkas locale.
+
+  Kuncinya `pdp3.timeline.n1.title` / `pdp3.timeline.n1.body` sampai `n5`.
+  Kunci yang belum ada dikembalikan kosong oleh `pdp4-copy`, dan simpul yang
+  judulnya kosong dilewati — jadi berkas locale yang hanya mengisi tiga simpul
+  menghasilkan tiga simpul, bukan tiga simpul dan dua baris "Translation
+  missing".
+
+  Snippet ini tidak mencetak apa pun kalau tak satu pun kunci terisi. Itu yang
+  dibaca sections/pdp4-timeline sebagai "pakai sumber lama".
+{% enddoc %}{%- liquid
+  assign tl_n = 'n1,n2,n3,n4,n5' | split: ','
+-%}
+{%- for n in tl_n -%}
+  {%- capture k_title %}pdp3.timeline.{{ n }}.title{% endcapture -%}
+  {%- capture k_body %}pdp3.timeline.{{ n }}.body{% endcapture -%}
+  {%- capture n_title %}{% render 'pdp4-copy', key: k_title %}{% endcapture -%}
+  {%- capture n_body %}{% render 'pdp4-copy', key: k_body %}{% endcapture -%}
+  {%- assign n_title = n_title | strip -%}
+  {%- assign n_body = n_body | strip -%}
+  {%- if n_title == blank -%}{%- continue -%}{%- endif -%}
+  <div class="pdp-node"><i></i><div class="sk-stack" style="gap:var(--sk-space-4)"><p class="sk-title">{{ n_title }}</p><p class="sk-small sk-text-secondary">{{ n_body }}</p></div></div>
+{%- endfor -%}

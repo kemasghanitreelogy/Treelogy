@@ -1,0 +1,120 @@
+{%- comment -%}
+  pdp4 — strip testimoni. Salinan DOM `<section id="stories">` dari berkas
+  rujukan.
+
+  Sampai generasi sebelumnya strip ini berada DI DALAM kolom kanan hero, di
+  bawah kotak beli. Rujukan baru mengeluarkannya menjadi section selebar
+  halaman tepat di bawah hero, karena kolom kanan sekarang ditempati pemilih
+  paket — dua daftar yang bisa digulir mendatar dalam satu kolom sempit saling
+  merebut gestur gulir yang sama di ponsel.
+
+  Isinya TIDAK berubah, hanya tempatnya. Sumber datanya pun sama persis seperti
+  saat ia berada di hero, jadi tidak ada satu pun teks yang perlu ditulis ulang
+  di mana pun.
+{%- endcomment -%}
+
+{%- liquid
+  comment
+    Template produk hanya ada satu per tema, sedangkan desain ini ditulis untuk
+    satu produk saja. Section JSON tidak bisa dipasang bersyarat, jadi
+    gerbangnya ada di sini. Kosongkan setting `handles` untuk semua produk.
+  endcomment
+  assign pdp4_on = false
+  if section.settings.handles == blank
+    assign pdp4_on = true
+  else
+    assign pdp4_needle = product.handle | prepend: ',' | append: ','
+    assign pdp4_hay = section.settings.handles | remove: ' ' | prepend: ',' | append: ','
+    if pdp4_hay contains pdp4_needle
+      assign pdp4_on = true
+    endif
+  endif
+-%}
+{%- if pdp4_on -%}
+{%- capture t_meta %}{% render 'pdp4-copy', value: section.settings.review_meta, key: 'pdp3.buybox.review_meta' %}{% endcapture -%}
+{%- comment -%}
+  Kunci locale-nya sengaja tetap `pdp3.buybox.review_meta`: kalimatnya sama
+  persis dengan saat strip ini masih di hero, dan memindahkan kuncinya berarti
+  menulis ulang satu baris yang sama di dua berkas locale tanpa satu pun kata
+  berubah.
+{%- endcomment -%}
+{%- assign quote_list = product.metafields.pdp3.reviews.value -%}
+{%- if quote_list == blank or quote_list.size == 0 -%}
+  {%- assign quote_list = product.metafields.custom.reviews.value -%}
+{%- endif -%}
+{%- if quote_list == blank or quote_list.size == 0 -%}
+  {%- assign quote_list = product.metafields.custom.featured_reviews.value -%}
+{%- endif -%}
+{%- assign quote_blocks = section.blocks | where: 'type', 'testimonial' -%}
+{%- if quote_list.size > 0 or quote_blocks.size > 0 -%}
+<div class="pdp4-page sk-root">
+<section class="sk-container sk-py-48" id="pdp4-stories"><div class="pdp-wrap">
+  <div class="pdp-strip" id="pdp4-tstrip">
+    {%- if quote_list != blank and quote_list.size > 0 -%}
+      {%- for review in quote_list -%}
+        {%- assign r_name = review.name | default: review.reviewer_name | default: review.author -%}
+        {%- assign r_body = review.quote | default: review.review_content | default: review.body -%}
+        {%- if r_body == blank -%}{%- continue -%}{%- endif -%}
+        {%- comment -%}
+          Rujukan memasangkan foto dan kutipan sebagai DUA KOLOM grid
+          (`.pdp-tcard__row`), bukan teks yang mengalir mengelilingi foto.
+          Karena itu `<img>` berada di luar paragrafnya, sebagai saudara — di
+          dalamnya tidak ada sel grid untuk ditempati.
+        {%- endcomment -%}
+        <div class="sk-card pdp-tcard">
+          <div class="pdp-tcard__row">
+            {%- if review.photo != blank -%}<img src="{{ review.photo }}" alt="" loading="lazy" width="72" height="72">{%- endif -%}
+            <p class="sk-body">{{ r_body }}</p>
+          </div>
+          <p class="sk-small sk-text-secondary">{{ r_name }}{% if t_meta != blank %} · {{ t_meta }}{% endif %}</p>
+        </div>
+      {%- endfor -%}
+    {%- else -%}
+      {%- for block in quote_blocks -%}
+        <div class="sk-card pdp-tcard" {{ block.shopify_attributes }}>
+          <div class="pdp-tcard__row">
+            {%- if block.settings.photo_url != blank -%}<img src="{{ block.settings.photo_url }}" alt="" loading="lazy" width="72" height="72">{%- endif -%}
+            <p class="sk-body">{{ block.settings.quote }}</p>
+          </div>
+          <p class="sk-small sk-text-secondary">{{ block.settings.name }}{% if block.settings.meta != blank %} · {{ block.settings.meta }}{% endif %}</p>
+        </div>
+      {%- endfor -%}
+    {%- endif -%}
+  </div>
+</div></section>
+</div>
+{%- endif -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "PDP4 Stories",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "text",
+      "id": "review_meta",
+      "label": "Reviewer suffix",
+      "info": "Fallback only — the locale key pdp3.buybox.review_meta is used when this is blank."
+    },
+    {
+      "type": "text",
+      "id": "handles",
+      "label": "Only show for these product handles (comma separated)",
+      "default": "organic-moringa-capsules"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        { "type": "textarea", "id": "quote", "label": "Quote" },
+        { "type": "text", "id": "name", "label": "Name" },
+        { "type": "text", "id": "meta", "label": "Meta" },
+        { "type": "text", "id": "photo_url", "label": "Photo (image URL)" }
+      ]
+    }
+  ]
+}
+{% endschema %}

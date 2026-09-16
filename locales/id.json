@@ -591,7 +591,8 @@
       "cta_label": "Pilih Paket",
       "wa_label": "Tanya kami di WhatsApp",
       "thumb_label": "Lihat gambar",
-      "review_meta": "Pembeli terverifikasi"
+      "review_meta": "Pembeli terverifikasi",
+      "lede": "Lebih dari 90 nutrisi dalam satu daun, lebih padat daripada hampir semua tanaman lain. Dipetik dan dikeringkan dalam empat jam di kebun kami sendiri, jadi yang ada di daun masih ada di kapsul."
     },
     "router": {
       "eyebrow": "Pilih yang membawamu ke sini",
@@ -672,7 +673,8 @@
       "per_day_suffix": "per hari",
       "sticky_note": "Garansi 60 hari",
       "select_label": "Pilih paket",
-      "save": "Hemat"
+      "save": "Hemat",
+      "channels_note": "Produk yang sama dengan toko Tokopedia dan Shopee kami. Ini harga terendah yang kami jual."
     },
     "howto": {
       "eyebrow": "Cara minum",
@@ -781,7 +783,27 @@
     },
     "timeline": {
       "eyebrow": "Yang akan terasa",
-      "heading": "Selama 3 bulan|dan seterusnya"
+      "heading": "Selama 3 bulan|dan seterusnya",
+      "n1": {
+        "title": "Minggu 1 · Pencernaan dan tidur",
+        "body": "Serat dan magnesium dari daun utuh. Makanan terasa lebih ringan dalam hitungan hari, dan tidur jadi lebih dalam sebelum hal lain berubah. Dua hal inilah yang paling awal dirasakan pelanggan."
+      },
+      "n2": {
+        "title": "Bulan 1 · Energi yang bertahan",
+        "body": "Zat besi datang bersama vitamin C yang membawanya, jadi terserap dan bukan terbuang. Hemoglobin naik dalam tiga sampai empat minggu, dan drop jam 3 sore tidak datang lagi."
+      },
+      "n3": {
+        "title": "Bulan 2 · Sendi dan otot",
+        "body": "Kalsium dan sembilan asam amino esensial, terpenuhi setiap hari. Sendi lebih luwes, otot tetap kencang, dan pagi tidak lagi dimulai dengan kaku. Perubahannya bertahap, bukan mendadak."
+      },
+      "n4": {
+        "title": "Bulan 3 · Angkanya bergerak",
+        "body": "Asam klorogenat bekerja pada gula darah, kalium pada tekanan darah, dan keduanya memang lambat. Ini bulan ketika perubahannya terlihat di atas kertas, bukan hanya terasa."
+      },
+      "n5": {
+        "title": "Bulan 3 dan seterusnya · Hasil dari konsisten",
+        "body": "Fitosterol, vitamin A dan seng terus bekerja pada kolesterol, kulit dan menopause. Berhenti, dan tubuh kembali ke kondisi semula."
+      }
     },
     "founder": {
       "eyebrow": "Dari Sacha, pendiri Treelogy",
@@ -790,7 +812,47 @@
     },
     "faq": {
       "eyebrow": "Pertanyaan",
-      "heading": "Sepuluh pertanyaan|yang paling sering ditanyakan."
+      "heading": "Sepuluh pertanyaan|yang paling sering ditanyakan.",
+      "q1": {
+        "q": "Berapa kapsul yang saya minum, dan kapan?",
+        "a": "Tiga kapsul saat sarapan, selalu bersama makanan. Baru pertama kali minum moringa? Mulai dengan dua kapsul selama tiga hari pertama."
+      },
+      "q2": {
+        "q": "Apakah ini hanya untuk perempuan?",
+        "a": "Tidak. Daun ini tidak mengenal gender. Pria minum tiga kapsul yang sama untuk sendi kaku yang sama, lemas sore yang sama, dan tidur yang sama. Banyak pelanggan pria kami mulai karena istrinya lebih dulu."
+      },
+      "q3": {
+        "q": "Saya punya tekanan darah tinggi, gula darah, atau kolesterol. Boleh minum?",
+        "a": "Boleh. Moringa secara tradisional dipakai untuk mendukung ketiganya, dan banyak pelanggan meminumnya justru karena itu. Sedang minum obat? Tanya dokter dulu, lalu mulai dengan dua kapsul saat sarapan."
+      },
+      "q4": {
+        "q": "Kapsul atau powder, mana yang cocok untuk saya?",
+        "a": "Daun yang sama, kebun yang sama, nutrisi yang sama. Powder kalau kamu memasak atau membuat blend setiap hari dan suka rasanya. Kapsul kalau ingin tanpa rasa, tanpa persiapan, dan dosis yang sama setiap pagi. Sebagian besar pelanggan yang pernah mencoba keduanya bertahan di kapsul."
+      },
+      "q5": {
+        "q": "Apa isinya, dan ada rasanya?",
+        "a": "Empat ratus miligram daun moringa organik per kapsul, dalam cangkang nabati. Tanpa batang, tanpa pengisi, tanpa perekat, tanpa pengawet. Tidak ada rasa, kapsul langsung ditelan dengan air."
+      },
+      "q6": {
+        "q": "Berapa lama sampai terasa, dan bagaimana kalau awalnya tidak terasa apa-apa?",
+        "a": "Pencernaan dan tidur biasanya berubah lebih dulu, dalam minggu pertama. Sendi dan energi sore butuh dua sampai empat minggu. Tidak merasakan apa-apa di minggu pertama itu normal dan bukan tanda gagal, itu sebabnya garansi berjalan sampai enam puluh hari, bukan tujuh."
+      },
+      "q7": {
+        "q": "Apakah produknya sama dengan yang di Tokopedia dan Shopee?",
+        "a": "Ya, itu toko resmi kami. Bedanya ada di apa yang kamu dapat bersamanya. Website kami memberi harga terendah yang bisa kami tawarkan, pengiriman prioritas, dan offer yang hanya ada di sini."
+      },
+      "q8": {
+        "q": "Boleh diminum saat hamil, menyusui, atau haid?",
+        "a": "Moringa justru sangat mendukung di fase-fase itu. Saat hamil, tanyakan dulu ke bidan atau perawat, karena kami tidak bisa mengetahui kondisi kesehatanmu. Saat menyusui atau haid, tidak ada yang berubah: tiga kapsul saat sarapan."
+      },
+      "q9": {
+        "q": "Boleh untuk anak atau orang tua saya?",
+        "a": "Remaja yang sudah bisa menelan kapsul, boleh, satu sampai dua kapsul saat sarapan. Anak yang lebih kecil lebih cocok dengan powder yang dicampur ke makanan. Untuk orang tua di atas tujuh puluh, mulai dengan dua kapsul saat sarapan selama seminggu, lalu tiga, dan beri tahu dokternya kalau sedang minum obat."
+      },
+      "q10": {
+        "q": "Bagaimana cara kerja garansi enam puluh hari?",
+        "a": "Kami bekerja atas dasar percaya. Minum secara konsisten minimal tiga puluh hari. Kalau masih tidak terasa apa-apa, kirim pesan ke WhatsApp kami dengan nomor pesanan dan uang kembali, tanpa ditanya. Bolong sehari dua hari tidak masalah, tapi minum hanya beberapa kali seminggu tidak akan memberi manfaatnya, dan bukan itu gunanya garansi."
+      }
     },
     "reviews": {
       "ratings_word": "penilaian",

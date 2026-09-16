@@ -42,8 +42,30 @@
 {%- capture t_sub %}{% render 'pdp4-copy', value: section.settings.subheading, key: 'pdp3.router.subheading' %}{% endcapture -%}
 {%- capture t_cta %}{% render 'pdp4-copy', value: section.settings.cta_label, key: 'pdp3.router.cta_label' %}{% endcapture -%}
 {%- capture t_meta %}{% render 'pdp4-copy', value: section.settings.review_meta, key: 'pdp3.router.review_meta' %}{% endcapture -%}
+{%- comment -%}
+  Tombol WhatsApp di kartu alasan. Labelnya memakai kunci `pdp3.buybox.wa_label`
+  — kalimatnya sama persis dengan tautan WhatsApp yang dulu ada di hero, dan
+  kunci baru untuk kata yang sama berarti dua baris terjemahan yang harus
+  dijaga tetap sama selamanya.
+
+  Pesan pembukanya menyisipkan `product.title` lewat penanda `%product%`, bukan
+  `{{ product }}`: kurung kurawal di dalam nilai locale dieksekusi ulang oleh
+  Liquid dan mematahkan lexernya.
+{%- endcomment -%}
+{%- capture t_wa %}{% render 'pdp4-copy', value: section.settings.wa_label, key: 'pdp3.buybox.wa_label' %}{% endcapture -%}
+{%- capture t_wa_msg %}{% render 'pdp4-copy', value: section.settings.wa_message, key: 'pdp3.wa_message' %}{% endcapture -%}
+{%- assign t_wa_msg = t_wa_msg | replace: '%product%', product.title -%}
+{%- capture t_wa_href %}{% render 'pdp4-wa-url', url: section.settings.wa_url, message: t_wa_msg %}{% endcapture -%}
+{%- assign t_wa_href = t_wa_href | strip -%}
 <div class="pdp4-page sk-root">
-<section class="sk-container sk-pt-24 sk-pb-24" id="pdp4-router"><div class="sk-stack" style="gap:var(--sk-space-24)">
+{%- comment -%}
+  Sejak generasi ini section ini berdiri di tempatnya sendiri — di antara
+  "daun" dan FAQ — dan hanya DIANGKAT ke kolom kanan hero kalau URL-nya
+  membawa `?r=<alasan>`, persis seperti rujukan. Karena itu ia kembali
+  memakai `.pdp-wrap`: selebar halaman ia butuh lebar baca 720px, dan
+  `.pdp-router--lifted` di pdp4.css yang mencabutnya lagi saat diangkat.
+{%- endcomment -%}
+<section class="sk-container sk-py-48" id="pdp4-router"><div class="pdp-wrap sk-stack" style="gap:var(--sk-space-24)">
   <div class="sk-stack" style="gap:var(--sk-space-12)">
     {%- if t_eyebrow != blank -%}<p class="sk-eyebrow sk-text-secondary">{{ t_eyebrow }}</p>{%- endif -%}
     <h2 class="sk-h2">{% render 'pdp4-sentence-lines', text: t_heading %}</h2>
@@ -83,6 +105,15 @@
   <script type="application/json" data-pdp4-routes>{{ routes_json }}</script>
   <script type="application/json" data-pdp4-router-cta>{{ t_cta | json }}</script>
   <script type="application/json" data-pdp4-router-meta>{{ t_meta | json }}</script>
+  {%- comment -%}
+    Rujukan menutup kartu alasan dengan DUA tombol berdampingan
+    (`.pdp-rcta`): "pilih paketmu" dan WhatsApp. Sebelumnya hanya ada satu
+    tautan teks. Keduanya digambar assets/pdp4.js bersama sisa kartunya, jadi
+    label dan tautannya dikirim ke sana lewat dua simpul JSON ini.
+  {%- endcomment -%}
+  {%- if section.settings.wa_url != blank -%}
+    <script type="application/json" data-pdp4-router-wa>{"href": {{ t_wa_href | json }}, "label": {{ t_wa | json }}}</script>
+  {%- endif -%}
 </div></section>
 </div>
 {%- endif -%}
@@ -116,6 +147,23 @@
       "type": "text",
       "id": "review_meta",
       "label": "Reviewer suffix"
+    },
+    {
+      "type": "text",
+      "id": "wa_url",
+      "label": "WhatsApp link"
+    },
+    {
+      "type": "text",
+      "id": "wa_label",
+      "label": "WhatsApp button label",
+      "info": "Fallback only — the locale key pdp3.buybox.wa_label is used when this is blank."
+    },
+    {
+      "type": "textarea",
+      "id": "wa_message",
+      "label": "WhatsApp opening message",
+      "info": "Use %product% where the product name should go."
     },
     {
       "type": "text",

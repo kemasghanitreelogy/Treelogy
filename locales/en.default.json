@@ -590,7 +590,8 @@
       "cta_label": "Choose your pack",
       "wa_label": "Ask us on WhatsApp",
       "thumb_label": "View image",
-      "review_meta": "Verified buyer"
+      "review_meta": "Verified buyer",
+      "lede": "Over 90 nutrients in a single leaf, more than almost anything that grows. Picked and dried within four hours on our own farm, so what is in the leaf is still in the capsule."
     },
     "router": {
       "eyebrow": "Pick what brought you here",
@@ -671,7 +672,8 @@
       "per_day_suffix": "a day",
       "sticky_note": "60-day guarantee",
       "select_label": "Choose a pack",
-      "save": "Save"
+      "save": "Save",
+      "channels_note": "Same product as our Tokopedia and Shopee stores. This is the lowest price it is sold at."
     },
     "howto": {
       "eyebrow": "How to take it",
@@ -780,7 +782,27 @@
     },
     "timeline": {
       "eyebrow": "What to expect",
-      "heading": "Over 3 months|and beyond"
+      "heading": "Over 3 months|and beyond",
+      "n1": {
+        "title": "Week 1 · Digestion and sleep",
+        "body": "Fibre and magnesium from the whole leaf. Meals sit lighter within days, and sleep gets deeper before anything else changes. These are the two things customers report feeling first."
+      },
+      "n2": {
+        "title": "Month 1 · Energy that holds",
+        "body": "Iron arrives with the vitamin C that carries it, so it is absorbed instead of passed. Hemoglobin rises over three to four weeks, and the 3pm crash stops arriving."
+      },
+      "n3": {
+        "title": "Month 2 · Joints and muscle",
+        "body": "Calcium and all nine essential amino acids, topped up daily. Joints loosen, muscle holds its tone, and mornings stop starting stiff. The change is steady rather than sudden."
+      },
+      "n4": {
+        "title": "Month 3 · The numbers move",
+        "body": "Chlorogenic acid works on blood sugar, potassium on blood pressure, and both are slow by nature. This is the month the change shows on paper and not only in how you feel."
+      },
+      "n5": {
+        "title": "Month 3 and beyond · What consistency buys",
+        "body": "Phytosterols, vitamin A and zinc keep working on cholesterol, skin and menopause. Stop, and the body returns to where it started."
+      }
     },
     "founder": {
       "eyebrow": "From Sacha, founder",
@@ -789,7 +811,47 @@
     },
     "faq": {
       "eyebrow": "Questions",
-      "heading": "The ten questions|we get asked most."
+      "heading": "The ten questions|we get asked most.",
+      "q1": {
+        "q": "How many do I take, and when?",
+        "a": "Three capsules with breakfast, always with food. New to moringa? Start with two for the first three days."
+      },
+      "q2": {
+        "q": "Is it only for women?",
+        "a": "No. The leaf does not know your gender. Men take the same three capsules for the same stiff joints, the same afternoon dip, and the same sleep. A lot of our male customers started because their wife did."
+      },
+      "q3": {
+        "q": "I have high blood pressure, blood sugar, or cholesterol. Can I take it?",
+        "a": "Yes. Moringa is traditionally used to support all three, and many customers take it for exactly that reason. Already on medication? Ask your doctor first, then start with two capsules with breakfast."
+      },
+      "q4": {
+        "q": "Capsules or powder, which one is for me?",
+        "a": "Same leaf, same farm, same nutrients. Powder if you cook or blend every day and like the taste. Capsules if you want no taste, no prep, and the same dose every morning. Most customers who tried both stay on capsules."
+      },
+      "q5": {
+        "q": "What is inside, and does it taste of anything?",
+        "a": "Four hundred milligrams of organic moringa leaf per capsule, in a plant-based shell. No stems, no fillers, no binders, no preservatives. There is no taste; the capsule goes down with water."
+      },
+      "q6": {
+        "q": "How long until I feel something, and what if I feel nothing at first?",
+        "a": "Digestion and sleep usually move first, inside the first week. Joints and afternoon energy take two to four weeks. Feeling nothing in week one is normal and is not a sign it is failing, which is why the guarantee runs to sixty days, not seven."
+      },
+      "q7": {
+        "q": "Is it the same product on Tokopedia and Shopee?",
+        "a": "Yes, those are our official stores. The difference is what you get with it. Our website carries the lowest price we can offer, priority shipping, and offers you will only find here."
+      },
+      "q8": {
+        "q": "Can I take it while pregnant, breastfeeding, or during my period?",
+        "a": "Moringa is particularly supportive in those seasons of life. During pregnancy, check with your midwife or nurse first, because we cannot know your health condition. While breastfeeding or during your period, nothing changes: three with breakfast."
+      },
+      "q9": {
+        "q": "Can my children or my parents take it?",
+        "a": "Teenagers who can swallow a capsule, yes, one to two with breakfast. Younger children do better on the powder mixed into food. For a parent over seventy, start with two capsules with breakfast for a week, then three, and tell their doctor if they take medication."
+      },
+      "q10": {
+        "q": "How does the sixty-day guarantee work?",
+        "a": "We work on trust. Take it consistently for at least thirty days. If you still feel nothing, message us on WhatsApp with your order number and we refund you, no questions. Skipping a day or two is fine, but taking it only a few times a week will not give you the benefits, and that is not what the guarantee is for."
+      }
     },
     "reviews": {
       "ratings_word": "ratings",
