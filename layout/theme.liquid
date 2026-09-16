@@ -283,7 +283,7 @@
 
     <script>
       // Normalizer UTM iklan Meta — jaring pengaman untuk template URL lama.
-      // Template lama menaruh {{ '{{placement}}' }} di utm_medium sehingga GA4
+      // Template lama menaruh {{ placement }}' }} di utm_medium sehingga GA4
       // menggolongkan iklan berbayar sebagai "Organic Social". Sebelum tag
       // apa pun membaca URL (Google tag, script utm->cart di bawah, Shopify),
       // rapikan: placement dipindah ke utm_term, medium jadi paid-social,
@@ -303,7 +303,7 @@
           if (medium && !GOOD_MEDIUM.test(medium)) {
             // medium berisi placement (Instagram_Stories dst.) atau literal
             // macro yang gagal render — pindahkan ke term bila slot kosong
-            // dan nilainya bukan sampah literal {{...}}.
+            // dan nilainya bukan sampah literal {{ nil }}.
             // '{'+'{' menghindari kurung ganda literal yang akan dibaca
             // Liquid sebagai pembuka variabel (file ini .liquid)
             if (!p.get('utm_term') && medium.indexOf('{' + '{') === -1) {
@@ -1739,3 +1739,16 @@
     </script>
   </body> 
 </html>
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: "{{ '{{placement}}"
+  to: "{{ placement }}"
+  position: 13013..13028
+- from: "{{...}}"
+  to: "{{ nil }}"
+  position: 14231..14240
+{% endcomment %}
