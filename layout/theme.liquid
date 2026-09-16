@@ -19,7 +19,27 @@
       design_mode dikecualikan supaya produk ini tetap bisa dibuka dari
       theme editor.
     {%- endcomment -%}
-    {%- if request.page_type == 'product' and product.price_max == 0 and request.design_mode != true -%}
+    {%- comment -%}
+      16 Sep 2026 — PDP produk vendor TEST tidak pernah boleh terlihat.
+      Produk vendor TEST adalah listing khusus funnel landing page (mis.
+      Inside Out Moringa Protocol): dibeli lewat permalink /cart/..., bukan
+      lewat halaman produknya. Halaman produknya tetap punya URL publik
+      (/products/<handle>) yang bisa muncul dari tautan baris keranjang,
+      hasil pencarian, atau tebakan URL — pembeli yang mendarat di sana
+      melihat listing duplikat dengan harga berbeda dari katalog utama.
+
+      Alihkan ke beranda locale ini (routes.root_url), sesuai permintaan;
+      berbeda dari hotfix Rp 0 di bawah yang mengalihkan ke katalog.
+      Diperiksa SEBELUM hotfix Rp 0 supaya produk TEST selalu ke beranda.
+      noindex ikut dipasang karena pengalihan ini berjalan di sisi klien —
+      crawler tanpa JS tetap menerima 200 dan tidak boleh mengindeksnya.
+      design_mode dikecualikan supaya tetap bisa dibuka dari theme editor.
+    {%- endcomment -%}
+    {%- if request.page_type == 'product' and product.vendor == 'TEST' and request.design_mode != true -%}
+      <meta name="robots" content="noindex, nofollow">
+      <script>window.location.replace({{ routes.root_url | json }});</script>
+      <noscript><meta http-equiv="refresh" content="0;url={{ routes.root_url }}"></noscript>
+    {%- elsif request.page_type == 'product' and product.price_max == 0 and request.design_mode != true -%}
       <script>window.location.replace({{ routes.all_products_collection_url | json }});</script>
     {%- endif -%}
     {%- comment -%}
