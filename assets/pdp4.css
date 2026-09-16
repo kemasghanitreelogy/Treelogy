@@ -738,6 +738,18 @@ html{scroll-behavior:smooth}
   font-size: var(--sk-text-14); letter-spacing: var(--sk-tracking-small); line-height: 1.4;
 }
 .sk-notice__icon { width: 16px; height: 16px; flex: none; margin-top: 2px; }
+/* Ikonnya 24px, bukan 16px: `.pdp-ico` dideklarasikan sesudah aturan di atas
+   dan memenangkan ukurannya. Rujukan punya tabrakan yang sama, jadi di sana
+   ikon ini pun turun 4,2px dari baris pertama teksnya — `margin-top:2px` di
+   atas dihitung untuk ikon 16px, bukan 24px.
+
+   Diperbaiki dengan menghitung selisihnya, bukan menambal satu angka: setengah
+   beda antara tinggi baris (1.4em) dan tinggi ikon. Hasilnya ikon duduk tepat
+   di tengah baris PERTAMA — yang benar juga saat teksnya melipat jadi dua
+   baris di ponsel, karena patokannya baris pertama, bukan tinggi kotaknya.
+   `em` di sini mengikuti font-size notice, jadi angkanya ikut kalau skalanya
+   berubah. INI SENGAJA BEDA DARI RUJUKAN. */
+.pdp4-page .sk-notice__icon { margin-top: calc((1.4em - 24px) / 2); }
 .sk-notice--success { background: var(--sk-surface-success); color: var(--sk-text-success); }
 .sk-notice--warning { background: var(--sk-surface-warning); color: var(--sk-green-900); }
 .sk-notice--error   { background: var(--sk-surface-error); color: var(--sk-text-error); box-shadow: inset 3px 0 0 var(--sk-outline-error); }
