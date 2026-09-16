@@ -1073,6 +1073,16 @@ html{scroll-behavior:smooth}
    bacanya dicabut, jaraknya menyusut jadi satu ruang di atas, eyebrow-nya
    hilang (judul hero sudah dua baris di atasnya), dan judulnya turun ke
    ukuran judul kartu supaya tidak bersaing dengan <h1>. */
+/* Pemilih paket diangkat ke kolom kanan hero oleh assets/pdp4.js. `sk-container`
+   sengaja DIPERTAHANKAN di markupnya supaya section ini tetap punya gutter yang
+   benar kalau berkas itu gagal muat dan ia tinggal di tempat aslinya selebar
+   halaman — tapi di DALAM kolom hero gutter itu hanya menjorokkan kartu paket
+   16px (32px di >=960) dari judul, lede, dan baris rating di atasnya, yang rata
+   penuh. Jadi ia dinetralkan di sini, bukan dibuang dari markup.
+
+   Rujukan menulis section ini tanpa `sk-container` sama sekali karena di sana ia
+   memang tidak pernah berdiri sendiri. */
+[data-pdp4-packs-slot] .sk-container{padding-inline:0;max-width:none}
 .pdp-router--lifted{padding:var(--sk-space-16) 0 0!important}
 .pdp-router--lifted > .pdp-wrap{max-width:none;padding-inline:0;margin-inline:0}
 .pdp-router--lifted .sk-eyebrow{display:none}
