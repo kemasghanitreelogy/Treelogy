@@ -1421,7 +1421,11 @@
         apply();
         if (anchor) {
           var delta = anchor.getBoundingClientRect().top - before;
-          if (Math.abs(delta) > 1) window.scrollBy(0, delta);
+          /* `instant`, bukan `scrollBy(0, delta)`: tema memasang
+             html{scroll-behavior:smooth}, jadi bentuk lama BERANIMASI —
+             diukur di live: 100 ms sesudah gambar ulang gulir baru bergeser
+             59 px dari 733, dan isi yang dibaca sempat melompat. */
+          if (Math.abs(delta) > 1) window.scrollBy({ top: delta, left: 0, behavior: 'instant' });
         }
       });
     });
