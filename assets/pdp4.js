@@ -844,7 +844,7 @@
     var search = $('[data-pdp4-search]', sec);
     var more = $('[data-pdp4-more]', sec);
 
-    var state = { order: 'newest', score: null, photos: false, q: '', shown: PAGE };
+    var state = { order: 'newest', score: null, photos: false, q: '', shown: PAGE, touched: false };
     var seed = [];       // dari cetakan widget — cepat, tapi cuma halaman pertama
     var every = null;    // ke-200-nya
     var fetching = false;
@@ -989,6 +989,16 @@
          kini lewat saklar "With photos", bukan lewat urutan diam-diam. */
       var oldest = state.order === 'oldest';
       out.sort(function (a, b) { return oldest ? a.time - b.time : b.time - a.time; });
+      /* Tampilan DEFAULT (belum ada kendali yang disentuh), permintaan user
+         17 Sep 2026: kartu pertama = ulasan terbaru apa pun bentuknya, kartu
+         sisanya = ulasan BERFOTO, terbaru dulu. Yang tanpa foto selain yang
+         pertama baru muncul kalau pembaca memilih urutan/saringan sendiri —
+         begitu satu kendali disentuh, daftar mengikuti kendali itu apa adanya
+         (`state.touched`), termasuk kalau yang dipilih "Most recent" lagi. */
+      if (!state.touched && out.length) {
+        var first = out[0];
+        out = [first].concat(out.filter(function (r) { return r !== first && r.pics.length > 0; }));
+      }
       return out;
     }
 
@@ -1189,6 +1199,7 @@
         var val = opt.dataset.pdp4Value;
         if (kind === 'order') state.order = val || 'newest';
         else state.score = val ? Number(val) : null;
+        state.touched = true;
 
         $$('[data-pdp4-value]', menu).forEach(function (o) {
           o.setAttribute('aria-selected', String(o === opt));
@@ -1212,6 +1223,7 @@
       photos.addEventListener('click', function (e) {
         e.stopPropagation();
         state.photos = !state.photos;
+        state.touched = true;
         photos.setAttribute('aria-pressed', String(state.photos));
         reset();
         apply();
@@ -1222,6 +1234,7 @@
     if (search) {
       search.addEventListener('input', function () {
         state.q = search.value.trim().toLowerCase();
+        state.touched = true;
         reset();
         apply();
         if (state.q) loadEvery().then(apply);
