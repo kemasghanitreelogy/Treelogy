@@ -350,48 +350,12 @@ html{scroll-behavior:smooth}
   color-scheme: dark;
 }
 
-/* Palet gelap mengikuti mode sistem pembaca — keputusan user 9 Sep, sama
-   seperti berkas rujukan. Konsekuensinya header dan footer tema (yang tidak
-   punya mode gelap) harus ikut dicat di halaman ini saja; lihat blok
-   "chrome tema ikut gelap" di bawah. */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --sk-text-primary:   var(--sk-snow);
-    --sk-text-secondary: var(--sk-snow-a70);
-    --sk-text-disabled:  var(--sk-snow-a50);
-    --sk-surface-page:      var(--sk-green-900);
-    --sk-surface-secondary: var(--sk-snow-a10);
-    --sk-surface-tertiary:  var(--sk-snow-a20);
-    --sk-surface-bright:    var(--sk-green-800);
-    --sk-surface-mist:      var(--sk-green-800);
-    --sk-surface-glass:     var(--sk-snow-a10);
-    --sk-surface-raised:    var(--sk-snow-a10);
-    --sk-surface-error:     rgba(184,67,58,.20);
-    --sk-text-error:        var(--sk-red-200);
-    --sk-outline-error:     var(--sk-red-200);
-    --sk-action-primary:       var(--sk-snow);
-    --sk-action-primary-hover: var(--sk-foam);
-    --sk-action-primary-text:  var(--sk-green-900);
-    --sk-action-inverse:       var(--sk-green-900);
-    --sk-action-inverse-hover: var(--sk-green-800);
-    --sk-action-inverse-text:  var(--sk-snow);
-    --sk-outline-primary: var(--sk-snow);
-    --sk-outline-subtle:  var(--sk-snow-a20);
-    --sk-outline-neutral: var(--sk-snow-a50);
-    --sk-state-hover:   var(--sk-white-a08);
-    --sk-state-pressed: var(--sk-white-a12);
-    --sk-state-focus:   var(--sk-white-a12);
-    --sk-state-selected: var(--sk-snow);
-    --sk-input-border: var(--sk-snow);
-    --sk-input-border-hover: var(--sk-snow);
-    --sk-input-border-focus: var(--sk-snow);
-    --sk-input-placeholder: var(--sk-snow-a70);
-    --sk-focus-ring: var(--sk-snow);
-    --sk-shadow-float: 0 4px 30px rgba(0,0,0,.3);
-    --sk-ring-brand: 0 0 0 .5px var(--sk-snow-a50);
-    color-scheme: dark;
-  }
-}
+/* Mode gelap DIMATIKAN — keputusan user 17 Sep 2026: halaman ini SELALU
+   terang, apa pun setelan sistem pembaca. Tiga blok
+   `@media (prefers-color-scheme: dark)` yang dulu membalik palet :root,
+   mengecat chrome header, dan memulihkan `.sk-light` di mode sistem dihapus.
+   Palet gelap tetap tersedia sebagai opt-in eksplisit lewat
+   `:root[data-theme="dark"]` di atas; tidak ada yang memasangnya. */
 
 /* A paper island inside an inverse region (e.g. a canvas card on ink) */
 .sk-inverse .sk-light,
@@ -1535,95 +1499,6 @@ header.header-nav .header-menu{
   header.header-nav .header-menu{transition:none}
 }
 
-/* --- chrome tema ikut gelap ------------------------------------------------
-   Keputusan user 9 Sep: palet halaman ini MENGIKUTI mode sistem pembaca,
-   seperti berkas rujukan. Footer tema kebetulan sudah hijau tua di kedua mode,
-   jadi ia tidak perlu apa-apa. Header tidak: latarnya sudah ikut gelap sendiri
-   (kaca `.header-menu` memakai `--sk-surface-page`), tapi logo dan ikonnya
-   digambar tema dengan tinta hijau tua yang dituliskan keras — di atas kaca
-   hijau tua keduanya nyaris tak terbaca (terukur: fill #2b3c35 dan #2a3b34 di
-   atas ground #213d29).
-
-   Ikonnya dibalik dengan `brightness(0) invert(1)`, bukan diwarnai ulang satu
-   per satu: bentuk-bentuk itu memakai fill yang ditulis di CSS tema, bukan
-   `currentColor`, jadi tidak ada satu properti yang bisa diwarisi. Filter
-   memutihkan gambar monokrom apa pun tanpa perlu tahu selektornya, dan itu
-   tepat karena semuanya memang monokrom.
-
-   Titik notifikasi keranjang DIKECUALIKAN — ia satu-satunya bagian berwarna di
-   sana, dan memutihkannya menghapus penanda "ada isi di keranjang". */
-@media (prefers-color-scheme: dark) {
-  header.header-nav .header-menu{color:var(--sk-text-primary)}
-  header.header-nav .header-menu img,
-  header.header-nav .header-menu svg{filter:brightness(0) invert(1)}
-  /* Pemilih bahasa mencetak "EN" sebagai teks langsung di dalam
-     `.language-picker`, dan warnanya ditulis pada elemen itu sendiri — bukan
-     diwarisi — jadi `color` pada `.header-menu` tidak pernah sampai.
-
-     Selektornya sengaja menyertakan `.right-menu.item`: aturan tema di
-     assets/styles.css berbunyi
-     `.header-nav .header-menu .right-menu.item .language-picker`, dan itu LIMA
-     kelas (0,5,0). Versi tanpa `.right-menu.item` hanya (0,4,1) dan kalah —
-     sudah dicoba, warnanya tidak bergerak sedikit pun. */
-  header.header-nav .header-menu .right-menu.item .language-picker,
-  header.header-nav .header-menu .language-picker{color:var(--sk-text-primary)}
-  /* Daftar bahasanya TIDAK ikut dibalik: panelnya punya ground terang sendiri
-     (#f8f8f2), jadi tinta gelap di sana memang yang benar. */
-  header.header-nav .header-menu .language-picker__list{color:var(--sk-green-900)}
-  header.header-nav .header-menu .language-picker__list img,
-  header.header-nav .header-menu .language-picker__list svg{filter:none}
-  header.header-nav .header-menu [class*="count"],
-  header.header-nav .header-menu [class*="badge"],
-  header.header-nav .header-menu [class*="dot"]{filter:none}
-}
-
-/* --- `.sk-light` juga harus bekerja di mode gelap SISTEM -------------------
-   Kit menyalakan "pulau kertas di atas tinta" lewat dua selektor saja:
-   `.sk-inverse .sk-light` dan `:root[data-theme="dark"] .sk-light`. Keduanya
-   meleset ketika yang menggelapkan halaman adalah MODE SISTEM, karena di jalur
-   itu tidak ada `data-theme` yang dipasang dan section-nya bukan `.sk-inverse`
-   — token `:root` yang berbalik sendiri.
-
-   Akibatnya terlihat: lambang BPOM (hijau tua di atas transparan) duduk di
-   kartu yang ikut menghijau, jadi ia hilang; ubin nutrisi di pita daun juga
-   kehilangan ground terangnya. Dilaporkan user 9 Sep sebagai "ikon BPOM-nya
-   tidak ada".
-
-   Yang ditambahkan cuma cabang selektor yang hilang, dengan isi yang sama
-   persis seperti aturan kit di atas — bukan nilai baru. */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .sk-light {
-  --sk-text-primary:   var(--sk-green-900);
-  --sk-text-secondary: var(--sk-green-300);
-  --sk-text-disabled:  var(--sk-green-900-a50);
-  --sk-surface-page:      var(--sk-snow);
-  --sk-surface-secondary: var(--sk-ivory);
-  --sk-surface-tertiary:  var(--sk-foam);
-  --sk-surface-bright:    var(--sk-white);
-  --sk-surface-mist:      var(--sk-mist);
-  --sk-surface-error:     rgba(184,67,58,.10);
-  --sk-text-error:        var(--sk-red-700);
-  --sk-outline-error:     var(--sk-red-500);
-  --sk-action-primary:       var(--sk-green-900);
-  --sk-action-primary-hover: var(--sk-green-800);
-  --sk-action-primary-text:  var(--sk-snow);
-  --sk-action-inverse:       var(--sk-snow);
-  --sk-action-inverse-hover: var(--sk-foam);
-  --sk-action-inverse-text:  var(--sk-green-900);
-  --sk-outline-primary: var(--sk-green-900);
-  --sk-outline-subtle:  var(--sk-green-900-a10);
-  --sk-outline-neutral: var(--sk-green-100);
-  --sk-state-hover:   var(--sk-black-a08);
-  --sk-state-pressed: var(--sk-black-a12);
-  --sk-state-selected: var(--sk-green-900);
-  --sk-input-border: var(--sk-green-100);
-  --sk-input-border-hover: var(--sk-green-900-a50);
-  --sk-input-border-focus: var(--sk-green-900);
-  --sk-input-placeholder: var(--sk-green-300);
-  --sk-focus-ring: var(--sk-green-900);
-  color-scheme: light;
-}
-}
 
 /* `.sk-card--outline` sengaja tidak punya latar — di rujukan ia mengandalkan
    ground halaman yang selalu kanvas. Di sini ground itu bisa gelap, jadi
