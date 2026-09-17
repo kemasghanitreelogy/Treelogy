@@ -892,6 +892,12 @@
           title: ((r.querySelector('.jdgm-rev__title') || {}).textContent || '').trim(),
           body: text,
           author: ((r.querySelector('.jdgm-rev__author') || {}).textContent || '').trim(),
+          /* Reviewer memilih "Anonymous" di formulir Judge.me → nama tidak
+             ditulis sama sekali (user 17 Sep: "kalo namanya anonymous gausah
+             tampilin, langsung verified buyer aja"). Dibaca dari atribut
+             widget, bukan dari teks "Anonymous", supaya di locale lain (yang
+             menerjemahkan katanya) tetap terdeteksi. */
+          anonymous: !!r.querySelector('.jdgm-rev__author-wrapper[data-is-anonymous="true"]'),
           /* Muatan endpoint menandainya di atribut kartu; muatan yang sudah
              dirender widget menandainya dengan adanya lencana. */
           verified: r.getAttribute('data-verified-buyer') === 'true' || !!r.querySelector('.jdgm-rev__buyer-badge'),
@@ -905,10 +911,12 @@
     }
 
     function card(r) {
-      var who = '<span class="kl_reviews__review__author">' + escRaw(r.author) + '</span>';
-      if (r.verified && verifiedLabel) who += ' · ' + esc(verifiedLabel);
+      var parts = [];
+      if (!r.anonymous && r.author) parts.push('<span class="kl_reviews__review__author">' + escRaw(r.author) + '</span>');
+      if (r.verified && verifiedLabel) parts.push(esc(verifiedLabel));
       var when = ago(r.iso);
-      if (when) who += ' · <span class="kl_reviews__review__timestamp">' + escRaw(when) + '</span>';
+      if (when) parts.push('<span class="kl_reviews__review__timestamp">' + escRaw(when) + '</span>');
+      var who = parts.join(' · ');
 
       var html = '<div class="sk-card sk-stack" style="gap:var(--sk-space-8)">' +
         '<span class="pdp-stars sk-small" aria-label="' + escRaw(r.score) + '/5">' + stars(r.score) + '</span>';
