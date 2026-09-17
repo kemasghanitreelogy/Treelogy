@@ -844,7 +844,7 @@
     var search = $('[data-pdp4-search]', sec);
     var more = $('[data-pdp4-more]', sec);
 
-    var state = { order: 'newest', score: null, photos: false, q: '', shown: PAGE, touched: false };
+    var state = { order: 'newest', score: null, photos: false, q: '', shown: PAGE, sorted: false };
     var seed = [];       // dari cetakan widget — cepat, tapi cuma halaman pertama
     var every = null;    // ke-200-nya
     var fetching = false;
@@ -895,9 +895,12 @@
           /* Reviewer memilih "Anonymous" di formulir Judge.me → nama tidak
              ditulis sama sekali (user 17 Sep: "kalo namanya anonymous gausah
              tampilin, langsung verified buyer aja"). Dibaca dari atribut
-             widget, bukan dari teks "Anonymous", supaya di locale lain (yang
-             menerjemahkan katanya) tetap terdeteksi. */
-          anonymous: !!r.querySelector('.jdgm-rev__author-wrapper[data-is-anonymous="true"]'),
+             widget bila ada — cetakan endpoint membawanya, tapi cetakan
+             widget di host (dari metafield) TIDAK, cuma teksnya. Maka teks
+             jadi cadangan, dicocokkan dengan kata "anonim" versi Judge.me di
+             beberapa bahasa, bukan hanya bahasa Inggris. */
+          anonymous: !!r.querySelector('.jdgm-rev__author-wrapper[data-is-anonymous="true"]') ||
+            /^(anonymous|anonim|anonyme|an[oó]nimo|anonimo|匿名)$/i.test(((r.querySelector('.jdgm-rev__author') || {}).textContent || '').trim()),
           /* Muatan endpoint menandainya di atribut kartu; muatan yang sudah
              dirender widget menandainya dengan adanya lencana. */
           verified: r.getAttribute('data-verified-buyer') === 'true' || !!r.querySelector('.jdgm-rev__buyer-badge'),
@@ -999,11 +1002,14 @@
       out.sort(function (a, b) { return oldest ? a.time - b.time : b.time - a.time; });
       /* Tampilan DEFAULT (belum ada kendali yang disentuh), permintaan user
          17 Sep 2026: kartu pertama = ulasan terbaru apa pun bentuknya, kartu
-         sisanya = ulasan BERFOTO, terbaru dulu. Yang tanpa foto selain yang
-         pertama baru muncul kalau pembaca memilih urutan/saringan sendiri —
-         begitu satu kendali disentuh, daftar mengikuti kendali itu apa adanya
-         (`state.touched`), termasuk kalau yang dipilih "Most recent" lagi. */
-      if (!state.touched && out.length) {
+         sisanya = ulasan BERFOTO, terbaru dulu. Berlaku selama TIDAK ada
+         saringan aktif dan pembaca belum memilih urutan sendiri
+         (`state.sorted`) — jadi mematikan "With photos" lagi mengembalikan
+         tampilan default (user 17 Sep: "pas unclick harusnya ke default
+         tadi"), sedangkan memilih "Most recent" dari menu = murni waktu dan
+         bertahan sampai halaman dimuat ulang. */
+      var neutral = !state.sorted && !state.score && !state.photos && !state.q;
+      if (neutral && out.length) {
         var first = out[0];
         out = [first].concat(out.filter(function (r) { return r !== first && r.pics.length > 0; }));
       }
@@ -1175,7 +1181,9 @@
            harus berbunyi begitu — kalau tidak, satu-satunya tempat keadaan itu
            terbaca adalah menu yang sudah tertutup. */
         label.textContent = state.order === 'newest' ? base : (opt ? opt.textContent.trim() : base);
-        pill.setAttribute('aria-pressed', String(state.order !== 'newest'));
+        /* Berwarna begitu pembaca MEMILIH urutan, termasuk "Most recent" —
+           itu tanda daftar sudah murni waktu, bukan tampilan default. */
+        pill.setAttribute('aria-pressed', String(state.sorted));
       } else {
         label.textContent = state.score ? RATING_TPL.replace('%n%', state.score) : base;
         pill.setAttribute('aria-pressed', String(!!state.score));
@@ -1205,9 +1213,8 @@
         e.stopPropagation();
         var kind = menu.dataset.pdp4Menu;
         var val = opt.dataset.pdp4Value;
-        if (kind === 'order') state.order = val || 'newest';
+        if (kind === 'order') { state.order = val || 'newest'; state.sorted = true; }
         else state.score = val ? Number(val) : null;
-        state.touched = true;
 
         $$('[data-pdp4-value]', menu).forEach(function (o) {
           o.setAttribute('aria-selected', String(o === opt));
@@ -1231,7 +1238,6 @@
       photos.addEventListener('click', function (e) {
         e.stopPropagation();
         state.photos = !state.photos;
-        state.touched = true;
         photos.setAttribute('aria-pressed', String(state.photos));
         reset();
         apply();
@@ -1242,7 +1248,6 @@
     if (search) {
       search.addEventListener('input', function () {
         state.q = search.value.trim().toLowerCase();
-        state.touched = true;
         reset();
         apply();
         if (state.q) loadEvery().then(apply);
