@@ -1389,7 +1389,41 @@
       seenIO.observe(sec);
     }
     afterLoadIdle(function () {
-      loadEvery().then(function () { if (!seen) apply(); });
+      loadEvery().then(function () {
+        if (!seen) { apply(); return; }
+        /* Sudah terlihat. Dulu berhenti di sini demi CLS — tapi cetakan widget
+           cuma DUA kartu, jadi pembaca yang menggulir cepat melihat daftar
+           yang tidak pernah terisi sampai ia menyentuh urutan/saringan
+           (dilaporkan 17 Sep 2026: "kenapa cuma muncul 2 doang di awal").
+           Kini tetap digambar ulang; kalau section-nya sudah di ATAS layar
+           (pembaca sudah lewat), selisih tingginya dikompensasi ke posisi
+           gulir supaya yang sedang dibaca tidak bergeser. Kalau masih di
+           layar atau di bawahnya, daftar bertambah ke bawah dan tidak ada
+           yang bergeser di atas titik pandang. */
+        /* Yang diukur adalah posisi section BERIKUTNYA di layar, bukan
+           tinggi daftar: Chrome sudah punya scroll anchoring sendiri dan
+           akan menggeser gulir lebih dulu — menambah tinggi daftar di atasnya
+           berarti menggeser dua kali. Selisih posisi nyata = yang masih
+           tersisa untuk dikoreksi (nol kalau browser sudah menanganinya). */
+        /* Dikompensasi bila pembaca sedang melihat isi DI BAWAH daftar: judul
+           ulasan sudah lewat ke atas layar DAN section berikutnya terlihat.
+           Syarat "dasar section < 0" saja tidak cukup — diukur: dengan section
+           penutup tepat di puncak layar, dasar ulasan masih 64px (di balik
+           header tetap), tidak dikompensasi, dan isi yang dibaca melompat
+           733px; scroll anchoring Chrome juga tidak menolong di sini.
+           `sec` adalah satu-satunya anak pembungkus .shopify-section-nya,
+           jadi saudara berikutnya dicari dari pembungkus itu. */
+        var wrap = sec.closest('.shopify-section') || sec;
+        var next = wrap.nextElementSibling;
+        var anchor = (next && sec.getBoundingClientRect().top < 0 &&
+          next.getBoundingClientRect().top < window.innerHeight) ? next : null;
+        var before = anchor ? anchor.getBoundingClientRect().top : 0;
+        apply();
+        if (anchor) {
+          var delta = anchor.getBoundingClientRect().top - before;
+          if (Math.abs(delta) > 1) window.scrollBy(0, delta);
+        }
+      });
     });
 
     if (!('MutationObserver' in window)) return;
