@@ -974,11 +974,19 @@
         return true;
       }).slice();
       /* Permintaan user 8 Sep: ulasan berfoto dan dari pembeli terverifikasi
-         didahulukan. Peringkatnya bertingkat — foto+terverifikasi, lalu foto,
-         lalu terverifikasi, lalu sisanya — dan di dalam tiap tingkat urutan
+         didahulukan. Dulu bertingkat empat (foto+terverifikasi, foto,
+         terverifikasi, sisanya) — dan itu MENGUBUR yang terverifikasi: di
+         produk ini 81 ulasan berfoto tapi cuma 2 di antaranya terverifikasi,
+         jadi 20 pembeli terverifikasi tanpa foto baru muncul di kartu ke-82
+         (dilaporkan 17 Sep 2026: "banyak verified buyer kenapa muncul cuma
+         1?"). Kini tiga tingkat: foto+terverifikasi, lalu foto ATAU
+         terverifikasi setara, lalu sisanya; di dalam tiap tingkat urutan
          waktu yang dipilih (terbaru/terlama) tetap berlaku. */
       var oldest = state.order === 'oldest';
-      function rank(r) { return (r.pics.length ? 2 : 0) + (r.verified ? 1 : 0); }
+      function rank(r) {
+        var pics = r.pics.length > 0;
+        return pics && r.verified ? 2 : (pics || r.verified ? 1 : 0);
+      }
       out.sort(function (a, b) {
         var d = rank(b) - rank(a);
         if (d) return d;
