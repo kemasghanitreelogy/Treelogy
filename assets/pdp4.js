@@ -1080,7 +1080,19 @@
       if (view !== 'reviews') return;
       var all = rows();
       list.innerHTML = all.slice(0, state.shown).map(card).join('');
-      if (more) more.hidden = all.length <= state.shown;
+      /* Tombol "Load more" dihitung dari jumlah yang BISA dimuat, bukan dari
+         kartu yang kebetulan sudah ada. Widget Judge.me hanya mencetak dua
+         ulasan di host, jadi sebelum ke-200-nya tiba `all` cuma dua — dan
+         kalau pembaca sudah menggulir ke sini sebelum itu, penjaga anti-CLS
+         di bawah sengaja tidak menggambar ulang. Tanpa ini tombolnya tidak
+         pernah muncul sampai pembaca menyentuh urutan/saringan (dilaporkan
+         17 Sep 2026: "ga ada button load more"). Totalnya diambil dari
+         `data-number-of-reviews` widget; saat ada saringan totalnya tidak
+         diketahui, dan penangan saringan memang memanggil loadEvery() lalu
+         apply() sendiri. */
+      var pending = !every && !state.score && !state.photos && !state.q
+        ? widgetTotal() : 0;
+      if (more) more.hidden = Math.max(all.length, pending) <= state.shown;
       /* Menyaring sampai kosong adalah hasil yang sah — 2 dan 1 bintang di
          produk ini memang nol. Yang tidak boleh terjadi adalah daftar yang
          lenyap tanpa penjelasan. */
@@ -1088,6 +1100,12 @@
     }
 
     function reset() { state.shown = PAGE; }
+
+    function widgetTotal() {
+      var w = host.querySelector('.jdgm-rev-widg');
+      var n = w ? parseInt(w.getAttribute('data-number-of-reviews'), 10) : NaN;
+      return isNaN(n) ? 0 : n;
+    }
 
     function syncBars() {
       var src = [].slice.call(host.querySelectorAll('.jdgm-histogram__row'));
