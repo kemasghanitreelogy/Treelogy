@@ -1412,6 +1412,23 @@ html{scroll-behavior:smooth}
     transition:top var(--sk-duration-base) var(--sk-ease-standard);
   }
   .pdp4-nav-sized.pdp4-nav-slim .header-popup{top:0}
+
+  /* Panel cari punya cacat yang sama: theme.css:6936 memaku
+     `.search-input-wrapper{top:95px}` = tinggi header PENUH. Dalam mode slim
+     header tinggal 55px, jadi panelnya menggantung 40px di bawah header dan
+     halaman di baliknya mengintip lewat celah itu (dilaporkan 17 Sep 2026,
+     "pas munculin search-nya ngebug"; diukur: header [0,55], panel mulai 95).
+     Di HP aman — tata letak headernya lain — maka gerbang lebarnya sama
+     dengan popup di atas. Angkanya diturunkan dari ukuran header yang sama,
+     bukan ditulis tangan. */
+  .pdp4-nav-sized .search-input-wrapper{
+    top:var(--pdp4-nav-full, 95px);
+    transition:top var(--sk-duration-base) var(--sk-ease-standard),
+               opacity .45s var(--cb);
+  }
+  .pdp4-nav-sized.pdp4-nav-slim .search-input-wrapper{
+    top:calc(var(--pdp4-nav-full, 95px) - var(--pdp4-announce-h, 40px));
+  }
 }
 
 /* --- kenapa aturan di bawah TIDAK menunggu kelas dari JS -------------------
