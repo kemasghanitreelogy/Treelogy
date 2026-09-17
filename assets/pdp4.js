@@ -55,12 +55,20 @@
   /* Pekerjaan yang boleh menunggu: sesudah `load`, saat browser senggang.
      Dipakai galeri (memasang slide sisa) dan ulasan (menarik ke-200-nya). */
   function afterLoadIdle(fn) {
+    var done = false;
+    function once() { if (done) return; done = true; fn(); }
     function idle() {
-      if ('requestIdleCallback' in window) window.requestIdleCallback(fn, { timeout: 4000 });
-      else window.setTimeout(fn, 1500);
+      if ('requestIdleCallback' in window) window.requestIdleCallback(once, { timeout: 4000 });
+      else window.setTimeout(once, 1500);
     }
     if (document.readyState === 'complete') idle();
-    else window.addEventListener('load', idle);
+    else {
+      window.addEventListener('load', idle);
+      /* `load` bisa tertahan lama oleh skrip/gambar pihak ketiga yang
+         menggantung (diukur 17 Sep: >30 dtk di headless). Tanpa cadangan ini
+         daftar ulasan tinggal 2 kartu sampai pembaca menyentuh kendali. */
+      window.setTimeout(idle, 8000);
+    }
   }
   function esc(s) {
     return unesc(s).replace(/[&<>"]/g, function (c) {
@@ -973,25 +981,14 @@
         if (q && (r.title + ' ' + r.body + ' ' + r.author).toLowerCase().indexOf(q) < 0) return false;
         return true;
       }).slice();
-      /* Permintaan user 8 Sep: ulasan berfoto dan dari pembeli terverifikasi
-         didahulukan. Dulu bertingkat empat (foto+terverifikasi, foto,
-         terverifikasi, sisanya) — dan itu MENGUBUR yang terverifikasi: di
-         produk ini 81 ulasan berfoto tapi cuma 2 di antaranya terverifikasi,
-         jadi 20 pembeli terverifikasi tanpa foto baru muncul di kartu ke-82
-         (dilaporkan 17 Sep 2026: "banyak verified buyer kenapa muncul cuma
-         1?"). Kini tiga tingkat: foto+terverifikasi, lalu foto ATAU
-         terverifikasi setara, lalu sisanya; di dalam tiap tingkat urutan
-         waktu yang dipilih (terbaru/terlama) tetap berlaku. */
+      /* Urutan MURNI waktu. Peringkat bertingkat (foto/terverifikasi
+         didahulukan, permintaan 8 Sep) dicabut 17 Sep 2026: dengan itu "Most
+         recent" membuka ulasan berumur 9 bulan di atas yang berumur 1 hari,
+         dan "Oldest first" sama tidak jujurnya — user: "urutan most recent-nya
+         ga sesuai, oldest first juga ga sesuai filternya". Menonjolkan foto
+         kini lewat saklar "With photos", bukan lewat urutan diam-diam. */
       var oldest = state.order === 'oldest';
-      function rank(r) {
-        var pics = r.pics.length > 0;
-        return pics && r.verified ? 2 : (pics || r.verified ? 1 : 0);
-      }
-      out.sort(function (a, b) {
-        var d = rank(b) - rank(a);
-        if (d) return d;
-        return oldest ? a.time - b.time : b.time - a.time;
-      });
+      out.sort(function (a, b) { return oldest ? a.time - b.time : b.time - a.time; });
       return out;
     }
 
