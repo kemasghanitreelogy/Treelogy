@@ -63,4 +63,24 @@
       padding: 80px 25px 100px;
     }
   }
+
+  /* "Ask a question" disembunyikan di SEMUA produk selain kapsul.
+
+     Section ini sendiri sudah dikecualikan untuk `organic-moringa-capsules`
+     lewat setting `excluded_handles`, jadi tidak perlu gerbang handle kedua
+     di sini — cukup dengan tidak menyentuh apa pun di luar wrapper-nya.
+
+     Ruang lingkup `.judgeme-review-wrapper` itu WAJIB, bukan kerapian.
+     Halaman kapsul memuat `a.jdgm-ask-question-btn` KEDUA di host Judge.me
+     tersembunyi miliknya sendiri, DI LUAR wrapper ini, dan `pdp4.js`
+     mengkliknya secara programatik untuk membuka formulir pertanyaan
+     (lihat `openQuestionForm()`). Aturan global tanpa ruang lingkup akan
+     mematahkan Q&A di PDP kapsul tanpa error apa pun.
+
+     `!important` dipakai karena stylesheet Judge.me disuntikkan belakangan
+     dan menang atas urutan sumber biasa. "Write a review" sengaja dibiarkan
+     — yang diminta hilang hanya tombol pertanyaannya. */
+  .judgeme-review-wrapper .jdgm-ask-question-btn {
+    display: none !important;
+  }
 {% endstylesheet %}
