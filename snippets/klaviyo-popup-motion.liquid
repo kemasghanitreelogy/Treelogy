@@ -1,7 +1,7 @@
 {% doc %}
   Animasi masuk untuk popup form Klaviyo: kartu naik-halus, lalu isinya menyusul
   sebagai satu gelombang — plus penjaga yang menyingkirkan popup selama drawer
-  keranjang terbuka.
+  keranjang terbuka, lalu memulihkannya begitu drawer ditutup.
 
   ATURAN KERAS — JANGAN pernah menyetel `animation`, `animation-name`,
   `animation-direction`, atau `animation-fill-mode` pada `[data-testid='POPUP']`.
@@ -100,12 +100,24 @@
      Klaviyo untuk membereskan overlay tak pernah terpicu — jebakan yang sama
      dengan ATURAN KERAS di atas.
 
-     Tanpa transisi, supaya hilangnya seketika; popup kembali utuh begitu
-     drawer ditutup, bukan dianggap sudah ditutup pembeli. */
-  body:has(.mini-cart.active) div[class*='kl-private-reset-css-']:has(> div > [data-testid='POPUP']) {
+     `pointer-events` sengaja TIDAK ditransisikan: ia berlaku seketika, jadi
+     tombol CHECK OUT sudah bisa ditekan sejak frame pertama walau opasitasnya
+     masih memudar. Yang ditunda justru `visibility`, supaya pudarnya terlihat
+     dulu sebelum elemennya benar-benar dicabut dari hit-test.
+
+     `body.tl-kl-hold` dipasang skrip di bawah — lihat alasannya di sana. */
+  div[class*='kl-private-reset-css-']:has(> div > [data-testid='POPUP']) {
+    transition: opacity 240ms ease !important;
+  }
+
+  body:has(.mini-cart.active) div[class*='kl-private-reset-css-']:has(> div > [data-testid='POPUP']),
+  body.tl-kl-hold div[class*='kl-private-reset-css-']:has(> div > [data-testid='POPUP']) {
     opacity: 0 !important;
     visibility: hidden !important;
     pointer-events: none !important;
+    transition:
+      opacity 160ms ease,
+      visibility 0s linear 160ms !important;
   }
 
   @media screen and (max-width: 767px) {
@@ -162,3 +174,83 @@
     }
   }
 {% endstyle %}
+
+<script>
+  /* Popup dipulihkan sesudah drawer keranjang ditutup.
+
+     Diukur di situs live: mengetuk tombol X penutup drawer membuat Klaviyo
+     menutup formnya sendiri — 18 ms sesudah ketukan, jauh sebelum tema
+     menyentuh `body`. Ini BUKAN akibat penyembunyian di atas: dengan drawer
+     terbuka dan tanpa ketukan sama sekali popupnya selamat, begitu juga kalau
+     yang diketuk area lain di dalam drawer, dan penutupan itu tetap terjadi
+     walau aturan CSS-nya dinetralkan. Jadi perilaku bawaan Klaviyo.
+
+     Menahan ketukannya tidak bisa: `stopPropagation` di fase bubble sudah
+     telat, dan di fase capture ia ikut mematikan penutup drawer. Yang tersisa
+     adalah membuka formnya kembali lewat API onsite resmi Klaviyo.
+
+     Dua penjaga supaya tidak memaksakan diri ke pembeli:
+     - Id form hanya dicatat kalau popup MEMANG sedang tampil saat drawer
+       dibuka. Popup yang sudah ditutup pembeli tidak pernah tercatat, jadi
+       tidak akan dihidupkan lagi.
+     - Id dibaca dinamis dari `data-testid` formnya, bukan ditulis tetap di
+       sini, supaya tidak basi saat form diganti di editor Klaviyo.
+
+     `tl-kl-hold` menahan popup tetap tak terlihat selama jeda itu. Tanpa ini
+     pembeli melihat popup berkedip: muncul sebentar begitu drawer tertutup,
+     dipudarkan Klaviyo, lalu muncul lagi. Jedanya 700 ms karena penutupan
+     Klaviyo tuntas di ~520 ms (diukur, bukan ditebak) — sisanya margin.
+
+     Snippet ini dirender di `<head>`, jadi `.mini-cart` belum ada saat skrip
+     jalan; pencariannya harus menunggu `DOMContentLoaded`. */
+  (function () {
+    var JEDA = 700;
+
+    function mulai() {
+      var cart = document.querySelector('.mini-cart');
+      if (!cart || !('MutationObserver' in window)) return;
+
+      var tertunda = null;
+
+      function cangkang() {
+        var pop = document.querySelector('[data-testid="POPUP"]');
+        return pop && pop.parentElement && pop.parentElement.parentElement;
+      }
+
+      function tampil() {
+        var s = cangkang();
+        return !!s && getComputedStyle(s).display !== 'none';
+      }
+
+      function idForm() {
+        var f = document.querySelector('[data-testid="POPUP"] form[data-testid^="klaviyo-form-"]');
+        return f ? f.getAttribute('data-testid').replace('klaviyo-form-', '') : null;
+      }
+
+      new MutationObserver(function () {
+        if (cart.classList.contains('active')) {
+          if (tampil()) tertunda = idForm();
+          return;
+        }
+        if (!tertunda) return;
+
+        var id = tertunda;
+        tertunda = null;
+        document.body.classList.add('tl-kl-hold');
+        setTimeout(function () {
+          if (!tampil()) {
+            window._klOnsite = window._klOnsite || [];
+            window._klOnsite.push(['openForm', id]);
+          }
+          document.body.classList.remove('tl-kl-hold');
+        }, JEDA);
+      }).observe(cart, { attributes: true, attributeFilter: ['class'] });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', mulai);
+    } else {
+      mulai();
+    }
+  })();
+</script>
