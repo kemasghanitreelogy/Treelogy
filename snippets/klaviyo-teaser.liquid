@@ -198,17 +198,33 @@
      dokumen. Halaman produk baru mengganti kelas pada puluhan simpul setiap
      frame guliran (titik linimasa, reveal), jadi pengamat ber-subtree akan
      terbangun ratusan kali per detik untuk sesuatu yang berubah dua kali per
-     kunjungan. Simpulnya sendiri sudah ada di DOM sejak muat pertama
-     (snippets/MiniCart.liquid merendernya di paling atas), jadi tidak perlu
-     menunggu apa pun. */
+     kunjungan.
+
+     Snippet ini dirender di `<head>`, jadi `.mini-cart` BELUM ada saat skrip
+     jalan — pencariannya harus menunggu `DOMContentLoaded`. Tanpa itu
+     `querySelector` mengembalikan null, fungsinya keluar diam-diam, dan
+     `body.mini-cart-open` tidak pernah terpasang sama sekali.
+
+     Kelas yang sama juga dipakai [[klaviyo-popup-motion]] untuk menyingkirkan
+     popup, jadi pengamat ini satu-satunya sumber sinyal di jalur non-`:has()`. */
   (function () {
-    if (CSS && CSS.supports && CSS.supports('selector(body:has(*))')) return;
-    var cart = document.querySelector('.mini-cart');
-    if (!cart || !('MutationObserver' in window)) return;
-    function sync() {
-      document.body.classList.toggle('mini-cart-open', cart.classList.contains('active'));
+    if (window.CSS && CSS.supports && CSS.supports('selector(body:has(*))')) return;
+    if (!('MutationObserver' in window)) return;
+
+    function start() {
+      var cart = document.querySelector('.mini-cart');
+      if (!cart) return;
+      function sync() {
+        document.body.classList.toggle('mini-cart-open', cart.classList.contains('active'));
+      }
+      new MutationObserver(sync).observe(cart, { attributes: true, attributeFilter: ['class'] });
+      sync();
     }
-    new MutationObserver(sync).observe(cart, { attributes: true, attributeFilter: ['class'] });
-    sync();
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', start);
+    } else {
+      start();
+    }
   })();
 </script>

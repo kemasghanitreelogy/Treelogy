@@ -1,6 +1,7 @@
 {% doc %}
   Animasi masuk untuk popup form Klaviyo: kartu naik-halus, lalu isinya menyusul
-  sebagai satu gelombang.
+  sebagai satu gelombang — plus penjaga yang menyingkirkan popup selama drawer
+  keranjang terbuka.
 
   ATURAN KERAS — JANGAN pernah menyetel `animation`, `animation-name`,
   `animation-direction`, atau `animation-fill-mode` pada `[data-testid='POPUP']`.
@@ -20,7 +21,8 @@
   jalan.
 
   Hanya menyasar popup, jadi form embed (12.12) dan teaser tidak terpengaruh.
-  Lihat [[klaviyo-teaser]] untuk gaya teasernya.
+  Lihat [[klaviyo-teaser]] untuk gaya teasernya — teaser disingkirkan saat
+  keranjang terbuka dengan mekanisme yang sama.
 
   @example
   {% render 'klaviyo-popup-motion' %}
@@ -82,6 +84,42 @@
     animation: tl-kl-content-rise 380ms cubic-bezier(0.16, 1, 0.3, 1) 300ms both !important;
   }
 
+  /* ---- Popup menyingkir saat keranjang terbuka ----
+
+     Cangkang popup `position: fixed` dengan `z-index: 90000`; drawer keranjang
+     duduk di bawah angka itu. Jadi popup selalu MENANG dan menutupi seluruh
+     drawer — termasuk tombol CHECK OUT — persis di detik pembeli paling siap
+     membayar. Backdrop-nya `pointer-events: auto`, jadi ketukan pertama cuma
+     menutup popup, bukan menekan tombol yang dituju.
+
+     Yang disembunyikan adalah cangkang terluar (fixed, z 90000), bukan
+     `[data-testid='POPUP']` yang cuma kartunya: backdrop gelap dan penadah
+     kliknya ada di cangkang. Struktur cangkang > div > POPUP diverifikasi di
+     situs live, dan sama dengan yang dipakai aturan `backdrop-filter` di atas.
+
+     `visibility` + `opacity`, BUKAN `display: none`: elemen ber-`display:none`
+     tidak menjalankan animasi sama sekali, jadi `animationend` yang ditunggu
+     Klaviyo untuk membereskan overlay tak akan pernah terpicu — jebakan yang
+     sama dengan ATURAN KERAS di atas. Elemen ber-`visibility:hidden` tetap
+     menganimasi, jadi popup yang kebetulan sedang menutup tetap selesai
+     bersih. `visibility` juga mencabutnya dari urutan tab, sehingga fokus
+     keyboard tidak tersesat ke form yang tak terlihat.
+
+     Sengaja tanpa transisi: hilangnya harus seketika, dan popup kembali utuh
+     begitu drawer ditutup — bukan dianggap sudah ditutup pembeli.
+
+     Dua jalur, sama seperti teaser:
+     - `body:has(.mini-cart.active)` — CSS murni, berlaku seketika.
+     - `body.mini-cart-open` + `.tl-kl-popup-shell` — untuk mesin tanpa
+       `:has()`, keduanya dipasang skrip di bawah. */
+  body:has(.mini-cart.active) div[class*='kl-private-reset-css-']:has(> div > [data-testid='POPUP']),
+  body.mini-cart-open div[class*='kl-private-reset-css-']:has(> div > [data-testid='POPUP']),
+  body.mini-cart-open .tl-kl-popup-shell {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
   @media screen and (max-width: 767px) {
     div[class*='kl-private-reset-css-']:has(> div > [data-testid='POPUP']) {
       backdrop-filter: none !important;
@@ -136,3 +174,34 @@
     }
   }
 {% endstyle %}
+
+<script>
+  /* Penjaga untuk mesin tanpa `:has()` (Safari < 15.4, Chrome < 105).
+
+     Di sana CSS tidak punya cara memilih cangkang popup: kelasnya ber-hash
+     (`kl-private-reset-css-Xuajs1`) dan PERSIS SAMA dengan kelas cangkang
+     teaser, jadi tidak ada pembeda selain isinya — yang hanya bisa ditanya
+     lewat `:has()`. Karena itu cangkangnya ditandai dari JS.
+
+     Kelas `body.mini-cart-open` yang jadi pasangan aturannya dipasang oleh
+     snippets/klaviyo-teaser.
+
+     Klaviyo membuang lalu membangun ulang cangkangnya setiap popup dibuka,
+     jadi penandaannya diulang di setiap event `open` — bukan sekali saat muat.
+     Event dipakai apa adanya dari Klaviyo; kalau namanya berubah, jalur ini
+     mati diam-diam dan jalur `:has()` di atas tetap menanggung 97% pembeli. */
+  (function () {
+    if (window.CSS && CSS.supports && CSS.supports('selector(body:has(*))')) return;
+
+    function tagShell() {
+      var popup = document.querySelector('[data-testid="POPUP"]');
+      var shell = popup && popup.parentElement && popup.parentElement.parentElement;
+      if (shell) shell.classList.add('tl-kl-popup-shell');
+    }
+
+    window.addEventListener('klaviyoForms', function (e) {
+      if (e.detail && e.detail.type === 'open') setTimeout(tagShell, 0);
+    });
+    tagShell();
+  })();
+</script>
