@@ -189,10 +189,17 @@
      telat, dan di fase capture ia ikut mematikan penutup drawer. Yang tersisa
      adalah membuka formnya kembali lewat API onsite resmi Klaviyo.
 
+     Pemeriksaan dilakukan saat drawer DITUTUP, bukan saat dibuka. Versi
+     pertama mencatat id form pada saat drawer dibuka, dan itu salah: popup
+     paling sering baru dipicu Klaviyo BEBERAPA DETIK SESUDAH drawer terbuka,
+     sehingga tidak pernah tercatat dan pembeli melihatnya berkelebat lalu
+     hilang. Saat drawer ditutup, popup yang masih hidup tetap ber-`display:
+     flex` — penyembunyian di atas hanya memakai `visibility`/`opacity` —
+     jadi keadaannya bisa dibaca apa adanya di detik itu juga.
+
      Dua penjaga supaya tidak memaksakan diri ke pembeli:
-     - Id form hanya dicatat kalau popup MEMANG sedang tampil saat drawer
-       dibuka. Popup yang sudah ditutup pembeli tidak pernah tercatat, jadi
-       tidak akan dihidupkan lagi.
+     - Popup yang sudah ditutup pembeli ber-`display: none`, jadi tidak
+       dianggap hidup dan tidak akan dihidupkan lagi.
      - Id dibaca dinamis dari `data-testid` formnya, bukan ditulis tetap di
        sini, supaya tidak basi saat form diganti di editor Klaviyo.
 
@@ -210,14 +217,12 @@
       var cart = document.querySelector('.mini-cart');
       if (!cart || !('MutationObserver' in window)) return;
 
-      var tertunda = null;
-
       function cangkang() {
         var pop = document.querySelector('[data-testid="POPUP"]');
         return pop && pop.parentElement && pop.parentElement.parentElement;
       }
 
-      function tampil() {
+      function hidup() {
         var s = cangkang();
         return !!s && getComputedStyle(s).display !== 'none';
       }
@@ -227,18 +232,23 @@
         return f ? f.getAttribute('data-testid').replace('klaviyo-form-', '') : null;
       }
 
-      new MutationObserver(function () {
-        if (cart.classList.contains('active')) {
-          if (tampil()) tertunda = idForm();
-          return;
-        }
-        if (!tertunda) return;
+      /* Pengamat menyala untuk SETIAP perubahan kelas pada `.mini-cart`, bukan
+         hanya buka-tutup, jadi peralihannya dijaga sendiri di sini. */
+      var terbuka = cart.classList.contains('active');
 
-        var id = tertunda;
-        tertunda = null;
+      new MutationObserver(function () {
+        var kini = cart.classList.contains('active');
+        if (kini === terbuka) return;
+        terbuka = kini;
+        if (kini) return;
+
+        if (!hidup()) return;
+        var id = idForm();
+        if (!id) return;
+
         document.body.classList.add('tl-kl-hold');
         setTimeout(function () {
-          if (!tampil()) {
+          if (!hidup()) {
             window._klOnsite = window._klOnsite || [];
             window._klOnsite.push(['openForm', id]);
           }
