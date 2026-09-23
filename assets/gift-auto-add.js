@@ -835,8 +835,12 @@
             });
             if (extra.length) {
               cartEpoch++;
+              /* Hadiah DIDAHULUKAN di body: Shopify menaruh item terakhir
+                 dari satu add.js di paling atas keranjang (diuji langsung),
+                 dan checkout ikut urutan itu — jadi hadiah di depan array =
+                 baris hadiah di paling bawah checkout. */
               arguments[1] = Object.assign({}, origInit, {
-                body: JSON.stringify({ items: parsed.items.concat(extra) })
+                body: JSON.stringify({ items: extra.concat(parsed.items) })
               });
               piggybacked = true;
             }
