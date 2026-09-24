@@ -381,6 +381,22 @@
   <a class="sk-btn" href="#pdp4-packs">{{ t_atc }}</a>
 </div></div>
 </div>
+{%- comment -%}
+  Naik ke kolom hero SEKARANG, begitu markup ini terurai — bukan menunggu
+  boot() di assets/pdp4.js, yang baru jalan sesudah DOMContentLoaded (halaman
+  ini panjang, jadi bisa detik-detik kemudian) dan membuat hero sempat tergambar
+  tanpa pemilih paket lalu melompat. pdp4.js tetap memanggil pemindahan yang
+  sama sebagai cadangan dan untuk theme editor.
+{%- endcomment -%}
+<script>
+  (function (me) {
+    var slot = document.querySelector('[data-pdp4-packs-slot]');
+    var wrap = me && me.closest('.shopify-section');
+    if (!slot || !wrap) return;
+    slot.hidden = false;
+    slot.appendChild(wrap);
+  })(document.currentScript);
+</script>
 {%- endif -%}
 
 {% schema %}
