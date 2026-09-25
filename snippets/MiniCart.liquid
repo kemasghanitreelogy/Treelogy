@@ -1978,7 +1978,11 @@
       if (btn.classList.contains('is-adding') || btn.classList.contains('is-added')) return;
 
       var select = isMain ? document.getElementById('productSelect') : null;
-      var variantId = parseInt(btn.dataset.variant || btn.dataset.variantId || (select && select.value), 10);
+      /* Paket PDP kapsul: baca radio yang tercentang, bukan salinan di tombol.
+         Tombol Back di Chrome memulihkan radio tanpa event `change`, jadi
+         data-variant bisa basi (keranjang dapat paket 3 bulan). */
+      var pack = isMain ? document.querySelector('#AddToCartForm input[name="pack"]:checked') : null;
+      var variantId = parseInt((pack && pack.value) || btn.dataset.variant || btn.dataset.variantId || (select && select.value), 10);
       if (!variantId) return; /* popup button before a variant is picked */
 
       var item = { id: variantId, quantity: 1 };

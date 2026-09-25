@@ -355,6 +355,16 @@
 
     form.addEventListener('change', apply);
     apply();
+
+    /* Tombol Back: browser memulihkan pilihan paket SESUDAH apply() di atas
+       jalan, dan pemulihan itu tidak memicu `change`. Akibatnya radio
+       menunjukkan paket pilihan pembeli, tetapi #AddToCart tetap membawa
+       varian bawaan (terbukti 24 Sep 2026: pilih 1 bulan, pindah halaman,
+       Back, tambah ke keranjang -> keranjang berisi 3 bulan). `load` menangkap
+       pemulihan pada muat ulang biasa, `pageshow` menangkap kembali dari
+       bfcache; setTimeout memberi browser satu giliran untuk selesai. */
+    window.addEventListener('load', apply);
+    window.addEventListener('pageshow', function () { setTimeout(apply, 0); });
   }
 
   /* --- galeri ---------------------------------------------------------------
