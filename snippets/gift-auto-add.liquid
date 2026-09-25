@@ -103,10 +103,16 @@
 {%- comment -%}
   Seed status keranjang saat halaman dirender — supaya pemeriksaan awal tidak
   perlu menembak /cart.js sama sekali. Hanya kolom yang dipakai sinkronisasi.
+  properties dirender sebagai OBJEK {"_Gifted": "true"} persis seperti /cart.js:
+  `item.properties | json` mengeluarkan array pasangan [["_Gifted","true"]],
+  sehingga JS (properties._Gifted) menganggap hadiah tanpa marker lalu
+  menolkan-dan-menambahnya lagi di setiap muat halaman (QA FLAP-01, 25 Sep 2026).
 {%- endcomment -%}
 <script type="application/json" data-cart-seed>[
   {%- for item in cart.items -%}
-    {"variant_id": {{ item.variant_id }}, "key": {{ item.key | json }}, "quantity": {{ item.quantity }}, "properties": {{ item.properties | json }}}{%- unless forloop.last -%},{%- endunless -%}
+    {"variant_id": {{ item.variant_id }}, "key": {{ item.key | json }}, "quantity": {{ item.quantity }}, "properties": {
+      {%- for property in item.properties -%}{{ property.first | json }}: {{ property.last | json }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}
+    }}{%- unless forloop.last -%},{%- endunless -%}
   {%- endfor -%}
 ]</script>
 
