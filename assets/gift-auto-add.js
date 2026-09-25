@@ -1026,12 +1026,14 @@
     document.querySelectorAll('.atc-btn.is-adding').forEach(function (b) {
       b.classList.remove('is-adding');
       b.removeAttribute('aria-busy');
-      /* innerHTML dulu, baru teks. Tombol kartu varian v2 berisi elemen anak
-         (label huruf besar, <s> harga coret, dan simpul sasaran syncAtc);
-         memulihkan lewat textContent meratakannya jadi satu simpul teks dan
-         membuat harga di tombol berhenti mengikuti paket yang dipilih.
-         Markup aslinya disimpan MiniCart.liquid di properti _idleHTML. */
-      if (b._idleHTML != null) b.innerHTML = b._idleHTML;
+      /* Simpul asli dulu, baru teks. Tombol kartu varian v2 dan PDP kapsul
+         berisi elemen anak (label huruf besar, <s> harga coret, span harga
+         sasaran syncAtc / pdp4.js); memulihkan lewat textContent meratakannya.
+         Simpul aslinya disimpan MiniCart.liquid di properti _idleNodes. */
+      if (b._idleNodes) {
+        b.textContent = '';
+        b._idleNodes.forEach(function (n) { b.appendChild(n); });
+      }
       else if (b.dataset.idleLabel) b.textContent = b.dataset.idleLabel;
     });
     awaitingGifts = {};
