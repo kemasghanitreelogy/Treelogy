@@ -330,7 +330,6 @@
     var inputs = $$('input[name="pack"]', form);
     if (!inputs.length) return;
 
-    var price = $('#pdp4-atc-price');
     var pdHero = $('#pdp4-pd-hero');
     var pdSticky = $('#pdp4-pd-sticky');
     var select = $('#productSelect');
@@ -339,6 +338,10 @@
     function apply() {
       var i = form.querySelector('input[name="pack"]:checked');
       if (!i) return;
+      /* Dicari ulang tiap kali: sesudah tambah ke keranjang, MiniCart.liquid
+         memulihkan isi tombol lewat innerHTML sehingga span ini diganti node
+         baru — referensi lama lepas dan harga tombol macet. */
+      var price = $('#pdp4-atc-price');
       if (price) price.textContent = i.dataset.price || '';
       if (pdHero && i.dataset.pd) pdHero.textContent = i.dataset.pd;
       if (pdSticky && i.dataset.pd) pdSticky.textContent = i.dataset.pd;
