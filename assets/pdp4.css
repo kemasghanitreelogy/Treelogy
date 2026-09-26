@@ -1120,6 +1120,16 @@ html{scroll-behavior:smooth}
 .pdp-pack__vis .pdp-tins{margin-left:-30px;margin-right:0}
 .pdp-tins{display:block;height:auto;justify-self:end;margin-right:var(--sk-space-8)}
 .pdp-tins--3{width:124px}.pdp-tins--2{width:93px}.pdp-tins--1{width:62px}
+/* Kaleng menjorok 30px ke kolom teks (margin negatif) dan tins--3 (124px)
+   lebih lebar dari kolomnya (112px). Aman selama kartu >= 352px; di bawah
+   itu teks tertutup gambar (Galaxy/Pixel 360px: "270 capsules" -10px,
+   iPhone SE 375px: "Free shipping" -2px — diukur 26 Sep 2026). Container
+   query mengikuti lebar KARTU, jadi benar di PDP, popup, maupun LP.
+   Container query mengukur ISI kartu (tanpa padding 16px + border 1px per
+   sisi): kartu 352px = isi 318px. Kartu >= 352px (iPhone 15, Pixel 7) tidak
+   berubah sama sekali — dibuktikan identik piksel. */
+.pdp-pack{container-type:inline-size}
+@container (max-width:317px){.pdp-pack__vis .pdp-tins{margin-left:0;max-width:100%}}
 .pdp-gift{display:flex;align-items:center;gap:var(--sk-space-8);text-align:right;white-space:nowrap;line-height:1.25}
 .pdp-gift img{height:56px;width:auto;display:block}
 .pdp-assure{list-style:none;margin:0;padding:0;display:grid;gap:var(--sk-space-8)}
