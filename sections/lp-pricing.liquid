@@ -15,7 +15,13 @@
   endif
 -%}
 
-<div class="lp-pricing lp-pad" id="{{ section.settings.anchor_id | default: 'pricing' }}" data-lp-soldout-label="{{ 'products.product.sold_out' | t | escape }}">
+{%- liquid
+  assign lp_soldout_label = section.settings.soldout_label
+  if lp_soldout_label == blank
+    assign lp_soldout_label = 'products.product.sold_out' | t
+  endif
+-%}
+<div class="lp-pricing lp-pad" id="{{ section.settings.anchor_id | default: 'pricing' }}" data-lp-soldout-label="{{ lp_soldout_label | escape }}">
   <div class="lp-container">
     {% if section.settings.eyebrow != blank %}
       <div class="lp-eyebrow lp-pricing__eyebrow">{{ section.settings.eyebrow }}</div>
@@ -1272,6 +1278,13 @@
       "id": "intro",
       "label": "Paragraf pengantar",
       "info": "Kalimat singkat di bawah judul. Kosongkan bila tidak dipakai."
+    },
+    {
+      "type": "text",
+      "id": "soldout_label",
+      "label": "Label tombol saat produk utama habis",
+      "default": "Stok habis",
+      "info": "Tombol paket dinonaktifkan otomatis bila produk utamanya tidak bisa dibeli (dicek real-time), supaya pembeli tidak mendapat checkout berisi hadiah saja."
     },
     {
       "type": "header",
