@@ -196,7 +196,8 @@
       "shop_now": "Belanja Sekarang"
     },
     "product": {
-      "adding": "Menambahkan..."
+      "adding": "Menambahkan...",
+      "sold_out": "Stok habis"
     },
     "featured": {
       "title": "Produk Unggulan"

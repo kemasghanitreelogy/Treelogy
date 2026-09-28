@@ -15,7 +15,7 @@
   endif
 -%}
 
-<div class="lp-pricing lp-pad" id="{{ section.settings.anchor_id | default: 'pricing' }}">
+<div class="lp-pricing lp-pad" id="{{ section.settings.anchor_id | default: 'pricing' }}" data-lp-soldout-label="{{ 'products.product.sold_out' | t | escape }}">
   <div class="lp-container">
     {% if section.settings.eyebrow != blank %}
       <div class="lp-eyebrow lp-pricing__eyebrow">{{ section.settings.eyebrow }}</div>
@@ -1147,6 +1147,77 @@
     }
 
     document.addEventListener('shopify:section:load', start);
+  })();
+
+  /* Penjaga stok produk utama (28 Sep 2026 — pesanan Rp0 #11056). Permalink
+     keranjang langsung membuka checkout; bila produk utama tidak bisa dibeli,
+     checkout Shopify membuangnya dan menyisakan hadiah Rp0. Maka tombol
+     dinonaktifkan dengan label "Stok habis": dicek saat halaman dimuat, saat
+     paket berganti (href berubah), dan SEKALI LAGI saat diketuk (real-time —
+     halaman bisa tersaji dari cache berjam-jam). Produk utama = varian berharga
+     > 0; hadiah (Rp0) diabaikan. Gagal jaringan = tetap lanjut, penjualan tidak
+     boleh terblokir karena gangguan. */
+  (function () {
+    var root = document.querySelector('.lp-pricing[data-lp-soldout-label]');
+    if (!root || root.dataset.lpStockGuard === 'true') return;
+    root.dataset.lpStockGuard = 'true';
+    var label = root.getAttribute('data-lp-soldout-label') || 'Sold out';
+    var cache = {};
+
+    function ids(href) {
+      var part = (href || '').split('/cart/')[1];
+      if (!part) return [];
+      return part.split('?')[0].split(',').map(function (x) { return x.split(':')[0]; }).filter(Boolean);
+    }
+    function info(id, fresh) {
+      if (!fresh && cache[id]) return cache[id];
+      cache[id] = fetch('/variants/' + id + '.js', { cache: 'no-store', headers: { Accept: 'application/json' } })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (j) { return j ? { price: j.price, available: j.available } : null; })
+        .catch(function () { return null; });
+      return cache[id];
+    }
+    /* true = semua produk utama bisa dibeli; false = ada yang habis; null = tidak diketahui */
+    function mainAvailable(href, fresh) {
+      var list = ids(href);
+      if (!list.length) return Promise.resolve(true);
+      return Promise.all(list.map(function (id) { return info(id, fresh); })).then(function (rs) {
+        if (rs.some(function (r) { return r === null; })) return null;
+        return rs.every(function (r) { return r.price === 0 || r.available; });
+      });
+    }
+    function setState(a, ok) {
+      if (ok === false) {
+        if (a.dataset.lpSoldout !== 'true') a.dataset.lpLabel = a.innerHTML;
+        a.innerHTML = label;
+        a.dataset.lpSoldout = 'true';
+        a.setAttribute('aria-disabled', 'true');
+        a.style.opacity = '0.5';
+        a.style.cursor = 'not-allowed';
+      } else if (a.dataset.lpSoldout === 'true') {
+        a.innerHTML = a.dataset.lpLabel || a.innerHTML;
+        delete a.dataset.lpSoldout;
+        a.removeAttribute('aria-disabled');
+        a.style.opacity = '';
+        a.style.cursor = '';
+      }
+    }
+    function check(a, fresh) {
+      return mainAvailable(a.getAttribute('href'), fresh).then(function (ok) { setState(a, ok); return ok; });
+    }
+
+    root.querySelectorAll('a[href*="/cart/"]').forEach(function (a) {
+      check(a, false);
+      new MutationObserver(function () { check(a, false); }).observe(a, { attributes: true, attributeFilter: ['href'] });
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        var href = a.getAttribute('href');
+        check(a, true).then(function (ok) {
+          if (ok === false) return;
+          window.location.href = href;
+        });
+      });
+    });
   })();
 {% endjavascript %}
 

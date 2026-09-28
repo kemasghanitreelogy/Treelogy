@@ -195,7 +195,8 @@
       "benefit_3": "Deeper sleep"
     },
     "product": {
-      "adding": "Adding..."
+      "adding": "Adding...",
+      "sold_out": "Sold out"
     },
     "featured": {
       "title": "Featured Products"
