@@ -22,6 +22,10 @@
       },
       "delivery_options": {
         "free_total_label": "Provided"
+      },
+      "alternative_payment_method_banner": {
+        "or": "⭐⭐⭐⭐⭐ Rate 4.8/5 | 👥 10,000+ Customers",
+        "or_pay_another_way": "60 days money back guaranteed"
       }
     }
   },
