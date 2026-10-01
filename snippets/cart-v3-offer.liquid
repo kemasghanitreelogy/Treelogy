@@ -182,7 +182,14 @@
       endif
     endif
   -%}
-  <div class="cv3-offer" data-cv3-offer="{{ kind }}">
+  {%- liquid
+    if kind == 'switch'
+      assign offer_value = delta | times: -1
+    else
+      assign offer_value = delta
+    endif
+  -%}
+  <div class="cv3-offer" data-cv3-offer="{{ kind }}" data-cv3-offer-target="{{ target.id }}" data-cv3-offer-value="{{ offer_value }}">
     <div class="cv3-offer__text">
       <span class="cv3-offer__title">{{ title }}</span>
       {%- if sub != blank -%}<span>{{ sub }}</span>{%- endif -%}
@@ -202,7 +209,7 @@
     endif
     assign image = target.image | default: target.product.featured_image
   -%}
-  <div class="cv3-addon" data-cv3-offer="addon">
+  <div class="cv3-addon" data-cv3-offer="addon" data-cv3-offer-target="{{ target.id }}" data-cv3-offer-value="{{ target.price }}">
     <span class="cv3-addon__photo">
       {%- if image -%}
         {{ image | image_url: width: 96, height: 96, crop: 'center' | image_tag: width: 48, height: 48, loading: 'lazy', alt: '' }}

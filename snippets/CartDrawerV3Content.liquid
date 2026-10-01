@@ -34,7 +34,7 @@
     assign fs_pct = cart.items_subtotal_price | times: 100 | divided_by: fs_min | at_most: 100
   endif
 -%}
-<div class="cv3" data-cv3 data-item-count="{{ cart.item_count }}">
+<div class="cv3" data-cv3 data-item-count="{{ cart.item_count }}" data-total="{{ cart.total_price }}">
   <header class="cv3-head">
     <div class="cv3-head__row">
       <h2 class="cv3-head__title">

@@ -16,6 +16,10 @@
   @example
   {% render 'cart-drawer-arm', part: 'shell', up_selling: section.settings.up_selling_products %}
 {% enddoc -%}
+{%- if part != 'content' -%}
+  {%- comment -%}Drawer analytics for BOTH arms (claudedocs/gtm/CART-DRAWER-TRACKING.md).{%- endcomment -%}
+  <script src="{{ 'cart-analytics.js' | asset_url }}" defer></script>
+{%- endif -%}
 {%- if cart.attributes['_tl_abc_cart_drawer'] == 'B' -%}
   {%- if part == 'content' -%}
     {%- render 'CartDrawerV3Content' -%}
