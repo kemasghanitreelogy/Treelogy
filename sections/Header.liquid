@@ -459,8 +459,7 @@
 
 {% render 'SearchInput' %}
 
-{% render 'MiniCart'
-  , up_selling: section.settings.up_selling_products %}
+{% render 'cart-drawer-arm', part: 'shell', up_selling: section.settings.up_selling_products %}
 
 {% render 'PopupVariants'
   , product: section.settings.header_product %}
