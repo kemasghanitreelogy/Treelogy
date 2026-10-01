@@ -8,6 +8,12 @@
   re-render. Absent or anything but "B" → arm A (the current drawer), so the
   theme behaves exactly as before whenever no test is running.
 
+  Variant B always goes through the two GENERATED entry snippets
+  (tl-abx-cart_drawer-shell / -content). The A/B app points them at the
+  running experiment's B when it starts — the built-in v3 drawer, or a design
+  copied from a draft theme (SPEC-component-experiments §10). Never edit them
+  by hand; never render a B drawer here directly.
+
   To ship B permanently: change the condition to `!= 'A'`.
 
   @param {string} part - shell (drawer + scripts, from Header) | content (cart?view=mini)
@@ -22,9 +28,9 @@
 {%- endif -%}
 {%- if cart.attributes['_tl_abc_cart_drawer'] == 'B' -%}
   {%- if part == 'content' -%}
-    {%- render 'CartDrawerV3Content' -%}
+    {%- render 'tl-abx-cart_drawer-content' -%}
   {%- else -%}
-    {%- render 'CartDrawer' -%}
+    {%- render 'tl-abx-cart_drawer-shell', up_selling: up_selling -%}
   {%- endif -%}
 {%- else -%}
   {%- if part == 'content' -%}
