@@ -1,0 +1,134 @@
+{% doc %}
+  Bottom sheet listing every available variant of a cart line's product
+  ("Choose your pack" / "Choose your size"). Picking an option swaps the
+  line to that variant, keeping its quantity. "Best value" marks the option
+  with the lowest price per unit; "Save" is compare-at minus price.
+
+  @param {line_item} item - Paid cart line the sheet belongs to
+  @param {string} unit - Unit kind of the line's pack (day | serving | ml)
+
+  @example
+  {% render 'cart-v3-sheet', item: item, unit: pack.unit.value %}
+{% enddoc -%}
+{%- liquid
+  assign title_key = 'cart_v3.sheet_pack'
+  if unit == 'serving' or unit == 'ml'
+    assign title_key = 'cart_v3.sheet_size'
+  endif
+  assign options = item.product.variants | where: 'available', true
+
+  assign best_id = blank
+  assign best_rate = 0
+  assign rated = 0
+  for v in options
+    for p in metaobjects.cart_pack.values
+      if p.variant.value.id == v.id
+        assign v_units = p.units.value | default: 0
+        if v_units > 0
+          assign rated = rated | plus: 1
+          assign v_rate = v.price | times: 1.0 | divided_by: v_units
+          if best_id == blank or v_rate < best_rate
+            assign best_id = v.id
+            assign best_rate = v_rate
+          endif
+        endif
+        break
+      endif
+    endfor
+  endfor
+  if rated < 2
+    assign best_id = blank
+  endif
+-%}
+<div class="cv3-sheet" data-cv3-sheet="{{ item.key }}" hidden>
+  <button type="button" class="cv3-sheet__scrim" data-cv3-sheet-close tabindex="-1" aria-label="{{ 'cart_v3.close' | t }}"></button>
+  <div class="cv3-sheet__panel" role="dialog" aria-modal="true" aria-labelledby="cv3-sheet-title-{{ item.key | handleize }}">
+    <span class="cv3-sheet__grabber" aria-hidden="true"></span>
+    <div class="cv3-sheet__head">
+      <h3 class="cv3-sheet__title" id="cv3-sheet-title-{{ item.key | handleize }}">{{ title_key | t }}</h3>
+      <button type="button" class="cv3-close" data-cv3-sheet-close aria-label="{{ 'cart_v3.close' | t }}">×</button>
+    </div>
+    <div class="cv3-sheet__options" role="radiogroup" aria-labelledby="cv3-sheet-title-{{ item.key | handleize }}">
+      {%- for v in options -%}
+        {%- liquid
+          assign opt_pack = nil
+          for p in metaobjects.cart_pack.values
+            if p.variant.value.id == v.id
+              assign opt_pack = p
+              break
+            endif
+          endfor
+          assign opt_label = opt_pack.label.value | default: v.metafields.custom.staged_plan_label.value | default: v.title
+          assign opt_line2 = opt_pack.contents.value | default: opt_pack.note.value | newline_to_br | replace: '<br />', ' ' | strip_newlines
+          assign current = false
+          if v.id == item.variant_id
+            assign current = true
+          endif
+          assign have = 0
+          for line in cart.items
+            if line.variant_id == v.id and line.final_line_price > 0
+              assign have = have | plus: line.quantity
+            endif
+          endfor
+          assign save = 0
+          if v.compare_at_price > v.price
+            assign save = v.compare_at_price | minus: v.price
+          endif
+        -%}
+        <button
+          type="button"
+          class="cv3-option{% if current %} is-current{% endif %}"
+          role="radio"
+          aria-checked="{{ current }}"
+          {% unless current %}
+            data-cv3-swap="{{ v.id }}" data-key="{{ item.key }}" data-qty="{{ item.quantity }}" data-have="{{ have }}"
+          {% else %}
+            data-cv3-sheet-close
+          {% endunless %}
+        >
+          <span class="cv3-radio" aria-hidden="true"></span>
+          <span class="cv3-option__text">
+            {%- if v.id == best_id or save > 0 -%}
+              <span class="cv3-tags">
+                {%- if v.id == best_id -%}<span class="cv3-tag cv3-tag--dark">{{ 'cart_v3.tag_best' | t }}</span>{%- endif -%}
+                {%- if save > 0 -%}
+                  {%- capture save_amount -%}{% render 'cart-v3-money', amount: save %}{%- endcapture -%}
+                  <span class="cv3-tag">{{ 'cart_v3.tag_save' | t: amount: save_amount }}</span>
+                {%- endif -%}
+              </span>
+            {%- endif -%}
+            <span class="cv3-option__row cv3-option__row--main">
+              <span class="cv3-option__grow">{{ opt_label }}</span>
+              <span>{% render 'cart-v3-money', amount: v.price %}</span>
+            </span>
+            {%- if opt_line2 != blank or save > 0 -%}
+              <span class="cv3-option__row cv3-option__row--sub">
+                <span class="cv3-option__grow">{{ opt_line2 }}</span>
+                {%- if save > 0 -%}<s>{% render 'cart-v3-money', amount: v.compare_at_price %}</s>{%- endif -%}
+              </span>
+            {%- endif -%}
+            {%- if opt_pack -%}
+              <span class="cv3-option__unit">{% render 'cart-v3-per-unit', price: v.price, pack: opt_pack %}</span>
+            {%- endif -%}
+            {%- assign opt_gifts = v.metafields.custom.eligible_gifts.value -%}
+            {%- for g in opt_gifts -%}
+              {%- liquid
+                assign g_name = g.product.title
+                for p in metaobjects.cart_pack.values
+                  if p.variant.value.id == g.id
+                    assign g_name = p.label.value | default: g_name
+                    break
+                  endif
+                endfor
+              -%}
+              <span class="cv3-option__gift">
+                {%- render 'cart-v3-icon', name: 'gift' -%}
+                <span>{{ 'cart_v3.gift_pill' | t: title: g_name }}</span>
+              </span>
+            {%- endfor -%}
+          </span>
+        </button>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>

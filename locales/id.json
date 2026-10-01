@@ -891,5 +891,61 @@
       "copyright": "© %shop% %year%. Seluruh hak cipta dilindungi."
     },
     "wa_message": "Halo Treelogy, saya ingin bertanya tentang %product%."
+  },
+  "cart_v3": {
+    "title": "Keranjang",
+    "count": {
+      "one": "{{ count }} produk",
+      "other": "{{ count }} produk"
+    },
+    "close": "Tutup",
+    "ship_remaining": "Tambah {{ amount }} lagi untuk gratis ongkir",
+    "ship_free": "Gratis ongkir ke seluruh Indonesia",
+    "ship_progress": "Progres menuju gratis ongkir",
+    "quantity": "Jumlah {{ title }}",
+    "decrease": "Kurangi jumlah",
+    "increase": "Tambah jumlah",
+    "remove": "Hapus {{ title }}",
+    "change_pack": "Ganti paket",
+    "change_size": "Ganti ukuran",
+    "gift_row": "Hadiah gratis: {{ title }}",
+    "gift_worth": "Senilai {{ amount }}",
+    "per_day": "{{ amount }} per hari",
+    "per_serving": "{{ amount }} per sajian",
+    "per_ml": "Sekitar {{ amount }} per ml",
+    "per_day_for": "{{ amount }} per hari selama {{ days }} hari",
+    "upgrade_title": "Upgrade ke {{ label }}",
+    "benefit_shipping": "gratis ongkir",
+    "benefit_gift": "gratis {{ title }}",
+    "switch_gifts": {
+      "one": "Produk sama · {{ count }} hadiah gratis",
+      "other": "Produk sama · {{ count }} hadiah gratis"
+    },
+    "switch_same": "Produk sama",
+    "addon_title": "Tambah {{ title }}",
+    "add": "Tambah",
+    "subtotal": "Subtotal",
+    "savings": "Hemat",
+    "shipping": "Ongkir",
+    "free": "Gratis",
+    "calculated": "Dihitung saat checkout",
+    "total": "Total",
+    "gifts_count": {
+      "one": "{{ count }} hadiah gratis",
+      "other": "{{ count }} hadiah gratis"
+    },
+    "checkout_html": "Checkout · {{ amount }}",
+    "payments_alt": "Bayar dengan QRIS, transfer bank, Visa atau Mastercard",
+    "reassure_guarantee": "Garansi uang kembali 60 hari",
+    "reassure_ships_today": "Pesan sebelum 15.00, dikirim hari ini",
+    "reassure_ships_tomorrow": "Pesan sekarang, dikirim besok",
+    "reassure_certified": "Terdaftar BPOM, Halal dan USDA Organic",
+    "reassure_price": "Harga terendah kami, hanya di treelogy.com",
+    "sheet_pack": "Pilih paketmu",
+    "sheet_size": "Pilih ukuranmu",
+    "tag_best": "Paling hemat",
+    "tag_save": "Hemat {{ amount }}",
+    "gift_pill": "Gratis {{ title }}",
+    "error": "Terjadi kesalahan. Silakan coba lagi."
   }
 }

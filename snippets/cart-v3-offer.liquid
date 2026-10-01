@@ -1,0 +1,217 @@
+{% doc %}
+  Cart v3 upsell engine. Picks at most ONE offer for the current cart,
+  evaluated server-side on every render so it always reflects the cart:
+
+    1. switch  — the paid lines are exactly a bundle's components
+                 (cart_pack.components), each qty 1: "Switch to the Protocol".
+    2. upgrade — one paid line, qty 1, with a larger variant after it:
+                 "Upgrade to 2 months", benefit = free shipping it unlocks,
+                 else a gift the bigger pack adds.
+    3. addon   — one paid line whose pack names an add-on not yet in the
+                 cart (cart_pack.addon): "Add Seed Oil 30 ml for skin".
+
+  Switch and upgrade render in the `offer` slot (under the items); the
+  add-on renders in the `addon` slot (after reassurance).
+
+  @param {string} slot - offer | addon
+
+  @example
+  {% render 'cart-v3-offer', slot: 'offer' %}
+{% enddoc -%}
+{%- liquid
+  assign paid_lines = 0
+  assign single = nil
+  for item in cart.items
+    assign is_gift = false
+    if item.final_line_price == 0
+      if item.properties['_Gifted'] != blank or item.line_level_discount_allocations.size > 0
+        assign is_gift = true
+      endif
+    endif
+    unless is_gift
+      assign paid_lines = paid_lines | plus: 1
+      assign single = item
+    endunless
+  endfor
+
+  assign kind = blank
+
+  if paid_lines >= 2
+    for p in metaobjects.cart_pack.values
+      assign comps = p.components.value
+      assign comps_size = comps.size | default: 0
+      if comps_size != paid_lines
+        continue
+      endif
+      assign bundle = p.variant.value
+      unless bundle.available
+        continue
+      endunless
+      assign matched = 0
+      assign paid_sum = 0
+      assign keys = ''
+      for c in comps
+        for item in cart.items
+          if item.variant_id == c.id and item.quantity == 1 and item.final_line_price > 0
+            assign matched = matched | plus: 1
+            assign paid_sum = paid_sum | plus: item.final_line_price
+            assign keys = keys | append: item.key | append: ','
+            break
+          endif
+        endfor
+      endfor
+      if matched == comps_size and paid_sum > bundle.price
+        assign kind = 'switch'
+        assign offer_pack = p
+        assign target = bundle
+        assign delta = paid_sum | minus: bundle.price
+        break
+      endif
+    endfor
+  endif
+
+  if kind == blank and paid_lines == 1 and single.quantity == 1
+    assign found = false
+    for v in single.product.variants
+      if found and v.available
+        assign target = v
+        break
+      endif
+      if v.id == single.variant_id
+        assign found = true
+      endif
+    endfor
+    if target and target.price > single.final_price
+      assign kind = 'upgrade'
+      assign delta = target.price | minus: single.final_price
+      assign offer_pack = nil
+      for p in metaobjects.cart_pack.values
+        if p.variant.value.id == target.id
+          assign offer_pack = p
+          break
+        endif
+      endfor
+    endif
+  endif
+
+  if kind == blank and paid_lines == 1
+    for p in metaobjects.cart_pack.values
+      if p.variant.value.id == single.variant_id
+        assign addon = p.addon.value
+        break
+      endif
+    endfor
+    if addon and addon.available
+      assign in_cart = false
+      for item in cart.items
+        if item.variant_id == addon.id
+          assign in_cart = true
+          break
+        endif
+      endfor
+      unless in_cart
+        assign kind = 'addon'
+        assign target = addon
+        assign offer_pack = nil
+        for p in metaobjects.cart_pack.values
+          if p.variant.value.id == addon.id
+            assign offer_pack = p
+            break
+          endif
+        endfor
+      endunless
+    endif
+  endif
+-%}
+{%- if slot == 'offer' and kind != blank and kind != 'addon' -%}
+  {%- liquid
+    if kind == 'switch'
+      assign title = offer_pack.offer_label.value | default: target.product.title
+      assign gift_count = target.metafields.custom.eligible_gifts.value.size | default: 0
+      if gift_count > 0
+        assign sub = 'cart_v3.switch_gifts' | t: count: gift_count
+      else
+        assign sub = 'cart_v3.switch_same' | t
+      endif
+    else
+      assign target_label = offer_pack.label.value | default: target.title
+      assign title = 'cart_v3.upgrade_title' | t: label: target_label
+      assign benefit = blank
+      if localization.market.handle == 'id'
+        assign fs_min = settings.min_shipping | default: 700000 | times: 100
+        assign after = cart.items_subtotal_price | minus: single.final_line_price | plus: target.price
+        if cart.items_subtotal_price < fs_min and after >= fs_min
+          assign benefit = 'cart_v3.benefit_shipping' | t
+        endif
+      endif
+      if benefit == blank
+        assign have_gifts = single.variant.metafields.custom.eligible_gifts.value
+        for g in target.metafields.custom.eligible_gifts.value
+          assign already = false
+          for h in have_gifts
+            if h.id == g.id
+              assign already = true
+              break
+            endif
+          endfor
+          unless already
+            assign g_name = g.product.title
+            for p in metaobjects.cart_pack.values
+              if p.variant.value.id == g.id
+                assign g_name = p.label.value | default: g_name
+                break
+              endif
+            endfor
+            assign benefit = 'cart_v3.benefit_gift' | t: title: g_name
+            break
+          endunless
+        endfor
+      endif
+      capture sub
+        if offer_pack
+          render 'cart-v3-per-unit', price: target.price, pack: offer_pack
+        endif
+      endcapture
+      assign sub = sub | strip
+      if benefit != blank
+        if sub != blank
+          assign sub = sub | append: ' · ' | append: benefit
+        else
+          assign sub = benefit
+        endif
+      endif
+    endif
+  -%}
+  <div class="cv3-offer" data-cv3-offer="{{ kind }}">
+    <div class="cv3-offer__text">
+      <span class="cv3-offer__title">{{ title }}</span>
+      {%- if sub != blank -%}<span>{{ sub }}</span>{%- endif -%}
+    </div>
+    {%- capture delta_amount -%}{% render 'cart-v3-money', amount: delta %}{%- endcapture -%}
+    {%- if kind == 'switch' -%}
+      <button type="button" class="cv3-pill" data-cv3-switch="{{ target.id }}" data-keys="{{ keys }}" data-qty="1" data-have="0">−{{ delta_amount }}</button>
+    {%- else -%}
+      <button type="button" class="cv3-pill" data-cv3-swap="{{ target.id }}" data-key="{{ single.key }}" data-qty="1" data-have="0">+{{ delta_amount }}</button>
+    {%- endif -%}
+  </div>
+{%- elsif slot == 'addon' and kind == 'addon' -%}
+  {%- liquid
+    assign title = offer_pack.offer_label.value
+    if title == blank
+      assign title = 'cart_v3.addon_title' | t: title: target.product.title
+    endif
+    assign image = target.image | default: target.product.featured_image
+  -%}
+  <div class="cv3-addon" data-cv3-offer="addon">
+    <span class="cv3-addon__photo">
+      {%- if image -%}
+        {{ image | image_url: width: 96, height: 96, crop: 'center' | image_tag: width: 48, height: 48, loading: 'lazy', alt: '' }}
+      {%- endif -%}
+    </span>
+    <div class="cv3-addon__info">
+      <span class="cv3-addon__title">{{ title }}</span>
+      <span>{% render 'cart-v3-money', amount: target.price %}</span>
+    </div>
+    <button type="button" class="cv3-pill cv3-pill--add" data-cv3-add="{{ target.id }}">{{ 'cart_v3.add' | t }}</button>
+  </div>
+{%- endif -%}

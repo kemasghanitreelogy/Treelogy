@@ -1,0 +1,148 @@
+{% doc %}
+  One paid cart line as a product card: photo, title, pack subtitle, price
+  with compare-at, quantity stepper, "Change pack" and remove. Free gifts
+  the line unlocked (its variant's custom.eligible_gifts, present in the
+  cart as `_Gifted` lines) are nested underneath, so the buyer sees which
+  product earned them.
+
+  @param {line_item} item - Paid cart line
+  @param {metaobject} [pack] - cart_pack entry of the line's variant
+
+  @example
+  {% render 'cart-v3-line', item: item, pack: pack %}
+{% enddoc -%}
+{%- liquid
+  assign base_unit = item.variant.compare_at_price | default: 0
+  if item.original_price > base_unit
+    assign base_unit = item.original_price
+  endif
+  assign base_line = base_unit | times: item.quantity
+
+  assign label = pack.label.value
+  if label == blank and pack == blank
+    assign label = item.variant.metafields.custom.staged_plan_label.value | default: item.variant.title
+  endif
+  if item.product.has_only_default_variant and pack == blank
+    assign label = blank
+  endif
+  assign contents = pack.contents.value
+
+  assign change_key = 'cart_v3.change_pack'
+  if pack.unit.value == 'serving' or pack.unit.value == 'ml'
+    assign change_key = 'cart_v3.change_size'
+  endif
+  assign can_change = false
+  if item.product.variants.size > 1
+    assign can_change = true
+  endif
+
+  assign image = item.image | default: item.product.featured_image
+  assign eligible = item.variant.metafields.custom.eligible_gifts.value
+-%}
+<article class="cv3-card" data-cv3-line="{{ item.key }}">
+  <div class="cv3-line">
+    <a class="cv3-line__photo" href="{{ item.url }}" tabindex="-1" aria-hidden="true">
+      {%- if image -%}
+        {{ image | image_url: width: 160, height: 160, crop: 'center' | image_tag: width: 80, height: 80, loading: 'lazy', alt: '' }}
+      {%- endif -%}
+    </a>
+    <div class="cv3-line__info">
+      <a class="cv3-line__title" href="{{ item.url }}">{{ item.product.title }}</a>
+      {%- if label != blank or contents != blank -%}
+        <span class="cv3-line__sub">
+          {{- label -}}
+          {%- if label != blank and contents != blank %} · {% endif -%}
+          {{- contents | escape | newline_to_br -}}
+        </span>
+      {%- endif -%}
+      <span class="cv3-price">
+        <span class="cv3-price__now" data-cv3-roll="line-{{ item.variant_id }}">{% render 'cart-v3-money', amount: item.final_line_price %}</span>
+        {%- if base_line > item.final_line_price -%}
+          <s class="cv3-price__was">{% render 'cart-v3-money', amount: base_line %}</s>
+        {%- endif -%}
+      </span>
+      <div class="cv3-line__actions">
+        <div class="cv3-stepper" role="group" aria-label="{{ 'cart_v3.quantity' | t: title: item.product.title | escape }}">
+          <button
+            type="button"
+            class="cv3-stepper__btn"
+            data-cv3-qty="{{ item.quantity | minus: 1 }}"
+            data-key="{{ item.key }}"
+            aria-label="{{ 'cart_v3.decrease' | t }}"
+            {% if item.quantity <= 1 %}disabled{% endif %}
+          >
+            −
+          </button>
+          <span class="cv3-stepper__qty" aria-live="polite">{{ item.quantity }}</span>
+          <button
+            type="button"
+            class="cv3-stepper__btn"
+            data-cv3-qty="{{ item.quantity | plus: 1 }}"
+            data-key="{{ item.key }}"
+            aria-label="{{ 'cart_v3.increase' | t }}"
+          >
+            +
+          </button>
+        </div>
+        {%- if can_change -%}
+          <button type="button" class="cv3-link" data-cv3-sheet-open="{{ item.key }}" aria-haspopup="dialog">
+            {{- change_key | t -}}
+          </button>
+        {%- endif -%}
+      </div>
+    </div>
+    <button
+      type="button"
+      class="cv3-remove"
+      data-cv3-qty="0"
+      data-key="{{ item.key }}"
+      aria-label="{{ 'cart_v3.remove' | t: title: item.product.title | escape }}"
+    >
+      {%- render 'cart-v3-icon', name: 'trash' -%}
+    </button>
+  </div>
+  {%- for gift in cart.items -%}
+    {%- if gift.final_line_price > 0 -%}{%- continue -%}{%- endif -%}
+    {%- assign earned = false -%}
+    {%- for gift_variant in eligible -%}
+      {%- if gift_variant.id == gift.variant_id -%}{%- assign earned = true -%}{%- break -%}{%- endif -%}
+    {%- endfor -%}
+    {%- unless earned -%}{%- continue -%}{%- endunless -%}
+    {%- liquid
+      assign worth = gift.variant.compare_at_price | default: 0
+      if gift.original_price > worth
+        assign worth = gift.original_price
+      endif
+      assign g_short = gift.product.title
+      for p in metaobjects.cart_pack.values
+        if p.variant.value.id == gift.variant_id
+          assign g_short = p.label.value | default: g_short
+          break
+        endif
+      endfor
+      assign g_full = 'cart_v3.gift_row' | t: title: gift.product.title
+      assign g_mid = 'cart_v3.gift_row' | t: title: g_short
+      assign rows = item.quantity | at_most: gift.quantity
+    -%}
+    {%- comment -%}One row per unit earned: qty 2 of the product = two gift rows.{%- endcomment -%}
+    {%- for n in (1..rows) -%}
+      <div class="cv3-gift" data-cv3-fit-row>
+        <span class="cv3-gift__label">
+          {%- render 'cart-v3-icon', name: 'gift' -%}
+          <span
+            class="cv3-gift__text"
+            data-cv3-fit="{{ g_full | escape }}|{{ g_mid | escape }}|{{ g_short | escape }}"
+            title="{{ g_full | escape }}"
+          >
+            {{- g_full -}}
+          </span>
+        </span>
+        {%- if worth > 0 -%}
+          {%- capture worth_amount -%}{% render 'cart-v3-money', amount: worth %}{%- endcapture -%}
+          {%- assign worth_long = 'cart_v3.gift_worth' | t: amount: worth_amount -%}
+          <span class="cv3-chip" data-cv3-fit-chip="{{ worth_long | escape }}|{{ worth_amount | strip | escape }}">{{ worth_long }}</span>
+        {%- endif -%}
+      </div>
+    {%- endfor -%}
+  {%- endfor -%}
+</article>

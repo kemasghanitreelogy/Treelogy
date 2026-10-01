@@ -1,0 +1,29 @@
+{% doc %}
+  Formats `amount ÷ units` as money — the single rounding rule behind every
+  "a day / a serving / per ml" figure in the cart, so they can never
+  disagree. IDR: a clean multiple of Rp50 is shown exactly (Rp13.250, the
+  same figure the PDP shows), anything else is rounded to the nearest
+  Rp100 (Rp15.166 → Rp15.200). Other currencies round to the subunit.
+
+  @param {number} amount - Amount in the currency subunit
+  @param {number} units - Divisor (days, servings, ml)
+
+  @example
+  {% render 'cart-v3-rate', amount: cart.total_price, units: 90 %}
+{% enddoc -%}
+{%- liquid
+  assign rate = amount | times: 1.0 | divided_by: units
+  if cart.currency.iso_code == 'IDR'
+    assign clean = amount | modulo: units
+    assign exact = amount | divided_by: units
+    assign fifty = exact | modulo: 5000
+    if clean == 0 and fifty == 0
+      assign rate = exact
+    else
+      assign rate = rate | divided_by: 10000.0 | round | times: 10000
+    endif
+  else
+    assign rate = rate | round
+  endif
+  render 'cart-v3-money', amount: rate
+-%}

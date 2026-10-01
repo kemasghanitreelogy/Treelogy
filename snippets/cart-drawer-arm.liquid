@@ -1,0 +1,31 @@
+{% doc %}
+  The ONE place that decides which cart drawer this visitor gets — the
+  switch of the cart-drawer A/B test (A/B app: SPEC-component-experiments).
+
+  The A/B app writes the hidden cart attribute `_tl_abc_cart_drawer` = "B" for
+  visitors in arm B and clears it otherwise; Shopify renders every page per
+  cart, so Liquid sees it on every page and on every `cart?view=mini`
+  re-render. Absent or anything but "B" → arm A (the current drawer), so the
+  theme behaves exactly as before whenever no test is running.
+
+  To ship B permanently: change the condition to `!= 'A'`.
+
+  @param {string} part - shell (drawer + scripts, from Header) | content (cart?view=mini)
+  @param {product[]} [up_selling] - Header's up-selling products (arm A shell only)
+
+  @example
+  {% render 'cart-drawer-arm', part: 'shell', up_selling: section.settings.up_selling_products %}
+{% enddoc -%}
+{%- if cart.attributes['_tl_abc_cart_drawer'] == 'B' -%}
+  {%- if part == 'content' -%}
+    {%- render 'CartDrawerV3Content' -%}
+  {%- else -%}
+    {%- render 'CartDrawer' -%}
+  {%- endif -%}
+{%- else -%}
+  {%- if part == 'content' -%}
+    {%- render 'CartDrawerContent' -%}
+  {%- else -%}
+    {%- render 'MiniCart', up_selling: up_selling -%}
+  {%- endif -%}
+{%- endif -%}

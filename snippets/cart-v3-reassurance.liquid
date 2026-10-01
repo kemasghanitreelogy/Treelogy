@@ -1,0 +1,18 @@
+{% doc %}
+  Cart v3 reassurance rows. The dispatch line is time-dependent (before
+  15:00 in the warehouse's UTC+8 "ships today", after "ships tomorrow");
+  the server renders the daytime copy and cart-drawer-v3.js switches it
+  on the client, because rendered HTML can be cached.
+
+  @example
+  {% render 'cart-v3-reassurance' %}
+{% enddoc -%}
+<ul class="cv3-reassure">
+  <li class="cv3-reassure__row">{% render 'cart-v3-icon', name: 'shield' %}<span>{{ 'cart_v3.reassure_guarantee' | t }}</span></li>
+  <li class="cv3-reassure__row">
+    {%- render 'cart-v3-icon', name: 'truck' -%}
+    <span data-cv3-ship-time data-after="{{ 'cart_v3.reassure_ships_tomorrow' | t | escape }}">{{ 'cart_v3.reassure_ships_today' | t }}</span>
+  </li>
+  <li class="cv3-reassure__row">{% render 'cart-v3-icon', name: 'certified' %}<span>{{ 'cart_v3.reassure_certified' | t }}</span></li>
+  <li class="cv3-reassure__row">{% render 'cart-v3-icon', name: 'tag' %}<span>{{ 'cart_v3.reassure_price' | t }}</span></li>
+</ul>

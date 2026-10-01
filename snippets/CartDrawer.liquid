@@ -1,0 +1,25 @@
+{% doc %}
+  Cart drawer v3 shell. Replaces snippets/MiniCart. Keeps the page-level
+  contract other code relies on: `.mini-cart` (+ `.active` when open) is
+  observed by gtm-events.js (view_cart), pdp3.js / pdp4.js (scroll lock)
+  and theme.liquid (/cart → open drawer); `#cart` is the render target of
+  both cart-drawer-v3.js and app.bundle.js.
+
+  @example
+  {% render 'CartDrawer' %}
+{% enddoc -%}
+{{ 'cart-drawer-v3.css' | asset_url | stylesheet_tag }}
+<div
+  class="mini-cart cv3-host"
+  data-lenis-prevent
+  data-atc-adding="{{ 'cart.atc_adding' | t | escape }}"
+  data-atc-added="{{ 'cart.atc_added' | t | escape }}"
+  data-atc-failed="{{ 'cart.atc_failed_generic' | t | escape }}"
+  data-error="{{ 'cart_v3.error' | t | escape }}"
+>
+  <div class="overlay" data-cv3-close></div>
+  <div class="mini-cart-wrapper" role="dialog" aria-modal="true" tabindex="-1" aria-label="{{ 'cart_v3.title' | t }}">
+    <div id="cart">{% render 'CartDrawerV3Content' %}</div>
+  </div>
+</div>
+<script src="{{ 'cart-drawer-v3.js' | asset_url }}" defer></script>

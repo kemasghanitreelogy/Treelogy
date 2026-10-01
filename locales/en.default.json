@@ -894,5 +894,61 @@
       "copyright": "© %shop% %year%. All rights reserved."
     },
     "wa_message": "Hi Treelogy, I would like to ask about %product%."
+  },
+  "cart_v3": {
+    "title": "Your cart",
+    "count": {
+      "one": "{{ count }} item",
+      "other": "{{ count }} items"
+    },
+    "close": "Close",
+    "ship_remaining": "Add {{ amount }} more for free shipping",
+    "ship_free": "Free shipping anywhere in Indonesia",
+    "ship_progress": "Progress to free shipping",
+    "quantity": "Quantity of {{ title }}",
+    "decrease": "Decrease quantity",
+    "increase": "Increase quantity",
+    "remove": "Remove {{ title }}",
+    "change_pack": "Change pack",
+    "change_size": "Change size",
+    "gift_row": "Free gift: {{ title }}",
+    "gift_worth": "Worth {{ amount }}",
+    "per_day": "{{ amount }} a day",
+    "per_serving": "{{ amount }} a serving",
+    "per_ml": "About {{ amount }} per ml",
+    "per_day_for": "{{ amount }} a day for {{ days }} days",
+    "upgrade_title": "Upgrade to {{ label }}",
+    "benefit_shipping": "free shipping",
+    "benefit_gift": "free {{ title }}",
+    "switch_gifts": {
+      "one": "Same products · {{ count }} free gift",
+      "other": "Same products · {{ count }} free gifts"
+    },
+    "switch_same": "Same products",
+    "addon_title": "Add {{ title }}",
+    "add": "Add",
+    "subtotal": "Subtotal",
+    "savings": "Savings",
+    "shipping": "Shipping",
+    "free": "Free",
+    "calculated": "Calculated at checkout",
+    "total": "Total",
+    "gifts_count": {
+      "one": "{{ count }} free gift",
+      "other": "{{ count }} free gifts"
+    },
+    "checkout_html": "Checkout · {{ amount }}",
+    "payments_alt": "Pay with QRIS, bank transfer, Visa or Mastercard",
+    "reassure_guarantee": "60-day money-back guarantee",
+    "reassure_ships_today": "Order by 3pm, ships today",
+    "reassure_ships_tomorrow": "Order now, ships tomorrow",
+    "reassure_certified": "BPOM registered, Halal and USDA Organic",
+    "reassure_price": "Our lowest price, only at treelogy.com",
+    "sheet_pack": "Choose your pack",
+    "sheet_size": "Choose your size",
+    "tag_best": "Best value",
+    "tag_save": "Save {{ amount }}",
+    "gift_pill": "Free {{ title }}",
+    "error": "Something went wrong. Please try again."
   }
 }
