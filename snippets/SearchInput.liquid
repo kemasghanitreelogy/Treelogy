@@ -102,7 +102,7 @@
           <div class="sp-label">{{ 'search.featured' | t }}</div>
           <div class="sp-upsell-rail">
             {%- for p in upsell_collection.products limit: 4 -%}
-              {%- if p.vendor == 'TEST' or p.tags contains 'lp-only' -%}{%- continue -%}{%- endif -%}
+              {%- if p.vendor == 'TEST' or p.vendor == 'Landing Page' or p.vendor == 'Gift' or p.tags contains 'lp-only' -%}{%- continue -%}{%- endif -%}
               <a class="sp-upsell-card" href="{{ p.url }}">
                 <span class="sp-upsell-thumb">
                   {{- p.featured_image | image_url: width: 160 | image_tag: loading: 'lazy', widths: '80, 160', alt: p.title -}}

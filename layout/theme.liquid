@@ -35,7 +35,16 @@
       crawler tanpa JS tetap menerima 200 dan tidak boleh mengindeksnya.
       design_mode dikecualikan supaya tetap bisa dibuka dari theme editor.
     {%- endcomment -%}
-    {%- if request.page_type == 'product' and product.vendor == 'TEST' and request.design_mode != true -%}
+    {%- comment -%}
+      5 Okt 2026 — vendor TEST dipecah: listing funnel LP = 'Landing Page',
+      hadiahnya = 'Gift'. 'TEST' tetap disaring (duplikat latihan & listing lama).
+      Pakai bendera karena Liquid mengevaluasi and/or dari kanan tanpa kurung.
+    {%- endcomment -%}
+    {%- assign tl_hidden_vendor = false -%}
+    {%- if product.vendor == 'TEST' or product.vendor == 'Landing Page' or product.vendor == 'Gift' -%}
+      {%- assign tl_hidden_vendor = true -%}
+    {%- endif -%}
+    {%- if request.page_type == 'product' and tl_hidden_vendor and request.design_mode != true -%}
       <meta name="robots" content="noindex, nofollow">
       <script>window.location.replace({{ routes.root_url | json }});</script>
       <noscript><meta http-equiv="refresh" content="0;url={{ routes.root_url }}"></noscript>
