@@ -120,6 +120,20 @@
       visibility 0s linear 160ms !important;
   }
 
+  /* Hiding the shell alone is not enough: Klaviyo's reset CSS
+     (kl-private-reset-css-*) sets `visibility: visible` and
+     `pointer-events: auto` on EVERY element inside the popup, which overrides
+     what they would inherit from the shell. The form and its image stayed
+     invisible-but-live over the drawer, swallowing taps and every scroll
+     (found 6 Oct 2026: first visit, drawer opened, stepper/list dead). So the
+     descendants follow the shell: no hit-testing at once, and visibility
+     inherits the shell's delayed hide, keeping its fade. */
+  body:has(.mini-cart.active) div[class*='kl-private-reset-css-']:has(> div > [data-testid='POPUP']) *,
+  body.tl-kl-hold div[class*='kl-private-reset-css-']:has(> div > [data-testid='POPUP']) * {
+    visibility: inherit !important;
+    pointer-events: none !important;
+  }
+
   @media screen and (max-width: 767px) {
     div[class*='kl-private-reset-css-']:has(> div > [data-testid='POPUP']) {
       backdrop-filter: none !important;
