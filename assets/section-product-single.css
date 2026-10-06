@@ -10,10 +10,17 @@
 }
 
 /* GRID LAYOUT */
+/* min-width: 0 — the wrapper is a flex row, and a flex item may not shrink
+   below its content by default. The gallery's content includes the thumbnail
+   strip (70px per photo), so a product with more photos got a wider gallery
+   and a narrower info column: Seed Oil (9 photos) squeezed the pack cards
+   until the price ran into the "save" badge, Powder (7 photos) did not. The
+   strip already scrolls (overflow-x: auto), so it no longer sets the width. */
 .product-detail-wrapper .gallery-wrapper {
   grid-column: 2 / 8;
   width: 100%;
   max-width: 100%;
+  min-width: 0;
   overflow: hidden;
 }
 
