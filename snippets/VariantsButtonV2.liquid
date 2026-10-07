@@ -1122,6 +1122,13 @@
        margin:0 yang lama menghapus jarak itu dan bullet menempel ke judul. */
     margin: 8px 0 0;
   }
+  /* Pasangan aturan di atas: begitu harga naik ke slot badge, kolom kanan
+     baris bawah kosong — tapi kolom itu tetap selebar harga, jadi nilai
+     ongkir/hadiah berhenti jauh sebelum tepi kartu. Daftar manfaat dibentang
+     ke dua kolom supaya angkanya rata kanan seperti kartu lain. */
+  .v2-plan:has(> .v2-plan__head--flow):not(:has(.v2-plan__badge)) > .v2-plan__perks {
+    grid-column: 1 / -1;
+  }
 
   /* Di 360-389px pengecilan badge pun tidak cukup — judul hanya dapat 84px.
      Di lebar itu badge turun ke bawah harga sehingga judul memakai lebar penuh. */
