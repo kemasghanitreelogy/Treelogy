@@ -77,17 +77,17 @@
     {%- endif -%}
     <div class="sk-stack" style="gap:var(--sk-space-8)">
       <h2 class="sk-h2">{% render 'pdp4-sentence-lines', text: t_heading %}</h2>
-      {%- comment -%}
-        Tombolnya SATU baris teks, bukan dua baris berlabel seperti generasi
-        sebelumnya — rujukan merangkai keduanya dengan pemisah titik-tengah.
-        Kedua setting locale-nya dipertahankan supaya terjemahan yang sudah ada
-        tidak dibuang.
-      {%- endcomment -%}
-      {%- if t_badge1 != blank or t_badge2 != blank -%}
-        <button class="sk-btn sk-btn--text sk-btn--sm pdp-seal__link" id="pdp4-bpom-btn" type="button" aria-haspopup="dialog">{{ t_badge1 }}{% if t_badge1 != blank and t_badge2 != blank %} · {% endif %}{{ t_badge2 }}</button>
-      {%- endif -%}
     </div>
   </div>
+  {%- comment -%}
+    Tombolnya SATU baris teks, bukan dua baris berlabel seperti generasi
+    sebelumnya — rujukan merangkai keduanya dengan pemisah titik-tengah.
+    Kedua setting locale-nya dipertahankan supaya terjemahan yang sudah ada
+    tidak dibuang.
+  {%- endcomment -%}
+  {%- if t_badge1 != blank or t_badge2 != blank -%}
+    <button class="sk-btn sk-btn--text sk-btn--sm pdp-seal__link" id="pdp4-bpom-btn" type="button" aria-haspopup="dialog">{{ t_badge1 }}{% if t_badge1 != blank and t_badge2 != blank %} · {% endif %}{{ t_badge2 }}</button>
+  {%- endif -%}
   {%- if t_body != blank -%}<p class="sk-body sk-text-secondary">{{ t_body }}</p>{%- endif -%}
   {%- if section.blocks.size > 0 -%}
     <div class="sk-scroll-x">
