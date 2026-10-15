@@ -774,6 +774,50 @@
     });
   };
 
+  /* ===== Keadaan kosong sesudah barang terakhir dihapus =====
+     `.cart-empty-state` dan footer "Continue shopping" hanya dirender server
+     bila keranjang SUDAH kosong saat drawer digambar. Menghapus barang
+     terakhir di klien hanya membuang barisnya (cartSyncRows), jadi drawer
+     tertinggal kosong tanpa pesan, dengan footer basi "CHECK OUT | Rp 0" dan
+     angka hemat lama — sampai drawer dibuka ulang dan digambar ulang.
+
+     Keadaan kosongnya diambil dari HTML server yang sama dengan jalur add
+     (cart?view=mini), bukan salinan markup, dan hanya dipasang bila payload
+     ini masih yang termuda DAN server memang menjawab kosong (429 dibalas
+     HTML tanpa keadaan kosong → tidak menyentuh apa pun). Janjinya disimpan
+     di cartEmptyRender supaya penutup otomatis dan overlay hapus menunggu
+     sampai pembeli MELIHAT keranjangnya kosong. */
+  window.cartEmptyRender = null;
+  window.cartRenderEmpty = function (seq) {
+    var mine = (seq === undefined || seq === null) ? window.cartMutSeq : seq;
+    var prefix = (typeof Shopify !== 'undefined' && Shopify.locale === 'id') ? '/id/' : '/';
+    var p = fetch(prefix + 'cart?view=mini', { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.text() : ''; })
+      .then(function (html) {
+        if (!html || mine !== window.cartMutSeq) return;
+        var doc = new DOMParser().parseFromString(html, 'text/html');
+        var newItems = doc.querySelector('.cart-items');
+        var newFooter = doc.querySelector('.sub-total.cart-footer');
+        if (!newItems || !newItems.querySelector('.cart-empty-state')) return;
+        var c = document.getElementById('cart');
+        var oldItems = c && c.querySelector('.cart-items');
+        var oldFooter = c && c.querySelector('.sub-total.cart-footer');
+        /* Barang masuk lagi selagi permintaan ini di jalan → bukan kosong lagi. */
+        if (!oldItems || oldItems.querySelector('.cart-item:not(.cart-item--skel)')) return;
+        oldItems.innerHTML = newItems.innerHTML;
+        if (oldFooter && newFooter) {
+          oldFooter.classList.remove('opt-pending');
+          oldFooter.innerHTML = newFooter.innerHTML;
+          if (window.initCartTrustSlider) window.initCartTrustSlider();
+        }
+        if (window.moveFBT) window.moveFBT();
+      })
+      .catch(function () {});
+    window.cartEmptyRender = p;
+    p.then(function () { if (window.cartEmptyRender === p) window.cartEmptyRender = null; });
+    return p;
+  };
+
   /* ===== Central UI refresh ===== */
   window.refreshCartUI = function(cart, seq) {
     var c = document.getElementById('cart');
@@ -799,6 +843,14 @@
     /* Daftar baris didamaikan DULU: recalcSavings di bawah membaca baris dari
        DOM, jadi baris basi yang belum dibuang akan menggelembungkan "hemat". */
     window.cartSyncRows(cart, seq);
+
+    /* Baru saja menjadi kosong (belum ada keadaan kosong di DOM) → pasang
+       keadaan kosong dari server. Dipanggil SEBELUM cartMaybeCloseOnEmpty
+       di bawah, supaya penutup otomatis bisa menunggu janjinya. */
+    if (cart.item_count === 0 && (seq === undefined || seq === null || seq === window.cartMutSeq)) {
+      var itemsNow = c.querySelector('.cart-items');
+      if (itemsNow && !itemsNow.querySelector('.cart-empty-state')) window.cartRenderEmpty(seq);
+    }
 
     /* Baris hadiah ikut disegarkan dari payload yang sama — lewat pemiliknya
        (mesin hadiah), bukan salinan logika. Hanya payload termuda yang boleh:
@@ -917,8 +969,10 @@
      seketika terasa seperti diusir. Batal otomatis bila sempat ada isi lagi
      (mis. pembeli menekan ADD di Frequently Bought Together). */
   var _emptyCloseTimer = null;
+  var _emptyCloseToken = 0;
   var _lastItemCount = null;
   window.cartCancelEmptyClose = function () {
+    _emptyCloseToken++;
     if (_emptyCloseTimer) { clearTimeout(_emptyCloseTimer); _emptyCloseTimer = null; }
   };
   /* Hanya TRANSISI berisi → kosong yang menutup. Drawer yang memang dibuka
@@ -935,8 +989,24 @@
   };
   window.cartScheduleEmptyClose = function () {
     if (_emptyCloseTimer) return;
+    /* Jeda 650ms dihitung sejak keadaan kosong TAMPIL (lihat cartRenderEmpty),
+       bukan sejak baris hilang — kalau tidak, drawer menutup di atas daftar
+       kosong tanpa pesan. Dibatalkan oleh cartCancelEmptyClose lewat token. */
+    var pending = window.cartEmptyRender;
+    if (pending) {
+      var token = ++_emptyCloseToken;
+      pending.then(function () {
+        if (token === _emptyCloseToken) window.cartScheduleEmptyClose();
+      });
+      return;
+    }
+    /* Pembeli yang menekan ADD (FBT) di keadaan kosong sedang berbelanja
+       lagi: mutasi yang BERANGKAT setelah jadwal ini dibuat membatalkannya,
+       tanpa menunggu jawaban server yang bisa lebih lambat dari 650ms. */
+    var seqAt = window.cartMutSeq;
     _emptyCloseTimer = setTimeout(function () {
       _emptyCloseTimer = null;
+      if (window.cartMutSeq !== seqAt) return;
       var c = document.getElementById('cart');
       /* `:not(.cart-item--skel)` WAJIB. Kerangka "drawer tidak pernah kosong"
          memakai kelas `.cart-item` juga, dan ia terpasang pada 260ms —
@@ -1107,7 +1177,10 @@
              pada DOM yang sedang hidup. */
           window.refreshCartUI(cart, seq);
           window.syncFBTVisibility(cart);
-          window.cartHideLoading();
+          /* Barang terakhir: overlay bertahan sampai keadaan kosong terpasang,
+             jadi footer basi "CHECK OUT | Rp 0" tak pernah terlihat. */
+          if (window.cartEmptyRender) window.cartEmptyRender.then(window.cartHideLoading);
+          else window.cartHideLoading();
         })
         .catch(function() {
           if (row) {
