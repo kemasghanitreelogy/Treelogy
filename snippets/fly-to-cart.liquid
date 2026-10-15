@@ -1,0 +1,330 @@
+{% doc %}
+  Fly-to-cart: gambar varian terbang dari tombol ATC ke ikon keranjang header.
+
+  Modul animasi murni, tanpa logika keranjang. Pemiliknya adalah handler ATC
+  premium di snippets/MiniCart.liquid: ia meluncurkan penerbangan, menjalankan
+  add + render drawer selagi chip terbang (penerbangan = loading state), lalu
+  membuka drawer saat `landed` selesai. Lihat claudedocs/fly-to-cart/DESIGN.md.
+
+  API: `window.tlFly.launch(event, button, src)` → `null` atau
+  `{ landed: Promise, cancel() }`. `null` berarti pemanggil memakai jalur
+  lamanya (reduced motion, `?fly=0`, ikon tak terlihat, tanpa gambar).
+  `window.tlFly.wait(on)`: ikon "bernapas" pelan selama server belum
+  menjawab sesudah chip mendarat — jeda terbaca sebagai menerima, bukan macet.
+
+  @example
+  {% render 'fly-to-cart' %}
+{% enddoc %}
+
+<style>
+  .tl-fly {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 2147483000;
+    pointer-events: none;
+    will-change: transform, opacity;
+    transform-origin: 50% 50%;
+  }
+  .tl-fly__clip {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: #F8F8F2;
+  }
+  .tl-fly__clip img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .tl-fly__clip::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55), inset 0 0 0 1.5px rgba(43, 60, 53, 0.06);
+    pointer-events: none;
+  }
+  .tl-fly__gloss {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.34) 0%, rgba(255, 255, 255, 0.08) 38%, rgba(255, 255, 255, 0) 60%);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .tl-fly__sheen {
+    position: absolute;
+    inset: -20%;
+    background: linear-gradient(105deg, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0.55) 50%, rgba(255, 255, 255, 0) 60%);
+    transform: translate3d(-130%, 0, 0);
+    pointer-events: none;
+  }
+  .tl-fly-ring {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 40px;
+    height: 40px;
+    margin: -20px 0 0 -20px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(165, 187, 134, 0.9);
+    z-index: 2147483000;
+    pointer-events: none;
+    opacity: 0;
+    will-change: transform, opacity;
+  }
+  .tl-fly__contact,
+  .tl-fly__lift {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+  .tl-fly__contact {
+    box-shadow: 0 1px 2px rgba(28, 40, 34, 0.16), 0 2px 6px rgba(28, 40, 34, 0.08);
+  }
+  .tl-fly__lift {
+    box-shadow: 0 6px 12px -6px rgba(28, 40, 34, 0.22), 0 26px 44px -14px rgba(28, 40, 34, 0.34);
+    opacity: 0;
+  }
+
+  .tl-fly-bump > svg {
+    animation: tlFlyBump 520ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    transform-origin: 50% 60%;
+  }
+  .tl-fly-bump .indicator svg {
+    animation: tlFlyDot 520ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  @keyframes tlFlyBump {
+    0% { transform: scale(1); }
+    30% { transform: scale(1.12); }
+    100% { transform: scale(1); }
+  }
+  .tl-fly-wait > svg {
+    animation: tlFlyWait 1100ms cubic-bezier(0.45, 0, 0.55, 1) infinite;
+    transform-origin: 50% 60%;
+  }
+  @keyframes tlFlyWait {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.06); opacity: 0.72; }
+  }
+  @keyframes tlFlyDot {
+    0% { transform: scale(0.6); }
+    45% { transform: scale(1.18); }
+    100% { transform: scale(1); }
+  }
+</style>
+
+<script>
+  (function () {
+    if (window.tlFly) return;
+    var off = false;
+    try { off = /[?&]fly=0\b/.test(location.search); } catch (e) {}
+    var reduceMQ = window.matchMedia ? matchMedia('(prefers-reduced-motion: reduce)') : null;
+
+    function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
+    function lerp(a, b, t) { return a + (b - a) * t; }
+    function smooth(a, b, t) { t = clamp((t - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); }
+
+    function bezier(x1, y1, x2, y2) {
+      function a(p1, p2) { return 1 - 3 * p2 + 3 * p1; }
+      function b(p1, p2) { return 3 * p2 - 6 * p1; }
+      function c(p1) { return 3 * p1; }
+      function at(t, p1, p2) { return ((a(p1, p2) * t + b(p1, p2)) * t + c(p1)) * t; }
+      function slope(t, p1, p2) { return 3 * a(p1, p2) * t * t + 2 * b(p1, p2) * t + c(p1); }
+      return function (x) {
+        if (x <= 0) return 0;
+        if (x >= 1) return 1;
+        var t = x;
+        for (var i = 0; i < 6; i++) {
+          var s = slope(t, x1, x2);
+          if (Math.abs(s) < 1e-6) break;
+          t -= (at(t, x1, x2) - x) / s;
+        }
+        return at(clamp(t, 0, 1), y1, y2);
+      };
+    }
+    var travelEase = bezier(0.45, 0, 0.2, 1);
+
+    function cartIcon() {
+      var icons = document.querySelectorAll('a.button.button-cart');
+      for (var i = 0; i < icons.length; i++) {
+        var r = icons[i].getBoundingClientRect();
+        if (r.width > 0 && r.height > 0 && r.bottom > 0 && r.top < innerHeight && r.right > 0 && r.left < innerWidth) {
+          return { el: icons[i], x: r.left + r.width / 2, y: r.top + r.height / 2 };
+        }
+      }
+      return null;
+    }
+
+    // Dua riak tipis berurutan dari mulut ikon: momen "diterima" yang
+    // terlihat jelas tanpa partikel.
+    function ripple(x, y) {
+      if (!document.body.animate) return;
+      [0, 110].forEach(function (delay, i) {
+        var r = document.createElement('div');
+        r.className = 'tl-fly-ring';
+        r.setAttribute('aria-hidden', 'true');
+        r.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) scale(0.5)';
+        document.body.appendChild(r);
+        var at = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) ';
+        r.animate([
+          { transform: at + 'scale(0.5)', opacity: i ? 0.5 : 0.9 },
+          { transform: at + 'scale(' + (i ? 2.3 : 1.8) + ')', opacity: 0 }
+        ], { duration: 700, delay: delay, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'both' });
+        setTimeout(function () { r.remove(); }, 900);
+      });
+    }
+
+    function bump(el) {
+      var r = el.getBoundingClientRect();
+      ripple(r.left + r.width / 2, r.top + r.height / 2);
+      el.classList.remove('tl-fly-bump');
+      void el.offsetWidth;
+      el.classList.add('tl-fly-bump');
+      setTimeout(function () { el.classList.remove('tl-fly-bump'); }, 560);
+      try { if (navigator.vibrate && matchMedia('(pointer: coarse)').matches) navigator.vibrate(6); } catch (e) {}
+    }
+
+    function launch(evt, btn, src) {
+      if (off || !src || document.hidden || (reduceMQ && reduceMQ.matches)) return null;
+      var icon = cartIcon();
+      if (!icon) return null;
+
+      var br = btn.getBoundingClientRect();
+      var p0x = evt && evt.detail > 0 && evt.clientX ? evt.clientX : br.left + br.width / 2;
+      var p0y = evt && evt.detail > 0 && evt.clientY ? evt.clientY : br.top + br.height / 2;
+      var s0 = innerWidth < 600 ? 56 : 64;
+
+      var el = document.createElement('div');
+      el.className = 'tl-fly';
+      el.setAttribute('aria-hidden', 'true');
+      el.style.width = s0 + 'px';
+      el.style.height = s0 + 'px';
+      el.innerHTML = '<div class="tl-fly__contact"></div><div class="tl-fly__lift"></div><div class="tl-fly__clip"><img alt="" decoding="async"><div class="tl-fly__gloss"></div><div class="tl-fly__sheen"></div></div>';
+      var clip = el.querySelector('.tl-fly__clip');
+      var contact = el.querySelector('.tl-fly__contact');
+      var lift = el.querySelector('.tl-fly__lift');
+      var gloss = el.querySelector('.tl-fly__gloss');
+      var sheen = el.querySelector('.tl-fly__sheen');
+      var pic = el.querySelector('img');
+      pic.src = src;
+
+      // Kotak kosong yang terbang terlihat murah: chip baru tampil setelah
+      // gambarnya terdekode, lalu masuk dalam 140ms.
+      var ready = pic.complete && pic.naturalWidth > 0;
+      var shown = ready ? 1 : 0;
+      if (!ready) {
+        var onReady = function () { ready = true; };
+        if (pic.decode) pic.decode().then(onReady, function () { if (pic.naturalWidth) ready = true; });
+        else pic.addEventListener('load', onReady);
+      }
+
+      var dist = Math.hypot(icon.x - p0x, icon.y - p0y);
+      var D = clamp(720 + dist * 0.2, 780, 960);
+      var gx = icon.x;
+      var gy = icon.y;
+      var elapsed = 0;
+      var last = 0;
+      var wall0 = 0;
+      var pose = null;
+      var dead = false;
+      var resolve;
+      var landed = new Promise(function (r) { resolve = r; });
+
+      // Ketinggian (0 menempel, 1 tertinggi) menggerakkan bayangan, skala
+      // angkat, dan kilap sekaligus supaya terasa satu benda fisik.
+      function paint(x, y, size, radius, op, h) {
+        var k = size / s0;
+        el.style.transform = 'translate3d(' + (x - s0 / 2).toFixed(2) + 'px,' + (y - s0 / 2).toFixed(2) + 'px,0) scale(' + k.toFixed(4) + ')';
+        var rr = (radius / k).toFixed(2) + 'px';
+        clip.style.borderRadius = rr;
+        el.style.borderRadius = rr;
+        el.style.opacity = op.toFixed(3);
+        contact.style.opacity = (1 - h).toFixed(3);
+        lift.style.opacity = h.toFixed(3);
+        gloss.style.opacity = (h * 0.9).toFixed(3);
+        pose = [x, y, size, radius, op];
+      }
+
+      paint(p0x, p0y, s0 * 0.5, 12, 0, 0);
+      document.body.appendChild(el);
+
+      function frame(now) {
+        if (dead) return;
+        if (!last) { last = now; wall0 = now; }
+        var dt = now - last;
+        last = now;
+        // Frame macet dihitung satu frame saja (tanpa teleport); batas keras
+        // menjamin chip selesai walau perangkat sangat lambat.
+        elapsed += dt > 100 ? 17 : dt;
+        if (now - wall0 > D * 2) elapsed = D;
+        var t = clamp(elapsed / D, 0, 1);
+
+        var cur = cartIcon();
+        if (cur) {
+          var f = 1 - Math.exp(-dt / 45);
+          gx += (cur.x - gx) * f;
+          gy += (cur.y - gy) * f;
+          icon = cur;
+        }
+
+        // Naik tegak dari tombol, lalu menikung masuk ke mulut ikon dari
+        // atas — lintasan seperti pada video referensi.
+        var p = travelEase(t);
+        var cx = p0x + (gx - p0x) * 0.06;
+        var cy = gy - 28;
+        var u = 1 - p;
+        var x = u * u * p0x + 2 * u * p * cx + p * p * gx;
+        var y = u * u * p0y + 2 * u * p * cy + p * p * gy;
+
+        // Momen presentasi: chip mekar dari tombol dan membesar 10% saat
+        // terangkat, lalu mengecil menjadi bulatan yang terhisap ke ikon.
+        var h = smooth(0, 0.2, t) * (1 - smooth(0.55, 0.95, p));
+        var grow = lerp(0.5, 1, smooth(0, 0.16, t));
+        var hero = 1 + 0.1 * Math.sin(Math.PI * smooth(0.06, 0.52, t));
+        var absorb = smooth(0.5, 1, p);
+        var size = lerp(s0, 18, absorb) * grow * hero;
+        var radius = lerp(12, 9, absorb);
+        if (ready && shown < 1) shown = Math.min(1, shown + dt / 140);
+        var op = smooth(0, 0.12, t) * (1 - smooth(0.86, 1, t)) * shown;
+
+        paint(x, y, size, radius, op, h);
+        sheen.style.transform = 'translate3d(' + lerp(-130, 130, smooth(0.14, 0.52, t)).toFixed(1) + '%,0,0)';
+
+        if (t < 1) {
+          requestAnimationFrame(frame);
+          return;
+        }
+        dead = true;
+        el.remove();
+        bump(icon.el);
+        resolve();
+      }
+      requestAnimationFrame(frame);
+
+      function cancel() {
+        if (dead) return;
+        dead = true;
+        var from = pose;
+        var a0 = 0;
+        (function out(now) {
+          if (!a0) a0 = now;
+          var k = clamp((now - a0) / 240, 0, 1);
+          var e = 1 - Math.pow(1 - k, 2);
+          paint(from[0], from[1] + 8 * e, from[2] * (1 - 0.12 * e), from[3], from[4] * (1 - e), 0);
+          if (k < 1) requestAnimationFrame(out); else el.remove();
+        })(performance.now());
+      }
+
+      return { landed: landed, cancel: cancel };
+    }
+
+    function wait(on) {
+      var icons = document.querySelectorAll('a.button.button-cart');
+      for (var i = 0; i < icons.length; i++) icons[i].classList.toggle('tl-fly-wait', !!on);
+    }
+
+    window.tlFly = { launch: launch, wait: wait };
+  })();
+</script>

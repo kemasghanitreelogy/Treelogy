@@ -1782,6 +1782,13 @@
        Hanya varian produk yang sedang dibuka yang ikut, dan hanya di halaman
        produk; halaman lain mengirim `{}` dan tetap memakai jalur keruk lama. */
     var ATC_LINES = {{ atc_lines_json }};
+    /* Gambar varian dipakai chip fly-to-cart DAN thumbnail baris drawer;
+       dimuat saat senggang supaya chip tak pernah menunggu gambar. */
+    (window.requestIdleCallback || setTimeout)(function () {
+      Object.keys(ATC_LINES).forEach(function (k) {
+        if (ATC_LINES[k].img) new Image().src = ATC_LINES[k].img;
+      });
+    });
     var MIN_STATE = 350;
     var L = window.cartDecodeMap({
       adding: {{ 'cart.atc_adding' | t | json }},
@@ -2018,39 +2025,70 @@
         window.popupVariantActive = false;
       }
 
-      /* Optimistic: drawer opens with the item already inside */
-      var mini = document.querySelector('.mini-cart');
-      if (mini) mini.classList.add('active');
-      var itemsWrap = document.querySelector('#cart .cart-items');
+      /* Fly-to-cart (snippets/fly-to-cart.liquid): gambar varian terbang ke
+         ikon header SELAGI add + render drawer berjalan dengan drawer
+         tertutup — penerbangan adalah loading state-nya. Drawer dibuka saat
+         chip mendarat, dengan DOM yang sudah final. Server lebih lambat dari
+         penerbangan → ikon "bernapas" ≤2,5 dtk, lewat itu jatuh ke jalur
+         optimistis lama (kartu + skeleton).
+         Tanpa penerbangan (reduced motion, ?fly=0, dll) → jalur lama utuh. */
       var optCard = null;
-      var emptyState = itemsWrap && itemsWrap.querySelector('.cart-empty-state');
-      if (itemsWrap) {
-        if (emptyState) emptyState.style.display = 'none';
-        optCard = buildOptimisticCard(ctx, priceText);
-        itemsWrap.insertBefore(optCard, itemsWrap.firstChild);
+      var emptyState = null;
+      var netDone = false;
+      var revealTimer = null;
+      var thumbSrc = ctx.imgSrc || (ctx.img && (ctx.img.currentSrc || ctx.img.src)) || '';
+      var flight = window.tlFly ? window.tlFly.launch(e, btn, thumbSrc) : null;
+      function openDrawer() {
+        if (flight) window.tlFly.wait(false);
+        var m = document.querySelector('.mini-cart');
+        if (m) m.classList.add('active');
       }
-      /* FBT skeleton immediately — the section is never an empty hole */
-      if (window.moveFBT) window.moveFBT();
-      var fbtSec = document.querySelector('.fbt-section');
-      if (fbtSec && !fbtSec.querySelector('.fbt-card[style*="flex"]')) {
-        fbtSec.classList.add('fbt-loading');
-        fbtSec.style.display = '';
+      if (flight) {
+        flight.landed.then(function () {
+          if (netDone) { openDrawer(); return; }
+          window.tlFly.wait(true);
+          revealTimer = setTimeout(function () {
+            window.tlFly.wait(false);
+            if (!netDone) showOptimistic();
+          }, 2500);
+        });
+      } else {
+        showOptimistic();
       }
-      /* Footer: swap the empty-cart CTA for a checkout-bar skeleton */
-      var footerEl = document.querySelector('#cart .sub-total.cart-footer');
-      if (footerEl && footerEl.querySelector('.cart-empty-shop-btn')) {
-        footerEl.classList.add('opt-pending');
-        var fskel = document.createElement('div');
-        fskel.className = 'opt-footer-skelwrap';
-        fskel.setAttribute('aria-hidden', 'true');
-        fskel.innerHTML =
-          '<div class="cart-footer-summary">'
-          + '<div class="cart-footer-row visible"><span class="opt-shimmer fbt-skel-line" style="width:96px"></span><span class="opt-shimmer fbt-skel-line" style="width:74px"></span></div>'
-          + '<div class="cart-footer-row visible"><span class="opt-shimmer fbt-skel-line" style="width:64px"></span><span class="opt-shimmer fbt-skel-line" style="width:42px"></span></div>'
-          + '</div>'
-          + '<div class="opt-skel-checkout"><span class="opt-shimmer opt-shimmer--light fbt-skel-line" style="width:172px;height:13px"></span></div>'
-          + '<div class="opt-skel-secure"><span class="opt-shimmer fbt-skel-line" style="width:210px;height:10px"></span></div>';
-        footerEl.appendChild(fskel);
+
+      /* Optimistic: drawer opens with the item already inside */
+      function showOptimistic() {
+        openDrawer();
+        var itemsWrap = document.querySelector('#cart .cart-items');
+        emptyState = itemsWrap && itemsWrap.querySelector('.cart-empty-state');
+        if (itemsWrap) {
+          if (emptyState) emptyState.style.display = 'none';
+          optCard = buildOptimisticCard(ctx, priceText);
+          itemsWrap.insertBefore(optCard, itemsWrap.firstChild);
+        }
+        /* FBT skeleton immediately — the section is never an empty hole */
+        if (window.moveFBT) window.moveFBT();
+        var fbtSec = document.querySelector('.fbt-section');
+        if (fbtSec && !fbtSec.querySelector('.fbt-card[style*="flex"]')) {
+          fbtSec.classList.add('fbt-loading');
+          fbtSec.style.display = '';
+        }
+        /* Footer: swap the empty-cart CTA for a checkout-bar skeleton */
+        var footerEl = document.querySelector('#cart .sub-total.cart-footer');
+        if (footerEl && footerEl.querySelector('.cart-empty-shop-btn')) {
+          footerEl.classList.add('opt-pending');
+          var fskel = document.createElement('div');
+          fskel.className = 'opt-footer-skelwrap';
+          fskel.setAttribute('aria-hidden', 'true');
+          fskel.innerHTML =
+            '<div class="cart-footer-summary">'
+            + '<div class="cart-footer-row visible"><span class="opt-shimmer fbt-skel-line" style="width:96px"></span><span class="opt-shimmer fbt-skel-line" style="width:74px"></span></div>'
+            + '<div class="cart-footer-row visible"><span class="opt-shimmer fbt-skel-line" style="width:64px"></span><span class="opt-shimmer fbt-skel-line" style="width:42px"></span></div>'
+            + '</div>'
+            + '<div class="opt-skel-checkout"><span class="opt-shimmer opt-shimmer--light fbt-skel-line" style="width:172px;height:13px"></span></div>'
+            + '<div class="opt-skel-secure"><span class="opt-shimmer fbt-skel-line" style="width:210px;height:10px"></span></div>';
+          footerEl.appendChild(fskel);
+        }
       }
 
       function settle(stateClass, label, hold) {
@@ -2107,8 +2145,11 @@
           var doc = new DOMParser().parseFromString(results[0], 'text/html');
           var cart = results[1];
           /* One scoped crossfade: optimistic card -> real card, footer
-             totals and FBT resolve together instead of popping. */
-          smoothApply(function () {
+             totals and FBT resolve together instead of popping. Drawer
+             masih tertutup (chip masih terbang) → terapkan langsung, tanpa
+             jeda crossfade, supaya DOM-nya final saat drawer dibuka. */
+          var drawerOpen = !!document.querySelector('.mini-cart.active');
+          (drawerOpen ? smoothApply : function (fn) { fn(); })(function () {
             var cartEl = document.getElementById('cart');
             var newItems = doc.querySelector('.cart-items');
             var newFooter = doc.querySelector('.sub-total.cart-footer');
@@ -2141,10 +2182,25 @@
           if (cart.item_count > 0 && window.loadCompareAtPrices) window.loadCompareAtPrices();
           var indicator = document.getElementById('cart-indicator');
           if (indicator) indicator.classList.toggle('show', cart.item_count > 0);
-          settle('is-added', L.added, 1400);
+          netDone = true;
+          clearTimeout(revealTimer);
+          if (flight) {
+            flight.landed.then(function () {
+              openDrawer();
+              settle('is-added', L.added, 1400);
+            });
+          } else {
+            settle('is-added', L.added, 1400);
+          }
         })
         .catch(function (err) {
           /* Rollback the optimistic state, tell the user WHY it failed */
+          netDone = true;
+          clearTimeout(revealTimer);
+          if (flight) {
+            flight.cancel();
+            window.tlFly.wait(false);
+          }
           if (optCard && optCard.parentNode) optCard.parentNode.removeChild(optCard);
           if (emptyState) emptyState.style.display = '';
           var secRb = document.querySelector('.fbt-section');
