@@ -66,6 +66,7 @@
 </a>
 
 {% if shop.customer_accounts_enabled %}
+  {% if customer %}<span class="account-slot">{% endif %}
   <shopify-account
     class="button button-login"
     {% if account_menu != blank %}
@@ -89,6 +90,10 @@
       </span>
     {% endif %}
   </shopify-account>
+  {% if customer %}
+    {% render 'customer-avatar', context: 'header' %}
+    </span>
+  {% endif %}
 {% else %}
   {% assign base_url = request.locale.root_url | remove_last: '/' %}
 

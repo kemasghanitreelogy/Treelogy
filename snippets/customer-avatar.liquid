@@ -1,0 +1,246 @@
+{% doc %}
+  Foto profil pelanggan yang ditumpuk di atas avatar inisial (header & drawer).
+
+  Sumber foto: metafield customer `profile.avatar` (file_reference), diisi
+  server treelogy-wa-sync dari foto Facebook pelanggan yang login lewat
+  tombol Facebook Shopify. Kalau metafield masih kosong, elemen dirender
+  dengan data-avatar-state="missing" dan skrip di bawah mencoba sinkron
+  diam-diam lewat Facebook JS SDK + app proxy /apps/treelogy.
+
+  Tanpa foto, inisial di bawahnya tetap terlihat; tidak ada yang bergeser.
+
+  @param {string} context - 'header' atau 'drawer'
+
+  @example
+  {% render 'customer-avatar', context: 'header' %}
+{% enddoc %}
+
+{%- if customer -%}
+  {%- assign avatar = customer.metafields.profile.avatar.value -%}
+  <span
+    class="customer-avatar customer-avatar--{{ context }}"
+    data-customer-avatar
+    data-customer-id="{{ customer.id }}"
+    data-avatar-state="{% if avatar %}ready{% else %}missing{% endif %}"
+    aria-hidden="true"
+  >
+    {%- if avatar -%}
+      {{- avatar | image_url: width: 96, height: 96, crop: 'center' | image_tag: width: 48, height: 48, alt: '', loading: 'eager', decoding: 'async', class: 'customer-avatar__img' -}}
+    {%- endif -%}
+  </span>
+{%- endif -%}
+
+{% javascript %}
+  /* Sinkron foto Facebook → metafield pelanggan, tanpa klik.
+     Hanya jalan untuk pelanggan login yang belum punya foto, sekali per
+     RETRY_AFTER per perangkat, saat browser senggang. Gagal = diam saja. */
+  (function () {
+    var APP_ID = '3328781347322130';
+    var GRAPH_VERSION = 'v26.0';
+    var ENDPOINT = '/apps/treelogy/avatar/facebook';
+    var RETRY_AFTER = 14 * 864e5;
+    var ERROR_RETRY_AFTER = 864e5;
+    var SDK_TIMEOUT = 8000;
+
+    if (window.__tlAvatarSync) return;
+    window.__tlAvatarSync = true;
+
+    function targets() {
+      return document.querySelectorAll('[data-customer-avatar][data-avatar-state="missing"]');
+    }
+
+    var first = targets()[0];
+    if (!first) return;
+    var key = 'tl_avatar_fb:' + first.getAttribute('data-customer-id');
+
+    function readState() {
+      try {
+        return JSON.parse(localStorage.getItem(key) || 'null');
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function writeState(result, retryAfter) {
+      try {
+        localStorage.setItem(key, JSON.stringify({ r: result, next: Date.now() + retryAfter }));
+      } catch (e) {}
+    }
+
+    var last = readState();
+    if (last && last.next > Date.now()) return;
+
+    function consentDenied() {
+      var p = window.Shopify && window.Shopify.customerPrivacy;
+      return !!(p && typeof p.preferencesProcessingAllowed === 'function' && !p.preferencesProcessingAllowed());
+    }
+
+    function paint(url) {
+      var els = targets();
+      for (var i = 0; i < els.length; i++) {
+        (function (el) {
+          var img = new Image();
+          img.className = 'customer-avatar__img';
+          img.alt = '';
+          img.decoding = 'async';
+          img.referrerPolicy = 'no-referrer';
+          img.onload = function () {
+            el.replaceChildren(img);
+            el.setAttribute('data-avatar-state', 'ready');
+          };
+          img.src = url;
+        })(els[i]);
+      }
+    }
+
+    function loadSdk() {
+      return new Promise(function (resolve, reject) {
+        var timer = setTimeout(function () {
+          reject(new Error('timeout'));
+        }, SDK_TIMEOUT);
+        window.fbAsyncInit = function () {
+          clearTimeout(timer);
+          resolve(window.FB);
+        };
+        var s = document.createElement('script');
+        s.src = 'https://connect.facebook.net/en_US/sdk.js';
+        s.async = true;
+        s.crossOrigin = 'anonymous';
+        s.onerror = function () {
+          clearTimeout(timer);
+          reject(new Error('blocked'));
+        };
+        document.head.appendChild(s);
+      });
+    }
+
+    function loginStatus(FB) {
+      return new Promise(function (resolve) {
+        var timer = setTimeout(function () {
+          resolve(null);
+        }, SDK_TIMEOUT);
+        FB.getLoginStatus(function (res) {
+          clearTimeout(timer);
+          resolve(res);
+        });
+      });
+    }
+
+    function run() {
+      if (consentDenied()) return;
+      /* SDK Facebook milik pihak lain sudah terpasang: jangan di-init ulang
+         dengan app id kita, bisa merusak integrasi mereka. */
+      if (window.FB) return writeState('foreign_sdk', RETRY_AFTER);
+
+      loadSdk()
+        .then(function (FB) {
+          FB.init({ appId: APP_ID, version: GRAPH_VERSION, cookie: false, xfbml: false, status: false });
+          return loginStatus(FB);
+        })
+        .then(function (res) {
+          if (!res || res.status !== 'connected' || !res.authResponse) {
+            writeState(res ? res.status : 'no_status', RETRY_AFTER);
+            return;
+          }
+          return fetch(ENDPOINT, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+            body: JSON.stringify({ accessToken: res.authResponse.accessToken }),
+          })
+            .then(function (r) {
+              return r.ok ? r.json() : { status: 'http_' + r.status };
+            })
+            .then(function (out) {
+              if (out && out.url && (out.status === 'synced' || out.status === 'unchanged')) paint(out.url);
+              var failed = !out || out.status === 'error' || /^http_/.test(out.status);
+              writeState(out ? out.status : 'empty', failed ? ERROR_RETRY_AFTER : RETRY_AFTER);
+            });
+        })
+        .catch(function (err) {
+          writeState(String((err && err.message) || 'error'), ERROR_RETRY_AFTER);
+        });
+    }
+
+    function start() {
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(run, { timeout: 4000 });
+      } else {
+        setTimeout(run, 2500);
+      }
+    }
+
+    if (document.readyState === 'complete') {
+      start();
+    } else {
+      window.addEventListener('load', start, { once: true });
+    }
+  })();
+{% endjavascript %}
+
+{% stylesheet %}
+  .account-slot {
+    position: relative;
+    display: flex;
+  }
+
+  .customer-avatar {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    border-radius: 50%;
+  }
+
+  .customer-avatar[data-avatar-state='missing'] {
+    display: none;
+  }
+
+  .customer-avatar__img {
+    display: block;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+    animation: customer-avatar-in 0.32s ease-out both;
+  }
+
+  .customer-avatar--drawer {
+    overflow: hidden;
+  }
+
+  .customer-avatar--drawer .customer-avatar__img {
+    width: 100%;
+    height: 100%;
+  }
+
+  .drawer-account__avatar {
+    position: relative;
+  }
+
+  @keyframes customer-avatar-in {
+    from {
+      opacity: 0;
+      transform: scale(0.85);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .customer-avatar__img {
+      animation: none;
+    }
+  }
+
+  @media only screen and (max-width: 900px) {
+    .header-nav:not(.header-popup) .header-menu .main-grid .account-slot,
+    .header-popup .header-menu .main-grid .account-slot {
+      display: none;
+    }
+  }
+{% endstylesheet %}

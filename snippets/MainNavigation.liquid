@@ -13,6 +13,7 @@
         <a href="{{ routes.account_url }}" class="drawer-account__row" rel="nofollow">
           <span class="drawer-account__avatar drawer-account__avatar--initials" aria-hidden="true">
             {{- customer.first_name | default: customer.email | slice: 0 | upcase -}}
+            {%- render 'customer-avatar', context: 'drawer' -%}
           </span>
           <span class="drawer-account__text">
             <span class="drawer-account__title">{{ 'customer.account.greeting' | t: name: customer.first_name }}</span>
