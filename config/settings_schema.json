@@ -214,8 +214,8 @@
         "type": "number",
         "id": "unique_buyers",
         "label": "Total pembeli unik",
-        "default": 20657,
-        "info": "Dipakai bila pembaruan otomatis dimatikan, atau bila angka otomatis belum ada."
+        "default": 21583,
+        "info": "Dipakai bila pembaruan otomatis dimatikan, dan selalu di llms.txt, llms-full.txt, dan agents.md (template teks tidak bisa membaca data toko). Angka harian terbaru ada di Settings > Custom data > Shop > Pembeli unik."
       },
       {
         "type": "checkbox",
