@@ -1,0 +1,71 @@
+{% doc %}
+  Angka "pembeli unik" untuk kalimat bukti sosial ("Trusted by more than 17.233 customers").
+
+  Sumbernya, berurutan:
+  1. metafield toko `treelogy.unique_buyers` - diperbarui setiap malam oleh dashboard
+     (api.treelogy-services.my.id) dari semua pesanan terjual sejak hari pertama, bila
+     "Perbarui otomatis setiap hari" di Theme settings > Pembeli Unik dicentang;
+  2. angka yang diketik di Theme settings > Pembeli Unik.
+
+  Dengan `text`: angka pertama berdigit empat atau lebih di dalam teks itu diganti, jadi
+  kalimat di metafield produk `custom.rating` bebas disusun dan diterjemahkan. Pemisah
+  ribuannya meniru angka aslinya. Teks tanpa angka seperti itu (mis. "4.64/5 (11)")
+  dikembalikan apa adanya.
+  Tanpa `text`: hanya angkanya, dengan pemisah `sep`.
+
+  @param {string} [text] - Kalimat yang angkanya diganti.
+  @param {string} [sep] - Pemisah ribuan bila tanpa `text`. Bawaan: titik.
+
+  @example
+  {% render 'unique-buyers', text: product.metafields.custom.rating %}
+  {% render 'unique-buyers', sep: ',' %}
+{% enddoc -%}
+{%- liquid
+  assign ub_count = settings.unique_buyers | plus: 0
+  assign ub_auto = shop.metafields.treelogy.unique_buyers.value | plus: 0
+  if settings.unique_buyers_auto and ub_auto > 0
+    assign ub_count = ub_auto
+  endif
+
+  if text == blank
+    assign ub_sep = sep | default: '.'
+  else
+    assign ub_sep = '.'
+    assign ub_words = text | append: '' | split: ' '
+    assign ub_token = ''
+    for ub_word in ub_words
+      assign ub_digits = ub_word | remove: '.' | remove: ','
+      assign ub_number = ub_digits | plus: 0 | append: ''
+      if ub_digits.size > 3 and ub_number == ub_digits
+        assign ub_token = ub_word
+        if ub_word contains ','
+          assign ub_sep = ','
+        endif
+        break
+      endif
+    endfor
+  endif
+
+  assign ub_raw = ub_count | append: ''
+  assign ub_last = ub_raw.size | minus: 1
+  assign ub_formatted = ''
+  for ub_i in (0..ub_last)
+    assign ub_char = ub_raw | slice: ub_i, 1
+    assign ub_formatted = ub_formatted | append: ub_char
+    assign ub_left = ub_last | minus: ub_i
+    assign ub_mod = ub_left | modulo: 3
+    if ub_left > 0 and ub_mod == 0
+      assign ub_formatted = ub_formatted | append: ub_sep
+    endif
+  endfor
+
+  if text == blank
+    if ub_count > 0
+      echo ub_formatted
+    endif
+  elsif ub_token == blank or ub_count < 1
+    echo text
+  else
+    echo text | replace_first: ub_token, ub_formatted
+  endif
+-%}

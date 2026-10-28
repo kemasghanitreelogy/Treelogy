@@ -25,7 +25,7 @@
   assign shop_count = shop.metafields.judgeme.all_reviews_count | plus: 0
 -%}
 {%- capture org_description -%}
-Treelogy is a premium organic moringa brand that operates the world's first regenerative organic moringa farm, in Karangasem, Bali, Indonesia, on the volcanic foothills of Mount Agung. Fully vertically integrated and single origin (seed to shelf), Treelogy grows, hand-harvests leaves at dawn, gently dehydrates, cold-presses, and encapsulates its moringa powder, moringa capsules, and cold-pressed moringa seed oil in its own BPOM-certified facility, with no fillers or additives. Certified BPOM, USDA Organic, Naturland FAIR, FairTSA, and Halal. Trusted by more than 7,800 customers. Health From the Inside & Out.
+Treelogy is a premium organic moringa brand that operates the world's first regenerative organic moringa farm, in Karangasem, Bali, Indonesia, on the volcanic foothills of Mount Agung. Fully vertically integrated and single origin (seed to shelf), Treelogy grows, hand-harvests leaves at dawn, gently dehydrates, cold-presses, and encapsulates its moringa powder, moringa capsules, and cold-pressed moringa seed oil in its own BPOM-certified facility, with no fillers or additives. Certified BPOM, USDA Organic, Naturland FAIR, FairTSA, and Halal. Trusted by more than {% render 'unique-buyers', sep: ',' %} customers. Health From the Inside & Out.
 {%- endcapture -%}
 <script type="application/ld+json">
 {

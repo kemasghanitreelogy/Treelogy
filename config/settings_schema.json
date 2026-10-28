@@ -202,5 +202,28 @@
         "info": "Mengganti kartu pemilih varian dan tombol add-to-cart di halaman produk dengan desain paket berdaftar-manfaat. Isinya diambil dari metafield varian staged_plan_label, staged_compare_at_price, dan description. Biarkan mati di tema live."
       }
     ]
+  },
+  {
+    "name": "Pembeli Unik",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Angka di kalimat \"Trusted by more than … customers\" pada semua kartu produk, halaman produk, dan llms.txt."
+      },
+      {
+        "type": "number",
+        "id": "unique_buyers",
+        "label": "Total pembeli unik",
+        "default": 20657,
+        "info": "Dipakai bila pembaruan otomatis dimatikan, atau bila angka otomatis belum ada."
+      },
+      {
+        "type": "checkbox",
+        "id": "unique_buyers_auto",
+        "label": "Perbarui otomatis setiap hari",
+        "default": true,
+        "info": "Dashboard menghitung ulang setiap malam dari semua pesanan terjual di Shopify, Shopee, Tokopedia, dan TikTok Shop (batal dan retur tidak dihitung), lalu menyimpannya di metafield toko treelogy.unique_buyers."
+      }
+    ]
   }
 ]

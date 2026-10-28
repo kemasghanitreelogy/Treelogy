@@ -41,7 +41,7 @@
                 <div class="top">
                   <div>
                     {% render 'StarReview' %}
-                    <span class="rating-text">{{ product.metafields.custom.rating }}</span>
+                    <span class="rating-text">{% render 'unique-buyers', text: product.metafields.custom.rating %}</span>
                   </div>
                 </div>
 

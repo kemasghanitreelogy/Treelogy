@@ -104,7 +104,7 @@
     <div class="detail" id="product-detail-content">
     <div class="rating body-mobile">
       {% if product.metafields.custom.rating %}
-        <div>{% render 'StarReview' %}<span class="rating-text">{{ product.metafields.custom.rating }}</span>
+        <div>{% render 'StarReview' %}<span class="rating-text">{% render 'unique-buyers', text: product.metafields.custom.rating %}</span>
         </div>
       {% else %}
         {% render 'Rating' %}

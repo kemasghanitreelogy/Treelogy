@@ -53,7 +53,7 @@
   {%- if rating_manual != blank -%}
     <div>
       {% render 'StarReview' %}
-      <span class="rating-text">{{ rating_manual }}</span>
+      <span class="rating-text">{% render 'unique-buyers', text: rating_manual %}</span>
     </div>
   {%- elsif rating_avg != blank and rating_cnt != blank and rating_cnt != '0' -%}
     <div class="jdgm-widget">
