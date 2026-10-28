@@ -146,9 +146,22 @@
       setClass(bag, 'is-adding', (bag.textContent || '').trim().indexOf('Adding') === 0);
     }).observe(bag, { childList: true, characterData: true, subtree: true });
 
+    /* The bundle prints variant.title from product.json as-is. A product with
+       no options has one variant Shopify names "Default Title" — show the
+       product name instead (the bundle writes the title before the rows, so
+       it is already there). Runs in the observer microtask, before paint. */
+    function fixDefaultTitle() {
+      var rows = wrapper.querySelectorAll('.checkbox-button');
+      if (rows.length !== 1) return;
+      var label = rows[0].querySelector('.variant-detail > div');
+      var name = (title.textContent || '').trim();
+      if (label && name && label.textContent.trim() === 'Default Title') label.textContent = name;
+    }
+
     /* Variant rows are injected by the bundle as plain divs — add keyboard & ARIA. */
     wrapper.setAttribute('role', 'radiogroup');
     new MutationObserver(function () {
+      fixDefaultTitle();
       wrapper.querySelectorAll('.checkbox-button').forEach(function (row) {
         if (!row.hasAttribute('tabindex')) {
           row.setAttribute('tabindex', '0');
