@@ -66,497 +66,11 @@
     assign pdp3_mode = true
   endif
 %}
-
-<div
-  class="v2-plans{% if skin == 'pdp3' %} v2-plans--pdp3{% endif %}"
-  role="radiogroup"
-  aria-label="{% if is_id_locale %}Pilih paket{% else %}Choose your plan{% endif %}"
->
-  {%- assign v2_rendered = 0 -%}
-  {%- for variant in v2_variants -%}
-    {%- if variant.metafields.custom.staged_hidden == true and show_staged != true -%}
-      {%- continue -%}
-    {%- endif -%}
-
-    {%- liquid
-      assign v2_rendered = v2_rendered | plus: 1
-
-      assign v2_label = variant.metafields.custom.staged_plan_label
-      if v2_label == blank
-        assign v2_label = variant.metafields.custom.time_protocol
-      endif
-      comment
-        Produk tanpa opsi memakai varian bernama "Default Title" — placeholder
-        Shopify yang tidak pernah boleh terbaca pembeli. Kartu lama sudah
-        menggantinya dengan nama produk; v2 harus melakukan hal yang sama.
-        Pengecekannya lewat has_only_default_variant, bukan mencocokkan teks,
-        karena nama itu tidak diterjemahkan dan mudah meleset antar-locale.
-      endcomment
-      if v2_label == blank
-        if product.has_only_default_variant
-          assign v2_label = product.title
-        else
-          assign v2_label = variant.title
-        endif
-      endif
-
-      comment
-        staged_compare_at_price disimpan dalam rupiah penuh (mengikuti
-        custom.original_price), sedangkan variant.price dalam satuan terkecil.
-        Tanpa dikalikan 100 perbandingannya selalu kalah dan harga coretnya
-        tidak pernah muncul.
-      endcomment
-      assign v2_compare = 0
-      assign v2_compare_meta = variant.metafields.custom.staged_compare_at_price.value | plus: 0
-      if v2_compare_meta > 0
-        assign v2_compare = v2_compare_meta | times: 100
-      elsif variant.compare_at_price > variant.price
-        assign v2_compare = variant.compare_at_price
-      endif
-
-      assign v2_saving = 0
-      if v2_compare > variant.price
-        assign v2_saving = v2_compare | minus: variant.price
-      endif
-
-      comment
-        Badge di mockup berbunyi "save 180.000" tanpa simbol mata uang, jadi
-        buang penanda Rp dari hasil filter money.
-      endcomment
-      assign v2_saving_text = v2_saving | money_without_trailing_zeros | remove: 'Rp' | strip
-
-      assign v2_compare_text = ''
-      if v2_saving > 0
-        assign v2_compare_text = v2_compare | money_without_trailing_zeros
-      endif
-      assign v2_price_text = variant.price | money_without_trailing_zeros
-
-      assign v2_badge = variant.metafields.custom.custom_badge_text
-      if pdp3_mode
-        assign v2_badge = variant.metafields.pdp3.badge
-      endif
-
-      comment
-        Kolom kiri dan kanan yang sama lebar membuat badge tepat di tengah, tapi
-        kolom judul jadi cuma separuh sisa ruang. Untuk nama panjang di layar
-        sempit itu tidak cukup: di 390px kolomnya 77px sedangkan "The Complete"
-        saja butuh 96px, sehingga namanya pecah empat baris. Kartu berlabel
-        panjang diberi penanda agar kolomnya mengikuti isi — badge lalu mengalir
-        setelah judul, persis seperti referensi desainnya. Label terpanjang di
-        desain "180 grams" hanya 9 karakter; nama bundel 18-26.
-      endcomment
-      assign v2_flow_head = false
-      assign v2_label_length = v2_label | strip | size
-      if v2_label_length > 12
-        assign v2_flow_head = true
-      endif
-
-
-      assign v2_is_active = false
-      if current_variant
-        if current_variant.id == variant.id
-          assign v2_is_active = true
-        endif
-      elsif v2_rendered == 1
-        assign v2_is_active = true
-      endif
-    -%}
-
-    <div
-      class="checkbox-button protocol-variant-card v2-plan{% if v2_is_active %} active{% endif %}"
-      data-value="{{ variant.id }}"
-      data-variant-price="{{ variant.price | divided_by: 100 }}"
-      data-available="{{ variant.available }}"
-      data-v2-compare="{{ v2_compare_text | escape }}"
-      data-v2-price="{{ v2_price_text | escape }}"
-      role="radio"
-      aria-checked="{% if v2_is_active %}true{% else %}false{% endif %}"
-      tabindex="0"
-    >
-      {%- if skin == 'pdp3' and v2_badge != blank -%}
-        <span class="v2-plan__tag">{{ v2_badge }}</span>
-      {%- endif -%}
-
-      <div class="v2-plan__head{% if v2_flow_head %} v2-plan__head--flow{% endif %}">
-        {%- comment -%}
-          Tiga anak langsung dari baris judul = tiga kolom grid: judul, badge,
-          harga. Badge harus jadi kolom tersendiri, bukan menempel pada judul,
-          supaya grid bisa menaruhnya tepat di sumbu tengah kartu.
-        {%- endcomment -%}
-        <span class="v2-plan__main">
-          <span class="v2-plan__radio" aria-hidden="true"></span>
-          <span class="v2-plan__title">{{ v2_label }}</span>
-        </span>
-
-        {%- if v2_saving > 0 -%}
-          <span class="v2-plan__badge">
-            {%- if pdp3_mode -%}
-              {%- assign v2_saving_rp = v2_saving | money_without_trailing_zeros | remove: ' ' -%}
-              {%- if is_id_locale -%}Hemat {{ v2_saving_rp }}{%- else -%}Save {{ v2_saving_rp }}{%- endif -%}
-            {%- elsif is_id_locale -%}hemat {{ v2_saving_text }}{%- else -%}save {{ v2_saving_text }}{%- endif -%}
-          </span>
-        {%- elsif v2_badge != blank -%}
-          <span class="v2-plan__badge">{{ v2_badge }}</span>
-        {%- endif -%}
-
-        <span class="v2-plan__prices">
-          {%- if v2_compare_text != blank -%}
-            <s class="v2-plan__compare">{{ v2_compare_text }}</s>
-          {%- endif -%}
-          <span class="v2-plan__price">{{ v2_price_text }}</span>
-          {%- unless variant.available -%}
-            <span class="v2-plan__soldout">
-              {%- if is_id_locale -%}stok habis{%- else -%}sold out{%- endif -%}
-            </span>
-          {%- endunless -%}
-        </span>
-      </div>
-
-      {%- if skin == 'pdp3' -%}
-        {%- assign v2_per_day = variant.metafields.custom.value_per_day -%}
-        {%- if v2_per_day != blank -%}
-          {%- comment -%}
-            Metafield-nya sudah berbentuk "Rp 12.700 / day"; garis miringnya
-            dicetak ulang sebagai elemen sendiri supaya bisa dipucatkan —
-            sama seperti di hero dan bilah sticky, jadi ketiga tempat membaca
-            harga per hari dengan tanda baca yang sama.
-          {%- endcomment -%}
-          <p class="v2-plan__perday">
-            <b>{{ v2_per_day | split: '/' | first | strip }}</b>
-            <span class="v2-plan__slash" aria-hidden="true">/</span>
-            <span>{{ v2_per_day | split: '/' | last | strip }}</span>
-          </p>
-        {%- endif -%}
-      {%- endif -%}
-
-      {%- comment -%}
-        Nilai hadiah dicoret, sama seperti harga lama di kanan atas. Dua coretan
-        dengan arti berbeda dalam satu kartu sebenarnya rawan tertukar, dan yang
-        membedakannya di sini adalah ikon kado pada barisnya: coretan di baris
-        berikon = barang yang kamu terima, coretan di baris judul = harga yang
-        batal kamu bayar. Jangan hilangkan ikonnya tanpa mengganti pembeda lain.
-      {%- endcomment -%}
-      {%- comment -%}
-        Nilai hadiah diambil dari VARIAN HADIAHNYA, bukan dari teks metafield.
-        Teks itu ditulis manual dalam rupiah, jadi pembeli Amerika pun membaca
-        "Rp 120.000" di sebelah harga dolar. compare_at_price varian hadiah
-        sudah sadar market, sehingga filter `money` mengeluarkan mata uang yang
-        benar tanpa ada angka kedua yang harus dirawat manusia.
-      {%- endcomment -%}
-      {%- assign v2_gifts = variant.metafields.custom.eligible_gifts.value -%}
-      {%- assign v2_gift_index = 0 -%}
-      {%- capture v2_perks_html -%}
-        {%- if pdp3_mode and variant.metafields.pdp3.description != blank -%}
-          {%- assign v2_pdp3_lines = variant.metafields.pdp3.description | newline_to_br | split: '<br />' -%}
-          {%- for v2_pdp3_line in v2_pdp3_lines -%}<li>{{ v2_pdp3_line | strip }}</li>{%- endfor -%}
-        {%- else -%}
-          {{ variant.metafields.custom.description | metafield_tag }}
-        {%- endif -%}
-      {%- endcapture -%}
-      {%- assign v2_perk_items = v2_perks_html | split: '<li>' -%}
-      {%- if v2_perk_items.size > 1 -%}
-        <ul class="v2-plan__perks">
-          {%- for v2_perk_raw in v2_perk_items offset: 1 -%}
-            {%- assign v2_perk_text = v2_perk_raw | split: '</li>' | first | strip_html | strip -%}
-            {%- if v2_perk_text == blank -%}
-              {%- continue -%}
-            {%- endif -%}
-            {%- assign v2_perk_parts = v2_perk_text | split: '|' -%}
-            {%- assign v2_perk_icon = v2_perk_parts[2] | default: 'gift' | strip | downcase -%}
-            {%- comment -%}
-              Gratis ongkir hanya berlaku untuk market Indonesia, jadi barisnya
-              TIDAK dirender sama sekali di market lain — bukan sekadar angkanya
-              yang disembunyikan. Menyisakan "Free Shipping included" tanpa nilai
-              untuk pembeli Eropa/Amerika sama saja menjanjikan sesuatu yang tidak
-              kita tanggung.
-
-              Penandanya ikon `ship`, bukan teksnya, sebab labelnya ikut
-              diterjemahkan per locale sedangkan ruas ikon tidak.
-
-              Dicocokkan ke handle market (`id`), bukan locale atau mata uang:
-              locale `id` bisa dibuka pembeli dari mana saja, dan satu market
-              bisa punya beberapa mata uang.
-            {%- endcomment -%}
-            {%- if v2_perk_icon == 'ship' and localization.market.handle != 'id' -%}
-              {%- continue -%}
-            {%- endif -%}
-            {%- comment -%}
-              Pencocokan hadiah: pertama lewat judul produk yang muncul di label
-              ("Free Travel Pouch" memuat "Travel Pouch"), baru jatuh ke urutan
-              kalau tidak ada yang cocok. Urutan saja rapuh — label bisa ditulis
-              ulang kapan pun — tapi ia jaring pengaman yang lebih baik daripada
-              tidak menampilkan nilai sama sekali.
-            {%- endcomment -%}
-            {%- assign v2_perk_money = blank -%}
-            {%- if v2_perk_parts.size > 1 and v2_perk_icon != 'ship' -%}
-              {%- assign v2_perk_label = v2_perk_parts[0] | strip -%}
-              {%- assign v2_gift_match = blank -%}
-              {%- for v2_g in v2_gifts -%}
-                {%- if v2_perk_label contains v2_g.product.title -%}
-                  {%- assign v2_gift_match = v2_g -%}
-                  {%- break -%}
-                {%- endif -%}
-              {%- endfor -%}
-              {%- if v2_gift_match == blank -%}
-                {%- assign v2_gift_match = v2_gifts[v2_gift_index] -%}
-              {%- endif -%}
-              {%- assign v2_gift_index = v2_gift_index | plus: 1 -%}
-              {%- if v2_gift_match.compare_at_price > 0 -%}
-                {%- assign v2_perk_money = v2_gift_match.compare_at_price | money -%}
-              {%- endif -%}
-            {%- endif -%}
-            {%- comment -%}
-              Di luar Indonesia, nilai yang tidak bisa diselesaikan lebih baik
-              TIDAK ditampilkan daripada ditampilkan dalam rupiah. Indonesia
-              tetap memakai teks metafield apa adanya supaya tampilannya tidak
-              berubah sedikit pun.
-            {%- endcomment -%}
-            {%- assign v2_perk_show_value = true -%}
-            {%- if v2_perk_money == blank and localization.market.handle != 'id' -%}
-              {%- assign v2_perk_show_value = false -%}
-            {%- endif -%}
-            {%- comment -%}
-              Baris isi paket membawa harga harian di ekornya
-              ("270 capsules - Rp 11.000 / day"). Angkanya rupiah tulis-tangan,
-              jadi di luar Indonesia ekor itu dipotong dan hanya isinya yang
-              tersisa ("270 capsules"). Dipotong pada " - Rp" — penanda yang
-              hanya muncul di pola ini, bukan pada label lain.
-            {%- endcomment -%}
-            {%- if localization.market.handle != 'id' and v2_perk_parts[0] contains ' - Rp' -%}
-              {%- assign v2_perk_head = v2_perk_parts[0] | split: ' - Rp' | first | strip -%}
-              {%- assign v2_perk_parts = v2_perk_head -%}
-              {%- assign v2_perk_parts = v2_perk_parts | split: '|' -%}
-            {%- endif -%}
-            <li class="v2-plan__perk">
-              {%- comment -%}
-                Baris berhadiah ditandai ikon kado, bukan titik. Penandanya
-                memisahkan barang fisik yang punya nilai rupiah dari benefit
-                layanan seperti gratis ongkir, sehingga angka di kanan langsung
-                terbaca sebagai nilai hadiah. Kata "worth" tetap ada di markup
-                tapi hanya untuk pembaca layar — ikon menyampaikan kategori,
-                bukan makna, jadi teksnya tidak boleh hilang sama sekali.
-              {%- endcomment -%}
-              <span class="v2-plan__marker" aria-hidden="true">
-                {%- if v2_perk_parts.size > 1 and v2_perk_icon == 'ship' -%}
-                  <svg class="v2-plan__gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false">
-                    <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2" />
-                    <path d="M15 18H9" />
-                    <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-3.48-4.35A1 1 0 0 0 17.52 8H14" />
-                    <circle cx="17" cy="18" r="2" />
-                    <circle cx="7" cy="18" r="2" />
-                  </svg>
-                {%- elsif v2_perk_parts.size > 1 and v2_perk_icon == 'oil' or v2_perk_parts.size > 1 and v2_perk_icon == 'dropper' -%}
-                  {%- comment -%}
-                    Botol pipet, bukan kotak kado: hadiah ini barang nyata yang
-                    punya nama sendiri (Moringa Seed Oil 3ml), dan ikon kado
-                    membuatnya terbaca sebagai "hadiah misteri" — hal yang justru
-                    sedang kita hentikan. Menerima `oil` maupun `dropper` — kosakata
-                    ikon LP (snippets/lp-icon.liquid) memakai nama kedua.
-                    Bentuknya diuji pada 16px, ukuran
-                    render sebenarnya: bahu botol + satu tetes. Detail yang lebih
-                    ramai (sprig dua daun) menggumpal di ukuran itu.
-                    Bobot garisnya 2 seperti ikon kado dan truk; hanya tetesnya
-                    1.5 supaya detail dalam tidak menebal.
-                  {%- endcomment -%}
-                  <svg class="v2-plan__gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false">
-                    <path d="M10 2h4v2.5h-4z" />
-                    <path d="M11 4.5v2.2M13 4.5v2.2" />
-                    <path d="M9 6.7h6l1.6 2.1a3 3 0 0 1 .6 1.8V19a3 3 0 0 1-3 3h-4.4a3 3 0 0 1-3-3v-8.4a3 3 0 0 1 .6-1.8z" />
-                    <path d="M12 18.6c-1.4 0-2.5-1.1-2.5-2.4 0-1.4 1.4-2.4 2.5-4 1.1 1.6 2.5 2.6 2.5 4 0 1.3-1.1 2.4-2.5 2.4z" stroke-width="1.5" />
-                  </svg>
-                {%- elsif v2_perk_parts.size > 1 -%}
-                  <svg class="v2-plan__gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false">
-                    <rect x="3" y="8" width="18" height="4" rx="1" />
-                    <path d="M12 8v13" />
-                    <path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7" />
-                    <path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5" />
-                  </svg>
-                {%- else -%}
-                  <span class="v2-plan__dot"></span>
-                {%- endif -%}
-              </span>
-              <span class="v2-plan__perk-text">{{ v2_perk_parts[0] | strip }}</span>
-              {%- if v2_perk_parts.size > 1 and v2_perk_show_value -%}
-                {%- assign v2_perk_value = v2_perk_parts[1] | strip -%}
-                {%- if v2_perk_money != blank -%}
-                  {%- assign v2_perk_value = v2_perk_money -%}
-                {%- endif -%}
-                {%- if v2_perk_value != blank -%}
-                <span class="v2-plan__perk-value">
-                  {%- comment -%}
-                    Label baris hadiah hanya menyebut barangnya ("Bamboo
-                    Spoon"); yang menyatakan gratis adalah ikon kado, coretan,
-                    dan chip — semuanya visual. Karena itu teks tersembunyi ini
-                    harus memuat kata "gratis" sendiri, kalau tidak pembaca
-                    layar cuma mendengar nama barang dan sebuah harga.
-
-                    Spasi pengapitnya &nbsp; supaya tidak terpangkas trim Liquid
-                    maupun penciutan spasi HTML; tanpa itu terdengar menyatu
-                    seperti "Bamboo Scoopfree".
-                  {%- endcomment -%}
-                  <span class="v2-plan__sr">
-                    {%- if is_id_locale -%}&nbsp;gratis, senilai&nbsp;{%- else -%}&nbsp;free, worth&nbsp;{%- endif -%}
-                  </span>
-                  {%- comment -%}
-                    Tanda "~" berarti perkiraan dan berlaku pada nilainya, jadi
-                    ia berada DI LUAR coretan — yang dicoret hanya angkanya.
-                    Mencoret tildenya membuat garis mulai sebelum "Rp" dan
-                    terbaca seperti tanda hubung.
-                  {%- endcomment -%}
-                  {%- assign v2_perk_amount_text = v2_perk_value -%}
-                  {%- if v2_perk_value contains '~' -%}
-                    {%- assign v2_perk_amount_text = v2_perk_value | split: '~' | last | strip -%}
-                    <span class="v2-plan__approx" aria-hidden="true">~</span>
-                  {%- endif -%}
-                  <s class="v2-plan__perk-price">{{ v2_perk_amount_text }}</s>
-                </span>
-                {%- endif -%}
-              {%- endif -%}
-            </li>
-          {%- endfor -%}
-        </ul>
-      {%- endif -%}
-    </div>
-  {%- endfor -%}
-</div>
-
 {%- comment -%}
-  Baris ini hanya untuk dua produk yang diminum tiap hari: bubuk dan kapsul.
-
-  Isinya janji tentang apa yang DIRASAKAN setelah rutin mengonsumsi. Minyak
-  biji dipakai di kulit, dan sisanya alat seduh atau paket campuran — janji
-  yang sama di sana tidak punya dasar dan malah mengaburkan bedanya produk.
-
-  Dikunci ke handle, bukan tag: tag bisa dipasang siapa saja dari admin dan
-  diam-diam menyalakan klaim ini di produk baru. Menambah produk ke daftar
-  harus jadi keputusan sadar di berkas ini.
+  Gaya kartu SEBELUM markupnya. Dulu blok ini berada sesudah markup: di
+  koneksi lambat browser sudah melukis kartu sebelum gayanya tiba, dan ikon
+  hadiah (svg tanpa ukuran) melebar selebar kartu sampai CSS datang.
 {%- endcomment -%}
-{%- assign v2_benefit_handles = 'organic-moringa-powder,organic-moringa-capsules' | split: ',' -%}
-{%- if v2_benefit_handles contains product.handle and pdp3_mode == false -%}
-  {%- comment -%}
-    Tiga janji hasil, di antara pemilih paket dan tombol beli.
-
-    Kartu paket menjelaskan APA yang didapat (isi, hadiah, ongkir); baris ini
-    menjawab pertanyaan yang tersisa tepat sebelum pembeli menekan tombol: APA
-    yang akan saya rasakan. Itu sebabnya letaknya di sini, bukan di atas kartu —
-    ia dibaca terakhir, saat keputusan sedang diambil.
-
-    Sengaja TIDAK bersaing dengan CTA: tanpa latar penuh, tanpa kotak, huruf
-    lebih kecil dan lebih ringan daripada tombol, hanya satu garis rambut sebagai
-    pemisah. Diberi warna solid, mata akan berhenti di sini alih-alih di tombol.
-
-    Teksnya dari berkas locale supaya versi /id ikut berubah tanpa menyentuh
-    snippet ini lagi.
-  {%- endcomment -%}
-  <ul class="v2-benefits">
-    {%- comment -%}
-      Kuncinya ditulis utuh, bukan dirakit `'products.general.' | append: key`.
-      Kunci rakitan lolos runtime tapi membuat theme-check tidak bisa memastikan
-      terjemahannya ada — dan kunci yang hilang baru ketahuan sebagai
-      "Translation missing" di halaman pembeli.
-    {%- endcomment -%}
-    {%- capture v2_benefits_raw -%}
-      {{- 'products.general.benefit_1' | t -}}|
-      {{- 'products.general.benefit_2' | t -}}|
-      {{- 'products.general.benefit_3' | t -}}
-    {%- endcapture -%}
-    {%- assign v2_benefit_list = v2_benefits_raw | split: '|' -%}
-    {%- for v2_benefit_raw in v2_benefit_list -%}
-      {%- assign v2_benefit_text = v2_benefit_raw | strip -%}
-      {%- comment -%}
-        Kunci yang belum diterjemahkan menghasilkan "Translation missing: ..." —
-        teks itu tidak boleh sampai ke pembeli, jadi barisnya dilewati.
-      {%- endcomment -%}
-      {%- if v2_benefit_text == blank or v2_benefit_text contains 'Translation missing' -%}
-        {%- continue -%}
-      {%- endif -%}
-      <li class="v2-benefit">
-        <span class="v2-benefit__tick" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M20 6 9 17l-5-5" /></svg>
-        </span>
-        <span class="v2-benefit__text">{{ v2_benefit_text }}</span>
-      </li>
-    {%- endfor -%}
-  </ul>
-{%- endif -%}
-
-{%- comment -%}
-  Bilah add-to-cart yang menempel di bawah layar. Ia hanya muncul saat tombol
-  add-to-cart aslinya keluar dari viewport, jadi tidak pernah ada dua ajakan
-  yang bersaing di layar yang sama.
-
-  Tombolnya sengaja meneruskan klik ke #AddToCart yang asli, bukan mengirim
-  form sendiri. Seluruh logika keranjang tema — validasi varian, langganan,
-  event GTM — sudah menempel di tombol itu; menduplikasinya berarti dua jalur
-  yang bisa menyimpang diam-diam.
-{%- endcomment -%}
-{%- if skin == 'pdp3' -%}
-  {%- comment -%}
-    Bentuk bilah versi pdp3 mengikuti mockup: harga per hari dan janji garansi
-    di kiri, tombol pil di kanan. Yang WAJIB dipertahankan cuma dua kait —
-    `data-v2-sticky` pada bilahnya dan `data-v2-sticky-btn` pada tombolnya —
-    sebab skrip di bawah memakai keduanya untuk memunculkan bilah dan meneruskan
-    klik ke `#AddToCart` yang asli. Isi lainnya bebas disusun ulang.
-
-    `data-pdp3-perday` diisi assets/pdp3.js dari peta metafield
-    `custom.value_per_day`, jadi angkanya ikut berganti saat paket diganti.
-  {%- endcomment -%}
-  {%- assign v2_sticky_per_day = current_variant.metafields.custom.value_per_day -%}
-  {%- comment -%}
-    "Rp 12.700 a day" ditulis ulang jadi "Rp 12.700 / day". Satuannya diambil
-    dari snippet yang sama dengan kolom beli di hero supaya kedua permukaan
-    tidak pernah menyebut hal yang sama dengan dua kata berbeda; `capture`
-    dipakai karena `render` punya scope terpisah dan tidak mengembalikan
-    variabel.
-  {%- endcomment -%}
-  {%- capture v2_per_day_unit -%}{%- render 'pdp3-per-day-unit', suffix: per_day_suffix -%}{%- endcapture -%}
-  {%- comment -%}
-    Kelas `pdp3` di bilah ini WAJIB. Seluruh token desain (--forest, --line,
-    --pdp3-gutter, --r-pill, ...) didefinisikan pada `.pdp3`, dan assets/pdp3.js
-    memindahkan bilah ini ke <body> supaya lepas dari pembungkus reveal yang
-    mematikan `position: fixed`. Begitu pindah, ia tidak lagi keturunan section
-    mana pun — tanpa kelas ini semua var() kosong: tombol transparan tanpa
-    radius, gutter nol, garis atas hilang.
-  {%- endcomment -%}
-  <div class="pdp3 v2-sticky v2-sticky--pdp3" data-v2-sticky>
-    <div class="v2-sticky__in">
-      <span class="v2-sticky__pd">
-        <b><span data-pdp3-perday>{{ v2_sticky_per_day | split: '/' | first | strip }}</span><span class="v2-sticky__slash" aria-hidden="true">/</span><em>{{ v2_per_day_unit }}</em></b>
-        {%- if sticky_note != blank -%}
-          <span class="v2-sticky__note">
-            <svg aria-hidden="true" focusable="false"><use href="#i-shield"></use></svg>
-            {{ sticky_note }}
-          </span>
-        {%- endif -%}
-      </span>
-      <button type="button" class="v2-sticky__btn" data-v2-sticky-btn>
-        {%- comment -%}
-          `| t` hanya boleh mengenai KUNCI terjemahan. Dirantai sesudah
-          `default:`, ia ikut menerjemahkan label yang sudah jadi teks biasa dan
-          hasilnya "Translation missing: en.Add to cart".
-        {%- endcomment -%}
-        <span class="v2-sticky__label">
-          {%- if sticky_cta != blank -%}
-            {{ sticky_cta }}
-          {%- else -%}
-            {{ 'products.general.add_to_cart' | t }}
-          {%- endif -%}
-        </span>
-        <svg class="v2-sticky__arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </button>
-    </div>
-  </div>
-{%- else -%}
-  <div class="v2-sticky" data-v2-sticky>
-    <button type="button" class="v2-sticky__btn" data-v2-sticky-btn>
-      <span class="v2-atc__label">{{ 'products.general.add_to_cart' | t }}</span>
-      <span class="v2-atc__sep" aria-hidden="true">|</span>
-      <s class="v2-atc__compare" data-v2-atc-compare></s>
-      <span class="v2-atc__price" data-v2-atc-price></span>
-    </button>
-  </div>
-{%- endif -%}
-
 <style>
   /* ---- Tiga janji hasil di atas tombol beli ----
 
@@ -1417,6 +931,497 @@
     }
   }
 </style>
+
+
+<div
+  class="v2-plans{% if skin == 'pdp3' %} v2-plans--pdp3{% endif %}"
+  role="radiogroup"
+  aria-label="{% if is_id_locale %}Pilih paket{% else %}Choose your plan{% endif %}"
+>
+  {%- assign v2_rendered = 0 -%}
+  {%- for variant in v2_variants -%}
+    {%- if variant.metafields.custom.staged_hidden == true and show_staged != true -%}
+      {%- continue -%}
+    {%- endif -%}
+
+    {%- liquid
+      assign v2_rendered = v2_rendered | plus: 1
+
+      assign v2_label = variant.metafields.custom.staged_plan_label
+      if v2_label == blank
+        assign v2_label = variant.metafields.custom.time_protocol
+      endif
+      comment
+        Produk tanpa opsi memakai varian bernama "Default Title" — placeholder
+        Shopify yang tidak pernah boleh terbaca pembeli. Kartu lama sudah
+        menggantinya dengan nama produk; v2 harus melakukan hal yang sama.
+        Pengecekannya lewat has_only_default_variant, bukan mencocokkan teks,
+        karena nama itu tidak diterjemahkan dan mudah meleset antar-locale.
+      endcomment
+      if v2_label == blank
+        if product.has_only_default_variant
+          assign v2_label = product.title
+        else
+          assign v2_label = variant.title
+        endif
+      endif
+
+      comment
+        staged_compare_at_price disimpan dalam rupiah penuh (mengikuti
+        custom.original_price), sedangkan variant.price dalam satuan terkecil.
+        Tanpa dikalikan 100 perbandingannya selalu kalah dan harga coretnya
+        tidak pernah muncul.
+      endcomment
+      assign v2_compare = 0
+      assign v2_compare_meta = variant.metafields.custom.staged_compare_at_price.value | plus: 0
+      if v2_compare_meta > 0
+        assign v2_compare = v2_compare_meta | times: 100
+      elsif variant.compare_at_price > variant.price
+        assign v2_compare = variant.compare_at_price
+      endif
+
+      assign v2_saving = 0
+      if v2_compare > variant.price
+        assign v2_saving = v2_compare | minus: variant.price
+      endif
+
+      comment
+        Badge di mockup berbunyi "save 180.000" tanpa simbol mata uang, jadi
+        buang penanda Rp dari hasil filter money.
+      endcomment
+      assign v2_saving_text = v2_saving | money_without_trailing_zeros | remove: 'Rp' | strip
+
+      assign v2_compare_text = ''
+      if v2_saving > 0
+        assign v2_compare_text = v2_compare | money_without_trailing_zeros
+      endif
+      assign v2_price_text = variant.price | money_without_trailing_zeros
+
+      assign v2_badge = variant.metafields.custom.custom_badge_text
+      if pdp3_mode
+        assign v2_badge = variant.metafields.pdp3.badge
+      endif
+
+      comment
+        Kolom kiri dan kanan yang sama lebar membuat badge tepat di tengah, tapi
+        kolom judul jadi cuma separuh sisa ruang. Untuk nama panjang di layar
+        sempit itu tidak cukup: di 390px kolomnya 77px sedangkan "The Complete"
+        saja butuh 96px, sehingga namanya pecah empat baris. Kartu berlabel
+        panjang diberi penanda agar kolomnya mengikuti isi — badge lalu mengalir
+        setelah judul, persis seperti referensi desainnya. Label terpanjang di
+        desain "180 grams" hanya 9 karakter; nama bundel 18-26.
+      endcomment
+      assign v2_flow_head = false
+      assign v2_label_length = v2_label | strip | size
+      if v2_label_length > 12
+        assign v2_flow_head = true
+      endif
+
+
+      assign v2_is_active = false
+      if current_variant
+        if current_variant.id == variant.id
+          assign v2_is_active = true
+        endif
+      elsif v2_rendered == 1
+        assign v2_is_active = true
+      endif
+    -%}
+
+    <div
+      class="checkbox-button protocol-variant-card v2-plan{% if v2_is_active %} active{% endif %}"
+      data-value="{{ variant.id }}"
+      data-variant-price="{{ variant.price | divided_by: 100 }}"
+      data-available="{{ variant.available }}"
+      data-v2-compare="{{ v2_compare_text | escape }}"
+      data-v2-price="{{ v2_price_text | escape }}"
+      role="radio"
+      aria-checked="{% if v2_is_active %}true{% else %}false{% endif %}"
+      tabindex="0"
+    >
+      {%- if skin == 'pdp3' and v2_badge != blank -%}
+        <span class="v2-plan__tag">{{ v2_badge }}</span>
+      {%- endif -%}
+
+      <div class="v2-plan__head{% if v2_flow_head %} v2-plan__head--flow{% endif %}">
+        {%- comment -%}
+          Tiga anak langsung dari baris judul = tiga kolom grid: judul, badge,
+          harga. Badge harus jadi kolom tersendiri, bukan menempel pada judul,
+          supaya grid bisa menaruhnya tepat di sumbu tengah kartu.
+        {%- endcomment -%}
+        <span class="v2-plan__main">
+          <span class="v2-plan__radio" aria-hidden="true"></span>
+          <span class="v2-plan__title">{{ v2_label }}</span>
+        </span>
+
+        {%- if v2_saving > 0 -%}
+          <span class="v2-plan__badge">
+            {%- if pdp3_mode -%}
+              {%- assign v2_saving_rp = v2_saving | money_without_trailing_zeros | remove: ' ' -%}
+              {%- if is_id_locale -%}Hemat {{ v2_saving_rp }}{%- else -%}Save {{ v2_saving_rp }}{%- endif -%}
+            {%- elsif is_id_locale -%}hemat {{ v2_saving_text }}{%- else -%}save {{ v2_saving_text }}{%- endif -%}
+          </span>
+        {%- elsif v2_badge != blank -%}
+          <span class="v2-plan__badge">{{ v2_badge }}</span>
+        {%- endif -%}
+
+        <span class="v2-plan__prices">
+          {%- if v2_compare_text != blank -%}
+            <s class="v2-plan__compare">{{ v2_compare_text }}</s>
+          {%- endif -%}
+          <span class="v2-plan__price">{{ v2_price_text }}</span>
+          {%- unless variant.available -%}
+            <span class="v2-plan__soldout">
+              {%- if is_id_locale -%}stok habis{%- else -%}sold out{%- endif -%}
+            </span>
+          {%- endunless -%}
+        </span>
+      </div>
+
+      {%- if skin == 'pdp3' -%}
+        {%- assign v2_per_day = variant.metafields.custom.value_per_day -%}
+        {%- if v2_per_day != blank -%}
+          {%- comment -%}
+            Metafield-nya sudah berbentuk "Rp 12.700 / day"; garis miringnya
+            dicetak ulang sebagai elemen sendiri supaya bisa dipucatkan —
+            sama seperti di hero dan bilah sticky, jadi ketiga tempat membaca
+            harga per hari dengan tanda baca yang sama.
+          {%- endcomment -%}
+          <p class="v2-plan__perday">
+            <b>{{ v2_per_day | split: '/' | first | strip }}</b>
+            <span class="v2-plan__slash" aria-hidden="true">/</span>
+            <span>{{ v2_per_day | split: '/' | last | strip }}</span>
+          </p>
+        {%- endif -%}
+      {%- endif -%}
+
+      {%- comment -%}
+        Nilai hadiah dicoret, sama seperti harga lama di kanan atas. Dua coretan
+        dengan arti berbeda dalam satu kartu sebenarnya rawan tertukar, dan yang
+        membedakannya di sini adalah ikon kado pada barisnya: coretan di baris
+        berikon = barang yang kamu terima, coretan di baris judul = harga yang
+        batal kamu bayar. Jangan hilangkan ikonnya tanpa mengganti pembeda lain.
+      {%- endcomment -%}
+      {%- comment -%}
+        Nilai hadiah diambil dari VARIAN HADIAHNYA, bukan dari teks metafield.
+        Teks itu ditulis manual dalam rupiah, jadi pembeli Amerika pun membaca
+        "Rp 120.000" di sebelah harga dolar. compare_at_price varian hadiah
+        sudah sadar market, sehingga filter `money` mengeluarkan mata uang yang
+        benar tanpa ada angka kedua yang harus dirawat manusia.
+      {%- endcomment -%}
+      {%- assign v2_gifts = variant.metafields.custom.eligible_gifts.value -%}
+      {%- assign v2_gift_index = 0 -%}
+      {%- capture v2_perks_html -%}
+        {%- if pdp3_mode and variant.metafields.pdp3.description != blank -%}
+          {%- assign v2_pdp3_lines = variant.metafields.pdp3.description | newline_to_br | split: '<br />' -%}
+          {%- for v2_pdp3_line in v2_pdp3_lines -%}<li>{{ v2_pdp3_line | strip }}</li>{%- endfor -%}
+        {%- else -%}
+          {{ variant.metafields.custom.description | metafield_tag }}
+        {%- endif -%}
+      {%- endcapture -%}
+      {%- assign v2_perk_items = v2_perks_html | split: '<li>' -%}
+      {%- if v2_perk_items.size > 1 -%}
+        <ul class="v2-plan__perks">
+          {%- for v2_perk_raw in v2_perk_items offset: 1 -%}
+            {%- assign v2_perk_text = v2_perk_raw | split: '</li>' | first | strip_html | strip -%}
+            {%- if v2_perk_text == blank -%}
+              {%- continue -%}
+            {%- endif -%}
+            {%- assign v2_perk_parts = v2_perk_text | split: '|' -%}
+            {%- assign v2_perk_icon = v2_perk_parts[2] | default: 'gift' | strip | downcase -%}
+            {%- comment -%}
+              Gratis ongkir hanya berlaku untuk market Indonesia, jadi barisnya
+              TIDAK dirender sama sekali di market lain — bukan sekadar angkanya
+              yang disembunyikan. Menyisakan "Free Shipping included" tanpa nilai
+              untuk pembeli Eropa/Amerika sama saja menjanjikan sesuatu yang tidak
+              kita tanggung.
+
+              Penandanya ikon `ship`, bukan teksnya, sebab labelnya ikut
+              diterjemahkan per locale sedangkan ruas ikon tidak.
+
+              Dicocokkan ke handle market (`id`), bukan locale atau mata uang:
+              locale `id` bisa dibuka pembeli dari mana saja, dan satu market
+              bisa punya beberapa mata uang.
+            {%- endcomment -%}
+            {%- if v2_perk_icon == 'ship' and localization.market.handle != 'id' -%}
+              {%- continue -%}
+            {%- endif -%}
+            {%- comment -%}
+              Pencocokan hadiah: pertama lewat judul produk yang muncul di label
+              ("Free Travel Pouch" memuat "Travel Pouch"), baru jatuh ke urutan
+              kalau tidak ada yang cocok. Urutan saja rapuh — label bisa ditulis
+              ulang kapan pun — tapi ia jaring pengaman yang lebih baik daripada
+              tidak menampilkan nilai sama sekali.
+            {%- endcomment -%}
+            {%- assign v2_perk_money = blank -%}
+            {%- if v2_perk_parts.size > 1 and v2_perk_icon != 'ship' -%}
+              {%- assign v2_perk_label = v2_perk_parts[0] | strip -%}
+              {%- assign v2_gift_match = blank -%}
+              {%- for v2_g in v2_gifts -%}
+                {%- if v2_perk_label contains v2_g.product.title -%}
+                  {%- assign v2_gift_match = v2_g -%}
+                  {%- break -%}
+                {%- endif -%}
+              {%- endfor -%}
+              {%- if v2_gift_match == blank -%}
+                {%- assign v2_gift_match = v2_gifts[v2_gift_index] -%}
+              {%- endif -%}
+              {%- assign v2_gift_index = v2_gift_index | plus: 1 -%}
+              {%- if v2_gift_match.compare_at_price > 0 -%}
+                {%- assign v2_perk_money = v2_gift_match.compare_at_price | money -%}
+              {%- endif -%}
+            {%- endif -%}
+            {%- comment -%}
+              Di luar Indonesia, nilai yang tidak bisa diselesaikan lebih baik
+              TIDAK ditampilkan daripada ditampilkan dalam rupiah. Indonesia
+              tetap memakai teks metafield apa adanya supaya tampilannya tidak
+              berubah sedikit pun.
+            {%- endcomment -%}
+            {%- assign v2_perk_show_value = true -%}
+            {%- if v2_perk_money == blank and localization.market.handle != 'id' -%}
+              {%- assign v2_perk_show_value = false -%}
+            {%- endif -%}
+            {%- comment -%}
+              Baris isi paket membawa harga harian di ekornya
+              ("270 capsules - Rp 11.000 / day"). Angkanya rupiah tulis-tangan,
+              jadi di luar Indonesia ekor itu dipotong dan hanya isinya yang
+              tersisa ("270 capsules"). Dipotong pada " - Rp" — penanda yang
+              hanya muncul di pola ini, bukan pada label lain.
+            {%- endcomment -%}
+            {%- if localization.market.handle != 'id' and v2_perk_parts[0] contains ' - Rp' -%}
+              {%- assign v2_perk_head = v2_perk_parts[0] | split: ' - Rp' | first | strip -%}
+              {%- assign v2_perk_parts = v2_perk_head -%}
+              {%- assign v2_perk_parts = v2_perk_parts | split: '|' -%}
+            {%- endif -%}
+            <li class="v2-plan__perk">
+              {%- comment -%}
+                Baris berhadiah ditandai ikon kado, bukan titik. Penandanya
+                memisahkan barang fisik yang punya nilai rupiah dari benefit
+                layanan seperti gratis ongkir, sehingga angka di kanan langsung
+                terbaca sebagai nilai hadiah. Kata "worth" tetap ada di markup
+                tapi hanya untuk pembaca layar — ikon menyampaikan kategori,
+                bukan makna, jadi teksnya tidak boleh hilang sama sekali.
+              {%- endcomment -%}
+              <span class="v2-plan__marker" aria-hidden="true">
+                {%- if v2_perk_parts.size > 1 and v2_perk_icon == 'ship' -%}
+                  <svg class="v2-plan__gift" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                    <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2" />
+                    <path d="M15 18H9" />
+                    <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-3.48-4.35A1 1 0 0 0 17.52 8H14" />
+                    <circle cx="17" cy="18" r="2" />
+                    <circle cx="7" cy="18" r="2" />
+                  </svg>
+                {%- elsif v2_perk_parts.size > 1 and v2_perk_icon == 'oil' or v2_perk_parts.size > 1 and v2_perk_icon == 'dropper' -%}
+                  {%- comment -%}
+                    Botol pipet, bukan kotak kado: hadiah ini barang nyata yang
+                    punya nama sendiri (Moringa Seed Oil 3ml), dan ikon kado
+                    membuatnya terbaca sebagai "hadiah misteri" — hal yang justru
+                    sedang kita hentikan. Menerima `oil` maupun `dropper` — kosakata
+                    ikon LP (snippets/lp-icon.liquid) memakai nama kedua.
+                    Bentuknya diuji pada 16px, ukuran
+                    render sebenarnya: bahu botol + satu tetes. Detail yang lebih
+                    ramai (sprig dua daun) menggumpal di ukuran itu.
+                    Bobot garisnya 2 seperti ikon kado dan truk; hanya tetesnya
+                    1.5 supaya detail dalam tidak menebal.
+                  {%- endcomment -%}
+                  <svg class="v2-plan__gift" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                    <path d="M10 2h4v2.5h-4z" />
+                    <path d="M11 4.5v2.2M13 4.5v2.2" />
+                    <path d="M9 6.7h6l1.6 2.1a3 3 0 0 1 .6 1.8V19a3 3 0 0 1-3 3h-4.4a3 3 0 0 1-3-3v-8.4a3 3 0 0 1 .6-1.8z" />
+                    <path d="M12 18.6c-1.4 0-2.5-1.1-2.5-2.4 0-1.4 1.4-2.4 2.5-4 1.1 1.6 2.5 2.6 2.5 4 0 1.3-1.1 2.4-2.5 2.4z" stroke-width="1.5" />
+                  </svg>
+                {%- elsif v2_perk_parts.size > 1 -%}
+                  <svg class="v2-plan__gift" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                    <rect x="3" y="8" width="18" height="4" rx="1" />
+                    <path d="M12 8v13" />
+                    <path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7" />
+                    <path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5" />
+                  </svg>
+                {%- else -%}
+                  <span class="v2-plan__dot"></span>
+                {%- endif -%}
+              </span>
+              <span class="v2-plan__perk-text">{{ v2_perk_parts[0] | strip }}</span>
+              {%- if v2_perk_parts.size > 1 and v2_perk_show_value -%}
+                {%- assign v2_perk_value = v2_perk_parts[1] | strip -%}
+                {%- if v2_perk_money != blank -%}
+                  {%- assign v2_perk_value = v2_perk_money -%}
+                {%- endif -%}
+                {%- if v2_perk_value != blank -%}
+                <span class="v2-plan__perk-value">
+                  {%- comment -%}
+                    Label baris hadiah hanya menyebut barangnya ("Bamboo
+                    Spoon"); yang menyatakan gratis adalah ikon kado, coretan,
+                    dan chip — semuanya visual. Karena itu teks tersembunyi ini
+                    harus memuat kata "gratis" sendiri, kalau tidak pembaca
+                    layar cuma mendengar nama barang dan sebuah harga.
+
+                    Spasi pengapitnya &nbsp; supaya tidak terpangkas trim Liquid
+                    maupun penciutan spasi HTML; tanpa itu terdengar menyatu
+                    seperti "Bamboo Scoopfree".
+                  {%- endcomment -%}
+                  <span class="v2-plan__sr">
+                    {%- if is_id_locale -%}&nbsp;gratis, senilai&nbsp;{%- else -%}&nbsp;free, worth&nbsp;{%- endif -%}
+                  </span>
+                  {%- comment -%}
+                    Tanda "~" berarti perkiraan dan berlaku pada nilainya, jadi
+                    ia berada DI LUAR coretan — yang dicoret hanya angkanya.
+                    Mencoret tildenya membuat garis mulai sebelum "Rp" dan
+                    terbaca seperti tanda hubung.
+                  {%- endcomment -%}
+                  {%- assign v2_perk_amount_text = v2_perk_value -%}
+                  {%- if v2_perk_value contains '~' -%}
+                    {%- assign v2_perk_amount_text = v2_perk_value | split: '~' | last | strip -%}
+                    <span class="v2-plan__approx" aria-hidden="true">~</span>
+                  {%- endif -%}
+                  <s class="v2-plan__perk-price">{{ v2_perk_amount_text }}</s>
+                </span>
+                {%- endif -%}
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+  {%- endfor -%}
+</div>
+
+{%- comment -%}
+  Baris ini hanya untuk dua produk yang diminum tiap hari: bubuk dan kapsul.
+
+  Isinya janji tentang apa yang DIRASAKAN setelah rutin mengonsumsi. Minyak
+  biji dipakai di kulit, dan sisanya alat seduh atau paket campuran — janji
+  yang sama di sana tidak punya dasar dan malah mengaburkan bedanya produk.
+
+  Dikunci ke handle, bukan tag: tag bisa dipasang siapa saja dari admin dan
+  diam-diam menyalakan klaim ini di produk baru. Menambah produk ke daftar
+  harus jadi keputusan sadar di berkas ini.
+{%- endcomment -%}
+{%- assign v2_benefit_handles = 'organic-moringa-powder,organic-moringa-capsules' | split: ',' -%}
+{%- if v2_benefit_handles contains product.handle and pdp3_mode == false -%}
+  {%- comment -%}
+    Tiga janji hasil, di antara pemilih paket dan tombol beli.
+
+    Kartu paket menjelaskan APA yang didapat (isi, hadiah, ongkir); baris ini
+    menjawab pertanyaan yang tersisa tepat sebelum pembeli menekan tombol: APA
+    yang akan saya rasakan. Itu sebabnya letaknya di sini, bukan di atas kartu —
+    ia dibaca terakhir, saat keputusan sedang diambil.
+
+    Sengaja TIDAK bersaing dengan CTA: tanpa latar penuh, tanpa kotak, huruf
+    lebih kecil dan lebih ringan daripada tombol, hanya satu garis rambut sebagai
+    pemisah. Diberi warna solid, mata akan berhenti di sini alih-alih di tombol.
+
+    Teksnya dari berkas locale supaya versi /id ikut berubah tanpa menyentuh
+    snippet ini lagi.
+  {%- endcomment -%}
+  <ul class="v2-benefits">
+    {%- comment -%}
+      Kuncinya ditulis utuh, bukan dirakit `'products.general.' | append: key`.
+      Kunci rakitan lolos runtime tapi membuat theme-check tidak bisa memastikan
+      terjemahannya ada — dan kunci yang hilang baru ketahuan sebagai
+      "Translation missing" di halaman pembeli.
+    {%- endcomment -%}
+    {%- capture v2_benefits_raw -%}
+      {{- 'products.general.benefit_1' | t -}}|
+      {{- 'products.general.benefit_2' | t -}}|
+      {{- 'products.general.benefit_3' | t -}}
+    {%- endcapture -%}
+    {%- assign v2_benefit_list = v2_benefits_raw | split: '|' -%}
+    {%- for v2_benefit_raw in v2_benefit_list -%}
+      {%- assign v2_benefit_text = v2_benefit_raw | strip -%}
+      {%- comment -%}
+        Kunci yang belum diterjemahkan menghasilkan "Translation missing: ..." —
+        teks itu tidak boleh sampai ke pembeli, jadi barisnya dilewati.
+      {%- endcomment -%}
+      {%- if v2_benefit_text == blank or v2_benefit_text contains 'Translation missing' -%}
+        {%- continue -%}
+      {%- endif -%}
+      <li class="v2-benefit">
+        <span class="v2-benefit__tick" aria-hidden="true">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M20 6 9 17l-5-5" /></svg>
+        </span>
+        <span class="v2-benefit__text">{{ v2_benefit_text }}</span>
+      </li>
+    {%- endfor -%}
+  </ul>
+{%- endif -%}
+
+{%- comment -%}
+  Bilah add-to-cart yang menempel di bawah layar. Ia hanya muncul saat tombol
+  add-to-cart aslinya keluar dari viewport, jadi tidak pernah ada dua ajakan
+  yang bersaing di layar yang sama.
+
+  Tombolnya sengaja meneruskan klik ke #AddToCart yang asli, bukan mengirim
+  form sendiri. Seluruh logika keranjang tema — validasi varian, langganan,
+  event GTM — sudah menempel di tombol itu; menduplikasinya berarti dua jalur
+  yang bisa menyimpang diam-diam.
+{%- endcomment -%}
+{%- if skin == 'pdp3' -%}
+  {%- comment -%}
+    Bentuk bilah versi pdp3 mengikuti mockup: harga per hari dan janji garansi
+    di kiri, tombol pil di kanan. Yang WAJIB dipertahankan cuma dua kait —
+    `data-v2-sticky` pada bilahnya dan `data-v2-sticky-btn` pada tombolnya —
+    sebab skrip di bawah memakai keduanya untuk memunculkan bilah dan meneruskan
+    klik ke `#AddToCart` yang asli. Isi lainnya bebas disusun ulang.
+
+    `data-pdp3-perday` diisi assets/pdp3.js dari peta metafield
+    `custom.value_per_day`, jadi angkanya ikut berganti saat paket diganti.
+  {%- endcomment -%}
+  {%- assign v2_sticky_per_day = current_variant.metafields.custom.value_per_day -%}
+  {%- comment -%}
+    "Rp 12.700 a day" ditulis ulang jadi "Rp 12.700 / day". Satuannya diambil
+    dari snippet yang sama dengan kolom beli di hero supaya kedua permukaan
+    tidak pernah menyebut hal yang sama dengan dua kata berbeda; `capture`
+    dipakai karena `render` punya scope terpisah dan tidak mengembalikan
+    variabel.
+  {%- endcomment -%}
+  {%- capture v2_per_day_unit -%}{%- render 'pdp3-per-day-unit', suffix: per_day_suffix -%}{%- endcapture -%}
+  {%- comment -%}
+    Kelas `pdp3` di bilah ini WAJIB. Seluruh token desain (--forest, --line,
+    --pdp3-gutter, --r-pill, ...) didefinisikan pada `.pdp3`, dan assets/pdp3.js
+    memindahkan bilah ini ke <body> supaya lepas dari pembungkus reveal yang
+    mematikan `position: fixed`. Begitu pindah, ia tidak lagi keturunan section
+    mana pun — tanpa kelas ini semua var() kosong: tombol transparan tanpa
+    radius, gutter nol, garis atas hilang.
+  {%- endcomment -%}
+  <div class="pdp3 v2-sticky v2-sticky--pdp3" data-v2-sticky>
+    <div class="v2-sticky__in">
+      <span class="v2-sticky__pd">
+        <b><span data-pdp3-perday>{{ v2_sticky_per_day | split: '/' | first | strip }}</span><span class="v2-sticky__slash" aria-hidden="true">/</span><em>{{ v2_per_day_unit }}</em></b>
+        {%- if sticky_note != blank -%}
+          <span class="v2-sticky__note">
+            <svg aria-hidden="true" focusable="false"><use href="#i-shield"></use></svg>
+            {{ sticky_note }}
+          </span>
+        {%- endif -%}
+      </span>
+      <button type="button" class="v2-sticky__btn" data-v2-sticky-btn>
+        {%- comment -%}
+          `| t` hanya boleh mengenai KUNCI terjemahan. Dirantai sesudah
+          `default:`, ia ikut menerjemahkan label yang sudah jadi teks biasa dan
+          hasilnya "Translation missing: en.Add to cart".
+        {%- endcomment -%}
+        <span class="v2-sticky__label">
+          {%- if sticky_cta != blank -%}
+            {{ sticky_cta }}
+          {%- else -%}
+            {{ 'products.general.add_to_cart' | t }}
+          {%- endif -%}
+        </span>
+        <svg class="v2-sticky__arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+  </div>
+{%- else -%}
+  <div class="v2-sticky" data-v2-sticky>
+    <button type="button" class="v2-sticky__btn" data-v2-sticky-btn>
+      <span class="v2-atc__label">{{ 'products.general.add_to_cart' | t }}</span>
+      <span class="v2-atc__sep" aria-hidden="true">|</span>
+      <s class="v2-atc__compare" data-v2-atc-compare></s>
+      <span class="v2-atc__price" data-v2-atc-price></span>
+    </button>
+  </div>
+{%- endif -%}
 
 <script>
   (function () {
