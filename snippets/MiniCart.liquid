@@ -1066,24 +1066,262 @@
     });
   };
 
+  /* ===== Tambah ke keranjang dalam SATU putaran =====
+     Dulu: add.js → tunggu → `cart?view=mini` + `/cart.js` → baru drawer
+     digambar. Dua putaran berurutan; terukur 28 Okt 2026 ±830ms + ±300ms.
+
+     Sekarang add.js membawa `sections`, dan Shopify menitipkan HTML drawer
+     (sections/cart-drawer-render.liquid) di jawaban yang sama, lengkap dengan
+     potret keranjang JSON-nya. Kontrak jawabannya sama dengan jalur lama:
+     `{ doc, cart }`, jadi pemanggil tidak perlu tahu jalur mana yang dipakai.
+
+     Jatuh ke jalur lama bila section-nya tidak ada (tema lain, A/B arm baru),
+     HTML-nya null (Shopify membalas null untuk section yang gagal dirender),
+     atau JSON keranjangnya bukan keranjang. Ragu = dua putaran, bukan drawer
+     yang salah.
+
+     Status 400 diperlakukan khusus: menurut dokumentasi Shopify, `sections`
+     yang tidak sah membalas 400 padahal barangnya BISA sudah masuk. Membuang
+     baris optimistis lalu bilang "gagal" di atas barang yang sudah di
+     keranjang lebih buruk daripada membaca ulang — jadi 400 dibaca ulang, dan
+     hanya 4xx lain (habis, varian tak sah) yang dianggap gagal sungguhan. */
+  var CART_RENDER_SECTION = 'cart-drawer-render';
+  window.cartLocalePrefix = function () {
+    return (typeof Shopify !== 'undefined' && Shopify.locale === 'id') ? '/id/' : '/';
+  };
+  function cartRenderTwoTrips() {
+    return Promise.all([
+      fetch(window.cartLocalePrefix() + 'cart?view=mini').then(function (r) { return r.text(); }),
+      fetch('/cart.js').then(function (r) { return r.json(); })
+    ]).then(function (res) {
+      return { doc: new DOMParser().parseFromString(res[0], 'text/html'), cart: res[1], trips: 2 };
+    });
+  }
+  /* `onAddFailed` (opsional) dipanggil HANYA bila penambahannya sendiri
+     ditolak — bukan bila penggambaran sesudahnya yang gagal. FBT memakainya
+     untuk memutuskan apakah kartunya boleh dikembalikan. */
+  window.cartAddRendered = function (items, onAddFailed) {
+    var addFailed = function (err) {
+      if (typeof onAddFailed === 'function') onAddFailed(err);
+      throw err;
+    };
+    return fetch(window.cartLocalePrefix() + 'cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ items: items, sections: CART_RENDER_SECTION })
+    })
+      .then(function (r) {
+        if (r.status === 400) return null;
+        return r.json().then(function (j) {
+          if (!r.ok) throw j;
+          return j;
+        });
+      })
+      /* Satu penangkap untuk semua bentuk penolakan add: jaringan putus,
+         4xx dari server, atau badan bukan JSON (429 dibalas HTML). Dipasang
+         SEBELUM tahap penggambaran supaya kegagalan di sana tidak ikut
+         terhitung sebagai "gagal menambahkan". */
+      .then(null, addFailed)
+      .then(function (added) {
+        var html = added && added.sections && added.sections[CART_RENDER_SECTION];
+        if (!html) return cartRenderTwoTrips();
+        var doc = new DOMParser().parseFromString(html, 'text/html');
+        var cart = null;
+        var state = doc.querySelector('script[data-cart-state]');
+        try { cart = state ? JSON.parse(state.textContent) : null; } catch (e) { cart = null; }
+        if (!doc.getElementById('mini-cart-content') || !window.isCartPayload(cart)) {
+          return cartRenderTwoTrips();
+        }
+        /* Potret Liquid tidak tahu kode diskon (lihat
+           sections/cart-drawer-render.liquid). Ada kode di keranjang, atau UI
+           voucher sedang tidak diam (terpasang / terbuka / ada pesan) → HTML
+           tetap dipakai, tapi keranjangnya dibaca dari /cart.js supaya
+           syncVoucherUI menerima bentuk aslinya. */
+        var voucher = document.querySelector('#cart [data-cart-voucher]');
+        var voucherBusy = voucher && (voucher.getAttribute('data-state') || 'idle') !== 'idle';
+        if (cart.has_code_discount || voucherBusy) {
+          return fetch('/cart.js')
+            .then(function (r) { return r.json(); })
+            .then(function (fresh) {
+              if (!window.isCartPayload(fresh)) return cartRenderTwoTrips();
+              return { doc: doc, cart: fresh, trips: 2 };
+            });
+        }
+        /* Tanpa kode diskon, "tidak ada kode" memang kebenarannya. */
+        delete cart.has_code_discount;
+        cart.discount_codes = [];
+        cart.cart_level_discount_applications = [];
+        return { doc: doc, cart: cart, trips: 1 };
+      });
+  };
+
+  /* ===== Ubah jumlah & hapus: optimistis, tanpa overlay =====
+     Dulu keduanya menyalakan cartShowLoading(): seluruh drawer tertutup
+     spinner dan setiap sentuhan ditelan sampai server menjawab — satu
+     putaran penuh untuk perubahan yang hasilnya sudah terlihat (select sudah
+     berisi angka barunya).
+
+     Sekarang yang PASTI digambar seketika, yang bergantung server ditandai
+     menunggu:
+     - pasti: angka jumlah, baris yang dihapus, angka hemat (recalcSavings
+       menghitungnya dari harga & coret baris, tanpa server)
+     - menunggu: total bayar, coret di tombol checkout, ongkir — voucher dan
+       diskon order hanya diketahui server, jadi angka itu TIDAK ditebak;
+       ia diredupkan (`.cart-totals-pending`) sampai jawaban tiba.
+
+     Mutasi diantrekan berurutan. Pembeli kini bisa mengubah jumlah beberapa
+     kali dengan cepat, dan dua permintaan yang terbang bersamaan bisa tiba
+     terbalik — jawaban tua menimpa angka yang baru. Antrean membuat setiap
+     jawaban mendarat sebelum permintaan berikutnya berangkat, jadi penjaga
+     cartMutSeq di cartSyncRows tetap bermakna.
+
+     Gagal = kembali ke kebenaran server, bukan ke tebakan lokal: angka
+     jumlahnya dibaca ulang dari /cart.js dan pembeli diberi tahu. */
+  var mutQueue = Promise.resolve();
+  var mutPending = 0;
+  var mutIdleWaiters = [];
+  var CART_UPDATE_FAILED = window.cartDecode({{ 'cart.update_failed' | t | json }});
+
+  function setTotalsPending(on) {
+    var c = document.getElementById('cart');
+    if (c) c.classList.toggle('cart-totals-pending', !!on);
+  }
+
+  /* Selesai saat antrean kosong. Dipakai penjaga checkout di bawah. */
+  window.cartMutationsIdle = function () {
+    if (!mutPending) return Promise.resolve();
+    return new Promise(function (res) { mutIdleWaiters.push(res); });
+  };
+
+  window.cartQueueChange = function (payload) {
+    mutPending++;
+    setTotalsPending(true);
+    var seq = null;
+    var run = mutQueue.then(function () {
+      var req = window.cartChangeWithRetry(payload);
+      seq = window.cartMutSeq;
+      return req;
+    });
+    mutQueue = run.then(function () {}, function () {});
+    function finish() {
+      if (mutPending > 0) mutPending--;
+      if (mutPending) return;
+      setTotalsPending(false);
+      var w = mutIdleWaiters;
+      mutIdleWaiters = [];
+      w.forEach(function (fn) { fn(); });
+    }
+    return run.then(function (cart) {
+      return { cart: cart, seq: seq, done: finish };
+    }, function (err) {
+      finish();
+      throw err;
+    });
+  };
+
+  /* Angka di setiap select disamakan dengan jawaban server — kecuali baris
+     yang sudah diubah lagi sesudah permintaan ini berangkat (tokennya
+     bergeser). Server bisa memangkas jumlah (stok), dan dulu select tetap
+     menampilkan angka yang dipilih walau keranjangnya berisi lebih sedikit. */
+  function cartSyncQty(cart) {
+    var c = document.getElementById('cart');
+    if (!c || !cart || !Array.isArray(cart.items)) return;
+    var byKey = {};
+    cart.items.forEach(function (it) { byKey[it.key] = it; });
+    Array.prototype.forEach.call(c.querySelectorAll('.cart-item:not(.cart-item--gift) .qty-select[data-key]'), function (sel) {
+      var row = sel.closest('.cart-item');
+      if (row && row._qtyBusy) return;
+      var line = byKey[sel.getAttribute('data-key')];
+      if (!line) return;
+      if (String(sel.value) !== String(line.quantity)) sel.value = String(line.quantity);
+      if (row && row.getAttribute('data-qty') !== String(line.quantity)) row.setAttribute('data-qty', line.quantity);
+    });
+  }
+
+  function cartResyncFromServer() {
+    return fetch('/cart.js')
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (cart) {
+        if (!window.isCartPayload(cart)) return;
+        window.refreshCartUI(cart);
+        cartSyncQty(cart);
+      })
+      .catch(function () {});
+  }
+
   /* ===== Qty change handler ===== */
   window.cartChangeQty = function(sel) {
     var key = sel.getAttribute('data-key') || sel.getAttribute('data-id');
     var qty = parseInt(sel.value);
+    var row = sel.closest('.cart-item');
 
-    window.cartShowLoading();
+    /* Token per baris: hanya perubahan TERAKHIR pada baris ini yang boleh
+       melepas tanda sibuknya dan menyamakan angkanya dengan server. */
+    var token = row ? (row._qtyToken = (row._qtyToken || 0) + 1) : 0;
+    if (row) {
+      row._qtyBusy = true;
+      row.setAttribute('data-qty', qty);
+    }
+    /* Hemat dihitung dari baris itu sendiri — benar seketika. */
+    window.recalcSavings();
 
-    var req = window.cartChangeWithRetry({ id: key, quantity: qty });
-    var seq = window.cartMutSeq;
-    req.then(function(cart) {
-      window.refreshCartUI(cart, seq);
-      window.syncFBTVisibility(cart);
-      /* qty 0 (dan baris yang hilang karena sebab lain) dibuang cartSyncRows
-         dari refreshCartUI di atas — satu penulis, bukan salinan lokal. */
-      window.cartHideLoading();
-    })
-    .catch(function() { window.cartHideLoading(); });
+    window.cartQueueChange({ id: key, quantity: qty })
+      .then(function (r) {
+        var mine = !row || row._qtyToken === token;
+        if (mine && row) row._qtyBusy = false;
+        /* done() di finally: penggambar yang melempar tidak boleh
+           meninggalkan total redup selamanya. */
+        try {
+          window.refreshCartUI(r.cart, r.seq);
+          window.syncFBTVisibility(r.cart);
+          /* qty 0 (dan baris yang hilang karena sebab lain) dibuang cartSyncRows
+             dari refreshCartUI di atas — satu penulis, bukan salinan lokal. */
+          cartSyncQty(r.cart);
+        } finally {
+          r.done();
+        }
+      })
+      .catch(function() {
+        if (row && row._qtyToken === token) row._qtyBusy = false;
+        window.cartToast(CART_UPDATE_FAILED);
+        cartResyncFromServer();
+      });
   };
+
+  /* ===== Checkout menunggu antrean =====
+     Total yang sedang diredupkan belum tentu total yang akan ditagih. Klik
+     checkout selama ada mutasi di jalan DITAHAN sampai antrean kosong, lalu
+     diteruskan apa adanya — jalur voucher dan gerbang hadiah melihat klik
+     kedua itu seperti klik biasa. Batas 10 dtk = anggaran cartChangeWithRetry;
+     pembeli tidak pernah tersandera lebih lama dari itu.
+
+     Dipasang di blok ini (paling awal di drawer) supaya berjalan sebelum
+     listener checkout lain di dokumen yang sama. */
+  document.addEventListener('click', function (e) {
+    if (!mutPending) return;
+    var t = e.target.closest && e.target.closest('#cart [name="checkout"], #cart a[href*="/checkout"]');
+    if (!t) return;
+    /* Klik yang KITA teruskan (sesudah antrean kosong atau batas waktu)
+       lolos sekali — tanpa ini batas 10 dtk menahan klik terusannya sendiri. */
+    if (t._cartWaitPass) { t._cartWaitPass = false; return; }
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    if (t.dataset.cartWaitIdle) return;
+    t.dataset.cartWaitIdle = '1';
+    t.setAttribute('aria-busy', 'true');
+    var released = false;
+    var go = function () {
+      if (released) return;
+      released = true;
+      delete t.dataset.cartWaitIdle;
+      t.removeAttribute('aria-busy');
+      if (!t.isConnected) return;
+      t._cartWaitPass = true;
+      t.click();
+    };
+    window.cartMutationsIdle().then(go);
+    setTimeout(go, 10000);
+  }, true);
 
   /* ===== Remove item confirmation modal ===== */
   (function() {
@@ -1122,6 +1360,69 @@
       }, 250);
     }
 
+    /* Baris keluar seketika (tinggi → 0, lalu disembunyikan), lalu antre ke
+       server. Simpulnya TIDAK dicabut: yang mencabut tetap cartSyncRows,
+       berdasarkan jawaban server — prinsip satu penulis dari fix 20 Agu.
+       Kalau server ternyata masih memegang barisnya (ditolak, atau update.js
+       mengabaikan kuncinya), baris itu dimunculkan lagi dan pembeli diberi
+       tahu; tidak ada barang yang diam-diam tertinggal di keranjang. */
+    function cartRemoveOptimistic(row, key) {
+      var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var h = row.offsetHeight;
+      row.classList.add('cart-item--removing');
+      row.setAttribute('aria-hidden', 'true');
+      var anim = null;
+      if (!reduce && row.animate) {
+        row.style.overflow = 'hidden';
+        anim = row.animate([
+          { opacity: 1, height: h + 'px', transform: 'scale(1)' },
+          { opacity: 0, height: '0px', paddingTop: '0px', paddingBottom: '0px', marginTop: '0px', marginBottom: '0px', transform: 'scale(0.96)' }
+        ], { duration: 220, easing: 'cubic-bezier(0.7, 0, 0.84, 0)', fill: 'forwards' });
+      }
+      var hide = function () { row.style.display = 'none'; };
+      if (anim) anim.onfinish = hide; else hide();
+      /* Hemat dihitung ulang tanpa baris ini (recalcSavings melewati
+         .cart-item--removing). */
+      window.recalcSavings();
+
+      function restore() {
+        if (!row.isConnected) return;
+        if (anim) { try { anim.cancel(); } catch (e) {} }
+        row.classList.remove('cart-item--removing');
+        row.removeAttribute('aria-hidden');
+        row.style.display = '';
+        row.style.overflow = '';
+        if (!reduce && row.animate) {
+          row.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200, easing: 'ease-out' });
+        }
+        window.recalcSavings();
+        window.cartToast(CART_UPDATE_FAILED);
+      }
+
+      window.cartQueueChange({ id: key, quantity: 0 })
+        .then(function (r) {
+          try {
+            window.refreshCartUI(r.cart, r.seq);
+            window.syncFBTVisibility(r.cart);
+            cartSyncQty(r.cart);
+            /* Patokannya ISI KERANJANG server, bukan "simpulnya masih
+               terpasang": cartSyncRows sengaja tidak membuang baris bila
+               jawabannya sudah didahului mutasi lain (mis. ATC di tengah
+               hapus). Baris tersembunyi semacam itu dibereskan refresh
+               berikutnya; yang dimunculkan lagi hanya baris yang memang
+               masih dipegang server. */
+            var still = r.cart.items.some(function (it) { return it.key === key; });
+            if (still) restore();
+          } finally {
+            r.done();
+          }
+        })
+        .catch(function () {
+          restore();
+          cartResyncFromServer();
+        });
+    }
+
     /* Show confirmation — called from trash button onclick */
     window.cartRemoveItem = function(btn) {
       _pendingBtn = btn;
@@ -1157,6 +1458,21 @@
 
         var key = btn.getAttribute('data-key');
         var row = btn.closest('.cart-item');
+
+        /* Masih ada barang lain → hapus optimistis: barisnya pergi sekarang,
+           total diredupkan sampai server menjawab, drawer tetap bisa dipakai.
+           Barang TERAKHIR tetap lewat jalur lama di bawah: keadaan kosongnya
+           digambar server (cartRenderEmpty) dan overlay menjaga supaya footer
+           basi "CHECK OUT | Rp 0" tidak pernah terlihat. */
+        var others = row && row.parentNode
+          ? Array.prototype.filter.call(
+              row.parentNode.querySelectorAll('.cart-item:not(.cart-item--gift):not(.cart-item--skel):not(.cart-item--removing)'),
+              function (n) { return n !== row; })
+          : [];
+        if (row && others.length) {
+          cartRemoveOptimistic(row, key);
+          return;
+        }
 
         /* Fade + shrink the row out */
         if (row) {
@@ -1315,7 +1631,6 @@
       btn.dataset.fbtBusy = '1';
 
       var card = btn.closest('.fbt-card');
-      var prefix = (typeof Shopify !== 'undefined' && Shopify.locale === 'id') ? '/id/' : '/';
 
       /* Optimistic: the card goes now, the network catches up */
       fbtExit(card);
@@ -1327,35 +1642,18 @@
       var addFailed = false;
 
       window.cartMutSeq++;
-      fetch('/cart/add.js', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ items: [{ id: parseInt(variant, 10), quantity: 1 }] })
-      })
-      .then(function(r) {
-        return r.json().then(function (j) { if (!r.ok) throw j; return j; });
-      })
-      .catch(function (err) {
-        addFailed = true;
-        throw err;
-      })
-      .then(function() {
-        /* Parallel. These two don't depend on each other, and chaining them
-           doubled the wait before the drawer showed the new line. */
-        return Promise.all([
-          fetch(prefix + 'cart?view=mini').then(function(r) { return r.text(); }),
-          fetch('/cart.js').then(function(r) { return r.json(); })
-        ]);
-      })
+      /* Satu putaran (window.cartAddRendered). Kegagalan ADD-nya sendiri
+         ditandai di dalam rantai helper, bukan di sini: penggambaran ulang
+         yang gagal sesudah barangnya masuk tidak boleh mengembalikan kartu. */
+      window.cartAddRendered([{ id: parseInt(variant, 10), quantity: 1 }], function () { addFailed = true; })
       .then(function(res) {
         delete btn.dataset.fbtBusy;
-        var html = res[0];
-        var cart = res[1];
+        var cart = res.cart;
 
         var cartEl = document.getElementById('cart');
         if (!cartEl) return;
 
-        var doc = new DOMParser().parseFromString(html, 'text/html');
+        var doc = res.doc;
         var newItems = doc.querySelector('.cart-items');
         var newFooter = doc.querySelector('.sub-total.cart-footer');
         var oldItems = cartEl.querySelector('.cart-items');
@@ -1694,6 +1992,20 @@
 
      Jumlah barisnya diingat dari render terakhir yang pernah terlihat, jadi
      kerangkanya sepanjang keranjang yang sesungguhnya. */
+  /* ===== Ubah jumlah / hapus optimistis =====
+     Angka yang hanya diketahui server (total bayar, coretnya, ongkir) diredupkan
+     selama mutasi di jalan — bukan ditebak, bukan disembunyikan. Tata letaknya
+     tidak bergerak sama sekali: hanya opacity. */
+  #cart.cart-totals-pending #sub-total-mini,
+  #cart.cart-totals-pending #cart-checkout-compare,
+  #cart.cart-totals-pending #cart-shipping-value {
+    opacity: 0.4;
+    transition: opacity 150ms ease;
+  }
+  #sub-total-mini,
+  #cart-checkout-compare,
+  #cart-shipping-value { transition: opacity 200ms ease; }
+  .cart-item--removing { pointer-events: none; }
   .cart-item--skel { pointer-events: none; }
   /* 80x80 / radius 8px diambil dari `.cart-item .thumb` yang sungguhan, diukur
      berdampingan (claudedocs/e2e/skel-geom-qa.mjs). Angka yang dikira-kira
@@ -2196,27 +2508,12 @@
       }
 
       window.cartMutSeq++;
-      fetch('/cart/add.js', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ items: [item] })
-      })
-        .then(function (r) {
-          return r.json().then(function (j) {
-            if (!r.ok) throw j;
-            return j;
-          });
-        })
-        .then(function () {
-          var prefix = (typeof Shopify !== 'undefined' && Shopify.locale === 'id') ? '/id/' : '/';
-          return Promise.all([
-            fetch(prefix + 'cart?view=mini').then(function (r) { return r.text(); }),
-            fetch('/cart.js').then(function (r) { return r.json(); })
-          ]);
-        })
+      /* Satu putaran: HTML drawer + potret keranjang ikut di jawaban add.js
+         (lihat window.cartAddRendered). */
+      window.cartAddRendered([item])
         .then(function (results) {
-          var doc = new DOMParser().parseFromString(results[0], 'text/html');
-          var cart = results[1];
+          var doc = results.doc;
+          var cart = results.cart;
           /* One scoped crossfade: optimistic card -> real card, footer
              totals and FBT resolve together instead of popping. Drawer
              masih tertutup (chip masih terbang) → terapkan langsung, tanpa
@@ -2394,7 +2691,10 @@
        hadiah sudah dinyatakan lewat badge FREE di barisnya sendiri, dan
        menjumlahkannya di sini membuat angka hemat melompat melebihi selisih
        harga yang benar-benar dilihat pembeli di baris produk. */
-    cartEl.querySelectorAll('.cart-item[data-compare-at]:not(.cart-item--gift)').forEach(function(el) {
+    /* `.cart-item--removing` = baris yang sedang dihapus secara optimistis;
+       ia masih di DOM sampai server menjawab, tapi pembeli sudah tidak
+       melihatnya — hematnya tidak boleh ikut dihitung. */
+    cartEl.querySelectorAll('.cart-item[data-compare-at]:not(.cart-item--gift):not(.cart-item--removing)').forEach(function(el) {
       var cap = parseInt(el.getAttribute('data-compare-at') || '0', 10);
       var price = parseInt(el.getAttribute('data-price') || '0', 10);
       var qtyEl = el.querySelector('.qty-select');

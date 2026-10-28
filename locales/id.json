@@ -55,6 +55,7 @@
     "atc_adding": "Menambahkan…",
     "atc_added": "Masuk Keranjang",
     "atc_failed_generic": "Gagal menambahkan — coba lagi",
+    "update_failed": "Gagal memperbarui keranjang — coba lagi",
     "title": "Keranjang",
     "checkout_button_label": "Check Out",
     "trust_guarantee": "Garansi uang kembali",

@@ -59,6 +59,7 @@
     "atc_adding": "Adding…",
     "atc_added": "Added to Cart",
     "atc_failed_generic": "Couldn't add to cart — please try again",
+    "update_failed": "Couldn't update your cart — please try again",
     "title": "Cart",
     "checkout_button_label": "Check Out",
     "trust_guarantee": "Money-back guarantee",

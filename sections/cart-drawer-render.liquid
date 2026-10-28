@@ -1,0 +1,84 @@
+{%- comment -%}
+  Isi drawer yang ikut di jawaban /cart/add.js (bundled section rendering).
+
+  Dulu setiap tambah-ke-keranjang butuh dua putaran berurutan: add.js, lalu
+  `cart?view=mini` + `/cart.js` untuk menggambar drawer. Dengan
+  `sections: 'cart-drawer-render'` di body add.js, Shopify merender section ini
+  SESUDAH barangnya masuk dan menitipkan HTML-nya di jawaban yang sama — satu
+  putaran.
+
+  Isinya sengaja identik dengan templates/cart.mini.liquid (lewat
+  cart-drawer-arm, jadi A/B drawer tetap dihormati), ditambah potret keranjang
+  supaya `/cart.js` juga tidak perlu dibaca ulang.
+
+  Potret itu DITULIS TANGAN, bukan `{{ cart | json }}`: objek cart di Liquid
+  tidak punya `discount_codes`, dan bentuk diskonnya berbeda dari /cart.js.
+  syncVoucherUI membaca `discount_codes` — diberi `cart | json` mentah, ia
+  menyimpulkan voucher yang masih aktif sudah kedaluwarsa. Jadi yang ditulis
+  hanya ruas yang memang dibaca drawer dan mesin hadiah, dengan bentuk /cart.js,
+  plus `has_code_discount`: bila ada diskon berkode, klien TIDAK memakai potret
+  ini dan membaca /cart.js seperti biasa (lihat window.cartAddRendered).
+
+  Tidak punya preset: tidak bisa ditambahkan lewat editor, hanya dirender lewat
+  API.
+{%- endcomment -%}
+<div id="mini-cart-content">
+  {% render 'cart-drawer-arm', part: 'content' %}
+</div>
+{%- liquid
+  assign has_code_discount = false
+  for app in cart.cart_level_discount_applications
+    if app.type == 'discount_code'
+      assign has_code_discount = true
+    endif
+  endfor
+  for app in cart.discount_applications
+    if app.type == 'discount_code'
+      assign has_code_discount = true
+    endif
+  endfor
+-%}
+<script type="application/json" data-cart-state>
+  {
+    "total_price": {{ cart.total_price | json }},
+    "items_subtotal_price": {{ cart.items_subtotal_price | json }},
+    "original_total_price": {{ cart.original_total_price | json }},
+    "total_discount": {{ cart.total_discount | json }},
+    "item_count": {{ cart.item_count | json }},
+    "has_code_discount": {{ has_code_discount | json }},
+    "items": [
+      {%- for item in cart.items -%}
+        {
+          "key": {{ item.key | json }},
+          "id": {{ item.variant_id | json }},
+          "variant_id": {{ item.variant_id | json }},
+          "product_id": {{ item.product_id | json }},
+          "quantity": {{ item.quantity | json }},
+          {%- comment -%}
+            Objek, ditulis per pasangan. `item.properties | json` membalas
+            ARRAY pasangan ([["_Gifted","true"]]), bukan objek seperti
+            /cart.js — `properties._Gifted` jadi undefined dan baris hadiah
+            terbaca sebagai baris berbayar (terukur di browser 28 Okt 2026).
+          {%- endcomment -%}
+          "properties": {
+            {%- for prop in item.properties -%}
+              {{ prop.first | json }}: {{ prop.last | json }}
+              {%- unless forloop.last -%},{%- endunless -%}
+            {%- endfor -%}
+          },
+          "final_price": {{ item.final_price | json }},
+          "final_line_price": {{ item.final_line_price | json }},
+          "selling_plan": {{ item.selling_plan_allocation.selling_plan.id | json }}
+        }
+        {%- unless forloop.last -%},{%- endunless -%}
+      {%- endfor -%}
+    ]
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Cart drawer render",
+  "settings": []
+}
+{% endschema %}

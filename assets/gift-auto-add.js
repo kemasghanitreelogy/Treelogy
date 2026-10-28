@@ -839,8 +839,12 @@
                  dari satu add.js di paling atas keranjang (diuji langsung),
                  dan checkout ikut urutan itu — jadi hadiah di depan array =
                  baris hadiah di paling bawah checkout. */
+              /* Kunci lain di body (mis. `sections` untuk bundled section
+                 rendering) WAJIB ikut. Menulis ulang jadi `{items}` saja
+                 membuat drawer kehilangan HTML-nya dan jatuh ke jalur dua
+                 putaran tanpa ada yang tahu sebabnya. */
               arguments[1] = Object.assign({}, origInit, {
-                body: JSON.stringify({ items: extra.concat(parsed.items) })
+                body: JSON.stringify(Object.assign({}, parsed, { items: extra.concat(parsed.items) }))
               });
               piggybacked = true;
             }
