@@ -5,7 +5,8 @@
   rotasi ulasan, tambah ke keranjang) dijalankan snippets/account-panel-shell.liquid.
 
   Sumber isi — semuanya data yang SUDAH tayang di PDP, tidak ada klaim baru:
-  - hook  = locale pdp3.why.heading (registrasi BPOM obat tradisional)
+  - hook  = metafield pdp3.hero_heading (headline PDP, terjemahan ID via metafield)
+  - badge = registrasi BPOM obat tradisional (locale pdp3.why.*)
   - ulasan = metafield pdp3.reviews (testimoni PDP, terjemahan ID via metafield)
   - paket = metafield varian pdp3.pack_image / pdp3.description / pdp3.badge
   - rating = metafield standar reviews.rating / reviews.rating_count (Judge.me)
@@ -44,229 +45,189 @@
   <p class="aco__eyebrow"><span aria-hidden="true"></span>{{ 'customer.panel.offer_eyebrow' | t }}</p>
 
   <article class="aco__card">
-    <div class="aco__media">
-      {%- comment -%}
-        Foto banner Shop the Look (tanpa teks tertanam, 2048px), di-zoom ke kaleng
-        kapsul. Foto media produk semuanya bertulisan; pack_image varian cuma 248px.
-      {%- endcomment -%}
-      {%- assign hero = images['treelogy-organic-moringa-oil-and-capsules-product-set.png'] -%}
-      {%- if hero != blank -%}
-        {{ hero | image_url: width: 1800 | image_tag: widths: '900, 1300, 1800', sizes: '(max-width: 640px) 150vw, 640px', loading: 'lazy', decoding: 'async', alt: '', class: 'aco__hero' }}
-      {%- else -%}
-        {{ product.featured_image | image_url: width: 900 | image_tag: loading: 'lazy', alt: '', class: 'aco__hero aco__hero--plain' }}
-      {%- endif -%}
-      <span class="aco__sheen" aria-hidden="true"></span>
-      {%- if rating_count > 0 -%}
-        <span class="aco__chip">
-          <span class="aco__stars" aria-hidden="true"><span style="--p: {{ star_pct }}%"></span></span>
-          <span>{{ rating_txt }} · {{ 'customer.panel.offer_reviews' | t: count: rating_count }}</span>
-        </span>
-      {%- endif -%}
-    </div>
+    <a class="aco__top" href="{{ product.url }}">
+      <span class="aco__thumb">
+        {%- comment -%}
+          Foto banner Shop the Look (tanpa teks tertanam), di-zoom ke kaleng kapsul.
+          Foto media produk semuanya bertulisan; pack_image varian cuma 248px.
+        {%- endcomment -%}
+        {%- assign hero = images['treelogy-organic-moringa-oil-and-capsules-product-set.png'] -%}
+        {%- if hero != blank -%}
+          {{ hero | image_url: width: 900 | image_tag: widths: '600, 900', sizes: '200px', loading: 'lazy', decoding: 'async', alt: '', class: 'aco__hero' }}
+        {%- else -%}
+          {{ product.featured_image | image_url: width: 300 | image_tag: loading: 'lazy', alt: '', class: 'aco__hero aco__hero--plain' }}
+        {%- endif -%}
+        <span class="aco__sheen" aria-hidden="true"></span>
+      </span>
+      <span class="aco__info">
+        {%- if rating_count > 0 -%}
+          <span class="aco__rating">
+            <span class="aco__stars" aria-hidden="true"><span style="--p: {{ star_pct }}%"></span></span>
+            <span>{{ rating_txt }} · {{ 'customer.panel.offer_reviews' | t: count: rating_count }}</span>
+          </span>
+        {%- endif -%}
+        <span class="aco__hook">{{ product.metafields.pdp3.hero_heading | default: product.title }}</span>
+        <span class="aco__badge">{{ 'customer.panel.offer_badge' | t }}</span>
+      </span>
+    </a>
 
-    <div class="aco__body">
-      <h3 class="aco__hook">{{ 'pdp3.why.heading' | t }}</h3>
-      <p class="aco__sub">{{ 'customer.panel.offer_sub' | t }}</p>
-
-      {%- if reviews != blank -%}
-        <div class="aco__reviews" data-aco-reviews aria-roledescription="carousel" aria-label="{{ 'customer.panel.offer_reviews_label' | t | escape }}">
-          {%- assign shown = 0 -%}
-          {%- for r in reviews -%}
-            {%- comment -%} Testimoni berkonteks penyakit (kemoterapi) tidak dipasang di panel seluruh situs. {%- endcomment -%}
-            {%- if r.quote contains 'chemo' or r.quote contains 'kemo' -%}{%- continue -%}{%- endif -%}
-            <figure class="aco__quote" data-aco-quote {% if shown > 0 %}hidden{% endif %}>
-              <blockquote>“{{ r.quote | escape }}”</blockquote>
-              <figcaption>
-                {%- if r.photo != blank -%}
-                  <img src="{{ r.photo }}&width=80" width="40" height="40" alt="" loading="lazy" decoding="async">
-                {%- endif -%}
-                <span>{{ r.name | escape }}</span>
-                <span class="aco__verified">{{ 'customer.panel.offer_verified' | t }}</span>
-              </figcaption>
-            </figure>
-            {%- assign shown = shown | plus: 1 -%}
-          {%- endfor -%}
-          {%- if shown > 1 -%}
-            <div class="aco__dots" role="tablist">
-              {%- for i in (1..shown) -%}
-                <button type="button" role="tab" class="aco__dot" data-aco-dot="{{ forloop.index0 }}" aria-label="{{ i }} / {{ shown }}" {% if forloop.first %}aria-selected="true"{% else %}aria-selected="false"{% endif %}><span></span></button>
-              {%- endfor -%}
-            </div>
-          {%- endif -%}
-        </div>
-      {%- endif -%}
-
-      <div class="aco__plans" role="radiogroup" aria-label="{{ 'customer.panel.offer_choose' | t | escape }}">
-        {%- for v in product.variants -%}
-          {%- liquid
-            assign caps = v.title | split: ' ' | first | plus: 0
-            assign per_day = 0
-            if caps > 0
-              assign per_day = v.price | times: 3 | divided_by: caps
-            endif
-            assign plan = v.metafields.custom.staged_plan_label | default: v.title
-            assign badge = v.metafields.pdp3.badge
-            assign desc_lines = v.metafields.pdp3.description.value | default: v.metafields.pdp3.description | newline_to_br | split: '<br />'
-            assign is_on = false
-            if v.id == selected.id
-              assign is_on = true
-            endif
-          -%}
-          <button
-            type="button" role="radio" class="aco__plan"
-            aria-checked="{{ is_on }}"
-            {% unless v.available %}disabled{% endunless %}
-            data-aco-plan="{{ v.id }}"
-            data-aco-price="{{ v.price | money | escape }}"
-          >
-            {%- if badge != blank -%}
-              <span class="aco__tag">{{ badge }}</span>
-            {%- elsif forloop.first -%}
-              <span class="aco__tag aco__tag--soft">{{ 'customer.panel.offer_first_pick' | t }}</span>
-            {%- else -%}
-              <span class="aco__tag aco__tag--none" aria-hidden="true"></span>
-            {%- endif -%}
-            {%- assign pack = v.metafields.pdp3.pack_image.value | default: v.metafields.pdp3.pack_image -%}
-            {%- if pack != blank -%}
-              <img class="aco__pack" src="{{ pack }}" width="124" height="66" alt="" loading="lazy" decoding="async">
-            {%- else -%}
-              <span aria-hidden="true"></span>
-            {%- endif -%}
-            <span class="aco__plan-name">{{ plan }}</span>
-            <span class="aco__plan-caps">{{ desc_lines.first | strip_html | strip }}</span>
-            <span class="aco__plan-price">
-              <strong>{{ v.price | money }}</strong>
-              {%- if v.compare_at_price > v.price -%}<s>{{ v.compare_at_price | money }}</s>{%- endif -%}
-            </span>
-            <span class="aco__plan-day">
-              {%- if per_day > 0 -%}
-                {%- assign per_day_money = per_day | money -%}
-                {{- 'customer.panel.offer_per_day' | t: price: per_day_money -}}
-              {%- endif -%}
-            </span>
-          </button>
+    {%- if reviews != blank -%}
+      <div class="aco__reviews" data-aco-reviews aria-label="{{ 'customer.panel.offer_reviews_label' | t | escape }}">
+        {%- assign shown = 0 -%}
+        {%- for r in reviews -%}
+          {%- comment -%} Testimoni berkonteks penyakit (kemoterapi) tidak dipasang di panel seluruh situs. {%- endcomment -%}
+          {%- if r.quote contains 'chemo' or r.quote contains 'kemo' -%}{%- continue -%}{%- endif -%}
+          <figure class="aco__quote" data-aco-quote {% if shown > 0 %}hidden{% endif %}>
+            <blockquote>“{{ r.quote | escape }}”</blockquote>
+            <figcaption>— {{ r.name | escape }} <span class="aco__verified">{{ 'customer.panel.offer_verified' | t }}</span></figcaption>
+          </figure>
+          {%- assign shown = shown | plus: 1 -%}
         {%- endfor -%}
       </div>
+    {%- endif -%}
 
+    <div class="aco__plans" role="radiogroup" aria-label="{{ 'customer.panel.offer_choose' | t | escape }}">
       {%- for v in product.variants -%}
-        {%- assign desc_lines = v.metafields.pdp3.description.value | default: v.metafields.pdp3.description | newline_to_br | split: '<br />' -%}
-        {%- capture perks -%}
-          {%- for line in desc_lines offset: 1 -%}
-            {%- assign parts = line | strip_html | strip | split: '|' -%}
-            {%- assign flag = parts[2] | strip -%}
-            {%- if parts[0] == blank -%}{%- continue -%}{%- endif -%}
-            {%- comment -%} Ruas |ship = gratis ongkir, hanya benar di market id. {%- endcomment -%}
-            {%- if flag == 'ship' and is_id_market == false -%}{%- continue -%}{%- endif -%}
-            <li>
-              <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg>
-              <span>{{ parts[0] | strip }}</span>
-              {%- if is_id_market and parts[1] != blank -%}<s>{{ parts[1] | strip }}</s>{%- endif -%}
-            </li>
-          {%- endfor -%}
-        {%- endcapture -%}
-        {%- if perks != blank -%}
-          <ul class="aco__perks" data-aco-perks="{{ v.id }}" {% unless v.id == selected.id %}hidden{% endunless %}>{{ perks }}</ul>
-        {%- endif -%}
+        {%- liquid
+          assign caps = v.title | split: ' ' | first | plus: 0
+          assign per_day = 0
+          if caps > 0
+            assign per_day = v.price | times: 3 | divided_by: caps
+          endif
+          assign plan = v.metafields.custom.staged_plan_label | default: v.title
+          assign badge = v.metafields.pdp3.badge
+          assign is_on = false
+          if v.id == selected.id
+            assign is_on = true
+          endif
+        -%}
+        <button
+          type="button" role="radio" class="aco__plan"
+          aria-checked="{{ is_on }}"
+          {% unless v.available %}disabled{% endunless %}
+          data-aco-plan="{{ v.id }}"
+          data-aco-price="{{ v.price | money | escape }}"
+        >
+          {%- if badge != blank -%}
+            {%- comment -%} Badge PDP ("Most chosen") versi pendek; teks metafield ID terlalu panjang untuk kolom 1/3. {%- endcomment -%}
+            <span class="aco__tag">{{ 'customer.panel.offer_most_chosen' | t }}</span>
+          {%- elsif forloop.first -%}
+            <span class="aco__tag aco__tag--soft">{{ 'customer.panel.offer_first_pick' | t }}</span>
+          {%- endif -%}
+          <span class="aco__plan-name">{{ plan }}</span>
+          <span class="aco__plan-price">{{ v.price | money }}</span>
+          <span class="aco__plan-day">
+            {%- if per_day > 0 -%}
+              {%- assign per_day_money = per_day | money -%}
+              {{- 'customer.panel.offer_per_day' | t: price: per_day_money -}}
+            {%- endif -%}
+          </span>
+        </button>
       {%- endfor -%}
-
-      <button
-        type="button"
-        class="acp-btn acp-btn--block aco__cta"
-        data-acp-add='[{"id":{{ selected.id }},"quantity":1}]'
-        data-acp-offer
-        data-acp-name="{{ product.title | escape }}"
-      >
-        <span class="acp-btn__label">{{ 'customer.panel.offer_add' | t }}</span>
-        <span class="aco__cta-price" data-aco-cta-price>{{ selected.price | money }}</span>
-      </button>
-      <a class="aco__more" href="{{ product.url }}">{{ 'customer.panel.offer_details' | t }} <span aria-hidden="true">→</span></a>
-
-      <p class="aco__certs">BPOM TR253017851 · Halal · USDA Organic</p>
     </div>
+
+    {%- for v in product.variants -%}
+      {%- assign desc_lines = v.metafields.pdp3.description.value | default: v.metafields.pdp3.description | newline_to_br | split: '<br />' -%}
+      {%- capture perks -%}
+        {%- if v.compare_at_price > v.price -%}
+          {%- assign save = v.compare_at_price | minus: v.price | money -%}
+          <li class="aco__perk--save">{{ 'customer.panel.offer_save' | t: amount: save }}</li>
+        {%- endif -%}
+        {%- for line in desc_lines offset: 1 -%}
+          {%- assign parts = line | strip_html | strip | split: '|' -%}
+          {%- assign flag = parts[2] | strip -%}
+          {%- if parts[0] == blank -%}{%- continue -%}{%- endif -%}
+          {%- comment -%} Ruas |ship = gratis ongkir, hanya benar di market id. {%- endcomment -%}
+          {%- if flag == 'ship' and is_id_market == false -%}{%- continue -%}{%- endif -%}
+          <li>{{ parts[0] | strip }}</li>
+        {%- endfor -%}
+      {%- endcapture -%}
+      {%- if perks != blank -%}
+        <ul class="aco__perks" data-aco-perks="{{ v.id }}" {% unless v.id == selected.id %}hidden{% endunless %}>{{ perks }}</ul>
+      {%- endif -%}
+    {%- endfor -%}
+
+    <button
+      type="button"
+      class="acp-btn acp-btn--block aco__cta"
+      data-acp-add='[{"id":{{ selected.id }},"quantity":1}]'
+      data-acp-offer
+      data-acp-name="{{ product.title | escape }}"
+    >
+      <span class="acp-btn__label">{{ 'customer.panel.offer_add' | t }}</span>
+      <span class="aco__cta-price" data-aco-cta-price>{{ selected.price | money }}</span>
+    </button>
   </article>
 
   <style>
-    .aco{display:grid;gap:12px}
+    .aco{display:grid;gap:10px;--aco-star:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12.4 11'%3E%3Cpath d='M5.5.3l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6L.3 4.1l3.6-.5z'/%3E%3C/svg%3E")}
     .aco__eyebrow{display:flex;align-items:center;gap:10px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
     .aco__eyebrow span{width:22px;height:1px;background:currentColor;opacity:.6}
-    .aco__card{position:relative;border-radius:22px;background:var(--surface);border:1px solid var(--line);overflow:hidden;box-shadow:0 1px 2px rgba(42,59,52,.04),0 18px 40px -24px rgba(42,59,52,.35)}
-    .aco__media{position:relative;aspect-ratio:16/11;background:linear-gradient(180deg,#d6d5d2,#e3e3e4);overflow:hidden}
-    .acp-root .aco__hero{position:absolute;inset:0;transform-origin:79% 66%;transform:scale(1.62);animation:aco-kb 2.4s var(--ease) both}
+    .aco__card{display:grid;gap:12px;padding:12px;border-radius:18px;background:var(--surface);border:1px solid var(--line);box-shadow:0 14px 32px -24px rgba(42,59,52,.4)}
+
+    .acp-root a.aco__top{display:grid;grid-template-columns:76px minmax(0,1fr);gap:12px;align-items:center;text-decoration:none}
+    .aco__thumb{position:relative;width:76px;height:76px;border-radius:12px;overflow:hidden;background:linear-gradient(180deg,#d6d5d2,#e3e3e4)}
+    .acp-root .aco__hero{position:absolute;inset:0;transform-origin:79% 64%;transform:scale(2.1);animation:aco-kb 2.2s var(--ease) both}
     .acp-root .aco__hero--plain{transform:none;animation:none}
-    @keyframes aco-kb{from{transform:scale(1.78);opacity:0}to{transform:scale(1.62);opacity:1}}
-    .aco__sheen{position:absolute;inset:0;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.38) 50%,transparent 65%);transform:translateX(-120%);animation:aco-sheen 1.5s .55s var(--ease) both;pointer-events:none}
+    @keyframes aco-kb{from{transform:scale(2.35);opacity:0}to{transform:scale(2.1);opacity:1}}
+    .aco__sheen{position:absolute;inset:0;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.45) 50%,transparent 65%);transform:translateX(-120%);animation:aco-sheen 1.4s .5s var(--ease) both;pointer-events:none}
     @keyframes aco-sheen{to{transform:translateX(120%)}}
-    .aco__chip{position:absolute;left:12px;bottom:12px;display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border-radius:999px;background:rgba(255,255,255,.82);-webkit-backdrop-filter:blur(10px) saturate(1.4);backdrop-filter:blur(10px) saturate(1.4);font-size:12px;font-weight:600;color:var(--ink);box-shadow:0 6px 18px -8px rgba(0,0,0,.25);animation:acp-rise .6s .35s var(--ease) both}
-    .aco__stars{position:relative;width:62px;height:11px;background:#cfd4ca;-webkit-mask:var(--aco-star) 0 0/12.4px 11px repeat-x;mask:var(--aco-star) 0 0/12.4px 11px repeat-x}
-    .aco__stars span{position:absolute;inset:0 auto 0 0;width:var(--p);background:#2a3b35;animation:aco-fill 1s .7s var(--ease) both}
+    .aco__info{display:grid;gap:4px;min-width:0}
+    .aco__rating{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:var(--muted)}
+    .aco__stars{position:relative;width:58px;height:10px;background:#cfd4ca;-webkit-mask:var(--aco-star) 0 0/11.6px 10px repeat-x;mask:var(--aco-star) 0 0/11.6px 10px repeat-x}
+    .aco__stars span{position:absolute;inset:0 auto 0 0;width:var(--p);background:#2a3b35;animation:aco-fill 1s .5s var(--ease) both}
     @keyframes aco-fill{from{width:0}}
-    .aco{--aco-star:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12.4 11'%3E%3Cpath d='M5.5.3l1.6 3.3 3.6.5-2.6 2.5.6 3.6-3.2-1.7-3.2 1.7.6-3.6L.3 4.1l3.6-.5z'/%3E%3C/svg%3E")}
+    .aco__hook{font-size:15px;line-height:1.3;font-weight:600;letter-spacing:-.01em;text-wrap:balance}
+    .aco__top:hover .aco__hook{text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(42,59,52,.35)}
+    .aco__badge{justify-self:start;font-size:10px;font-weight:600;letter-spacing:.04em;color:#3e5228;background:#e5ecd9;padding:2px 7px;border-radius:999px}
 
-    .aco__body{display:grid;gap:14px;padding:18px 18px 16px}
-    .aco__hook{font-size:19px!important;line-height:1.25!important;font-weight:600!important;letter-spacing:-.015em!important;text-wrap:balance}
-    .aco__sub{color:var(--muted);font-size:13.5px;margin-top:-6px!important}
-
-    .aco__reviews{position:relative;display:grid;padding:14px 14px 12px;border-radius:16px;background:#f3f4ef}
-    .aco__quote{grid-area:1/1;margin:0;display:grid;gap:10px;align-content:start}
+    .aco__reviews{display:grid;padding:9px 11px;border-radius:12px;background:#f3f4ef}
+    .aco__quote{grid-area:1/1;margin:0;display:grid;gap:3px;align-content:center}
     .aco__quote[hidden]{display:grid;visibility:hidden;opacity:0}
-    .aco__quote[data-in]{animation:aco-q-in .55s var(--ease) both}
-    @keyframes aco-q-in{from{opacity:0;transform:translateY(6px);filter:blur(4px)}}
-    .aco__quote blockquote{margin:0;padding:0;border:0;font-size:14px;line-height:1.5;color:var(--ink);font-style:normal;text-wrap:pretty}
-    .aco__quote figcaption{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600}
-    .acp-root .aco__quote figcaption img{width:28px;height:28px;border-radius:50%}
-    .aco__verified{font-weight:500;color:#5f7a3f;font-size:11.5px;display:inline-flex;align-items:center;gap:4px}
-    .aco__verified::before{content:"";width:12px;height:12px;border-radius:50%;background:#a5bb87 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3.5 6.2l1.7 1.7 3.3-3.6' fill='none' stroke='%23fff' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat}
-    .aco__dots{display:flex;gap:2px;margin-top:10px}
-    .aco__dot{all:unset;cursor:pointer;padding:8px 3px;display:grid}
-    .aco__dot span{display:block;width:6px;height:6px;border-radius:999px;background:rgba(42,59,52,.22);transition:width .35s var(--ease),background .25s}
-    .aco__dot[aria-selected="true"] span{width:18px;background:var(--ink)}
-    .aco__dot:focus-visible span{outline:2px solid var(--ink);outline-offset:2px}
+    .aco__quote[data-in]{animation:aco-q-in .5s var(--ease) both}
+    @keyframes aco-q-in{from{opacity:0;transform:translateY(5px);filter:blur(3px)}}
+    .aco__quote blockquote{margin:0;padding:0;border:0;font-size:12.5px;line-height:1.45;font-style:italic;color:var(--ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .aco__quote figcaption{font-size:11px;font-weight:600;color:var(--muted)}
+    .aco__verified{font-weight:500;color:#5f7a3f;margin-left:4px}
+    .aco__verified::before{content:"✓ "}
 
-    .aco__plans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-    .aco__tag--none{visibility:hidden}
-    .aco__plan{all:unset;box-sizing:border-box;cursor:pointer;position:relative;display:grid;gap:2px;align-content:start;padding:10px 9px 10px;border-radius:14px;border:1.5px solid var(--line);background:#fff;transition:border-color .2s,box-shadow .3s var(--ease),transform .2s var(--ease)}
+    .aco__plans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+    .aco__plan{all:unset;box-sizing:border-box;cursor:pointer;display:grid;gap:1px;align-content:start;padding:8px 8px 7px;border-radius:11px;border:1.5px solid var(--line);background:#fff;transition:border-color .2s,box-shadow .3s var(--ease),transform .2s var(--ease)}
     .aco__plan:hover{border-color:rgba(42,59,52,.35)}
-    .aco__plan:active{transform:scale(.98)}
+    .aco__plan:active{transform:scale(.97)}
     .aco__plan:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
     .aco__plan[aria-checked="true"]{border-color:var(--ink);box-shadow:0 0 0 3px rgba(165,187,135,.35)}
     .aco__plan[disabled]{opacity:.45;cursor:not-allowed}
-    .aco__tag{justify-self:start;align-self:start;max-width:100%;padding:3px 7px;margin-bottom:4px;border-radius:6px;background:var(--ink);color:#f8f8f2;font-size:9.5px;line-height:1.25;font-weight:600;letter-spacing:.02em}
-    .acp-root .aco__pack{width:100%;height:auto;aspect-ratio:248/131;object-fit:contain;margin:0 0 6px;transition:transform .35s var(--ease)}
-    .aco__plan[aria-checked="true"] .aco__pack{transform:translateY(-2px) scale(1.04)}
+    .aco__tag{justify-self:start;align-self:start;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:1px 5px;margin-bottom:3px;border-radius:5px;background:var(--ink);color:#f8f8f2;font-size:9px;line-height:1.35;font-weight:600}
     .aco__tag--soft{background:#e5ecd9;color:#3e5228}
-    .aco__plan-name{font-size:13px;font-weight:600}
-    .aco__plan-caps{font-size:11px;color:var(--muted);line-height:1.3}
-    .aco__plan-price{display:grid;margin-top:6px;line-height:1.25}
-    .aco__plan-price strong{font-size:12.5px;white-space:nowrap}
-    .aco__plan-price s{font-size:11px;color:var(--muted)}
-    .aco__plan-day{font-size:10.5px;color:#5f7a3f;font-weight:500;margin-top:2px}
+    .aco__plan-name{font-size:12.5px;font-weight:600}
+    .aco__plan-price{font-size:12px;font-weight:600;white-space:nowrap}
+    .aco__plan-day{font-size:10px;color:#5f7a3f;font-weight:500}
+    @supports (grid-template-rows:subgrid){
+      .aco__plans{grid-template-rows:repeat(4,auto);row-gap:0}
+      .aco__plan{grid-row:span 4;grid-template-rows:subgrid}
+      .aco__plan:not(:has(.aco__tag))::before{content:"";grid-row:1}
+      .aco__plan:not(:has(.aco__tag)) .aco__plan-name{grid-row:2}
+    }
 
+    .aco__perks{display:flex;flex-wrap:wrap;gap:5px;margin-top:-4px!important}
     .aco__perks[hidden]{display:none}
-    .aco__perks{display:grid;gap:6px;font-size:12.5px;margin-top:-2px!important}
-    .aco__perks[data-in]{animation:acp-rise .4s var(--ease) both}
-    .aco__perks li{display:flex;align-items:center;gap:8px}
-    .aco__perks svg{flex:none;stroke:#5f7a3f!important;stroke-width:2!important}
-    .aco__perks s{color:var(--muted);font-size:11.5px}
+    .aco__perks[data-in]{animation:acp-rise .35s var(--ease) both}
+    .aco__perks li{font-size:11px;font-weight:600;color:#3e5228;background:#eef2e7;padding:3px 8px;border-radius:999px}
+    .aco__perks li::before{content:"✓ "}
+    .aco__perks .aco__perk--save{background:var(--ink);color:#f8f8f2}
+    .aco__perks .aco__perk--save::before{content:""}
 
-    .aco__cta{position:relative;overflow:hidden;justify-content:space-between;min-height:52px!important;border-radius:14px!important;padding:0 18px!important}
+    .aco__cta{position:relative;overflow:hidden;justify-content:space-between;min-height:46px!important;border-radius:12px!important;padding:0 16px!important}
     .aco__cta::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.16) 50%,transparent 70%);transform:translateX(-120%);transition:transform .8s var(--ease)}
     .aco__cta:hover::after{transform:translateX(120%)}
     .aco__cta:active{transform:scale(.985)}
     .aco__cta-price{font-weight:600;opacity:.9}
     .aco__cta[aria-busy="true"]{opacity:.7;pointer-events:none}
-    .aco__more{justify-self:center;font-size:13px;font-weight:500;text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(42,59,52,.35)}
-    .aco__certs{text-align:center;font-size:10.5px;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
-
-    /* subgrid: label, foto, nama, isi, harga, per hari sejajar di ketiga paket */
-    @supports (grid-template-rows:subgrid){
-      .aco__plans{grid-template-rows:repeat(6,auto);column-gap:8px;row-gap:0}
-      .aco__plan{grid-row:span 6;grid-template-rows:subgrid;align-content:stretch}
-    }
 
     @media (prefers-reduced-motion:reduce){
       .aco__sheen,.aco__cta::after{display:none}
-      .aco__stars span,.aco__chip,.aco__quote[data-in],.aco__perks[data-in]{animation:none}
-      .acp-root .aco__hero{animation:none}
+      .aco__stars span,.aco__quote[data-in],.aco__perks[data-in],.acp-root .aco__hero{animation:none}
     }
   </style>
 </div>

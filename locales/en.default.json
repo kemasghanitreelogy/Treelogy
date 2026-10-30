@@ -231,7 +231,10 @@
       "offer_first_pick": "First-timer pick",
       "offer_per_day": "{{ price }}/day",
       "offer_add": "Add to cart",
-      "offer_details": "See full details"
+      "offer_details": "See full details",
+      "offer_badge": "BPOM · Traditional medicine",
+      "offer_save": "Save {{ amount }}",
+      "offer_most_chosen": "Most chosen"
     }
   },
   "products": {

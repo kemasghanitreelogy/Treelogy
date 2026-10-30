@@ -227,7 +227,10 @@
       "offer_first_pick": "Favorit pemula",
       "offer_per_day": "{{ price }}/hari",
       "offer_add": "Tambah ke keranjang",
-      "offer_details": "Lihat detail lengkap"
+      "offer_details": "Lihat detail lengkap",
+      "offer_badge": "BPOM · Obat tradisional",
+      "offer_save": "Hemat {{ amount }}",
+      "offer_most_chosen": "Terlaris"
     }
   },
   "products": {
