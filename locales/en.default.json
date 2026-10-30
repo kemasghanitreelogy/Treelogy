@@ -221,7 +221,17 @@
       "total": "Total",
       "buy_again": "Buy again",
       "track_order": "Track order",
-      "order_status": "Order status"
+      "order_status": "Order status",
+      "offer_eyebrow": "Start your ritual",
+      "offer_sub": "Organic moringa leaf, farmed and crafted in Bali. Three capsules with breakfast.",
+      "offer_reviews": "{{ count }} reviews",
+      "offer_reviews_label": "Customer reviews",
+      "offer_verified": "Verified buyer",
+      "offer_choose": "Choose your plan",
+      "offer_first_pick": "First-timer pick",
+      "offer_per_day": "{{ price }}/day",
+      "offer_add": "Add to cart",
+      "offer_details": "See full details"
     }
   },
   "products": {

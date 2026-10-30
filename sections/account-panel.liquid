@@ -170,11 +170,21 @@
             </ul>
           </div>
         {%- else -%}
-          <div class="acp-empty acp-in" style="--d:1">
-            <p class="acp-empty__title">{{ 'customer.panel.empty_title' | t }}</p>
-            <p class="acp-empty__text">{{ 'customer.panel.empty_text' | t }}</p>
-            <a class="acp-btn" href="{{ routes.all_products_collection_url }}">{{ 'customer.panel.empty_cta' | t }}</a>
-          </div>
+          {%- comment -%}
+            Belum pernah order → sorot kapsul. Handle dikunci di sini karena
+            section ini tidak hidup di template mana pun (tak ada setting yang
+            bisa diisi). Kalau produknya hilang/habis, kembali ke empty state.
+          {%- endcomment -%}
+          {%- assign offer = all_products['organic-moringa-capsules'] -%}
+          {%- if offer != blank and offer.available -%}
+            {%- render 'account-panel-offer', product: offer -%}
+          {%- else -%}
+            <div class="acp-empty acp-in" style="--d:1">
+              <p class="acp-empty__title">{{ 'customer.panel.empty_title' | t }}</p>
+              <p class="acp-empty__text">{{ 'customer.panel.empty_text' | t }}</p>
+              <a class="acp-btn" href="{{ routes.all_products_collection_url }}">{{ 'customer.panel.empty_cta' | t }}</a>
+            </div>
+          {%- endif -%}
         {%- endif -%}
 
         {%- if customer.store_credit_account and customer.store_credit_account.balance > 0 -%}

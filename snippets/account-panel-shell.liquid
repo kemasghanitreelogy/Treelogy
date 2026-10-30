@@ -127,11 +127,15 @@
             var doc = new DOMParser().parseFromString(html, 'text/html');
             var content = doc.querySelector('[data-acp-root]');
             if (!content) throw new Error('empty');
-            var style = doc.querySelector('style');
+            /* semua <style> di luar root (root membawa style-nya sendiri) */
+            var styles = Array.prototype.filter.call(doc.querySelectorAll('style'), function (s) {
+              return !content.contains(s);
+            });
             body.textContent = '';
-            if (style) body.appendChild(style);
+            styles.forEach(function (s) { body.appendChild(s); });
             body.appendChild(content);
             buildPeek();
+            initOffer();
             dlg.setAttribute('data-loaded', '');
           })
           .catch(function () {
@@ -165,6 +169,85 @@
           more.textContent = '+' + (rows.length - max);
           peek.appendChild(more);
         }
+      }
+
+      /* ---- penawaran kapsul (pelanggan tanpa order) ---- */
+      var REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      function initOffer() {
+        var box = body.querySelector('[data-aco]');
+        if (!box) return;
+        track('account_offer_view');
+
+        var quotes = box.querySelectorAll('[data-aco-quote]');
+        var dots = box.querySelectorAll('[data-aco-dot]');
+        var qi = 0;
+        var hold = false;
+        function showQuote(n) {
+          if (n === qi || !quotes[n]) return;
+          quotes[qi].hidden = true;
+          quotes[qi].removeAttribute('data-in');
+          qi = n;
+          quotes[qi].hidden = false;
+          if (!REDUCED) quotes[qi].setAttribute('data-in', '');
+          for (var i = 0; i < dots.length; i++) dots[i].setAttribute('aria-selected', String(i === qi));
+        }
+        for (var d = 0; d < dots.length; d++) {
+          dots[d].addEventListener('click', function () {
+            hold = true;
+            showQuote(+this.getAttribute('data-aco-dot'));
+          });
+        }
+        var rv = box.querySelector('[data-aco-reviews]');
+        if (rv) {
+          rv.addEventListener('pointerenter', function () { hold = true; });
+          rv.addEventListener('pointerleave', function () { hold = false; });
+          rv.addEventListener('focusin', function () { hold = true; });
+        }
+        /* Berputar hanya selama panel terbuka & terlihat; reduced-motion = manual. */
+        if (quotes.length > 1 && !REDUCED) {
+          setInterval(function () {
+            if (hold || !dlg.open || document.hidden) return;
+            var main = body.querySelector('[data-acp-view="main"]');
+            if (main && main.hidden) return;
+            showQuote((qi + 1) % quotes.length);
+          }, 5200);
+        }
+
+        var plans = box.querySelectorAll('[data-aco-plan]');
+        var cta = box.querySelector('[data-acp-offer]');
+        var ctaPrice = box.querySelector('[data-aco-cta-price]');
+        function pick(btn) {
+          var id = btn.getAttribute('data-aco-plan');
+          for (var i = 0; i < plans.length; i++) plans[i].setAttribute('aria-checked', String(plans[i] === btn));
+          var perks = box.querySelectorAll('[data-aco-perks]');
+          for (var k = 0; k < perks.length; k++) {
+            var on = perks[k].getAttribute('data-aco-perks') === id;
+            perks[k].hidden = !on;
+            perks[k].toggleAttribute('data-in', on && !REDUCED);
+          }
+          cta.setAttribute('data-acp-add', JSON.stringify([{ id: +id, quantity: 1 }]));
+          ctaPrice.textContent = btn.getAttribute('data-aco-price');
+          track('account_offer_select', { variant_id: id });
+        }
+        for (var p = 0; p < plans.length; p++) {
+          plans[p].addEventListener('click', function () {
+            if (this.getAttribute('aria-checked') !== 'true') pick(this);
+          });
+          plans[p].addEventListener('keydown', function (e) {
+            var dir = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
+            if (!dir) return;
+            e.preventDefault();
+            var list = Array.prototype.filter.call(plans, function (b) { return !b.disabled; });
+            var next = list[(list.indexOf(this) + dir + list.length) % list.length];
+            next.focus();
+            pick(next);
+          });
+        }
+        /* roving tabindex: hanya paket terpilih yang masuk urutan Tab */
+        box.querySelector('.aco__plans').addEventListener('focusin', function () {
+          for (var i = 0; i < plans.length; i++) plans[i].tabIndex = plans[i].getAttribute('aria-checked') === 'true' ? 0 : -1;
+        });
+        for (var t = 0; t < plans.length; t++) plans[t].tabIndex = plans[t].getAttribute('aria-checked') === 'true' ? 0 : -1;
       }
 
       /* ---- buka / tutup ---- */
@@ -256,7 +339,8 @@
         var label = btn.querySelector('.acp-btn__label');
         var original = label ? label.textContent : '';
         btn.setAttribute('aria-busy', 'true');
-        var reorder = btn.hasAttribute('data-acp-reorder');
+        var offer = btn.hasAttribute('data-acp-offer');
+        var reorder = offer || btn.hasAttribute('data-acp-reorder');
         fetch(root + 'cart/add.js', {
           method: 'POST',
           credentials: 'same-origin',
@@ -271,7 +355,8 @@
           .then(function () {
             btn.removeAttribute('aria-busy');
             markCart();
-            track(reorder ? 'account_reorder' : 'account_add_previous', {
+            if (offer) track('account_offer_add', { variant_id: String(items[0].id) });
+            else track(reorder ? 'account_reorder' : 'account_add_previous', {
               items: items.length
             });
             if (reorder) {

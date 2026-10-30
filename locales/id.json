@@ -217,7 +217,17 @@
       "total": "Total",
       "buy_again": "Beli lagi",
       "track_order": "Lacak pesanan",
-      "order_status": "Status pesanan"
+      "order_status": "Status pesanan",
+      "offer_eyebrow": "Mulai ritualmu",
+      "offer_sub": "Daun moringa organik, ditanam dan diolah di Bali. Tiga kapsul saat sarapan.",
+      "offer_reviews": "{{ count }} ulasan",
+      "offer_reviews_label": "Ulasan pelanggan",
+      "offer_verified": "Pembeli terverifikasi",
+      "offer_choose": "Pilih paketmu",
+      "offer_first_pick": "Favorit pemula",
+      "offer_per_day": "{{ price }}/hari",
+      "offer_add": "Tambah ke keranjang",
+      "offer_details": "Lihat detail lengkap"
     }
   },
   "products": {
