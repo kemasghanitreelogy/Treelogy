@@ -48,7 +48,8 @@
       ],
       "settings": {
         "interval": 6000
-      }
+      },
+      "disabled": true
     },
     "featured_products_riADma": {
       "type": "FeaturedProducts",
@@ -185,9 +186,52 @@
         "filter_tags": "",
         "remove_excerpt": false
       }
+    },
+    "stl_hero": {
+      "type": "stl-hero",
+      "blocks": {
+        "spot_oil": {
+          "type": "hotspot",
+          "settings": {
+            "product": "organic-moringa-oil",
+            "x": 19,
+            "y": 65,
+            "card_x": 5,
+            "card_y": 9,
+            "card_x_mobile": 4,
+            "card_y_mobile": 5
+          }
+        },
+        "spot_caps": {
+          "type": "hotspot",
+          "settings": {
+            "product": "organic-moringa-capsules",
+            "x": 68,
+            "y": 64,
+            "card_x": 24,
+            "card_y": 20,
+            "card_x_mobile": 30,
+            "card_y_mobile": 14
+          }
+        }
+      },
+      "block_order": [
+        "spot_caps",
+        "spot_oil"
+      ],
+      "settings": {
+        "image": "shopify://shop_images/treelogy-organic-moringa-oil-and-capsules-product-set.png",
+        "image_alt": "Treelogy Organic Moringa Oil and Organic Moringa Capsules",
+        "bg_top": "#d6d5d2",
+        "bg_bottom": "#e3e3e4",
+        "show_certs": true,
+        "cta_product": "moringa-inside-out-protocol",
+        "auto_open": true
+      }
     }
   },
   "order": [
+    "stl_hero",
     "featured_image_hero_U7tQjE",
     "featured_products_riADma",
     "featured_text_nc4UFx",

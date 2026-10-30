@@ -841,6 +841,15 @@
             attrs.wc_cta_at = wc.at;
             attrs.wc_cta_page = wc.page;
           }
+          // Kunci ditulis literal: buildAttrs sudah dipanggil (pushToCart saat
+          // page load) SEBELUM var STL_KEY di bawah ter-assign.
+          var stl = stlStored('app_stl_click');
+          if (stl) {
+            attrs.stl_click_at = stl.at;
+            attrs.stl_product = stl.product;
+          }
+          var stlSeen = stlStored('app_stl_seen');
+          if (stlSeen) attrs.stl_seen_at = stlSeen.at;
           return attrs;
         }
 
@@ -942,6 +951,48 @@
         }
         window.addEventListener('click', onWcCtaClick, true);
         window.addEventListener('auxclick', onWcCtaClick, true);
+
+        // Shop the Look (hero beranda). Dua jejak, keduanya klik PERTAMA, 30 hari:
+        // - app_stl_click → stl_click_at + stl_product: kartu produk diklik dan
+        //   pembeli menyeberang ke PDP. Inilah "order dari Shop the Look".
+        // - app_stl_seen → stl_seen_at: pembeli sendiri membuka kartu (klik/hover
+        //   titik), ditulis oleh sections/stl-hero.liquid. Buka otomatis TIDAK
+        //   dihitung. Dipakai untuk angka "terbantu", bukan sumber.
+        // Penangkap klik kartu di sini (window-capture + isTrusted, aturan keras
+        // #6 & #16), bukan di section, supaya tidak tertelan interceptor.
+        var STL_KEY = 'app_stl_click';
+
+        function stlStored(key) {
+          try {
+            var raw = localStorage.getItem(key);
+            if (!raw) return null;
+            var o = JSON.parse(raw);
+            if (!o || !o.at || Date.now() - new Date(o.at).getTime() > WA_TTL_MS) {
+              localStorage.removeItem(key);
+              return null;
+            }
+            return o;
+          } catch (e) { return null; }
+        }
+
+        function onStlCardClick(e) {
+          if (!e.isTrusted) return;
+          var t = e.target;
+          var link = t && t.closest && t.closest('a.stl-card__link');
+          if (!link) return;
+          if (stlStored(STL_KEY)) return;
+          var m = (link.getAttribute('href') || '').match(/\/products\/([^/?#]+)/);
+          try {
+            localStorage.setItem(STL_KEY, JSON.stringify({
+              at: new Date().toISOString(),
+              page: location.pathname,
+              product: m ? m[1] : '-'
+            }));
+          } catch (err) { return; }
+          pushToCart();
+        }
+        window.addEventListener('click', onStlCardClick, true);
+        window.addEventListener('auxclick', onStlCardClick, true);
 
         // 3c. Permalink keranjang — CTA beli di landing page — MENGGANTI isi
         // keranjang dan MEMBUANG seluruh atributnya, lalu melompat langsung ke

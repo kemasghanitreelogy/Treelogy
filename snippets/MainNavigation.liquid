@@ -10,7 +10,7 @@
   {% if show_account and shop.customer_accounts_enabled %}
     <div class="menu-listing__item drawer-account" style="--i: {{ menu.links.size | plus: 1 }}" data-cs-capture>
       {% if customer %}
-        <a href="{{ routes.account_url }}" class="drawer-account__row" rel="nofollow">
+        <a href="{{ routes.account_url }}" class="drawer-account__row" rel="nofollow" data-account-panel-open aria-haspopup="dialog" aria-controls="AccountPanel">
           <span class="drawer-account__avatar drawer-account__avatar--initials" aria-hidden="true">
             {{- customer.first_name | default: customer.email | slice: 0 | upcase -}}
             {%- render 'customer-avatar', context: 'drawer' -%}

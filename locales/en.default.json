@@ -182,6 +182,46 @@
       "payment_status": "Payment Status",
       "fulfillment_status": "Fulfillment Status",
       "total": "Total"
+    },
+    "panel": {
+      "title": "Account",
+      "close": "Close",
+      "hello": "Hello, {{ name }}",
+      "orders_count_singular": "1 order",
+      "orders_count_many": "{{ count }} orders",
+      "recent_orders": "Recent orders",
+      "view_all": "View all",
+      "cancelled": "Cancelled",
+      "empty_title": "No orders yet",
+      "empty_text": "Your orders, tracking and quick reorders will appear here.",
+      "empty_cta": "Start shopping",
+      "store_credit": "Store credit",
+      "balance": "Balance",
+      "previously_purchased": "Previously purchased",
+      "items_singular": "1 item",
+      "items_many": "{{ count }} items",
+      "toggle_purchased": "Show previously purchased items",
+      "add_to_cart": "Add to cart",
+      "sold_out": "Sold out",
+      "added": "Added",
+      "added_toast": "{{ name }} added to your cart",
+      "view_cart": "View cart",
+      "error": "Try again",
+      "load_error": "We couldn't load your account. Please try again.",
+      "details": "Details",
+      "phone": "Phone",
+      "manage": "Manage account",
+      "sign_out": "Sign out",
+      "back": "Back",
+      "gift": "Gift",
+      "subtotal": "Subtotal",
+      "discount": "Discount",
+      "shipping": "Shipping",
+      "free": "Free",
+      "total": "Total",
+      "buy_again": "Buy again",
+      "track_order": "Track order",
+      "order_status": "Order status"
     }
   },
   "products": {
@@ -895,5 +935,20 @@
       "copyright": "© %shop% %year%. All rights reserved."
     },
     "wa_message": "Hi Treelogy, I would like to ask about %product%."
+  },
+  "shop_the_look": {
+    "eyebrow": "The inside-out ritual",
+    "heading_html": "Capsules from the <strong>inside</strong><br>Oil from the <strong>outside</strong>",
+    "subheading": "Organic moringa, farmed and crafted in Bali. Tap a product to see what's inside.",
+    "hint": "Tap the dots to explore",
+    "cta": "Shop the Inside Out Protocol",
+    "certs_label": "Certifications",
+    "open_label": "Show {{ product }}",
+    "card_label": "{{ product }} details",
+    "close": "Close",
+    "blurbs": {
+      "organic_moringa_capsules": "Stem-free dehydrated leaves, farmed & crafted in Bali",
+      "organic_moringa_oil": "Pure cold-pressed seed oil, farmed & crafted in Bali"
+    }
   }
 }

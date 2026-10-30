@@ -1,0 +1,545 @@
+{% comment %}
+  Isi panel akun (orders, store credit, pernah dibeli, detail).
+
+  Section ini TIDAK ditaruh di template mana pun. Ia hanya diambil lewat
+  Section Rendering API (`?section_id=account-panel`) oleh
+  snippets/account-panel-shell.liquid saat pelanggan membuka panel, jadi
+  halaman biasa tidak menanggung satu byte pun dari isinya.
+
+  Yang sengaja dilewati:
+  - baris hadiah (properti `_Gifted*` atau harga baris 0) — bukan pilihan pembeli;
+  - produk khusus LP (tag lp-only, vendor Landing Page/Gift/TEST) — guard
+    keranjang akan mencabutnya lagi kalau ditambahkan dari luar LP.
+{% endcomment %}
+
+{%- liquid
+  assign orders_limit = section.settings.orders_limit
+  assign pp_limit = section.settings.previously_limit
+  assign blocked_vendors = 'Landing Page,Gift,TEST' | split: ','
+-%}
+
+<div class="acp-root" data-acp-root>
+  {%- if customer -%}
+    {%- paginate customer.orders by 20 -%}
+      {%- liquid
+        assign seen = ','
+        assign pp_count = 0
+        assign first_name = customer.first_name | default: customer.name | default: customer.email
+        assign initial = first_name | slice: 0 | upcase
+      -%}
+
+      {%- comment -%} Pernah dibeli: varian unik lintas 20 order terakhir {%- endcomment -%}
+      {%- capture pp_rows -%}
+        {%- for order in customer.orders -%}
+          {%- if order.cancelled -%}{%- continue -%}{%- endif -%}
+          {%- for li in order.line_items -%}
+            {%- liquid
+              assign v = li.variant
+              assign p = li.product
+              if v == blank or p == blank
+                continue
+              endif
+              assign key = ',' | append: v.id | append: ','
+              if seen contains key
+                continue
+              endif
+              assign skip = false
+              if li.final_line_price == 0
+                assign skip = true
+              endif
+              for prop in li.properties
+                if prop.first contains '_Gifted'
+                  assign skip = true
+                endif
+              endfor
+              if p.tags contains 'lp-only' or blocked_vendors contains p.vendor
+                assign skip = true
+              endif
+              if v.price == 0
+                assign skip = true
+              endif
+              if skip
+                continue
+              endif
+              assign seen = seen | append: v.id | append: ','
+              assign pp_count = pp_count | plus: 1
+              if pp_count > pp_limit
+                continue
+              endif
+              assign v_label = v.metafields.custom.staged_plan_label.value | default: v.metafields.custom.time_protocol.value | default: v.title
+              if v_label == 'Default Title'
+                assign v_label = ''
+              endif
+              assign img = v.image | default: p.featured_image
+            -%}
+            <li class="acp-pp__row" data-acp-thumb="{% if img %}{{ img | image_url: width: 112, height: 112, crop: 'center' }}{% endif %}">
+              <a class="acp-pp__media" href="{{ v.url }}" tabindex="-1" aria-hidden="true">
+                {%- if img -%}
+                  {{- img | image_url: width: 128, height: 128, crop: 'center' | image_tag: width: 64, height: 64, loading: 'lazy', decoding: 'async', alt: '' -}}
+                {%- endif -%}
+              </a>
+              <div class="acp-pp__info">
+                <a class="acp-pp__title" href="{{ v.url }}">{{ p.title | escape }}</a>
+                {%- if v_label != blank -%}<span class="acp-pp__meta">{{ v_label | escape }}</span>{%- endif -%}
+                <span class="acp-pp__price">{{ v.price | money }}</span>
+              </div>
+              {%- if v.available -%}
+                <button
+                  type="button"
+                  class="acp-btn acp-btn--sm"
+                  data-acp-add='[{"id":{{ v.id }},"quantity":1}]'
+                  data-acp-name="{{ p.title | escape }}"
+                >
+                  <span class="acp-btn__label">{{ 'customer.panel.add_to_cart' | t }}</span>
+                </button>
+              {%- else -%}
+                <span class="acp-btn acp-btn--sm acp-btn--ghost" aria-disabled="true">{{ 'customer.panel.sold_out' | t }}</span>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        {%- endfor -%}
+      {%- endcapture -%}
+      {%- if pp_count > pp_limit -%}{%- assign pp_count = pp_limit -%}{%- endif -%}
+
+      {%- comment -%} ===== Tampilan utama ===== {%- endcomment -%}
+      <section class="acp-view acp-view--main" data-acp-view="main" aria-labelledby="AcpTitle">
+        <header class="acp-hello acp-in" style="--d:0">
+          <span class="acp-avatar" aria-hidden="true">
+            {{- initial -}}
+            {%- render 'customer-avatar', context: 'panel' -%}
+          </span>
+          <div>
+            <h2 class="acp-hello__title" id="AcpTitle" tabindex="-1">{{ 'customer.panel.hello' | t: name: first_name | escape_once }}</h2>
+            <p class="acp-hello__sub">
+              {%- if customer.orders_count == 1 -%}
+                {{ 'customer.panel.orders_count_singular' | t }}
+              {%- else -%}
+                {{ 'customer.panel.orders_count_many' | t: count: customer.orders_count }}
+              {%- endif -%}
+            </p>
+          </div>
+        </header>
+
+        {%- if customer.orders_count > 0 -%}
+          <div class="acp-block acp-in" style="--d:1">
+            <div class="acp-block__head">
+              <h3 class="acp-h3">{{ 'customer.panel.recent_orders' | t }}</h3>
+              <a class="acp-link" href="{{ routes.account_url }}">{{ 'customer.panel.view_all' | t }}</a>
+            </div>
+            <ul class="acp-orders" role="list">
+              {%- for order in customer.orders limit: orders_limit -%}
+                {%- liquid
+                  assign thumb = nil
+                  assign qty = 0
+                  for li in order.line_items
+                    if li.final_line_price > 0
+                      assign qty = qty | plus: li.quantity
+                      if thumb == nil and li.image
+                        assign thumb = li.image
+                      endif
+                    endif
+                  endfor
+                  if thumb == nil
+                    assign thumb = order.line_items.first.image
+                  endif
+                  assign tone = 'neutral'
+                  if order.cancelled
+                    assign tone = 'danger'
+                  elsif order.fulfillment_status == 'fulfilled'
+                    assign tone = 'success'
+                  elsif order.fulfillment_status == 'partial'
+                    assign tone = 'warn'
+                  endif
+                -%}
+                <li>
+                  <button type="button" class="acp-order" data-acp-goto="o{{ order.id }}">
+                    <span class="acp-order__media">
+                      {%- if thumb -%}
+                        {{- thumb | image_url: width: 280, height: 210, crop: 'center' | image_tag: width: 140, height: 105, loading: 'lazy', decoding: 'async', alt: '' -}}
+                      {%- endif -%}
+                      {%- if qty > 1 -%}<span class="acp-order__qty">×{{ qty }}</span>{%- endif -%}
+                    </span>
+                    <span class="acp-order__no">{{ order.name }}</span>
+                    <span class="acp-order__date">{{ order.created_at | time_tag: format: 'abbreviated_date' }}</span>
+                    <span class="acp-pill acp-pill--{{ tone }}">
+                      {%- if order.cancelled -%}{{ 'customer.panel.cancelled' | t }}{%- else -%}{{ order.fulfillment_status_label }}{%- endif -%}
+                    </span>
+                  </button>
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- else -%}
+          <div class="acp-empty acp-in" style="--d:1">
+            <p class="acp-empty__title">{{ 'customer.panel.empty_title' | t }}</p>
+            <p class="acp-empty__text">{{ 'customer.panel.empty_text' | t }}</p>
+            <a class="acp-btn" href="{{ routes.all_products_collection_url }}">{{ 'customer.panel.empty_cta' | t }}</a>
+          </div>
+        {%- endif -%}
+
+        {%- if customer.store_credit_account and customer.store_credit_account.balance > 0 -%}
+          <div class="acp-block acp-in" style="--d:2">
+            <h3 class="acp-h3">{{ 'customer.panel.store_credit' | t }}</h3>
+            <div class="acp-card acp-credit">
+              <span>{{ 'customer.panel.balance' | t }}</span>
+              <strong>{{ customer.store_credit_account.balance | money }}</strong>
+            </div>
+          </div>
+        {%- endif -%}
+
+        {%- if pp_count > 0 -%}
+          <div class="acp-block acp-pp acp-in" style="--d:3" data-acp-pp>
+            <div class="acp-block__head">
+              <h3 class="acp-h3">
+                {{ 'customer.panel.previously_purchased' | t }}
+                <span class="acp-count">
+                  {%- if pp_count == 1 -%}
+                    {{- 'customer.panel.items_singular' | t -}}
+                  {%- else -%}
+                    {{- 'customer.panel.items_many' | t: count: pp_count -}}
+                  {%- endif -%}
+                </span>
+              </h3>
+              <button
+                type="button"
+                class="acp-toggle"
+                aria-expanded="false"
+                aria-controls="AcpPpList"
+                aria-label="{{ 'customer.panel.toggle_purchased' | t | escape_once }}"
+              >
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10" /><path class="acp-toggle__v" d="M8 3v10" /></svg>
+              </button>
+            </div>
+            <div class="acp-pp__peek" data-acp-peek aria-hidden="true"></div>
+            <div class="acp-collapse" id="AcpPpList">
+              <ul class="acp-pp__list" role="list">
+                {{ pp_rows }}
+              </ul>
+            </div>
+          </div>
+        {%- endif -%}
+
+        <div class="acp-block acp-in" style="--d:4">
+          <h3 class="acp-h3">{{ 'customer.panel.details' | t }}</h3>
+          <dl class="acp-card acp-details">
+            <div><dt>{{ 'customer.account.name' | t }}</dt><dd>{{ customer.name | default: '—' | escape }}</dd></div>
+            <div><dt>{{ 'customer.account.email' | t }}</dt><dd>{{ customer.email | escape }}</dd></div>
+            {%- if customer.phone != blank -%}
+              <div><dt>{{ 'customer.panel.phone' | t }}</dt><dd>{{ customer.phone | escape }}</dd></div>
+            {%- endif -%}
+            <div class="acp-details__foot">
+              <a class="acp-link" href="{{ routes.account_url }}">
+                {{- 'customer.panel.manage' | t -}}
+                <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M4 2.5h5.5V8M9.5 2.5 2.5 9.5" /></svg>
+              </a>
+              <a class="acp-link acp-link--muted" href="{{ routes.account_logout_url }}">{{ 'customer.panel.sign_out' | t }}</a>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      {%- comment -%} ===== Detail tiap order ===== {%- endcomment -%}
+      {%- for order in customer.orders limit: orders_limit -%}
+        {%- liquid
+          assign tone = 'neutral'
+          if order.cancelled
+            assign tone = 'danger'
+          elsif order.fulfillment_status == 'fulfilled'
+            assign tone = 'success'
+          elsif order.fulfillment_status == 'partial'
+            assign tone = 'warn'
+          endif
+          assign pay_tone = 'neutral'
+          if order.financial_status == 'paid'
+            assign pay_tone = 'success'
+          elsif order.financial_status == 'refunded' or order.financial_status == 'voided'
+            assign pay_tone = 'danger'
+          endif
+        -%}
+        {%- capture buy_again -%}
+          {%- for li in order.line_items -%}
+            {%- liquid
+              assign v = li.variant
+              assign p = li.product
+              if v == blank or p == blank or li.final_line_price == 0
+                continue
+              endif
+              if v.available == false or p.tags contains 'lp-only' or blocked_vendors contains p.vendor
+                continue
+              endif
+              assign gifted = false
+              for prop in li.properties
+                if prop.first contains '_Gifted'
+                  assign gifted = true
+                endif
+              endfor
+              if gifted
+                continue
+              endif
+            -%}
+            {"id":{{ v.id }},"quantity":{{ li.quantity }}},
+          {%- endfor -%}
+        {%- endcapture -%}
+        <section class="acp-view" data-acp-view="o{{ order.id }}" aria-labelledby="AcpO{{ order.id }}" hidden>
+          <button type="button" class="acp-back" data-acp-goto="main">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5" /></svg>
+            {{ 'customer.panel.back' | t }}
+          </button>
+          <header class="acp-od__head">
+            <h2 class="acp-od__title" id="AcpO{{ order.id }}" tabindex="-1">{{ order.name }}</h2>
+            <span class="acp-od__date">{{ order.created_at | time_tag: format: 'date' }}</span>
+            <div class="acp-od__pills">
+              <span class="acp-pill acp-pill--{{ tone }}">
+                {%- if order.cancelled -%}{{ 'customer.panel.cancelled' | t }}{%- else -%}{{ order.fulfillment_status_label }}{%- endif -%}
+              </span>
+              <span class="acp-pill acp-pill--{{ pay_tone }}">{{ order.financial_status_label }}</span>
+            </div>
+          </header>
+
+          <ul class="acp-lines" role="list">
+            {%- for li in order.line_items -%}
+              {%- liquid
+                assign gifted = false
+                for prop in li.properties
+                  if prop.first contains '_Gifted'
+                    assign gifted = true
+                  endif
+                endfor
+                if li.final_line_price == 0
+                  assign gifted = true
+                endif
+                assign line_title = li.product.title | default: li.title
+                assign line_label = li.variant.metafields.custom.staged_plan_label.value | default: li.variant_title
+                if line_label == 'Default Title'
+                  assign line_label = ''
+                endif
+              -%}
+              <li class="acp-line">
+                <span class="acp-line__media">
+                  {%- if li.image -%}
+                    {{- li.image | image_url: width: 112, height: 112, crop: 'center' | image_tag: width: 56, height: 56, loading: 'lazy', decoding: 'async', alt: '' -}}
+                  {%- endif -%}
+                  {%- if li.quantity > 1 -%}<span class="acp-line__qty">{{ li.quantity }}</span>{%- endif -%}
+                </span>
+                <span class="acp-line__info">
+                  <span class="acp-line__title">{{ line_title | escape }}</span>
+                  {%- if line_label != blank -%}<span class="acp-line__meta">{{ line_label | escape }}</span>{%- endif -%}
+                </span>
+                <span class="acp-line__price">
+                  {%- if gifted -%}
+                    <span class="acp-gift">{{ 'customer.panel.gift' | t }}</span>
+                  {%- else -%}
+                    {{- li.final_line_price | money -}}
+                  {%- endif -%}
+                </span>
+              </li>
+            {%- endfor -%}
+          </ul>
+
+          <dl class="acp-sum">
+            <div><dt>{{ 'customer.panel.subtotal' | t }}</dt><dd>{{ order.line_items_subtotal_price | money }}</dd></div>
+            {%- if order.total_discounts > 0 -%}
+              <div><dt>{{ 'customer.panel.discount' | t }}</dt><dd>−{{ order.total_discounts | money }}</dd></div>
+            {%- endif -%}
+            <div>
+              <dt>{{ 'customer.panel.shipping' | t }}</dt>
+              <dd>{%- if order.shipping_price == 0 -%}{{ 'customer.panel.free' | t }}{%- else -%}{{ order.shipping_price | money }}{%- endif -%}</dd>
+            </div>
+            <div class="acp-sum__total"><dt>{{ 'customer.panel.total' | t }}</dt><dd>{{ order.total_price | money }}</dd></div>
+          </dl>
+
+          <div class="acp-od__actions">
+            {%- if buy_again != blank -%}
+              <button
+                type="button"
+                class="acp-btn acp-btn--block"
+                data-acp-add='[{{ buy_again | strip | remove_last: ',' }}]'
+                data-acp-reorder
+              >
+                <span class="acp-btn__label">{{ 'customer.panel.buy_again' | t }}</span>
+              </button>
+            {%- endif -%}
+            <a class="acp-btn acp-btn--block acp-btn--ghost" href="{{ order.order_status_url }}" target="_blank" rel="noopener">
+              {%- if order.fulfillment_status == 'fulfilled' or order.fulfillment_status == 'partial' -%}
+                {{- 'customer.panel.track_order' | t -}}
+              {%- else -%}
+                {{- 'customer.panel.order_status' | t -}}
+              {%- endif -%}
+              <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M4 2.5h5.5V8M9.5 2.5 2.5 9.5" /></svg>
+            </a>
+          </div>
+        </section>
+      {%- endfor -%}
+    {%- endpaginate -%}
+  {%- else -%}
+    <div class="acp-empty" data-acp-signed-out>
+      <p class="acp-empty__title">{{ 'customer.account.sign_in' | t }}</p>
+      <a class="acp-btn" href="{{ routes.account_login_url }}">{{ 'customer.account.sign_in' | t }}</a>
+    </div>
+  {%- endif -%}
+</div>
+
+<style>
+  .acp-root{--ink:#2a3b34;--muted:#5d6b64;--line:rgba(42,59,52,.12);--surface:#fff;--sage:#a5bb87;--ease:cubic-bezier(.16,1,.3,1);color:var(--ink);font-family:Inter,system-ui,sans-serif;font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+  .acp-root *{box-sizing:border-box}
+  .acp-root p{margin:0;line-height:inherit}
+  .acp-root h2,.acp-root h3{margin:0;font-family:inherit;color:inherit;text-transform:none;letter-spacing:-.01em}
+  .acp-root ul{list-style:none;margin:0;padding:0}
+  .acp-root dl,.acp-root dd{margin:0}
+  .acp-root a:not(.acp-btn){color:inherit}
+  .acp-root svg{fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+  .acp-root img{display:block;width:100%;height:100%;object-fit:cover}
+
+  /* theme.css memberi semua <section> width:100vw — dikembalikan ke lebar panel */
+  .acp-root .acp-view{width:auto;max-width:none;padding:4px 24px 32px;display:grid;grid-template-columns:minmax(0,1fr);gap:28px}
+  .acp-root .acp-view[hidden]{display:none}
+  .acp-block{min-width:0}
+  .acp-view[data-acp-enter]{animation:acp-view-in .34s var(--ease) both}
+  .acp-view[data-acp-enter="back"]{animation-name:acp-view-back}
+  @keyframes acp-view-in{from{opacity:0;transform:translateX(18px)}}
+  @keyframes acp-view-back{from{opacity:0;transform:translateX(-18px)}}
+  .acp-in{animation:acp-rise .5s var(--ease) both;animation-delay:calc(var(--d,0) * 45ms + 40ms)}
+  @keyframes acp-rise{from{opacity:0;transform:translateY(10px)}}
+
+  .acp-hello{display:flex;align-items:center;gap:14px}
+  .acp-avatar{position:relative;flex:none;width:52px;height:52px;border-radius:50%;background:var(--ink);color:#f8f8f2;display:grid;place-items:center;font-size:20px;font-weight:600;overflow:hidden}
+  .acp-avatar .customer-avatar{position:absolute;inset:0}
+  .acp-hello__title{font-size:24px;line-height:1.15;font-weight:600;outline:none}
+  .acp-hello__sub{color:var(--muted);font-size:13px;margin-top:2px}
+
+  .acp-block{display:grid;gap:12px}
+  .acp-block__head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .acp-h3{font-size:15px;line-height:1.3;font-weight:600}
+  .acp-count{font-weight:400;color:var(--muted);font-size:13px;margin-left:6px}
+  .acp-link{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:500;text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(42,59,52,.35);transition:text-decoration-color .2s}
+  .acp-link:hover{text-decoration-color:currentColor}
+  .acp-link svg{width:11px;height:11px}
+  .acp-link--muted{color:var(--muted)}
+
+  .acp-orders{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(152px,46%);gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -24px;padding:2px 24px 6px;scrollbar-width:none;overscroll-behavior-x:contain}
+  .acp-orders::-webkit-scrollbar{display:none}
+  .acp-orders>li{scroll-snap-align:start;scroll-margin-left:24px}
+  .acp-order{all:unset;box-sizing:border-box;cursor:pointer;display:grid;gap:3px;width:100%;padding:10px 10px 12px;border-radius:16px;background:var(--surface);border:1px solid var(--line);transition:border-color .2s,box-shadow .25s var(--ease),transform .25s var(--ease)}
+  .acp-order:hover{border-color:rgba(42,59,52,.28);box-shadow:0 8px 24px -14px rgba(42,59,52,.35)}
+  .acp-order:active{transform:scale(.98)}
+  .acp-order:focus-visible{outline:2px solid var(--sage);outline-offset:2px}
+  .acp-order__media{position:relative;aspect-ratio:4/3;border-radius:10px;overflow:hidden;background:#efefe8;margin-bottom:7px}
+  .acp-order__qty{position:absolute;right:6px;bottom:6px;padding:1px 7px;border-radius:99px;background:rgba(255,255,255,.92);font-size:11px;font-weight:600}
+  .acp-order__no{font-weight:600;font-size:14px}
+  .acp-order__date{color:var(--muted);font-size:12px}
+
+  .acp-pill{justify-self:start;display:inline-flex;align-items:center;gap:5px;margin-top:5px;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:600;line-height:1.3;background:#ecebe4;color:#47504b}
+  .acp-pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.7}
+  .acp-pill--success{background:#e2eed9;color:#2e5a2b}
+  .acp-pill--warn{background:#f6ead0;color:#7a5310}
+  .acp-pill--danger{background:#f6e0dc;color:#8a2d21}
+
+  .acp-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+  .acp-credit{display:flex;justify-content:space-between;align-items:center;color:var(--muted)}
+  .acp-credit strong{color:var(--ink);font-size:17px;font-weight:600}
+
+  .acp-toggle{all:unset;box-sizing:border-box;cursor:pointer;width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;transition:background .2s}
+  .acp-toggle:hover{background:#f1f1ea}
+  .acp-toggle:focus-visible{outline:2px solid var(--sage);outline-offset:2px}
+  .acp-toggle svg{width:14px;height:14px}
+  .acp-toggle__v{transform-origin:center;transition:transform .3s var(--ease)}
+  .acp-toggle[aria-expanded="true"] .acp-toggle__v{transform:scaleY(0)}
+  .acp-pp__peek{display:flex;gap:8px;transition:opacity .25s,height .3s var(--ease)}
+  .acp-pp__peek span{width:48px;height:48px;border-radius:12px;overflow:hidden;background:#efefe8;border:1px solid var(--line)}
+  .acp-pp__peek .acp-more{display:grid;place-items:center;font-size:12px;font-weight:600;color:var(--muted)}
+  .acp-pp[data-open] .acp-pp__peek{opacity:0;height:0;pointer-events:none}
+  .acp-collapse{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s var(--ease)}
+  .acp-collapse>ul{min-height:0;overflow:hidden}
+  .acp-pp[data-open] .acp-collapse{grid-template-rows:1fr}
+  .acp-pp:not([data-open]) .acp-collapse{visibility:hidden;transition:grid-template-rows .4s var(--ease),visibility 0s .4s}
+  .acp-pp__list{display:grid;gap:4px}
+  .acp-pp__row{display:grid;grid-template-columns:56px 1fr auto;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--line)}
+  .acp-pp__row:last-child{border-bottom:0}
+  .acp-pp__media{width:56px;height:56px;border-radius:12px;overflow:hidden;background:#efefe8}
+  .acp-pp__info{display:grid;min-width:0}
+  .acp-pp__title{font-weight:600;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .acp-pp__title:hover{text-decoration:underline}
+  .acp-pp__meta{color:var(--muted);font-size:12px}
+  .acp-pp__price{font-weight:600;font-size:13px;margin-top:2px}
+
+  .acp-btn{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 20px;border-radius:12px;background:var(--ink);color:#f8f8f2;font-weight:600;font-size:14px;text-align:center;white-space:nowrap;transition:background .2s,transform .2s var(--ease),opacity .2s}
+  .acp-btn:hover{background:#1e2b26}
+  .acp-btn:active{transform:scale(.98)}
+  .acp-btn:focus-visible{outline:2px solid var(--sage);outline-offset:2px}
+  .acp-btn svg{width:12px;height:12px}
+  .acp-btn--sm{min-height:38px;padding:0 14px;font-size:13px;border-radius:10px}
+  .acp-btn--block{width:100%}
+  .acp-btn--ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px rgba(42,59,52,.25)}
+  .acp-btn--ghost:hover{background:rgba(42,59,52,.05)}
+  .acp-btn[aria-disabled="true"]{cursor:default;opacity:.55}
+  .acp-btn[aria-busy="true"]{pointer-events:none}
+  .acp-btn[aria-busy="true"] .acp-btn__label{opacity:0}
+  .acp-btn[aria-busy="true"]::after{content:"";position:absolute;width:16px;height:16px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:acp-spin .7s linear infinite}
+  .acp-btn{position:relative}
+  .acp-btn[data-done]{background:#3d6b39}
+  @keyframes acp-spin{to{transform:rotate(1turn)}}
+
+  .acp-details{display:grid;gap:10px}
+  .acp-details>div{display:flex;justify-content:space-between;gap:16px}
+  .acp-details dt{color:var(--muted)}
+  .acp-details dd{font-weight:500;text-align:right;overflow-wrap:anywhere}
+  .acp-details .acp-details__foot{border-top:1px solid var(--line);padding-top:12px;margin-top:2px}
+
+  .acp-empty{display:grid;gap:8px;justify-items:start;padding:20px;border-radius:16px;background:var(--surface);border:1px solid var(--line)}
+  .acp-empty__title{font-weight:600;font-size:15px}
+  .acp-empty__text{color:var(--muted);margin-bottom:8px!important}
+
+  .acp-back{all:unset;cursor:pointer;justify-self:start;display:inline-flex;align-items:center;gap:4px;min-height:36px;padding-right:8px;font-size:13px;font-weight:500;color:var(--muted);border-radius:8px}
+  .acp-back:hover{color:var(--ink)}
+  .acp-back:focus-visible{outline:2px solid var(--sage)}
+  .acp-back svg{width:16px;height:16px}
+  .acp-od__head{display:grid;gap:2px;margin-top:-16px}
+  .acp-od__title{font-size:24px;font-weight:600;line-height:1.15;outline:none}
+  .acp-od__date{color:var(--muted);font-size:13px}
+  .acp-od__pills{display:flex;gap:6px;flex-wrap:wrap}
+  .acp-lines{display:grid}
+  .acp-line{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+  .acp-line__media{position:relative;width:56px;height:56px;border-radius:12px;overflow:visible;background:#efefe8}
+  .acp-line__media img{border-radius:12px}
+  .acp-line__qty{position:absolute;top:-6px;right:-6px;min-width:20px;height:20px;padding:0 5px;border-radius:99px;background:var(--ink);color:#f8f8f2;font-size:11px;font-weight:600;display:grid;place-items:center}
+  .acp-line__info{display:grid;min-width:0}
+  .acp-line__title{font-weight:500}
+  .acp-line__meta{color:var(--muted);font-size:12px}
+  .acp-line__price{font-weight:600;font-size:13px;white-space:nowrap}
+  .acp-gift{display:inline-block;padding:2px 8px;border-radius:99px;background:#e2eed9;color:#2e5a2b;font-size:11px;font-weight:600}
+  .acp-sum{display:grid;gap:8px}
+  .acp-sum>div{display:flex;justify-content:space-between;color:var(--muted)}
+  .acp-sum dd{color:var(--ink);font-weight:500}
+  .acp-sum .acp-sum__total{color:var(--ink);font-weight:600;font-size:16px;padding-top:10px;border-top:1px solid var(--line)}
+  .acp-sum .acp-sum__total dd{font-weight:700}
+  .acp-od__actions{display:grid;gap:10px}
+
+  @media (prefers-reduced-motion:reduce){.acp-root *,.acp-root *::before,.acp-root *::after{animation-duration:1ms!important;animation-delay:0s!important;transition-duration:1ms!important}}
+</style>
+
+{% schema %}
+{
+  "name": "Account panel",
+  "class": "acp-section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "orders_limit",
+      "label": "Recent orders shown",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "previously_limit",
+      "label": "Previously purchased items shown",
+      "min": 2,
+      "max": 20,
+      "step": 1,
+      "default": 8
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,832 @@
+{%- comment -%}
+  Shop the Look hero — foto produk dengan titik (hotspot). Titik dipilih →
+  garis penghubung tergambar dari titik ke kartu produk kaca yang muncul di
+  ruang kosong foto. Teks dari locale `shop_the_look.*` kecuali diisi di editor.
+  <style> sengaja di atas markup (lihat jebakan FOUC di theme architecture).
+{%- endcomment -%}
+{%- liquid
+  assign img = section.settings.image
+  assign img_mobile = section.settings.image_mobile | default: img
+  assign sid = section.id
+  assign heading_html = section.settings.heading
+  if heading_html == blank
+    assign heading_html = 'shop_the_look.heading_html' | t
+  endif
+  assign sub = section.settings.subheading
+  if sub == blank
+    assign sub = 'shop_the_look.subheading' | t
+  endif
+  assign cta_product = section.settings.cta_product
+-%}
+<style>
+  #stl-{{ sid }} {
+    --stl-bg-top: {{ section.settings.bg_top }};
+    --stl-bg-bottom: {{ section.settings.bg_bottom }};
+  }
+  .stl {
+    --stl-ink: #2a3b35;
+    --stl-sage: #66704f;
+    --stl-muted: #55605a;
+    --stl-line: #2a3b35;
+    --stl-ease: cubic-bezier(.2, .9, .25, 1);
+    position: relative;
+    background: linear-gradient(180deg, var(--stl-bg-top) 0%, var(--stl-bg-bottom) 100%);
+    color: var(--stl-ink);
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .stl *, .stl *::before, .stl *::after { box-sizing: border-box; }
+  /* Foto menempel ke tepi kanan layar di lebar berapa pun (tidak dikurung
+     max-width), teks tetap sejajar dengan grid konten 1440px. */
+  .stl__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, min(50vw, 980px));
+    align-items: center;
+  }
+  .stl__copy {
+    justify-self: end;
+    width: 100%;
+    max-width: calc(740px + max(5vw, (100vw - 1440px) / 2 + 80px));
+    padding: 48px clamp(16px, 2vw, 32px) 48px max(clamp(24px, 5vw, 80px), (100vw - 1440px) / 2 + 80px);
+  }
+  .stl__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 20px;
+    font-size: 12px;
+    line-height: 1;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--stl-sage);
+  }
+  .stl__eyebrow::before {
+    content: "";
+    width: 28px;
+    height: 1px;
+    background: currentColor;
+  }
+  .stl__heading {
+    margin: 0;
+    font-size: clamp(34px, 3.4vw, 58px);
+    line-height: 1.04;
+    letter-spacing: -.025em;
+    font-weight: 400;
+    color: var(--stl-sage);
+  }
+  .stl__heading strong { font-weight: 700; }
+  /* desktop: tiap baris (dipisah <br>) tidak boleh patah — "inside" sempat jatuh sendirian */
+  @media (min-width: 990px) { .stl__heading { white-space: nowrap; } }
+  .stl__sub {
+    margin: 22px 0 0;
+    max-width: 44ch;
+    font-size: clamp(15px, 1.15vw, 18px);
+    line-height: 1.6;
+    color: var(--stl-muted);
+  }
+  .stl__certs {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    margin: 28px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .stl__certs img { display: block; width: auto; height: 46px; }
+  .stl__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px 22px;
+    margin-top: 34px;
+  }
+  .stl__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 50px;
+    padding: 0 26px;
+    border-radius: 999px;
+    background: var(--stl-ink);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color .2s ease, box-shadow .2s ease;
+    box-shadow: 0 10px 24px -12px rgba(42, 59, 53, .6);
+  }
+  .stl__cta:hover { background: #1d2a25; box-shadow: 0 14px 28px -12px rgba(42, 59, 53, .7); }
+  .stl__cta svg { transition: transform .25s var(--stl-ease); }
+  .stl__cta:hover svg { transform: translateX(3px); }
+
+  .stl__stage {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    width: 100%;
+  }
+  .stl__media, .stl__media img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .stl__media img { object-fit: cover; display: block; }
+  .stl__media--mobile { display: none; }
+  @media (min-width: 990px) {
+    .stl__media {
+      -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 9%);
+      mask-image: linear-gradient(90deg, transparent 0, #000 9%);
+    }
+  }
+
+  .stl__lines {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+    z-index: 2;
+  }
+  .stl__path {
+    fill: none;
+    stroke: var(--stl-line);
+    stroke-width: 1.25;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: var(--len, 0) var(--len, 0);
+    stroke-dashoffset: var(--len, 0);
+    opacity: 0;
+    transition: stroke-dashoffset .45s var(--stl-ease), opacity .2s ease;
+  }
+  .stl__path.is-on { stroke-dashoffset: 0; opacity: .85; }
+  .stl__end {
+    fill: var(--stl-line);
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+    transform: scale(0);
+    transition: opacity .2s ease .32s, transform .3s var(--stl-ease) .32s;
+  }
+  .stl__end.is-on { opacity: 1; transform: scale(1); }
+
+  .stl-spot {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    z-index: 3;
+    width: 44px;
+    height: 44px;
+    margin: -22px 0 0 -22px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .stl-spot__dot {
+    position: relative;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .92);
+    box-shadow: 0 0 0 1px rgba(42, 59, 53, .12), 0 6px 16px -4px rgba(42, 59, 53, .45);
+    display: grid;
+    place-items: center;
+    transition: background-color .25s ease, transform .3s var(--stl-ease);
+  }
+  .stl-spot__dot::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 255, 255, .95);
+    animation: stl-pulse 2.4s cubic-bezier(.2, .6, .3, 1) infinite;
+  }
+  .stl-spot:nth-of-type(2n) .stl-spot__dot::before { animation-delay: 1.2s; }
+  .stl-spot__icon {
+    width: 12px;
+    height: 12px;
+    color: var(--stl-ink);
+    transition: transform .35s var(--stl-ease), color .25s ease;
+  }
+  .stl-spot:hover .stl-spot__dot { transform: scale(1.08); }
+  .stl-spot[aria-expanded="true"] .stl-spot__dot { background: var(--stl-ink); transform: scale(1.05); }
+  .stl-spot[aria-expanded="true"] .stl-spot__dot::before { animation: none; opacity: 0; }
+  .stl-spot[aria-expanded="true"] .stl-spot__icon { transform: rotate(135deg); color: #fff; }
+  .stl-spot:focus-visible { outline: none; }
+  .stl-spot:focus-visible .stl-spot__dot { box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--stl-ink); }
+  @keyframes stl-pulse {
+    0% { transform: scale(1); opacity: .9; }
+    70%, 100% { transform: scale(2.3); opacity: 0; }
+  }
+
+  .stl-card {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 4;
+    width: min(330px, calc(100% - 24px));
+    padding: 14px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, .8);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, .7);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, .7),
+      0 24px 48px -20px rgba(42, 59, 53, .38),
+      0 6px 14px -6px rgba(42, 59, 53, .12);
+    opacity: 0;
+    visibility: hidden;
+    transform: translate3d(var(--cx, 0), calc(var(--cy, 0px) + 10px), 0) scale(.97);
+    transform-origin: var(--origin, 50% 100%);
+    transition:
+      opacity .3s ease .12s,
+      transform .55s var(--stl-ease) .12s,
+      visibility 0s linear .55s;
+  }
+  .stl-card[data-open] {
+    opacity: 1;
+    visibility: visible;
+    transform: translate3d(var(--cx, 0), var(--cy, 0), 0) scale(1);
+    transition:
+      opacity .3s ease .14s,
+      transform .55s var(--stl-ease) .14s,
+      visibility 0s;
+  }
+  .stl-card__link {
+    display: grid;
+    grid-template-columns: 84px minmax(0, 1fr);
+    gap: 14px;
+    align-items: center;
+    color: inherit;
+    text-decoration: none;
+    border-radius: 12px;
+  }
+  .stl-card__link:focus-visible { outline: 2px solid var(--stl-ink); outline-offset: 4px; }
+  .stl-card__thumb {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #eeeeea;
+  }
+  .stl-card__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transform: scale(1.08);
+    transition: transform .9s var(--stl-ease) .1s;
+  }
+  .stl-card[data-open] .stl-card__thumb img { transform: scale(1); }
+  .stl-card__body > * {
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity .3s ease, transform .45s var(--stl-ease);
+  }
+  .stl-card[data-open] .stl-card__body > * { opacity: 1; transform: none; }
+  .stl-card[data-open] .stl-card__body > :nth-child(1) { transition-delay: .2s; }
+  .stl-card[data-open] .stl-card__body > :nth-child(2) { transition-delay: .25s; }
+  .stl-card[data-open] .stl-card__body > :nth-child(3) { transition-delay: .3s; }
+  .stl-card[data-open] .stl-card__body > :nth-child(4) { transition-delay: .35s; }
+  .stl-card__rating {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    line-height: 1;
+    color: var(--stl-muted);
+    margin-bottom: 6px;
+  }
+  .stl-stars { position: relative; display: inline-block; width: 70px; height: 13px; }
+  .stl-stars svg { position: absolute; inset: 0; width: 70px; height: 13px; }
+  .stl-stars__fill { position: absolute; inset: 0 auto 0 0; overflow: hidden; }
+  .stl-card__title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.3;
+    font-weight: 650;
+    color: var(--stl-ink);
+  }
+  .stl-card__blurb {
+    margin: 4px 0 0;
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: var(--stl-muted);
+  }
+  .stl-card__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .stl-card__price { font-size: 14px; line-height: 1.25; color: var(--stl-ink); }
+  .stl-card__price-label { color: var(--stl-muted); font-size: 12px; margin-right: 2px; }
+  .stl-card__price strong { font-weight: 700; }
+  .stl-card__price s { display: block; color: #8a918c; font-size: 12px; }
+  .stl-card__go {
+    flex: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--stl-ink);
+    color: #fff;
+    transition: transform .3s var(--stl-ease), background-color .2s ease;
+  }
+  .stl-card__link:hover .stl-card__go { transform: translateX(3px); background: #1d2a25; }
+  .stl-card__close {
+    position: absolute;
+    top: -14px;
+    right: -14px;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+  }
+  .stl-card__close span {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: #fff;
+    color: var(--stl-ink);
+    box-shadow: 0 4px 12px -4px rgba(42, 59, 53, .4);
+  }
+  .stl-card__close:focus-visible span { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--stl-ink); }
+  .stl-sr {
+    position: absolute !important;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 989px) {
+    .stl__inner { grid-template-columns: minmax(0, 1fr); }
+    .stl__copy { padding: 32px 20px 4px; max-width: none; text-align: center; }
+    .stl__eyebrow { margin-bottom: 14px; }
+    .stl__heading { font-size: clamp(30px, 8.6vw, 46px); }
+    .stl__sub { margin: 14px auto 0; font-size: 15px; }
+    .stl__certs { justify-content: center; gap: 18px; margin-top: 20px; }
+    .stl__certs img { height: 38px; }
+    .stl__actions { justify-content: center; margin-top: 22px; }
+    .stl__media--desktop { display: none; }
+    .stl__media--mobile { display: block; }
+    .stl-card { width: min(300px, calc(100% - 24px)); padding: 12px; }
+    .stl-card__link { grid-template-columns: 68px minmax(0, 1fr); gap: 12px; }
+    .stl-card__title { font-size: 14px; }
+    .stl-card__blurb { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; font-size: 12px; }
+    .stl-card__foot { margin-top: 8px; }
+    .stl-card__go { width: 32px; height: 32px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stl-spot__dot::before { animation: none; opacity: 0; }
+    .stl-card, .stl-card[data-open], .stl-card__body > *, .stl-card__thumb img, .stl__path, .stl__end {
+      transition-duration: .01s !important;
+      transition-delay: 0s !important;
+    }
+    .stl-card, .stl-card[data-open] { transform: translate3d(var(--cx, 0), var(--cy, 0), 0); }
+  }
+</style>
+
+<div id="stl-{{ sid }}" class="stl" data-stl data-auto-open="{{ section.settings.auto_open }}">
+  <div class="stl__inner">
+    <div class="stl__copy">
+      <p class="stl__eyebrow">{{ 'shop_the_look.eyebrow' | t }}</p>
+      <h1 class="stl__heading">{{ heading_html }}</h1>
+      <p class="stl__sub">{{ sub | escape_once }}</p>
+      {%- if section.settings.show_certs -%}
+        <ul class="stl__certs" aria-label="{{ 'shop_the_look.certs_label' | t | escape }}">
+          <li><img src="{{ 'oil-guide-cert-usda.svg' | asset_url }}" alt="USDA Organic" width="46" height="46" loading="eager"></li>
+          <li><img src="{{ 'oil-guide-cert-halal.svg' | asset_url }}" alt="Halal Indonesia" width="26" height="46" loading="eager"></li>
+          <li><img src="{{ 'oil-guide-cert-pom.png' | asset_url }}" alt="Badan POM" width="46" height="46" loading="eager"></li>
+        </ul>
+      {%- endif -%}
+      <div class="stl__actions">
+        {%- if cta_product != blank -%}
+          <a class="stl__cta" href="{{ cta_product.url }}">
+            {{- 'shop_the_look.cta' | t -}}
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="stl__stage" data-stl-stage>
+      {%- if img != blank -%}
+        <div class="stl__media stl__media--desktop">
+          {{ img | image_url: width: 1600 | image_tag: widths: '800, 1100, 1400, 1600', sizes: '(min-width: 1445px) 780px, (min-width: 990px) 54vw, 100vw', loading: 'eager', fetchpriority: 'high', alt: section.settings.image_alt }}
+        </div>
+        <div class="stl__media stl__media--mobile">
+          {{ img_mobile | image_url: width: 1100 | image_tag: widths: '450, 650, 850, 1100', sizes: '100vw', loading: 'eager', alt: section.settings.image_alt }}
+        </div>
+      {%- else -%}
+        <div class="stl__media">{{ 'lifestyle-1' | placeholder_svg_tag }}</div>
+      {%- endif -%}
+
+      <svg class="stl__lines" aria-hidden="true" focusable="false" data-stl-lines>
+        {%- for block in section.blocks -%}
+          <path class="stl__path" data-stl-path="{{ block.id }}" d=""/>
+          <circle class="stl__end" data-stl-end="{{ block.id }}" r="3" cx="0" cy="0"/>
+        {%- endfor -%}
+      </svg>
+
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign p = block.settings.product
+          if p == blank
+            continue
+          endif
+          assign cheapest = p.variants | where: 'price', p.price_min | first
+          assign compare = cheapest.compare_at_price | default: 0
+          assign blurb = block.settings.blurb
+          if blurb == blank
+            assign blurb_key = p.handle | replace: '-', '_' | prepend: 'shop_the_look.blurbs.'
+            assign blurb = blurb_key | t
+            if blurb contains 'Translation missing' or blurb contains 'translation missing'
+              assign blurb = ''
+            endif
+          endif
+          assign badge_html = p.metafields.judgeme.badge | default: ''
+          assign rating_avg = ''
+          assign rating_cnt = ''
+          if badge_html contains "data-average-rating='"
+            assign rating_avg = badge_html | split: "data-average-rating='" | last | split: "'" | first
+          endif
+          if badge_html contains "data-number-of-reviews='"
+            assign rating_cnt = badge_html | split: "data-number-of-reviews='" | last | split: "'" | first
+          endif
+          assign rating_sep = 'products.rating.decimal_separator' | t
+          assign rating_local = rating_avg
+          if rating_sep.size == 1
+            assign rating_local = rating_avg | replace: '.', rating_sep
+          endif
+          assign star_pct = rating_avg | times: 20
+          assign alt = p.featured_image.alt
+          if alt contains 'LANG:'
+            assign alt = p.title
+          endif
+        -%}
+        <button
+          type="button"
+          class="stl-spot"
+          style="--x: {{ block.settings.x }}%; --y: {{ block.settings.y }}%;"
+          aria-expanded="false"
+          aria-controls="stl-card-{{ block.id }}"
+          aria-label="{{ 'shop_the_look.open_label' | t: product: p.title | escape }}"
+          data-stl-spot="{{ block.id }}"
+          {{ block.shopify_attributes }}
+        >
+          <span class="stl-spot__dot" aria-hidden="true">
+            <svg class="stl-spot__icon" viewBox="0 0 12 12" width="12" height="12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </span>
+        </button>
+        <div
+          class="stl-card"
+          id="stl-card-{{ block.id }}"
+          role="group"
+          aria-label="{{ 'shop_the_look.card_label' | t: product: p.title | escape }}"
+          data-stl-card="{{ block.id }}"
+          data-card-x="{{ block.settings.card_x }}"
+          data-card-y="{{ block.settings.card_y }}"
+          data-card-x-mobile="{{ block.settings.card_x_mobile }}"
+          data-card-y-mobile="{{ block.settings.card_y_mobile }}"
+          inert
+        >
+          <a class="stl-card__link" href="{{ p.url }}">
+            <span class="stl-card__thumb">
+              {{ p.featured_image | image_url: width: 220 | image_tag: width: 110, height: 110, loading: 'lazy', alt: alt, sizes: '84px' }}
+            </span>
+            <span class="stl-card__body">
+              {%- if rating_avg != blank -%}
+                <span class="stl-card__rating">
+                  <span class="stl-stars" aria-hidden="true">
+                    <svg viewBox="0 0 70 13" fill="#d3d6cf"><use href="#stl-star-row-{{ sid }}"/></svg>
+                    <span class="stl-stars__fill" style="width: {{ star_pct }}%;"><svg viewBox="0 0 70 13" fill="#2a3b35"><use href="#stl-star-row-{{ sid }}"/></svg></span>
+                  </span>
+                  <span aria-hidden="true">{{ rating_local }} ({{ rating_cnt }})</span>
+                  <span class="stl-sr">{{ 'products.rating.aria_summary' | t: rating: rating_local, count: rating_cnt }}</span>
+                </span>
+              {%- endif -%}
+              <span class="stl-card__title">{{ p.title }}</span>
+              {%- if blurb != blank -%}
+                <span class="stl-card__blurb">{{ blurb | escape_once }}</span>
+              {%- endif -%}
+              <span class="stl-card__foot">
+                <span class="stl-card__price">
+                  {%- if compare > cheapest.price -%}<s>{{ compare | money }}</s>{%- endif -%}
+                  {%- if p.price_varies -%}<span class="stl-card__price-label">{{ 'products.general.from' | t }}</span> {% endif -%}
+                  <strong>{{ p.price_min | money }}</strong>
+                </span>
+                <span class="stl-card__go" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+              </span>
+            </span>
+          </a>
+          <button type="button" class="stl-card__close" data-stl-close aria-label="{{ 'shop_the_look.close' | t | escape }}">
+            <span aria-hidden="true"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 1.5l7 7M8.5 1.5l-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+          </button>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <g id="stl-star-row-{{ sid }}">
+        {%- for i in (0..4) -%}
+          {%- assign ox = i | times: 14.25 -%}
+          <path transform="translate({{ ox }} 0)" d="M6.5.6l1.8 3.8 4.1.5-3 2.9.8 4.1-3.7-2-3.7 2 .8-4.1-3-2.9 4.1-.5z"/>
+        {%- endfor -%}
+      </g>
+    </defs>
+  </svg>
+</div>
+
+<script>
+  (function () {
+    var root = document.getElementById('stl-{{ sid }}');
+    if (!root || root.dataset.stlReady) return;
+    root.dataset.stlReady = '1';
+    var stage = root.querySelector('[data-stl-stage]');
+    var svg = root.querySelector('[data-stl-lines]');
+    var spots = Array.prototype.slice.call(root.querySelectorAll('[data-stl-spot]'));
+    var mqMobile = window.matchMedia('(max-width: 989px)');
+    var mqHover = window.matchMedia('(hover: hover) and (pointer: fine)');
+    var openId = null;
+    var touched = false;
+    var hoverAt = 0;
+    var GAP = 12;
+
+    function q(attr, id) { return root.querySelector('[' + attr + '="' + id + '"]'); }
+
+    // Tracking. Atribut order (stl_click_at / stl_seen_at) dibaca buildAttrs di
+    // layout/theme.liquid; di sini hanya jejak "pernah membuka kartu" + event
+    // GA4. Sekali per titik per halaman, supaya hover bolak-balik tidak banjir.
+    var seenIds = {};
+    function handleOf(id) {
+      var a = root.querySelector('[data-stl-card="' + id + '"] a.stl-card__link');
+      var m = a && (a.getAttribute('href') || '').match(/\/products\/([^/?#]+)/);
+      return m ? m[1] : '';
+    }
+    function track(id, via) {
+      if (seenIds[id]) return;
+      seenIds[id] = 1;
+      try {
+        var raw = localStorage.getItem('app_stl_seen');
+        var o = raw && JSON.parse(raw);
+        if (!o || !o.at || Date.now() - new Date(o.at).getTime() > 2592e6) {
+          localStorage.setItem('app_stl_seen', JSON.stringify({ at: new Date().toISOString() }));
+        }
+      } catch (e) {}
+      var dl = (window.dataLayer = window.dataLayer || []);
+      dl.push({ event: 'stl_hotspot_open', from_section: 'stl_hero', item_handle: handleOf(id), cta_label: via });
+      dl.push({ from_section: null, item_handle: null, cta_label: null });
+    }
+
+    function place(id) {
+      var spot = q('data-stl-spot', id);
+      var card = q('data-stl-card', id);
+      var path = q('data-stl-path', id);
+      var end = q('data-stl-end', id);
+      if (!spot || !card) return;
+      var W = stage.clientWidth;
+      var H = stage.clientHeight;
+      svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+      var sx = parseFloat(spot.style.getPropertyValue('--x')) / 100 * W;
+      var sy = parseFloat(spot.style.getPropertyValue('--y')) / 100 * H;
+      var mob = mqMobile.matches;
+      var cw = card.offsetWidth;
+      var ch = card.offsetHeight;
+      var l = parseFloat(card.getAttribute(mob ? 'data-card-x-mobile' : 'data-card-x')) / 100 * W;
+      var t = parseFloat(card.getAttribute(mob ? 'data-card-y-mobile' : 'data-card-y')) / 100 * H;
+      l = Math.max(GAP, Math.min(l, W - cw - GAP));
+      t = Math.max(GAP, Math.min(t, H - ch - GAP));
+      var R = 22;
+      if (sx > l - R && sx < l + cw + R && sy > t - R && sy < t + ch + R) {
+        t = sy - ch - 40;
+        if (t < GAP) t = Math.min(H - ch - GAP, sy + 40);
+      }
+      card.style.setProperty('--cx', Math.round(l) + 'px');
+      card.style.setProperty('--cy', Math.round(t) + 'px');
+
+      var d;
+      var ex;
+      var ey;
+      var inX = sx > l + 18 && sx < l + cw - 18;
+      if (inX) {
+        ex = sx;
+        ey = sy > t + ch ? t + ch : t;
+        var dir = ey < sy ? -1 : 1;
+        d = 'M' + sx + ' ' + (sy + dir * 16) + ' V' + ey;
+        card.style.setProperty('--origin', (sx - l) + 'px ' + (ey < sy ? '100%' : '0%'));
+      } else {
+        ex = sx < l ? l : l + cw;
+        ey = Math.max(t + 22, Math.min(sy, t + ch - 22));
+        if (Math.abs(ey - sy) < 1) {
+          d = 'M' + (sx + (ex > sx ? 16 : -16)) + ' ' + sy + ' H' + ex;
+        } else {
+          var dy = ey < sy ? -1 : 1;
+          d = 'M' + sx + ' ' + (sy + dy * 16) + ' V' + ey + ' H' + ex;
+        }
+        card.style.setProperty('--origin', (sx < l ? '0%' : '100%') + ' ' + (ey - t) + 'px');
+      }
+      if (path) {
+        path.setAttribute('d', d);
+        var len = path.getTotalLength ? path.getTotalLength() : 400;
+        path.style.setProperty('--len', Math.ceil(len));
+      }
+      if (end) {
+        end.setAttribute('cx', ex);
+        end.setAttribute('cy', ey);
+      }
+    }
+
+    function setOpen(id, on) {
+      var spot = q('data-stl-spot', id);
+      var card = q('data-stl-card', id);
+      var path = q('data-stl-path', id);
+      var end = q('data-stl-end', id);
+      if (!spot || !card) return;
+      spot.setAttribute('aria-expanded', on ? 'true' : 'false');
+      if (on) {
+        card.removeAttribute('inert');
+        place(id);
+        if (path) {
+          path.classList.remove('is-on');
+          path.getBoundingClientRect();
+          path.classList.add('is-on');
+        }
+        if (end) end.classList.add('is-on');
+        card.setAttribute('data-open', '');
+      } else {
+        card.setAttribute('inert', '');
+        card.removeAttribute('data-open');
+        if (path) path.classList.remove('is-on');
+        if (end) end.classList.remove('is-on');
+      }
+    }
+
+    function open(id) {
+      if (openId === id) return;
+      if (openId) setOpen(openId, false);
+      openId = id;
+      setOpen(id, true);
+    }
+    function close(restoreFocus) {
+      if (!openId) return;
+      var id = openId;
+      openId = null;
+      setOpen(id, false);
+      if (restoreFocus) {
+        var s = q('data-stl-spot', id);
+        if (s) s.focus();
+      }
+    }
+
+    spots.forEach(function (spot) {
+      var id = spot.getAttribute('data-stl-spot');
+      spot.addEventListener('click', function () {
+        touched = true;
+        if (openId === id) {
+          if (Date.now() - hoverAt > 700) close(false);
+        } else {
+          open(id);
+          track(id, 'click');
+        }
+      });
+      spot.addEventListener('mouseenter', function () {
+        if (!mqHover.matches || openId === id) return;
+        touched = true;
+        hoverAt = Date.now();
+        open(id);
+        track(id, 'hover');
+      });
+    });
+    root.addEventListener('click', function (e) {
+      var card = e.target.closest('a.stl-card__link');
+      if (card && e.isTrusted) {
+        var m = (card.getAttribute('href') || '').match(/\/products\/([^/?#]+)/);
+        var dl = (window.dataLayer = window.dataLayer || []);
+        dl.push({ event: 'stl_card_click', from_section: 'stl_hero', item_handle: m ? m[1] : '' });
+        dl.push({ from_section: null, item_handle: null });
+      }
+      if (e.target.closest('[data-stl-close]')) {
+        touched = true;
+        close(true);
+      }
+    });
+    document.addEventListener('click', function (e) {
+      if (!openId) return;
+      if (e.target.closest('.stl-card') || e.target.closest('[data-stl-spot]')) return;
+      close(false);
+    });
+    root.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && openId) {
+        e.stopPropagation();
+        close(true);
+      }
+    });
+
+    var raf = 0;
+    function relayout() {
+      if (!openId) return;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(function () { place(openId); });
+    }
+    if ('ResizeObserver' in window) new ResizeObserver(relayout).observe(stage);
+    else window.addEventListener('resize', relayout);
+
+    if (root.getAttribute('data-auto-open') === 'true' && spots.length && 'IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        if (!entries[0].isIntersecting) return;
+        io.disconnect();
+        setTimeout(function () {
+          if (!touched && !openId) open(spots[0].getAttribute('data-stl-spot'));
+        }, 1100);
+      }, { threshold: 0.45 });
+      io.observe(stage);
+    }
+
+    if (window.Shopify && Shopify.designMode) {
+      document.addEventListener('shopify:block:select', function (e) {
+        if (!root.contains(e.target)) return;
+        var id = e.target.getAttribute('data-stl-spot');
+        if (id) open(id);
+      });
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Shop the look hero",
+  "class": "stl-section",
+  "settings": [
+    { "type": "header", "content": "Image" },
+    { "type": "image_picker", "id": "image", "label": "Image", "info": "Square image works best. Hotspots are placed in % of the image." },
+    { "type": "image_picker", "id": "image_mobile", "label": "Mobile image", "info": "Optional. Must use the same framing so hotspots line up." },
+    { "type": "text", "id": "image_alt", "label": "Image alt text" },
+    { "type": "color", "id": "bg_top", "label": "Background top", "default": "#d6d5d2" },
+    { "type": "color", "id": "bg_bottom", "label": "Background bottom", "default": "#e3e3e4" },
+    { "type": "header", "content": "Text" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "info": "Leave empty to use the translated default." },
+    { "type": "textarea", "id": "subheading", "label": "Subheading", "info": "Leave empty to use the translated default." },
+    { "type": "checkbox", "id": "show_certs", "label": "Show certification badges", "default": true },
+    { "type": "product", "id": "cta_product", "label": "Button product" },
+    { "type": "header", "content": "Behaviour" },
+    { "type": "checkbox", "id": "auto_open", "label": "Open the first hotspot when the section comes into view", "default": true }
+  ],
+  "blocks": [
+    {
+      "type": "hotspot",
+      "name": "Hotspot",
+      "limit": 6,
+      "settings": [
+        { "type": "product", "id": "product", "label": "Product" },
+        { "type": "text", "id": "blurb", "label": "Short description", "info": "Leave empty to use the translated default." },
+        { "type": "header", "content": "Dot position" },
+        { "type": "range", "id": "x", "label": "Horizontal", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 50 },
+        { "type": "range", "id": "y", "label": "Vertical", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 50 },
+        { "type": "header", "content": "Card position (desktop)" },
+        { "type": "range", "id": "card_x", "label": "Horizontal", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 8 },
+        { "type": "range", "id": "card_y", "label": "Vertical", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 10 },
+        { "type": "header", "content": "Card position (mobile)" },
+        { "type": "range", "id": "card_x_mobile", "label": "Horizontal", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 4 },
+        { "type": "range", "id": "card_y_mobile", "label": "Vertical", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 6 }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Shop the look hero",
+      "blocks": [
+        { "type": "hotspot", "settings": { "x": 19, "y": 65, "card_x": 6, "card_y": 10 } },
+        { "type": "hotspot", "settings": { "x": 68, "y": 64, "card_x": 30, "card_y": 14 } }
+      ]
+    }
+  ]
+}
+{% endschema %}

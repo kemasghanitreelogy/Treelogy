@@ -1,0 +1,366 @@
+{% doc %}
+  Kerangka panel akun: <dialog> + skeleton + skrip pembuka.
+
+  Hanya dirender untuk pelanggan yang sudah login. Isinya (orders, store
+  credit, pernah dibeli) diambil dari sections/account-panel.liquid lewat
+  Section Rendering API saat panel pertama kali dibuka, dan sudah
+  di-prefetch begitu kursor/jari menyentuh pemicunya.
+
+  Pemicu = elemen apa pun ber-atribut `data-account-panel-open`
+  (ikon akun header desktop & kartu akun di drawer burger mobile).
+  Elemen itu tetap <a href="/account"> atau tombol biasa, jadi tanpa JS
+  pelanggan masih sampai ke halaman akun.
+
+  @example
+  {% render 'account-panel-shell' %}
+{% enddoc %}
+
+{%- if customer -%}
+  <dialog class="acp-dialog" id="AccountPanel" aria-label="{{ 'customer.panel.title' | t | escape_once }}" data-state="closed">
+    <div class="acp-sheet" data-acp-sheet>
+      <div class="acp-bar" data-acp-drag>
+        <span class="acp-grip" aria-hidden="true"></span>
+        <span class="acp-bar__title">{{ 'customer.panel.title' | t }}</span>
+        <button type="button" class="acp-close" data-acp-close aria-label="{{ 'customer.panel.close' | t | escape_once }}">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" /></svg>
+        </button>
+      </div>
+      <div class="acp-scroll" data-acp-scroll>
+        <div class="acp-skel" data-acp-skel aria-hidden="true">
+          <div class="acp-skel__row"><i class="acp-skel__circle"></i><span><i style="width:160px"></i><i style="width:80px"></i></span></div>
+          <i style="width:120px"></i>
+          <div class="acp-skel__cards"><i></i><i></i></div>
+          <i style="width:100%;height:56px"></i>
+          <i style="width:100%;height:120px"></i>
+        </div>
+        <div data-acp-body aria-live="polite"></div>
+      </div>
+      <div class="acp-toast" data-acp-toast role="status" hidden>
+        <span data-acp-toast-text></span>
+        <button type="button" class="acp-toast__btn" data-acp-view-cart>{{ 'customer.panel.view_cart' | t }}</button>
+      </div>
+    </div>
+  </dialog>
+
+  <style>
+    .acp-dialog{--ease:cubic-bezier(.16,1,.3,1);position:fixed;inset:12px 12px 12px auto;width:min(440px,calc(100vw - 24px));height:auto;max-width:none;max-height:none;margin:0;padding:0;border:0;background:transparent;color:#2a3b34;overflow:visible}
+    .acp-dialog:not([open]){display:none}
+    .acp-dialog::backdrop{background:rgba(20,28,24,.42);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;transition:opacity .3s ease}
+    .acp-dialog[data-state="open"]::backdrop{opacity:1}
+    .acp-sheet{position:relative;height:100%;display:flex;flex-direction:column;background:#f8f8f2;border-radius:22px;box-shadow:0 30px 80px -20px rgba(20,28,24,.45),0 0 0 1px rgba(42,59,52,.06);overflow:hidden;transform:translateX(28px);opacity:0;transition:transform .42s var(--ease),opacity .3s ease}
+    .acp-dialog[data-state="open"] .acp-sheet{transform:none;opacity:1}
+    .acp-bar{flex:none;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 14px 10px 24px;touch-action:none}
+    .acp-bar__title{font:600 12px/1 Inter,system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5d6b64}
+    .acp-grip{display:none}
+    .acp-close{all:unset;box-sizing:border-box;cursor:pointer;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:#2a3b34;transition:background .2s}
+    .acp-close:hover{background:rgba(42,59,52,.07)}
+    .acp-close:focus-visible{outline:2px solid #a5bb87;outline-offset:2px}
+    .acp-close svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
+    .acp-scroll{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+    .acp-skel{display:grid;gap:18px;padding:8px 24px}
+    .acp-skel i{display:block;height:14px;border-radius:8px;background:linear-gradient(90deg,#ecece5 0,#f4f4ee 40%,#ecece5 80%) 0 0/300% 100%;animation:acp-shimmer 1.3s linear infinite}
+    .acp-skel__row{display:flex;gap:14px;align-items:center}
+    .acp-skel__row span{display:grid;gap:8px}
+    .acp-skel .acp-skel__circle{width:52px;height:52px;border-radius:50%}
+    .acp-skel__cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .acp-skel__cards i{height:170px;border-radius:16px}
+    .acp-dialog[data-loaded] .acp-skel{display:none}
+    @keyframes acp-shimmer{to{background-position:-300% 0}}
+    .acp-toast{position:absolute;left:16px;right:16px;bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 10px 10px 16px;border-radius:14px;background:#2a3b34;color:#f8f8f2;font:500 13px/1.35 Inter,system-ui,sans-serif;box-shadow:0 14px 34px -12px rgba(20,28,24,.5);animation:acp-toast .38s var(--ease) both}
+    .acp-toast[hidden]{display:none}
+    .acp-toast__btn{all:unset;cursor:pointer;flex:none;padding:8px 12px;border-radius:9px;background:#f8f8f2;color:#2a3b34;font-weight:600}
+    .acp-toast__btn:focus-visible{outline:2px solid #a5bb87;outline-offset:2px}
+    @keyframes acp-toast{from{opacity:0;transform:translateY(12px)}}
+    html.acp-lock{overflow:hidden}
+
+    @media (max-width:640px){
+      .acp-dialog{inset:auto 0 0 0;width:100%;height:92dvh}
+      .acp-sheet{border-radius:22px 22px 0 0;transform:translateY(100%);opacity:1;transition:transform .45s var(--ease)}
+      .acp-bar{position:relative;padding:22px 12px 6px 20px}
+      .acp-grip{display:block;position:absolute;top:8px;left:50%;width:38px;height:4px;margin-left:-19px;border-radius:4px;background:rgba(42,59,52,.18)}
+      .acp-dialog .acp-root .acp-view{padding-left:20px;padding-right:20px;padding-bottom:calc(32px + env(safe-area-inset-bottom))}
+    }
+    @media (prefers-reduced-motion:reduce){
+      .acp-sheet,.acp-dialog::backdrop{transition-duration:1ms!important}
+      .acp-skel i{animation:none}
+    }
+  </style>
+
+  <script>
+    (function () {
+      if (window.__acpInstalled) return;
+      window.__acpInstalled = true;
+
+      var dlg = document.getElementById('AccountPanel');
+      if (!dlg || typeof dlg.showModal !== 'function') return;
+      var sheet = dlg.querySelector('[data-acp-sheet]');
+      var body = dlg.querySelector('[data-acp-body]');
+      var scroller = dlg.querySelector('[data-acp-scroll]');
+      var toast = dlg.querySelector('[data-acp-toast]');
+      var root = (window.Shopify && Shopify.routes && Shopify.routes.root) || '/';
+      var TEXT = {
+        added: {{ 'customer.panel.added' | t | json }},
+        addedToast: {{ 'customer.panel.added_toast' | t: name: '__N__' | json }},
+        error: {{ 'customer.panel.error' | t | json }},
+        loadError: {{ 'customer.panel.load_error' | t | json }}
+      };
+      var request = null;
+      var opener = null;
+      var mainScroll = 0;
+      var CLOSE_MS = 320;
+
+      function track(name, extra) {
+        try {
+          (window.dataLayer = window.dataLayer || []).push(Object.assign({ event: name }, extra || {}));
+        } catch (e) {}
+      }
+
+      /* ---- muat isi (sekali per halaman) ---- */
+      function load() {
+        if (request) return request;
+        request = fetch(root + '?section_id=account-panel', { credentials: 'same-origin' })
+          .then(function (r) {
+            if (!r.ok) throw new Error(r.status);
+            return r.text();
+          })
+          .then(function (html) {
+            var doc = new DOMParser().parseFromString(html, 'text/html');
+            var content = doc.querySelector('[data-acp-root]');
+            if (!content) throw new Error('empty');
+            var style = doc.querySelector('style');
+            body.textContent = '';
+            if (style) body.appendChild(style);
+            body.appendChild(content);
+            buildPeek();
+            dlg.setAttribute('data-loaded', '');
+          })
+          .catch(function () {
+            request = null;
+            body.innerHTML = '<p style="padding:8px 24px;color:#5d6b64">' + TEXT.loadError + '</p>';
+            dlg.setAttribute('data-loaded', '');
+          });
+        return request;
+      }
+
+      function buildPeek() {
+        var peek = body.querySelector('[data-acp-peek]');
+        if (!peek) return;
+        var rows = body.querySelectorAll('[data-acp-thumb]');
+        var max = 5;
+        for (var i = 0; i < rows.length && i < max; i++) {
+          var src = rows[i].getAttribute('data-acp-thumb');
+          var cell = document.createElement('span');
+          if (src) {
+            var img = new Image(48, 48);
+            img.alt = '';
+            img.decoding = 'async';
+            img.src = src;
+            cell.appendChild(img);
+          }
+          peek.appendChild(cell);
+        }
+        if (rows.length > max) {
+          var more = document.createElement('span');
+          more.className = 'acp-more';
+          more.textContent = '+' + (rows.length - max);
+          peek.appendChild(more);
+        }
+      }
+
+      /* ---- buka / tutup ---- */
+      function open(trigger) {
+        if (dlg.open) return;
+        opener = trigger || document.activeElement;
+        load();
+        dlg.showModal();
+        document.documentElement.classList.add('acp-lock');
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () { dlg.setAttribute('data-state', 'open'); });
+        });
+        var title = body.querySelector('#AcpTitle');
+        (title || dlg.querySelector('[data-acp-close]')).focus({ preventScroll: true });
+        if (request) request.then(function () {
+          if (!dlg.open) return;
+          var t = body.querySelector('#AcpTitle');
+          if (t && dlg.contains(document.activeElement) && document.activeElement.matches('[data-acp-close]')) t.focus({ preventScroll: true });
+        });
+        track('account_panel_open');
+      }
+
+      function close() {
+        if (!dlg.open || dlg.getAttribute('data-state') === 'closing') return;
+        dlg.setAttribute('data-state', 'closing');
+        sheet.style.transform = '';
+        setTimeout(function () {
+          dlg.close();
+          dlg.setAttribute('data-state', 'closed');
+          document.documentElement.classList.remove('acp-lock');
+          toast.hidden = true;
+          showView('main', true);
+          if (opener && opener.isConnected && typeof opener.focus === 'function') opener.focus({ preventScroll: true });
+        }, matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : CLOSE_MS);
+      }
+
+      dlg.addEventListener('cancel', function (e) {
+        e.preventDefault();
+        close();
+      });
+      dlg.addEventListener('click', function (e) {
+        if (e.target === dlg) close();
+      });
+
+      /* ---- tampilan dalam panel ---- */
+      function showView(id, silent) {
+        var views = body.querySelectorAll('[data-acp-view]');
+        var target = null;
+        for (var i = 0; i < views.length; i++) {
+          var match = views[i].getAttribute('data-acp-view') === id;
+          if (match) target = views[i];
+          views[i].hidden = !match;
+          views[i].removeAttribute('data-acp-enter');
+        }
+        if (!target || silent) {
+          if (target) scroller.scrollTop = 0;
+          return;
+        }
+        if (id === 'main') {
+          target.setAttribute('data-acp-enter', 'back');
+          scroller.scrollTop = mainScroll;
+        } else {
+          target.setAttribute('data-acp-enter', 'in');
+          scroller.scrollTop = 0;
+        }
+        var heading = target.querySelector('h2');
+        if (heading) heading.focus({ preventScroll: true });
+      }
+
+      /* ---- keranjang ---- */
+      function openCart() {
+        var icon = document.querySelector('a.button.button-cart');
+        if (icon) icon.click();
+      }
+
+      function markCart() {
+        var dots = document.querySelectorAll('.button-cart .indicator');
+        for (var i = 0; i < dots.length; i++) dots[i].classList.add('show');
+      }
+
+      function add(btn) {
+        var items;
+        try {
+          items = JSON.parse(btn.getAttribute('data-acp-add'));
+        } catch (e) {
+          return;
+        }
+        if (!items || !items.length) return;
+        var label = btn.querySelector('.acp-btn__label');
+        var original = label ? label.textContent : '';
+        btn.setAttribute('aria-busy', 'true');
+        var reorder = btn.hasAttribute('data-acp-reorder');
+        fetch(root + 'cart/add.js', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({ items: items })
+        })
+          .then(function (r) {
+            /* 429 dibalas HTML, jadi status dicek sebelum .json() */
+            if (!r.ok) throw new Error(r.status);
+            return r.json();
+          })
+          .then(function () {
+            btn.removeAttribute('aria-busy');
+            markCart();
+            track(reorder ? 'account_reorder' : 'account_add_previous', {
+              items: items.length
+            });
+            if (reorder) {
+              close();
+              setTimeout(openCart, CLOSE_MS + 20);
+              return;
+            }
+            btn.setAttribute('data-done', '');
+            if (label) label.textContent = TEXT.added;
+            setTimeout(function () {
+              btn.removeAttribute('data-done');
+              if (label) label.textContent = original;
+            }, 1800);
+            dlg.querySelector('[data-acp-toast-text]').textContent =
+              TEXT.addedToast.replace('__N__', btn.getAttribute('data-acp-name') || '');
+            toast.hidden = false;
+            clearTimeout(toast._t);
+            toast._t = setTimeout(function () { toast.hidden = true; }, 5000);
+          })
+          .catch(function () {
+            btn.removeAttribute('aria-busy');
+            if (label) label.textContent = TEXT.error;
+            setTimeout(function () { if (label) label.textContent = original; }, 2200);
+          });
+      }
+
+      dlg.addEventListener('click', function (e) {
+        var t = e.target.closest('button, a');
+        if (!t || !dlg.contains(t)) return;
+        if (t.hasAttribute('data-acp-close')) return close();
+        if (t.hasAttribute('data-acp-view-cart')) {
+          close();
+          return setTimeout(openCart, CLOSE_MS + 20);
+        }
+        var go = t.getAttribute('data-acp-goto');
+        if (go) {
+          if (go !== 'main') mainScroll = scroller.scrollTop;
+          return showView(go);
+        }
+        if (t.hasAttribute('data-acp-add')) return add(t);
+        if (t.classList.contains('acp-toggle')) {
+          var pp = t.closest('[data-acp-pp]');
+          var on = t.getAttribute('aria-expanded') !== 'true';
+          t.setAttribute('aria-expanded', String(on));
+          pp.toggleAttribute('data-open', on);
+        }
+      });
+
+      /* ---- tarik ke bawah untuk menutup (bottom sheet mobile) ---- */
+      var drag = null;
+      var bar = dlg.querySelector('[data-acp-drag]');
+      bar.addEventListener('pointerdown', function (e) {
+        if (!matchMedia('(max-width: 640px)').matches || e.target.closest('button')) return;
+        drag = { y: e.clientY, dy: 0, t: Date.now() };
+        bar.setPointerCapture(e.pointerId);
+        sheet.style.transition = 'none';
+      });
+      bar.addEventListener('pointermove', function (e) {
+        if (!drag) return;
+        drag.dy = Math.max(0, e.clientY - drag.y);
+        sheet.style.transform = 'translateY(' + drag.dy + 'px)';
+      });
+      function endDrag() {
+        if (!drag) return;
+        var fast = drag.dy / Math.max(1, Date.now() - drag.t) > 0.5;
+        var shouldClose = drag.dy > 110 || (fast && drag.dy > 30);
+        sheet.style.transition = '';
+        drag = null;
+        if (shouldClose) close();
+        else sheet.style.transform = '';
+      }
+      bar.addEventListener('pointerup', endDrag);
+      bar.addEventListener('pointercancel', endDrag);
+
+      /* ---- pemicu ---- */
+      function triggerFrom(e) {
+        return e.target.closest && e.target.closest('[data-account-panel-open]');
+      }
+      document.addEventListener('click', function (e) {
+        var t = triggerFrom(e);
+        if (!t || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.button > 0) return;
+        e.preventDefault();
+        open(t);
+      });
+      ['pointerenter', 'focusin', 'touchstart'].forEach(function (type) {
+        document.addEventListener(type, function (e) {
+          if (triggerFrom(e)) load();
+        }, { capture: true, passive: true });
+      });
+    })();
+  </script>
+{%- endif -%}

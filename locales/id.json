@@ -178,6 +178,46 @@
       "payment_status": "Status Pembayaran",
       "fulfillment_status": "Status Pemenuhan",
       "total": "Total"
+    },
+    "panel": {
+      "title": "Akun",
+      "close": "Tutup",
+      "hello": "Halo, {{ name }}",
+      "orders_count_singular": "1 pesanan",
+      "orders_count_many": "{{ count }} pesanan",
+      "recent_orders": "Pesanan terbaru",
+      "view_all": "Lihat semua",
+      "cancelled": "Dibatalkan",
+      "empty_title": "Belum ada pesanan",
+      "empty_text": "Pesanan, pelacakan, dan beli ulang cepat akan muncul di sini.",
+      "empty_cta": "Mulai belanja",
+      "store_credit": "Kredit toko",
+      "balance": "Saldo",
+      "previously_purchased": "Pernah dibeli",
+      "items_singular": "1 produk",
+      "items_many": "{{ count }} produk",
+      "toggle_purchased": "Tampilkan produk yang pernah dibeli",
+      "add_to_cart": "Tambah",
+      "sold_out": "Habis",
+      "added": "Ditambahkan",
+      "added_toast": "{{ name }} masuk ke keranjang",
+      "view_cart": "Lihat keranjang",
+      "error": "Coba lagi",
+      "load_error": "Akun gagal dimuat. Silakan coba lagi.",
+      "details": "Detail",
+      "phone": "Telepon",
+      "manage": "Kelola akun",
+      "sign_out": "Keluar",
+      "back": "Kembali",
+      "gift": "Hadiah",
+      "subtotal": "Subtotal",
+      "discount": "Diskon",
+      "shipping": "Pengiriman",
+      "free": "Gratis",
+      "total": "Total",
+      "buy_again": "Beli lagi",
+      "track_order": "Lacak pesanan",
+      "order_status": "Status pesanan"
     }
   },
   "products": {
@@ -892,5 +932,20 @@
       "copyright": "© %shop% %year%. Seluruh hak cipta dilindungi."
     },
     "wa_message": "Halo Treelogy, saya ingin bertanya tentang %product%."
+  },
+  "shop_the_look": {
+    "eyebrow": "Ritual dari dalam & luar",
+    "heading_html": "Kapsul dari <strong>dalam</strong><br>Minyak dari <strong>luar</strong>",
+    "subheading": "Moringa organik, ditanam dan diolah di Bali. Ketuk produk untuk melihat detailnya.",
+    "hint": "Ketuk titik untuk menjelajah",
+    "cta": "Lihat Inside Out Protocol",
+    "certs_label": "Sertifikasi",
+    "open_label": "Tampilkan {{ product }}",
+    "card_label": "Detail {{ product }}",
+    "close": "Tutup",
+    "blurbs": {
+      "organic_moringa_capsules": "Daun kering tanpa batang, ditanam & diolah di Bali",
+      "organic_moringa_oil": "Minyak biji murni perasan dingin, ditanam & diolah di Bali"
+    }
   }
 }
