@@ -154,7 +154,7 @@
       </form>
 
       {%- paginate metaobjects.treelogy_review_page.values by 1 -%}
-        <ol class="rv-list" data-list>
+        <ol class="rv-list" data-list data-page-param="{{ paginate.page_param }}">
           {%- for pg in metaobjects.treelogy_review_page.values -%}
             {%- for card in pg.reviews.value -%}
               {%- liquid
@@ -336,7 +336,7 @@
       status.textContent = {{ 'reviews_hub.filter_loading' | t | json }};
       var jobs = [];
       for (var p = 1; p <= pages; p++) {
-        jobs.push(fetch(location.pathname + '?page=' + p + '&section_id=' + encodeURIComponent(section)).then(function (r) { return r.ok ? r.text() : ''; }));
+        jobs.push(fetch(location.pathname + '?' + encodeURIComponent(list.dataset.pageParam || 'page') + '=' + p + '&section_id=' + encodeURIComponent(section)).then(function (r) { return r.ok ? r.text() : ''; }));
       }
       loading = Promise.all(jobs).then(function (htmls) {
         var frag = document.createDocumentFragment();
