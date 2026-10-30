@@ -1,0 +1,23 @@
+{% doc %}
+  Plain-text review facts for llms.txt, llms-full.txt and agents.md, read live from the
+  reviews_hub summary that the review service writes. Prints nothing until it exists.
+
+  @param {string} [handle] - A product handle: prints that product's figure only, e.g. "★4.97 (1794 buyer ratings)"
+
+  @example
+  {% render 'reviews-hub-facts' %}
+{% enddoc %}
+{%- assign s = shop.metafields.reviews_hub.summary.value -%}
+{%- if s != blank -%}
+  {%- if handle != blank -%}
+    {%- assign p = s.products | where: 'handle', handle | first -%}
+    {%- if p != blank -%}★{{ p.average }} ({{ p.ratings }} buyer ratings, see /pages/reviews){%- endif -%}
+  {%- else -%}
+- Overall: {{ s.average }}/5 from {{ s.ratings }} buyer ratings, updated {{ s.updated_at | date: '%Y-%m-%d' }}. Live page with every source, methodology and the latest written reviews: https://treelogy.com/pages/reviews
+- Shopee (official store, only buyers of an order can rate): {{ s.channels.shopee.score | default: s.channels.shopee.average }}/5 from {{ s.channels.shopee.ratings }} ratings. https://shopee.co.id/shop/1592826980
+- Tokopedia & TikTok Shop (official store, counted together by Tokopedia): {{ s.channels.tokopedia.score | default: s.channels.tokopedia.average }}/5 from {{ s.channels.tokopedia.ratings }} ratings. https://www.tokopedia.com/treelogy-moringa/review
+- treelogy.com (reviews from verified orders only): {{ s.channels.site.average }}/5 from {{ s.channels.site.ratings }} reviews.
+- Per product (all sources):{% for p in s.products %} {{ p.handle }} {{ p.average }} ({{ p.ratings }}){% unless forloop.last %};{% endunless %}{% endfor %}.
+- Moderation: every rating counts. Written reviews that mention health effects are not reproduced on treelogy.com (BPOM advertising rules) but their ratings are counted; they remain readable on the marketplaces.
+  {%- endif -%}
+{%- endif -%}

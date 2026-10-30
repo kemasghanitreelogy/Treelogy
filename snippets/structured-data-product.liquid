@@ -1,7 +1,9 @@
 {% doc %}
   Renders Product + BreadcrumbList + FAQPage JSON-LD (schema.org) for the current
-  product page. AggregateOffer spans variants; AggregateRating renders only when a
-  real per-product review count exists (never fabricated). Moringa-specific facts
+  product page. AggregateOffer spans variants; AggregateRating counts only reviews
+  collected on treelogy.com from verified orders (Google: no ratings aggregated from
+  other sites), from the reviews_hub summary the review service writes; marketplace
+  ratings live on /pages/reviews, labelled by source. Moringa-specific facts
   (origin, sourcing, certifications) are emitted only for certified products so
   accessories are described accurately. Built for GEO / AI-search and rich results.
 
@@ -28,19 +30,10 @@
     assign desc = product.title | append: ' by Treelogy — premium single-origin organic moringa from Bali.'
   endif
 
-  assign rating_meta = product.metafields.reviews.rating.value
-  assign rating_count = product.metafields.reviews.rating_count.value | default: product.metafields.custom.rating_count.value | plus: 0
-  assign fallback_rating = product.metafields.custom.rating.value
-
-  assign rating_value = ''
+  assign onsite = shop.metafields.reviews_hub.summary.value.site_products[product.handle]
+  assign rating_count = onsite.ratings | plus: 0
+  assign rating_value = onsite.average
   assign best_rating = 5
-  if rating_meta != blank
-    assign rating_value = rating_meta.rating
-    assign best_rating = rating_meta.scale_max | default: 5
-  elsif fallback_rating != blank
-    assign rating_value = fallback_rating
-  endif
-
   assign show_rating = false
   if rating_count > 0 and rating_value != blank
     assign show_rating = true
@@ -58,7 +51,6 @@
 
   assign faq_items = product.metafields.product.faq.value.faq_items.value
   assign howto_steps = product.metafields.custom.how_to_use.value
-  assign featured_reviews = product.metafields.custom.featured_reviews.value
 -%}
 <script type="application/ld+json">
 {
@@ -94,24 +86,11 @@
         "worstRating": 1
       }
       {%- endif -%}
-      {%- if featured_reviews != blank -%}
-      ,"review": [
-        {%- for fr in featured_reviews -%}
-        {
-          "@type": "Review",
-          "author": { "@type": "Person", "name": {{ fr.author | json }} },
-          "reviewRating": { "@type": "Rating", "ratingValue": {{ fr.rating | json }}, "bestRating": 5, "worstRating": 1 },
-          "reviewBody": {{ fr.body | json }}
-          {%- if fr.date != blank -%},"datePublished": {{ fr.date | json }}{%- endif -%}
-        }{%- unless forloop.last -%},{%- endunless -%}
-        {%- endfor -%}
-      ]
-      {%- endif -%}
       {%- if is_certified_moringa -%}
       ,"additionalProperty": [
         { "@type": "PropertyValue", "name": "Origin", "value": "Karangasem, Bali, Indonesia (foothills of Mount Agung)" },
         { "@type": "PropertyValue", "name": "Sourcing", "value": "Single origin, seed to shelf, regenerative organic, stem-free" },
-        { "@type": "PropertyValue", "name": "Certifications", "value": "BPOM, USDA Organic, Naturland FAIR, FairTSA, Halal" }
+        { "@type": "PropertyValue", "name": "Certifications", "value": "EU Organic, Organik Indonesia, USDA Organic, Halal Indonesia; registered with Badan POM" }
       ]
       {%- endif -%}
       ,"offers": {

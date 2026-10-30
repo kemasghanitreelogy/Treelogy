@@ -1,0 +1,474 @@
+{%- liquid
+  assign s = shop.metafields.reviews_hub.summary.value
+  assign base = request.origin
+  assign page_url = base | append: request.path
+  assign held = s.written.held.health_claim | plus: s.written.held.contact
+  assign tp_source = 'Tokopedia & TikTok Shop'
+  assign channel_ids = 'shopee,tokopedia,site' | split: ','
+-%}
+
+<div class="rv" id="rv-{{ section.id }}" data-section="{{ section.id }}" data-pages="{{ s.pages | default: 1 }}">
+  {%- if s != blank -%}
+    <header class="rv-hero">
+      <nav class="rv-crumbs" aria-label="{{ 'reviews_hub.breadcrumb_label' | t }}">
+        <a href="{{ routes.root_url }}">{{ 'reviews_hub.breadcrumb_home' | t }}</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">{{ 'reviews_hub.eyebrow' | t }}</span>
+      </nav>
+      <p class="rv-eyebrow">{{ 'reviews_hub.eyebrow' | t }}</p>
+      <h1 class="rv-title">{{ 'reviews_hub.title' | t }}</h1>
+      {%- capture avg_txt -%}{% render 'rv-num', n: s.average, decimals: 2 %}{%- endcapture -%}
+      {%- capture count_txt -%}{% render 'rv-num', n: s.ratings %}{%- endcapture -%}
+      <p class="rv-lede">{{ 'reviews_hub.lede_html' | t: average: avg_txt, count: count_txt }}</p>
+      <p class="rv-updated">
+        {%- assign updated_txt = s.updated_at | date: '%d/%m/%Y' -%}
+        <time datetime="{{ s.updated_at }}">{{ 'reviews_hub.updated' | t: date: updated_txt }}</time>
+      </p>
+
+      <div class="rv-score">
+        <div class="rv-score__big">
+          <span class="rv-score__num">{{ avg_txt }}</span>
+          <span class="rv-score__of">{{ 'reviews_hub.out_of' | t }}</span>
+          {% render 'rv-stars', rating: s.average, size: 'lg' %}
+          <span class="rv-score__count">{{ 'reviews_hub.ratings_count' | t: count: count_txt }}</span>
+        </div>
+        <ul class="rv-dist" aria-label="{{ 'reviews_hub.sources_title' | t }}">
+          {%- for star in (1..5) reversed -%}
+            {%- liquid
+              assign key = star | append: ''
+              assign n = s.distribution[key] | default: 0
+              assign pct = n | times: 100.0 | divided_by: s.ratings
+              if pct > 0 and pct < 1
+                assign pct = 1
+              endif
+            -%}
+            <li class="rv-dist__row">
+              <span class="rv-dist__label">{{ 'reviews_hub.star_row' | t: star: star }}</span>
+              <span class="rv-dist__bar" aria-hidden="true"><span style="width: {{ pct }}%"></span></span>
+              <span class="rv-dist__n">{% render 'rv-num', n: n %}</span>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    </header>
+
+    <section class="rv-block" aria-labelledby="rv-sources-{{ section.id }}">
+      <h2 class="rv-h2" id="rv-sources-{{ section.id }}">{{ 'reviews_hub.sources_title' | t }}</h2>
+      <div class="rv-sources">
+        {%- for id in channel_ids -%}
+          {%- assign c = s.channels[id] -%}
+          {%- if c.ratings > 0 -%}
+            <article class="rv-source rv-source--{{ id }}">
+              {%- liquid
+                assign label = c.label
+                if id == 'tokopedia'
+                  assign label = tp_source
+                endif
+                assign score = c.score | default: c.average
+              -%}
+              <h3 class="rv-source__name">{{ label }}</h3>
+              <p class="rv-source__score">
+                <strong>{% render 'rv-num', n: score, decimals: 2 %}</strong>
+                {% render 'rv-stars', rating: score %}
+              </p>
+              <p class="rv-source__count">{%- capture cc -%}{% render 'rv-num', n: c.ratings %}{%- endcapture -%}{{ 'reviews_hub.ratings_count' | t: count: cc }}</p>
+              {%- assign source_key = 'reviews_hub.source_' | append: id -%}
+              <p class="rv-source__text">{{ source_key | t }}</p>
+              {%- if c.url != blank -%}
+                <a class="rv-source__link" href="{{ c.url }}" target="_blank" rel="noopener">{{ 'reviews_hub.source_link' | t: source: c.label }}</a>
+              {%- endif -%}
+            </article>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </section>
+
+    {%- if s.topics.size > 0 -%}
+      <section class="rv-block" aria-labelledby="rv-topics-{{ section.id }}">
+        <h2 class="rv-h2" id="rv-topics-{{ section.id }}">{{ 'reviews_hub.topics_title' | t }}</h2>
+        <ul class="rv-topics">
+          {%- for t in s.topics -%}
+            {%- assign tkey = 'reviews_hub.topic_' | append: t.key | replace: ' ', '_' -%}
+            <li class="rv-topic">
+              <span class="rv-topic__name">{{ tkey | t }}</span>
+              <span class="rv-topic__score">{% render 'rv-num', n: t.rating, decimals: 2 %} {% render 'rv-stars', rating: t.rating %}</span>
+              <span class="rv-topic__n">{%- capture tn -%}{% render 'rv-num', n: t.reviews %}{%- endcapture -%}{{ 'reviews_hub.topic_reviews' | t: count: tn }}</span>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </section>
+    {%- endif -%}
+
+    <section class="rv-block" aria-labelledby="rv-products-{{ section.id }}">
+      <h2 class="rv-h2" id="rv-products-{{ section.id }}">{{ 'reviews_hub.products_title' | t }}</h2>
+      <ul class="rv-products">
+        {%- for p in s.products limit: 8 -%}
+          {%- assign prod = all_products[p.handle] -%}
+          {%- if prod.title != blank -%}
+            <li class="rv-product">
+              <a class="rv-product__link" href="{{ prod.url }}">
+                {%- if prod.featured_image -%}
+                  {{ prod.featured_image | image_url: width: 240 | image_tag: loading: 'lazy', class: 'rv-product__img', alt: prod.title, widths: '120,240' }}
+                {%- endif -%}
+                <span class="rv-product__name">{{ prod.title }}</span>
+                <span class="rv-product__score">{% render 'rv-num', n: p.average, decimals: 2 %} {% render 'rv-stars', rating: p.average %}</span>
+                <span class="rv-product__n">{%- capture pn -%}{% render 'rv-num', n: p.ratings %}{%- endcapture -%}{{ 'reviews_hub.ratings_count' | t: count: pn }}</span>
+              </a>
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    </section>
+
+    <section class="rv-block" aria-labelledby="rv-list-{{ section.id }}">
+      <h2 class="rv-h2" id="rv-list-{{ section.id }}">{{ 'reviews_hub.list_title' | t }}</h2>
+      {%- capture shown_txt -%}{% render 'rv-num', n: s.written.shown %}{%- endcapture -%}
+      <p class="rv-note">{{ 'reviews_hub.list_note' | t: shown: shown_txt }}</p>
+
+      <form class="rv-filters" aria-label="{{ 'reviews_hub.filter_label' | t }}" hidden>
+        <label>{{ 'reviews_hub.filter_channel' | t }}
+          <select name="c">
+            <option value="">{{ 'reviews_hub.filter_all' | t }}</option>
+            {%- for id in channel_ids -%}
+              {%- if s.channels[id].ratings > 0 -%}<option value="{{ id }}">{{ s.channels[id].label }}</option>{%- endif -%}
+            {%- endfor -%}
+          </select>
+        </label>
+        <label>{{ 'reviews_hub.filter_rating' | t }}
+          <select name="r">
+            <option value="">{{ 'reviews_hub.filter_all' | t }}</option>
+            {%- for star in (1..5) reversed -%}<option value="{{ star }}">{{ 'reviews_hub.star_row' | t: star: star }}</option>{%- endfor -%}
+          </select>
+        </label>
+        <label>{{ 'reviews_hub.filter_product' | t }}
+          <select name="h">
+            <option value="">{{ 'reviews_hub.filter_all' | t }}</option>
+            {%- for p in s.products limit: 8 -%}
+              {%- assign prod = all_products[p.handle] -%}
+              {%- if prod.title != blank -%}<option value="{{ p.handle }}">{{ prod.title }}</option>{%- endif -%}
+            {%- endfor -%}
+          </select>
+        </label>
+        <label class="rv-filters__check"><input type="checkbox" name="ph" value="1"> {{ 'reviews_hub.filter_photos' | t }}</label>
+        <p class="rv-filters__status" role="status" aria-live="polite"></p>
+      </form>
+
+      {%- paginate metaobjects.treelogy_review_page.values by 1 -%}
+        <ol class="rv-list" data-list>
+          {%- for pg in metaobjects.treelogy_review_page.values -%}
+            {%- for card in pg.reviews.value -%}
+              {%- liquid
+                assign prod = blank
+                if card.h != blank
+                  assign prod = all_products[card.h]
+                endif
+                assign src_label = s.channels[card.c].label
+              -%}
+              <li class="rv-card" data-k="{{ card.k }}" data-c="{{ card.c }}" data-r="{{ card.r }}" data-h="{{ card.h }}" data-ph="{% if card.im.size > 0 %}1{% endif %}">
+                <article>
+                  <header class="rv-card__head">
+                    {% render 'rv-stars', rating: card.r %}
+                    <span class="rv-card__who">
+                      {%- if card.n != blank -%}{{ card.n | escape }}{%- else -%}{{ 'reviews_hub.anonymous' | t }}{%- endif -%}
+                    </span>
+                    {%- assign verified_key = 'reviews_hub.verified_' | append: card.c -%}
+                    <span class="rv-card__badge rv-card__badge--{{ card.c }}">{{ verified_key | t }}</span>
+                    {%- if card.d != blank -%}
+                      <time class="rv-card__date" datetime="{{ card.d }}"{% if card.a == 1 %} title="{{ 'reviews_hub.approx_date' | t }}"{% endif %}>{% if card.a == 1 %}~{% endif %}{{ card.d | date: '%d/%m/%Y' }}</time>
+                    {%- endif -%}
+                  </header>
+                  {%- if prod.title != blank -%}
+                    <p class="rv-card__product"><a href="{{ prod.url }}">{{ prod.title }}</a>{% if card.v != blank %} · {{ card.v | escape }}{% endif %}</p>
+                  {%- endif -%}
+                  {%- if card.t != blank -%}
+                    <p class="rv-card__text">{{ card.t | escape | newline_to_br }}</p>
+                  {%- endif -%}
+                  {%- if card.im.size > 0 -%}
+                    <ul class="rv-card__photos">
+                      {%- for img in card.im limit: 6 -%}
+                        {%- liquid
+                          assign joiner = '?'
+                          if img.u contains '?'
+                            assign joiner = '&'
+                          endif
+                        -%}
+                        <li><a href="{{ img.u }}" target="_blank" rel="noopener"><img src="{{ img.u }}{{ joiner }}width=200" srcset="{{ img.u }}{{ joiner }}width=200 1x, {{ img.u }}{{ joiner }}width=400 2x" width="96" height="96" loading="lazy" decoding="async" alt="{{ 'reviews_hub.photo_alt' | t }}"></a></li>
+                      {%- endfor -%}
+                    </ul>
+                  {%- endif -%}
+                  {%- if card.vd > 0 and card.u != blank -%}
+                    <p class="rv-card__video"><a href="{{ card.u }}" target="_blank" rel="noopener">{{ 'reviews_hub.video_note' | t: source: src_label }}</a></p>
+                  {%- endif -%}
+                  {%- if card.rp != blank -%}
+                    <blockquote class="rv-card__reply">
+                      <p class="rv-card__reply-label">{{ 'reviews_hub.reply_label' | t }}</p>
+                      <p>{{ card.rp | escape | newline_to_br }}</p>
+                    </blockquote>
+                  {%- endif -%}
+                </article>
+              </li>
+            {%- endfor -%}
+          {%- endfor -%}
+        </ol>
+        <p class="rv-empty" data-empty hidden>{{ 'reviews_hub.filter_empty' | t }}</p>
+
+        {%- if paginate.pages > 1 -%}
+          <nav class="rv-pager" aria-label="{{ 'reviews_hub.page_label' | t }}" data-pager>
+            {%- if paginate.previous -%}
+              <a class="rv-pager__step" href="{{ paginate.previous.url }}" rel="prev">← {{ 'reviews_hub.page_prev' | t }}</a>
+            {%- endif -%}
+            <span class="rv-pager__parts">
+              {%- for part in paginate.parts -%}
+                {%- if part.is_link -%}
+                  <a href="{{ part.url }}">{{ part.title }}</a>
+                {%- elsif part.title == paginate.current_page -%}
+                  <span aria-current="page">{{ part.title }}</span>
+                {%- else -%}
+                  <span>{{ part.title }}</span>
+                {%- endif -%}
+              {%- endfor -%}
+            </span>
+            {%- if paginate.next -%}
+              <a class="rv-pager__step" href="{{ paginate.next.url }}" rel="next">{{ 'reviews_hub.page_next' | t }} →</a>
+            {%- endif -%}
+            <p class="rv-pager__of">{{ 'reviews_hub.page_of' | t: current: paginate.current_page, total: paginate.pages }}</p>
+          </nav>
+        {%- endif -%}
+      {%- endpaginate -%}
+    </section>
+
+    <section class="rv-block rv-method" aria-labelledby="rv-method-{{ section.id }}">
+      <h2 class="rv-h2" id="rv-method-{{ section.id }}">{{ 'reviews_hub.method_title' | t }}</h2>
+      <p>{{ 'reviews_hub.method_1_html' | t }}</p>
+      <p>{{ 'reviews_hub.method_2_html' | t: count: count_txt }}</p>
+      {%- capture held_txt -%}{% render 'rv-num', n: held %}{%- endcapture -%}
+      <p>{{ 'reviews_hub.method_3_html' | t: held: held_txt }}</p>
+      <p>{{ 'reviews_hub.method_5_html' | t }}</p>
+    </section>
+
+    <section class="rv-block rv-faq" aria-labelledby="rv-faq-{{ section.id }}">
+      <h2 class="rv-h2" id="rv-faq-{{ section.id }}">{{ 'reviews_hub.faq_title' | t }}</h2>
+      {%- for i in (1..5) -%}
+        {%- assign q = 'reviews_hub.faq_q' | append: i -%}
+        {%- assign a = 'reviews_hub.faq_a' | append: i -%}
+        <details class="rv-faq__item"{% if forloop.first %} open{% endif %}>
+          <summary>{{ q | t }}</summary>
+          <p>{{ a | t }}</p>
+        </details>
+      {%- endfor -%}
+      <p class="rv-cta"><a class="rv-cta__btn" href="{{ routes.all_products_collection_url }}">{{ 'reviews_hub.shop_cta' | t }}</a></p>
+    </section>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebPage",
+            "@id": {{ page_url | append: '#webpage' | json }},
+            "url": {{ page_url | json }},
+            "name": {{ 'reviews_hub.title' | t | json }},
+            "inLanguage": {{ request.locale.iso_code | json }},
+            "dateModified": {{ s.updated_at | json }},
+            "isPartOf": { "@id": {{ base | append: '/#website' | json }} },
+            "about": { "@id": {{ base | append: '/#organization' | json }} },
+            "breadcrumb": { "@id": {{ page_url | append: '#breadcrumb' | json }} }
+          },
+          {
+            "@type": "BreadcrumbList",
+            "@id": {{ page_url | append: '#breadcrumb' | json }},
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": {{ 'reviews_hub.breadcrumb_home' | t | json }}, "item": {{ base | append: routes.root_url | json }} },
+              { "@type": "ListItem", "position": 2, "name": {{ 'reviews_hub.eyebrow' | t | json }}, "item": {{ page_url | json }} }
+            ]
+          },
+          {
+            "@type": "ItemList",
+            "name": {{ 'reviews_hub.products_title' | t | json }},
+            "itemListElement": [
+              {%- assign pos = 0 -%}
+              {%- for p in s.products limit: 8 -%}
+                {%- assign prod = all_products[p.handle] -%}
+                {%- if prod.title != blank -%}
+                  {%- assign pos = pos | plus: 1 -%}
+                  {%- unless pos == 1 -%},{%- endunless -%}
+                  { "@type": "ListItem", "position": {{ pos }}, "url": {{ base | append: prod.url | json }}, "name": {{ prod.title | json }} }
+                {%- endif -%}
+              {%- endfor -%}
+            ]
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {%- for i in (1..5) -%}
+                {%- assign q = 'reviews_hub.faq_q' | append: i -%}
+                {%- assign a = 'reviews_hub.faq_a' | append: i -%}
+                { "@type": "Question", "name": {{ q | t | json }}, "acceptedAnswer": { "@type": "Answer", "text": {{ a | t | json }} } }{% unless forloop.last %},{% endunless %}
+              {%- endfor -%}
+            ]
+          }
+        ]
+      }
+    </script>
+  {%- endif -%}
+</div>
+
+<script>
+  (function () {
+    var root = document.getElementById('rv-{{ section.id }}');
+    if (!root) return;
+    var form = root.querySelector('.rv-filters');
+    var list = root.querySelector('[data-list]');
+    var empty = root.querySelector('[data-empty]');
+    var pager = root.querySelector('[data-pager]');
+    var status = root.querySelector('.rv-filters__status');
+    if (!form || !list) return;
+    form.hidden = false;
+    var loaded = false;
+    var loading = null;
+    function loadAll() {
+      if (loaded) return Promise.resolve();
+      if (loading) return loading;
+      var pages = Number(root.dataset.pages) || 1;
+      var section = root.dataset.section;
+      var seen = {};
+      list.querySelectorAll('.rv-card').forEach(function (el) { seen[el.dataset.k] = true; });
+      status.textContent = {{ 'reviews_hub.filter_loading' | t | json }};
+      var jobs = [];
+      for (var p = 1; p <= pages; p++) {
+        jobs.push(fetch(location.pathname + '?page=' + p + '&section_id=' + encodeURIComponent(section)).then(function (r) { return r.ok ? r.text() : ''; }));
+      }
+      loading = Promise.all(jobs).then(function (htmls) {
+        var frag = document.createDocumentFragment();
+        htmls.forEach(function (html) {
+          var doc = new DOMParser().parseFromString(html, 'text/html');
+          doc.querySelectorAll('.rv-card').forEach(function (el) {
+            if (seen[el.dataset.k]) return;
+            seen[el.dataset.k] = true;
+            frag.appendChild(document.importNode(el, true));
+          });
+        });
+        var cards = Array.prototype.slice.call(list.querySelectorAll('.rv-card'));
+        cards.forEach(function (el) { frag.appendChild(el); });
+        var all = Array.prototype.slice.call(frag.children);
+        all.sort(function (a, b) {
+          var da = (a.querySelector('time') || {}).dateTime || '';
+          var db = (b.querySelector('time') || {}).dateTime || '';
+          return da < db ? 1 : da > db ? -1 : 0;
+        });
+        all.forEach(function (el) { list.appendChild(el); });
+        loaded = true;
+        status.textContent = '';
+        if (pager) pager.hidden = true;
+      });
+      return loading;
+    }
+    function apply() {
+      var f = new FormData(form);
+      var c = f.get('c'), r = f.get('r'), h = f.get('h'), ph = f.get('ph');
+      var shown = 0;
+      list.querySelectorAll('.rv-card').forEach(function (el) {
+        var ok = (!c || el.dataset.c === c) && (!r || el.dataset.r === r) && (!h || el.dataset.h === h) && (!ph || el.dataset.ph === '1');
+        el.hidden = !ok;
+        if (ok) shown++;
+      });
+      empty.hidden = shown > 0;
+    }
+    form.addEventListener('change', function () { loadAll().then(apply); });
+  })();
+</script>
+
+{% stylesheet %}
+  .rv { --rv-ink: #1f2a1f; --rv-muted: #5d665a; --rv-line: #e3e6dc; --rv-soft: #f6f7f1; --rv-accent: #3d4a2c; --rv-star: #e2a52b; max-width: 1080px; margin: 0 auto; padding: 32px 16px 64px; color: var(--rv-ink); }
+  .rv p { line-height: 1.55; }
+  .rv-crumbs { display: flex; gap: 8px; font-size: 13px; color: var(--rv-muted); margin-bottom: 20px; }
+  .rv-crumbs a { color: inherit; }
+  .rv-eyebrow { text-transform: uppercase; letter-spacing: .12em; font-size: 12px; color: var(--rv-accent); margin: 0 0 8px; font-weight: 600; }
+  .rv-title { font-size: clamp(28px, 4.4vw, 44px); line-height: 1.12; margin: 0 0 12px; }
+  .rv-lede { font-size: 18px; max-width: 720px; margin: 0 0 4px; }
+  .rv-updated { font-size: 13px; color: var(--rv-muted); margin: 0 0 24px; }
+  .rv-score { display: grid; grid-template-columns: minmax(0, 220px) minmax(0, 1fr); gap: 32px; align-items: center; background: var(--rv-soft); border: 1px solid var(--rv-line); border-radius: 16px; padding: 24px; }
+  .rv-score__big { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+  .rv-score__num { font-size: 56px; font-weight: 700; line-height: 1; color: var(--rv-accent); }
+  .rv-score__of, .rv-score__count { font-size: 14px; color: var(--rv-muted); }
+  .rv-dist { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .rv-dist__row { display: grid; grid-template-columns: 76px minmax(0, 1fr) 64px; gap: 12px; align-items: center; font-size: 14px; }
+  .rv-dist__bar { height: 8px; background: var(--rv-line); border-radius: 8px; overflow: hidden; }
+  .rv-dist__bar span { display: block; height: 100%; background: var(--rv-accent); border-radius: 8px; }
+  .rv-dist__n { text-align: right; font-variant-numeric: tabular-nums; color: var(--rv-muted); }
+  .rv-stars { display: inline-flex; gap: 2px; vertical-align: middle; }
+  .rv-star { width: 14px; height: 14px; fill: var(--rv-line); }
+  .rv-star.is-on { fill: var(--rv-star); }
+  .rv-stars--lg .rv-star { width: 22px; height: 22px; }
+  .rv-block { margin-top: 48px; }
+  .rv-h2 { font-size: 22px; margin: 0 0 16px; }
+  .rv-note { color: var(--rv-muted); font-size: 14px; margin: -8px 0 16px; }
+  .rv-sources { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  .rv-source { border: 1px solid var(--rv-line); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 6px; }
+  .rv-source__name { font-size: 16px; margin: 0; }
+  .rv-source__score { margin: 0; display: flex; gap: 8px; align-items: center; font-size: 20px; }
+  .rv-source__count { margin: 0; font-size: 14px; color: var(--rv-muted); }
+  .rv-source__text { margin: 4px 0; font-size: 14px; }
+  .rv-source__link { font-size: 14px; color: var(--rv-accent); font-weight: 600; margin-top: auto; }
+  .rv-topics { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .rv-topic { background: var(--rv-soft); border-radius: 12px; padding: 14px; display: grid; gap: 4px; font-size: 14px; }
+  .rv-topic__name { font-weight: 600; }
+  .rv-topic__n { color: var(--rv-muted); }
+  .rv-products { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+  .rv-product__link { display: grid; gap: 6px; text-decoration: none; color: inherit; border: 1px solid var(--rv-line); border-radius: 14px; padding: 12px; height: 100%; }
+  .rv-product__img { width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; border-radius: 10px; background: var(--rv-soft); }
+  .rv-product__name { font-weight: 600; font-size: 14px; line-height: 1.3; }
+  .rv-product__score { font-size: 14px; display: flex; gap: 6px; align-items: center; }
+  .rv-product__n { font-size: 13px; color: var(--rv-muted); }
+  .rv-filters { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; margin-bottom: 16px; font-size: 13px; }
+  .rv-filters label { display: grid; gap: 4px; }
+  .rv-filters select { min-height: 40px; border: 1px solid var(--rv-line); border-radius: 10px; padding: 0 10px; background: #fff; font: inherit; }
+  .rv-filters__check { display: flex !important; align-items: center; gap: 6px; min-height: 40px; }
+  .rv-filters__status { margin: 0; color: var(--rv-muted); }
+  .rv-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+  .rv-card { border: 1px solid var(--rv-line); border-radius: 14px; padding: 18px; }
+  .rv-card[hidden] { display: none; }
+  .rv-card__head { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; font-size: 14px; }
+  .rv-card__who { font-weight: 600; overflow-wrap: anywhere; }
+  .rv-card__badge { font-size: 12px; padding: 2px 8px; border-radius: 999px; background: var(--rv-soft); color: var(--rv-accent); }
+  .rv-card__date { color: var(--rv-muted); margin-left: auto; font-size: 13px; }
+  .rv-card__product { margin: 8px 0 0; font-size: 13px; color: var(--rv-muted); }
+  .rv-card__product a { color: inherit; }
+  .rv-card__text { margin: 10px 0 0; overflow-wrap: anywhere; }
+  .rv-card__photos { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .rv-card__photos img { width: 96px; height: 96px; object-fit: cover; border-radius: 10px; display: block; background: var(--rv-soft); }
+  .rv-card__video { margin: 10px 0 0; font-size: 13px; }
+  .rv-card__video a { color: var(--rv-accent); }
+  .rv-card__reply { margin: 12px 0 0; padding: 12px 14px; background: var(--rv-soft); border-left: 3px solid var(--rv-accent); border-radius: 8px; font-size: 14px; }
+  .rv-card__reply p { margin: 0; }
+  .rv-card__reply-label { font-weight: 600; margin-bottom: 4px !important; }
+  .rv-empty { color: var(--rv-muted); }
+  .rv-pager { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: center; margin-top: 24px; font-size: 14px; }
+  .rv-pager[hidden] { display: none; }
+  .rv-pager a, .rv-pager__parts span { display: inline-flex; min-width: 40px; min-height: 40px; align-items: center; justify-content: center; padding: 0 10px; border-radius: 10px; border: 1px solid var(--rv-line); color: inherit; text-decoration: none; }
+  .rv-pager__parts { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+  .rv-pager__parts [aria-current] { background: var(--rv-accent); color: #fff; border-color: var(--rv-accent); }
+  .rv-pager__of { width: 100%; text-align: center; color: var(--rv-muted); margin: 0; }
+  .rv-method p { max-width: 760px; }
+  .rv-method a { color: var(--rv-accent); }
+  .rv-faq__item { border-bottom: 1px solid var(--rv-line); padding: 14px 0; }
+  .rv-faq__item summary { cursor: pointer; font-weight: 600; min-height: 24px; }
+  .rv-faq__item p { margin: 10px 0 0; max-width: 760px; }
+  .rv-cta { margin-top: 28px; }
+  .rv-cta__btn { display: inline-flex; min-height: 48px; align-items: center; padding: 0 24px; border-radius: 999px; background: var(--rv-accent); color: #fff; text-decoration: none; font-weight: 600; }
+  @media (max-width: 640px) {
+    .rv-score { grid-template-columns: minmax(0, 1fr); gap: 20px; padding: 18px; }
+    .rv-dist__row { grid-template-columns: 68px minmax(0, 1fr) 52px; }
+    .rv-card__date { margin-left: 0; width: 100%; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Reviews hub",
+  "tag": "section",
+  "class": "section-rv-hub",
+  "settings": [],
+  "presets": [{ "name": "Reviews hub" }]
+}
+{% endschema %}

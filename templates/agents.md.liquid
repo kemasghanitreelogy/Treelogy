@@ -92,8 +92,8 @@ machine-checkable keys derived from the same live data: **`purchasable_variant_i
 allowlist — the *only* variant IDs an agent may add to a cart or checkout) and **`never_surface`**
 (handles/collections to never show or sell). Purchasability is keyed on `variant_id`, not handle or
 title. `variant_id` is the Shopify line-item ID for cart and checkout; `price` is in major IDR
-units; `rating` / `rating_count` come from the Judge.me `reviews` metafield (omitted when a product
-has no reviews); `available` reflects current stock. **Fail closed:** if a variant is not in
+units; ratings are not in this block: use the live Reviews section in §6 or
+https://treelogy.com/pages/reviews; `available` reflects current stock. **Fail closed:** if a variant is not in
 `purchasable_variant_ids`, do not sell or surface it. Buy at
 `https://treelogy.com/products/{handle}`. Re-verify price/stock at request time via `/products.json`
 or `lookup_catalog` (verification only — it does not expand what may be sold).
@@ -122,8 +122,6 @@ or `lookup_catalog` (verification only — it does not expand what may be sold).
       "title": "Organic Moringa Powder",
       "url": "https://treelogy.com/products/organic-moringa-powder",
       "description": "Grown regeneratively, crafted by hand. Stem-free organic moringa powder: pure, potent, and packed with nutrients. Single origin, sustainably grown, nourishing in every serving.",
-      "rating": 4.77,
-      "rating_count": 94,
       "variants": [
         {
           "variant_id": 44527088435388,
@@ -153,8 +151,6 @@ or `lookup_catalog` (verification only — it does not expand what may be sold).
       "title": "Organic Moringa Capsules",
       "url": "https://treelogy.com/products/organic-moringa-capsules",
       "description": "Pure moringa, zero fillers. Stem-free moringa powder encapsulated in plant-based HPMC for effortless daily nourishment: energy, digestion, and vitality in every dose.",
-      "rating": 4.96,
-      "rating_count": 199,
       "variants": [
         {
           "variant_id": 44527085617340,
@@ -184,8 +180,6 @@ or `lookup_catalog` (verification only — it does not expand what may be sold).
       "title": "Organic Moringa Cold-Pressed Seed Oil",
       "url": "https://treelogy.com/products/organic-moringa-oil",
       "description": "Cold-pressed from hand-selected seeds. A pure, antioxidant-rich, single-ingredient oil that deeply hydrates, soothes, and protects the skin.",
-      "rating": 4.93,
-      "rating_count": 44,
       "variants": [
         {
           "variant_id": 44527091318972,
@@ -208,8 +202,6 @@ or `lookup_catalog` (verification only — it does not expand what may be sold).
       "title": "The Discovery Pack",
       "url": "https://treelogy.com/products/the-discovery-pack",
       "description": "A complete introduction to moringa: capsules, powder, and oil in one pack, so you can choose the format that fits your lifestyle.",
-      "rating": 5.0,
-      "rating_count": 6,
       "variants": [
         {
           "variant_id": 45506369192124,
@@ -225,8 +217,6 @@ or `lookup_catalog` (verification only — it does not expand what may be sold).
       "title": "Inside Out Moringa Protocol",
       "url": "https://treelogy.com/products/moringa-inside-out-protocol",
       "description": "For the stiffness you feel every morning, the energy that fades too early, and the skin that needs more than it's getting. Capsules from the inside, oil from the outside. 30 days to feel the difference, 60 days to make it yours.",
-      "rating": 5.0,
-      "rating_count": 2,
       "variants": [
         {
           "variant_id": 46129731666108,
@@ -249,8 +239,6 @@ or `lookup_catalog` (verification only — it does not expand what may be sold).
       "title": "Moringa Ritual Set",
       "url": "https://treelogy.com/products/moringa-ritual-set",
       "description": "Handcrafted bamboo whisk, scoop, and glass bowl. Each step intentional: a smooth blend, perfect texture, and a mindful moment.",
-      "rating": 4.8,
-      "rating_count": 5,
       "variants": [
         {
           "variant_id": 44561387880636,
@@ -365,13 +353,13 @@ daily nutrition and skin care.
 - Founder: Sacha; philosophy Tri Hita Karana; values Earth Care, People Care, Future Care.
 - Process: hand harvest at dawn, hand stem separation, on-site drying at 38°C for 22 hours,
   cold-pressed seed oil, plant-based HPMC capsules, zero fillers or additives.
-- Certifications: BPOM (CPOTB, CPPOB, CPKB), USDA Organic, Naturland FAIR, FairTSA, Halal;
-  facility certified GMP, HACCP, ISO 22000:2018, ISO 22716; nearing Regenerative Organic Alliance
-  Certification.
+- Certifications: EU Organic, Organik Indonesia, USDA Organic, Halal Indonesia; products registered
+  with Badan POM; facility certified GMP, HACCP, ISO 22000:2018, ISO 22716.
 - Moringa: 92 nutrients: 13 vitamins, 10 minerals, 46 antioxidants, 36 anti-inflammatory
   compounds, all 18 amino acids (including 9 essential), omega 3/6/9, plus fiber. Naturally
   caffeine-free.
-- Trust: {% endraw %}{% render 'unique-buyers', sep: ',' %}{% raw %}+ customers; core products rated 4.8 to 4.96 stars (Judge.me verified reviews).
+- Trust: {% endraw %}{% render 'unique-buyers', sep: ',' %}{% raw %}+ customers. Reviews, live:
+{% endraw %}{% render 'reviews-hub-facts' %}{% raw %}
 
 ## 7. Voice & claims rules for agents
 - **"Not a Medicine."** Treelogy products are food and cosmetic products, not drugs. Supportive

@@ -1,0 +1,45 @@
+{% doc %}
+  Prints a number with the active language's separators: 4.986 and 4,97 in Indonesian, 4,986 and 4.97 in English.
+
+  @param {number} n - The number to print
+  @param {number} [decimals] - Decimal places to keep (default 0)
+
+  @example
+  {% render 'rv-num', n: 4986 %}
+{% enddoc %}
+{%- liquid
+  assign d = decimals | default: 0
+  assign thousands = ','
+  assign point = '.'
+  if request.locale.iso_code == 'id'
+    assign thousands = '.'
+    assign point = ','
+  endif
+  if d > 0
+    assign rounded = n | round: d | append: ''
+    assign parts = rounded | split: '.'
+    assign whole = parts[0]
+    assign frac = parts[1] | default: '0'
+  else
+    assign whole = n | round | append: ''
+    assign frac = ''
+  endif
+  assign len = whole.size
+  assign out = ''
+  for i in (1..len)
+    assign idx = i | minus: 1
+    assign ch = whole | slice: idx
+    assign out = out | append: ch
+    assign remaining = len | minus: i
+    if remaining > 0
+      assign m = remaining | modulo: 3
+      if m == 0
+        assign out = out | append: thousands
+      endif
+    endif
+  endfor
+  if d > 0
+    assign out = out | append: point | append: frac
+  endif
+  echo out
+-%}

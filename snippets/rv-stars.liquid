@@ -1,0 +1,15 @@
+{% doc %}
+  Five stars, filled to the nearest whole star, with an accessible label.
+
+  @param {number} rating - Rating from 1 to 5
+  @param {string} [size] - 'lg' for the summary block
+
+  @example
+  {% render 'rv-stars', rating: 4.97, size: 'lg' %}
+{% enddoc %}
+{%- assign filled = rating | round -%}
+<span class="rv-stars{% if size == 'lg' %} rv-stars--lg{% endif %}" role="img" aria-label="{{ 'reviews_hub.stars_label' | t: rating: rating }}">
+  {%- for i in (1..5) -%}
+    <svg class="rv-star{% if i <= filled %} is-on{% endif %}" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 1.6l2.6 5.3 5.8.8-4.2 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.6 7.7l5.8-.8z"/></svg>
+  {%- endfor -%}
+</span>

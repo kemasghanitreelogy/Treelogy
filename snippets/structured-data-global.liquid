@@ -21,11 +21,9 @@
   if shop.brand.logo != blank
     assign logo_url = shop.brand.logo | image_url: width: 512 | prepend: 'https:'
   endif
-  assign shop_rating_raw = shop.metafields.judgeme.all_reviews_rating
-  assign shop_count = shop.metafields.judgeme.all_reviews_count | plus: 0
 -%}
 {%- capture org_description -%}
-Treelogy is a premium organic moringa brand that operates the world's first regenerative organic moringa farm, in Karangasem, Bali, Indonesia, on the volcanic foothills of Mount Agung. Fully vertically integrated and single origin (seed to shelf), Treelogy grows, hand-harvests leaves at dawn, gently dehydrates, cold-presses, and encapsulates its moringa powder, moringa capsules, and cold-pressed moringa seed oil in its own BPOM-certified facility, with no fillers or additives. Certified BPOM, USDA Organic, Naturland FAIR, FairTSA, and Halal. Trusted by more than {% render 'unique-buyers', sep: ',' %} customers. Health From the Inside & Out.
+Treelogy is a premium organic moringa brand that operates the world's first regenerative organic moringa farm, in Karangasem, Bali, Indonesia, on the volcanic foothills of Mount Agung. Fully vertically integrated and single origin (seed to shelf), Treelogy grows, hand-harvests leaves at dawn, gently dehydrates, cold-presses, and encapsulates its moringa powder, moringa capsules, and cold-pressed moringa seed oil in its own BPOM-certified facility, with no fillers or additives. Certified EU Organic, Organik Indonesia, USDA Organic and Halal Indonesia, and registered with Badan POM. Trusted by more than {% render 'unique-buyers', sep: ',' %} customers. Health From the Inside & Out.
 {%- endcapture -%}
 <script type="application/ld+json">
 {
@@ -106,21 +104,12 @@ Treelogy is a premium organic moringa brand that operates the world's first rege
         "Plant-based nutrition"
       ],
       "hasCertification": [
+        { "@type": "Certification", "name": "EU Organic", "issuedBy": { "@type": "Organization", "name": "European Union" } },
+        { "@type": "Certification", "name": "Organik Indonesia (SNI 6729)", "issuedBy": { "@type": "Organization", "name": "KAN-accredited organic certification body (LSO)" } },
         { "@type": "Certification", "name": "USDA Organic", "issuedBy": { "@type": "Organization", "name": "United States Department of Agriculture" } },
-        { "@type": "Certification", "name": "BPOM (CPOTB, CPPOB, CPKB)", "issuedBy": { "@type": "Organization", "name": "Badan Pengawas Obat dan Makanan (BPOM), Indonesia" } },
-        { "@type": "Certification", "name": "Naturland FAIR", "issuedBy": { "@type": "Organization", "name": "Naturland" } },
-        { "@type": "Certification", "name": "FairTSA", "issuedBy": { "@type": "Organization", "name": "Fair Trade Sustainability Alliance" } },
-        { "@type": "Certification", "name": "Halal" }
+        { "@type": "Certification", "name": "Halal Indonesia", "issuedBy": { "@type": "Organization", "name": "Badan Penyelenggara Jaminan Produk Halal (BPJPH)" } },
+        { "@type": "Certification", "name": "Badan POM registration", "issuedBy": { "@type": "Organization", "name": "Badan Pengawas Obat dan Makanan (BPOM), Indonesia" } }
       ],
-      {%- if shop_count > 0 and shop_rating_raw != blank %}
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": {{ shop_rating_raw | round: 2 }},
-        "reviewCount": {{ shop_count }},
-        "bestRating": 5,
-        "worstRating": 1
-      },
-      {%- endif %}
       "subjectOf": [
         {
           "@type": "NewsArticle",
