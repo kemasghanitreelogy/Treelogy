@@ -9,55 +9,129 @@
  */
 {
   "sections": {
-    "featured_product_pTELCE": {
-      "type": "FeaturedProduct",
-      "settings": {
-        "product": "moringa-inside-out-protocol",
-        "cta_label_1": "30 Day Protocol",
-        "cta_label_2": "60 Day Protocol"
-      }
-    },
     "main": {
-      "type": "MainListingProduct",
+      "type": "cl-all",
+      "blocks": {
+        "capsules": {
+          "type": "product",
+          "settings": {
+            "product": "organic-moringa-capsules",
+            "copy": "capsules",
+            "category": "inside",
+            "image": "shopify://shop_images/coll-capsules-t.png",
+            "image_width": 140,
+            "featured": true,
+            "bestseller": true,
+            "image_featured": "shopify://shop_images/coll-v3-capsules.png"
+          }
+        },
+        "powder": {
+          "type": "product",
+          "settings": {
+            "product": "organic-moringa-powder",
+            "copy": "powder",
+            "category": "inside",
+            "image": "shopify://shop_images/coll-v3-powder.png",
+            "image_width": 138,
+            "featured": false,
+            "bestseller": false
+          }
+        },
+        "oil": {
+          "type": "product",
+          "settings": {
+            "product": "organic-moringa-oil",
+            "copy": "oil",
+            "category": "outside",
+            "image": "shopify://shop_images/coll-v3-oil.png",
+            "image_width": 100,
+            "featured": false,
+            "bestseller": false
+          }
+        },
+        "protocol": {
+          "type": "product",
+          "settings": {
+            "product": "moringa-inside-out-protocol",
+            "copy": "protocol",
+            "category": "bundle",
+            "image": "shopify://shop_images/coll-v3-protocol.png",
+            "image_width": 130,
+            "featured": false,
+            "bestseller": false,
+            "also_inside": true,
+            "also_outside": true
+          }
+        },
+        "discovery": {
+          "type": "product",
+          "settings": {
+            "product": "the-discovery-pack",
+            "copy": "discovery",
+            "category": "bundle",
+            "image": "shopify://shop_images/coll-v3-discovery.png",
+            "image_width": 76,
+            "featured": false,
+            "bestseller": false,
+            "also_inside": true,
+            "also_outside": true
+          }
+        },
+        "ritual": {
+          "type": "product",
+          "settings": {
+            "product": "moringa-ritual-set",
+            "copy": "ritual",
+            "category": "essentials",
+            "image": "shopify://shop_images/coll-v3-ritual.png",
+            "image_width": 146,
+            "featured": false,
+            "bestseller": false
+          }
+        },
+        "whisk": {
+          "type": "product",
+          "settings": {
+            "product": "bamboo-whisk",
+            "copy": "whisk",
+            "category": "essentials",
+            "image": "shopify://shop_images/coll-v3-whisk.png",
+            "image_width": 146,
+            "featured": false,
+            "bestseller": false
+          }
+        },
+        "scoop": {
+          "type": "product",
+          "settings": {
+            "product": "bamboo-spoon",
+            "copy": "scoop",
+            "category": "essentials",
+            "image": "shopify://shop_images/coll-v3-scoop.png",
+            "image_width": 166,
+            "featured": false,
+            "bestseller": false
+          }
+        }
+      },
+      "block_order": [
+        "capsules",
+        "powder",
+        "oil",
+        "protocol",
+        "discovery",
+        "ritual",
+        "whisk",
+        "scoop"
+      ],
       "settings": {
-        "collection": "all-products",
-        "product_limit": 20,
-        "custom_order": "organic-moringa-capsules,organic-moringa-oil,organic-moringa-powder,moringa-inside-out-protocol,the-discovery-pack,moringa-ritual-set,bamboo-whisk,bamboo-scoop"
-      }
-    },
-    "featured_text_CkWmqN": {
-      "type": "FeaturedText",
-      "settings": {
-        "title": "Antioxidant",
-        "description": "Moringa Oleifera, a potent antioxidant force. Explore its proven health benefits in extensive research studies.",
-        "background": "shopify://shop_images/antioxidant.webp",
-        "title_mobile": "Antioxidant",
-        "description_mobile": "Moringa Oleifera, a potent antioxidant force. Explore its proven health benefits in extensive research studies.",
-        "background_mobile": "shopify://shop_images/antioxidant.webp",
-        "button_label": "Get To Know More +",
-        "button_url": "shopify://blogs/news/antioxidant",
-        "box_container": true,
-        "text_position": "left"
-      }
-    },
-    "featured_blog_6XFnzG": {
-      "type": "FeaturedBlog",
-      "settings": {
-        "title": "Rooted in Wisdom, \nGrowing Through Knowledge.",
-        "description": "Explore the science of Moringa, discover recipes we love, and learn about our farm, factory, and well-being practices.",
-        "products": "news",
-        "button_label": "Discover All",
-        "button_url": "#",
-        "remove_button": false,
-        "filter_tags": "",
-        "remove_excerpt": false
+        "hero_mobile": "shopify://shop_images/coll-hero-mobile.jpg",
+        "hero_desktop": "shopify://shop_images/coll-hero-desktop.jpg",
+        "show_tabs": true
       }
     }
   },
   "order": [
-    "featured_product_pTELCE",
-    "main",
-    "featured_text_CkWmqN",
-    "featured_blog_6XFnzG"
+    "main"
   ]
 }
