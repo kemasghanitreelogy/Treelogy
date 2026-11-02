@@ -1,0 +1,755 @@
+{%- comment -%}
+  pdp5 — badan PDP kapsul dari Figma "390w light" (node 2920:5629), dari kartu
+  testimoni di bawah tombol beli sampai logo "as seen in". Semua ukuran =
+  koordinat Figma ÷ 3,0128 (frame 1175 = layar 390).
+
+  Hero, pemilih paket, FAQ dan ulasan TIDAK di sini: section pdp4 yang sudah
+  ada tetap dipakai (logika beli, hadiah, varian) dan hanya ditata ulang lewat
+  assets/pdp5.css. JS-nya hanya karosel testimoni, tombol sertifikasi, dan
+  sekuens foto "Our process".
+
+  Semua teks (termasuk isi accordion) di locale `pdp5.story.*` (EN + ID, copy
+  dari frame Figma PDP OMC EN 2920:5629 dan PDP OMC ID 2927:8404).
+
+  Tata letak dikunci di lebar 390 lalu di-zoom ke lebar layar (--p5-z diisi
+  skrip kecil di bawah), sama seperti sections/cl-all.liquid.
+{%- endcomment -%}
+{%- liquid
+  assign p5_on = false
+  if section.settings.handles == blank
+    assign p5_on = true
+  else
+    assign p5_needle = product.handle | prepend: ',' | append: ','
+    assign p5_hay = section.settings.handles | remove: ' ' | prepend: ',' | append: ','
+    if p5_hay contains p5_needle
+      assign p5_on = true
+    endif
+  endif
+-%}
+{%- if p5_on -%}
+{%- liquid
+  assign reviews = product.metafields.pdp3.reviews.value
+  assign star_src = 'pdp5-stars.svg' | asset_url
+-%}
+<div class="p5s" data-p5s>
+  <script>
+    (function (el) {
+      function z() {
+        var w = document.documentElement.clientWidth;
+        el.style.setProperty('--p5-z', (w < 960 ? Math.min(Math.max(w / 390, 0.8), 1.25) : 1).toFixed(4));
+      }
+      z();
+      window.addEventListener('resize', z);
+    })(document.currentScript.parentNode);
+  </script>
+
+  {%- comment -%}
+    Testimoni (Figma "Review carousel (auto)"): satu kartu selebar kolom, tanpa intipan kartu berikut. Track scroll-snap
+    native — di ponsel kartu mengikuti jari saat di-drag; di desktop drag mouse lewat JS. Titik persis Figma (bulat 7 px,
+    jarak 2 px, aktif terisi), berupa tombol. Kutipan dari locale, foto & nama dari pdp3.reviews.
+  {%- endcomment -%}
+  <div class="p5s-z p5s-rev">
+    <div class="p5s-rev__show" data-p5s-show role="region" aria-roledescription="carousel" aria-label="{{ 'pdp5.story.reviews.verified' | t | escape }} reviews">
+      <div class="p5s-rev__track" data-p5s-track>
+      {%- for i in (1..5) -%}
+        {%- assign r_key = 'pdp5.story.reviews.r' | append: i -%}
+        {%- assign r_name = r_key | append: '.name' | t -%}
+        {%- assign r_photo = '' -%}
+        {%- for r in reviews -%}
+          {%- assign r_first = r.name | split: ',' | first | strip -%}
+          {%- if r_first == r_name -%}{%- assign r_photo = r.photo -%}{%- endif -%}
+        {%- endfor -%}
+        <figure class="p5s-rev__card" aria-roledescription="slide" aria-label="{{ i }} / 5">
+          {%- if r_photo != blank -%}<img class="p5s-rev__photo" src="{{ r_photo | split: '?' | first }}?width=244" alt="" width="81" height="81" loading="lazy">{%- endif -%}
+          <figcaption class="p5s-rev__head">
+            <span class="p5s-rev__name">{{ r_name }}</span>
+            <span class="p5s-rev__check" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16"><circle cx="8" cy="8" r="8" fill="#213d29"/><path d="M4.6 8.2l2.2 2.1 4.6-4.5" stroke="#fff" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span class="p5s-rev__verified">{{ 'pdp5.story.reviews.verified' | t }}</span>
+            <img class="p5s-rev__stars" src="{{ star_src }}" alt="5/5" width="57" height="12">
+          </figcaption>
+          <blockquote class="p5s-rev__quote">{{ r_key | append: '.quote' | t }}</blockquote>
+        </figure>
+      {%- endfor -%}
+      </div>
+      <div class="p5s-rev__dots">
+        {%- for d in (1..5) -%}
+          <button type="button" class="p5s-rev__dot{% if d == 1 %} is-on{% endif %}" aria-label="{{ d }} / 5"{% if d == 1 %} aria-current="true"{% endif %}></button>
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+
+  {%- comment -%}
+    Accordion produk (Figma "PDP Accordion", isi = panel samping 2920:6663 EN / 2932:9434 ID). Isinya dari locale,
+    bukan metafield custom.product_detail: metafield itu dipakai PDP live dan copy-nya berbeda dari desain ini.
+  {%- endcomment -%}
+  <div class="p5s-z p5s-acc-wrap">
+    <div class="p5s-acc">
+      {%- for i in (1..4) -%}
+        {%- assign a_key = 'pdp5.story.accordion.a' | append: i -%}
+        <details class="p5s-acc__item"{% if i == 4 %} id="p5-quality"{% endif %}>
+          <summary><span>{{ a_key | t }}</span><img src="{{ 'pdp5-plus.svg' | asset_url }}" alt="" width="12" height="12"></summary>
+          <div class="p5s-acc__body">{{ 'pdp5.story.accordion.b' | append: i | append: '_html' | t }}</div>
+        </details>
+      {%- endfor -%}
+    </div>
+  </div>
+
+  {%- comment -%} What to expect (Figma Frame 26 + timeline). {%- endcomment -%}
+  <div class="p5s-z p5s-head p5s-head--expect">
+    <p class="p5s-eyebrow">{{ 'pdp5.story.expect.eyebrow' | t }}</p>
+    <h2 class="p5s-h2">{{ 'pdp5.story.expect.heading_html' | t }}</h2>
+    <p class="p5s-lead">{{ 'pdp5.story.expect.body' | t }}</p>
+  </div>
+  <div class="p5s-z p5s-tl-wrap">
+    <ol class="p5s-tl">
+      {%- for i in (1..6) -%}
+        {%- assign t_key = 'pdp5.story.expect.t' | append: i -%}
+        <li class="p5s-tl__item p5s-tl__item--{{ i }}">
+          <h3 class="p5s-tl__title">{{ t_key | append: '.title' | t }}</h3>
+          <span class="p5s-tl__pill">{{ t_key | append: '.when' | t }}</span>
+          <p class="p5s-tl__desc">{{ t_key | append: '.desc_html' | t }}</p>
+        </li>
+      {%- endfor -%}
+    </ol>
+    <p class="p5s-tl__note">{{ 'pdp5.story.expect.note_html' | t }}</p>
+  </div>
+
+  {%- comment -%} How it works (Figma Frame 33, diagram Frame 5, kartu Frame 30/43/44). {%- endcomment -%}
+  <div class="p5s-z p5s-head p5s-head--how">
+    <p class="p5s-eyebrow">{{ 'pdp5.story.how.eyebrow' | t }}</p>
+    <h2 class="p5s-h2">{{ 'pdp5.story.how.heading_html' | t }}</h2>
+    <p class="p5s-lead">{{ 'pdp5.story.how.body_html' | t }}</p>
+  </div>
+  <div class="p5s-z p5s-diagram">
+    <img src="{{ 'pdp5-diagram.png' | file_url }}" alt="{{ 'pdp5.story.how.diagram_alt' | t | escape }}" width="390" height="289" loading="lazy">
+  </div>
+  {%- for i in (1..3) -%}
+    {%- assign c_key = 'pdp5.story.how.c' | append: i -%}
+    <div class="p5s-z p5s-card-wrap p5s-card-wrap--{{ i }}">
+      <div class="p5s-card">
+        <p class="p5s-eyebrow">{{ c_key | append: '.eyebrow' | t }}</p>
+        <h3 class="p5s-card__title">{{ c_key | append: '.title' | t }}</h3>
+        <p class="p5s-card__body">{{ c_key | append: '.body_html' | t }}</p>
+        <p class="p5s-card__pills"><span>{{ c_key | append: '.pill1' | t }}</span><span>{{ c_key | append: '.pill2' | t }}</span></p>
+      </div>
+    </div>
+  {%- endfor -%}
+
+  {%- comment -%} Why Treelogy + tabel (Figma Frame 29 + Table). {%- endcomment -%}
+  <div class="p5s-z p5s-why">
+    <p class="p5s-eyebrow">{{ 'pdp5.story.why.eyebrow' | t }}</p>
+    <h2 class="p5s-h2">{{ 'pdp5.story.why.heading_html' | t }}</h2>
+    <img class="p5s-why__hand" src="{{ 'pdp5-hand.png' | file_url }}" alt="" width="159" height="126" loading="lazy">
+    <p class="p5s-lead">{{ 'pdp5.story.why.body_html' | t }}</p>
+    {%- comment -%}
+      Tanpa cert_url: tombol membuka dialog registrasi BPOM yang SAMA dengan PDP live (#pdp4-bpom-modal, dirender di
+      bawah). Buka/tutup, klik latar, Escape, dan fokus diurus initModal() di assets/pdp4.js — tidak ada JS baru.
+    {%- endcomment -%}
+    {%- if section.settings.cert_url != blank -%}
+      <a class="p5s-btn" href="{{ section.settings.cert_url }}">{{ 'pdp5.story.why.cta' | t }}</a>
+    {%- else -%}
+      <button class="p5s-btn" id="pdp4-bpom-btn" type="button" aria-haspopup="dialog">{{ 'pdp5.story.why.cta' | t }}</button>
+    {%- endif -%}
+  </div>
+  <div class="p5s-z p5s-table-wrap">
+    <table class="p5s-table">
+      <thead><tr><th></th><th>Treelogy</th><th>{{ 'pdp5.story.table.others' | t }}</th></tr></thead>
+      <tbody>
+        {%- for i in (1..6) -%}
+          {%- assign r_key = 'pdp5.story.table.r' | append: i -%}
+          <tr><th scope="row">{{ r_key | append: '.label' | t }}</th><td>{{ r_key | append: '.ours' | t }}</td><td>{{ r_key | append: '.theirs' | t }}</td></tr>
+        {%- endfor -%}
+      </tbody>
+    </table>
+  </div>
+
+  {%- comment -%} Our process + karosel foto (Figma Background 2920:6125). {%- endcomment -%}
+  <div class="p5s-z p5s-proc">
+    <p class="p5s-eyebrow">{{ 'pdp5.story.process.eyebrow' | t }}</p>
+    <h2 class="p5s-h2 p5s-h2--light">{{ 'pdp5.story.process.heading_html' | t }}</h2>
+    <p class="p5s-lead">{{ 'pdp5.story.process.body' | t }}</p>
+    <a class="p5s-btn" href="{{ section.settings.farm_url | default: '/pages/farm' }}">{{ 'pdp5.story.process.cta' | t }}</a>
+    <div class="p5s-proc__track">
+      {%- for i in (1..4) -%}
+        {%- assign s_key = 'pdp5.story.process.s' | append: i -%}
+        <figure class="p5s-proc__slide">
+          {%- comment -%}
+            Figma menaruh GIF di sini (6–7 frame, 1 dtk/frame, 330 px, 256 warna). Frame sumbernya diunggah terpisah
+            (pdp5-proc-<langkah>-<frame>.jpg) dan diputar sebagai sekuens: tajam di layar retina, WebP/AVIF dari CDN,
+            dan berhenti saat tidak terlihat. Frame yang tidak ada di Files dilewati.
+          {%- endcomment -%}
+          <div class="p5s-proc__media" data-p5s-seq>
+            {%- for f in (1..8) -%}
+              {%- assign f_name = 'pdp5-proc-' | append: i | append: '-' | append: f | append: '.jpg' -%}
+              {%- assign f_img = images[f_name] -%}
+              {%- if f_img != blank -%}
+                {%- if f == 1 -%}{%- assign f_class = 'is-on' -%}{%- else -%}{%- assign f_class = '' -%}{%- endif -%}
+                {{ f_img | image_url: width: 660 | image_tag: widths: '330, 495, 660, 990', sizes: '330px', loading: 'lazy', alt: '', class: f_class }}
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+          <figcaption><strong>{{ s_key | append: '.title' | t }}</strong>{{ s_key | append: '.body' | t }}</figcaption>
+        </figure>
+      {%- endfor -%}
+    </div>
+  </div>
+
+  {%- comment -%} As seen in (Figma "as seen in"). {%- endcomment -%}
+  <div class="p5s-z p5s-press">
+    <p class="p5s-press__title">{{ 'pdp5.story.press' | t }}</p>
+    <div class="p5s-press__logos">
+      <img src="{{ 'pdp5-logo-jp.png' | file_url }}" alt="The Jakarta Post" width="135" height="16" loading="lazy">
+      <img src="{{ 'pdp5-logo-bisnis.svg' | asset_url }}" alt="Bisnis Indonesia" width="86" height="20" loading="lazy">
+      <img src="{{ 'pdp5-logo-mi.png' | file_url }}" alt="Media Indonesia" width="103" height="32" loading="lazy">
+      <img src="{{ 'pdp5-logo-now.svg' | asset_url }}" alt="NOW! Bali" width="60" height="22" loading="lazy">
+      <img src="{{ 'pdp5-logo-punch.png' | file_url }}" alt="The Punch" width="111" height="14" loading="lazy">
+    </div>
+  </div>
+</div>
+
+{%- comment -%}
+  Dialog registrasi BPOM — markup, isi (locale pdp3.why.modal_*, baris "Label|Nilai") dan gaya (.pdp-modal di
+  pdp4.css) sama dengan section pdp4-why di live. Dibungkus .pdp4-page.sk-root agar token sk-* berlaku, dan di luar
+  .p5s-z supaya position:fixed tidak ikut zoom. pdp4-why di template draft nonaktif, jadi id-nya tidak bentrok.
+{%- endcomment -%}
+{%- if section.settings.cert_url == blank -%}
+  {%- assign m_close = 'pdp3.why.modal_close' | t -%}
+  <div class="pdp4-page sk-root">
+    <div class="pdp-modal p5-cert" id="pdp4-bpom-modal" role="dialog" aria-modal="true" aria-labelledby="pdp4-bpom-title">
+      <div class="p5-cert__sheet">
+        <span class="p5-cert__grip" aria-hidden="true"></span>
+        <button class="p5-cert__x" type="button" data-p5-cert-x aria-label="{{ m_close | escape }}"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+        <div class="p5-cert__badges" aria-hidden="true">
+          <span><img src="{{ 'pdp3-cert-bpom.png' | file_url }}" alt="" width="188" height="164" loading="lazy"></span>
+          <span><img src="{{ 'pdp3-cert-halal.png' | file_url }}" alt="" width="92" height="164" loading="lazy"></span>
+          <span><img src="{{ 'pdp3-cert-usda.png' | file_url }}" alt="" width="144" height="144" loading="lazy"></span>
+        </div>
+        <h3 class="p5-cert__title" id="pdp4-bpom-title">{{ 'pdp3.why.modal_heading' | t }}</h3>
+        <dl class="p5-cert__list">
+          {%- for i in (1..5) -%}
+            {%- assign m_key = 'pdp3.why.modal_row_' | append: i -%}
+            {%- assign m_row = m_key | t -%}
+            {%- if m_row contains 'Translation missing' or m_row == blank -%}{%- continue -%}{%- endif -%}
+            {%- assign m_parts = m_row | split: '|' -%}
+            <div class="p5-cert__row">{% if m_parts.size > 1 %}<dt>{{ m_parts[0] | strip }}</dt><dd>{{ m_parts[1] | strip }}</dd>{% else %}<dd>{{ m_row }}</dd>{% endif %}</div>
+          {%- endfor -%}
+        </dl>
+        <button class="p5-cert__close" id="pdp4-bpom-close" type="button">{{ m_close }}</button>
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+<style>
+  .p5s{--p5-ink:#213d29;--p5-sec:#536c3c;--p5-card:#eef2e6;--p5-line:rgba(33,61,41,.1);background:#f8f8f2;color:var(--p5-ink);font-family:Inter,sans-serif;font-optical-sizing:none;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow:hidden}
+  .p5s *,.p5s *::before,.p5s *::after{box-sizing:border-box}
+  .p5s :where(p,h2,h3,ol,ul,li,figure,blockquote,table){margin:0;padding:0}
+  .p5s ol,.p5s ul{list-style:none}
+  /* Ponsel: tiap blok dikunci 390 px lalu di-zoom. Desktop (≥960): kolom 720 px di tengah seperti section pdp4, tanpa zoom. */
+  .p5s-z{width:390px;margin:0 auto;zoom:var(--p5-z,1);position:relative}
+
+  .p5s-eyebrow{font-size:12px;line-height:13.2px;font-weight:500;letter-spacing:.24px;text-transform:uppercase;color:var(--p5-sec)}
+  .p5s-h2{font-size:30px;line-height:36px;font-weight:400;letter-spacing:-.36px;color:var(--p5-ink)}
+  .p5s-h2--light{font-weight:300}
+  .p5s-lead{font-size:16px;line-height:22.4px;font-weight:300;color:var(--p5-sec)}
+  button.p5s-btn{padding:0;background:none;font-family:inherit;cursor:pointer}
+  .p5s-btn{display:flex;align-items:center;justify-content:center;width:224px;height:56px;border:1px solid var(--p5-sec);border-radius:999px;font-size:14px;line-height:16px;font-weight:300;color:var(--p5-sec);text-decoration:none}
+
+  /* Testimoni: kartu 358×110, langkah 367 (Figma 1105,7). */
+  .p5s-rev{height:166px}
+  .p5s-rev__show{position:relative;margin:17px 16px 0}
+  .p5s-rev__track{display:flex;gap:16px;height:110px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:none;border-radius:16px}
+  .p5s-rev__track::-webkit-scrollbar{display:none}
+  .p5s-rev__track.is-dragging{scroll-snap-type:none;cursor:grabbing;user-select:none}
+  .p5s-rev__card{position:relative;flex:0 0 100%;height:110px;border-radius:16px;background:#d7e6c6;scroll-snap-align:start;scroll-snap-stop:always}
+  .p5s-rev__card img{-webkit-user-drag:none}
+  .p5s-rev__photo{position:absolute;left:11px;top:14px;width:81px;height:81px;border-radius:8px;object-fit:cover}
+  /* Baris kepala = flex, bukan 4 posisi absolut: "Terverifikasi" (ID) lebih panjang dari "Verified" dan dulu menabrak
+     bintang. Jarak diambil dari Figma (nama 101→centang 155, centang→teks 4, teks→bintang 19), jadi EN tetap 1:1. */
+  .p5s-rev__head{position:absolute;left:101px;top:14px;right:11px;display:flex;align-items:center;height:18px;white-space:nowrap}
+  .p5s-rev__name{min-width:54px;padding-right:4px;font-size:16px;line-height:18px;font-weight:600;color:var(--p5-ink)}
+  .p5s-rev__check{flex:0 0 16px;height:16px}
+  .p5s-rev__check svg{display:block}
+  .p5s-rev__verified{margin-left:4px;font-size:14px;line-height:18px;font-weight:400;color:var(--p5-ink)}
+  .p5s-rev__stars{flex:0 0 auto;margin-left:19px;width:56.8px;height:12.1px}
+  .p5s-rev__quote{position:absolute;left:101px;top:40px;width:231px;font-size:16px;line-height:20px;font-weight:400;color:var(--p5-ink)}
+  /* Titik persis Figma: baris 43×7 dengan tepi kanan 14 px dari tepi kartu, top 91. Area ketuk diperbesar via ::before. */
+  .p5s-rev__dots{position:absolute;right:14px;top:91px;z-index:2;display:flex;gap:2px}
+  .p5s-rev__dot{position:relative;flex:none;width:7px;height:7px;margin:0;padding:0;border:1px solid var(--p5-ink);border-radius:50%;background:transparent;cursor:pointer;transition:background-color .25s ease}
+  .p5s-rev__dot::before{content:"";position:absolute;inset:-10px -1px}
+  .p5s-rev__dot.is-on{background:var(--p5-ink)}
+  .p5s-rev__dot:focus-visible{outline:2px solid var(--p5-ink);outline-offset:2px}
+
+  /* Accordion (nilai komponen Figma sudah dalam px layar). */
+  .p5s-acc-wrap{padding:0 16px 48px}
+  .p5s-acc{padding:11px 22px;border-radius:16px;background:var(--p5-card)}
+  .p5s-acc__item{border-bottom:1px solid #e5e5e5}
+  .p5s-acc__item:last-child{border-bottom:0}
+  .p5s-acc__item summary{display:flex;align-items:center;justify-content:space-between;height:44px;cursor:pointer;list-style:none;font-size:16px;line-height:24px;font-weight:300;color:#6c7256}
+  .p5s-acc__item summary::-webkit-details-marker{display:none}
+  .p5s-acc__item summary img{width:12px;height:12px;transition:transform .2s}
+  .p5s-acc__item[open]:not(.is-closing) summary img{transform:rotate(45deg)}
+  .p5s-acc__body{overflow:hidden;padding:0 0 14px;font-size:14px;line-height:24px;font-weight:300;color:#6c7256}
+  .p5s-acc__body ul{list-style:disc;padding-left:21px}
+  .p5s-acc__body :is(p,ul)+:is(p,ul){margin-top:24px}
+  :lang(id) .p5s-acc__body :is(p,ul)+:is(p,ul){margin-top:6px}
+  .p5s-acc__body strong{font-weight:700}
+
+  /* Judul bagian (Frame 26 / Frame 33). */
+  .p5s-head{padding:30px 16px 0}
+  .p5s-head .p5s-h2{margin-top:20.8px}
+  .p5s-head--expect{min-height:239px}
+  .p5s-head--expect .p5s-lead{margin-top:13px}
+  .p5s-head--how{min-height:342px}
+  .p5s-head--how .p5s-h2{margin-top:20.9px}
+  .p5s-head--how .p5s-lead{margin-top:19.9px}
+
+  /* Timeline: kartu 358×722, isi 24 px dari tepi. */
+  .p5s-tl-wrap{padding:23.5px 16px}
+  .p5s-tl{min-height:722px;padding:24px 24px 0;border-radius:16px;background:var(--p5-card)}
+  .p5s-tl__item{position:relative;padding:12px 0;border-top:1px solid var(--p5-line)}
+  .p5s-tl__item:first-child{border-top:0}
+  .p5s-tl__title{font-size:20px;line-height:28px;font-weight:300;letter-spacing:-.2px;color:var(--p5-ink);padding-right:calc(var(--pw,0px) + 8px)}
+  .p5s-tl__pill{position:absolute;right:0;top:calc(12px + var(--pt,4px));height:20px;padding:0 10px;border-radius:10px;background:#bed4a2;font-size:14px;line-height:20px;font-weight:300;letter-spacing:-.07px;color:var(--p5-sec);white-space:nowrap;min-width:var(--pw,0)}
+  .p5s-tl__desc{margin-top:4px;font-size:14px;line-height:19.6px;font-weight:300;letter-spacing:-.07px;color:var(--p5-sec)}
+  .p5s-tl__item--1{min-height:115px}.p5s-tl__item--1 .p5s-tl__pill{--pt:2px;--pw:56px;text-align:center}
+  .p5s-tl__item--2{min-height:97px}.p5s-tl__item--2 .p5s-tl__pill{--pt:5.9px;--pw:91px;text-align:center}
+  .p5s-tl__item--3{min-height:123px;padding-top:12.5px}.p5s-tl__item--3 .p5s-tl__pill{--pt:2.5px;--pw:99px;right:3px;text-align:center}
+  .p5s-tl__item--4{min-height:116px}.p5s-tl__item--4 .p5s-tl__pill{--pt:4px;--pw:103px;text-align:center}
+  .p5s-tl__item--5{min-height:116px}.p5s-tl__item--5 .p5s-tl__pill{--pt:3.9px;--pw:91px;text-align:center}.p5s-tl__item--5 .p5s-tl__desc{margin-top:3.4px}
+  .p5s-tl__item--6{min-height:96.4px;padding-bottom:0}.p5s-tl__item--6 .p5s-tl__pill{--pt:4.5px;--pw:133px;text-align:center}.p5s-tl__item--6 .p5s-tl__desc{margin-top:12.1px}
+  .p5s-tl__note{display:flex;align-items:center;justify-content:center;min-height:58px;font-size:12px;line-height:18px;font-weight:300;font-style:italic;text-align:center;color:var(--p5-sec)}
+  /* Frame Figma PDP OMC ID (2927:8693/8697) memberi bagian ini ruang berbeda dari EN: kepala 802u, jarak kartu 38u,
+     kartu 2276u, item 4 436u (÷3,0128). Hanya ponsel; desktop memakai aliran bebas di bawah. */
+  @media (max-width:959px){
+    :lang(id) .p5s-head--expect{min-height:266.2px}
+    :lang(id) .p5s-tl-wrap{padding-top:12.65px;padding-bottom:12.65px}
+    :lang(id) .p5s-tl{min-height:755.5px}
+    :lang(id) .p5s-tl__item--4{min-height:144.7px}
+  }
+
+  .p5s-diagram img{display:block;width:390px;height:auto}
+
+  /* Tiga kartu cara kerja (Diagram 01): jarak isi per kartu mengikuti Figma. */
+  .p5s-card-wrap{padding:0 16px var(--cb,0)}
+  .p5s-card{min-height:var(--ch);padding:40px 16px var(--cpb) 17px;border-radius:16px;background:var(--p5-card)}
+  .p5s-card__title{margin:var(--tm) 0 0 -1px;font-size:20px;line-height:36px;font-weight:400;letter-spacing:-.36px;color:var(--p5-ink)}
+  .p5s-card__body{margin-top:var(--bm);width:313px;font-size:14px;line-height:18px;font-weight:300;color:var(--p5-sec)}
+  .p5s-card__body strong{font-weight:600}
+  .p5s-card__pills{display:flex;flex-wrap:wrap;gap:8px;width:341px;margin:var(--pm) 0 0 -1px}
+  .p5s-card__pills span{padding:6px 10px;border:.75px solid var(--p5-sec);border-radius:14px;font-size:12px;line-height:14.5px;font-weight:300;letter-spacing:.24px;color:var(--p5-sec);white-space:nowrap}
+  .p5s-card-wrap--1{--ch:325px;--cb:17px;--tm:13.9px;--bm:13px;--pm:12.9px;--cpb:20px}
+  .p5s-card-wrap--2{--ch:290px;--cb:19px;--tm:10.9px;--bm:10px;--pm:9.9px;--cpb:20px}
+  .p5s-card-wrap--3{--ch:302px;--cb:0px;--tm:18.9px;--bm:4px;--pm:17.9px;--cpb:20px}
+
+  /* Why Treelogy (Frame 29, tinggi 459). */
+  .p5s-why{min-height:459px;padding:69.5px 16px 16px}
+  .p5s-why .p5s-h2{margin-top:20.9px;position:relative;z-index:1}
+  .p5s-why__hand{position:absolute;left:231px;top:84px;width:158.8px;height:126.2px}
+  .p5s-why .p5s-lead{margin-top:31.5px}
+  .p5s-why .p5s-btn{margin-top:31.9px}
+
+  /* Tabel: 358 lebar, kolom 78,75 / 151,77 / 127,48. */
+  .p5s-table-wrap{padding:40px 16px}
+  .p5s-table{width:358px;border-collapse:separate;border-spacing:0;table-layout:fixed;font-size:14px;line-height:19.6px;font-weight:300;letter-spacing:-.07px}
+  .p5s-table th,.p5s-table td{white-space:nowrap;padding:11.3px 8px 12.3px;border-bottom:1px solid var(--p5-line);text-align:left;vertical-align:top;font-weight:300;color:var(--p5-sec)}
+  .p5s-table thead th{padding:12px 8px;font-weight:500;color:var(--p5-ink)}
+  .p5s-table th:first-child{width:78.75px}
+  .p5s-table th:nth-child(2),.p5s-table td:nth-child(2){width:151.77px;background:#d7e6c6;color:var(--p5-ink)}
+  .p5s-table thead th:nth-child(2){border-radius:8px 8px 0 0}
+  .p5s-table tbody tr:last-child td:nth-child(2){border-radius:0 0 8px 8px}
+  .p5s-table thead th:last-child{font-weight:500}
+
+  /* Our process (pt 23, pb 64, jarak antarblok 24). */
+  /* Figma memotong frame ini di tinggi 745 (frame berikutnya mulai di sana), jadi ruang bawah efektif 23,8, bukan pb 64. */
+  .p5s-proc{padding:23px 16px 23.8px}
+  .p5s-proc .p5s-h2{margin-top:11.2px}
+  .p5s-proc .p5s-lead{margin-top:24.6px}
+  .p5s-proc .p5s-btn{margin-top:24px}
+  .p5s-proc__track{display:flex;gap:14px;margin:24px -16px 0;padding:0 16px;min-height:406px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding:0 16px;scrollbar-width:none}
+  .p5s-proc__track::-webkit-scrollbar{display:none}
+  .p5s-proc__slide{flex:0 0 330px;scroll-snap-align:start}
+  .p5s-proc__media{position:relative;width:330px;height:225px;border-radius:16px;overflow:hidden;background:var(--p5-card)}
+  .p5s-proc__media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .3s ease}
+  .p5s-proc__media img.is-on{opacity:1}
+  @media (prefers-reduced-motion:reduce){.p5s-proc__media img{transition:none}}
+  .p5s-proc__slide figcaption{margin:15px 0 0 4px;width:288px;font-size:16px;line-height:19.6px;font-weight:300;letter-spacing:-.07px;color:var(--p5-sec)}
+  .p5s-proc__slide strong{display:block;margin-bottom:19.6px;font-weight:700}
+
+  /* As seen in (tinggi 165). */
+  .p5s-press{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:165px;padding:8px 16px}
+  .p5s-press__title{font-size:12px;line-height:14.5px;font-weight:500;letter-spacing:.24px;color:var(--p5-sec)}
+  .p5s-press__logos{display:flex;flex-wrap:wrap;align-content:center;align-items:center;justify-content:center;gap:24px 28px;width:358px;height:114px}
+  .p5s-press__logos img{display:block;height:auto;object-fit:contain}
+  .p5s-press__logos img:nth-child(1){width:135px;height:16px}
+  .p5s-press__logos img:nth-child(2){width:86.4px;height:20px}
+  .p5s-press__logos img:nth-child(3){width:103px;height:32px}
+  .p5s-press__logos img:nth-child(4){width:60.4px;height:22px}
+  .p5s-press__logos img:nth-child(5){width:111px;height:14px}
+  /* Inter Light di Chrome (berkas variable tema, wght 300) ±0,09 px/karakter lebih sempit dari Inter Light
+     Figma — terukur di 4 ukuran (14–30 px). Bobot 400/500 sudah sama lebar, jadi koreksi hanya di teks light. */
+  .p5s-lead,.p5s-card__body,.p5s-tl__note,.p5s-acc__body,.p5s-acc__item summary,.p5s-btn{letter-spacing:.09px}
+  .p5s-tl__title{letter-spacing:-.11px}
+  /* Judul accordion tebal 650 (permintaan 2 Nov); koreksi lebar +0,09 px hanya untuk teks light, jadi di sini 0. */
+  .p5s-acc__item summary{font-weight:650;letter-spacing:0}
+  .p5s-tl__desc,.p5s-tl__pill,.p5s-table td,.p5s-table tbody th,.p5s-proc__slide figcaption{letter-spacing:.02px}
+  .p5s-proc__slide strong{letter-spacing:-.07px}
+  .p5s-h2--light{letter-spacing:-.27px}
+  .p5s-card__pills span{letter-spacing:.33px}
+  .p5s-rev__card:not(:first-child) .p5s-rev__quote{width:224px}
+  .p5s-card__body strong{letter-spacing:0}
+  .p5s-tl__item--6 .p5s-tl__desc{letter-spacing:-.01px} /* baris pertamanya pas 310 px seperti di Figma */
+  /* Desktop: susunan section pdp4 lama (kolom 720 px, huruf ukuran Figma), konten & aset Figma. */
+  @media (min-width:960px){
+    .p5s-z{width:720px;zoom:1}
+    .p5s-rev__show{margin-left:0;margin-right:0}
+    .p5s-acc-wrap,.p5s-tl-wrap,.p5s-card-wrap,.p5s-table-wrap{padding-left:0;padding-right:0}
+    .p5s-head,.p5s-why,.p5s-proc,.p5s-press{padding-left:0;padding-right:0}
+    .p5s-head{min-height:0!important;padding-bottom:40px}
+    .p5s-lead{max-width:600px}
+    .p5s-card{padding-right:24px}
+    .p5s-card__body{width:auto;max-width:600px}
+    .p5s-card__pills{width:auto}
+    .p5s-card-wrap--1,.p5s-card-wrap--2{--cb:16px}
+    .p5s-card,.p5s-tl{min-height:0}
+    .p5s-tl{padding-bottom:12px}
+    .p5s-tl .p5s-tl__item{min-height:0;padding:16px 0}
+    .p5s-tl .p5s-tl__item:first-child{padding-top:0}
+    .p5s-tl .p5s-tl__item .p5s-tl__desc{margin-top:4px}
+    .p5s-tl .p5s-tl__item .p5s-tl__pill{top:calc(var(--item-pt,16px) + 4px)}
+    .p5s-tl .p5s-tl__item:first-child .p5s-tl__pill{top:4px}
+    .p5s-why{min-height:0;padding-bottom:40px}
+    .p5s-why__hand{left:auto;right:0;top:60px;width:238px;height:auto}
+    .p5s-diagram img{width:100%;border-radius:16px}
+    .p5s-table{width:100%}
+    .p5s-table th:first-child{width:160px}
+    .p5s-table th:nth-child(2),.p5s-table td:nth-child(2){width:280px}
+    .p5s-proc__track{margin:24px 0 0;padding:0;scroll-padding:0;gap:16px}
+    .p5s-press__logos{width:100%;height:auto;padding:24px 0}
+    /* Pindah baris Figma dibuat untuk kolom 390 px; di kolom 720 teks mengalir bebas (judul tetap). */
+    .p5s-tl__desc br,.p5s-lead br,.p5s-tl__note br{display:none}
+  }
+  /* Dialog sertifikasi (premium): bottom sheet di ponsel, dialog tengah di ≥640 px. Tinggi dialog = 100dvh (viewport yang
+     benar-benar terlihat), bukan inset:0 — di Chrome Android inset:0 mengikuti viewport layout yang lebih tinggi dari
+     layar saat bilah alamat/navigasi tampil, sehingga tombol Close terpotong. Buka/tutup tetap initModal()
+     pdp4.js (atribut [open]); di sini hanya tampilan + gerak. Masuk ease-out 520 ms dengan stagger isi, keluar ease-in
+     240 ms (kelas .is-closing dipasang skrip di bawah). Latar diblur, halaman di belakang tidak ikut tergulir. */
+  html:has(#pdp4-bpom-modal[open]){overflow:hidden}
+  .pdp-modal.p5-cert{inset:0 0 auto;height:100vh;height:100dvh;padding:0;place-items:end center;background:rgba(33,61,41,.38);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);overscroll-behavior:contain;font-family:Inter,sans-serif;-webkit-font-smoothing:antialiased}
+  .pdp-modal.p5-cert.is-closing{display:grid}
+  .p5-cert__sheet{position:relative;box-sizing:border-box;display:flex;flex-direction:column;width:100%;max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);overflow:hidden;padding:12px 24px calc(24px + env(safe-area-inset-bottom));border-radius:24px 24px 0 0;background:#f8f8f2;color:#213d29;box-shadow:0 -12px 40px rgba(33,61,41,.18)}
+  .p5-cert__grip{display:block;width:40px;height:4px;margin:0 auto 20px;cursor:grab;touch-action:none;border-radius:2px;background:rgba(33,61,41,.18)}
+  .p5-cert__x{position:absolute;z-index:2;top:10px;right:10px;display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:transparent;color:#213d29;cursor:pointer;transition:background-color .2s ease}
+  .p5-cert__x:hover{background:rgba(33,61,41,.07)}
+  .p5-cert__badges{display:flex;gap:8px;width:max-content;margin:0 0 16px}
+  .p5-cert__badges span{display:grid;place-items:center;width:52px;height:52px;border-radius:12px;background:#869a68}
+  .p5-cert__badges img{display:block;width:auto;height:auto;max-width:34px;max-height:32px}
+  .p5-cert__title{margin:0 0 16px;font-size:24px;line-height:30px;font-weight:400;letter-spacing:-.36px;color:#213d29}
+  /* Hanya daftar yang menggulir saat layar pendek; lencana, judul, dan tombol Close selalu terlihat. */
+  .p5-cert__grip,.p5-cert__badges,.p5-cert__title,.p5-cert__close{flex:none}
+  .p5-cert__list{flex:0 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;margin:0;padding:4px 16px;border-radius:16px;background:#eef2e6}
+  .p5-cert__row{padding:12px 0;border-top:1px solid rgba(33,61,41,.1)}
+  .p5-cert__row:first-child{border-top:0}
+  .p5-cert__row dt{font-size:12px;line-height:16px;font-weight:500;letter-spacing:.24px;text-transform:uppercase;color:#536c3c}
+  .p5-cert__row dd{margin:2px 0 0;font-size:15px;line-height:22px;font-weight:400;color:#213d29}
+  .p5-cert__close{display:flex;align-items:center;justify-content:center;width:100%;height:52px;margin-top:20px;padding:0;border:0;border-radius:999px;background:#213d29;color:#f8f8f2;font:inherit;font-size:16px;font-weight:400;cursor:pointer;transition:background-color .2s ease}
+  .p5-cert__close:hover{background:#2d5038}
+  .p5-cert__x:focus-visible,.p5-cert__close:focus-visible{outline:2px solid #213d29;outline-offset:3px}
+  .pdp-modal.p5-cert[open]{animation:p5c-fade .32s ease-out both}
+  /* fill-mode backwards (BUKAN both): animasi yang ditahan setelah selesai mengalahkan transform inline, sehingga sheet
+     tidak bisa mengikuti jari saat di-drag. */
+  .p5-cert[open] .p5-cert__sheet{animation:p5c-up .5s cubic-bezier(.32,.72,0,1) backwards}
+  .p5-cert[open] :is(.p5-cert__badges,.p5-cert__title,.p5-cert__row,.p5-cert__close){animation:p5c-rise .5s cubic-bezier(.16,1,.3,1) both}
+  .p5-cert[open] .p5-cert__badges{animation-delay:.08s}
+  .p5-cert[open] .p5-cert__title{animation-delay:.12s}
+  .p5-cert[open] .p5-cert__row:nth-child(1){animation-delay:.16s}
+  .p5-cert[open] .p5-cert__row:nth-child(2){animation-delay:.2s}
+  .p5-cert[open] .p5-cert__row:nth-child(3){animation-delay:.24s}
+  .p5-cert[open] .p5-cert__row:nth-child(4){animation-delay:.28s}
+  .p5-cert[open] .p5-cert__row:nth-child(5){animation-delay:.32s}
+  .p5-cert[open] .p5-cert__close{animation-delay:.36s}
+  .pdp-modal.p5-cert.is-closing{animation:p5c-fade .24s ease-in reverse both}
+  .p5-cert.is-closing .p5-cert__sheet{animation:p5c-down .24s cubic-bezier(.4,0,1,1) both}
+  @keyframes p5c-fade{from{opacity:0}to{opacity:1}}
+  @keyframes p5c-up{from{transform:translateY(100%)}to{transform:none}}
+  @keyframes p5c-down{from{transform:none}to{transform:translateY(100%)}}
+  @keyframes p5c-rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  @keyframes p5c-pop{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}
+  @keyframes p5c-sink{from{opacity:1;transform:none}to{opacity:0;transform:translateY(8px) scale(.98)}}
+  @media (min-width:640px){
+    .pdp-modal.p5-cert{place-items:center;padding:24px}
+    .p5-cert__sheet{width:440px;max-height:min(84vh,calc(100dvh - 48px));padding:28px 28px 28px;border-radius:24px;box-shadow:0 24px 64px rgba(33,61,41,.22)}
+    .p5-cert__grip{display:none}
+    .p5-cert[open] .p5-cert__sheet{animation-name:p5c-pop;animation-duration:.42s}
+    .p5-cert.is-closing .p5-cert__sheet{animation-name:p5c-sink;animation-duration:.2s}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .pdp-modal.p5-cert[open],.p5-cert[open] *,.pdp-modal.p5-cert.is-closing,.p5-cert.is-closing *{animation:none!important}
+  }
+</style>
+<script>
+  (function () {
+    var root = document.querySelector('[data-p5s]');
+    var show = root && root.querySelector('[data-p5s-show]');
+    if (!root) return;
+    var reduce = matchMedia('(prefers-reduced-motion: reduce)');
+    /* Dialog sertifikasi: × meneruskan ke tombol Close milik pdp4.js; saat [open] dicabut, .is-closing menahan dialog
+       240 ms agar animasi keluar sempat diputar. */
+    (function () {
+      var cert = document.getElementById('pdp4-bpom-modal');
+      if (!cert || !cert.classList.contains('p5-cert')) return;
+      var x = cert.querySelector('[data-p5-cert-x]'), was = false, t = null;
+      var sheet = cert.querySelector('.p5-cert__sheet'), list = cert.querySelector('.p5-cert__list');
+      var mobile = matchMedia('(max-width: 639px)');
+      /* Drag ke bawah untuk menutup — perilaku bottom sheet iOS: sheet menempel ke jari 1:1 (efek karet bila ditarik
+         ke atas), latar memudar sebanding jarak; dilepas → tutup bila jarak > 25% tinggi sheet atau kecepatan > 0,5 px/ms,
+         selain itu memantul kembali. Kurva iOS cubic-bezier(.32,.72,0,1). Mulai dari mana saja di sheet; dari dalam
+         daftar hanya bila daftar sudah di paling atas, supaya tidak bentrok dengan scroll daftar. */
+      var IOS = 'cubic-bezier(.32,.72,0,1)', d = null, raf2 = 0;
+      function paint() {
+        raf2 = 0;
+        if (!d) return;
+        var y = d.dy >= 0 ? d.dy : -Math.sqrt(-d.dy) * 2;
+        sheet.style.transform = 'translate3d(0,' + y + 'px,0)';
+        cert.style.backgroundColor = 'rgba(33,61,41,' + (0.38 * (1 - Math.min(1, Math.max(0, y) / d.h))).toFixed(3) + ')';
+      }
+      sheet.addEventListener('touchstart', function (e) {
+        if (!mobile.matches || e.touches.length > 1) return;
+        d = { y: e.touches[0].clientY, dy: 0, on: false, inList: list && list.contains(e.target), samples: [] };
+      }, { passive: true });
+      sheet.addEventListener('touchmove', function (e) {
+        if (!d) return;
+        var cy = e.touches[0].clientY, dy = cy - d.y;
+        if (!d.on) {
+          if (Math.abs(dy) < 6) return;
+          if (dy < 0 && d.inList) { d = null; return; }
+          if (d.inList && list.scrollTop > 0) { d = null; return; }
+          d.on = true; d.h = sheet.offsetHeight;
+          sheet.style.transition = 'none'; sheet.style.willChange = 'transform';
+        }
+        e.preventDefault();
+        d.dy = dy;
+        d.samples.push([performance.now(), cy]); if (d.samples.length > 5) d.samples.shift();
+        if (!raf2) raf2 = requestAnimationFrame(paint);
+      }, { passive: false });
+      function release() {
+        if (!d) return;
+        var g = d; d = null;
+        if (!g.on) return;
+        var sm = g.samples, v = 0;
+        if (sm.length > 1) { var a0 = sm[0], a1 = sm[sm.length - 1]; v = (a1[1] - a0[1]) / Math.max(1, a1[0] - a0[0]); }
+        var y = Math.max(0, g.dy);
+        sheet.style.willChange = '';
+        if (y > g.h * 0.25 || v > 0.5) {
+          /* Sisa jarak ditempuh lebih cepat bila dikibas: durasi menyesuaikan kecepatan (min 160, maks 320 ms). */
+          var rest = g.h - y, ms = Math.round(Math.min(320, Math.max(160, v > 0 ? rest / (v * 1.2) : 320)));
+          sheet.style.transition = 'transform ' + ms + 'ms ' + IOS;
+          sheet.style.transform = 'translate3d(0,100%,0)';
+          cert.style.transition = 'background-color ' + ms + 'ms ease-out';
+          cert.style.backgroundColor = 'rgba(33,61,41,0)';
+          setTimeout(function () {
+            cert.setAttribute('data-dragged', '');
+            cert.style.transition = '';
+            var c = document.getElementById('pdp4-bpom-close'); if (c) c.click();
+          }, ms);
+        } else {
+          sheet.style.transition = 'transform .5s ' + IOS;
+          sheet.style.transform = '';
+          cert.style.transition = 'background-color .3s ease-out';
+          cert.style.backgroundColor = '';
+          setTimeout(function () { if (!d) { sheet.style.transition = ''; cert.style.transition = ''; } }, 500);
+        }
+      }
+      sheet.addEventListener('touchend', release);
+      sheet.addEventListener('touchcancel', release);
+      if (x) x.addEventListener('click', function () { var c = document.getElementById('pdp4-bpom-close'); if (c) c.click(); });
+      new MutationObserver(function () {
+        var now = cert.hasAttribute('open');
+        if (was && !now && cert.hasAttribute('data-dragged')) {
+          /* Ditutup lewat drag: sheet sudah di luar layar, jangan putar animasi keluar lagi. */
+          cert.removeAttribute('data-dragged');
+          sheet.style.transform = sheet.style.transition = cert.style.backgroundColor = '';
+        } else if (was && !now && !reduce.matches) {
+          cert.classList.add('is-closing');
+          clearTimeout(t); t = setTimeout(function () { cert.classList.remove('is-closing'); }, 240);
+        }
+        if (now) { clearTimeout(t); cert.classList.remove('is-closing'); }
+        was = now;
+      }).observe(cert, { attributes: true, attributeFilter: ['open'] });
+    })();
+    /* Accordion: <details> native (aksesibel, jalan tanpa JS), tingginya dianimasikan dengan WAAPI. Transisi CSS murni
+       (interpolate-size / ::details-content) belum ada di Safari iOS, padahal mayoritas pengunjung pakai iPhone.
+       Klik di tengah animasi membalik arah dari tinggi saat itu, tanpa lompatan. Reduced motion: buka/tutup instan.
+       Tinggi awal saat tertutup = 0: isi <details> tertutup tetap melaporkan tingginya di Chrome. */
+    root.querySelectorAll('.p5s-acc__item').forEach(function (d) {
+      var body = d.querySelector('.p5s-acc__body'), anim = null;
+      d.querySelector('summary').addEventListener('click', function (e) {
+        if (reduce.matches || !body.animate) return;
+        e.preventDefault();
+        var closing = d.open && !d.classList.contains('is-closing');
+        var from = d.open ? body.getBoundingClientRect().height : 0, pad = getComputedStyle(body).paddingBottom;
+        if (anim) anim.cancel();
+        if (closing) {
+          d.classList.add('is-closing');
+          anim = body.animate([{ height: from + 'px' }, { height: '0px', paddingBottom: '0px' }], { duration: 260, easing: 'cubic-bezier(.4,0,.2,1)' });
+          anim.onfinish = function () { d.open = false; d.classList.remove('is-closing'); anim = null; };
+        } else {
+          d.classList.remove('is-closing');
+          d.open = true;
+          var to = body.getBoundingClientRect().height;
+          anim = body.animate([{ height: (from || 0) + 'px', paddingBottom: from ? pad : '0px' }, { height: to + 'px', paddingBottom: pad }], { duration: 300, easing: 'cubic-bezier(.2,.7,.2,1)' });
+          anim.onfinish = function () { anim = null; };
+        }
+      });
+    });
+    /* Sekuens foto "Our process" (pengganti GIF Figma, 1 dtk/frame). Hanya berputar saat kartunya terlihat dan tab
+       aktif; frame berikut ditampilkan hanya bila sudah selesai dimuat, jadi tidak pernah ada kotak kosong.
+       Reduced motion: tetap di frame pertama. */
+    /* Scope sendiri: blok testimoni di bawah juga memakai nama timer/step — dengan var/function bersama, timer
+       sekuens tertimpa dan foto berhenti di frame pertama. */
+    (function () {
+      var seqs = root.querySelectorAll('[data-p5s-seq]'), seen = [], timer = null;
+      function step() {
+        seen.forEach(function (s) {
+          var f = s.children, k = +s.getAttribute('data-k') || 0, n = (k + 1) % f.length;
+          if (f.length < 2 || !f[n].complete || !f[n].naturalWidth) return;
+          f[k].classList.remove('is-on');
+          f[n].classList.add('is-on');
+          s.setAttribute('data-k', n);
+        });
+      }
+      function sync() {
+        var run = seen.length && !document.hidden && !reduce.matches;
+        if (run && !timer) timer = setInterval(step, 1000);
+        if (!run && timer) { clearInterval(timer); timer = null; }
+      }
+      if (seqs.length && 'IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            var at = seen.indexOf(e.target);
+            if (e.isIntersecting && at < 0) seen.push(e.target);
+            if (!e.isIntersecting && at > -1) seen.splice(at, 1);
+          });
+          sync();
+        }, { threshold: 0.25 });
+        seqs.forEach(function (s) { io.observe(s); });
+        document.addEventListener('visibilitychange', sync);
+      }
+    })();
+    if (!show) return;
+    /* Testimoni: track scroll-snap native (drag jari di ponsel), drag mouse di desktop, auto-slide tiap DUR ms.
+       Interaksi (sentuh, drag, ketuk titik, geser horizontal trackpad) = jeda, lanjut sendiri IDLE ms kemudian;
+       scroll vertikal halaman tidak dihitung. Titik aktif dihitung dari posisi scroll, jadi selalu cocok dengan kartu
+       yang terlihat. Auto-slide hanya saat terlihat & tab aktif; reduced motion = tanpa auto-slide, geser instan. */
+    var track = show.querySelector('[data-p5s-track]');
+    var DUR = 3000, IDLE = 6000;
+    var real = [].slice.call(track.children), N = real.length, dots = [].slice.call(show.querySelectorAll('.p5s-rev__dot'));
+    if (!N) return;
+    /* Putaran tanpa ujung: salinan kartu terakhir di depan + salinan kartu pertama di belakang (aria-hidden). Geser
+       dari kartu 5 ke salinan kartu 1 tetap MAJU; begitu geseran berhenti di salinan, posisi dipindah diam-diam
+       (tanpa animasi) ke kartu aslinya. Posisi track: 0 = salinan terakhir, 1..N = kartu asli, N+1 = salinan pertama. */
+    if (N > 1) {
+      var head = real[N - 1].cloneNode(true), tail = real[0].cloneNode(true);
+      [head, tail].forEach(function (c) { c.setAttribute('aria-hidden', 'true'); c.setAttribute('data-clone', ''); c.removeAttribute('aria-label'); });
+      track.insertBefore(head, real[0]);
+      track.appendChild(tail);
+    }
+    var cards = [].slice.call(track.children), off = N > 1 ? 1 : 0;
+    var cur = 0, timer = null, idle = null, held = false, inView = false, raf = 0, settle = 0;
+    function step() { return cards.length > 1 ? cards[1].offsetLeft - cards[0].offsetLeft : track.clientWidth; }
+    function pos() { return Math.round(track.scrollLeft / step()); }
+    function jump(p) { track.scrollTo({ left: p * step(), behavior: 'instant' }); }
+    function to(p, smooth) { track.scrollTo({ left: p * step(), behavior: smooth && !reduce.matches ? 'smooth' : 'instant' }); }
+    jump(off);
+    function mark() {
+      raf = 0;
+      var n = ((pos() - off) % N + N) % N;
+      if (n === cur) return;
+      dots[cur].classList.remove('is-on'); dots[cur].removeAttribute('aria-current');
+      real[cur].setAttribute('aria-hidden', 'true');
+      cur = n;
+      dots[n].classList.add('is-on'); dots[n].setAttribute('aria-current', 'true');
+      real[n].removeAttribute('aria-hidden');
+    }
+    function settled() {
+      settle = 0;
+      if (track.classList.contains('is-dragging')) return;
+      var p = pos();
+      if (off && p === 0) jump(N);
+      else if (off && p === N + 1) jump(1);
+      arm();
+    }
+    real.forEach(function (c, k) { if (k) c.setAttribute('aria-hidden', 'true'); });
+    track.addEventListener('scroll', function () {
+      if (!raf) raf = requestAnimationFrame(mark);
+      clearTimeout(settle); settle = setTimeout(settled, 140);
+    }, { passive: true });
+    function arm() {
+      clearTimeout(timer);
+      if (!inView || held || document.hidden || reduce.matches) return;
+      timer = setTimeout(function () { to(pos() + 1, true); }, DUR);
+    }
+    function hold() {
+      held = true; clearTimeout(timer); clearTimeout(idle);
+      idle = setTimeout(function () { held = false; arm(); }, IDLE);
+    }
+    dots.forEach(function (d, k) { d.addEventListener('click', function () { hold(); to(k + off, true); }); });
+    ['touchstart', 'touchmove'].forEach(function (ev) { track.addEventListener(ev, hold, { passive: true }); });
+    track.addEventListener('wheel', function (e) { if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) hold(); }, { passive: true });
+    /* Drag mouse (desktop). Sentuhan memakai scroll native, jadi hanya pointerType mouse/pen yang ditangani. */
+    var drag = null;
+    track.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'touch' || e.button !== 0) return;
+      hold();
+      drag = { x: e.clientX, left: track.scrollLeft, id: e.pointerId, moved: false };
+    });
+    track.addEventListener('pointermove', function (e) {
+      if (!drag) return;
+      var dx = e.clientX - drag.x;
+      if (!drag.moved && Math.abs(dx) > 4) { drag.moved = true; track.classList.add('is-dragging'); track.setPointerCapture(drag.id); }
+      if (drag.moved) track.scrollLeft = drag.left - dx;
+    });
+    function endDrag(e) {
+      if (!drag) return;
+      var d = drag, dx = e.clientX - d.x; drag = null;
+      if (!d.moved) return;
+      track.classList.remove('is-dragging');
+      var base = Math.round(d.left / step());
+      to(Math.abs(dx) > step() * 0.15 ? base + (dx < 0 ? 1 : -1) : base, true);
+    }
+    track.addEventListener('pointerup', endDrag);
+    track.addEventListener('pointercancel', endDrag);
+    track.addEventListener('click', function (e) { if (track.classList.contains('is-dragging')) e.preventDefault(); }, true);
+    document.addEventListener('visibilitychange', arm);
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) { inView = es[0].isIntersecting; arm(); }, { threshold: 0.5 }).observe(show);
+    } else { inView = true; arm(); }
+  })();
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "PDP5 Story",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "text",
+      "id": "handles",
+      "label": "Only show for these product handles (comma separated)"
+    },
+    {
+      "type": "url",
+      "id": "cert_url",
+      "label": "Certifications button link"
+    },
+    {
+      "type": "url",
+      "id": "farm_url",
+      "label": "Farm & Factory button link"
+    }
+  ],
+  "presets": [{ "name": "PDP5 Story" }]
+}
+{% endschema %}
