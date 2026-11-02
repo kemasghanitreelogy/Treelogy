@@ -1076,5 +1076,186 @@
         "desc_html": "Sendok khas kami untuk menakar sajian harianmu."
       }
     }
+  },
+  "pdp5": {
+    "buybox": {
+      "score": "4.96 / 5",
+      "count": "250 ulasan",
+      "title_html": "<strong>Organic Moringa Capsules</strong><br>untuk meredakan peradangan<br>di balik gerak, energi, dan<br>proses menua.",
+      "check_1": "Sendi lebih lentur saat bergerak",
+      "check_2": "Energi stabil tanpa kafein, tanpa lemas",
+      "check_3": "Pencernaan lancar dengan serat alami",
+      "check_4": "Mendukung tekanan darah lebih sehat",
+      "check_5": "Mendukung gula darah seimbang",
+      "pick": "Pilih Paket Anda",
+      "guarantee_html": "<strong>Garansi</strong> uang kembali <strong>60 hari</strong>"
+    },
+    "packs": {
+      "most_chosen": "Paling dipilih",
+      "assure_1_html": "<strong>Stok tersedia</strong> · Pengiriman <strong>3 sampai 5 hari</strong>",
+      "assure_2_html": "<strong>Garansi</strong> uang kembali <strong>60 hari</strong>",
+      "assure_3_html": "<strong>Harga terendah</strong> di <strong>website</strong> ini",
+      "ship": "Gratis ongkir ke Indonesia"
+    },
+    "story": {
+      "reviews": {
+        "verified": "Terverifikasi",
+        "r1": {
+          "name": "Dewi",
+          "quote": "“Sakit lutut dan pegal-pegal badan hilang.”"
+        },
+        "r2": {
+          "name": "Ratna",
+          "quote": "“Tidur nyenyak, bangun pagi segar, stamina buat olahraga meningkat drastis.”"
+        },
+        "r3": {
+          "name": "Maya",
+          "quote": "“Awalnya skeptis, tapi  tidur lelap, mood stabil, pencernaan lancar.”"
+        },
+        "r4": {
+          "name": "Andini",
+          "quote": "“Gejala menopause saya jauh berkurang, tiap hari berjalan dengan happy.”"
+        },
+        "r5": {
+          "name": "Sari",
+          "quote": "“Mens jadi gak sakit kepala, gak kram parah, energi ada.”"
+        }
+      },
+      "accordion": {
+        "a1": "Komposisi",
+        "a2": "Cocok untuk Siapa",
+        "a3": "Cara Minum",
+        "a4": "Kualitas dan Sertifikasi",
+        "b1_html": "<p><strong>Isi</strong></p><ul><li>100% daun moringa organik (Moringa oleifera), 400 mg per kapsul</li><li>Cangkang HPMC nabati</li><li>Tanpa batang, pengisi, pengikat, atau pengawet</li><li>Daun utuh, bukan ekstrak, dengan semua senyawa alaminya</li></ul><p><strong>Cara pembuatan</strong></p><ul><li>Dipanen di kebun kami di Bali</li><li>Batang dipisah manual dalam 4 jam setelah panen</li><li>Didehidrasi di suhu 38°C selama 22 jam</li><li>Digiling dan dikapsulkan di pabrik kami sendiri</li></ul>",
+        "b2_html": "<p>Cocok untuk kebanyakan orang dewasa, terutama jika kamu:</p><ul><li>Ingin menekan peradangan secara alami</li><li>Ingin melindungi sel dari oksidasi harian</li><li>Mengalami perubahan hormon: haid, pascamelahirkan, perimenopause, menopause</li><li>Bangun tidur badan kaku, atau lama pulih setelah olahraga</li><li>Tenaga cepat habis dan ingin energi stabil tanpa kafein</li><li>Ingin menjaga pencernaan</li><li>Memantau gula darah atau tekanan darah, dengan pola hidup sehat</li><li>Sering stres atau kurang tidur</li><li>Ingin menua dengan sehat</li></ul>",
+        "b3_html": "<ul><li>3 kapsul sehari, pagi hari bersama makanan</li><li>Baru coba moringa? Mulai 2 kapsul sehari, 3 hari pertama</li><li>Minum setiap hari: rutin lebih penting dari dosis</li><li>Untuk pria dan wanita</li></ul>",
+        "b4_html": "<ul><li>BPOM: obat tradisional, POM TR253017851, berlaku s.d. 2030</li><li>Organik: USDA Organic (NOP 4080207676, CERES) dan EU Organic</li><li>Halal: BPJPH ID51210022336550525</li><li>Diuji: setiap batch, sebelum keluar dari pabrik</li><li>Masa simpan: 24 bulan, tanggal kedaluwarsa ada di label</li></ul>"
+      },
+      "expect": {
+        "eyebrow": "yang bisa dirasakan",
+        "heading_html": "Rasakan bedanya saat tubuh kembali seimbang.",
+        "body": "Titik awal setiap tubuh berbeda, jadi yang dirasakan pun berbeda. Yang pasti: daunnya bekerja sejak kapsul pertama, dan manfaatnya bertambah selama rutin diminum.",
+        "t1": {
+          "title": "Bekerja sejak hari pertama",
+          "when": "Hari 1",
+          "desc_html": "Antioksidannya mulai membantu melindungi sel sejak kapsul pertama. Belum terasa, tapi inilah fondasi untuk semua manfaat berikutnya."
+        },
+        "t2": {
+          "title": "Perut lebih ringan",
+          "when": "Minggu Pertama",
+          "desc_html": "Biasanya ini yang pertama terasa. Daun utuhnya bekerja langsung di saluran cerna."
+        },
+        "t3": {
+          "title": "Energi lebih stabil",
+          "when": "Minggu 2-4",
+          "desc_html": "Energi bertahan sepanjang hari, tidak gampang lemas. Ada yang merasakannya dalam hitungan hari, ada yang butuh beberapa minggu."
+        },
+        "t4": {
+          "title": "Gerak lebih leluasa",
+          "when": "Bulan 1-2",
+          "desc_html": "Badan terasa lebih ringan, lebih leluasa bergerak, dan lebih cepat pulih. Peradangan mereda perlahan, jadi manfaatnya terbangun bertahap."
+        },
+        "t5": {
+          "title": "Hasil cek membaik",
+          "when": "Bulan 3",
+          "desc_html": "Gula darah dan tekanan darah berubah perlahan. Paling cepat, hasil cek baru bisa menunjukkan bedanya di bulan ketiga."
+        },
+        "t6": {
+          "title": "Tetap seimbang",
+          "when": "Dari 3 bulan +",
+          "desc_html": "Di sinilah konsistensi membuahkan hasil. Terus lanjutkan, dan manfaatnya ikut bertahan."
+        },
+        "note_html": "Beri waktu tiga bulan, lalu nilai dari yang kamu rasakan.<br>Berdasarkan laporan pelanggan dan riset terpublikasi."
+      },
+      "how": {
+        "eyebrow": "cara kerjanya",
+        "heading_html": "90+ nutrisi bekerja bersama untuk merawat tubuh dari dalam.",
+        "body_html": "Moringa adalah salah satu tanaman paling padat nutrisi di bumi, dan satu-satunya sumber umum moringin, senyawa antiinflamasi yang langka. Bersama-sama, keduanya bekerja tiga arah sekaligus: menutrisi tubuh, melindungi sel, dan membantu meredakan peradangan.",
+        "diagram_alt": "Polifenol, antioksidan, asam amino, mineral, vitamin, dan moringin dalam satu daun moringa",
+        "c1": {
+          "eyebrow": "01 - MENUTRISI TUBUH",
+          "title": "Bukan ekstrak. Daun utuh.",
+          "body_html": "Kesehatan dimulai dari usus: hanya yang diserap yang bisa bekerja. Nutrisi yang diisolasi dan diproses sering kali terbuang. Moringa memberi <strong>matriks nutrisi</strong> utuh yang saling membantu penyerapan, jadi tubuh benar-benar memakai apa yang dikonsumsi.",
+          "pill1": "MATRIKS DAUN UTUH",
+          "pill2": "PENYERAPAN USUS"
+        },
+        "c2": {
+          "eyebrow": "02 - MELINDUNGI SEL",
+          "title": "Cegah kerusakan sejak awal.",
+          "body_html": "Stres, gula, dan kurang tidur mengikis sel setiap hari. <strong>Moringin</strong>, senyawa langka dalam moringa, mengaktifkan jalur <strong>Nrf2</strong>, saklar pertahanan sel, agar sel membuat antioksidannya sendiri seperti glutation, bahkan setelah senyawanya habis.",
+          "pill1": "AKTIVASI NRF2",
+          "pill2": "GLUTATION"
+        },
+        "c3": {
+          "eyebrow": "03 - MEREDAKAN PERADANGAN",
+          "title": "Badan ringan, gerak leluasa",
+          "body_html": "Peradangan ringan yang menahun diam-diam membuat sendi kaku, tenaga cepat habis, dan ikut menaikkan gula darah serta tekanan darah. <strong>Moringin</strong> meredam jalur <strong>NF-κB</strong>, saklar peradangan sel, sehingga peradangan mereda dan tidak berlarut-larut.",
+          "pill1": "REGULASI NF-κB",
+          "pill2": "KESEIMBANGAN PERADANGAN"
+        }
+      },
+      "why": {
+        "eyebrow": "KENAPA Treelogy",
+        "heading_html": "Daun murni,<br> dari tanah kami<br> sampai ke kapsul.",
+        "body_html": "Kebanyakan moringa digiling bersama batang dan dikeringkan berhari-hari. Moringa kami dari kebun organik di Bali, batangnya dipisah manual dalam 4 jam setelah panen, lalu didehidrasi agar senyawa pelindung sel terjaga.",
+        "cta": "Lihat sertifikasi kami"
+      },
+      "table": {
+        "others": "Lainnya",
+        "r1": {
+          "label": "Proses",
+          "ours": "22 jam di suhu 38°C",
+          "theirs": "Matahari / oven"
+        },
+        "r2": {
+          "label": "Kualitas",
+          "ours": "Bebas batang",
+          "theirs": "Dengan batang"
+        },
+        "r3": {
+          "label": "Asal",
+          "ours": "Kebun sendiri",
+          "theirs": "Pengepul"
+        },
+        "r4": {
+          "label": "Sertifikasi",
+          "ours": "USDA Organic, Halal",
+          "theirs": "Biasanya tidak ada"
+        },
+        "r5": {
+          "label": "BPOM",
+          "ours": "Obat tradisional",
+          "theirs": "Pangan / tak ada"
+        },
+        "r6": {
+          "label": "Refund",
+          "ours": "Garansi 60 hari",
+          "theirs": "Tidak ada"
+        }
+      },
+      "process": {
+        "eyebrow": "proses kami",
+        "heading_html": "Setiap langkah,<br> di tangan kami sendiri.",
+        "body": "Dari panen saat subuh sampai kapsul di dalam kaleng, setiap langkah terjadi di kebun dan pabrik kami di Bali.",
+        "cta": "Kenali Kebun & Pabrik Kami",
+        "s1": {
+          "title": "01 · Pertanian regeneratif",
+          "body": "Moringa kami tumbuh di tanah yang hidup. Kami membuat kompos sendiri, melibatkan hewan di lahan, dan merawat tanah, bukan mengurasnya. Tanah yang sehat menumbuhkan daun yang lebih sehat, dari musim ke musim."
+        },
+        "s2": {
+          "title": "02 · Kemurnian bebas batang",
+          "body": "Setiap batang dipisahkan dengan tangan. Satu ibu pemilah hanya bisa memilah 65 gram daun segar per jam, setara 12 gram bubuk, kira-kira 30 kapsul. Prosesnya lambat, dan karena itulah hanya daun murni yang masuk ke dalam kaleng."
+        },
+        "s3": {
+          "title": "03 · Pengeringan perlahan, suhu rendah",
+          "body": "Daun dikeringkan perlahan di suhu 38°C selama 22 jam, cukup rendah untuk menjaga senyawa alaminya. Tanpa ekstraksi, tanpa isolasi: daun utuh, seperti yang dibuat alam."
+        },
+        "s4": {
+          "title": "04 · Dibuat di pabrik sendiri",
+          "body": "Digiling, dikapsulkan, dan diuji di pabrik kami sendiri, hanya beberapa menit dari kebun. Dari panen sampai kaleng tersegel, daunnya tidak pernah keluar dari tangan kami."
+        }
+      },
+      "press": "DILIPUT OLEH"
+    }
   }
 }

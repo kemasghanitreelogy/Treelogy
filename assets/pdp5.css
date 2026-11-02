@@ -1,0 +1,147 @@
+/* pdp5 — tata ulang hero, paket & FAQ pdp4 ke Figma "390w light" (node 2920:5629).
+   Hanya di bawah 960 px (Figma = frame ponsel 390); desktop tetap memakai susunan pdp4.
+   Semua ukuran = koordinat Figma ÷ 3,0128. Markup & JS pdp4 tidak diganti — kelas
+   `.p5` dipasang di pembungkus .pdp4-page section buybox, packs dan faq. */
+
+.pdp4-page.p5{font-optical-sizing:none;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+.pdp4-page.p5 .p5-rating,.pdp4-page.p5 .p5-checks,.pdp4-page.p5 .p5-pick,.pdp4-page.p5 .p5-guarantee{font-family:Inter,sans-serif}
+
+/* ---------- Komponen baru di buybox (berlaku di semua lebar) ---------- */
+.pdp4-page.p5 .p5-rating{display:flex;align-items:center;gap:8px;height:20px;color:#213d29;text-decoration:none}
+.pdp4-page.p5 .p5-rating .pdp-faces{display:flex;margin:0}
+.pdp4-page.p5 .p5-rating .pdp-faces img{width:24px;height:24px;margin:0 -8px 0 0;border:1px solid #f8f8f2;border-radius:50%;object-fit:cover}
+.pdp4-page.p5 .p5-rating .pdp-faces img:last-child{margin-right:0}
+.pdp4-page.p5 .p5-rating__score{font-size:14px;line-height:19.6px;font-weight:600;white-space:nowrap}
+.pdp4-page.p5 .p5-rating__stars{display:block;width:72px;height:15.35px}
+.pdp4-page.p5 .p5-rating__count{font-size:14px;line-height:19.6px;font-weight:300;white-space:nowrap}
+.pdp4-page.p5 .p5-rating__count u{text-decoration-thickness:from-font;text-underline-position:from-font}
+.pdp4-page.p5 .p5-h1{font-size:30px;line-height:36px;font-weight:300;letter-spacing:-.64px;color:#213d29}
+.pdp4-page.p5 .p5-h1 strong{font-weight:700}
+/* Gaya dasar memberi text-wrap:balance; Figma membungkus biasa (baris diisi penuh). */
+.pdp4-page.p5 .p5-h1{text-wrap:wrap}
+/* Frame Figma PDP OMC ID memakai H1 lebih kecil (80u = 26,55/33,2 px) agar kalimat ID yang lebih panjang tetap 4 baris. */
+html[lang="id"] .pdp4-page.p5 .p5-h1{font-size:26.55px;line-height:33.2px}
+/* Baris H1 dikunci dengan <br> (locale) persis Figma. Di bawah lebar 390 huruf ikut mengecil sebanding lebar kolom
+   (358 px di Figma) supaya tidak ada baris yang terlipat lagi; di 390+ tetap ukuran Figma. */
+@media (max-width:389px){
+  .pdp4-page.p5 .p5-h1{font-size:calc((100vw - 32px) * 30 / 358);line-height:1.2}
+  html[lang="id"] .pdp4-page.p5 .p5-h1{font-size:calc((100vw - 32px) * 26.55 / 358);line-height:1.25}
+}
+.pdp4-page.p5 .p5-checks{position:relative;margin:0;padding:0;list-style:none;min-height:126px;padding-top:7px}
+.pdp4-page.p5 .p5-checks li{position:relative;padding-left:25px;font-size:16px;line-height:23.8px;font-weight:300;letter-spacing:-.18px;color:#536c3c}
+.pdp4-page.p5 .p5-checks img{position:absolute;left:0;top:3px;width:16px;height:16px}
+.pdp4-page.p5 .p5-pick{display:flex;align-items:center;justify-content:center;width:100%;height:56px;border-radius:999px;background:#213d29;color:#f8f8f2;font-size:16px;line-height:16px;font-weight:300;letter-spacing:-.16px;text-decoration:none}
+.pdp4-page.p5 .p5-guarantee{display:flex;align-items:center;justify-content:center;gap:0;margin:0;font-size:12px;line-height:23.4px;font-weight:400;letter-spacing:-.18px;color:#213d29}
+.pdp4-page.p5 .p5-guarantee img{width:31px;height:31px}
+/* Figma: ikon 31 px + kotak teks 173 px (521u) dengan isi rata tengah — jarak ikon→huruf pertama ikut dari situ. */
+.pdp4-page.p5 .p5-guarantee span{min-width:173px;text-align:center}
+.pdp4-page.p5 .p5-guarantee strong,.pdp4-page.p5 .p5-assure strong{font-weight:600}
+/* Jaminan: kolom ikon tetap 24 px + teks rata kiri; blok selebar isinya lalu di tengah. Panjang teks per bahasa
+   bebas berubah tanpa ikon/teks bergeser (dulu lebar per baris dikunci ke copy EN). */
+.pdp4-page.p5 .p5-assure{display:grid;row-gap:0;width:max-content;max-width:100%;margin:0 auto;padding:0;list-style:none}
+.pdp4-page.p5 .p5-assure li{display:grid;grid-template-columns:24px auto;column-gap:8px;align-items:center;min-height:24px;font-size:14px;line-height:23.4px;font-weight:300;letter-spacing:-.18px;color:#213d29;white-space:nowrap}
+.pdp4-page.p5 .p5-assure li img{justify-self:center}
+.pdp4-page.p5 .p5-assure li span{text-align:left}
+
+@media (max-width:959px){
+  /* Hero: mulai 8 px di bawah header, slide 350×438 + intip slide berikutnya, jarak 8 — dalam satuan --p5u
+     (lebar layar / 390), jadi di ponsel lebih lebar dari frame Figma galeri ikut membesar sebanding, bukan terkunci px. */
+  .pdp4-page.p5{--p5u:calc(100vw / 390)}
+  .pdp4-page.p5 #pdp4-hero{padding-top:8px!important;padding-bottom:0!important}
+  .pdp4-page.p5 .pdp-hero{display:block!important;gap:0!important}
+  .pdp4-page.p5 .pdp-gallery{display:flex!important;gap:calc(8 * var(--p5u))!important;margin:0 -16px!important;padding:0 16px!important;height:calc(438 * var(--p5u))!important;border-radius:0!important;scroll-padding:0 16px}
+  .pdp4-page.p5 .pdp-slide{flex:0 0 calc(350 * var(--p5u))!important;width:calc(350 * var(--p5u))!important;height:calc(438 * var(--p5u))!important;border-radius:16px!important;overflow:hidden}
+  .pdp4-page.p5 .pdp-slide img,.pdp4-page.p5 .pdp-slide video{width:100%!important;height:100%!important;object-fit:cover!important;border-radius:16px!important}
+  .pdp4-page.p5 .pdp-thumbs{display:flex!important;gap:calc(8 * var(--p5u))!important;margin:15px -16px 0!important;padding:0 16px!important;height:calc(48 * var(--p5u))!important}
+  .pdp4-page.p5 .pdp-thumbs button{flex:0 0 calc(48 * var(--p5u))!important;width:calc(48 * var(--p5u))!important;height:calc(48 * var(--p5u))!important;padding:0!important;border:0!important;border-radius:4px!important;background:#e2e8d3!important;opacity:.8;overflow:hidden;position:relative;outline:0!important;box-shadow:none!important}
+  .pdp4-page.p5 .pdp-thumbs button[aria-current="true"]{opacity:1}
+  .pdp4-page.p5 .pdp-thumbs button[aria-current="true"]::after{content:"";position:absolute;inset:1px;border:1px solid #213d29;border-radius:3px}
+  .pdp4-page.p5 .pdp-thumbs img{width:100%!important;height:100%!important;object-fit:cover!important;border-radius:4px!important}
+
+  /* Kolom info: rating 15 di bawah thumb; judul +17; daftar +15; tombol +37,4; jaminan +9. */
+  .pdp4-page.p5 .pdp-hero > div:nth-child(2){gap:0!important;margin-top:15px!important}
+  .pdp4-page.p5 .pdp-hero > div:nth-child(2) > .sk-stack:first-child{gap:0!important}
+  .pdp4-page.p5 .p5-h1{margin-top:17px!important}
+  .pdp4-page.p5 .p5-checks{margin-top:15px!important}
+  .pdp4-page.p5 .p5-pick{margin-top:37.4px!important}
+  .pdp4-page.p5 .p5-guarantee{margin-top:9px!important;height:31px}
+
+  /* Paket: mulai 37,7 di bawah jaminan (15 + 11,1 ruang pita + 11,6). */
+  .pdp4-page.p5 #pdp4-packs{padding:0!important;margin-top:48.7px!important}
+  .pdp4-page.p5 #pdp4-packs > .sk-stack,.pdp4-page.p5 #AddToCartForm{gap:0!important}
+  .pdp4-page.p5 #pdp4-packform{gap:12px!important}
+  .pdp4-page.p5 .pdp-pack{position:relative;display:block!important;padding:16px!important;border:1px solid #d0d7c6!important;border-radius:16px!important;background:transparent!important;box-shadow:none!important}
+  .pdp4-page.p5 .pdp-pack:has(> input:checked){border-color:#213d29!important;box-shadow:inset 0 0 0 1.5px #213d29!important;background:#eef2e6!important}
+  .pdp4-page.p5 .pdp-pack__tag{position:absolute!important;left:15px!important;top:-13px!important;height:24px!important;padding:0 8px!important;border-radius:999px!important;background:#f5d053!important;color:#213d29!important;font-size:12px!important;line-height:24px!important;font-weight:500!important;letter-spacing:-.06px!important;transform:none!important}
+  .pdp4-page.p5 .pdp-pack__top{display:flex!important;align-items:center!important;justify-content:space-between!important;margin:0!important}
+  .pdp4-page.p5 .pdp-pack__top .sk-title{font-size:20px!important;line-height:28px!important;font-weight:300!important;letter-spacing:-.2px!important;color:#213d29!important}
+  .pdp4-page.p5 .pdp-pack__top .sk-badge{height:24px!important;padding:0 8px!important;border-radius:999px!important;background:#e7eab0!important;color:#213d29!important;font-size:12px!important;line-height:12px!important;font-weight:500!important;letter-spacing:-.06px!important}
+  .pdp4-page.p5 .pdp-pack__body{display:flex!important;gap:8px!important;align-items:flex-end!important;margin-top:8px!important}
+  .pdp4-page.p5 .pdp-pack__body > .sk-stack{flex:1 1 auto!important;gap:8px!important;min-width:0}
+  .pdp4-page.p5 .pdp-price{display:flex!important;align-items:baseline!important;gap:8px!important;margin:0 0 16px!important}
+  .pdp4-page.p5 .pdp-price .sk-h3{font-size:24px!important;line-height:28.8px!important;font-weight:300!important;letter-spacing:-.36px!important;color:#213d29!important}
+  .pdp4-page.p5 .pdp-price .sk-small{font-size:14px!important;line-height:19.6px!important;font-weight:300!important;letter-spacing:-.07px!important;color:#536c3c!important}
+  .pdp4-page.p5 .pdp-pack__body .sk-small{font-size:14px!important;line-height:19.6px!important;font-weight:300!important;letter-spacing:-.07px!important}
+  .pdp4-page.p5 .pdp-pack__body p.sk-num{color:#213d29!important}
+  .pdp4-page.p5 .pdp-pack__body .sk-strike{color:rgba(33,61,41,.5)!important}
+  .pdp4-page.p5 .pdp-pack__body .sk-text-secondary{color:#536c3c!important}
+  .pdp4-page.p5 .p5-nosave .pdp-pack__body > .sk-stack{display:block!important}
+  .pdp4-page.p5 .p5-nosave .pdp-pack__body > .sk-stack > p.sk-num,.pdp4-page.p5 .p5-nosave .pdp-pack__body > .sk-stack > p.sk-num + p{display:inline!important}
+  .pdp4-page.p5 .p5-nosave .pdp-pack__body > .sk-stack > p.sk-num::after{content:", "}
+  .pdp4-page.p5 .p5-nosave .pdp-pack__body > .sk-stack > p.sk-num + p{color:#4a6741!important}
+  .pdp4-page.p5 .pdp-gift{font-size:14px!important;line-height:17.5px!important;font-weight:500!important;letter-spacing:-.07px!important;color:#213d29!important;text-align:right}
+  .pdp4-page.p5 .pdp-gift img{width:19.3px!important;height:56px!important;object-fit:contain}
+  .pdp4-page.p5 .pdp-tins--3{width:124px!important;height:65.5px!important;object-fit:contain}
+  .pdp4-page.p5 .pdp-tins--2{width:93px!important;height:65.5px!important;object-fit:contain}
+  .pdp4-page.p5 .pdp-tins--1{width:62px!important;height:65.5px!important;object-fit:contain}
+
+  /* Jarak dalam kartu mengikuti Figma per kartu (Label 1/2/3 di node "selector"). */
+  .pdp4-page.p5 #pdp4-packform > label:nth-of-type(1) .pdp-pack__body{align-items:center!important}
+  .pdp4-page.p5 #pdp4-packform > label:nth-of-type(1){padding-bottom:17.2px!important}
+  .pdp4-page.p5 #pdp4-packform > label:nth-of-type(1) .pdp-pack__vis{display:flex!important;flex-direction:column!important;justify-content:space-between!important;align-items:flex-end!important;gap:0!important;align-self:stretch;padding:4px 8px 0 0}
+  .pdp4-page.p5 #pdp4-packform > label:nth-of-type(2){min-height:134px;padding:11px 16px 2px!important}
+  .pdp4-page.p5 #pdp4-packform > label:nth-of-type(2) .pdp-pack__body{margin-top:0!important;height:82px;align-items:flex-end!important}
+  .pdp4-page.p5 #pdp4-packform > label:nth-of-type(2) .pdp-pack__body > .sk-stack{gap:0!important;align-self:flex-start}
+  .pdp4-page.p5 #pdp4-packform > label:nth-of-type(2) .pdp-price{margin-bottom:5.2px!important}
+  /* Figma kartu 2 bulan hanya memuat jumlah kapsul — baris ongkir disembunyikan seperti di desain. */
+  .pdp4-page.p5 #pdp4-packform > label:nth-of-type(2) .pdp-pack__body > .sk-stack > p:nth-child(n+4){display:none!important}
+  .pdp4-page.p5 #pdp4-packform > label:nth-of-type(3) .pdp-pack__top{height:21px}
+  .pdp4-page.p5 #pdp4-packform > label:nth-of-type(3) .pdp-pack__body{height:56px;align-items:flex-end!important}
+  .pdp4-page.p5 #pdp4-packform > label:nth-of-type(3) .pdp-price{margin-bottom:8.2px!important}
+  .pdp4-page.p5 #pdp4-packform > label:nth-of-type(3) .pdp-pack__body > .sk-stack{align-self:flex-start}
+
+  /* Tombol beli: 15 di bawah kartu terakhir, 358×56; jaminan 12 di bawahnya. */
+  .pdp4-page.p5 #AddToCart{margin-top:26.1px!important;height:56px!important;min-height:56px!important;border-radius:999px!important;background:#213d29!important;color:#f8f8f2!important;font-size:16px!important;line-height:16px!important;font-weight:300!important;letter-spacing:-.16px!important}
+  .pdp4-page.p5 .p5-assure{margin-top:12px!important}
+
+  /* FAQ (Figma Background 2920:6202). */
+  .pdp4-page.p5 #pdp4-faq{padding:41px 16px 64px!important}
+  .pdp4-page.p5 #pdp4-faq > .pdp-wrap{gap:24px!important}
+  .pdp4-page.p5 #pdp4-faq > .pdp-wrap > .sk-stack{gap:11.2px!important}
+  .pdp4-page.p5 #pdp4-faq .sk-eyebrow{font-size:12px!important;line-height:13.2px!important;font-weight:500!important;letter-spacing:.24px!important;color:#536c3c!important}
+  .pdp4-page.p5 #pdp4-faq .sk-h2{font-size:24px!important;line-height:26.4px!important;font-weight:300!important;letter-spacing:-.36px!important;color:#213d29!important}
+  .pdp4-page.p5 #pdp4-faq .sk-accordion{border-top:1px solid rgba(33,61,41,.1)!important}
+  .pdp4-page.p5 #pdp4-faq .sk-accordion > details{border-bottom:1px solid rgba(33,61,41,.1)!important}
+  .pdp4-page.p5 #pdp4-faq .sk-accordion summary{padding:16px 0!important;min-height:0!important;font-size:16px!important;line-height:22.4px!important;font-weight:500!important;letter-spacing:-.16px!important;color:#213d29!important;gap:12px}
+  .pdp4-page.p5 #pdp4-faq .sk-accordion summary::after{font-size:24px!important;line-height:24px!important;font-weight:300!important;width:15px;flex:0 0 15px}
+}
+
+/* Galeri tanpa pita latar bawaan pdp4: di Figma slide langsung di atas latar halaman. */
+.pdp4-page.p5 .pdp-gallery{background:none!important}
+
+/* Koreksi lebar Inter Light (lihat sections/pdp5-story): +0,09 px untuk teks bobot 300. */
+.pdp4-page.p5 .p5-h1{letter-spacing:-.55px}
+.pdp4-page.p5 .p5-h1 strong{letter-spacing:-.64px}
+.pdp4-page.p5 .p5-checks li{letter-spacing:-.09px}
+.pdp4-page.p5 .p5-rating__count{letter-spacing:.09px}
+.pdp4-page.p5 .p5-pick{letter-spacing:-.07px}
+.pdp4-page.p5 .p5-assure li{letter-spacing:-.09px}
+.pdp4-page.p5 .p5-assure li strong,.pdp4-page.p5 .p5-guarantee strong{letter-spacing:-.18px}
+@media (max-width:959px){
+  .pdp4-page.p5 .pdp-pack__top .sk-title{letter-spacing:-.11px!important}
+  .pdp4-page.p5 .pdp-price .sk-h3{letter-spacing:-.27px!important}
+  .pdp4-page.p5 .pdp-price .sk-small,.pdp4-page.p5 .pdp-pack__body .sk-small{letter-spacing:.02px!important}
+  .pdp4-page.p5 .pdp-gift,.pdp4-page.p5 .pdp-gift *{font-weight:500!important;letter-spacing:-.07px!important}
+  .pdp4-page.p5 #AddToCart{letter-spacing:-.07px!important}
+  .pdp4-page.p5 #pdp4-faq .sk-h2{letter-spacing:-.27px!important}
+}

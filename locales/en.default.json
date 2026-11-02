@@ -1079,5 +1079,186 @@
         "desc_html": "Our signature scoop to measure your daily servings."
       }
     }
+  },
+  "pdp5": {
+    "buybox": {
+      "score": "4.96 / 5",
+      "count": "250 Reviews",
+      "title_html": "<strong>Organic Moringa<br>Capsules</strong> to calm the<br>inflammation behind how<br>you move, feel and age.",
+      "check_1": "Joints that move with less stiffness",
+      "check_2": "Steady energy without caffeine crash",
+      "check_3": "Smoother digestion with natural fiber",
+      "check_4": "Support healthier blood pressure",
+      "check_5": "Support balanced blood sugar levels",
+      "pick": "Pick Your Pack",
+      "guarantee_html": "<strong>60 day</strong> money back <strong>guarantee</strong>"
+    },
+    "packs": {
+      "most_chosen": "Most chosen",
+      "assure_1_html": "<strong>In stock</strong> · Delivery between <strong>3 to 5 days</strong>",
+      "assure_2_html": "<strong>60 Days</strong> money-back <strong>guarantee</strong>",
+      "assure_3_html": "<strong>Lowest Price</strong> on this <strong>website</strong>",
+      "ship": "Free shipping, all Indonesia"
+    },
+    "story": {
+      "reviews": {
+        "verified": "Verified",
+        "r1": {
+          "name": "Dewi",
+          "quote": "“Sakit lutut dan pegal-pegal badan hilang.”"
+        },
+        "r2": {
+          "name": "Ratna",
+          "quote": "“Tidur nyenyak, bangun pagi segar, stamina buat olahraga meningkat drastis.”"
+        },
+        "r3": {
+          "name": "Maya",
+          "quote": "“Awalnya skeptis, tapi  tidur lelap, mood stabil, pencernaan lancar.”"
+        },
+        "r4": {
+          "name": "Andini",
+          "quote": "“Gejala menopause saya jauh berkurang, tiap hari berjalan dengan happy.”"
+        },
+        "r5": {
+          "name": "Sari",
+          "quote": "“Mens jadi gak sakit kepala, gak kram parah, energi ada.”"
+        }
+      },
+      "accordion": {
+        "a1": "Ingredient",
+        "a2": "Who It’s For",
+        "a3": "How to Take",
+        "a4": "Quality and certifications",
+        "b1_html": "<p>100% organic moringa leaf (Moringa oleifera), 400 mg per capsule, in a plant-based HPMC shell. Nothing else: no stems, no fillers, no binders, no preservatives.</p><p>Whole leaf, not an extract, so you get the full combination of natural compounds.</p><p>The leaves are harvested on our own farm in Bali, stems removed by hand within 4 hours of harvest, then dehydrated at 38°C for 22 hours, before being milled and encapsulated in our own factory.</p>",
+        "b2_html": "<p>Treelogy moringa supports just about every adult, especially if you’re:</p><ul><li>Looking to keep inflammation low, naturally</li><li>Protecting your cells from daily oxidation</li><li>Going through hormonal changes: cycles, postpartum, perimenopause or menopause</li><li>Waking up stiff or recovering slowly after exercise</li><li>Running on low energy and want steadier days without caffeine</li><li>Supporting your digestion and gut comfort</li><li>Watching your blood sugar or blood pressure alongside a healthy lifestyle</li><li>Under chronic stress or not sleeping well</li><li>Investing in healthy aging, from the inside</li></ul>",
+        "b3_html": "<p>3 capsules a day, ideally in the morning with food.</p><ul><li>New to moringa?<br>Start with 2 capsules for the first three days.</li><li>Take it every day.<br>Consistency matters more than dose.</li><li>Suitable for men and women.</li></ul>",
+        "b4_html": "<ul><li>BPOM: registered as traditional medicine, POM TR253017851, valid until 2030.</li><li>Organic: certified USDA Organic (NOP 4080207676, certifier CERES) and EU Organic.</li><li>Halal: BPJPH ID51210022336550525.</li><li>Batch tested before leaving our factory.</li><li>Shelf life: 24 months from production. The expiry date is printed on the label.</li></ul>"
+      },
+      "expect": {
+        "eyebrow": "what to expect",
+        "heading_html": "Feel the difference<br>of a body in balance.",
+        "body": "Every body starts from a different place, so every body feels it differently. What never changes: the leaf works from the first capsule, and builds every day you take it.",
+        "t1": {
+          "title": "Working from day one",
+          "when": "Day 1",
+          "desc_html": "The antioxidants start protecting your cells<br> from the first capsule. You won’t feel it yet. It’s<br> the foundation everything else builds on."
+        },
+        "t2": {
+          "title": "Lighter digestion",
+          "when": "First Week",
+          "desc_html": "Usually the first change people notice.<br> The whole leaf works directly in your gut."
+        },
+        "t3": {
+          "title": "Steadier energy",
+          "when": "Week 2 to 4",
+          "desc_html": "Energy that holds through the day, with<br> fewer dips. For some it’s days, for others<br> a few weeks."
+        },
+        "t4": {
+          "title": "Easier movement",
+          "when": "month 1 to 2",
+          "desc_html": "Your body feels lighter, moves more freely and recovers faster. Inflammation calms gradually, so this one builds."
+        },
+        "t5": {
+          "title": "Healthier numbers",
+          "when": "month 3",
+          "desc_html": "Blood sugar and blood pressure move slowly<br> by nature. Three months is the earliest a<br> checkup can reflect a difference."
+        },
+        "t6": {
+          "title": "Lasting balance",
+          "when": "beyond 3 months",
+          "desc_html": "This is where consistency pays off. Keep going,<br> and the benefits keep going with you."
+        },
+        "note_html": "Give it three months. Then judge by how you feel.<br> Based on customer reports and published research."
+      },
+      "how": {
+        "eyebrow": "how it works",
+        "heading_html": "90+ nutrients working together, to nourish<br>you from within.",
+        "body_html": "Moringa is one of the most nutrient-dense plants on earth, and the only common source of moringin, a rare anti-inflammatory compound. Together they do three things at once: nourish your body, protect your cells<br> and calm inflammation.",
+        "diagram_alt": "Polyphenols, antioxidants, amino acids, minerals, vitamins and moringin in one moringa leaf",
+        "c1": {
+          "eyebrow": "01 - NOURISHING YOUR BODY",
+          "title": "Not an extract. The whole leaf.",
+          "body_html": "Your health starts in your gut: only what it absorbs can work for you. Isolated, processed nutrients are often mostly flushed out. Moringa gives you a <strong>whole matrix</strong> of nutrients that arrive together and help each other get absorbed, so your body actually uses what you take in.",
+          "pill1": "WHOLE-LEAF MATRIX",
+          "pill2": "GUT ABSORPTION"
+        },
+        "c2": {
+          "eyebrow": "02 - PROTECTING YOUR CELLS",
+          "title": "Stop the damage, before it starts.",
+          "body_html": "Stress, sugar and poor sleep wear your cells down every day. Moringa’s rare compound, <strong>moringin</strong>, activates the <strong>Nrf2</strong> pathway, your cells’ defense switch, so they make their own antioxidants like glutathione, and keep making them after the compound is gone.",
+          "pill1": "NRF2 ACTIVATION",
+          "pill2": "GLUTATHIONE"
+        },
+        "c3": {
+          "eyebrow": "03 - CALMING INFLAMMATION",
+          "title": "Feel lighter, move easier.",
+          "body_html": "Low-grade inflammation quietly stiffens joints, drains energy and contributes to rising blood sugar and blood pressure. <strong>Moringin</strong> turns down the <strong>NF-κB</strong> pathway, your cells’ inflammation switch, so fewer signals are sent and inflammation settles instead of lingering.",
+          "pill1": "NF-κB REGULATION",
+          "pill2": "INFLAMMATORY BALANCE"
+        }
+      },
+      "why": {
+        "eyebrow": "WHY Treelogy",
+        "heading_html": "Pure leaf,<br>from our soil<br>to your capsule.",
+        "body_html": "Most moringa is milled with stems and dried<br> for days. Ours is grown on our organic farm<br> in Bali, stems removed by hand within 4<br> hours of harvest to keep the compounds<br> that protect your cells.",
+        "cta": "Tap to see our certifications"
+      },
+      "table": {
+        "others": "Others",
+        "r1": {
+          "label": "Drying",
+          "ours": "22 hours at 38°C",
+          "theirs": "Sun or oven"
+        },
+        "r2": {
+          "label": "Quality",
+          "ours": "Stem-free purity",
+          "theirs": "with stems"
+        },
+        "r3": {
+          "label": "Origin",
+          "ours": "Our Farm & Factory",
+          "theirs": "Unknown traders"
+        },
+        "r4": {
+          "label": "Certified",
+          "ours": "USDA organic, Halal",
+          "theirs": "Usually neither"
+        },
+        "r5": {
+          "label": "BPOM",
+          "ours": "Traditional medicine",
+          "theirs": "Food, or none"
+        },
+        "r6": {
+          "label": "Refund",
+          "ours": "60-day refund",
+          "theirs": "None"
+        }
+      },
+      "process": {
+        "eyebrow": "our process",
+        "heading_html": "Every step,<br>in our own hands.",
+        "body": "From harvest at dawn to the capsule in your tin, every step happens on our farm and in our factory in Bali.",
+        "cta": "Discover the Farm & Factory",
+        "s1": {
+          "title": "01 · Regenerative farming",
+          "body": "Our moringa grows in living soil. We make our own compost, work with animals on the land, and feed the soil instead of depleting it. Healthy soil grows healthier leaves, season after season."
+        },
+        "s2": {
+          "title": "02 · Stem-free purity",
+          "body": "Every stem is removed by hand. One woman can sort only 65 g of fresh leaves an hour, the equivalent of just 12 g of powder, about 30 capsules. It’s slow, and it’s why only pure leaf ends up in your tin."
+        },
+        "s3": {
+          "title": "03 · Low and slow drying",
+          "body": "The leaves dry gently at 38°C for 22 hours, low enough to preserve their natural compounds. No extraction, no isolation: the whole leaf, as nature made it."
+        },
+        "s4": {
+          "title": "04 · Made in our own factory",
+          "body": "Milled, encapsulated and tested in our own factory, just minutes from the farm. From harvest to sealed tin, the leaf never leaves our hands."
+        }
+      },
+      "press": "AS SEEN IN"
+    }
   }
 }
