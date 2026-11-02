@@ -1026,5 +1026,55 @@
     "shop_cta": "Belanja Treelogy",
     "breadcrumb_home": "Beranda",
     "breadcrumb_label": "Navigasi remah roti"
+  },
+  "collection_v2": {
+    "tabs_label": "Saring produk berdasarkan kategori",
+    "tab_all": "Semua Produk",
+    "tab_inside": "Inside Care",
+    "tab_outside": "Outside Care",
+    "tab_bundle": "Bundle",
+    "hero_title": "Menutrisi dirimu, sambil memperkaya hidup dengan moringa",
+    "learn_more": "Selengkapnya",
+    "add_to_cart": "Tambahkan",
+    "price_from": "Dari {{ price }}",
+    "bestseller": "Terlaris",
+    "badge_inside": "Inside Care",
+    "badge_outside": "Outside Care",
+    "badge_bundle": "Bundle",
+    "badge_essentials": "Esensial",
+    "items": {
+      "capsules": {
+        "title_html": "Organic Moringa<br>Capsules",
+        "desc_html": "Cara termudah mendapatkan asupan moringa harianmu."
+      },
+      "powder": {
+        "title_html": "Organic Moringa<br>Powder",
+        "desc_html": "Blender, kocok, campur, atau taburkan ke makanan atau minuman."
+      },
+      "oil": {
+        "title_html": "Organic Moringa<br>Seed Oil",
+        "desc_html": "Perawatan kulit cold-pressed yang tidak menyumbat pori."
+      },
+      "protocol": {
+        "title_html": "Inside Out<br>Moringa Protocol",
+        "desc_html": "Kapsul untuk dari dalam, minyak biji untuk dari luar."
+      },
+      "discovery": {
+        "title_html": "The Discovery Pack",
+        "desc_html": "Bubuk, kapsul, dan minyak biji kami dalam satu kotak."
+      },
+      "ritual": {
+        "title_html": "Moringa Ritual Set",
+        "desc_html": "Ritual untuk melambat dan menikmati minuman moringamu."
+      },
+      "whisk": {
+        "title_html": "Bamboo Whisk<br>120 prongs",
+        "desc_html": "120 helai untuk<br>racikan yang lebih halus."
+      },
+      "scoop": {
+        "title_html": "Bamboo Scoop",
+        "desc_html": "Sendok khas kami untuk menakar sajian harianmu."
+      }
+    }
   }
 }

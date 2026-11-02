@@ -1,0 +1,118 @@
+{% doc %}
+  Kartu produk halaman koleksi v2 (sections/cl-all.liquid).
+
+  @param {object} block - Blok "product" dari cl-all (product, copy, category, image, image_width, bestseller)
+  @param {boolean} featured - true = kartu hijau besar di atas daftar
+  @param {boolean} [filter_only] - true = kartu biasa yang hanya muncul di tab kategori (kembaran kartu unggulan)
+
+  @example
+  {% render 'cl-card', block: block, featured: false %}
+{% enddoc %}
+{%- liquid
+  assign p = block.settings.product
+  assign key = block.settings.copy
+  assign cat = block.settings.category
+
+  if key == 'product'
+    assign title_html = p.title | escape
+    assign desc = p.metafields.custom.excerpt | default: ''
+  else
+    assign title_key = 'collection_v2.items.' | append: key | append: '.title_html'
+    assign desc_key = 'collection_v2.items.' | append: key | append: '.desc_html'
+    assign title_html = title_key | t
+    assign desc = desc_key | t
+  endif
+
+  assign tags = cat
+  if block.settings.also_inside and cat != 'inside'
+    assign tags = tags | append: ' inside'
+  endif
+  if block.settings.also_outside and cat != 'outside'
+    assign tags = tags | append: ' outside'
+  endif
+
+  assign badge_key = 'collection_v2.badge_' | append: cat
+  assign img = block.settings.image | default: p.featured_image
+  if featured
+    assign img = block.settings.image_featured | default: img
+  endif
+-%}
+{%- liquid
+  assign price_min = p.price_min | money
+  if p.price_varies
+    assign price_html = 'collection_v2.price_from' | t: price: price_min
+  else
+    assign price_html = price_min
+  endif
+-%}
+{%- liquid
+  # Foto popup varian = foto kartu katalog lama (ProductCard.liquid): media pertama, atau media ber-alt "LANG:xx|…" sesuai bahasa.
+  assign popup_media = p.media.first
+  for m in p.media
+    if m.alt contains 'LANG:'
+      assign m_lang = m.alt | split: '|' | first | remove: 'LANG:' | downcase
+      if m_lang == request.locale.iso_code
+        assign popup_media = m
+        break
+      endif
+    endif
+  endfor
+-%}
+{%- capture actions -%}
+  <div class="cl-card__actions">
+    <a class="cl-btn" href="{{ p.url }}">{{ 'collection_v2.learn_more' | t }}</a>
+    {%- comment -%} PopupVariants mengangkat <img> terdekat dari tombol ATC ke thumbnail popup — img ini harus lebih dekat dari foto kartu. {%- endcomment -%}
+    {%- if p.available and popup_media != blank -%}
+      <img src="{{ popup_media | image_url: width: 240 }}" alt="" width="240" height="240" loading="lazy" hidden>
+    {%- endif -%}
+    {%- if p.available -%}
+      <a
+        href="#"
+        class="cl-atc button-cart button-quick-add-cart open-popup-variants"
+        data-title="{{ p.title | escape }}"
+        data-slug="{{ p.url }}"
+      >{{ 'collection_v2.add_to_cart' | t }}</a>
+    {%- endif -%}
+  </div>
+  <span hidden aria-hidden="true">{% render 'Rating', product: p %}</span>
+{%- endcapture -%}
+
+{%- if featured -%}
+  <div class="cl-feat-wrap" data-cl-cat="{{ cat }}" data-cl-tags="{{ tags }}" {{ block.shopify_attributes }}>
+    <article class="cl-feat" data-cl-key="{{ key }}">
+      {%- if block.settings.bestseller -%}
+        <span class="cl-feat__flag">{{ 'collection_v2.bestseller' | t }}</span>
+      {%- endif -%}
+      <a class="cl-feat__media" href="{{ p.url }}" tabindex="-1" aria-hidden="true">
+        {%- if img != blank -%}
+          {{ img | image_url: width: 1000 | image_tag: widths: '400, 660, 1000', sizes: '(min-width: 768px) 640px, calc(100vw - 62px)', loading: 'eager', alt: '' }}
+        {%- endif -%}
+      </a>
+      <div class="cl-feat__body">
+        <span class="cl-badge">{{ badge_key | t }}</span>
+        <p class="cl-feat__price">{{ price_html }}</p>
+        <h2 class="cl-feat__title"><a href="{{ p.url }}">{{ title_html }}</a></h2>
+        {%- if desc != blank -%}<p class="cl-feat__desc">{{ desc }}</p>{%- endif -%}
+        {{ actions }}
+      </div>
+    </article>
+  </div>
+{%- else -%}
+  <article class="cl-card" data-cl-cat="{{ cat }}" data-cl-tags="{{ tags }}" data-cl-key="{{ key }}"{% if filter_only %} data-cl-filter-only hidden{% endif %} style="--cl-img-w: {{ block.settings.image_width }}px" {{ block.shopify_attributes }}>
+    <a class="cl-card__media" href="{{ p.url }}" tabindex="-1" aria-hidden="true">
+      {%- if img != blank -%}
+        {%- assign w2 = block.settings.image_width | times: 3 -%}
+        {{ img | image_url: width: w2 | image_tag: widths: '200, 300, 450, 600', sizes: '(min-width: 1024px) 260px, (min-width: 768px) 180px, 150px', loading: 'lazy', alt: '' }}
+      {%- endif -%}
+    </a>
+    <div class="cl-card__body">
+      <span class="cl-badge">{{ badge_key | t }}</span>
+      <div class="cl-card__copy">
+        <h2 class="cl-card__title"><a href="{{ p.url }}">{{ title_html }}</a></h2>
+        {%- if desc != blank -%}<p class="cl-card__desc">{{ desc }}</p>{%- endif -%}
+        <p class="cl-card__price">{{ price_html }}</p>
+      </div>
+      {{ actions }}
+    </div>
+  </article>
+{%- endif -%}

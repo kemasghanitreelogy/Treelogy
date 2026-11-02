@@ -1,0 +1,388 @@
+{% comment %}
+  Halaman koleksi v2 (Figma "All Product All", node 2893:3927).
+  Mobile = 1:1 dari frame 390px; tablet/desktop = kartu yang sama disusun
+  2/3 kolom. Kartu diisi dari blok (produk + gambar + kategori); teks halaman
+  dari locale `collection_v2.*` supaya ikut bahasa tanpa Translate & Adapt.
+  Sengaja tidak memakai <section>: theme.css mematok `section{width:100vw}`.
+  Add To Cart memakai popup varian tema (.open-popup-variants) — popup itu
+  membaca `.star-review` lewat btn.parentNode.parentNode, jadi Rating
+  tersembunyi wajib tetap satu tingkat di atas .cl-card__actions.
+{% endcomment %}
+<style>
+  .cl-page{--cl-ink:#213d29;--cl-text:#2a3b34;--cl-cream:#f8f8f2;--cl-card:#eef2e6;--cl-forest:#335123;--cl-moss:#536c3c;background:var(--cl-forest);color:var(--cl-text);font-family:var(--font-base,Inter),sans-serif;font-optical-sizing:none;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+  /* ↑ Inter tema = variabel dgn sumbu opsz; 'auto' merapatkan huruf ±7% vs Inter di Figma. 'none' = metrik Figma. */
+  .cl-page *,.cl-page *::before,.cl-page *::after{box-sizing:border-box}
+  :where(.cl-page) :where(h1,h2,p){margin:0;padding:0;font-family:inherit;text-transform:none}
+  :where(.cl-page) a{text-decoration:none}
+
+  /* theme.css:523 memberi body overflow-x:hidden di ≤900px → body jadi wadah gulir dan sticky mati.
+     clip tetap memotong luapan horizontal tanpa membuat wadah gulir. Hanya di halaman ini. */
+  html:has(.cl-page),body:has(.cl-page){overflow-x:clip}
+  .cl-tabs{position:sticky;top:var(--cl-sticky-top,0px);z-index:5;display:flex;align-items:center;justify-content:space-between;height:52px;padding:0 16px;background:var(--cl-cream);border-top:1px solid #d0d7c6;border-bottom:1px solid #d0d7c6;overflow-x:auto;scrollbar-width:none}
+  .cl-tabs::-webkit-scrollbar{display:none}
+  .cl-tab{flex:0 0 auto;margin:0;padding:0;border:0;background:none;cursor:pointer;font:400 14px/1 var(--font-base,Inter),sans-serif;letter-spacing:-.14px;color:var(--cl-ink);white-space:nowrap}
+  .cl-tab[aria-pressed="true"]{font-weight:500}
+  .cl-tab:focus-visible{outline:2px solid var(--cl-ink);outline-offset:4px;border-radius:2px}
+
+  .cl-hero{position:relative;height:204px;overflow:hidden;border-radius:0 0 24px 24px;background:#e9d8cc}
+  .cl-hero picture,.cl-hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:right center}
+  .cl-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 45%,rgba(60,30,10,.12) 100%)}
+  .cl-hero__title{position:absolute;z-index:1;left:16px;right:16px;bottom:14px;font-size:28px;line-height:1.1;font-weight:400;letter-spacing:-.56px;color:var(--cl-cream)}
+
+  .cl-feat-wrap{padding:20px 16px 21px}
+  .cl-feat{position:relative;display:flex;flex-direction:column;min-height:509px;padding:15px 0 32px;border-radius:24px;background:var(--cl-moss);color:var(--cl-cream);overflow:hidden}
+  .cl-feat__flag{align-self:flex-start;display:inline-flex;align-items:center;height:24px;margin-left:20px;padding:0 8px;border-radius:999px;background:#f5d053;color:var(--cl-ink);font-size:12px;line-height:1;font-weight:500;letter-spacing:-.06px}
+  .cl-feat__media{display:block;margin:37px 15px 0;height:167px}
+  .cl-feat__media img{display:block;width:100%;height:100%;object-fit:contain}
+  .cl-feat__body{position:relative;margin-top:22px;padding:0 24px}
+  .cl-feat .cl-badge{height:24px;padding:0 12px;border-color:var(--cl-cream);color:var(--cl-cream);font-size:12px}
+  .cl-feat__price{position:absolute;top:18px;right:15px;width:129px;text-align:center;font-size:16px;line-height:24px;font-weight:500;letter-spacing:-.64px;color:#fff}
+  .cl-feat__title{margin:12px 0 0 -4px;font-size:24px;line-height:28px;font-weight:400;letter-spacing:-.64px;color:var(--cl-cream)}
+  .cl-feat__title a{color:inherit}
+  .cl-feat__desc{margin-top:12px;max-width:310px;font-size:16px;line-height:1.25;color:#fff}
+  .cl-feat .cl-card__actions{margin-top:24px}
+  .cl-page .cl-feat .cl-btn{height:44px;min-width:161px;padding:0 24px;background:var(--cl-cream);color:var(--cl-moss);font-size:16px;font-weight:500;letter-spacing:-.16px}
+  .cl-page .cl-feat a.cl-atc{font-size:16px;color:var(--cl-cream);letter-spacing:-.16px}
+
+  .cl-list{display:grid;grid-template-columns:1fr;gap:24px;padding:20px 16px 24px;background:var(--cl-cream);border-radius:30px 30px 0 0}
+  .cl-card{position:relative;display:grid;grid-template-columns:146px 1fr;column-gap:10px;min-height:245px;border-radius:16px;background:var(--cl-card)}
+  .cl-card__media{display:flex;align-items:center;justify-content:center;min-width:0}
+  .cl-card__media img{display:block;flex:0 0 auto;width:var(--cl-img-w,140px);max-width:none;height:auto}
+  .cl-card__body{display:flex;flex-direction:column;align-items:flex-start;min-width:0;padding:27px 21px 33px 0}
+  .cl-card__copy{display:flex;flex-direction:column;align-items:flex-start;margin:auto 0}
+  .cl-badge{display:inline-flex;align-items:center;height:16px;padding:0 8px;border:1px solid var(--cl-ink);border-radius:999px;font-size:10px;line-height:1;font-weight:500;letter-spacing:-.05px;color:var(--cl-ink);white-space:nowrap}
+  .cl-card__title{margin-top:14px;font-size:18px;line-height:1.18;font-weight:500;color:var(--cl-text)}
+  .cl-card__title a{color:inherit}
+  .cl-card__desc{margin-top:8px;font-size:12px;line-height:1.25;color:var(--cl-text)}
+  .cl-card__price{margin-top:13px;font-size:12px;line-height:1.25;font-weight:500;color:var(--cl-text)}
+  .cl-card__actions{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%}
+  .cl-page .cl-btn{display:inline-flex;align-items:center;justify-content:center;height:25px;min-width:100px;padding:0 16px;border-radius:999px;background:var(--cl-ink);color:var(--cl-cream);font-size:12px;line-height:1;font-weight:400;letter-spacing:-.12px;white-space:nowrap}
+  .cl-page a.cl-atc{display:inline;width:auto;height:auto;min-width:0;margin:0;padding:0;border:0;border-radius:0;background:none;box-shadow:none;font-size:12px;line-height:1.4;font-weight:500;letter-spacing:-.12px;color:var(--cl-ink);text-decoration:underline;text-underline-offset:2px;white-space:nowrap;text-transform:none}
+  .cl-page .cl-btn:focus-visible,.cl-page a.cl-atc:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+  .cl-page [hidden]{display:none!important}
+  /* Popup varian tema menyalin .star-review kartu; CSS Judge.me menyembunyikan .jdgm-prev-badge__text
+     (visibility:hidden) sampai widget-nya memproses elemen — salinan di popup tak pernah diproses. */
+  #popup-variant #popup-variant-rating .jdgm-prev-badge{display:flex!important;align-items:center;gap:6px}
+  #popup-variant #popup-variant-rating .jdgm-prev-badge svg{display:block;flex:0 0 auto}
+  #popup-variant #popup-variant-rating .jdgm-prev-badge__text{visibility:visible;display:inline-flex;align-items:center;gap:4px;font-size:12px;line-height:12px;font-weight:400;color:#2b3c35}
+  #popup-variant #popup-variant-rating .jdgm-prev-badge__text span{display:block;line-height:12px;transform:none!important}
+  /* Filter menyembunyikan kartu unggulan hijau → tak ada lagi pita hijau; sudut hero & daftar harus di atas krem. */
+  .cl-page:has(.cl-feat-wrap[hidden]){background:var(--cl-cream)}
+
+  /* ===== Mobile 1:1 Figma (frame 390 → koordinat Figma ÷ 3,0128) =====
+     Semua teks/tombol/gambar kartu diposisikan absolut di titik yang sama dengan Figma, karena
+     jarak antar-teks di desain berbeda per kartu (slot tetap, bukan alur). Nilai per produk
+     dikunci lewat data-cl-key (= setting "Card copy"); kunci "product" memakai nilai bawaan. */
+  @media (max-width:767px){
+    /* Seluruh tata letak dikunci di lebar Figma 390px lalu di-zoom ke lebar layar (--cl-z diisi JS di
+       bawah), supaya HP 360/393/430px melihat proporsi yang sama persis — bukan kartu melebar dengan
+       isi berposisi px tetap. Tab tidak di-zoom (sticky top akan ikut terkali), cukup ukurannya diskala. */
+    .cl-hero,.cl-feat-wrap,.cl-list{zoom:var(--cl-z,1)}
+    .cl-feat{width:358px;margin:0 auto}
+    .cl-card{width:358px;justify-self:center}
+    .cl-tabs{height:calc(52px * var(--cl-z,1));padding:0 calc(16px * var(--cl-z,1))}
+    .cl-tab{font-size:calc(14px * var(--cl-z,1));letter-spacing:calc(-.14px * var(--cl-z,1))}
+    .cl-hero__title{top:128px;bottom:auto}
+    .cl-page a.cl-atc{text-decoration-thickness:from-font;text-underline-position:from-font;text-underline-offset:auto}
+
+    .cl-feat{display:block;height:509px;min-height:0;padding:0}
+    .cl-feat__flag{position:absolute;left:20px;top:15px;width:72.4px;margin:0;padding:0;justify-content:center}
+    .cl-feat__media{position:absolute;left:15px;top:76px;width:328.1px;height:166.9px;margin:0}
+    .cl-feat__body{position:static;margin:0;padding:0}
+    .cl-page .cl-feat .cl-badge{position:absolute;left:24px;top:265px;width:88px;height:24px;padding:0;justify-content:center}
+    .cl-feat__price{position:absolute;left:214px;right:auto;top:283px;width:129px;margin:0}
+    .cl-feat__title{position:absolute;left:20px;top:301px;width:318px;margin:0}
+    .cl-feat__desc{position:absolute;left:24px;top:369px;width:310px;max-width:none;margin:0}
+    .cl-feat .cl-card__actions{display:block;margin:0}
+    .cl-page .cl-feat .cl-btn{position:absolute;left:24px;top:433px;width:161px;height:44px;min-width:0;padding:0;line-height:1}
+    .cl-page .cl-feat a.cl-atc{position:absolute;right:24px;top:445px;line-height:22.4px}
+
+    /* Figma final (node 2923:8226, 2 Nov): semua posisi per kartu = koordinat Figma ÷ 3,0128. Gambar = ekspor
+       Figma persis seukuran slotnya (latar kartu ikut ter-ekspor, jadi object-fit fill tanpa celah). */
+    .cl-card{--ix:2px;--iy:52px;--iw:150px;--ih:140px;--bx:155px;--by:27px;--bw:66px;--bl:156px;--bt:185px;--ar:21px;--dw:181px;display:block;height:245px;min-height:0;overflow:hidden}
+    .cl-card__media{position:absolute;left:var(--ix);top:var(--iy);width:var(--iw);height:var(--ih);display:block}
+    .cl-card__media img{width:100%;height:100%;max-width:none;object-fit:fill}
+    .cl-card__body{position:static;display:block;margin:0;padding:0}
+    .cl-page .cl-card .cl-badge{position:absolute;left:var(--bx);top:var(--by);width:var(--bw);height:20px;padding:0;justify-content:center;border-width:.5px;font-size:12px;letter-spacing:-.06px}
+    /* Judul/deskripsi/harga = satu tumpukan flex di antara badge dan tombol: jarak antar-baris dari satu token
+       (--cl-gap), blok di-tengah-kan vertikal → jarak konsisten di semua kartu, apa pun jumlah baris teksnya. */
+    .cl-card__copy{--cl-gap:8px;position:absolute;left:156px;top:calc(var(--by) + 20px);bottom:calc(245px - var(--bt));display:flex;flex-direction:column;justify-content:center;gap:var(--cl-gap);width:219px;margin:0;padding:0}
+    .cl-card__title{width:219px;margin:0}
+    .cl-page .cl-card .cl-card__desc{width:var(--dw);margin:0;font-size:14px;line-height:1.25}
+    .cl-page .cl-card .cl-card__price{width:165px;margin:0;font-size:14px;line-height:1.25;font-weight:500}
+    .cl-card .cl-card__actions{display:block}
+    .cl-page .cl-card .cl-btn{position:absolute;left:var(--bl);top:var(--bt);width:100px;height:30px;min-width:0;padding:0}
+    .cl-page .cl-card a.cl-atc{position:absolute;right:var(--ar);top:192px;line-height:16.8px;text-decoration-thickness:.5px}
+    /* ↑ top 192 (Figma 191): Figma membulatkan baseline teks 12px/1.4 satu piksel lebih rendah; garis bawah Figma 0,5px. Terukur di render 2x. */
+
+    .cl-card[data-cl-cat="outside"]{--bw:78px}
+    .cl-card[data-cl-cat="bundle"]{--bw:52px}
+    .cl-card[data-cl-cat="essentials"]{--bw:68px}
+    .cl-card[data-cl-key="powder"]{--ix:7.9px;--iy:42.88px;--iw:138.1px;--ih:143.7px;--bx:158px;--by:25px;--bw:83px;--bl:155px;--bt:184px;--ar:20px;--dw:188px}
+    .cl-card[data-cl-key="oil"]{--ix:28.15px;--iy:16.84px;--iw:91.86px;--ih:202.64px;--bw:93px;--bt:187px}
+    .cl-card[data-cl-key="protocol"]{--ix:7.9px;--iy:57.85px;--iw:131.08px;--ih:119.19px;--bw:58px;--bt:185px}
+    .cl-card[data-cl-key="discovery"]{--ix:31.46px;--iy:13.56px;--iw:76.08px;--ih:216.53px;--bw:60px;--bt:185px}
+    .cl-card[data-cl-key="ritual"]{--ix:0px;--iy:44px;--iw:145px;--ih:174px;--bw:77px;--bt:187px}
+    .cl-card[data-cl-key="whisk"]{--ix:-4px;--iy:48px;--iw:146px;--ih:152px;--bw:76px;--bt:185px;--dw:190px}
+    .cl-card[data-cl-key="scoop"]{--ix:0px;--iy:13px;--iw:166px;--ih:200px;--bw:79px;--bt:186px;--dw:191px}
+    /* Kembaran Capsules (tab Inside) tak ada di Figma: gambar lebar ekspor kartu hijau, contain di slot bawaan. */
+    .cl-card[data-cl-key="capsules"] .cl-card__media img{object-fit:contain}
+  }
+
+  @media (min-width:768px){
+    .cl-tabs{justify-content:center;gap:48px;height:56px;padding:0 32px}
+    .cl-tab{font-size:15px}
+    .cl-hero{height:clamp(300px,40vw,520px);border-radius:0 0 40px 40px}
+    .cl-hero__title{left:40px;right:40px;bottom:32px;max-width:820px;font-size:clamp(36px,4.6vw,64px);letter-spacing:-.02em}
+    .cl-feat-wrap{max-width:1320px;margin:0 auto;padding:32px 32px 40px}
+    .cl-feat{display:grid;grid-template-columns:1fr 1.1fr;grid-template-rows:auto 1fr;align-items:center;min-height:440px;padding:20px 0 28px}
+    .cl-feat__flag{grid-column:1/-1;justify-self:start;margin-left:20px}
+    .cl-feat__media{grid-column:1;margin:0 0 0 24px;height:auto;aspect-ratio:989/503}
+    .cl-feat__body{grid-column:2;display:flex;flex-direction:column;align-items:flex-start;margin:0;padding:0 48px 0 32px}
+    .cl-feat__price{position:static;order:3;width:auto;margin-top:28px;text-align:left;font-size:clamp(18px,1.6vw,24px);letter-spacing:-.02em}
+    .cl-feat__title{margin:12px 0 0;font-size:clamp(28px,3vw,44px);line-height:1.1}
+    .cl-feat__desc{order:2;max-width:520px;margin-top:24px;font-size:17px;line-height:1.45}
+    .cl-feat .cl-card__actions{order:4;justify-content:flex-start;gap:32px;margin-top:28px}
+    .cl-list{grid-template-columns:repeat(2,minmax(0,1fr));padding:40px max(32px,calc((100% - 1176px) / 2)) 64px;border-radius:40px 40px 0 0}
+  }
+  /* Layar lebar: hero dipendekkan supaya kartu unggulan tetap terlihat di layar pertama
+     (tinggi layar − header − tab − 510px: baris kartu maks 470 + jarak atas 20 + napas bawah 20). */
+  @media (min-width:1024px){
+    .cl-hero{height:clamp(220px,calc(100svh - var(--cl-sticky-top,95px) - 56px - 510px),460px)}
+    .cl-hero__title{left:max(48px,calc((100% - 1256px) / 2));bottom:clamp(28px,4vh,56px);font-size:clamp(40px,3.6vw,60px);line-height:1.08}
+    .cl-feat-wrap{padding:20px 32px 40px}
+    .cl-feat{min-height:clamp(380px,calc(100svh - var(--cl-sticky-top,95px) - 56px - 280px),470px)}
+
+    /* Daftar produk desktop: kartu horizontal (gambar kiri, isi kanan) 2 kolom, tipografi desktop, kartu ganjil terakhir di tengah. */
+    .cl-list{display:flex;flex-wrap:wrap;justify-content:flex-start;gap:24px;padding:48px max(32px,calc((100% - 1256px) / 2)) 72px}
+    .cl-card{flex:0 0 calc((100% - 24px) / 2);display:flex;flex-direction:row;align-items:stretch;min-height:clamp(300px,24vw,340px);border-radius:24px;overflow:hidden}
+    .cl-card__media{flex:0 0 42%;height:auto;padding:28px 8px 28px 28px}
+    .cl-card__media img{width:auto;max-width:90%;height:auto;max-height:clamp(220px,18vw,270px);object-fit:contain;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+    .cl-card:hover .cl-card__media img{transform:translateY(-4px) scale(1.02)}
+    .cl-card__body{flex:1;min-width:0;padding:32px 32px 32px 16px}
+    .cl-card__copy{margin:0}
+    .cl-badge{height:24px;padding:0 12px;font-size:12px}
+    .cl-card__title{margin-top:14px;font-size:clamp(20px,1.7vw,24px);line-height:1.2;letter-spacing:-.01em}
+    .cl-card__desc{margin-top:10px;font-size:15px;line-height:1.45;color:rgba(42,59,52,.82)}
+    .cl-card__price{margin-top:14px;font-size:17px;line-height:1.3}
+    .cl-card__actions{margin-top:auto;padding-top:22px}
+    .cl-page .cl-btn{height:44px;min-width:0;padding:0 24px;font-size:15px;letter-spacing:-.15px}
+    .cl-page a.cl-atc{font-size:15px;letter-spacing:-.15px}
+  }
+  @media (min-width:1100px){
+    .cl-feat__desc{font-size:18px}
+  }
+</style>
+
+{%- liquid
+  assign listing_currency = cart.currency.iso_code | default: shop.currency
+  if listing_currency == 'XXX'
+    assign listing_currency = shop.currency
+  endif
+-%}
+
+<div class="cl-page" data-cl-page data-cs-capture>
+  <script>
+    (function (el) {
+      function z() { el.style.setProperty('--cl-z', Math.min(Math.max(document.documentElement.clientWidth / 390, 0.8), 1.25).toFixed(4)); }
+      z();
+      window.addEventListener('resize', z);
+    })(document.currentScript.parentNode);
+  </script>
+  {%- if section.settings.show_tabs -%}
+    <nav class="cl-tabs" aria-label="{{ 'collection_v2.tabs_label' | t }}" data-cl-tabs>
+      <button type="button" class="cl-tab" data-cl-filter="all" aria-pressed="true">{{ 'collection_v2.tab_all' | t }}</button>
+      <button type="button" class="cl-tab" data-cl-filter="inside" aria-pressed="false">{{ 'collection_v2.tab_inside' | t }}</button>
+      <button type="button" class="cl-tab" data-cl-filter="outside" aria-pressed="false">{{ 'collection_v2.tab_outside' | t }}</button>
+      <button type="button" class="cl-tab" data-cl-filter="bundle" aria-pressed="false">{{ 'collection_v2.tab_bundle' | t }}</button>
+    </nav>
+  {%- endif -%}
+
+  <div class="cl-hero">
+    {%- assign hero_m = section.settings.hero_mobile -%}
+    {%- assign hero_d = section.settings.hero_desktop | default: hero_m -%}
+    {%- if hero_m != blank -%}
+      <picture>
+        <source media="(min-width: 768px)" srcset="{{ hero_d | image_url: width: 1200 }} 1200w, {{ hero_d | image_url: width: 1800 }} 1800w, {{ hero_d | image_url: width: 2400 }} 2400w" sizes="100vw">
+        {{ hero_m | image_url: width: 1200 | image_tag: widths: '400, 600, 800, 1000, 1200', sizes: '100vw', loading: 'eager', fetchpriority: 'high', alt: '' }}
+      </picture>
+    {%- endif -%}
+    <h1 class="cl-hero__title">{{ 'collection_v2.hero_title' | t }}</h1>
+  </div>
+
+  {%- comment -%} Produk berharga 0 (hadiah, mis. Bamboo Scoop) tidak pernah dijual di katalog — aturan sama dgn smart collection all-products. {%- endcomment -%}
+  {%- assign featured_done = false -%}
+  {%- for block in section.blocks -%}
+    {%- assign p = block.settings.product -%}
+    {%- if block.settings.featured and featured_done == false and p != blank and p.price_max > 0 -%}
+      {%- assign featured_done = true -%}
+      {%- render 'cl-card', block: block, featured: true -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+  <div class="cl-list" data-cl-list>
+    {%- assign featured_seen = false -%}
+    {%- for block in section.blocks -%}
+      {%- assign p = block.settings.product -%}
+      {%- if p == blank or p.price_max <= 0 -%}{%- continue -%}{%- endif -%}
+      {%- comment -%} Produk unggulan sudah tampil sebagai kartu hijau, jadi dilewati di daftar. {%- endcomment -%}
+      {%- if block.settings.featured and featured_seen == false -%}
+        {%- assign featured_seen = true -%}
+        {%- continue -%}
+      {%- endif -%}
+      {%- render 'cl-card', block: block, featured: false, filter_only: false -%}
+    {%- endfor -%}
+  </div>
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "@id": {{ canonical_url | append: '#collection-products' | json }},
+      "name": {{ collection.title | default: 'All Products' | json }},
+      "itemListElement": [
+        {%- assign li_pos = 0 -%}
+        {%- for block in section.blocks -%}
+          {%- assign p = block.settings.product -%}
+          {%- if p == blank or p.price_max <= 0 -%}{%- continue -%}{%- endif -%}
+          {%- assign li_pos = li_pos | plus: 1 -%}
+          {%- if li_pos == 1 -%}
+            {%- render 'ProductListItemSchema', product: p, pos: li_pos, listing_currency: listing_currency, is_first: true -%}
+          {%- else -%}
+            {%- render 'ProductListItemSchema', product: p, pos: li_pos, listing_currency: listing_currency, is_first: false -%}
+          {%- endif -%}
+        {%- endfor -%}
+      ],
+      "numberOfItems": {{ li_pos }}
+    }
+  </script>
+</div>
+
+<script>
+  (function () {
+    var root = document.currentScript && document.currentScript.previousElementSibling;
+    if (!root || !root.matches('[data-cl-page]')) root = document.querySelector('[data-cl-page]');
+    if (!root) return;
+
+    /* Header tema position:fixed — tab ditempel tepat di bawahnya, ikut tinggi aktualnya. */
+    var header = document.querySelector('header.header-nav');
+    function syncTop() {
+      var b = header ? header.getBoundingClientRect().bottom : 0;
+      root.style.setProperty('--cl-sticky-top', Math.max(0, Math.round(b)) + 'px');
+    }
+    syncTop();
+    if (header && 'ResizeObserver' in window) new ResizeObserver(syncTop).observe(header);
+    window.addEventListener('scroll', syncTop, { passive: true });
+    window.addEventListener('resize', syncTop);
+
+    var tabs = root.querySelectorAll('[data-cl-filter]');
+    var cards = root.querySelectorAll('[data-cl-cat]');
+    var busy = false;
+    function apply(cat) {
+      tabs.forEach(function (t) { t.setAttribute('aria-pressed', String(t.dataset.clFilter === cat)); });
+      cards.forEach(function (c) {
+        /* Kartu unggulan hijau tampil di tab All dan tab kategorinya sendiri (Capsules → Inside).
+           data-cl-tags = kategori + kategori isi bundel, jadi bundel ikut tampil di Inside/Outside. */
+        var inCat = (' ' + (c.dataset.clTags || c.dataset.clCat) + ' ').indexOf(' ' + cat + ' ') > -1;
+        if (c.classList.contains('cl-feat-wrap')) c.hidden = cat !== 'all' && !inCat;
+        else if (c.hasAttribute('data-cl-filter-only')) c.hidden = cat === 'all' || !inCat;
+        else c.hidden = cat !== 'all' && !inCat;
+      });
+    }
+    tabs.forEach(function (t) {
+      t.addEventListener('click', function () {
+        var cat = t.dataset.clFilter;
+        if (t.getAttribute('aria-pressed') === 'true' || busy) return;
+        /* Tab & hero diam; hanya kartu yang berganti: kartu lama memudar (140 ms), isi ditukar,
+           kartu baru muncul bergiliran. Sebelumnya View Transition menganimasikan seluruh halaman
+           sehingga tab ikut "berkedip" seperti reload. */
+        var calm = matchMedia('(prefers-reduced-motion: reduce)').matches || !Element.prototype.animate;
+        var shown = [].filter.call(cards, function (c) { return !c.hidden; });
+        var swap = function () {
+          apply(cat);
+          /* sudah lewat hero → kembalikan ke awal daftar, supaya hasil filter langsung terlihat */
+          var hero = root.querySelector('.cl-hero');
+          var bar = root.querySelector('[data-cl-tabs]');
+          var top = hero.getBoundingClientRect().bottom + window.scrollY - (bar ? bar.getBoundingClientRect().bottom : 0);
+          if (window.scrollY > top) window.scrollTo({ top: top, behavior: calm ? 'auto' : 'smooth' });
+          if (calm) return;
+          [].filter.call(cards, function (c) { return !c.hidden; }).forEach(function (c, i) {
+            c.animate([{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }],
+              { duration: 320, delay: Math.min(i, 6) * 45, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' });
+          });
+        };
+        if (calm) { swap(); return; }
+        busy = true;
+        tabs.forEach(function (x) { x.setAttribute('aria-pressed', String(x === t)); });
+        var outs = shown.map(function (c) { return c.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 140, easing: 'ease-out', fill: 'forwards' }); });
+        Promise.all(outs.map(function (a) { return a.finished; })).then(function () {
+          outs.forEach(function (a) { a.cancel(); });
+          swap();
+          busy = false;
+        });
+      });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Collection v2 (Figma)",
+  "class": "cl-all-section",
+  "settings": [
+    { "type": "header", "content": "Hero" },
+    { "type": "image_picker", "id": "hero_mobile", "label": "Hero image (mobile)" },
+    { "type": "image_picker", "id": "hero_desktop", "label": "Hero image (tablet & desktop)" },
+    { "type": "paragraph", "content": "Hero headline, tab labels and card copy live in the locale files under collection_v2." },
+    { "type": "header", "content": "Filter" },
+    { "type": "checkbox", "id": "show_tabs", "label": "Show category tabs", "default": true }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product card",
+      "settings": [
+        { "type": "product", "id": "product", "label": "Product" },
+        {
+          "type": "select",
+          "id": "copy",
+          "label": "Card copy",
+          "info": "Title and description from locale collection_v2.items.<key>. Product title & excerpt are used for 'Product data'.",
+          "options": [
+            { "value": "product", "label": "Product data" },
+            { "value": "capsules", "label": "Capsules" },
+            { "value": "powder", "label": "Powder" },
+            { "value": "oil", "label": "Seed oil" },
+            { "value": "protocol", "label": "Inside Out Protocol" },
+            { "value": "discovery", "label": "Discovery Pack" },
+            { "value": "ritual", "label": "Ritual Set" },
+            { "value": "whisk", "label": "Bamboo Whisk" },
+            { "value": "scoop", "label": "Bamboo Scoop" }
+          ],
+          "default": "product"
+        },
+        {
+          "type": "select",
+          "id": "category",
+          "label": "Category",
+          "options": [
+            { "value": "inside", "label": "Inside Care" },
+            { "value": "outside", "label": "Outside Care" },
+            { "value": "bundle", "label": "Bundle" },
+            { "value": "essentials", "label": "Essentials" }
+          ],
+          "default": "inside"
+        },
+        { "type": "checkbox", "id": "also_inside", "label": "Also show in Inside Care tab", "info": "For bundles that contain an Inside Care product (capsules/powder).", "default": false },
+        { "type": "checkbox", "id": "also_outside", "label": "Also show in Outside Care tab", "info": "For bundles that contain an Outside Care product (oil).", "default": false },
+        { "type": "image_picker", "id": "image", "label": "Card image", "info": "Transparent PNG. Falls back to the product's first image." },
+        { "type": "image_picker", "id": "image_featured", "label": "Featured card image", "info": "Only for the large green card. Falls back to Card image." },
+        { "type": "range", "id": "image_width", "label": "Image width (mobile card)", "min": 60, "max": 200, "step": 2, "unit": "px", "default": 140 },
+        { "type": "checkbox", "id": "featured", "label": "Featured card (large, green)", "default": false },
+        { "type": "checkbox", "id": "bestseller", "label": "Show Bestseller label", "default": false }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Collection v2 (Figma)" }]
+}
+{% endschema %}

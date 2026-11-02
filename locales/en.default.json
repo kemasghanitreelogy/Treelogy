@@ -1029,5 +1029,55 @@
     "shop_cta": "Shop Treelogy",
     "breadcrumb_home": "Home",
     "breadcrumb_label": "Breadcrumb"
+  },
+  "collection_v2": {
+    "tabs_label": "Filter products by category",
+    "tab_all": "All Products",
+    "tab_inside": "Inside Care",
+    "tab_outside": "Outside Care",
+    "tab_bundle": "Bundle",
+    "hero_title": "Nourishing you, while enriching life with moringa",
+    "learn_more": "Learn More",
+    "add_to_cart": "Add To Cart",
+    "price_from": "From {{ price }}",
+    "bestseller": "Bestseller",
+    "badge_inside": "Inside Care",
+    "badge_outside": "Outside Care",
+    "badge_bundle": "Bundle",
+    "badge_essentials": "Essentials",
+    "items": {
+      "capsules": {
+        "title_html": "Organic Moringa<br>Capsules",
+        "desc_html": "The easiest way to get your daily moringa dose."
+      },
+      "powder": {
+        "title_html": "Organic Moringa<br>Powder",
+        "desc_html": "Blend, whisk, mix or sprinkle with food or drinks."
+      },
+      "oil": {
+        "title_html": "Organic Moringa<br>Seed Oil",
+        "desc_html": "Cold-pressed, non-comedogenic skin care."
+      },
+      "protocol": {
+        "title_html": "Inside Out<br>Moringa Protocol",
+        "desc_html": "Capsules for the inside, seed oil for the outside."
+      },
+      "discovery": {
+        "title_html": "The discovery pack",
+        "desc_html": "Our powder, capsules and seed oil in one box."
+      },
+      "ritual": {
+        "title_html": "Moringa Ritual Set",
+        "desc_html": "A ritual to slow down and enjoy your moringa drink."
+      },
+      "whisk": {
+        "title_html": "Bamboo Whisk<br>120 prongs",
+        "desc_html": "120 prongs for<br>a smoother blend."
+      },
+      "scoop": {
+        "title_html": "Bamboo Scoop",
+        "desc_html": "Our signature scoop to measure your daily servings."
+      }
+    }
   }
 }
