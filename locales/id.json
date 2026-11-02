@@ -1079,8 +1079,8 @@
   },
   "pdp5": {
     "buybox": {
-      "score": "4.96 / 5",
-      "count": "250 ulasan",
+      "score": "{{ avg }} / 5",
+      "count": "{{ count }} ulasan",
       "title_html": "<strong>Organic Moringa Capsules</strong><br>untuk meredakan peradangan<br>di balik gerak, energi, dan<br>proses menua.",
       "check_1": "Sendi lebih lentur saat bergerak",
       "check_2": "Energi stabil tanpa kafein, tanpa lemas",

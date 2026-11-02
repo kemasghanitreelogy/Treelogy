@@ -267,7 +267,46 @@
         judul TIDAK dari metafield pdp3.hero_heading karena metafield itu
         dipakai bersama tema live.
       {%- endcomment -%}
-      <a class="p5-rating" href="#pdp4-reviews">{% render 'pdp4-faces', a: section.settings.face_1, b: section.settings.face_2, c: section.settings.face_3 %}<span class="p5-rating__score">{{ 'pdp5.buybox.score' | t }}</span><img class="p5-rating__stars" src="{{ 'pdp5-stars.svg' | asset_url }}" alt="" width="72" height="15"><span class="p5-rating__count">· <u>{{ 'pdp5.buybox.count' | t }}</u></span></a>
+      {%- comment -%}
+        Angka rating = angka kartu ringkasan section pdp4-reviews. Server:
+        metafield reviews.* (= yang tampil di kartu; klaviyo_reviews.* berisi
+        agregat lintas produk 1545, jadi hanya cadangan). Klien: begitu
+        pdp4.js mengisi kartu dengan angka live Klaviyo, angka di sini ikut.
+        Tanpa data, baris rating disembunyikan.
+      {%- endcomment -%}
+      {%- liquid
+        assign rv_rating = product.metafields.reviews.rating.value
+        assign rv_count = product.metafields.reviews.rating_count
+        assign rv_avg = rv_rating.rating | times: 100 | round | divided_by: 100.0
+        if rv_count == blank
+          assign rv_avg = product.metafields.klaviyo_reviews.rating
+          assign rv_count = product.metafields.klaviyo_reviews.rating_count
+        endif
+      -%}
+      {%- if rv_count > 0 -%}
+      <a class="p5-rating" href="#pdp4-reviews">{% render 'pdp4-faces', a: section.settings.face_1, b: section.settings.face_2, c: section.settings.face_3 %}<span class="p5-rating__score">{{ 'pdp5.buybox.score' | t: avg: rv_avg }}</span><img class="p5-rating__stars" src="{{ 'pdp5-stars.svg' | asset_url }}" alt="" width="72" height="15"><span class="p5-rating__count">· <u>{{ 'pdp5.buybox.count' | t: count: rv_count }}</u></span></a>
+      <script>
+        (function () {
+          function sync() {
+            var a = document.querySelector('.kl_reviews__summary__average_value');
+            var c = document.querySelector('.kl_reviews__summary__stars__count');
+            var sa = document.querySelector('.p5-rating__score');
+            var sc = document.querySelector('.p5-rating__count u');
+            var n = c && parseInt(c.textContent, 10);
+            if (a && sa && a.textContent.trim()) sa.textContent = sa.textContent.replace(/[\d.]+/, a.textContent.trim());
+            if (n && sc) sc.textContent = sc.textContent.replace(/\d+/, n);
+          }
+          function watch() {
+            var box = document.querySelector('.kl_reviews__summary__average_value');
+            if (!box) return;
+            sync();
+            new MutationObserver(sync).observe(box.parentNode, { childList: true, characterData: true, subtree: true });
+          }
+          if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', watch);
+          else watch();
+        })();
+      </script>
+      {%- endif -%}
       <h1 class="sk-h1 p5-h1" id="pdp4-h1">{{ 'pdp5.buybox.title_html' | t }}</h1>
       <ul class="p5-checks">
         {%- for i in (1..5) -%}

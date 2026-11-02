@@ -1082,8 +1082,8 @@
   },
   "pdp5": {
     "buybox": {
-      "score": "4.96 / 5",
-      "count": "250 Reviews",
+      "score": "{{ avg }} / 5",
+      "count": "{{ count }} Reviews",
       "title_html": "<strong>Organic Moringa<br>Capsules</strong> to calm the<br>inflammation behind how<br>you move, feel and age.",
       "check_1": "Joints that move with less stiffness",
       "check_2": "Steady energy without caffeine crash",
