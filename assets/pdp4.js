@@ -1074,9 +1074,9 @@
         '<p class="sk-title">' + escRaw(q.body) + '</p>' +
         '<p class="sk-small sk-text-secondary">' + who + '</p>';
       q.answers.forEach(function (a) {
+        /* Jawaban tanpa cap waktu: Judge.me mencatat waktu jawaban bergeser
+           zona sehingga bisa jatuh di masa depan dan terbaca "dalam 0 hari". */
         var aw = '<span class="kl_reviews__review__author">' + escRaw(a.who) + '</span>';
-        var at = ago(a.iso);
-        if (at) aw += ' · <span class="kl_reviews__review__timestamp">' + escRaw(at) + '</span>';
         html += '<div class="pdp-ans sk-stack" style="gap:var(--sk-space-4)">' +
           (answerLabel ? '<p class="sk-eyebrow sk-text-secondary">' + esc(answerLabel) + '</p>' : '') +
           '<p class="sk-body">' + escRaw(a.body) + '</p>' +
