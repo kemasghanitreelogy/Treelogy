@@ -333,6 +333,7 @@
     var price = $('#pdp4-atc-price');
     var pdHero = $('#pdp4-pd-hero');
     var pdSticky = $('#pdp4-pd-sticky');
+    var planSticky = $('#pdp4-plan-sticky');
     var select = $('#productSelect');
     var atc = $('#AddToCart');
 
@@ -342,6 +343,7 @@
       if (price) price.textContent = i.dataset.price || '';
       if (pdHero && i.dataset.pd) pdHero.textContent = i.dataset.pd;
       if (pdSticky && i.dataset.pd) pdSticky.textContent = i.dataset.pd;
+      if (planSticky && i.dataset.label) planSticky.textContent = i.dataset.label;
 
       if (select && select.value !== i.value) {
         select.value = i.value;

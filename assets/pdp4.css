@@ -1194,6 +1194,17 @@ html{scroll-behavior:smooth}
 .pdp-sticky{position:fixed;inset:auto 0 0 0;z-index:var(--sk-z-sticky);display:flex;align-items:center;justify-content:space-between;gap:var(--sk-space-12);padding:var(--sk-space-12) var(--sk-space-16);padding-bottom:max(var(--sk-space-12),env(safe-area-inset-bottom));border-radius:0;transform:translateY(110%);transition:transform var(--sk-duration-fast) var(--sk-ease-standard)}
 .pdp-sticky[data-on="true"]{transform:none}
 @media(min-width:960px){.pdp-sticky{display:none}}
+/* Bilah sticky versi mockup CTA (3 Nov): ukuran diukur dari mockup ~2,1x.
+   Kiri: paket 16/400, harga 18/700 + "/ day" 13/400, jaminan 13/600 hijau
+   zaitun. Kanan: pil 174x49, label 16/400. */
+.pdp-sticky__info{min-width:0;display:flex;flex-direction:column;justify-content:center}
+.pdp-sticky__info p{margin:0}
+.pdp-sticky__plan{font-size:16px;font-weight:400;line-height:1.2;color:#17211a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pdp-sticky__price{font-size:18px;line-height:1.2;color:#1c2a23;white-space:nowrap}
+.pdp-sticky__price strong{font-weight:700}
+.pdp-sticky__unit{font-size:13px;font-weight:400;color:#51584a}
+.pdp-sticky__note{font-size:13px;font-weight:600;line-height:1.25;color:#4b523b;white-space:nowrap}
+.pdp-sticky .pdp-sticky__cta{flex:0 0 auto;width:174px;max-width:48%;height:49px;min-height:49px;padding:0 20px;border-radius:999px;background:#283d2c;border-color:#283d2c;color:#f2f8f2;font-size:16px;font-weight:400;letter-spacing:0;text-transform:none;display:inline-flex;align-items:center;justify-content:center}
 .pdp-root{padding-bottom:88px}
 @media(min-width:960px){.pdp-root{padding-bottom:0}}
 .pdp-foot__grid{display:grid;gap:var(--sk-space-32)}

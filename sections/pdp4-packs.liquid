@@ -188,7 +188,8 @@
       {%- assign v_per_day_raw = variant.metafields.custom.value_per_day | split: '/' | first | strip -%}
       {%- capture v_per_day %}{% render 'pdp4-money', text: v_per_day_raw %}{% endcapture -%}
 
-      <label class="sk-card sk-card--outline pdp-pack"><input type="radio" name="pack" value="{{ variant.id }}"{% if v_active %} checked{% endif %} data-pd="{{ v_per_day | escape }}" data-price="{{ v_price_text | escape }}" data-available="{{ variant.available }}">
+      {%- if v_active -%}{%- assign sticky_label = v_label -%}{%- endif -%}
+      <label class="sk-card sk-card--outline pdp-pack"><input type="radio" name="pack" value="{{ variant.id }}"{% if v_active %} checked{% endif %} data-pd="{{ v_per_day | escape }}" data-label="{{ v_label | escape }}" data-price="{{ v_price_text | escape }}" data-available="{{ variant.available }}">
         {%- if v_badge != blank %}<span class="sk-badge pdp-pack__tag">{{ v_badge }}</span>{% endif -%}
         <div class="pdp-pack__top"><span class="sk-title">{{ v_label }}</span>
           {%- if v_saving > 0 -%}
@@ -374,11 +375,17 @@
 {%- endcomment -%}
 {%- assign sticky_per_day = default_variant.metafields.custom.value_per_day | split: '/' | first | strip -%}
 <div data-pdp4-sticky-host><div class="pdp-sticky sk-card sk-card--float" id="pdp4-sticky" data-on="false">
-  <div>
-    <p class="sk-small sk-text-medium sk-num"><span id="pdp4-pd-sticky">{% render 'pdp4-money', text: sticky_per_day %}</span> / {{ t_perday_unit }}</p>
-    {%- if t_sticky != blank -%}<p class="sk-small sk-text-secondary">{{ t_sticky }}</p>{%- endif -%}
+  {%- comment -%}
+    Tiga baris (paket terpilih / harga per hari / jaminan) + tombol pil besar,
+    sesuai mockup CTA 3 Nov. Label paket diisi Liquid dari varian aktif lalu
+    diganti pdp4.js (data-label di radio paket) setiap pembeli memilih paket.
+  {%- endcomment -%}
+  <div class="pdp-sticky__info">
+    {%- if sticky_label != blank -%}<p class="pdp-sticky__plan" id="pdp4-plan-sticky">{{ sticky_label }}</p>{%- endif -%}
+    <p class="pdp-sticky__price sk-num"><strong id="pdp4-pd-sticky">{% render 'pdp4-money', text: sticky_per_day %}</strong> <span class="pdp-sticky__unit">/ {{ t_perday_unit }}</span></p>
+    {%- if t_sticky != blank -%}<p class="pdp-sticky__note">{{ t_sticky }}</p>{%- endif -%}
   </div>
-  <a class="sk-btn" href="#pdp4-packs">{{ t_atc }}</a>
+  <a class="sk-btn pdp-sticky__cta" href="#pdp4-packs">{{ t_atc }}</a>
 </div></div>
 </div>
 {%- comment -%}
