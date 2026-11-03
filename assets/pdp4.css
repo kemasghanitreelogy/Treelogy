@@ -1204,7 +1204,10 @@ html{scroll-behavior:smooth}
 .pdp-sticky__price strong{font-weight:700}
 .pdp-sticky__unit{font-size:13px;font-weight:400;color:#51584a}
 .pdp-sticky__note{font-size:13px;font-weight:600;line-height:1.25;color:#4b523b;white-space:nowrap}
-.pdp-sticky .pdp-sticky__cta{flex:0 0 auto;width:174px;max-width:48%;height:49px;min-height:49px;padding:0 20px;border-radius:999px;background:#283d2c;border-color:#283d2c;color:#f2f8f2;font-size:16px;font-weight:400;letter-spacing:0;text-transform:none;display:inline-flex;align-items:center;justify-content:center}
+.pdp-sticky .pdp-sticky__cta{flex:0 0 auto;width:auto;min-width:174px;max-width:none;white-space:nowrap;height:49px;min-height:49px;padding:0 18px;border-radius:999px;background:#283d2c;border-color:#283d2c;color:#f2f8f2;font-size:16px;font-weight:400;letter-spacing:0;text-transform:none;display:inline-flex;align-items:center;justify-content:center}
+/* Label ID "Tambah ke Keranjang" lebih panjang dari "Add to cart": pil melebar
+   ikut teks (min 174px = mockup), dan di layar <375px huruf turun 1px. */
+@media(max-width:374px){.pdp-sticky .pdp-sticky__cta{min-width:0;padding:0 14px;font-size:15px}}
 .pdp-root{padding-bottom:88px}
 @media(min-width:960px){.pdp-root{padding-bottom:0}}
 .pdp-foot__grid{display:grid;gap:var(--sk-space-32)}
