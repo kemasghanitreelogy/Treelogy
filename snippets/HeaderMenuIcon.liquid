@@ -152,6 +152,20 @@
     {% endfor %}
   </div>
 </div>
+<script>
+  /* request.path tidak membawa query string, jadi ganti bahasa membuang
+     ?view= (template varian A/B) dan parameter lain. Query & hash halaman
+     saat ini disambung ke tautan bahasa tepat saat diklik. */
+  (function () {
+    if (window.__langPickerKeepQuery) return;
+    window.__langPickerKeepQuery = true;
+    document.addEventListener('click', function (e) {
+      var a = e.target && e.target.closest && e.target.closest('.language-picker__list a[href]');
+      if (!a || (!location.search && !location.hash)) return;
+      a.setAttribute('href', a.getAttribute('href').split(/[?#]/)[0] + location.search + location.hash);
+    }, true);
+  })();
+</script>
 
 {% javascript %}
   (function () {
