@@ -1040,19 +1040,27 @@
     var view = 'reviews';
     var answerLabel = (qlist && qlist.dataset.answerLabel) || '';
     function text(el) { return el ? el.textContent.replace(/\s+/g, ' ').trim() : ''; }
+    /* Kartu pertanyaan Judge.me memberi waktu di `data-content`
+       ("2026-10-28 10:20:53 UTC"), bukan `datetime`; Safari menolak format
+       itu, jadi dinormalkan ke ISO. */
+    function stampIso(el) {
+      if (!el) return '';
+      var v = el.getAttribute('datetime') || el.getAttribute('data-content') || '';
+      return v.replace(' UTC', 'Z').replace(' ', 'T');
+    }
     function readQuestions(root) {
       return [].slice.call(root.querySelectorAll('.jdgm-quest')).map(function (q) {
         var stamp = q.querySelector('.jdgm-rev__timestamp');
         return {
           body: text(q.querySelector('.jdgm-quest__body')),
           asker: text(q.querySelector('.jdgm-quest__asker .jdgm-rev__author')) || text(q.querySelector('.jdgm-rev__author')),
-          iso: stamp ? stamp.getAttribute('datetime') : '',
+          iso: stampIso(stamp),
           answers: [].slice.call(q.querySelectorAll('.jdgm-ans')).map(function (a) {
             var st = a.querySelector('.jdgm-rev__timestamp');
             return {
               who: text(a.querySelector('.jdgm-ans__answerer .jdgm-rev__author')) || text(a.querySelector('.jdgm-rev__author')),
               body: text(a.querySelector('.jdgm-ans__body')) || text(a.querySelector('.jdgm-ans__content')),
-              iso: st ? st.getAttribute('datetime') : ''
+              iso: stampIso(st)
             };
           }).filter(function (a) { return a.body; })
         };
@@ -1083,10 +1091,44 @@
       if (sub) n = parseInt(sub.textContent, 10);
       return isNaN(n) ? qs.length : Math.max(n, qs.length);
     }
+    /* Widget di host hanya memanggil endpoint pertanyaan kalau metafield
+       `judgeme.widget` mencatat jumlah pertanyaan > 0 — dan metafield itu
+       tidak diregenerasi Judge.me saat pertanyaan dijawab/terbit (3 Nov 2026:
+       3 pertanyaan terbit, metafield masih 0 sejak 28 Okt, tab "(0)"). Jadi
+       pertanyaan ditarik sendiri dari endpoint yang sama dengan widget-nya;
+       host tetap jadi cadangan kalau permintaan gagal. */
+    var remoteQ = null;
+    function loadQuestions() {
+      if (!qlist || !sec.dataset.productId) return;
+      var box = document.createElement('div');
+      var seen = {};
+      function page(n) {
+        return fetch('https://api.judge.me/api/questions/questions_for_widget' +
+          '?product_id=' + encodeURIComponent(sec.dataset.productId) +
+          '&shop_domain=' + encodeURIComponent(sec.dataset.shop) +
+          '&platform=shopify&per_page=50&page=' + n)
+          .then(function (r) { return r.json(); })
+          .then(function (j) {
+            var doc = new DOMParser().parseFromString(j.html || '', 'text/html');
+            var fresh = [].filter.call(doc.querySelectorAll('.jdgm-quest'), function (q) {
+              var id = q.getAttribute('data-question-id');
+              if (id && seen[id]) return false;
+              if (id) seen[id] = true;
+              return true;
+            });
+            fresh.forEach(function (q) { box.appendChild(q); });
+            if (fresh.length && n < 10) return page(n + 1);
+          });
+      }
+      page(1).then(function () {
+        remoteQ = readQuestions(box);
+        syncQuestions();
+      }).catch(function () {});
+    }
     function syncQuestions() {
       if (!qlist) return;
-      var qs = readQuestions(host);
-      if (qcount) qcount.textContent = String(questionTotal(qs));
+      var qs = remoteQ || readQuestions(host);
+      if (qcount) qcount.textContent = String(remoteQ ? remoteQ.length : questionTotal(qs));
       qlist.innerHTML = qs.map(qcard).join('');
       var showing = view === 'questions';
       qlist.hidden = !showing || !qs.length;
@@ -1401,6 +1443,7 @@
     seed = readReviews(host);
     syncBars();
     syncQuestions();
+    loadQuestions();
     apply();
     /* Ke-200 ulasannya (sembilan permintaan ke api.judge.me, ±700 KB JSON
        yang lalu di-parse jadi DOM) dulu ditarik begitu halaman lahir dan ikut
