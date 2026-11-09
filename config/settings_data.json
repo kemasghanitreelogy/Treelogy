@@ -183,7 +183,14 @@
         "disabled": false,
         "settings": {}
       }
-    }
+    },
+    "promo_url_enable": true,
+    "promo_url_match": "1111,11.11",
+    "promo_url_capsule": "organic-moringa-capsules",
+    "promo_url_bundle": "moringa-inside-out-protocol",
+    "promo_url_oil": "organic-moringa-oil",
+    "promo_url_gift": "moringa-seed-oil-30ml",
+    "promo_url_bundle_promo": "inside-out-moringa-protocol-promo-1111"
   },
   "presets": {
     "Default": {}
