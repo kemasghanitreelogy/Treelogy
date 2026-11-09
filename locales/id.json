@@ -225,7 +225,7 @@
       "offer_verified": "Pembeli terverifikasi",
       "offer_choose": "Pilih paketmu",
       "offer_first_pick": "Favorit pemula",
-      "offer_per_day": "{{ price }}/hari",
+      "offer_per_day": "{{ price }}\/hari",
       "offer_add": "Tambah ke keranjang",
       "offer_details": "Lihat detail lengkap",
       "offer_badge": "BPOM · Obat tradisional",
@@ -235,7 +235,7 @@
   },
   "products": {
     "rating": {
-      "average": "{{ rating }}/5",
+      "average": "{{ rating }}\/5",
       "count": "({{ count }})",
       "decimal_separator": ",",
       "aria_summary": "Dinilai {{ rating }} dari 5 berdasarkan {{ count }} ulasan"
@@ -330,7 +330,7 @@
     "regeneration": "Regenerasi"
   },
   "address": {
-    "country_region": "Negara/ Wilayah",
+    "country_region": "Negara\/ Wilayah",
     "first_name": "Nama Depan",
     "last_name_optional": "Nama Belakang (Opsional)",
     "company_address": "Alamat Perusahaan",
@@ -376,18 +376,18 @@
   },
   "oil_guide": {
     "hero": {
-      "title_html": "Moringa<br>Seed Oil<br><b>Guide</b>",
+      "title_html": "Moringa<br>Seed Oil<br><b>Guide<\/b>",
       "pill": "Outside Care",
       "image_alt": "Botol moringa seed oil Treelogy"
     },
     "leaf": {
-      "heading_html": "Setiap pohon moringa<br>memberi kita <b>dua hal.</b>",
-      "body_html": "<b>Daunnya</b> hanya setengah dari pohon.<br>Dipanen saat fajar, dipetik satu per satu<br>oleh komunitas kami, bebas batang, lalu<br>didehidrasi pada suhu rendah dan<br>digiling jadi powder halus yang mengisi<br>Moringa Capsules kami.",
+      "heading_html": "Setiap pohon moringa<br>memberi kita <b>dua hal.<\/b>",
+      "body_html": "<b>Daunnya<\/b> hanya setengah dari pohon.<br>Dipanen saat fajar, dipetik satu per satu<br>oleh komunitas kami, bebas batang, lalu<br>didehidrasi pada suhu rendah dan<br>digiling jadi powder halus yang mengisi<br>Moringa Capsules kami.",
       "image_alt": "Powder halus daun moringa"
     },
     "seeds": {
-      "heading_html": "Lalu <b>setengahnya lagi?</b>",
-      "body_html": "<b>Bijinya.</b> Dikupas dengan tangan, cold-<br>pressed untuk menjaga nutrisinya, lalu<br>didiamkan dua minggu supaya minyaknya<br>mengendap alami. Minyak serbaguna yang<br>berharga, dipakai berabad-abad di berbagai<br>budaya untuk meregenerasi kulit.<br>Di wajah, badan, dan rambut.",
+      "heading_html": "Lalu <b>setengahnya lagi?<\/b>",
+      "body_html": "<b>Bijinya.<\/b> Dikupas dengan tangan, cold-<br>pressed untuk menjaga nutrisinya, lalu<br>didiamkan dua minggu supaya minyaknya<br>mengendap alami. Minyak serbaguna yang<br>berharga, dipakai berabad-abad di berbagai<br>budaya untuk meregenerasi kulit.<br>Di wajah, badan, dan rambut.",
       "image_alt": "Biji moringa"
     },
     "specs": {
@@ -404,14 +404,14 @@
       "note_html": "Non-comedogenic. Sekitar 70% asam oleat, mirip dengan yang diproduksi kulit sendiri. Itu sebabnya minyaknya meresap, bukan menumpuk di permukaan."
     },
     "how": {
-      "heading_html": "Cara <b>pakainya?</b>",
+      "heading_html": "Cara <b>pakainya?<\/b>",
       "where_label": "Di mana.",
       "when_label": "Kapan.",
       "how_label": "Caranya."
     },
     "cards": {
       "face": {
-        "title_html": "Untuk <b>Wajah</b>",
+        "title_html": "Untuk <b>Wajah<\/b>",
         "benefit": "Kelembapan, garis halus, warna kulit merata, bibir kering",
         "where": "Wajah, leher, bibir",
         "when": "Malam hari, langkah terakhir",
@@ -419,7 +419,7 @@
         "image_alt": "Mengoleskan moringa oil ke wajah"
       },
       "skin": {
-        "title_html": "Untuk <b>Kulit</b>",
+        "title_html": "Untuk <b>Kulit<\/b>",
         "benefit": "Kulit kering bersisik, kulit iritasi atau meradang, tangan dan kuku, kulit yang meregang",
         "where": "Di mana saja yang kering, iritasi, atau meradang. Siku, lutut, tumit. Tangan dan kuku.",
         "when": "Malam hari untuk area yang kena sinar matahari. Kapan saja untuk area yang tertutup pakaian.",
@@ -427,7 +427,7 @@
         "image_alt": "Moringa oil untuk kulit"
       },
       "hair": {
-        "title_html": "Untuk <b>Rambut</b>",
+        "title_html": "Untuk <b>Rambut<\/b>",
         "benefit": "Kulit kepala kering, ketombe, rambut mengembang, ujung bercabang, kilau",
         "where": "Kulit kepala sebelum keramas. Ujung rambut setelahnya.",
         "when": "Kulit kepala satu sampai dua kali seminggu. Ujung rambut setiap keramas.",
@@ -436,7 +436,7 @@
       }
     },
     "know": {
-      "heading_html": "Yang perlu <b>kamu tahu</b>",
+      "heading_html": "Yang perlu <b>kamu tahu<\/b>",
       "q1_title": "Simpan di mana.",
       "q1_body": "Jauh dari cahaya dan panas. Rak kamar mandi sudah cukup.",
       "q2_title": "Kalau minyaknya keruh.",
@@ -446,7 +446,7 @@
     },
     "proof": {
       "heading": "Kata pelanggan",
-      "rating": "4.9/5",
+      "rating": "4.9\/5",
       "rating_aria": "Dinilai 4,9 dari 5 bintang",
       "customers_html": "10,000+ customers",
       "quote": "Utk yang moringa seed oil ini sih juara banget. Hari ke-4 setelah pemakaian setiap malam kulit muka terasa lbh lembab. Saya beranikan pergi keluar rumah tanpa skin care apapun. Dan amaaannnn… kulit ga terasa kering. Saya uji coba pakaikan ke bibir setiap malam cuma setetes kecil. Voila! Paginya bibir jadi lembab loh.. seriusan.",
@@ -478,7 +478,7 @@
   },
   "why_capsules": {
     "hero": {
-      "title_html": "Kenapa Capsules<br>jadi <b>bestseller</b>",
+      "title_html": "Kenapa Capsules<br>jadi <b>bestseller<\/b>",
       "sub_html": "Tanpa perlu diseduh,<br>tanpa rasa yang mengganggu.<br>Tiga capsules setiap pagi, dan selesai.",
       "cta_cart": "Checkout",
       "image_alt": "Moringa capsules di telapak tangan"
@@ -497,7 +497,7 @@
     },
     "proof": {
       "heading": "Kata pelanggan",
-      "rating": "4.9/5",
+      "rating": "4.9\/5",
       "rating_aria": "Dinilai 4,9 dari 5 bintang",
       "customers_html": "10,000+ customers",
       "quote": "Saya awal beli Treelogy bulan Des 2025<br>dan Treelogy saya tidak pernah putus<br>hingga saat ini",
@@ -537,7 +537,7 @@
       "image_alt": "Sacha memetik daun moringa di kebun Treelogy di Bali"
     },
     "letter": {
-      "heading_html": "Surat dari <b>founder</b> kami.",
+      "heading_html": "Surat dari <b>founder<\/b> kami.",
       "greeting": "Halo, Para Customer Treelogy",
       "body_html": "Bulan Agustus lalu saya menulis bahwa harga<br>kami berubah mulai 1 September, dan bahwa<br>untuk kamu yang sudah lebih dulu memesan,<br>harganya akan kami jaga.",
       "body2_html": "Hari ini harga baru sudah berlaku.<br>Dan ini yang saya janjikan.",
@@ -601,7 +601,7 @@
       "body_1_html": "Kami sudah mengirim pengajuan ke<br>Regenerative Organic Alliance. Sekarang<br>kami menunggu jadwal audit.",
       "body_2_html": "Kalau lolos, moringa kami jadi yang<br>pertama di dunia dengan sertifikasi<br>regeneratif. Itu tujuan kami sejak hari<br>pertama.",
       "image_alt": "Foto udara kebun moringa Treelogy di antara pohon kelapa",
-      "body3_html": "<b>Organik itu baik, dan kami organik. Tapi<br>organik melihat apa yang masuk.<br>Regeneratif melihat apa yang dihasilkan.</b><br>Apakah tanahnya lebih sehat? Apakah<br>hewan dan orang-orangnya jadi lebih baik?<br>Itu pertanyaan yang lebih sulit, dan itu yang<br>ingin kami jawab."
+      "body3_html": "<b>Organik itu baik, dan kami organik. Tapi<br>organik melihat apa yang masuk.<br>Regeneratif melihat apa yang dihasilkan.<\/b><br>Apakah tanahnya lebih sehat? Apakah<br>hewan dan orang-orangnya jadi lebih baik?<br>Itu pertanyaan yang lebih sulit, dan itu yang<br>ingin kami jawab."
     },
     "same": {
       "heading": "Apa yang Tetap Sama",
@@ -637,11 +637,11 @@
       "body_html": "Lebih murah dari harga lama paket 1 bulan.<br>Dan dengan garansi 60 hari, risikonya<br>di kami, bukan di kamu.",
       "cta_label": "Start With 3 Months"
     },
-    "signoff_html": "From Bali with care,<br><b>Sacha, Founder</b>"
+    "signoff_html": "From Bali with care,<br><b>Sacha, Founder<\/b>"
   },
   "pdp3": {
     "buybox": {
-      "proof_text": "4,96 / 5 · 17.000+ pelanggan",
+      "proof_text": "4,96 \/ 5 · 17.000+ pelanggan",
       "per_day_suffix": "per hari",
       "cta_label": "Pilih Paket",
       "wa_label": "Tanya kami di WhatsApp",
@@ -780,7 +780,7 @@
       "modal_close": "Tutup",
       "modal_row_1": "Produk|Treelogy Organic Moringa Capsules, 400 mg, tins of 90 and 180.",
       "modal_row_2": "Nomor|POM TR253017851, category Obat Tradisional.",
-      "modal_row_3": "Keputusan|SK 0316/Reg/TR/2025, 15 March 2025, valid to 15 March 2030.",
+      "modal_row_3": "Keputusan|SK 0316\/Reg\/TR\/2025, 15 March 2025, valid to 15 March 2030.",
       "modal_row_4": "Halal|BPJPH ID51210022336550525, 20 May 2025.",
       "modal_row_5": "USDA Organic|NOP 4080207676, certifier CERES.",
       "row_1": {
@@ -948,7 +948,7 @@
   },
   "shop_the_look": {
     "eyebrow": "Ritual dari dalam & luar",
-    "heading_html": "Kapsul dari <strong>dalam</strong><br>Minyak dari <strong>luar</strong>",
+    "heading_html": "Kapsul dari <strong>dalam<\/strong><br>Minyak dari <strong>luar<\/strong>",
     "subheading": "Moringa organik, ditanam dan diolah di Bali. Ketuk produk untuk melihat detailnya.",
     "hint": "Ketuk titik untuk menjelajah",
     "cta": "Lihat Inside Out Protocol",
@@ -964,7 +964,7 @@
   "reviews_hub": {
     "eyebrow": "Ulasan Treelogy",
     "title": "Apa kata pembeli tentang Treelogy",
-    "lede_html": "<strong>{{ average }} dari 5</strong> berdasarkan <strong>{{ count }}</strong> penilaian pembeli di Shopee, Tokopedia & TikTok Shop, dan treelogy.com.",
+    "lede_html": "<strong>{{ average }} dari 5<\/strong> berdasarkan <strong>{{ count }}<\/strong> penilaian pembeli di Shopee, Tokopedia & TikTok Shop, dan treelogy.com.",
     "updated": "Diperbarui {{ date }}",
     "out_of": "dari 5",
     "ratings_count": "{{ count }} penilaian",
@@ -1008,10 +1008,10 @@
     "page_label": "Halaman ulasan",
     "page_of": "Halaman {{ current }} dari {{ total }}",
     "method_title": "Cara kami mengumpulkan dan memoderasi ulasan",
-    "method_1_html": "<strong>Sumber.</strong> Penilaian dan ulasan disalin otomatis dari toko resmi Treelogy di Shopee dan Tokopedia serta dari pesanan terverifikasi di treelogy.com, dan diperbarui kira-kira tiap sepuluh menit. Marketplace hanya mengizinkan pembeli pesanan memberi penilaian.",
-    "method_2_html": "<strong>Semua penilaian dihitung.</strong> Seluruh {{ count }} penilaian, termasuk yang rendah dan yang tanpa teks, masuk ke angka di atas. Kami tidak pernah menghapus ulasan karena bintangnya.",
-    "method_3_html": "<strong>Yang tidak kami tampilkan sebagai teks.</strong> Produk Treelogy diawasi Badan POM, yang aturannya tidak mengizinkan testimoni tentang menyembuhkan, mengobati, atau mencegah penyakit di publikasi kami sendiri. Karena itu ulasan tertulis yang menyebut efek kesehatan tidak ditampilkan di sini, berapa pun bintangnya (saat ini {{ held }} ulasan); bintangnya tetap dihitung. Ulasan yang memuat data kontak juga tidak ditampilkan. Semua ulasan tetap bisa dibaca di marketplace-nya.",
-    "method_5_html": "<strong>Nama</strong> ditampilkan seperti di marketplace. Pertanyaan tentang ulasan: <a href=\"mailto:hello@treelogy.com\">hello@treelogy.com</a>.",
+    "method_1_html": "<strong>Sumber.<\/strong> Penilaian dan ulasan disalin otomatis dari toko resmi Treelogy di Shopee dan Tokopedia serta dari pesanan terverifikasi di treelogy.com, dan diperbarui kira-kira tiap sepuluh menit. Marketplace hanya mengizinkan pembeli pesanan memberi penilaian.",
+    "method_2_html": "<strong>Semua penilaian dihitung.<\/strong> Seluruh {{ count }} penilaian, termasuk yang rendah dan yang tanpa teks, masuk ke angka di atas. Kami tidak pernah menghapus ulasan karena bintangnya.",
+    "method_3_html": "<strong>Yang tidak kami tampilkan sebagai teks.<\/strong> Produk Treelogy diawasi Badan POM, yang aturannya tidak mengizinkan testimoni tentang menyembuhkan, mengobati, atau mencegah penyakit di publikasi kami sendiri. Karena itu ulasan tertulis yang menyebut efek kesehatan tidak ditampilkan di sini, berapa pun bintangnya (saat ini {{ held }} ulasan); bintangnya tetap dihitung. Ulasan yang memuat data kontak juga tidak ditampilkan. Semua ulasan tetap bisa dibaca di marketplace-nya.",
+    "method_5_html": "<strong>Nama<\/strong> ditampilkan seperti di marketplace. Pertanyaan tentang ulasan: <a href=\"mailto:hello@treelogy.com\">hello@treelogy.com<\/a>.",
     "faq_title": "Pertanyaan umum",
     "faq_q1": "Apakah Treelogy asli dan terpercaya?",
     "faq_a1": "Treelogy dibuat oleh PT. Treelogy Regenerative Moringa di Bali, Indonesia. Produknya terdaftar di Badan POM dan bersertifikat EU Organic, Organik Indonesia, USDA Organic, dan Halal Indonesia. Penilaian di halaman ini berasal dari pembeli di Shopee, Tokopedia & TikTok Shop, dan treelogy.com, dan bisa dicek langsung di tiap marketplace.",
@@ -1079,22 +1079,22 @@
   },
   "pdp5": {
     "buybox": {
-      "score": "{{ avg }} / 5",
+      "score": "{{ avg }} \/ 5",
       "count": "{{ count }} ulasan",
-      "title_html": "<strong>Organic Moringa Capsules</strong><br>untuk meredakan peradangan<br>di balik gerak, energi, dan<br>proses menua.",
+      "title_html": "<strong>Organic Moringa Capsules<\/strong><br>untuk meredakan peradangan<br>di balik gerak, energi, dan<br>proses menua.",
       "check_1": "Sendi lebih lentur saat bergerak",
       "check_2": "Energi stabil tanpa kafein, tanpa lemas",
       "check_3": "Pencernaan lancar dengan serat alami",
       "check_4": "Mendukung tekanan darah lebih sehat",
       "check_5": "Mendukung gula darah seimbang",
       "pick": "Pilih Paket Anda",
-      "guarantee_html": "<strong>Garansi</strong> uang kembali <strong>60 hari</strong>"
+      "guarantee_html": "<strong>Garansi<\/strong> uang kembali <strong>60 hari<\/strong>"
     },
     "packs": {
       "most_chosen": "Paling dipilih",
-      "assure_1_html": "<strong>Stok tersedia</strong> · Pengiriman <strong>3 sampai 5 hari</strong>",
-      "assure_2_html": "<strong>Garansi</strong> uang kembali <strong>60 hari</strong>",
-      "assure_3_html": "<strong>Harga terendah</strong> di <strong>website</strong> ini",
+      "assure_1_html": "<strong>Stok tersedia<\/strong> · Pengiriman <strong>3 sampai 5 hari<\/strong>",
+      "assure_2_html": "<strong>Garansi<\/strong> uang kembali <strong>60 hari<\/strong>",
+      "assure_3_html": "<strong>Harga terendah<\/strong> di <strong>website<\/strong> ini",
       "ship": "Gratis ongkir ke Indonesia"
     },
     "story": {
@@ -1126,10 +1126,10 @@
         "a2": "Cocok untuk Siapa",
         "a3": "Cara Minum",
         "a4": "Kualitas dan Sertifikasi",
-        "b1_html": "<p><strong>Isi</strong></p><ul><li>100% daun moringa organik (Moringa oleifera), 400 mg per kapsul</li><li>Cangkang HPMC nabati</li><li>Tanpa batang, pengisi, pengikat, atau pengawet</li><li>Daun utuh, bukan ekstrak, dengan semua senyawa alaminya</li></ul><p><strong>Cara pembuatan</strong></p><ul><li>Dipanen di kebun kami di Bali</li><li>Batang dipisah manual dalam 4 jam setelah panen</li><li>Didehidrasi di suhu 38°C selama 22 jam</li><li>Digiling dan dikapsulkan di pabrik kami sendiri</li></ul>",
-        "b2_html": "<p>Cocok untuk kebanyakan orang dewasa, terutama jika kamu:</p><ul><li>Ingin menekan peradangan secara alami</li><li>Ingin melindungi sel dari oksidasi harian</li><li>Mengalami perubahan hormon: haid, pascamelahirkan, perimenopause, menopause</li><li>Bangun tidur badan kaku, atau lama pulih setelah olahraga</li><li>Tenaga cepat habis dan ingin energi stabil tanpa kafein</li><li>Ingin menjaga pencernaan</li><li>Memantau gula darah atau tekanan darah, dengan pola hidup sehat</li><li>Sering stres atau kurang tidur</li><li>Ingin menua dengan sehat</li></ul>",
-        "b3_html": "<ul><li>3 kapsul sehari, pagi hari bersama makanan</li><li>Baru coba moringa? Mulai 2 kapsul sehari, 3 hari pertama</li><li>Minum setiap hari: rutin lebih penting dari dosis</li><li>Untuk pria dan wanita</li></ul>",
-        "b4_html": "<ul><li>BPOM: obat tradisional, POM TR253017851, berlaku s.d. 2030</li><li>Organik: USDA Organic (NOP 4080207676, CERES) dan EU Organic</li><li>Halal: BPJPH ID51210022336550525</li><li>Diuji: setiap batch, sebelum keluar dari pabrik</li><li>Masa simpan: 24 bulan, tanggal kedaluwarsa ada di label</li></ul>"
+        "b1_html": "<p><strong>Isi<\/strong><\/p><ul><li>100% daun moringa organik (Moringa oleifera), 400 mg per kapsul<\/li><li>Cangkang HPMC nabati<\/li><li>Tanpa batang, pengisi, pengikat, atau pengawet<\/li><li>Daun utuh, bukan ekstrak, dengan semua senyawa alaminya<\/li><\/ul><p><strong>Cara pembuatan<\/strong><\/p><ul><li>Dipanen di kebun kami di Bali<\/li><li>Batang dipisah manual dalam 4 jam setelah panen<\/li><li>Didehidrasi di suhu 38°C selama 22 jam<\/li><li>Digiling dan dikapsulkan di pabrik kami sendiri<\/li><\/ul>",
+        "b2_html": "<p>Cocok untuk kebanyakan orang dewasa, terutama jika kamu:<\/p><ul><li>Ingin menekan peradangan secara alami<\/li><li>Ingin melindungi sel dari oksidasi harian<\/li><li>Mengalami perubahan hormon: haid, pascamelahirkan, perimenopause, menopause<\/li><li>Bangun tidur badan kaku, atau lama pulih setelah olahraga<\/li><li>Tenaga cepat habis dan ingin energi stabil tanpa kafein<\/li><li>Ingin menjaga pencernaan<\/li><li>Memantau gula darah atau tekanan darah, dengan pola hidup sehat<\/li><li>Sering stres atau kurang tidur<\/li><li>Ingin menua dengan sehat<\/li><\/ul>",
+        "b3_html": "<ul><li>3 kapsul sehari, pagi hari bersama makanan<\/li><li>Baru coba moringa? Mulai 2 kapsul sehari, 3 hari pertama<\/li><li>Minum setiap hari: rutin lebih penting dari dosis<\/li><li>Untuk pria dan wanita<\/li><\/ul>",
+        "b4_html": "<ul><li>BPOM: obat tradisional, POM TR253017851, berlaku s.d. 2030<\/li><li>Organik: USDA Organic (NOP 4080207676, CERES) dan EU Organic<\/li><li>Halal: BPJPH ID51210022336550525<\/li><li>Diuji: setiap batch, sebelum keluar dari pabrik<\/li><li>Masa simpan: 24 bulan, tanggal kedaluwarsa ada di label<\/li><\/ul>"
       },
       "expect": {
         "eyebrow": "yang bisa dirasakan",
@@ -1175,21 +1175,21 @@
         "c1": {
           "eyebrow": "01 - MENUTRISI TUBUH",
           "title": "Bukan ekstrak. Daun utuh.",
-          "body_html": "Kesehatan dimulai dari usus: hanya yang diserap yang bisa bekerja. Nutrisi yang diisolasi dan diproses sering kali terbuang. Moringa memberi <strong>matriks nutrisi</strong> utuh yang saling membantu penyerapan, jadi tubuh benar-benar memakai apa yang dikonsumsi.",
+          "body_html": "Kesehatan dimulai dari usus: hanya yang diserap yang bisa bekerja. Nutrisi yang diisolasi dan diproses sering kali terbuang. Moringa memberi <strong>matriks nutrisi<\/strong> utuh yang saling membantu penyerapan, jadi tubuh benar-benar memakai apa yang dikonsumsi.",
           "pill1": "MATRIKS DAUN UTUH",
           "pill2": "PENYERAPAN USUS"
         },
         "c2": {
           "eyebrow": "02 - MELINDUNGI SEL",
           "title": "Cegah kerusakan sejak awal.",
-          "body_html": "Stres, gula, dan kurang tidur mengikis sel setiap hari. <strong>Moringin</strong>, senyawa langka dalam moringa, mengaktifkan jalur <strong>Nrf2</strong>, saklar pertahanan sel, agar sel membuat antioksidannya sendiri seperti glutation, bahkan setelah senyawanya habis.",
+          "body_html": "Stres, gula, dan kurang tidur mengikis sel setiap hari. <strong>Moringin<\/strong>, senyawa langka dalam moringa, mengaktifkan jalur <strong>Nrf2<\/strong>, saklar pertahanan sel, agar sel membuat antioksidannya sendiri seperti glutation, bahkan setelah senyawanya habis.",
           "pill1": "AKTIVASI NRF2",
           "pill2": "GLUTATION"
         },
         "c3": {
           "eyebrow": "03 - MEREDAKAN PERADANGAN",
           "title": "Badan ringan, gerak leluasa",
-          "body_html": "Peradangan ringan yang menahun diam-diam membuat sendi kaku, tenaga cepat habis, dan ikut menaikkan gula darah serta tekanan darah. <strong>Moringin</strong> meredam jalur <strong>NF-κB</strong>, saklar peradangan sel, sehingga peradangan mereda dan tidak berlarut-larut.",
+          "body_html": "Peradangan ringan yang menahun diam-diam membuat sendi kaku, tenaga cepat habis, dan ikut menaikkan gula darah serta tekanan darah. <strong>Moringin<\/strong> meredam jalur <strong>NF-κB<\/strong>, saklar peradangan sel, sehingga peradangan mereda dan tidak berlarut-larut.",
           "pill1": "REGULASI NF-κB",
           "pill2": "KESEIMBANGAN PERADANGAN"
         }
@@ -1205,7 +1205,7 @@
         "r1": {
           "label": "Proses",
           "ours": "22 jam di suhu 38°C",
-          "theirs": "Matahari / oven"
+          "theirs": "Matahari \/ oven"
         },
         "r2": {
           "label": "Kualitas",
@@ -1225,7 +1225,7 @@
         "r5": {
           "label": "BPOM",
           "ours": "Obat tradisional",
-          "theirs": "Pangan / tak ada"
+          "theirs": "Pangan \/ tak ada"
         },
         "r6": {
           "label": "Refund",
@@ -1257,5 +1257,12 @@
       },
       "press": "DILIPUT OLEH"
     }
+  },
+  "promo_url": {
+    "title_capsule_html": "PROMO 11.11<br>UPGRADE<br>SEED OIL 30ml<br><s>{{ value }}<\/s>",
+    "card_capsule_html": "PROMO 11.11<br>GRATIS SEED<br>OIL 30ml<br><s>{{ value }}<\/s>",
+    "title_bundle_html": "PROMO 11.11<br>GANTI SEED<br>OIL <s>30ml<\/s><br>60ml",
+    "perk_find": "30ml Minyak Biji",
+    "perk_html": "<s>30ml<\/s> <mark>60ml Seed Oil<\/mark>"
   }
 }

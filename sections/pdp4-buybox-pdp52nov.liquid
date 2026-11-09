@@ -100,6 +100,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..500&display=swap" rel="stylesheet">
 
 {% render 'pdp4-icons' %}
+{% render 'promo-url', slot: 'gate' %}
 
 {%- capture t_thumb %}{% render 'pdp4-copy', value: section.settings.thumb_label, key: 'pdp3.buybox.thumb_label' %}{% endcapture -%}
 <div class="pdp4-page sk-root p5">
@@ -307,7 +308,8 @@
         })();
       </script>
       {%- endif -%}
-      <h1 class="sk-h1 p5-h1" id="pdp4-h1">{{ 'pdp5.buybox.title_html' | t }}</h1>
+      {%- capture p11_h1 -%}<h1 class="sk-h1 p5-h1" id="pdp4-h1">{{ 'pdp5.buybox.title_html' | t }}</h1>{%- endcapture -%}
+      {% render 'promo-url', slot: 'title', heading_html: p11_h1 %}
       <ul class="p5-checks">
         {%- for i in (1..5) -%}
           {%- assign ck = 'pdp5.buybox.check_' | append: i | t -%}

@@ -101,6 +101,12 @@
 <script type="application/json" data-gift-map>{{ gift_map }}</script>
 
 {%- comment -%}
+  Promo URL: slot `global` menulis ulang peta di atas SEBELUM
+  assets/gift-auto-add.js membacanya (lihat snippets/promo-url.liquid).
+{%- endcomment -%}
+{% render 'promo-url', slot: 'global' %}
+
+{%- comment -%}
   Seed status keranjang saat halaman dirender — supaya pemeriksaan awal tidak
   perlu menembak /cart.js sama sekali. Hanya kolom yang dipakai sinkronisasi.
   properties dirender sebagai OBJEK {"_Gifted": "true"} persis seperti /cart.js:
@@ -123,7 +129,11 @@
   kini bebas rate limit sepenuhnya. data-key diisi JS dari respons keranjang.
   Judulnya bukan tautan — produk hadiah memang tidak bisa dibeli terpisah.
 {%- endcomment -%}
-{%- assign gift_handles = 'bamboo-scoop,travel-pouch,mystery-gift' | split: ',' -%}
+{%- assign gift_handles = 'bamboo-scoop,travel-pouch,mystery-gift' -%}
+{%- if settings.promo_url_enable and settings.promo_url_gift != blank -%}
+  {%- assign gift_handles = gift_handles | append: ',' | append: settings.promo_url_gift.handle -%}
+{%- endif -%}
+{%- assign gift_handles = gift_handles | split: ',' -%}
 {%- for gift_handle in gift_handles -%}
   {%- assign gift_product = all_products[gift_handle] -%}
   {%- assign gift_variant = gift_product.variants.first -%}

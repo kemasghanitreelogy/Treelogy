@@ -99,6 +99,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..500&display=swap" rel="stylesheet">
 
 {% render 'pdp4-icons' %}
+{% render 'promo-url', slot: 'gate' %}
 
 {%- capture t_proof %}{% render 'pdp4-copy', value: section.settings.proof_text, key: 'pdp3.buybox.proof_text' %}{% endcapture -%}
 {%- capture t_lede %}{% render 'pdp4-copy', value: section.settings.lede, key: 'pdp3.buybox.lede' %}{% endcapture -%}
@@ -262,7 +263,8 @@
         ia dibaca section lain dan tema live, dan menghapusnya di sini berarti
         menghapusnya di sana juga.
       {%- endcomment -%}
-      <h1 class="sk-h1" id="pdp4-h1">{{ product.metafields.pdp3.hero_heading | default: section.settings.heading | default: product.title }}</h1>
+      {%- capture p11_h1 -%}<h1 class="sk-h1" id="pdp4-h1">{{ product.metafields.pdp3.hero_heading | default: section.settings.heading | default: product.title }}</h1>{%- endcapture -%}
+      {% render 'promo-url', slot: 'title', heading_html: p11_h1 %}
 
       {%- liquid
         comment

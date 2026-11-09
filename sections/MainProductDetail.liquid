@@ -111,7 +111,9 @@
       {% endif %}
     </div>
 
-    <h1>{{ product.title }}</h1>
+    {%- capture p11_h1 -%}<h1>{{ product.title }}</h1>{%- endcapture -%}
+    {% render 'promo-url', slot: 'gate' %}
+    {% render 'promo-url', slot: 'title', heading_html: p11_h1 %}
     {% render 'ProductTags' %}
     {% render 'ProductVideos' %}
 

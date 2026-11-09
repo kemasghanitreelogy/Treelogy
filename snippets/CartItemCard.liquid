@@ -68,13 +68,23 @@
     daripada yang barusan dipilih. Rantai fallback dijaga identik dengan kartu
     tersebut supaya keduanya tidak akan pernah bisa menyimpang.
   endcomment
-  assign cart_variant_label = item.variant.metafields.custom.staged_plan_label
+  comment
+    Sumber utama: metafield varian custom.cart_item_description ("Cart item
+    description") — teks khusus baris keranjang, bisa diedit per varian di
+    admin. Kosong = rantai lama di bawah. Peta ATC_LINES di
+    snippets/MiniCart.liquid memakai rantai yang sama (kartu optimistis).
+  endcomment
+  assign cart_variant_label = item.variant.metafields.custom.cart_item_description
+  if cart_variant_label == blank
+    assign cart_variant_label = item.variant.metafields.custom.staged_plan_label
+  endif
   if cart_variant_label == blank
     assign cart_variant_label = item.variant.metafields.custom.time_protocol
   endif
   if cart_variant_label == blank
     assign cart_variant_label = item.variant.title
   endif
+
 -%}
 <div
   class="cart-item{% if is_eg_gift %} cart-item--gift{% endif %}"
