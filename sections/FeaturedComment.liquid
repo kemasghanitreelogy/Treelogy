@@ -21,7 +21,7 @@
         -%}
         {%- if fc_count > 0 -%}
           {%- liquid
-            assign fc_avg = fc_sum | divided_by: fc_count | round: 1 | append: ''
+            assign fc_avg = fc_sum | divided_by: fc_count | round: 2 | append: ''
             assign fc_sep = 'products.rating.decimal_separator' | t
             if fc_sep.size == 1
               assign fc_avg = fc_avg | replace: '.', fc_sep
