@@ -1,0 +1,180 @@
+{% comment %}
+  Ulasan Klaviyo — untuk produk selain kapsul.
+
+  Yang dirender bukan widget Klaviyo — widget itu membawa susunannya sendiri
+  (grid foto, tab, "Show more" lebar penuh, gelembung balasan) dan CSS tidak
+  bisa mengubah susunan, hanya mengecatnya. Yang dirender adalah kerangka DOM
+  milik tema (kelas klr-*) yang diisi data Klaviyo oleh
+  assets/klaviyo-reviews.js; CSS-nya assets/klaviyo-reviews.css, override di
+  theme.css. Angka ringkasan datang dari endpoint Klaviyo yang sama dengan
+  daftar, jadi selalu cocok dengan kartu-kartunya.
+
+  Gerbang `excluded_handles`: PDP kapsul punya section ulasannya sendiri
+  (pdp4-reviews) dan harus dikecualikan di sini, kalau tidak ulasannya tampil
+  dua kali.
+
+  Semua teks lewat snippets/pdp4-copy (setting section → locale
+  `pdp3.reviews.*` → kosong), supaya /id berbahasa Indonesia sejak tema masih
+  draft. Dua kunci lama `reviews.based_on` / `reviews.based_on_singular`
+  dipakai untuk "Based on N reviews".
+{% endcomment %}
+
+{%- liquid
+  assign kr_skip = false
+  if section.settings.excluded_handles != blank
+    assign kr_needle = product.handle | prepend: ',' | append: ','
+    assign kr_hay = section.settings.excluded_handles | remove: ' ' | prepend: ',' | append: ','
+    if kr_hay contains kr_needle
+      assign kr_skip = true
+    endif
+  endif
+-%}
+{%- unless kr_skip -%}
+{%- liquid
+  comment
+    Produk promo 11.11 (setelan tema promo_url_bundle_promo) adalah salinan
+    Inside Out dengan oli 60ml dan tidak punya ulasan sendiri: ulasan dan
+    formulirnya memakai produk Inside Out asli (promo_url_bundle).
+  endcomment
+  assign kr_product = product
+  if settings.promo_url_bundle_promo != blank and settings.promo_url_bundle != blank
+    if product.id == settings.promo_url_bundle_promo.id
+      assign kr_product = settings.promo_url_bundle
+    endif
+  endif
+-%}
+{%- comment -%}
+  CSS ulasan (±47 KB) dimuat TANPA memblokir render: section ini jauh di bawah
+  lipatan dan isinya baru digambar JS saat pembaca mendekat, jadi CSS-nya
+  pasti tiba lebih dulu. `noscript` = cadangan tanpa JS.
+{%- endcomment -%}
+<link rel="stylesheet" href="{{ 'klaviyo-reviews.css' | asset_url }}" media="print" onload="this.media='all'">
+<noscript>{{ 'klaviyo-reviews.css' | asset_url | stylesheet_tag }}</noscript>
+
+{%- capture t_write %}{% render 'pdp4-copy', value: section.settings.write_label, key: 'pdp3.reviews.write_label' %}{% endcapture -%}
+{%- capture t_ask %}{% render 'pdp4-copy', value: section.settings.ask_label, key: 'pdp3.reviews.ask_label' %}{% endcapture -%}
+{%- capture t_sort %}{% render 'pdp4-copy', value: section.settings.sort_label, key: 'pdp3.reviews.sort_by' %}{% endcapture -%}
+{%- capture t_recent %}{% render 'pdp4-copy', value: section.settings.order_recent, key: 'pdp3.reviews.order_newest' %}{% endcapture -%}
+{%- capture t_highest %}{% render 'pdp4-copy', value: section.settings.order_highest, key: 'pdp3.reviews.order_highest' %}{% endcapture -%}
+{%- capture t_lowest %}{% render 'pdp4-copy', value: section.settings.order_lowest, key: 'pdp3.reviews.order_lowest' %}{% endcapture -%}
+{%- capture t_onlypics %}{% render 'pdp4-copy', value: section.settings.only_pictures, key: 'pdp3.reviews.only_pictures' %}{% endcapture -%}
+{%- capture t_picsfirst %}{% render 'pdp4-copy', value: section.settings.pictures_first, key: 'pdp3.reviews.pictures_first' %}{% endcapture -%}
+{%- capture t_more %}{% render 'pdp4-copy', value: section.settings.load_more_label, key: 'pdp3.reviews.load_more_label' %}{% endcapture -%}
+{%- capture t_readmore %}{% render 'pdp4-copy', value: section.settings.read_more_label, key: 'pdp3.reviews.read_more' %}{% endcapture -%}
+{%- capture t_seeall %}{% render 'pdp4-copy', value: section.settings.see_all_label, key: 'pdp3.reviews.see_all' %}{% endcapture -%}
+{%- capture t_close %}{% render 'pdp4-copy', value: '', key: 'pdp3.reviews.close' %}{% endcapture -%}
+{%- capture t_title %}{% render 'pdp4-copy', value: '', key: 'reviews.title' %}{% endcapture -%}
+{%- capture t_based %}{{ 'reviews.based_on' | t: count: '__N__' }}{% endcapture -%}
+{%- capture t_based1 %}{{ 'reviews.based_on_singular' | t }}{% endcapture -%}
+
+<div class="klaviyo-review-wrapper" id="klaviyo-review-wrapper"
+  data-tl-klaviyo-reviews
+  data-product-id="{{ kr_product.id }}"
+  data-product-title="{{ kr_product.title | escape }}"
+  data-company="{{ section.settings.company_id | default: 'T9cUqZ' | escape }}"
+  data-locale="{{ request.locale.iso_code }}"
+  data-per-page="{{ section.settings.per_page | default: 5 }}"
+  data-show-ask="{{ section.settings.show_ask }}"
+  data-show-replies="{{ section.settings.show_replies }}"
+  data-shop-name="{{ shop.name | escape }}"
+  data-l-title="{{ t_title | strip | escape }}"
+  data-l-write="{{ t_write | strip | escape }}"
+  data-l-ask="{{ t_ask | strip | escape }}"
+  data-l-sort="{{ t_sort | strip | escape }}"
+  data-l-recent="{{ t_recent | strip | escape }}"
+  data-l-highest="{{ t_highest | strip | escape }}"
+  data-l-lowest="{{ t_lowest | strip | escape }}"
+  data-l-only-pics="{{ t_onlypics | strip | escape }}"
+  data-l-pics-first="{{ t_picsfirst | strip | escape }}"
+  data-l-more="{{ t_more | strip | escape }}"
+  data-l-read-more="{{ t_readmore | strip | escape }}"
+  data-l-see-all="{{ t_seeall | strip | escape }}"
+  data-l-close="{{ t_close | strip | escape }}"
+  data-l-based-on="{{ t_based | strip | escape }}"
+  data-l-based-on-1="{{ t_based1 | strip | escape }}">
+  <div style="clear:both"></div>
+</div>
+<script src="{{ 'klaviyo-reviews.js' | asset_url }}" defer></script>
+{%- endunless -%}
+
+{% schema %}
+{
+  "name": "Klaviyo Reviews",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "excluded_handles",
+      "label": "Hide this section for these product handles (comma separated)"
+    },
+    {
+      "type": "text",
+      "id": "company_id",
+      "label": "Klaviyo company ID",
+      "default": "T9cUqZ"
+    },
+    {
+      "type": "range",
+      "id": "per_page",
+      "label": "Reviews per page",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "checkbox",
+      "id": "show_ask",
+      "label": "Show the Ask a question button",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_replies",
+      "label": "Show shop replies under reviews",
+      "info": "Off keeps the page identical to before.",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Labels (blank = locale file)"
+    },
+    { "type": "text", "id": "write_label", "label": "Write a review" },
+    { "type": "text", "id": "ask_label", "label": "Ask a question" },
+    { "type": "text", "id": "sort_label", "label": "Sort by" },
+    { "type": "text", "id": "order_recent", "label": "Most Recent" },
+    { "type": "text", "id": "order_highest", "label": "Highest Rating" },
+    { "type": "text", "id": "order_lowest", "label": "Lowest Rating" },
+    { "type": "text", "id": "only_pictures", "label": "Only Pictures" },
+    { "type": "text", "id": "pictures_first", "label": "Pictures First" },
+    { "type": "text", "id": "load_more_label", "label": "Load More" },
+    { "type": "text", "id": "read_more_label", "label": "Read more" },
+    { "type": "text", "id": "see_all_label", "label": "See all reviews" }
+  ],
+  "presets": [{ "name": "Klaviyo Reviews" }]
+}
+{% endschema %}
+
+{% stylesheet %}
+  /* Pembungkus section ulasan. */
+  .klaviyo-review-wrapper {
+    padding: 30px 25px 10px;
+    margin: auto;
+    max-width: 1100px;
+    /* Tujuan tautan badge rating di atas judul produk; header lengket ±90px
+       jangan menutupi ringkasan ulasan saat halaman bergulir ke sini. */
+    scroll-margin-top: 100px;
+  }
+  @media screen and (min-width: 750px) {
+    .klaviyo-review-wrapper {
+      padding: 80px 25px 100px;
+    }
+  }
+  /* "Ask a question" disembunyikan di produk selain kapsul (permintaan 18 Sep
+     2026) — di sini lewat setting, dan tombolnya memang tidak dirender kalau
+     setting-nya mati. Aturan ini hanya jaring pengaman. */
+  .klaviyo-review-wrapper[data-show-ask="false"] .klr-ask-question-btn {
+    display: none !important;
+  }
+{% endstylesheet %}

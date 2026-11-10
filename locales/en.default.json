@@ -24,7 +24,7 @@
         "free_total_label": "Provided"
       },
       "alternative_payment_method_banner": {
-        "or": "⭐⭐⭐⭐⭐ Rate 4.8\/5 | 👥 10,000+ Customers",
+        "or": "⭐⭐⭐⭐⭐ Rate 4.8/5 | 👥 10,000+ Customers",
         "or_pay_another_way": "60 days money back guaranteed"
       }
     }
@@ -229,7 +229,7 @@
       "offer_verified": "Verified buyer",
       "offer_choose": "Choose your plan",
       "offer_first_pick": "First-timer pick",
-      "offer_per_day": "{{ price }}\/day",
+      "offer_per_day": "{{ price }}/day",
       "offer_add": "Add to cart",
       "offer_details": "See full details",
       "offer_badge": "BPOM · Traditional medicine",
@@ -239,7 +239,7 @@
   },
   "products": {
     "rating": {
-      "average": "{{ rating }}\/5",
+      "average": "{{ rating }}/5",
       "count": "({{ count }})",
       "decimal_separator": ".",
       "aria_summary": "Rated {{ rating }} out of 5 based on {{ count }} reviews"
@@ -264,7 +264,8 @@
     "title": "Reviews",
     "write_review": "Write a Review",
     "based_on": "Based on {{ count }} reviews",
-    "based_on_singular": "Based on 1 review"
+    "based_on_singular": "Based on 1 review",
+    "all_summary": "{{ rating }}/5 based on {{ count }} reviews."
   },
   "articles": {
     "read_full_article": "Read Full Article"
@@ -333,7 +334,7 @@
     "regeneration": "Regeneration"
   },
   "address": {
-    "country_region": "Country\/ Region",
+    "country_region": "Country/ Region",
     "first_name": "First Name",
     "last_name_optional": "Last Name (Optional)",
     "company_address": "Company Address",
@@ -379,18 +380,18 @@
   },
   "oil_guide": {
     "hero": {
-      "title_html": "Moringa<br>Seed Oil<br><b>Guide<\/b>",
+      "title_html": "Moringa<br>Seed Oil<br><b>Guide</b>",
       "pill": "Outside Care",
       "image_alt": "Treelogy moringa seed oil bottle"
     },
     "leaf": {
-      "heading_html": "Every moringa tree<br>gives us <b>two things.<\/b>",
-      "body_html": "<b>The leaf<\/b> is only half the tree. Harvested<br>at dawn, picked one by one by our<br>community, stem-free, then dehydrated<br>at low temperature and milled into the<br>fine powder that fills our capsules.",
+      "heading_html": "Every moringa tree<br>gives us <b>two things.</b>",
+      "body_html": "<b>The leaf</b> is only half the tree. Harvested<br>at dawn, picked one by one by our<br>community, stem-free, then dehydrated<br>at low temperature and milled into the<br>fine powder that fills our capsules.",
       "image_alt": "Fine green moringa leaf powder"
     },
     "seeds": {
-      "heading_html": "The other <b>half ?<\/b>",
-      "body_html": "<b>The seeds.<\/b> Hand-peeled, cold-pressed to<br>preserve their nutrients, then rested two<br>weeks so the oil settles naturally. A precious<br>multi-purpose oil, used for centuries across<br>cultures to regenerate skin, on the face, the<br>body and the hair.",
+      "heading_html": "The other <b>half ?</b>",
+      "body_html": "<b>The seeds.</b> Hand-peeled, cold-pressed to<br>preserve their nutrients, then rested two<br>weeks so the oil settles naturally. A precious<br>multi-purpose oil, used for centuries across<br>cultures to regenerate skin, on the face, the<br>body and the hair.",
       "image_alt": "Moringa seeds"
     },
     "specs": {
@@ -407,14 +408,14 @@
       "note_html": "Non-comedogenic. Around 70% oleic acid, close to what your own skin makes. That is why it goes in rather than sitting on top."
     },
     "how": {
-      "heading_html": "<b>How to<\/b> use ?",
+      "heading_html": "<b>How to</b> use ?",
       "where_label": "Where.",
       "when_label": "When.",
       "how_label": "How."
     },
     "cards": {
       "face": {
-        "title_html": "For the <b>face<\/b>",
+        "title_html": "For the <b>face</b>",
         "benefit": "Moisture, fine lines, even tone, dry lips",
         "where": "Face, neck, lips",
         "when": "At night, last step",
@@ -422,7 +423,7 @@
         "image_alt": "Applying moringa oil on the face"
       },
       "skin": {
-        "title_html": "For the <b>skin<\/b>",
+        "title_html": "For the <b>skin</b>",
         "benefit": "Dry patches, irritated or inflamed skin, hands and nails, stretching skin",
         "where": "Anywhere dry, irritated or inflamed. Elbows, knees, heels. Hands and nails.",
         "when": "At night where skin meets daylight. Any time under clothes.",
@@ -430,7 +431,7 @@
         "image_alt": "Moringa oil on the skin"
       },
       "hair": {
-        "title_html": "For the <b>hair<\/b>",
+        "title_html": "For the <b>hair</b>",
         "benefit": "Dry scalp, dandruff, frizz, split ends, shine",
         "where": "Scalp before washing. Ends after.",
         "when": "Scalp once or twice a week. Ends every wash.",
@@ -439,7 +440,7 @@
       }
     },
     "know": {
-      "heading_html": "Good to <b>know<\/b>",
+      "heading_html": "Good to <b>know</b>",
       "q1_title": "Where to keep it.",
       "q1_body": "Away from light and heat. A bathroom shelf is fine.",
       "q2_title": "If it goes cloudy.",
@@ -449,7 +450,7 @@
     },
     "proof": {
       "heading": "What customers say",
-      "rating": "4.9\/5",
+      "rating": "4.9/5",
       "rating_aria": "Rated 4.9 out of 5 stars",
       "customers_html": "10,000+ customers",
       "quote": "Utk yang moringa seed oil ini sih juara banget. Hari ke-4 setelah pemakaian setiap malam kulit muka terasa lbh lembab. Saya beranikan pergi keluar rumah tanpa skin care apapun. Dan amaaannnn… kulit ga terasa kering. Saya uji coba pakaikan ke bibir setiap malam cuma setetes kecil. Voila! Paginya bibir jadi lembab loh.. seriusan.",
@@ -481,7 +482,7 @@
   },
   "why_capsules": {
     "hero": {
-      "title_html": "Why Capsules<br>are our <b>bestseller<\/b>",
+      "title_html": "Why Capsules<br>are our <b>bestseller</b>",
       "sub_html": "No brewing needed,<br>no taste getting in the way.<br>Three capsules every morning, and done.",
       "cta_cart": "Checkout",
       "image_alt": "Moringa capsules in an open palm"
@@ -500,7 +501,7 @@
     },
     "proof": {
       "heading": "What customers say",
-      "rating": "4.9\/5",
+      "rating": "4.9/5",
       "rating_aria": "Rated 4.9 out of 5 stars",
       "customers_html": "10,000+ customers",
       "quote": "Saya awal beli Treelogy bulan Des 2025<br>dan Treelogy saya tidak pernah putus<br>hingga saat ini",
@@ -540,7 +541,7 @@
       "image_alt": "Sacha memetik daun moringa di kebun Treelogy di Bali"
     },
     "letter": {
-      "heading_html": "Surat dari <b>founder<\/b> kami.",
+      "heading_html": "Surat dari <b>founder</b> kami.",
       "greeting": "Halo, Para Customer Treelogy",
       "body_html": "Bulan Agustus lalu saya menulis bahwa harga<br>kami berubah mulai 1 September, dan bahwa<br>untuk kamu yang sudah lebih dulu memesan,<br>harganya akan kami jaga.",
       "body2_html": "Hari ini harga baru sudah berlaku.<br>Dan ini yang saya janjikan.",
@@ -604,7 +605,7 @@
       "body_1_html": "Kami sudah mengirim pengajuan ke<br>Regenerative Organic Alliance. Sekarang<br>kami menunggu jadwal audit.",
       "body_2_html": "Kalau lolos, moringa kami jadi yang<br>pertama di dunia dengan sertifikasi<br>regeneratif. Itu tujuan kami sejak hari<br>pertama.",
       "image_alt": "Foto udara kebun moringa Treelogy di antara pohon kelapa",
-      "body3_html": "<b>Organik itu baik, dan kami organik. Tapi<br>organik melihat apa yang masuk.<br>Regeneratif melihat apa yang dihasilkan.<\/b><br>Apakah tanahnya lebih sehat? Apakah<br>hewan dan orang-orangnya jadi lebih baik?<br>Itu pertanyaan yang lebih sulit, dan itu yang<br>ingin kami jawab."
+      "body3_html": "<b>Organik itu baik, dan kami organik. Tapi<br>organik melihat apa yang masuk.<br>Regeneratif melihat apa yang dihasilkan.</b><br>Apakah tanahnya lebih sehat? Apakah<br>hewan dan orang-orangnya jadi lebih baik?<br>Itu pertanyaan yang lebih sulit, dan itu yang<br>ingin kami jawab."
     },
     "same": {
       "heading": "Apa yang Tetap Sama",
@@ -640,11 +641,11 @@
       "body_html": "Lebih murah dari harga lama paket 1 bulan.<br>Dan dengan garansi 60 hari, risikonya<br>di kami, bukan di kamu.",
       "cta_label": "Start With 3 Months"
     },
-    "signoff_html": "From Bali with care,<br><b>Sacha, Founder<\/b>"
+    "signoff_html": "From Bali with care,<br><b>Sacha, Founder</b>"
   },
   "pdp3": {
     "buybox": {
-      "proof_text": "4.96 \/ 5 · 17,000+ customers",
+      "proof_text": "4.96 / 5 · 17,000+ customers",
       "per_day_suffix": "a day",
       "cta_label": "Choose your pack",
       "wa_label": "Ask us on WhatsApp",
@@ -783,7 +784,7 @@
       "modal_close": "Close",
       "modal_row_1": "Product|Treelogy Organic Moringa Capsules, 400 mg, tins of 90 and 180.",
       "modal_row_2": "Number|POM TR253017851, category Obat Tradisional.",
-      "modal_row_3": "Decision|SK 0316\/Reg\/TR\/2025, 15 March 2025, valid to 15 March 2030.",
+      "modal_row_3": "Decision|SK 0316/Reg/TR/2025, 15 March 2025, valid to 15 March 2030.",
       "modal_row_4": "Halal|BPJPH ID51210022336550525, 20 May 2025.",
       "modal_row_5": "USDA Organic|NOP 4080207676, certifier CERES.",
       "row_1": {
@@ -929,7 +930,15 @@
       "rating_all": "All ratings",
       "empty_label": "No reviews match these filters.",
       "questions_empty": "No questions yet. Ask the first one.",
-      "answer_label": "Answer"
+      "answer_label": "Answer",
+      "order_highest": "Highest rating",
+      "order_lowest": "Lowest rating",
+      "only_pictures": "Only pictures",
+      "pictures_first": "Pictures first",
+      "read_more": "Read more",
+      "sort_by": "Sort by",
+      "see_all": "See all reviews",
+      "close": "Close"
     },
     "close": {
       "heading": "Try it for 60 days with breakfast. Keep the tin either way.",
@@ -951,7 +960,7 @@
   },
   "shop_the_look": {
     "eyebrow": "The inside-out ritual",
-    "heading_html": "Capsules from the <strong>inside<\/strong><br>Oil from the <strong>outside<\/strong>",
+    "heading_html": "Capsules from the <strong>inside</strong><br>Oil from the <strong>outside</strong>",
     "subheading": "Organic moringa, farmed and crafted in Bali. Tap a product to see what's inside.",
     "hint": "Tap the dots to explore",
     "cta": "Shop the Inside Out Protocol",
@@ -967,7 +976,7 @@
   "reviews_hub": {
     "eyebrow": "Treelogy reviews",
     "title": "What buyers say about Treelogy",
-    "lede_html": "<strong>{{ average }} out of 5<\/strong> from <strong>{{ count }}<\/strong> buyer ratings on Shopee, Tokopedia & TikTok Shop and treelogy.com.",
+    "lede_html": "<strong>{{ average }} out of 5</strong> from <strong>{{ count }}</strong> buyer ratings on Shopee, Tokopedia & TikTok Shop and treelogy.com.",
     "updated": "Updated {{ date }}",
     "out_of": "out of 5",
     "ratings_count": "{{ count }} ratings",
@@ -1011,10 +1020,10 @@
     "page_label": "Review pages",
     "page_of": "Page {{ current }} of {{ total }}",
     "method_title": "How we collect and moderate reviews",
-    "method_1_html": "<strong>Sources.<\/strong> Ratings and reviews are copied automatically from Treelogy's official Shopee and Tokopedia stores and from verified orders on treelogy.com, and refreshed about every ten minutes. Marketplaces only let the buyer of an order leave a rating.",
-    "method_2_html": "<strong>Every rating counts.<\/strong> All {{ count }} ratings, including low ones and ratings without text, are in the totals above. We never remove a review because of its rating.",
-    "method_3_html": "<strong>What we don't publish as text.<\/strong> Treelogy products are regulated by Indonesia's food and drug authority (BPOM), whose rules do not allow testimonials about curing, treating or preventing health conditions in our own publications. Written reviews that mention health effects are therefore not shown here, whatever their rating ({{ held }} reviews at the moment); their ratings still count. Reviews with contact details are not shown either. You can read every review on the marketplace itself.",
-    "method_5_html": "<strong>Names<\/strong> are shown as the marketplace shows them. Questions about a review: <a href=\"mailto:hello@treelogy.com\">hello@treelogy.com<\/a>.",
+    "method_1_html": "<strong>Sources.</strong> Ratings and reviews are copied automatically from Treelogy's official Shopee and Tokopedia stores and from verified orders on treelogy.com, and refreshed about every ten minutes. Marketplaces only let the buyer of an order leave a rating.",
+    "method_2_html": "<strong>Every rating counts.</strong> All {{ count }} ratings, including low ones and ratings without text, are in the totals above. We never remove a review because of its rating.",
+    "method_3_html": "<strong>What we don't publish as text.</strong> Treelogy products are regulated by Indonesia's food and drug authority (BPOM), whose rules do not allow testimonials about curing, treating or preventing health conditions in our own publications. Written reviews that mention health effects are therefore not shown here, whatever their rating ({{ held }} reviews at the moment); their ratings still count. Reviews with contact details are not shown either. You can read every review on the marketplace itself.",
+    "method_5_html": "<strong>Names</strong> are shown as the marketplace shows them. Questions about a review: <a href=\"mailto:hello@treelogy.com\">hello@treelogy.com</a>.",
     "faq_title": "Common questions",
     "faq_q1": "Is Treelogy legit?",
     "faq_a1": "Treelogy is made by PT. Treelogy Regenerative Moringa in Bali, Indonesia. Its products are registered with Badan POM and certified EU Organic, Organik Indonesia, USDA Organic and Halal Indonesia. The ratings on this page come from buyers on Shopee, Tokopedia & TikTok Shop and treelogy.com, and can be checked on each marketplace.",
@@ -1082,22 +1091,22 @@
   },
   "pdp5": {
     "buybox": {
-      "score": "{{ avg }} \/ 5",
+      "score": "{{ avg }} / 5",
       "count": "{{ count }} Reviews",
-      "title_html": "<strong>Organic Moringa<br>Capsules<\/strong> to calm the<br>inflammation behind how<br>you move, feel and age.",
+      "title_html": "<strong>Organic Moringa<br>Capsules</strong> to calm the<br>inflammation behind how<br>you move, feel and age.",
       "check_1": "Joints that move with less stiffness",
       "check_2": "Steady energy without caffeine crash",
       "check_3": "Smoother digestion with natural fiber",
       "check_4": "Support healthier blood pressure",
       "check_5": "Support balanced blood sugar levels",
       "pick": "Pick Your Pack",
-      "guarantee_html": "<strong>60 day<\/strong> money back <strong>guarantee<\/strong>"
+      "guarantee_html": "<strong>60 day</strong> money back <strong>guarantee</strong>"
     },
     "packs": {
       "most_chosen": "Most chosen",
-      "assure_1_html": "<strong>In stock<\/strong> · Delivery between <strong>3 to 5 days<\/strong>",
-      "assure_2_html": "<strong>60 Days<\/strong> money-back <strong>guarantee<\/strong>",
-      "assure_3_html": "<strong>Lowest Price<\/strong> on this <strong>website<\/strong>",
+      "assure_1_html": "<strong>In stock</strong> · Delivery between <strong>3 to 5 days</strong>",
+      "assure_2_html": "<strong>60 Days</strong> money-back <strong>guarantee</strong>",
+      "assure_3_html": "<strong>Lowest Price</strong> on this <strong>website</strong>",
       "ship": "Free shipping, all Indonesia"
     },
     "story": {
@@ -1129,10 +1138,10 @@
         "a2": "Who It’s For",
         "a3": "How to Take",
         "a4": "Quality and certifications",
-        "b1_html": "<p>100% organic moringa leaf (Moringa oleifera), 400 mg per capsule, in a plant-based HPMC shell. Nothing else: no stems, no fillers, no binders, no preservatives.<\/p><p>Whole leaf, not an extract, so you get the full combination of natural compounds.<\/p><p>The leaves are harvested on our own farm in Bali, stems removed by hand within 4 hours of harvest, then dehydrated at 38°C for 22 hours, before being milled and encapsulated in our own factory.<\/p>",
-        "b2_html": "<p>Treelogy moringa supports just about every adult, especially if you’re:<\/p><ul><li>Looking to keep inflammation low, naturally<\/li><li>Protecting your cells from daily oxidation<\/li><li>Going through hormonal changes: cycles, postpartum, perimenopause or menopause<\/li><li>Waking up stiff or recovering slowly after exercise<\/li><li>Running on low energy and want steadier days without caffeine<\/li><li>Supporting your digestion and gut comfort<\/li><li>Watching your blood sugar or blood pressure alongside a healthy lifestyle<\/li><li>Under chronic stress or not sleeping well<\/li><li>Investing in healthy aging, from the inside<\/li><\/ul>",
-        "b3_html": "<p>3 capsules a day, ideally in the morning with food.<\/p><ul><li>New to moringa?<br>Start with 2 capsules for the first three days.<\/li><li>Take it every day.<br>Consistency matters more than dose.<\/li><li>Suitable for men and women.<\/li><\/ul>",
-        "b4_html": "<ul><li>BPOM: registered as traditional medicine, POM TR253017851, valid until 2030.<\/li><li>Organic: certified USDA Organic (NOP 4080207676, certifier CERES) and EU Organic.<\/li><li>Halal: BPJPH ID51210022336550525.<\/li><li>Batch tested before leaving our factory.<\/li><li>Shelf life: 24 months from production. The expiry date is printed on the label.<\/li><\/ul>"
+        "b1_html": "<p>100% organic moringa leaf (Moringa oleifera), 400 mg per capsule, in a plant-based HPMC shell. Nothing else: no stems, no fillers, no binders, no preservatives.</p><p>Whole leaf, not an extract, so you get the full combination of natural compounds.</p><p>The leaves are harvested on our own farm in Bali, stems removed by hand within 4 hours of harvest, then dehydrated at 38°C for 22 hours, before being milled and encapsulated in our own factory.</p>",
+        "b2_html": "<p>Treelogy moringa supports just about every adult, especially if you’re:</p><ul><li>Looking to keep inflammation low, naturally</li><li>Protecting your cells from daily oxidation</li><li>Going through hormonal changes: cycles, postpartum, perimenopause or menopause</li><li>Waking up stiff or recovering slowly after exercise</li><li>Running on low energy and want steadier days without caffeine</li><li>Supporting your digestion and gut comfort</li><li>Watching your blood sugar or blood pressure alongside a healthy lifestyle</li><li>Under chronic stress or not sleeping well</li><li>Investing in healthy aging, from the inside</li></ul>",
+        "b3_html": "<p>3 capsules a day, ideally in the morning with food.</p><ul><li>New to moringa?<br>Start with 2 capsules for the first three days.</li><li>Take it every day.<br>Consistency matters more than dose.</li><li>Suitable for men and women.</li></ul>",
+        "b4_html": "<ul><li>BPOM: registered as traditional medicine, POM TR253017851, valid until 2030.</li><li>Organic: certified USDA Organic (NOP 4080207676, certifier CERES) and EU Organic.</li><li>Halal: BPJPH ID51210022336550525.</li><li>Batch tested before leaving our factory.</li><li>Shelf life: 24 months from production. The expiry date is printed on the label.</li></ul>"
       },
       "expect": {
         "eyebrow": "what to expect",
@@ -1178,21 +1187,21 @@
         "c1": {
           "eyebrow": "01 - NOURISHING YOUR BODY",
           "title": "Not an extract. The whole leaf.",
-          "body_html": "Your health starts in your gut: only what it absorbs can work for you. Isolated, processed nutrients are often mostly flushed out. Moringa gives you a <strong>whole matrix<\/strong> of nutrients that arrive together and help each other get absorbed, so your body actually uses what you take in.",
+          "body_html": "Your health starts in your gut: only what it absorbs can work for you. Isolated, processed nutrients are often mostly flushed out. Moringa gives you a <strong>whole matrix</strong> of nutrients that arrive together and help each other get absorbed, so your body actually uses what you take in.",
           "pill1": "WHOLE-LEAF MATRIX",
           "pill2": "GUT ABSORPTION"
         },
         "c2": {
           "eyebrow": "02 - PROTECTING YOUR CELLS",
           "title": "Stop the damage, before it starts.",
-          "body_html": "Stress, sugar and poor sleep wear your cells down every day. Moringa’s rare compound, <strong>moringin<\/strong>, activates the <strong>Nrf2<\/strong> pathway, your cells’ defense switch, so they make their own antioxidants like glutathione, and keep making them after the compound is gone.",
+          "body_html": "Stress, sugar and poor sleep wear your cells down every day. Moringa’s rare compound, <strong>moringin</strong>, activates the <strong>Nrf2</strong> pathway, your cells’ defense switch, so they make their own antioxidants like glutathione, and keep making them after the compound is gone.",
           "pill1": "NRF2 ACTIVATION",
           "pill2": "GLUTATHIONE"
         },
         "c3": {
           "eyebrow": "03 - CALMING INFLAMMATION",
           "title": "Feel lighter, move easier.",
-          "body_html": "Low-grade inflammation quietly stiffens joints, drains energy and contributes to rising blood sugar and blood pressure. <strong>Moringin<\/strong> turns down the <strong>NF-κB<\/strong> pathway, your cells’ inflammation switch, so fewer signals are sent and inflammation settles instead of lingering.",
+          "body_html": "Low-grade inflammation quietly stiffens joints, drains energy and contributes to rising blood sugar and blood pressure. <strong>Moringin</strong> turns down the <strong>NF-κB</strong> pathway, your cells’ inflammation switch, so fewer signals are sent and inflammation settles instead of lingering.",
           "pill1": "NF-κB REGULATION",
           "pill2": "INFLAMMATORY BALANCE"
         }
@@ -1262,10 +1271,10 @@
     }
   },
   "promo_url": {
-    "title_capsule_html": "PROMO 11.11<br>UPGRADE<br>SEED OIL 30ml<br><s>{{ value }}<\/s>",
-    "card_capsule_html": "PROMO 11.11<br>GRATIS SEED<br>OIL 30ml<br><s>{{ value }}<\/s>",
-    "title_bundle_html": "PROMO 11.11<br>GANTI SEED<br>OIL <s>30ml<\/s><br>60ml",
+    "title_capsule_html": "PROMO 11.11<br>UPGRADE<br>SEED OIL 30ml<br><s>{{ value }}</s>",
+    "card_capsule_html": "PROMO 11.11<br>GRATIS SEED<br>OIL 30ml<br><s>{{ value }}</s>",
+    "title_bundle_html": "PROMO 11.11<br>GANTI SEED<br>OIL <s>30ml</s><br>60ml",
     "perk_find": "30ml Seed Oil",
-    "perk_html": "<s>30ml<\/s> <mark>60ml Seed Oil<\/mark>"
+    "perk_html": "<s>30ml</s> <mark>60ml Seed Oil</mark>"
   }
 }

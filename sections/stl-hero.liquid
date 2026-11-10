@@ -469,14 +469,10 @@
               assign blurb = ''
             endif
           endif
-          assign badge_html = p.metafields.judgeme.badge | default: ''
           assign rating_avg = ''
-          assign rating_cnt = ''
-          if badge_html contains "data-average-rating='"
-            assign rating_avg = badge_html | split: "data-average-rating='" | last | split: "'" | first
-          endif
-          if badge_html contains "data-number-of-reviews='"
-            assign rating_cnt = badge_html | split: "data-number-of-reviews='" | last | split: "'" | first
+          assign rating_cnt = p.metafields.reviews.rating_count.value | append: ''
+          if p.metafields.reviews.rating != blank
+            assign rating_avg = p.metafields.reviews.rating.value.rating | times: 100 | round | divided_by: 100.0 | append: ''
           endif
           assign rating_sep = 'products.rating.decimal_separator' | t
           assign rating_local = rating_avg

@@ -2,18 +2,36 @@
   <div class="inner">
     <div class="header">
       <div class="review-rating technical">
-        <div class="jdgm-widget jdgm-all-reviews-text">
-          <span class="jdgm-all-reviews-text__link">
-            <span data-score="{{ shop.metafields.judgeme.all_reviews_rating }}" class="jdgm-all-reviews-rating"></span>
-            <span
-              class="jdgm-all-reviews-text__text"
-              data-score="{{ shop.metafields.judgeme.all_reviews_rating }}"
-              data-number-of-reviews="{{ shop.metafields.judgeme.all_reviews_count }}"
-              data-locale="en">
-              {{ shop.metafields.judgeme.all_reviews_rating | round: 1 }}/5 based on
-              {{ shop.metafields.judgeme.all_reviews_count }} reviews.</span>
-          </span>
-        </div>
+        {%- liquid
+          comment
+            Total toko = jumlah metafield standar reviews.* (ditulis Klaviyo
+            Reviews) atas semua produk katalog. Klaviyo tidak punya metafield
+            level toko; koleksi all-products berisi ±10 produk, jadi murah dan
+            ikut cache halaman. Rata-rata = rata-rata berbobot jumlah ulasan.
+          endcomment
+          assign fc_count = 0
+          assign fc_sum = 0.0
+          for fc_p in collections['all-products'].products
+            assign fc_n = fc_p.metafields.reviews.rating_count.value | plus: 0
+            if fc_n > 0 and fc_p.metafields.reviews.rating != blank
+              assign fc_count = fc_count | plus: fc_n
+              assign fc_sum = fc_p.metafields.reviews.rating.value.rating | times: fc_n | plus: fc_sum
+            endif
+          endfor
+        -%}
+        {%- if fc_count > 0 -%}
+          {%- liquid
+            assign fc_avg = fc_sum | divided_by: fc_count | round: 1 | append: ''
+            assign fc_sep = 'products.rating.decimal_separator' | t
+            if fc_sep.size == 1
+              assign fc_avg = fc_avg | replace: '.', fc_sep
+            endif
+          -%}
+          <div class="klr-widget klr-all-reviews-text">
+            {% render 'StarReview', color: '#2B3C35' %}
+            <span class="klr-all-reviews-text__text">{{ 'reviews.all_summary' | t: rating: fc_avg, count: fc_count }}</span>
+          </div>
+        {%- endif -%}
       </div>
       <div class="h1">
         {{ section.settings.title | newline_to_br }}

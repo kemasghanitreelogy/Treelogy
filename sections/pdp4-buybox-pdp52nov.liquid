@@ -270,19 +270,14 @@
       {%- endcomment -%}
       {%- comment -%}
         Angka rating = angka kartu ringkasan section pdp4-reviews. Server:
-        metafield reviews.* (= yang tampil di kartu; klaviyo_reviews.* berisi
-        agregat lintas produk 1545, jadi hanya cadangan). Klien: begitu
+        metafield standar reviews.* (ditulis Klaviyo Reviews). Klien: begitu
         pdp4.js mengisi kartu dengan angka live Klaviyo, angka di sini ikut.
         Tanpa data, baris rating disembunyikan.
       {%- endcomment -%}
       {%- liquid
         assign rv_rating = product.metafields.reviews.rating.value
-        assign rv_count = product.metafields.reviews.rating_count
+        assign rv_count = product.metafields.reviews.rating_count.value | plus: 0
         assign rv_avg = rv_rating.rating | times: 100 | round | divided_by: 100.0
-        if rv_count == blank
-          assign rv_avg = product.metafields.klaviyo_reviews.rating
-          assign rv_count = product.metafields.klaviyo_reviews.rating_count
-        endif
       -%}
       {%- if rv_count > 0 -%}
       <a class="p5-rating" href="#pdp4-reviews">{% render 'pdp4-faces', a: section.settings.face_1, b: section.settings.face_2, c: section.settings.face_3 %}<span class="p5-rating__score">{{ 'pdp5.buybox.score' | t: avg: rv_avg }}</span><img class="p5-rating__stars" src="{{ 'pdp5-stars.svg' | asset_url }}" alt="" width="72" height="15"><span class="p5-rating__count">· <u>{{ 'pdp5.buybox.count' | t: count: rv_count }}</u></span></a>

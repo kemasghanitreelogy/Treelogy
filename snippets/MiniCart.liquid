@@ -64,9 +64,20 @@
                 >
               </div>
               <div class="fbt-card-info">
-                <div class="fbt-rating" style="display:none;">
+                {%- liquid
+                  comment
+                    Rating FBT dirender server-side dari metafield standar
+                    reviews.* (ditulis Klaviyo Reviews) — dulu diambil lewat
+                    satu fetch section per kartu setiap drawer dibuka.
+                  endcomment
+                  assign fbt_rating = ''
+                  if product.metafields.reviews.rating != blank and product.metafields.reviews.rating_count.value > 0
+                    assign fbt_rating = product.metafields.reviews.rating.value.rating | times: 100 | round | divided_by: 100.0
+                  endif
+                -%}
+                <div class="fbt-rating"{% if fbt_rating == blank %} style="display:none;"{% endif %}>
                   <span class="fbt-star"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 0C5.80302 0 5.63472 0.0961647 5.5078 0.213572C5.38088 0.33098 5.27903 0.47454 5.18487 0.635508C4.99654 0.957443 4.83682 1.3563 4.68095 1.76327C4.52508 2.17024 4.37566 2.58362 4.23302 2.91318C4.09037 3.24274 3.92546 3.48566 3.88535 3.51613C3.84523 3.54659 3.57302 3.63634 3.22908 3.67631C2.88513 3.71627 2.4613 3.73567 2.04284 3.76486C1.62438 3.79405 1.21293 3.8321 0.861812 3.91983C0.686252 3.9637 0.523469 4.01877 0.377421 4.10866C0.231373 4.19855 0.091925 4.33478 0.0310553 4.5306C-0.0298147 4.72641 0.00641869 4.92552 0.0740254 5.08797C0.141632 5.25042 0.241827 5.3939 0.359191 5.53725C0.593919 5.82395 0.905579 6.10823 1.22771 6.38893C1.54984 6.66964 1.88211 6.94619 2.1379 7.18983C2.39368 7.43347 2.56269 7.67186 2.57801 7.72116C2.59334 7.77045 2.59064 8.06882 2.52072 8.42308C2.4508 8.77734 2.33831 9.20397 2.23555 9.62898C2.1328 10.054 2.03896 10.4744 2.01029 10.8505C1.99595 11.0386 1.99576 11.2167 2.03242 11.3897C2.06908 11.5626 2.15172 11.7453 2.31108 11.8663C2.47044 11.9873 2.66192 12.0122 2.83063 11.9952C2.99933 11.9782 3.16004 11.9243 3.32674 11.852C3.66013 11.7072 4.01478 11.4825 4.36974 11.249C4.7247 11.0155 5.07816 10.7729 5.37889 10.594C5.67962 10.415 5.95042 10.3205 6 10.3205C6.04958 10.3205 6.32039 10.415 6.62112 10.594C6.92184 10.7729 7.27531 11.0155 7.63026 11.249C7.98522 11.4825 8.33987 11.7072 8.67327 11.852C8.83997 11.9243 9.00067 11.9782 9.16938 11.9952C9.33808 12.0122 9.52957 11.9873 9.68892 11.8663C9.84828 11.7453 9.93092 11.5626 9.96758 11.3897C10.0042 11.2167 10.0041 11.0386 9.98971 10.8505C9.96103 10.4744 9.8672 10.054 9.76445 9.62898C9.66169 9.20397 9.5492 8.77734 9.47928 8.42308C9.40936 8.06882 9.40666 7.77045 9.42199 7.72116C9.43731 7.67186 9.60632 7.43347 9.86211 7.18983C10.1179 6.94619 10.4502 6.66964 10.7723 6.38893C11.0944 6.10823 11.4061 5.82395 11.6408 5.53725C11.7582 5.3939 11.8584 5.25042 11.926 5.08797C11.9936 4.92552 12.0298 4.72641 11.9689 4.5306C11.9081 4.33478 11.7686 4.19855 11.6226 4.10866C11.4765 4.01877 11.3138 3.9637 11.1382 3.91983C10.7871 3.8321 10.3756 3.79405 9.95716 3.76486C9.5387 3.73567 9.11487 3.71627 8.77093 3.67631C8.42698 3.63634 8.15477 3.54659 8.11465 3.51613C8.07454 3.48566 7.90963 3.24274 7.76699 2.91318C7.62434 2.58362 7.47492 2.17024 7.31906 1.76327C7.16319 1.3563 7.00346 0.957443 6.81513 0.635508C6.72097 0.47454 6.61913 0.33098 6.4922 0.213572C6.36528 0.0961647 6.19698 0 6 0Z" fill="#F8F8F2"/></svg></span>
-                  <span class="fbt-rating-text"></span>
+                  <span class="fbt-rating-text">{% if fbt_rating != blank %}{{ fbt_rating }}/5{% endif %}</span>
                 </div>
                 <div class="fbt-card-title">{{ product.title }}</div>
                 {%- comment -%}
@@ -1529,54 +1540,9 @@
 
      Sekarang server satu-satunya sumber; yang tersisa hanyalah menghitung
      ulang total hemat dari data-compare-at yang sudah terpasang. Nol
-     permintaan jaringan per pembukaan drawer.
-
-     Catatan: window.loadFBTRatings di bawah masih memakai section yang sama
-     untuk badge rating Judge.me — itu tidak menyentuh harga, jadi tetap. */
+     permintaan jaringan per pembukaan drawer. */
   window.loadCompareAtPrices = function() {
     if (typeof window.recalcSavings === 'function') window.recalcSavings();
-  };
-
-  /* ===== Fetch Judge.me ratings for FBT products ===== */
-  window.loadFBTRatings = function() {
-    var fbtCards = document.querySelectorAll('.fbt-card[data-handle]');
-    if (!fbtCards.length) return;
-
-    fbtCards.forEach(function(card) {
-      var handle = card.getAttribute('data-handle');
-      if (!handle) return;
-
-      fetch('/products/' + handle + '?section_id=variant-compare-data')
-        .then(function(r) { return r.text(); })
-        .then(function(html) {
-          var doc = new DOMParser().parseFromString(html, 'text/html');
-
-          /* Try to extract data-average-rating from Judge.me badge */
-          var badge = doc.querySelector('[data-rating-badge]');
-          if (!badge) return;
-
-          var ratingEl = badge.querySelector('[data-average-rating]');
-          var rating = ratingEl ? ratingEl.getAttribute('data-average-rating') : null;
-
-          /* Fallback: try to extract from badge text content */
-          if (!rating) {
-            var text = badge.textContent || '';
-            var match = text.match(/([\d.]+)\s*\/\s*5/);
-            if (match) rating = match[1];
-          }
-
-          if (!rating || parseFloat(rating) <= 0) return;
-
-          /* Update the FBT card rating display */
-          var ratingWrap = card.querySelector('.fbt-rating');
-          var ratingText = card.querySelector('.fbt-rating-text');
-          if (ratingWrap && ratingText) {
-            ratingText.textContent = rating + '/5';
-            ratingWrap.style.display = '';
-          }
-        })
-        .catch(function(err) { console.warn('FBT rating fetch failed for', handle, err); });
-    });
   };
 
   /* ===== FBT Add-to-Cart ==================================================
@@ -3265,9 +3231,6 @@
           window.loadCompareAtPrices();
         }
       });
-
-      /* 6. Fetch Judge.me ratings for FBT products */
-      window.loadFBTRatings();
 
       /* 7. Init cart trust badge slider */
       window.initCartTrustSlider();

@@ -1,32 +1,20 @@
 {%- comment -%}
   pdp4 — ulasan. Salinan DOM `<section id="reviews">` dari berkas rujukan.
 
-  Bagian ini sempat ditulis dengan cara lain — merender widget Judge.me apa
-  adanya lalu MENATANYA agar menyerupai rancangan — dan cara itu tidak akan
-  pernah sampai 1:1. Widget membawa susunannya sendiri (baris kendali di
-  tengah, tanpa tab, tanpa kotak cari, tanpa pil saring), dan CSS hanya bisa
-  mengecat ulang susunan itu, tidak bisa menggantinya.
+  Menata widget ulasan pihak ketiga agar menyerupai rancangan tidak akan
+  pernah sampai 1:1 — widget membawa susunannya sendiri dan CSS hanya bisa
+  mengecat ulang susunan itu. Jadi yang dirender halaman ini adalah MARKUP
+  RUJUKAN, kelas demi kelas, termasuk nama-nama `.kl_reviews__*` milik widget
+  Klaviyo yang ditiru rujukan. Datanya data sungguhan: assets/pdp4.js
+  menariknya dari endpoint JSON Klaviyo (lewat assets/klaviyo-reviews.js) —
+  bintang, judul, kutipan, nama, lencana pembeli, cap waktu ISO, foto — lalu
+  menuangkannya ke kartu. Formulir tulis ulasan / pertanyaan = modal iframe
+  Klaviyo; foto = lightbox bersama.
 
-  Jadi yang dirender halaman ini adalah MARKUP RUJUKAN, kelas demi kelas,
-  termasuk nama-nama `.kl_reviews__*` milik widget Klaviyo yang ditiru rujukan.
-  Datanya tetap data sungguhan: widget Judge.me dirender di wadah tersembunyi
-  di bawah, dan assets/pdp4.js membaca isinya — bintang, judul, kutipan, nama,
-  lencana pembeli, cap waktu ISO, foto — lalu menuangkannya ke kartu.
-
-  Dua akibat yang harus dipahami sebelum menyentuh berkas ini:
-
-  1. Wadah Judge.me TIDAK boleh dibuang. Ia sumber datanya. Ia disembunyikan
-     lewat CSS, bukan `display:none` di markup, supaya widgetnya tetap
-     menghitung tinggi dan memuat halaman berikutnya saat "Load more" ditekan.
-  2. Tanpa JavaScript, yang tampil adalah ringkasan dari metafield (angka
-     rata-rata dan jumlah rating, keduanya dirender Liquid) tanpa daftar
-     kartunya. Itu penurunan yang disengaja: lebih baik ringkasan yang benar
-     daripada kerangka kosong.
-
-  Setting `source` = `klaviyo` mematikan seluruh jalur Judge.me dan menyerahkan
-  wadah `#klaviyo-product-reviews-wrapper` kepada widget Klaviyo yang asli —
-  yang memang ditiru rujukan ini. Saat modul itu aktif, section ini tidak butuh
-  satu baris CSS pun yang baru.
+  Tanpa JavaScript, yang tampil adalah ringkasan dari metafield standar
+  `reviews.*` (ditulis Klaviyo Reviews; angka rata-rata dan jumlah rating, keduanya dirender
+  Liquid) tanpa daftar kartunya. Itu penurunan yang disengaja: lebih baik
+  ringkasan yang benar daripada kerangka kosong.
 {%- endcomment -%}
 
 {%- liquid
@@ -49,14 +37,20 @@
 {%- if pdp4_on -%}
 {%- liquid
   comment
-    Angka rata-rata dan jumlah rating datang dari metafield `reviews.*` yang
-    diisi Judge.me sendiri, bukan dari DOM widget: keduanya sudah ada saat HTML
-    dikirim, jadi bagian teratas section tidak pernah berkedip menunggu skrip.
+    Angka rata-rata dan jumlah rating dirender server-side dari metafield
+    standar `reviews.*` (ditulis sinkronisasi metafield Klaviyo Reviews) —
+    sumber yang sama dengan badge di atas judul dan kartu produk — jadi
+    bagian teratas section tidak pernah berkedip menunggu skrip;
+    assets/pdp4.js lalu menimpanya dengan angka live Klaviyo.
   endcomment
   assign r_rating = product.metafields.reviews.rating.value
-  assign r_count = product.metafields.reviews.rating_count
-  assign r_avg = r_rating.rating | times: 100 | round | divided_by: 100.0
-  assign r_scale = r_rating.scale_max | round | default: 5
+  assign r_count = product.metafields.reviews.rating_count.value
+  assign r_avg = ''
+  assign r_scale = 5
+  if r_rating != blank
+    assign r_avg = r_rating.rating | times: 100 | round | divided_by: 100.0
+    assign r_scale = r_rating.scale_max | round | default: 5
+  endif
 -%}
 {%- capture t_ratings %}{% render 'pdp4-copy', value: section.settings.ratings_word, key: 'pdp3.reviews.ratings_word' %}{% endcapture -%}
 {%- capture t_verified %}{% render 'pdp4-copy', value: section.settings.verified_label, key: 'pdp3.reviews.verified_label' %}{% endcapture -%}
@@ -75,27 +69,21 @@
 {%- capture t_oold %}{% render 'pdp4-copy', value: section.settings.order_oldest, key: 'pdp3.reviews.order_oldest' %}{% endcapture -%}
 {%- capture t_rall %}{% render 'pdp4-copy', value: section.settings.rating_all, key: 'pdp3.reviews.rating_all' %}{% endcapture -%}
 {%- capture t_empty %}{% render 'pdp4-copy', value: section.settings.empty_label, key: 'pdp3.reviews.empty_label' %}{% endcapture -%}
-{%- capture t_wa_msg %}{% render 'pdp4-copy', value: section.settings.wa_message, key: 'pdp3.wa_message' %}{% endcapture -%}
-{%- assign t_wa_msg = t_wa_msg | replace: '%product%', product.title -%}
-{%- capture t_ask_href %}{% render 'pdp4-wa-url', url: section.settings.ask_url, message: t_wa_msg %}{% endcapture -%}
 <div class="pdp4-page sk-root">
 {%- comment -%}
-  Ruas-ruas di bawah adalah yang dibutuhkan assets/pdp4.js untuk memanggil
-  endpoint widget Judge.me sendiri saat pembeli mencari:
-
-    https://cdn.judge.me/reviews/reviews_for_widget?shop_domain=…&product_id=…
-
-  Endpoint itu publik dan mengirim `access-control-allow-origin: *`, jadi bisa
-  dibaca dari halaman ini tanpa kunci apa pun — dan memang begitulah widgetnya
-  sendiri memuat halaman berikutnya. Domainnya `shop.permanent_domain`, BUKAN
-  treelogy.com: Judge.me menyimpan tokonya dengan nama myshopify-nya.
+  Ruas-ruas di bawah dibaca assets/pdp4.js: ID produk + company Klaviyo untuk
+  endpoint JSON publik Klaviyo (ber-`access-control-allow-origin: *`, tanpa
+  kunci apa pun), dan URL skrip klien yang dimuat malas.
 {%- endcomment -%}
 <section class="sk-container sk-pb-64" id="pdp4-reviews" data-pdp4-reviews
   data-verified-label="{{ t_verified | escape }}"
   data-locale="{{ request.locale.iso_code }}"
-  data-shop="{{ shop.permanent_domain }}"
   data-product-id="{{ product.id }}"
-  data-total="{{ product.metafields.reviews.rating_count | default: 0 }}"
+  data-klaviyo-src="{{ 'klaviyo-reviews.js' | asset_url }}"
+  data-company="{{ section.settings.klaviyo_company | default: 'T9cUqZ' | escape }}"
+  data-ratings-word="{{ t_ratings | strip | escape }}"
+  data-l-close="{{ 'pdp3.reviews.close' | t }}"
+  data-total="{{ product.metafields.reviews.rating_count.value | default: 0 }}"
   data-per-page="{{ section.settings.per_page | default: 4 }}"
   {%- comment -%}
     Penanda tempat angkanya `%n%`, BUKAN `{n}`: kurung kurawal di dalam string
@@ -103,8 +91,7 @@
     "variable was not properly terminated".
   {%- endcomment -%}
   data-rating-label="{{ section.settings.rating_pill_label | default: '%n% ★' | escape }}">
-  <div class="pdp-wrap sk-stack" id="klaviyo-product-reviews-wrapper" style="gap:var(--sk-space-24)"{% if section.settings.source == 'klaviyo' %} data-product-id="{{ product.id }}"{% endif %}>
-    {%- if section.settings.source != 'klaviyo' -%}
+  <div class="pdp-wrap sk-stack" id="klaviyo-product-reviews-wrapper" style="gap:var(--sk-space-24)">
     {%- if section.settings.eyebrow != blank or section.settings.heading != blank -%}
       <div class="sk-stack" style="gap:var(--sk-space-12)">
         {%- if section.settings.eyebrow != blank -%}<p class="sk-eyebrow sk-text-secondary">{{ section.settings.eyebrow }}</p>{%- endif -%}
@@ -122,9 +109,9 @@
 
       {%- comment -%}
         Lima baris histogram dirender kosong di sini dan diisi assets/pdp4.js
-        dari frekuensi milik widget. Kerangkanya tetap ada di HTML supaya
+        dari histogram ringkasan Klaviyo. Kerangkanya tetap ada di HTML supaya
         tingginya sudah benar sebelum skrip jalan — kalau tidak, kartu ringkasan
-        melompat saat widget selesai memuat.
+        melompat saat datanya tiba.
       {%- endcomment -%}
       <div class="pdp-hist sk-small sk-num" data-pdp4-bars>
         {%- for i in (1..5) -%}
@@ -136,21 +123,16 @@
       <div class="sk-btn-group">
         <button class="sk-btn sk-btn--sm" type="button" data-pdp4-write>{{ t_write }}</button>
         {%- comment -%}
-          Tombol kedua dulu diarahkan ke WhatsApp karena Judge.me belum punya
-          modul tanya-jawab. Modul itu dinyalakan 8 Sep 2026, jadi tombolnya
-          membuka formulir pertanyaan Judge.me kalau ada, dan jatuh ke
-          `ask_url` kalau tidak. Kalau keduanya tidak ada, tombolnya tidak
-          dirender sama sekali; lebih baik hilang daripada tidak menuju ke
-          mana-mana.
+          "Ask a question" membuka formulir pertanyaan Klaviyo (modal iframe).
         {%- endcomment -%}
-        <button class="sk-btn sk-btn--outline sk-btn--sm" type="button" data-pdp4-ask{% if section.settings.ask_url != blank %} data-href="{{ t_ask_href | strip | escape }}"{% endif %}>{{ t_ask }}</button>
+        <button class="sk-btn sk-btn--outline sk-btn--sm" type="button" data-pdp4-ask>{{ t_ask }}</button>
       </div>
     </div>
 
     {%- comment -%}
       Dua tab di rujukan adalah dua `<span>`; di sini keduanya kontrol.
-      Hitungan pertanyaan diisi assets/pdp4.js dari `data-number-of-questions`
-      pada widget Judge.me, jadi "0" di bawah hanya nilai sebelum skrip jalan.
+      Hitungan pertanyaan diisi assets/pdp4.js dari ringkasan Klaviyo, jadi
+      "0" di bawah hanya nilai sebelum skrip jalan.
     {%- endcomment -%}
     <div class="pdp-tabs sk-small" role="tablist">
       <span role="tab" tabindex="0" aria-selected="true" data-pdp4-tab="reviews">{{ t_tabr }} (<span data-pdp4-tab-count>{{ r_count }}</span>)</span>
@@ -209,33 +191,14 @@
     <p class="sk-small sk-text-secondary" data-pdp4-empty hidden>{{ t_empty }}</p>
 
     {%- comment -%}
-      Daftar tanya-jawab: diisi assets/pdp4.js dari kartu `.jdgm-quest` di
-      widget Judge.me (host tersembunyi), digambar ulang dengan bahasa kartu
-      yang sama seperti ulasan. Keadaan kosong punya kalimatnya sendiri — tab
-      yang menampilkan daftar lenyap tanpa penjelasan bukan hasil yang sah.
+      Daftar tanya-jawab: diisi assets/pdp4.js dari endpoint pertanyaan Klaviyo,
+      digambar dengan bahasa kartu yang sama seperti ulasan. Keadaan kosong
+      punya kalimatnya sendiri — tab yang menampilkan daftar lenyap tanpa
+      penjelasan bukan hasil yang sah.
     {%- endcomment -%}
     <div class="sk-stack" style="gap:var(--sk-space-12)" data-pdp4-quest-list hidden data-answer-label="{{ t_anslabel | escape }}"></div>
     <p class="sk-small sk-text-secondary" data-pdp4-quest-empty hidden>{{ t_qempty }}</p>
     <button class="sk-btn sk-btn--outline sk-btn--full" type="button" data-pdp4-more hidden>{{ t_more }}</button>
-
-    {%- comment -%}
-      Sumber datanya. Disembunyikan lewat CSS (`.pdp-jdgm-host`), BUKAN
-      dibuang: widgetnya yang memegang paginasi, pengurutan, dan formulir tulis
-      ulasan, dan ketiganya berhenti bekerja kalau simpulnya dilepas dari
-      dokumen.
-    {%- endcomment -%}
-    <div class="pdp-jdgm-host" data-pdp4-jdgm-host aria-hidden="true">
-      <div
-        id="judgeme_product_reviews"
-        class="jdgm-widget jdgm-review-widget"
-        data-product-title="{{ product.title | escape }}"
-        data-id="{{ product.id }}"
-        data-auto-install="false"
-      >
-        {{ product.metafields.judgeme.widget | replace: 'schema.org/AggregateRating', 'schema.org/None' }}
-      </div>
-    </div>
-    {%- endif -%}
   </div>
 </section>
 </div>
@@ -257,21 +220,11 @@
       "label": "Heading"
     },
     {
-      "type": "select",
-      "id": "source",
-      "label": "Review source",
-      "info": "Klaviyo Reviews is not populated yet — Judge.me holds the review history.",
-      "default": "judgeme",
-      "options": [
-        {
-          "value": "judgeme",
-          "label": "Judge.me"
-        },
-        {
-          "value": "klaviyo",
-          "label": "Klaviyo Reviews"
-        }
-      ]
+      "type": "text",
+      "id": "klaviyo_company",
+      "label": "Klaviyo company ID",
+      "info": "Reviews, summary and forms come from Klaviyo Reviews for this company.",
+      "default": "T9cUqZ"
     },
     {
       "type": "text",
@@ -297,18 +250,7 @@
       "id": "ask_label",
       "label": "Ask a question button"
     },
-    {
-      "type": "text",
-      "id": "wa_message",
-      "label": "WhatsApp opening message",
-      "info": "%product% is replaced by the product title. Leave blank to use the locale files."
-    },
-    {
-      "type": "url",
-      "id": "ask_url",
-      "label": "Ask a question link",
-      "info": "Judge.me has no Q&A module. Leave blank to drop the button rather than show one that goes nowhere."
-    },
+
     {
       "type": "header",
       "content": "List controls"

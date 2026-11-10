@@ -15,7 +15,7 @@
      • section "pilih alasanmu" harus dipindahkan ke dalam kolom hero, karena
        section Shopify tidak bisa bersarang;
      • bilah menempel harus lepas dari pembungkus section-nya;
-     • widget ulasan Judge.me datang belakangan, dan kartunya baru bisa
+     • data ulasan datang belakangan (JSON Klaviyo), dan kartunya baru bisa
        digambar sesudah ia selesai merender;
      • akordeon FAQ dianimasikan, karena `<details>` bawaan melompat.
 
@@ -75,8 +75,8 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
     });
   }
-  /* Escape untuk teks yang TIDAK pernah lewat filter `t` — mis. isi yang
-     dibaca dari DOM widget Judge.me. Menormalkan yang ini akan mengubah
+  /* Escape untuk teks yang TIDAK pernah lewat filter `t` — mis. isi ulasan
+     dari data JSON. Menormalkan yang ini akan mengubah
      "&amp;" yang memang ditulis pembeli menjadi "&". */
   function escRaw(s) {
     return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
@@ -834,21 +834,18 @@
     });
   }
 
-  /* --- ulasan: markup rujukan, data Judge.me, kendali milik sendiri ---------
-     Widget Judge.me dirender di host tersembunyi dan dibaca dari sana: kartu,
-     histogram, tanya-jawab, formulir tulis ulasan. Seluruh ulasan (200-an)
-     ditarik sekali dari endpoint widget sendiri supaya pencarian dan saringan
-     bekerja pada semuanya, bukan cuma halaman pertama.
-
-     Endpointnya publik, ber-`access-control-allow-origin: *`, dan memang itu
-     yang dipanggil widget sendiri untuk "Load more" — tidak ada kunci rahasia
-     yang dibawa ke tema. */
+  /* --- ulasan: markup rujukan, data Klaviyo, kendali milik sendiri ---------
+     Ulasan, ringkasan, histogram, dan pertanyaan datang dari endpoint JSON
+     Klaviyo lewat assets/klaviyo-reviews.js (dimuat malas dari sini);
+     formulir tulis ulasan / pertanyaan dari modal iframe Klaviyo; foto dari
+     lightbox yang sama dengan section ulasan produk lain. Seluruh ulasan yang
+     terjangkau ditarik sekali sesudah `load` supaya pencarian dan saringan
+     bekerja pada semuanya, bukan cuma halaman pertama. */
   function initReviews() {
     var sec = $('[data-pdp4-reviews]');
     if (!sec) return;
-    var host = $('[data-pdp4-jdgm-host]', sec);
     var list = $('[data-pdp4-rev-list]', sec);
-    if (!host || !list) return;
+    if (!list) return;
 
     var verifiedLabel = sec.dataset.verifiedLabel || '';
     var locale = sec.dataset.locale || 'en';
@@ -857,15 +854,55 @@
     var more = $('[data-pdp4-more]', sec);
 
     var state = { order: 'newest', score: null, photos: false, q: '', shown: PAGE, sorted: false };
-    var seed = [];       // dari cetakan widget — cepat, tapi cuma halaman pertama
-    var every = null;    // ke-200-nya
+    var seed = [];       // halaman pertama — cepat
+    var every = null;    // semua yang terjangkau
     var fetching = false;
 
-    /* Rujukan menulis cap waktu sebagai jarak ("2 weeks ago"), Judge.me sebagai
-       tanggal ("12/07/2026"). Yang dipakai atribut `datetime` ISO-nya, bukan
-       teks yang terlihat — teks itu format admin Judge.me dan bisa berubah
-       tanpa kita tahu. Intl menerjemahkan katanya sendiri, jadi /id membaca
-       "2 bulan yang lalu" tanpa satu pun string di tema. */
+    /* --- data Klaviyo -------------------------------------------------------- */
+    var kl = { summary: null, questions: [] };
+    function klPid() { return sec.dataset.productId; }
+    function klCompany() { return sec.dataset.company || 'T9cUqZ'; }
+    function klLang() { return locale === 'id' ? 'id' : 'en-us'; }
+    /* assets/klaviyo-reviews.js dimuat malas dari sini supaya urutan <script>
+       di halaman tidak menentukan apa pun. */
+    function klReady(cb) {
+      if (window.TLKlaviyoReviews) return cb();
+      var src = sec.dataset.klaviyoSrc;
+      if (!src) return;
+      var s = document.querySelector('script[data-tl-klaviyo-reviews]');
+      if (!s) {
+        s = document.createElement('script');
+        s.src = src;
+        s.async = true;
+        s.setAttribute('data-tl-klaviyo-reviews', '');
+        document.head.appendChild(s);
+      }
+      s.addEventListener('load', function () { cb(); });
+    }
+    /* Bentuk ulasan Klaviyo → bentuk yang dipakai card(). */
+    function klToPdp(r) {
+      return {
+        id: r.id, score: r.score, title: r.title, body: r.body, author: r.author,
+        anonymous: r.anonymous, verified: r.verified, iso: r.iso, time: r.time,
+        pics: r.pics.map(function (p) { return p.thumb; }),
+        full: r.pics.map(function (p) { return p.full; })   /* ukuran asli, untuk lightbox */
+      };
+    }
+    function klFillSummary(s) {
+      kl.summary = s;
+      var avg = $('.kl_reviews__summary__average_value', sec);
+      if (avg) avg.textContent = String(Math.round(s.avg * 100) / 100);
+      var cnt = $('.kl_reviews__summary__stars__count', sec);
+      if (cnt) cnt.textContent = s.count + ' ' + (sec.dataset.ratingsWord || '');
+      var tab = $('[data-pdp4-tab-count]', sec);
+      if (tab) tab.textContent = String(s.count);
+      var qc = $('[data-pdp4-qcount]', sec);
+      if (qc) qc.textContent = String(s.questions);
+    }
+
+    /* Rujukan menulis cap waktu sebagai jarak ("2 weeks ago"). Yang dipakai
+       ISO `created_at` dari data, dan Intl menerjemahkan katanya sendiri, jadi
+       /id membaca "2 bulan yang lalu" tanpa satu pun string di tema. */
     function ago(iso) {
       if (!iso || !window.Intl || !Intl.RelativeTimeFormat) return '';
       var then = new Date(iso);
@@ -884,47 +921,6 @@
       return new Array(n + 1).join('★') + new Array(6 - n).join('☆');
     }
 
-    function readReviews(root) {
-      return [].slice.call(root.querySelectorAll('.jdgm-rev')).map(function (r) {
-        var rating = r.querySelector('.jdgm-rev__rating');
-        var body = r.querySelector('.jdgm-rev__body');
-        var text = '';
-        if (body) {
-          /* "Read more" tautan milik widget, bukan bagian ulasannya. Disalin
-             dulu supaya membuangnya tidak merusak DOM widget. */
-          var clone = body.cloneNode(true);
-          [].slice.call(clone.querySelectorAll('.jdgm-rev__body-read-more')).forEach(function (e) { e.remove(); });
-          text = clone.textContent.replace(/\s+/g, ' ').trim();
-        }
-        var stamp = r.querySelector('.jdgm-rev__timestamp');
-        var iso = stamp ? stamp.getAttribute('datetime') : '';
-        return {
-          id: r.getAttribute('data-review-id') || '',
-          score: Number((rating && rating.getAttribute('data-score')) || 5),
-          title: ((r.querySelector('.jdgm-rev__title') || {}).textContent || '').trim(),
-          body: text,
-          author: ((r.querySelector('.jdgm-rev__author') || {}).textContent || '').trim(),
-          /* Reviewer memilih "Anonymous" di formulir Judge.me → nama tidak
-             ditulis sama sekali (user 17 Sep: "kalo namanya anonymous gausah
-             tampilin, langsung verified buyer aja"). Dibaca dari atribut
-             widget bila ada — cetakan endpoint membawanya, tapi cetakan
-             widget di host (dari metafield) TIDAK, cuma teksnya. Maka teks
-             jadi cadangan, dicocokkan dengan kata "anonim" versi Judge.me di
-             beberapa bahasa, bukan hanya bahasa Inggris. */
-          anonymous: !!r.querySelector('.jdgm-rev__author-wrapper[data-is-anonymous="true"]') ||
-            /^(anonymous|anonim|anonyme|an[oó]nimo|anonimo|匿名)$/i.test(((r.querySelector('.jdgm-rev__author') || {}).textContent || '').trim()),
-          /* Muatan endpoint menandainya di atribut kartu; muatan yang sudah
-             dirender widget menandainya dengan adanya lencana. */
-          verified: r.getAttribute('data-verified-buyer') === 'true' || !!r.querySelector('.jdgm-rev__buyer-badge'),
-          iso: iso,
-          time: iso ? Date.parse(iso) || 0 : 0,
-          pics: [].slice.call(r.querySelectorAll('.jdgm-rev__pics img')).map(function (i) {
-            return i.getAttribute('src') || i.getAttribute('data-src') || '';
-          }).filter(Boolean),
-        };
-      });
-    }
-
     function card(r) {
       var parts = [];
       if (!r.anonymous && r.author) parts.push('<span class="kl_reviews__review__author">' + escRaw(r.author) + '</span>');
@@ -940,60 +936,29 @@
          sendiri di sebagian besar browser, dan kartunya tidak punya. */
       if (r.body) html += '<q class="sk-body kl_reviews__review__content" style="quotes:none">' + escRaw(r.body) + '</q>';
       if (r.pics.length) {
-        html += '<div class="pdp-rev-pics">' + r.pics.map(function (src) {
-          return '<img src="' + escRaw(src) + '" alt="" loading="lazy" width="78" height="78">';
+        html += '<div class="pdp-rev-pics">' + r.pics.map(function (src, i) {
+          /* data-full = ukuran asli; klik membuka lightbox (pemasangan di bawah). */
+          return '<img src="' + escRaw(src) + '" alt="" loading="lazy" width="78" height="78"' +
+            (r.full && r.full[i] ? ' data-full="' + escRaw(r.full[i]) + '"' : '') + '>';
         }).join('') + '</div>';
       }
       return html + '<p class="sk-small sk-text-secondary">' + who + '</p></div>';
     }
 
     /* --- seluruh ulasan, sekali ------------------------------------------- */
-    function endpoint(page) {
-      var pg = host.querySelector('.jdgm-paginate');
-      var base = (pg && pg.getAttribute('data-url')) || 'https://cdn.judge.me/reviews/reviews_for_widget';
-      return base +
-        '?url=' + encodeURIComponent(sec.dataset.shop) +
-        '&shop_domain=' + encodeURIComponent(sec.dataset.shop) +
-        '&platform=shopify&product_id=' + encodeURIComponent(sec.dataset.productId) +
-        '&page=' + page + '&per_page=100';
-    }
-
-    function parsePage(html) {
-      var box = document.createElement('div');
-      box.innerHTML = html;
-      return readReviews(box);
-    }
-
     function loadEvery() {
       if (every) return Promise.resolve();
       if (fetching) return fetching;
-      /* `per_page` dibatasi server (sekitar 23 apa pun yang diminta), jadi
-         halaman pertama dipakai MENGUKUR berapa yang benar-benar datang, lalu
-         sisanya ditarik sekaligus. */
-      fetching = fetch(endpoint(1))
-        .then(function (r) { return r.json(); })
-        .then(function (first) {
-          var page1 = parsePage(first.html || '');
-          var per = page1.length || 1;
-          var total = Number(first.total_count) || page1.length;
-          var pages = Math.min(Math.ceil(total / per), 30);
-          var rest = [];
-          for (var i = 2; i <= pages; i++) {
-            rest.push(fetch(endpoint(i)).then(function (r) { return r.json(); })
-              .then(function (j) { return parsePage(j.html || ''); })
-              .catch(function () { return []; }));
-          }
-          return Promise.all(rest).then(function (chunks) {
-            var out = page1;
-            chunks.forEach(function (c) { out = out.concat(c); });
-            every = out;
-          });
+      fetching = new Promise(function (res) { klReady(res); })
+        .then(function () { return window.TLKlaviyoReviews.all(klPid(), klCompany(), { sort: 1 }); })
+        .then(function (out) {
+          every = out.reviews.map(klToPdp);
+          if (out.summary) { klFillSummary(out.summary); syncBars(); }
         })
-        .catch(function () { /* tetap pakai cetakan widget */ })
+        .catch(function () { /* tetap pakai halaman pertama */ })
         .then(function () { fetching = false; });
       return fetching;
     }
-
     /* --- urut, saring, gambar --------------------------------------------- */
     function rows() {
       var pool = (every && every.length) ? every : seed;
@@ -1022,52 +987,23 @@
          bertahan sampai halaman dimuat ulang. */
       var neutral = !state.sorted && !state.score && !state.photos && !state.q;
       if (neutral && out.length) {
-        var first = out[0];
+        /* Kartu pertama WAJIB punya teks (user 22 Sep 2026) — data Klaviyo
+           penuh ulasan rating-saja impor Shopee yang kartunya kosong. */
+        var first = out.filter(function (r) { return (r.body || '').trim() || (r.title || '').trim(); })[0] || out[0];
         out = [first].concat(out.filter(function (r) { return r !== first && r.pics.length > 0; }));
       }
       return out;
     }
 
-    /* --- tab pertanyaan (Judge.me Q&A, dinyalakan 8 Sep 2026) --------------
-       Kartu pertanyaan Judge.me: `.jdgm-quest` > header (`.jdgm-quest__asker
-       .jdgm-rev__author`, `.jdgm-rev__timestamp[datetime]`) +
-       `.jdgm-quest__body` + `.jdgm-quest__answers` berisi `.jdgm-ans`. Nama-
-       nama itu diambil dari CSS dan skrip widget Judge.me, bukan diduga — tapi
-       toko ini belum punya satu pun pertanyaan terbit saat ditulis, jadi
-       pembacanya sengaja toleran: tiap ruas boleh kosong tanpa merusak
-       kartunya. */
+    /* --- tab pertanyaan ------------------------------------------------------
+       Pertanyaan datang dari TLKlaviyoReviews.questions(). Toko ini belum punya
+       satu pun pertanyaan terbit saat ditulis, jadi kartunya toleran: tiap
+       ruas boleh kosong tanpa merusak kartunya. */
     var qlist = $('[data-pdp4-quest-list]', sec);
     var qempty = $('[data-pdp4-quest-empty]', sec);
     var qcount = $('[data-pdp4-qcount]', sec);
     var view = 'reviews';
     var answerLabel = (qlist && qlist.dataset.answerLabel) || '';
-    function text(el) { return el ? el.textContent.replace(/\s+/g, ' ').trim() : ''; }
-    /* Kartu pertanyaan Judge.me memberi waktu di `data-content`
-       ("2026-10-28 10:20:53 UTC"), bukan `datetime`; Safari menolak format
-       itu, jadi dinormalkan ke ISO. */
-    function stampIso(el) {
-      if (!el) return '';
-      var v = el.getAttribute('datetime') || el.getAttribute('data-content') || '';
-      return v.replace(' UTC', 'Z').replace(' ', 'T');
-    }
-    function readQuestions(root) {
-      return [].slice.call(root.querySelectorAll('.jdgm-quest')).map(function (q) {
-        var stamp = q.querySelector('.jdgm-rev__timestamp');
-        return {
-          body: text(q.querySelector('.jdgm-quest__body')),
-          asker: text(q.querySelector('.jdgm-quest__asker .jdgm-rev__author')) || text(q.querySelector('.jdgm-rev__author')),
-          iso: stampIso(stamp),
-          answers: [].slice.call(q.querySelectorAll('.jdgm-ans')).map(function (a) {
-            var st = a.querySelector('.jdgm-rev__timestamp');
-            return {
-              who: text(a.querySelector('.jdgm-ans__answerer .jdgm-rev__author')) || text(a.querySelector('.jdgm-rev__author')),
-              body: text(a.querySelector('.jdgm-ans__body')) || text(a.querySelector('.jdgm-ans__content')),
-              iso: stampIso(st)
-            };
-          }).filter(function (a) { return a.body; })
-        };
-      }).filter(function (q) { return q.body; });
-    }
     function qcard(q) {
       var who = '<span class="kl_reviews__review__author">' + escRaw(q.asker) + '</span>';
       var when = ago(q.iso);
@@ -1076,8 +1012,8 @@
         '<p class="sk-title">' + escRaw(q.body) + '</p>' +
         '<p class="sk-small sk-text-secondary">' + who + '</p>';
       q.answers.forEach(function (a) {
-        /* Jawaban tanpa cap waktu: Judge.me mencatat waktu jawaban bergeser
-           zona sehingga bisa jatuh di masa depan dan terbaca "dalam 0 hari". */
+        /* Jawaban sengaja tanpa cap waktu (sumber lama mencatatnya bergeser
+           zona sehingga bisa terbaca "dalam 0 hari"). */
         var aw = '<span class="kl_reviews__review__author">' + escRaw(a.who) + '</span>';
         html += '<div class="pdp-ans sk-stack" style="gap:var(--sk-space-4)">' +
           (answerLabel ? '<p class="sk-eyebrow sk-text-secondary">' + esc(answerLabel) + '</p>' : '') +
@@ -1087,50 +1023,12 @@
       return html + '</div>';
     }
     function questionTotal(qs) {
-      var w = host.querySelector('.jdgm-rev-widg');
-      var n = w ? parseInt(w.getAttribute('data-number-of-questions'), 10) : NaN;
-      var sub = host.querySelector('.jdgm-subtab__name[data-tabname="questions"] .jdgm-subtab__count');
-      if (sub) n = parseInt(sub.textContent, 10);
-      return isNaN(n) ? qs.length : Math.max(n, qs.length);
-    }
-    /* Widget di host hanya memanggil endpoint pertanyaan kalau metafield
-       `judgeme.widget` mencatat jumlah pertanyaan > 0 — dan metafield itu
-       tidak diregenerasi Judge.me saat pertanyaan dijawab/terbit (3 Nov 2026:
-       3 pertanyaan terbit, metafield masih 0 sejak 28 Okt, tab "(0)"). Jadi
-       pertanyaan ditarik sendiri dari endpoint yang sama dengan widget-nya;
-       host tetap jadi cadangan kalau permintaan gagal. */
-    var remoteQ = null;
-    function loadQuestions() {
-      if (!qlist || !sec.dataset.productId) return;
-      var box = document.createElement('div');
-      var seen = {};
-      function page(n) {
-        return fetch('https://api.judge.me/api/questions/questions_for_widget' +
-          '?product_id=' + encodeURIComponent(sec.dataset.productId) +
-          '&shop_domain=' + encodeURIComponent(sec.dataset.shop) +
-          '&platform=shopify&per_page=50&page=' + n)
-          .then(function (r) { return r.json(); })
-          .then(function (j) {
-            var doc = new DOMParser().parseFromString(j.html || '', 'text/html');
-            var fresh = [].filter.call(doc.querySelectorAll('.jdgm-quest'), function (q) {
-              var id = q.getAttribute('data-question-id');
-              if (id && seen[id]) return false;
-              if (id) seen[id] = true;
-              return true;
-            });
-            fresh.forEach(function (q) { box.appendChild(q); });
-            if (fresh.length && n < 10) return page(n + 1);
-          });
-      }
-      page(1).then(function () {
-        remoteQ = readQuestions(box);
-        syncQuestions();
-      }).catch(function () {});
+      return Math.max(kl.summary ? kl.summary.questions : 0, qs.length);
     }
     function syncQuestions() {
       if (!qlist) return;
-      var qs = remoteQ || readQuestions(host);
-      if (qcount) qcount.textContent = String(remoteQ ? remoteQ.length : questionTotal(qs));
+      var qs = kl.questions;
+      if (qcount) qcount.textContent = String(questionTotal(qs));
       qlist.innerHTML = qs.map(qcard).join('');
       var showing = view === 'questions';
       qlist.hidden = !showing || !qs.length;
@@ -1163,16 +1061,11 @@
       if (view !== 'reviews') return;
       var all = rows();
       list.innerHTML = all.slice(0, state.shown).map(card).join('');
-      /* Tombol "Load more" dihitung dari jumlah yang BISA dimuat, bukan dari
-         kartu yang kebetulan sudah ada. Widget Judge.me hanya mencetak dua
-         ulasan di host, jadi sebelum ke-200-nya tiba `all` cuma dua — dan
-         kalau pembaca sudah menggulir ke sini sebelum itu, penjaga anti-CLS
-         di bawah sengaja tidak menggambar ulang. Tanpa ini tombolnya tidak
-         pernah muncul sampai pembaca menyentuh urutan/saringan (dilaporkan
-         17 Sep 2026: "ga ada button load more"). Totalnya diambil dari
-         `data-number-of-reviews` widget; saat ada saringan totalnya tidak
-         diketahui, dan penangan saringan memang memanggil loadEvery() lalu
-         apply() sendiri. */
+      /* Tombol "Load more" dihitung dari jumlah yang BISA dimuat (total dari
+         ringkasan server), bukan dari kartu yang kebetulan sudah ada: sebelum
+         semuanya tiba, tampilan default hanya berisi beberapa kartu. Saat ada
+         saringan totalnya tidak diketahui, dan penangan saringan memang
+         memanggil loadEvery() lalu apply() sendiri. */
       var pending = !every && !state.score && !state.photos && !state.q
         ? widgetTotal() : 0;
       if (more) more.hidden = Math.max(all.length, pending) <= state.shown;
@@ -1185,29 +1078,25 @@
     function reset() { state.shown = PAGE; }
 
     function widgetTotal() {
-      var w = host.querySelector('.jdgm-rev-widg');
-      var n = w ? parseInt(w.getAttribute('data-number-of-reviews'), 10) : NaN;
-      return isNaN(n) ? 0 : n;
+      return kl.summary ? kl.summary.count : 0;
     }
 
+    /* Lima baris histogram (5→1) dari ringkasan server; angkanya dipinjam ke
+       menu bintang supaya pilihan yang kosong terlihat kosong sebelum ditekan. */
     function syncBars() {
-      var src = [].slice.call(host.querySelectorAll('.jdgm-histogram__row'));
-      var out = [].slice.call(sec.querySelectorAll('[data-pdp4-bars] .kl_reviews__histogram__row'));
-      src.forEach(function (row, i) {
-        if (!out[i]) return;
-        var freq = row.querySelector('.jdgm-histogram__frequency');
-        var fill = row.querySelector('.jdgm-histogram__bar-content');
-        var count = out[i].querySelector('[data-pdp4-bar-count]');
-        var bar = out[i].querySelector('.kl_reviews__histogram__bar--foreground');
-        if (count && freq) count.textContent = freq.textContent.trim();
-        if (bar && fill) bar.style.width = fill.style.width || '0%';
-        /* Baris histogram berurutan 5→1, dan angkanya dipinjam ke menu bintang
-           supaya pilihan yang kosong terlihat kosong sebelum ditekan. */
-        var opt = sec.querySelector('[data-pdp4-score-count="' + (5 - i) + '"]');
-        if (opt && freq) opt.textContent = freq.textContent.trim();
+      if (!kl.summary) return;
+      var total = kl.summary.count || 1;
+      $$('[data-pdp4-bars] .kl_reviews__histogram__row', sec).forEach(function (row, i) {
+        var star = 5 - i;
+        var n = kl.summary.hist[star - 1] || 0;
+        var count = row.querySelector('[data-pdp4-bar-count]');
+        var bar = row.querySelector('.kl_reviews__histogram__bar--foreground');
+        if (count) count.textContent = String(n);
+        if (bar) bar.style.width = (n ? Math.max(1, Math.round(n / total * 100)) : 0) + '%';
+        var opt = sec.querySelector('[data-pdp4-score-count="' + star + '"]');
+        if (opt) opt.textContent = String(n);
       });
     }
-
     /* --- kendali -----------------------------------------------------------
        Dua pil membuka DAFTAR PILIHAN — urutan dan saringan bintang — sedangkan
        "With photos" saklar yang berdiri sendiri dan bisa digabung keduanya. */
@@ -1316,141 +1205,55 @@
       });
     }
 
-    /* --- formulir Judge.me dibuka DI TEMPAT, di bawah kartu ringkasan -------
-       Widget di host sudah di-setup Judge.me, dan formulirnya — validasi,
-       unggah foto/video, anti-spam — sepenuhnya milik widget. Tapi selama host
-       berada di luar layar, dua hal terjadi: tautan `.jdgm-write-rev-link`
-       dipasangi display:none oleh Judge.me (widget dianggap tak terlihat), dan
-       pembungkus formulirnya berukuran 0. Klik programatik memang membuka
-       formulir, hanya saja di tempat yang tidak pernah terlihat pembeli —
-       itulah kenapa tombolnya terasa mati.
-
-       Urutannya: host dipindah tepat di bawah kartu ringkasan (tempat
-       tombolnya ditekan), dijadikan terlihat & masuk aliran lewat kelas, BARU
-       tautannya diklik. Memindahkan simpul tidak memutus Judge.me: penangan
-       kliknya didelegasikan di document dan simpulnya tidak pernah lepas dari
-       dokumen. */
-    var formOpen = false;
-    var summary = sec.querySelector('.sk-card--pad-lg');
-    var motion = reduce ? 'auto' : 'smooth';
-    function setHost(open) {
-      formOpen = open;
-      host.classList.toggle('pdp-jdgm-host--form', open);
-      if (!open) host.classList.remove('pdp-jdgm-host--qa');
-      host.setAttribute('aria-hidden', open ? 'false' : 'true');
+    /* --- formulir: modal iframe Klaviyo (ulasan & pertanyaan) --------------- */
+    function klLabels(title) { return { title: title, close: sec.dataset.lClose || 'Close' }; }
+    function openReviewForm() {
+      klReady(function () { window.TLKlaviyoReviews.openWrite(klPid(), klCompany(), klLang(), klLabels((write && write.textContent) || '')); });
     }
-    function dockHost() {
-      if (summary && summary.nextElementSibling !== host) summary.insertAdjacentElement('afterend', host);
+    function openQuestionForm() {
+      klReady(function () { window.TLKlaviyoReviews.openAsk(klPid(), klCompany(), klLang(), klLabels((ask && ask.textContent) || '')); });
     }
-    function wrappersOpen() {
-      var open = false;
-      $$('.jdgm-form-wrapper, .jdgm-form-dynamic-wrapper, .jdgm-question-form-wrapper', host).forEach(function (w) {
-        if (getComputedStyle(w).display !== 'none') open = true;
-      });
-      return open;
-    }
-    /* Klik tautannya HARUS menunggu Judge.me menyadari widgetnya terlihat.
-       Diukur, bukan diduga: dengan host baru saja dijadikan terlihat, klik
-       seketika tidak membuka apa pun — Judge.me baru membangun
-       `.jdgm-form-wrapper` dan mencabut display:none tautannya lewat
-       pemeriksaan visibilitasnya sendiri, beberapa ratus milidetik kemudian.
-       Jadi pembungkusnya ditunggu (polling 100ms, paling lama 6s), lalu
-       diklik. */
-    function whenFormReady(linkSel, wrapSel, done) {
-      var tries = 0;
-      (function tick() {
-        var link = host.querySelector(linkSel);
-        var ready = link && getComputedStyle(link).display !== 'none' && host.querySelector(wrapSel);
-        if (ready || tries++ > 60) return done();
-        /* Pemeriksaan visibilitas Judge.me menumpang pada peristiwa gulir; di
-           desktop ia bisa lewat beberapa detik tanpa gulir — jadi disenggol
-           tiap putaran. */
-        window.dispatchEvent(new Event('scroll'));
-        window.setTimeout(tick, 100);
-      })();
-    }
-    /* Satu mekanisme untuk dua formulir Judge.me: ulasan
-       (.jdgm-write-rev-link → .jdgm-form-wrapper) dan pertanyaan
-       (.jdgm-ask-question-btn → .jdgm-question-form-wrapper). Kalau formulir
-       yang satu masih terbuka saat yang lain diminta, Judge.me sendiri yang
-       menukarnya. */
-    function openJdgmForm(linkSel, wrapSel) {
-      var link = host.querySelector(linkSel);
-      if (!link) return false;
-      dockHost();
-      setHost(true);
-      /* Host digulirkan ke layar SEBELUM menunggu, bukan sesudahnya: itu yang
-         memicu Judge.me menganggap widgetnya terlihat. */
-      host.scrollIntoView({ block: 'start', behavior: motion });
-      whenFormReady(linkSel, wrapSel, function () {
-        if (!formOpen) return; /* ditutup lagi sebelum sempat terbuka */
-        var wrap = host.querySelector(wrapSel);
-        var isOpen = wrap && getComputedStyle(wrap).display !== 'none';
-        if (!isOpen) link.click();
-        window.setTimeout(function () {
-          (host.querySelector(wrapSel) || host).scrollIntoView({ block: 'start', behavior: motion });
-        }, 120);
-      });
-      return true;
-    }
-    var activeForm = null;
-    function openReviewForm() { activeForm = 'review'; return openJdgmForm('.jdgm-write-rev-link', '.jdgm-form-wrapper'); }
-    function openQuestionForm() { activeForm = 'question'; return openJdgmForm('.jdgm-ask-question-btn', '.jdgm-question-form-wrapper'); }
-    /* Penutupan diikuti dari DOM, bukan dari klik: Judge.me menutup pembungkus
-       formulirnya lewat style inline (tombol "Cancel review", Enter, atau apa
-       pun yang ia tambahkan nanti). Pengamat ini menunggu pembungkusnya pernah
-       TERBUKA dulu — tepat sesudah klik kita pembungkusnya memang masih
-       tertutup, dan tanpa syarat itu host akan ditutup sebelum sempat
-       terbuka. */
-    var wasOpen = false, closeTimer = null;
-    new MutationObserver(function () {
-      if (!formOpen) { wasOpen = false; return; }
-      window.clearTimeout(closeTimer);
-      closeTimer = window.setTimeout(function () {
-        if (!formOpen) return;
-        if (wrappersOpen()) { wasOpen = true; return; }
-        if (wasOpen) { wasOpen = false; setHost(false); }
-      }, 150);
-    }).observe(host, { attributes: true, subtree: true, attributeFilter: ['style', 'class'] });
-
     var write = $('[data-pdp4-write]', sec);
-    if (write) {
-      write.addEventListener('click', function () {
-        if (formOpen && activeForm === 'review') { setHost(false); return; }
-        openReviewForm();
-      });
-    }
+    if (write) write.addEventListener('click', openReviewForm);
 
-    /* "Ask a question": formulir pertanyaan Judge.me, mekanisme yang sama.
-       Kalau widget tidak punya tombolnya (modul Tanya-Jawab dimatikan lagi di
-       admin Judge.me), tombolnya jatuh ke `data-href` — WhatsApp. Kalau
-       keduanya tidak ada, tombolnya dibuang: tombol yang tidak menuju ke mana
-       pun lebih buruk daripada tombol yang tidak ada. */
+    /* "Ask a question" membuka formulir pertanyaan Klaviyo. */
     var ask = $('[data-pdp4-ask]', sec);
-    if (ask) {
-      if (!ask.dataset.href && !host.querySelector('.jdgm-ask-question-btn')) {
-        /* Diperiksa lagi belakangan: widget mungkin belum selesai merender. */
-        window.setTimeout(function () {
-          if (!ask.dataset.href && !host.querySelector('.jdgm-ask-question-btn')) ask.remove();
-        }, 3000);
-      }
-      ask.addEventListener('click', function () {
-        if (formOpen && activeForm === 'question') { setHost(false); return; }
-        if (host.querySelector('.jdgm-ask-question-btn')) { openQuestionForm(); return; }
-        if (ask.dataset.href) window.open(ask.dataset.href, '_blank', 'noopener');
+    if (ask) ask.addEventListener('click', openQuestionForm);
+
+    /* Foto ulasan: klik membuka lightbox yang sama dengan section ulasan
+       produk lain (permintaan user 22 Sep 2026). */
+    list.addEventListener('click', function (e) {
+      var img = e.target.closest('.pdp-rev-pics img[data-full]');
+      if (!img) return;
+      var imgs = [].slice.call(img.parentElement.querySelectorAll('img[data-full]'));
+      klReady(function () {
+        window.TLKlaviyoReviews.openLightbox(imgs.map(function (im) {
+          return { full: im.getAttribute('data-full'), thumb: im.currentSrc || im.src, alt: im.alt || '' };
+        }), imgs.indexOf(img), img);
       });
-    }
+    });
 
     /* --- jalan ------------------------------------------------------------- */
-    seed = readReviews(host);
-    syncBars();
-    syncQuestions();
-    loadQuestions();
-    apply();
-    /* Ke-200 ulasannya (sembilan permintaan ke api.judge.me, ±700 KB JSON
-       yang lalu di-parse jadi DOM) dulu ditarik begitu halaman lahir dan ikut
-       berebut pita + main thread dengan gambar hero (LCP 15 detik, 10 Sep
-       2026). Kini ditarik sesudah `load`, saat browser senggang.
+    /* Halaman pertama (50 ulasan + ringkasan) diminta sekarang: angka di kartu
+       ringkasan sudah dirender Liquid dari metafield dan diperbarui di sini.
+       Ke-semuanya menyusul lewat loadEvery() di bawah, sesudah `load`. */
+    klReady(function () {
+      var KR = window.TLKlaviyoReviews;
+      KR.first(klPid(), klCompany(), { sort: 1 }).then(function (out) {
+        if (out.summary) klFillSummary(out.summary);
+        seed = out.reviews.map(klToPdp);
+        syncBars();
+        apply();
+      }).catch(function () { /* ringkasan tetap dari metafield, daftar tetap kosong */ });
+      KR.questions(klPid(), klCompany()).then(function (qs) {
+        kl.questions = qs;
+        syncQuestions();
+      });
+    });
+    /* Seluruh ulasan (±30 permintaan JSON untuk kapsul) dulu ditarik begitu
+       halaman lahir dan ikut berebut pita + main thread dengan gambar hero
+       (LCP 15 detik, 10 Sep 2026). Kini ditarik sesudah `load`, saat browser
+       senggang.
 
        Hasilnya hanya DIGAMBAR kalau bagian ini belum pernah terlihat: daftar
        yang berganti di bawah mata pembaca mengubah tingginya, dan bagian di
@@ -1469,10 +1272,11 @@
     afterLoadIdle(function () {
       loadEvery().then(function () {
         if (!seen) { apply(); return; }
-        /* Sudah terlihat. Dulu berhenti di sini demi CLS — tapi cetakan widget
-           cuma DUA kartu, jadi pembaca yang menggulir cepat melihat daftar
-           yang tidak pernah terisi sampai ia menyentuh urutan/saringan
-           (dilaporkan 17 Sep 2026: "kenapa cuma muncul 2 doang di awal").
+        /* Sudah terlihat. Dulu berhenti di sini demi CLS — tapi halaman
+           pertama cuma beberapa kartu, jadi pembaca yang menggulir cepat
+           melihat daftar yang tidak pernah terisi sampai ia menyentuh
+           urutan/saringan (dilaporkan 17 Sep 2026: "kenapa cuma muncul 2
+           doang di awal").
            Kini tetap digambar ulang; kalau section-nya sudah di ATAS layar
            (pembaca sudah lewat), selisih tingginya dikompensasi ke posisi
            gulir supaya yang sedang dibaca tidak bergeser. Kalau masih di
@@ -1508,24 +1312,6 @@
       });
     });
 
-    if (!('MutationObserver' in window)) return;
-    /* Widget mengisi dirinya bertahap. Selama ke-200-nya belum tiba, cetakan
-       pertamanya masih yang tampil, jadi ia diikuti — di-debounce, karena
-       kerangka `.jdgm-rev` muncul lebih dulu dan `.jdgm-rev__body` menyusul. */
-    var timer = null;
-    new MutationObserver(function () {
-      /* Selama formulir terbuka host berada di aliran dengan lebar kolom, dan
-         Judge.me memotong badan ulasan panjang pada lebar itu; membaca ulang
-         saat itu akan mengganti kutipan utuh dengan yang terpotong. */
-      if (formOpen) return;
-      window.clearTimeout(timer);
-      timer = window.setTimeout(function () {
-        seed = readReviews(host);
-        syncBars();
-        syncQuestions();
-        if (!every) apply();
-      }, 250);
-    }).observe(host, { childList: true, subtree: true });
   }
 
   function boot() {

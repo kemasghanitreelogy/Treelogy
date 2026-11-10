@@ -1286,17 +1286,6 @@ html{scroll-behavior:smooth}
   .shopify-section:has(> .pdp4-page > .pdp-foot-space){padding-bottom:88px}
 }
 
-/* Judge.me's own widget is the DATA source for the reviews section, never the
-   visible one: assets/pdp4.js reads it and redraws the rows in the reference's
-   markup. It has to stay in the DOM (Judge.me only initialises what it can
-   measure) and it has to stay out of sight. `.pdp-jdgm-host` is that box.
-   `!important` because Judge.me writes inline display on several of these. */
-.pdp4-page .pdp-jdgm-host{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
-.pdp4-page .pdp-jdgm-host--form,.pdp4-page .pdp-jdgm-host--qa{position:static;width:auto;height:auto;overflow:visible;clip:auto;clip-path:none;white-space:normal}
-.pdp4-page .pdp-jdgm-host--qa .jdgm-rev-widg > :not(.jdgm-rev-widg__header){display:none!important}
-.pdp4-page .pdp-jdgm-host--form .jdgm-rev-widg__header > :not(.jdgm-form-wrapper):not(.jdgm-form-dynamic-wrapper):not(.jdgm-question-form-wrapper){display:none!important}
-.pdp4-page .pdp-jdgm-host--form .jdgm-rev-widg,.pdp4-page .pdp-jdgm-host--qa .jdgm-rev-widg{display:block!important}
-
 /* Screen-reader-only. The reference writes the comparison table's corner cell
    as an empty `<th>`; visually empty is right, empty to a screen reader is
    not — the first column does have a name. */
@@ -1631,7 +1620,7 @@ header.header-nav .header-menu{
 .pdp4-page .pdp-rev-pics{display:flex;flex-wrap:wrap;gap:var(--sk-space-8)}
 .pdp4-page .pdp-rev-pics img{width:78px;height:78px;object-fit:cover;border-radius:var(--sk-radius-xs);display:block}
 
-/* Jawaban Judge.me menjorok ke dalam pertanyaannya, bukan berdiri sejajar. */
+/* Jawaban menjorok ke dalam pertanyaannya, bukan berdiri sejajar. */
 .pdp4-page .pdp-ans{padding-left:var(--sk-space-16);border-left:var(--sk-stroke-default) solid var(--sk-outline-subtle)}
 
 /* Elemen yang disembunyikan lewat properti `hidden` di pdp4.js. Kit tidak

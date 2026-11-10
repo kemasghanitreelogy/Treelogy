@@ -60,12 +60,11 @@
   .cl-page a.cl-atc{display:inline;width:auto;height:auto;min-width:0;margin:0;padding:0;border:0;border-radius:0;background:none;box-shadow:none;font-size:12px;line-height:1.4;font-weight:500;letter-spacing:-.12px;color:var(--cl-ink);text-decoration:underline;text-underline-offset:2px;white-space:nowrap;text-transform:none}
   .cl-page .cl-btn:focus-visible,.cl-page a.cl-atc:focus-visible{outline:2px solid currentColor;outline-offset:3px}
   .cl-page [hidden]{display:none!important}
-  /* Popup varian tema menyalin .star-review kartu; CSS Judge.me menyembunyikan .jdgm-prev-badge__text
-     (visibility:hidden) sampai widget-nya memproses elemen — salinan di popup tak pernah diproses. */
-  #popup-variant #popup-variant-rating .jdgm-prev-badge{display:flex!important;align-items:center;gap:6px}
-  #popup-variant #popup-variant-rating .jdgm-prev-badge svg{display:block;flex:0 0 auto}
-  #popup-variant #popup-variant-rating .jdgm-prev-badge__text{visibility:visible;display:inline-flex;align-items:center;gap:4px;font-size:12px;line-height:12px;font-weight:400;color:#2b3c35}
-  #popup-variant #popup-variant-rating .jdgm-prev-badge__text span{display:block;line-height:12px;transform:none!important}
+  /* Popup varian tema menyalin .star-review kartu; tata letaknya disetel ulang di sini. */
+  #popup-variant #popup-variant-rating .klr-prev-badge{display:flex!important;align-items:center;gap:6px}
+  #popup-variant #popup-variant-rating .klr-prev-badge svg{display:block;flex:0 0 auto}
+  #popup-variant #popup-variant-rating .klr-prev-badge__text{visibility:visible;display:inline-flex;align-items:center;gap:4px;font-size:12px;line-height:12px;font-weight:400;color:#2b3c35}
+  #popup-variant #popup-variant-rating .klr-prev-badge__text span{display:block;line-height:12px;transform:none!important}
   /* Filter menyembunyikan kartu unggulan hijau → tak ada lagi pita hijau; sudut hero & daftar harus di atas krem. */
   .cl-page:has(.cl-feat-wrap[hidden]){background:var(--cl-cream)}
 

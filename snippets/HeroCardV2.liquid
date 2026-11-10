@@ -50,24 +50,17 @@
       </span>
       <span class="product-card-detail">
         {%- comment -%}
-          Badge Judge.me membawa handler klik DAN keydown yang melompat ke
-          #judgeme_product_reviews; atribut tabindex/role-nya ditulis ulang
-          oleh skrip mereka saat setup, jadi melucutinya di Liquid percuma.
           Di kartu hero seluruh kartu adalah satu tautan ke PDP biasa, maka
-          badge dijadikan dekoratif dengan `inert` (mematikan pointer, fokus,
-          dan aktivasi keyboard sekaligus) + pointer-events di CSS section
+          badge rating dijadikan dekoratif dengan `inert` (mematikan pointer,
+          fokus, dan aktivasi keyboard sekaligus) + pointer-events di CSS section
           sebagai cadangan untuk peramban tanpa dukungan inert. Nilainya
           tetap sampai ke pembaca layar lewat teks tersembunyi di bawahnya.
         {%- endcomment -%}
         {%- liquid
-          assign badge_html = product.metafields.judgeme.badge | default: ''
           assign rating_avg = ''
-          assign rating_cnt = ''
-          if badge_html contains "data-average-rating='"
-            assign rating_avg = badge_html | split: "data-average-rating='" | last | split: "'" | first
-          endif
-          if badge_html contains "data-number-of-reviews='"
-            assign rating_cnt = badge_html | split: "data-number-of-reviews='" | last | split: "'" | first
+          assign rating_cnt = product.metafields.reviews.rating_count.value | append: ''
+          if product.metafields.reviews.rating != blank
+            assign rating_avg = product.metafields.reviews.rating.value.rating | times: 100 | round | divided_by: 100.0 | append: ''
           endif
           assign rating_separator = 'products.rating.decimal_separator' | t
           assign rating_avg_local = rating_avg
