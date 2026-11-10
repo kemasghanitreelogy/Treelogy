@@ -38,9 +38,6 @@ html, body {
     overflow: visible !important;
 }
 
-#product-detail-content .klr-widget .klr-prev-badge__text .total-review {
-  display: none;
-}
 .variant-separator-content {
   margin: 25px 0;
   display: flex;
@@ -649,8 +646,9 @@ section {
 }
 .star-review .klr-prev-badge__text {
   display: flex;
+  align-items: center;
   gap: 4px;
-  transform: translateY(1.1px) !important;
+  line-height: 1;
 }
 .product-detail-wrapper .star-review .klr-prev-badge__text {
   color: #2b3c35;
@@ -668,6 +666,11 @@ section {
 .star-review .klr-prev-badge {
   gap: 9px;
   display: flex !important;
+  align-items: center;
+}
+.star-review .klr-prev-badge svg {
+  display: block;
+  flex: 0 0 auto;
 }
 
 /* Jumlah ulasan di kartu produk. Di PDP jumlahnya diatur terpisah oleh
@@ -1162,6 +1165,26 @@ input.red {
   .product-detail-wrapper .detail .inside-set-wrapper {
     font-size: 14px;
   }
+}
+.product-detail-wrapper .detail .rating-link {
+  display: inline-flex;
+  color: inherit;
+  text-decoration: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.product-detail-wrapper .detail .rating-link .total-review {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-color: rgba(43, 60, 53, .35);
+  transition: text-decoration-color .2s ease-out;
+}
+.product-detail-wrapper .detail .rating-link:hover .total-review {
+  text-decoration-color: currentColor;
+}
+.product-detail-wrapper .detail .rating-link:focus-visible {
+  outline: 2px solid #56734F;
+  outline-offset: 3px;
 }
 .product-detail-wrapper .detail .rating {
   gap: 4px;

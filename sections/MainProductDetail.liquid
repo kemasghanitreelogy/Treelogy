@@ -107,7 +107,8 @@
         <div>{% render 'StarReview' %}<span class="rating-text">{% render 'unique-buyers', text: product.metafields.custom.rating %}</span>
         </div>
       {% else %}
-        {% render 'Rating' %}
+        {%- comment -%} Badge rating = tautan ke section ulasan (gulir halus lewat scroll-behavior di theme.css, berhenti di scroll-margin-top wrapper). {%- endcomment -%}
+        <a href="#klaviyo-review-wrapper" class="rating-link">{% render 'Rating' %}</a>
       {% endif %}
     </div>
 
