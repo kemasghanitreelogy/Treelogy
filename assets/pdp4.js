@@ -908,9 +908,12 @@
       if (!iso || !window.Intl || !Intl.RelativeTimeFormat) return '';
       var then = new Date(iso);
       if (isNaN(then)) return '';
-      var days = Math.round((Date.now() - then) / 86400000);
+      /* Cap waktu sedikit di masa depan (beda zona) dihitung hari ini, dan
+         selisih 0 hari ditulis "today" / "hari ini" (numeric:auto), bukan
+         "in 0 days". */
+      var days = Math.max(0, Math.round((Date.now() - then) / 86400000));
+      if (days < 1) return new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(0, 'day');
       var rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'always' });
-      if (days < 1) return rtf.format(0, 'day');
       if (days < 7) return rtf.format(-days, 'day');
       if (days < 35) return rtf.format(-Math.round(days / 7), 'week');
       if (days < 365) return rtf.format(-Math.round(days / 30), 'month');
