@@ -102,6 +102,22 @@
 {% render 'promo-url', slot: 'gate' %}
 
 {%- capture t_proof %}{% render 'pdp4-copy', value: section.settings.proof_text, key: 'pdp3.buybox.proof_text' %}{% endcapture -%}
+{%- liquid
+  comment
+    Angka rating di depan " / 5" selalu dari metafield reviews.rating (Klaviyo),
+    supaya sama dengan section ulasan; sisa kalimatnya tetap dari setting/locale.
+  endcomment
+  assign proof_parts = t_proof | split: ' / 5'
+  if product.metafields.reviews.rating != blank and proof_parts.size > 1
+    assign proof_avg = product.metafields.reviews.rating.value.rating | times: 100 | round | divided_by: 100.0 | append: ''
+    assign proof_sep = 'products.rating.decimal_separator' | t
+    if proof_sep.size == 1
+      assign proof_avg = proof_avg | replace: '.', proof_sep
+    endif
+    assign proof_head = proof_parts.first | strip
+    assign t_proof = t_proof | replace_first: proof_head, proof_avg
+  endif
+-%}
 {%- capture t_lede %}{% render 'pdp4-copy', value: section.settings.lede, key: 'pdp3.buybox.lede' %}{% endcapture -%}
 {%- capture t_thumb %}{% render 'pdp4-copy', value: section.settings.thumb_label, key: 'pdp3.buybox.thumb_label' %}{% endcapture -%}
 <div class="pdp4-page sk-root">
