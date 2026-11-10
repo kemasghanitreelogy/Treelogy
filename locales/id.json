@@ -263,7 +263,9 @@
     "based_on": "Berdasarkan {{ count }} ulasan",
     "based_on_singular": "Berdasarkan 1 ulasan",
     "all_summary": "{{ rating }}/5 dari {{ count }} ulasan.",
-    "reply_from": "Balasan dari Treelogy"
+    "reply_show": "Lihat balasan Treelogy",
+    "reply_hide": "Sembunyikan balasan",
+    "reply_from": "Tim Treelogy"
   },
   "articles": {
     "read_full_article": "Baca Artikel Lengkap"

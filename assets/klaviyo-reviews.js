@@ -417,6 +417,24 @@
     return true;
   }
 
+  /* --- balasan toko (dipakai juga oleh pdp4.js) -----------------------------
+     <details>/<summary> bawaan HTML: tertutup secara bawaan, dibuka dengan
+     klik/Enter/Spasi, terbaca pembaca layar sebagai tombol buka-tutup, tanpa
+     JS dan tanpa geser tata letak saat halaman dimuat. Teks balasan di-escape
+     dan baris barunya dijaga lewat CSS (pre-line), bukan <br> dari data. */
+  var ICON_REPLY = '<svg class="tl-reply__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>';
+  var ICON_CHEV = '<svg class="tl-reply__chev" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>';
+  function replyHtml(text, L) {
+    if (!text) return '';
+    L = L || {};
+    return '<details class="tl-reply"><summary class="tl-reply__toggle">' + ICON_REPLY +
+      '<span class="tl-reply__show">' + esc(L.show || 'See reply') + '</span>' +
+      '<span class="tl-reply__hide">' + esc(L.hide || L.show || 'Hide reply') + '</span>' + ICON_CHEV + '</summary>' +
+      '<div class="tl-reply__panel"><div class="tl-reply__head"><span class="tl-reply__mark" aria-hidden="true">T</span>' +
+      '<span class="tl-reply__from">' + esc(L.from || '') + '</span></div>' +
+      '<p class="tl-reply__body">' + esc(text) + '</p></div></details>';
+  }
+
   /* --- penggambar daftar ulasan --------------------------------------------
      Kelas-kelas di bawah (klr-*) adalah kerangka DOM ulasan yang ditata
      assets/klaviyo-reviews.css dan override di theme.css. */
@@ -480,10 +498,7 @@
           '<img class="klr-rev__pic-img" alt="' + esc(r.author) + ' review photo" src="' + esc(p.thumb) + '" loading="lazy" width="96" height="96"></a>';
       }).join('') + '</div>';
     }
-    if (L.showReplies && r.reply) {
-      h += '<div class="klr-rev__reply"><div class="klr-rev__replier-wrapper"><span class="klr-rev__replier">' + esc(L.shopName) + '</span></div>' +
-        '<div class="klr-rev__reply-content">' + esc(r.reply.body).replace(/\n/g, '<br>') + '</div></div>';
-    }
+    if (L.showReplies && r.reply) h += replyHtml(r.reply.body, L.reply);
     h += '</div><div class="klr-rev__actions"><div class="klr-rev__social"></div><div class="klr-rev__votes"></div></div></div>';
     return h;
   }
@@ -553,7 +568,7 @@
       lowest: D.lLowest || 'Lowest Rating', onlyPics: D.lOnlyPics || 'Only Pictures', picsFirst: D.lPicsFirst || 'Pictures First',
       more: D.lMore || 'Load More', readMore: D.lReadMore || 'Read more', seeAll: D.lSeeAll || 'See all reviews',
       basedOn: D.lBasedOn || 'Based on __N__ reviews', basedOn1: D.lBasedOn1 || 'Based on 1 review',
-      close: D.lClose || 'Close', showAsk: D.showAsk === 'true', showReplies: D.showReplies === 'true', shopName: D.shopName || ''
+      close: D.lClose || 'Close', showAsk: D.showAsk === 'true', showReplies: D.showReplies === 'true', reply: { show: D.lReply, hide: D.lReplyHide, from: D.lReplyFrom }
     };
     var PER = Math.max(1, parseInt(D.perPage, 10) || 5);
     var lang = D.locale === 'id' ? 'id' : 'en-us';
@@ -749,6 +764,6 @@
     page: page, first: first, all: all, questions: questions,
     openWrite: openWrite, openAsk: openAsk, closeModal: closeModal,
     openLightbox: openLightbox, closeLightbox: closeLightbox,
-    normalize: normalize, summary: summary, mountReviews: mountReviews
+    normalize: normalize, summary: summary, mountReviews: mountReviews, replyHtml: replyHtml
   };
 })();

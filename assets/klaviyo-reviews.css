@@ -310,3 +310,26 @@ html.tl-klr-lock{overflow:hidden}
 .klr-sort-dropdown-arrow:before{content:"";display:inline-block;width:18px;height:18px;vertical-align:middle;background-color:currentColor;-webkit-mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M8.5 4l8 8-8 8' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/></svg>") center/100% 100% no-repeat;mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M8.5 4l8 8-8 8' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/></svg>") center/100% 100% no-repeat}
 .klr-lb-arrow:before{content:"";display:block;width:48px;height:48px;background-color:currentColor;-webkit-mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M8.5 4l8 8-8 8' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/></svg>") center/100% 100% no-repeat;mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M8.5 4l8 8-8 8' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/></svg>") center/100% 100% no-repeat}
 .klr-lb-arrow-left:before{transform:rotate(180deg)}
+/* ===== Balasan toko (komponen bersama PDP kapsul + PDP lain) =============
+   Tertutup secara bawaan. Tombol 44px (target sentuh), panel bernuansa daun
+   dengan aksen kiri; animasi hanya opacity/transform 200ms ease-out, mati
+   bila prefers-reduced-motion. */
+.tl-reply{--tl-ink:#2B3C35;--tl-leaf:#56734F;--tl-mist:#EEF1E6;margin-top:10px;color:var(--tl-ink);font-family:inherit}
+.tl-reply__toggle{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px 0 12px;margin-left:-2px;border:1px solid rgba(43,60,53,.18);border-radius:999px;background:transparent;font-size:13px;font-weight:500;line-height:1.2;letter-spacing:.01em;color:var(--tl-ink);cursor:pointer;list-style:none;user-select:none;-webkit-tap-highlight-color:transparent;transition:background-color .2s ease-out,border-color .2s ease-out}
+.tl-reply__toggle::-webkit-details-marker,.tl-reply__toggle::marker{display:none;content:""}
+.tl-reply__toggle:hover{background:var(--tl-mist);border-color:rgba(86,115,80,.45)}
+.tl-reply__toggle:focus-visible{outline:2px solid var(--tl-leaf);outline-offset:2px}
+.tl-reply__icon,.tl-reply__chev{width:16px;height:16px;flex:0 0 16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tl-reply__icon{color:var(--tl-leaf)}
+.tl-reply__chev{opacity:.7;transition:transform .2s ease-out}
+.tl-reply[open] .tl-reply__chev{transform:rotate(180deg)}
+.tl-reply__hide,.tl-reply[open] .tl-reply__show{display:none}
+.tl-reply[open] .tl-reply__hide{display:inline}
+.tl-reply__panel{margin-top:10px;padding:14px 16px;border-left:2px solid var(--tl-leaf);border-radius:0 12px 12px 0;background:var(--tl-mist)}
+.tl-reply[open] .tl-reply__panel{animation:tl-reply-in .2s ease-out}
+.tl-reply__head{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.tl-reply__mark{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--tl-ink);color:#F5F3EA;font-size:11px;font-weight:600;line-height:1}
+.tl-reply__from{font-size:12px;font-weight:600;letter-spacing:.02em;color:var(--tl-ink)}
+.tl-reply__body{margin:0;font-size:14px;line-height:1.6;color:var(--tl-ink);white-space:pre-line;overflow-wrap:anywhere}
+@keyframes tl-reply-in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.tl-reply__toggle,.tl-reply__chev{transition:none}.tl-reply[open] .tl-reply__panel{animation:none}}
