@@ -4,7 +4,7 @@
 
   Markup promo dirender server tapi disembunyikan CSS. Slot `gate` memasang
   skrip inline sinkron SEBELUM judul dilukis: bila URL cocok (atau pernah cocok
-  dalam 72 jam terakhir, disimpan di localStorage) ia memasang kelas `tl-promo-url` di <html>. Tanpa request
+  dalam 24 jam terakhir, disimpan di localStorage) ia memasang kelas `tl-promo-url` di <html>. Tanpa request
   tambahan, tanpa kedip, tanpa geser tata letak, dan cache halaman tetap jalan
   karena Liquid tidak membaca query string.
 
@@ -34,7 +34,7 @@
       var s = localStorage, now = Date.now();
       if (e && !(Date.parse(e) > now)) return s.removeItem(k);
       var q = decodeURIComponent(location.search).toLowerCase();
-      if (m.some(function (w) { return w && q.indexOf(w) > -1; })) s.setItem(k, now + 2592e5);
+      if (m.some(function (w) { return w && q.indexOf(w) > -1; })) s.setItem(k, now + 864e5);
       if (+s.getItem(k) > now) document.documentElement.classList.add('tl-promo-url');
       else s.removeItem(k);
     } catch (x) {}

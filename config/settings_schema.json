@@ -4,8 +4,8 @@
     "theme_name": "Treelogy",
     "theme_version": "1.0.0",
     "theme_author": "Shopify",
-    "theme_documentation_url": "https://github.com/Shopify/themekit",
-    "theme_support_url": "https://github.com/Shopify/themekit/issues"
+    "theme_documentation_url": "https:\/\/github.com\/Shopify\/themekit",
+    "theme_support_url": "https:\/\/github.com\/Shopify\/themekit\/issues"
   },
   {
     "name": "Favicon Settings",
@@ -231,7 +231,7 @@
     "settings": [
       {
         "type": "paragraph",
-        "content": "Promo di PDP hanya tampil bila URL memuat salah satu kata kunci, mis. ?utm_campaign=promo-1111. Status tersimpan 72 jam sejak klik iklan terakhir, juga saat pindah halaman / bahasa."
+        "content": "Promo di PDP hanya tampil bila URL memuat salah satu kata kunci, mis. ?utm_campaign=promo-1111. Status tersimpan 24 jam sejak klik iklan terakhir, juga saat pindah halaman \/ bahasa."
       },
       {
         "type": "checkbox",
