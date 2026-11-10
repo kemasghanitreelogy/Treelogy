@@ -76,7 +76,7 @@
   data-per-page="{{ section.settings.per_page | default: 5 }}"
   data-show-ask="{{ section.settings.show_ask }}"
   data-show-replies="{{ section.settings.show_replies }}"
-  data-shop-name="{{ shop.name | escape }}"
+  data-shop-name="{{ 'reviews.reply_from' | t | escape }}"
   data-l-title="{{ t_title | strip | escape }}"
   data-l-write="{{ t_write | strip | escape }}"
   data-l-ask="{{ t_ask | strip | escape }}"
@@ -133,8 +133,7 @@
       "type": "checkbox",
       "id": "show_replies",
       "label": "Show shop replies under reviews",
-      "info": "Off keeps the page identical to before.",
-      "default": false
+      "default": true
     },
     {
       "type": "header",

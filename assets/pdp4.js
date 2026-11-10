@@ -885,7 +885,8 @@
         id: r.id, score: r.score, title: r.title, body: r.body, author: r.author,
         anonymous: r.anonymous, verified: r.verified, iso: r.iso, time: r.time,
         pics: r.pics.map(function (p) { return p.thumb; }),
-        full: r.pics.map(function (p) { return p.full; })   /* ukuran asli, untuk lightbox */
+        full: r.pics.map(function (p) { return p.full; }),  /* ukuran asli, untuk lightbox */
+        reply: r.reply ? r.reply.body : ''                  /* balasan toko (Klaviyo public_reply) */
       };
     }
     function klFillSummary(s) {
@@ -921,6 +922,7 @@
       return new Array(n + 1).join('★') + new Array(6 - n).join('☆');
     }
 
+    var shopName = sec.dataset.shopName || '';
     function card(r) {
       var parts = [];
       if (!r.anonymous && r.author) parts.push('<span class="kl_reviews__review__author">' + escRaw(r.author) + '</span>');
@@ -942,7 +944,15 @@
             (r.full && r.full[i] ? ' data-full="' + escRaw(r.full[i]) + '"' : '') + '>';
         }).join('') + '</div>';
       }
-      return html + '<p class="sk-small sk-text-secondary">' + who + '</p></div>';
+      html += '<p class="sk-small sk-text-secondary">' + who + '</p>';
+      /* Balasan toko — gaya jawaban Q&A (.pdp-ans, menjorok). pre-line menjaga
+         baris baru dari Klaviyo tanpa menyisipkan HTML. */
+      if (r.reply) {
+        html += '<div class="pdp-ans sk-stack" style="gap:var(--sk-space-4)">' +
+          (shopName ? '<p class="sk-eyebrow sk-text-secondary">' + esc(shopName) + '</p>' : '') +
+          '<p class="sk-body" style="white-space:pre-line">' + escRaw(r.reply) + '</p></div>';
+      }
+      return html + '</div>';
     }
 
     /* --- seluruh ulasan, sekali ------------------------------------------- */

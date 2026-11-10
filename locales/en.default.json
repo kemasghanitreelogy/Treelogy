@@ -265,7 +265,8 @@
     "write_review": "Write a Review",
     "based_on": "Based on {{ count }} reviews",
     "based_on_singular": "Based on 1 review",
-    "all_summary": "{{ rating }}/5 based on {{ count }} reviews."
+    "all_summary": "{{ rating }}/5 based on {{ count }} reviews.",
+    "reply_from": "Reply from Treelogy"
   },
   "articles": {
     "read_full_article": "Read Full Article"

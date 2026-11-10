@@ -82,6 +82,7 @@
   data-klaviyo-src="{{ 'klaviyo-reviews.js' | asset_url }}"
   data-company="{{ section.settings.klaviyo_company | default: 'T9cUqZ' | escape }}"
   data-ratings-word="{{ t_ratings | strip | escape }}"
+  data-shop-name="{{ 'reviews.reply_from' | t | escape }}"
   data-l-close="{{ 'pdp3.reviews.close' | t }}"
   data-total="{{ product.metafields.reviews.rating_count.value | default: 0 }}"
   data-per-page="{{ section.settings.per_page | default: 4 }}"
