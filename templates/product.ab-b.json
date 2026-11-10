@@ -208,11 +208,6 @@
         "margin_bottom": 0
       }
     },
-    "review_judge_me_aJGGPd": {
-      "type": "ReviewJudgeMe",
-      "name": "Review Judge.me",
-      "settings": {}
-    },
     "side_image_video_content_hjYMcH": {
       "type": "SideImageVideoContent",
       "blocks": {
@@ -275,11 +270,6 @@
         "bakground_color": "#f8f8f2"
       }
     },
-    "section_review_eHhJ8D": {
-      "type": "SectionReview",
-      "disabled": true,
-      "settings": {}
-    },
     "featured_blog_DYaUTY": {
       "type": "FeaturedBlog",
       "disabled": true,
@@ -303,6 +293,10 @@
         "button_label": "All Products",
         "button_url": "shopify://collections/all"
       }
+    },
+    "klaviyo_reviews": {
+      "type": "KlaviyoReviews",
+      "settings": {}
     }
   },
   "order": [
@@ -310,11 +304,10 @@
     "text_plain_product_AHGqWt",
     "featured_bundle_KcrzKt",
     "hero_baner_CX6VQR",
-    "review_judge_me_aJGGPd",
+    "klaviyo_reviews",
     "side_image_video_content_hjYMcH",
     "section_how_to_9WPERG",
     "section_results_HDj6ei",
-    "section_review_eHhJ8D",
     "featured_blog_DYaUTY",
     "featured_products_iH7QUc"
   ]
