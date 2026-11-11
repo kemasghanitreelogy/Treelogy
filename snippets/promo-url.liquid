@@ -3,17 +3,22 @@
   kata kunci dari setelan tema "Promo URL", contoh ?utm_campaign=promo-1111.
 
   Markup promo dirender server tapi disembunyikan CSS. Slot `gate` memasang
-  skrip inline sinkron SEBELUM judul dilukis: bila URL cocok (atau pernah cocok
-  dalam 24 jam terakhir, disimpan di localStorage) ia memasang kelas `tl-promo-url` di <html>. Tanpa request
-  tambahan, tanpa kedip, tanpa geser tata letak, dan cache halaman tetap jalan
-  karena Liquid tidak membaca query string.
+  skrip inline sinkron SEBELUM judul dilukis: bila URL HALAMAN INI cocok ia
+  memasang kelas `tl-promo-url` di <html>. Tidak ada sesi — pindah halaman
+  tanpa kata kunci = PDP normal. Tanpa request tambahan, tanpa kedip, tanpa
+  geser tata letak, dan cache halaman tetap jalan karena Liquid tidak membaca
+  query string.
 
   Kapsul: badge judul + badge kartu paket terbesar; slot `global` (semua
   halaman, dari snippets/gift-auto-add.liquid) menukar hadiah paket itu jadi
   hadiah promo dan menandai baris kapsul `_Promo: 11.11`.
-  Inside Out: PDP aslinya dialihkan ke produk promo (setelan
-  promo_url_bundle_promo, vendor "11.11 Promo", varian 60ml) yang selalu
-  menampilkan badge + teks 30ml → 60ml.
+  Inside Out: produk promo terpisah (setelan promo_url_bundle_promo, vendor
+  "11.11 Promo") selalu menampilkan badge + teks 30ml → 60ml.
+
+  Stok promo habis (11 Nov 2026): selama `tl-promo-url` aktif di PDP kapsul
+  maupun PDP Inside Out promo, tombol add-to-cart + bilah sticky-nya dinonaktifkan
+  dan berlabel `promo_url.out_of_stock`. PDP kapsul tanpa kata kunci tidak
+  tersentuh.
 
   @param {string} slot - 'global' | 'gate' | 'title' | 'card' | 'perk'
   @param {object} [product] - Produk yang dirender (default: produk halaman)
@@ -31,12 +36,12 @@
 {%- capture p11_detect -%}
   (function (k, m, e) {
     try {
-      var s = localStorage, now = Date.now();
-      if (e && !(Date.parse(e) > now)) return s.removeItem(k);
+      localStorage.removeItem(k); /* sisa sesi 24 jam versi lama */
+    } catch (x) {}
+    try {
+      if (e && !(Date.parse(e) > Date.now())) return;
       var q = decodeURIComponent(location.search).toLowerCase();
-      if (m.some(function (w) { return w && q.indexOf(w) > -1; })) s.setItem(k, now + 864e5);
-      if (+s.getItem(k) > now) document.documentElement.classList.add('tl-promo-url');
-      else s.removeItem(k);
+      if (m.some(function (w) { return w && q.indexOf(w) > -1; })) document.documentElement.classList.add('tl-promo-url');
     } catch (x) {}
   })('tl_promo_url', {{ settings.promo_url_match | downcase | remove: ' ' | split: ',' | json }}, {{ settings.promo_url_ends | strip | json }});
 {%- endcapture -%}
@@ -110,8 +115,6 @@
       assign p11_kind = 'capsule'
     elsif product.id == settings.promo_url_bundle_promo.id
       assign p11_kind = 'bundle'
-    elsif product.id == settings.promo_url_bundle.id and settings.promo_url_bundle_promo != blank
-      assign p11_kind = 'redirect'
     endif
   endif
   assign p11_value = ''
@@ -125,27 +128,7 @@
   endif
 -%}
 
-{%- if p11_kind == 'redirect' and slot == 'gate' -%}
-  {%- comment -%}
-    PDP Inside Out ASLI: saat promo aktif (URL cocok / flag 24 jam), pembeli
-    langsung dipindah ke PDP promo (vendor "11.11 Promo", varian 60ml) —
-    halaman disembunyikan dulu supaya tidak sempat terlihat. Query & bahasa ikut.
-  {%- endcomment -%}
-  {%- liquid
-    assign p11_root = routes.root_url
-    if p11_root == '/'
-      assign p11_root = ''
-    endif
-    assign p11_target = p11_root | append: '/products/' | append: settings.promo_url_bundle_promo.handle
-  -%}
-  <script>
-    {{ p11_detect }}
-    if (document.documentElement.classList.contains('tl-promo-url')) {
-      document.documentElement.style.visibility = 'hidden';
-      location.replace({{ p11_target | json }} + location.search + location.hash);
-    }
-  </script>
-{%- elsif p11_kind == blank or p11_kind == 'redirect' -%}
+{%- if p11_kind == blank -%}
   {%- if slot == 'title' -%}{{ heading_html }}{%- elsif slot == 'perk' -%}{{ text | escape }}{%- endif -%}
 {%- else -%}
 {%- case slot -%}
@@ -168,6 +151,8 @@
       .tl-promo-url .pdp-pack__vis:has(> .tl-p11-card) > .pdp-gift{visibility:hidden}
       .tl-promo-url .pdp-pack__vis:has(> .tl-p11-card) > .pdp-tins{position:relative;z-index:1}
       .tl-promo-url .pdp-pack:has(.tl-p11-card) > .pdp-pack__top{position:relative;z-index:3}
+      .tl-promo-url :is(#AddToCart,[data-v2-sticky-btn],.pdp-sticky__cta):not(.tl-p11-oos){visibility:hidden}
+      .tl-p11-oos{opacity:.5;cursor:not-allowed}
       @media (max-width:959px){
         .pdp4-page.p5 .tl-p11-head{--tl-p11-mt:17px}
         .tl-p11-head .tl-p11-badge{--d:clamp(82px,21.026vw,94px);--f:clamp(10px,2.564vw,11.46px);--l:clamp(11px,2.821vw,12.6px)}
@@ -180,6 +165,23 @@
       {%- else -%}
         {{ p11_detect }}
       {%- endif -%}
+      /* Stok promo habis: tombol add-to-cart (+ bilah sticky yang meneruskan
+         klik ke sana) dinonaktifkan secara native, jadi klik, Enter, dan
+         .click() terprogram dari bilah sticky semuanya mati. Sampai skrip ini
+         jalan, tombolnya disembunyikan CSS di atas (ruangnya tetap, tanpa CLS)
+         supaya label "Add to cart" tidak sempat terlihat. */
+      if (document.documentElement.classList.contains('tl-promo-url')) {
+        document.addEventListener('DOMContentLoaded', function () {
+          var label = {{ 'promo_url.out_of_stock' | t | json }};
+          document.querySelectorAll('#AddToCart,[data-v2-sticky-btn],.pdp-sticky__cta').forEach(function (el) {
+            if (el.tagName === 'A') el.removeAttribute('href');
+            else el.disabled = true;
+            el.setAttribute('aria-disabled', 'true');
+            el.textContent = label;
+            el.classList.add('tl-p11-oos');
+          });
+        });
+      }
     </script>
 
   {%- when 'title' -%}

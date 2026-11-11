@@ -1278,6 +1278,7 @@
     "card_capsule_html": "PROMO 11.11<br>GRATIS SEED<br>OIL 30ml<br><s>{{ value }}<\/s>",
     "title_bundle_html": "PROMO 11.11<br>GANTI SEED<br>OIL <s>30ml<\/s><br>60ml",
     "perk_find": "30ml Seed Oil",
-    "perk_html": "<s>30ml<\/s> <mark>60ml Seed Oil<\/mark>"
+    "perk_html": "<s>30ml<\/s> <mark>60ml Seed Oil<\/mark>",
+    "out_of_stock": "Out of stock"
   }
 }
