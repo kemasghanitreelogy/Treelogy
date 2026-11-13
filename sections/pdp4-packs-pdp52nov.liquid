@@ -302,7 +302,6 @@
               {%- if section.settings.gift_image != blank -%}<img src="{{ section.settings.gift_image }}" alt="" loading="lazy" width="40" height="56">{%- endif -%}
             </div>
             {%- if pack_img != blank -%}<img class="pdp-tins {{ pi_class }}" src="{{ pack_img }}" alt="" loading="lazy" width="124" height="90">{%- endif -%}
-            {%- if card_no == 1 -%}{%- render 'promo-url', slot: 'card' -%}{%- endif -%}
           </div>
         {%- elsif pack_img != blank -%}
           <img class="pdp-tins {{ pi_class }}" src="{{ pack_img }}" alt="" loading="lazy" width="93" height="70">

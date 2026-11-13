@@ -30,19 +30,6 @@
   endif
 -%}
 {%- unless kr_skip -%}
-{%- liquid
-  comment
-    Produk promo 11.11 (setelan tema promo_url_bundle_promo) adalah salinan
-    Inside Out dengan oli 60ml dan tidak punya ulasan sendiri: ulasan dan
-    formulirnya memakai produk Inside Out asli (promo_url_bundle).
-  endcomment
-  assign kr_product = product
-  if settings.promo_url_bundle_promo != blank and settings.promo_url_bundle != blank
-    if product.id == settings.promo_url_bundle_promo.id
-      assign kr_product = settings.promo_url_bundle
-    endif
-  endif
--%}
 {%- comment -%}
   CSS ulasan (±47 KB) dimuat TANPA memblokir render: section ini jauh di bawah
   lipatan dan isinya baru digambar JS saat pembaca mendekat, jadi CSS-nya
@@ -69,8 +56,8 @@
 
 <div class="klaviyo-review-wrapper" id="klaviyo-review-wrapper"
   data-tl-klaviyo-reviews
-  data-product-id="{{ kr_product.id }}"
-  data-product-title="{{ kr_product.title | escape }}"
+  data-product-id="{{ product.id }}"
+  data-product-title="{{ product.title | escape }}"
   data-company="{{ section.settings.company_id | default: 'T9cUqZ' | escape }}"
   data-locale="{{ request.locale.iso_code }}"
   data-per-page="{{ section.settings.per_page | default: 5 }}"

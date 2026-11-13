@@ -1241,7 +1241,7 @@
                   <span class="v2-plan__dot"></span>
                 {%- endif -%}
               </span>
-              {%- assign p11_perk_text = v2_perk_parts[0] | strip -%}<span class="v2-plan__perk-text">{%- render 'promo-url', slot: 'perk', product: product, text: p11_perk_text -%}</span>
+              <span class="v2-plan__perk-text">{{ v2_perk_parts[0] | strip }}</span>
               {%- if v2_perk_parts.size > 1 and v2_perk_show_value -%}
                 {%- assign v2_perk_value = v2_perk_parts[1] | strip -%}
                 {%- if v2_perk_money != blank -%}

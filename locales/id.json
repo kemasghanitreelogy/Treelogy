@@ -1269,13 +1269,5 @@
       },
       "press": "DILIPUT OLEH"
     }
-  },
-  "promo_url": {
-    "title_capsule_html": "PROMO 11.11<br>UPGRADE<br>SEED OIL 30ml<br><s>{{ value }}<\/s>",
-    "card_capsule_html": "PROMO 11.11<br>GRATIS SEED<br>OIL 30ml<br><s>{{ value }}<\/s>",
-    "title_bundle_html": "PROMO 11.11<br>GANTI SEED<br>OIL <s>30ml<\/s><br>60ml",
-    "perk_find": "30ml Minyak Biji",
-    "perk_html": "<s>30ml<\/s> <mark>60ml Seed Oil<\/mark>",
-    "out_of_stock": "Stok habis"
   }
 }
