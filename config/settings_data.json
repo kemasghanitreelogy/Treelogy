@@ -28,14 +28,6 @@
     "gtm_container_id": "GTM-5M855J4V",
     "show_staged_variants": true,
     "variant_card_v2": true,
-    "promo_url_enable": false,
-    "promo_url_match": "1111,11.11",
-    "promo_url_ends": "2026-11-12T00:00:00+08:00",
-    "promo_url_capsule": "organic-moringa-capsules",
-    "promo_url_bundle": "moringa-inside-out-protocol",
-    "promo_url_bundle_promo": "inside-out-moringa-protocol-promo-1111",
-    "promo_url_oil": "organic-moringa-oil",
-    "promo_url_gift": "moringa-seed-oil-30ml",
     "favicon": "shopify://shop_images/favicon_-_picto_-_treelogy.png",
     "sections": {
       "Header": {
